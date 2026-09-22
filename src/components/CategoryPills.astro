@@ -1,0 +1,136 @@
+---
+import { 
+  Sparkles, 
+  Flame, 
+  Tv, 
+  Rocket, 
+  Sword, 
+  Search, 
+  Coffee, 
+  Brain, 
+  Bot,
+  Compass
+} from '@lucide/astro';
+
+const categories = [
+  { id: 'all', label: 'All', icon: Sparkles, count: '124' },
+  { id: 'trending', label: 'Trending', icon: Flame, count: '28' },
+  { id: 'anime', label: 'Anime & Manga', icon: Tv, count: '45' },
+  { id: 'scifi', label: 'Sci-Fi & Cyberpunk', icon: Rocket, count: '32' },
+  { id: 'fantasy', label: 'Fantasy & RPG', icon: Sword, count: '39' },
+  { id: 'mystery', label: 'Mystery & Noir', icon: Search, count: '14' },
+  { id: 'slice-of-life', label: 'Slice of Life', icon: Coffee, count: '21' },
+  { id: 'philosophy', label: 'Philosophy & Lore', icon: Brain, count: '16' },
+  { id: 'vtuber', label: 'VTuber & AI Idols', icon: Bot, count: '18' },
+];
+---
+
+<div class="relative w-full border-b border-white/[0.06] bg-[#07080d]/90 backdrop-blur-md sticky top-16 sm:top-18 z-40">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div class="relative flex items-center py-3">
+      
+      <!-- Left/Right Scroll fade gradients for sleek mobile feeling -->
+      <div class="pointer-events-none absolute left-0 top-0 bottom-0 w-6 bg-gradient-to-r from-[#07080d] to-transparent z-10 sm:hidden"></div>
+      <div class="pointer-events-none absolute right-0 top-0 bottom-0 w-8 bg-gradient-to-l from-[#07080d] to-transparent z-10 sm:hidden"></div>
+
+      <!-- Scrollable Pills Row -->
+      <div 
+        id="category-scroll-container"
+        class="flex items-center gap-2 overflow-x-auto no-scrollbar scroll-smooth w-full py-1 -my-1"
+        style="-webkit-overflow-scrolling: touch;"
+      >
+        {categories.map((cat, idx) => {
+          const Icon = cat.icon;
+          const isFirst = idx === 0;
+          return (
+            <button
+              type="button"
+              data-cat-btn={cat.id}
+              class={`category-pill shrink-0 flex items-center gap-2 px-3.5 py-1.5 rounded-full text-xs font-medium transition-all duration-200 cursor-pointer select-none ${
+                isFirst 
+                  ? 'active-pill bg-purple-600/20 text-purple-200 border border-purple-500/40 shadow-sm shadow-purple-500/20' 
+                  : 'bg-white/[0.03] text-slate-400 hover:text-slate-200 hover:bg-white/[0.07] border border-white/[0.06]'
+              }`}
+            >
+              <Icon class={`w-3.5 h-3.5 transition-colors ${isFirst ? 'text-purple-400' : 'text-slate-400'}`} />
+              <span>{cat.label}</span>
+              <span class={`text-[10px] px-1.5 py-0.2 rounded-full font-mono ${
+                isFirst ? 'bg-purple-500/20 text-purple-300' : 'bg-white/[0.05] text-slate-500'
+              }`}>
+                {cat.count}
+              </span>
+            </button>
+          );
+        })}
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<script>
+  // Interactive pill selection handling
+  const pills = document.querySelectorAll<HTMLButtonElement>('[data-cat-btn]');
+  
+  pills.forEach((pill) => {
+    pill.addEventListener('click', () => {
+      // Remove active classes from all
+      pills.forEach((p) => {
+        p.classList.remove(
+          'active-pill', 
+          'bg-purple-600/20', 
+          'text-purple-200', 
+          'border-purple-500/40', 
+          'shadow-sm', 
+          'shadow-purple-500/20'
+        );
+        p.classList.add(
+          'bg-white/[0.03]', 
+          'text-slate-400', 
+          'border-white/[0.06]'
+        );
+        const icon = p.querySelector('svg');
+        if (icon) {
+          icon.classList.remove('text-purple-400');
+          icon.classList.add('text-slate-400');
+        }
+        const badge = p.querySelector('span:last-child');
+        if (badge) {
+          badge.classList.remove('bg-purple-500/20', 'text-purple-300');
+          badge.classList.add('bg-white/[0.05]', 'text-slate-500');
+        }
+      });
+
+      // Activate clicked pill
+      pill.classList.add(
+        'active-pill', 
+        'bg-purple-600/20', 
+        'text-purple-200', 
+        'border-purple-500/40', 
+        'shadow-sm', 
+        'shadow-purple-500/20'
+      );
+      pill.classList.remove(
+        'bg-white/[0.03]', 
+        'text-slate-400', 
+        'border-white/[0.06]'
+      );
+      const activeIcon = pill.querySelector('svg');
+      if (activeIcon) {
+        activeIcon.classList.add('text-purple-400');
+        activeIcon.classList.remove('text-slate-400');
+      }
+      const activeBadge = pill.querySelector('span:last-child');
+      if (activeBadge) {
+        activeBadge.classList.add('bg-purple-500/20', 'text-purple-300');
+        activeBadge.classList.remove('bg-white/[0.05]', 'text-slate-500');
+      }
+
+      // Dispatch event for character grid filtering
+      const categoryId = pill.getAttribute('data-cat-btn');
+      window.dispatchEvent(new CustomEvent('aetheria:category-change', { 
+        detail: { category: categoryId } 
+      }));
+    });
+  });
+</script>
