@@ -12,7 +12,8 @@ import {
   RotateCcw,
   CheckCircle2,
   Lock,
-  ChevronDown
+  ChevronDown,
+  ExternalLink
 } from '@lucide/astro';
 ---
 
@@ -73,6 +74,16 @@ import {
 
       <!-- Header Actions -->
       <div class="flex items-center gap-1.5 sm:gap-2 shrink-0">
+        <!-- Open Fullscreen Immersion Room Link -->
+        <a 
+          id="modal-fullpage-link"
+          href="/chat/lyra-vance"
+          class="p-2 rounded-xl bg-white/[0.05] hover:bg-white/[0.1] text-slate-400 hover:text-purple-300 transition cursor-pointer"
+          title="Open Fullscreen Immersion Room"
+        >
+          <ExternalLink class="w-4 h-4" />
+        </a>
+
         <!-- BYOK Settings Toggle Button -->
         <button 
           type="button" 
@@ -288,6 +299,9 @@ import {
     if (nameEl) nameEl.textContent = currentCharacter.name;
     if (titleEl) titleEl.textContent = currentCharacter.title;
     if (input) input.placeholder = `Message ${currentCharacter.name}...`;
+
+    const fullPageLink = document.getElementById('modal-fullpage-link') as HTMLAnchorElement | null;
+    if (fullPageLink) fullPageLink.href = `/chat/${currentCharacter.id}`;
 
     // Clear previous messages and show initial greeting
     if (messagesContainer) {

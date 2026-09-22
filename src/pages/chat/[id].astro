@@ -1,0 +1,644 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import { characters, type Character } from '../../data/characters';
+import { 
+  ArrowLeft, 
+  Send, 
+  Sparkles, 
+  ShieldCheck, 
+  KeyRound, 
+  Volume2, 
+  VolumeX,
+  Trash2, 
+  Download, 
+  RotateCcw, 
+  PanelLeftClose, 
+  PanelLeft, 
+  Check, 
+  Copy,
+  Flame,
+  Star,
+  Bot,
+  User,
+  ExternalLink,
+  MessageSquare
+} from '@lucide/astro';
+
+export function getStaticPaths() {
+  return characters.map((character) => ({
+    params: { id: character.id },
+    props: { character },
+  }));
+}
+
+interface Props {
+  character: Character;
+}
+
+const { character } = Astro.props;
+---
+
+<Layout title={`${character.name} — Immersive Roleplay Chat | Aetheria AI`}>
+  <div class="h-screen flex flex-col bg-[#070913] text-slate-100 overflow-hidden">
+    
+    <!-- Top Navigation Header -->
+    <header class="h-14 sm:h-16 border-b border-white/[0.08] bg-[#090b17]/95 backdrop-blur-xl px-3 sm:px-6 flex items-center justify-between z-30 shrink-0">
+      <div class="flex items-center gap-2.5 sm:gap-4">
+        <!-- Back to Hub -->
+        <a 
+          href="/" 
+          class="flex items-center gap-1.5 px-2.5 py-1.5 rounded-xl bg-white/[0.04] hover:bg-white/[0.08] border border-white/[0.08] text-slate-300 hover:text-white text-xs font-medium transition active:scale-95"
+          title="Back to Hub"
+        >
+          <ArrowLeft class="w-4 h-4 text-purple-400" />
+          <span class="hidden sm:inline">Hub</span>
+        </a>
+
+        <!-- Character Status Header -->
+        <div class="flex items-center gap-2.5">
+          <div class="relative w-9 h-9 sm:w-10 sm:h-10 rounded-full overflow-hidden ring-2 ring-purple-500/30 shrink-0">
+            <img 
+              src={character.avatarUrl} 
+              alt={character.name} 
+              class="w-full h-full object-cover" 
+            />
+            <span class="absolute bottom-0 right-0 w-2.5 h-2.5 rounded-full bg-emerald-400 ring-2 ring-[#090b17]"></span>
+          </div>
+          <div>
+            <div class="flex items-center gap-1.5">
+              <h1 class="text-xs sm:text-sm font-bold text-white tracking-wide">{character.name}</h1>
+              <span class="inline-flex items-center gap-0.5 px-1.5 py-0.2 rounded text-[9px] font-semibold bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">
+                <ShieldCheck class="w-2.5 h-2.5" />
+                <span>SFW</span>
+              </span>
+            </div>
+            <p class="text-[10px] sm:text-xs text-purple-400/90 truncate max-w-[140px] sm:max-w-xs">{character.title}</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Right Header Actions -->
+      <div class="flex items-center gap-1 sm:gap-2">
+        <!-- Toggle Lore Sidebar (Desktop / Tablet) -->
+        <button 
+          id="toggle-sidebar-btn"
+          class="p-2 rounded-xl bg-white/[0.04] hover:bg-white/[0.08] border border-white/[0.08] text-slate-400 hover:text-slate-200 text-xs transition cursor-pointer"
+          title="Toggle Character Persona Details"
+        >
+          <PanelLeft class="w-4 h-4 text-purple-400" />
+        </button>
+
+        <!-- Voice Read Aloud Toggle -->
+        <button 
+          id="toggle-tts-btn"
+          class="p-2 rounded-xl bg-white/[0.04] hover:bg-white/[0.08] border border-white/[0.08] text-slate-400 hover:text-purple-300 text-xs transition cursor-pointer"
+          title="Toggle Voice Read Aloud (Web Speech)"
+        >
+          <Volume2 id="tts-icon-on" class="w-4 h-4 text-purple-400" />
+          <VolumeX id="tts-icon-off" class="w-4 h-4 text-slate-500 hidden" />
+        </button>
+
+        <!-- Export Chat -->
+        <button 
+          id="export-chat-btn"
+          class="hidden sm:flex items-center gap-1.5 px-2.5 py-1.5 rounded-xl bg-white/[0.04] hover:bg-white/[0.08] border border-white/[0.08] text-slate-300 hover:text-white text-xs transition cursor-pointer"
+          title="Export Conversation (Markdown)"
+        >
+          <Download class="w-3.5 h-3.5 text-slate-400" />
+          <span>Export</span>
+        </button>
+
+        <!-- Clear Chat History -->
+        <button 
+          id="clear-chat-btn"
+          class="p-2 rounded-xl bg-white/[0.04] hover:bg-red-500/20 border border-white/[0.08] hover:border-red-500/30 text-slate-400 hover:text-red-400 text-xs transition cursor-pointer"
+          title="Clear Conversation History"
+        >
+          <Trash2 class="w-4 h-4" />
+        </button>
+
+        <!-- BYOK Pill -->
+        <button 
+          id="chat-byok-btn"
+          class="flex items-center gap-1.5 px-2 sm:px-3 py-1.5 rounded-xl bg-purple-950/40 hover:bg-purple-900/50 border border-purple-500/30 text-purple-300 text-xs font-medium transition cursor-pointer"
+          title="Configure BYOK API Key"
+        >
+          <KeyRound class="w-3.5 h-3.5 text-cyan-400" />
+          <span class="hidden md:inline" id="chat-engine-label">Edge Demo</span>
+        </button>
+      </div>
+    </header>
+
+    <!-- Main Content Area: Sidebar + Chat Thread -->
+    <div class="flex-1 flex overflow-hidden relative">
+      
+      <!-- Left Sidebar: Character Persona & Lore Drawer -->
+      <aside 
+        id="character-sidebar"
+        class="w-80 shrink-0 border-r border-white/[0.08] bg-[#080a14] overflow-y-auto hidden lg:flex flex-col p-5 space-y-5 transition-all duration-300 z-20"
+      >
+        <!-- Character Portrait Banner -->
+        <div class="relative rounded-2xl overflow-hidden aspect-[4/3] border border-white/[0.1] shadow-lg shadow-purple-950/40">
+          <img 
+            src={character.avatarUrl} 
+            alt={character.name} 
+            class="w-full h-full object-cover" 
+          />
+          <div class="absolute inset-0 bg-gradient-to-t from-[#080a14] via-transparent to-transparent"></div>
+          <div class="absolute bottom-3 left-3 right-3 flex items-center justify-between">
+            <span class="text-[11px] font-semibold px-2 py-0.5 rounded-full bg-black/60 backdrop-blur-md text-purple-300 border border-purple-500/30">
+              {character.category}
+            </span>
+            <div class="flex items-center gap-1 text-[11px] font-bold text-amber-400 bg-black/60 px-2 py-0.5 rounded-full backdrop-blur-md">
+              <Star class="w-3 h-3 fill-amber-400" />
+              <span>{character.rating}</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Bio & Lore -->
+        <div class="space-y-2">
+          <h2 class="text-xs uppercase tracking-wider text-slate-400 font-bold">About Character</h2>
+          <p class="text-xs text-slate-300 leading-relaxed bg-white/[0.02] p-3.5 rounded-xl border border-white/[0.05]">
+            {character.description}
+          </p>
+        </div>
+
+        <!-- Tags -->
+        <div class="space-y-2">
+          <h2 class="text-xs uppercase tracking-wider text-slate-400 font-bold">Tags & Archetypes</h2>
+          <div class="flex flex-wrap gap-1.5">
+            {character.tags.map((tag) => (
+              <span class="px-2.5 py-1 rounded-lg bg-white/[0.04] text-[11px] text-slate-300 border border-white/[0.06]">
+                #{tag}
+              </span>
+            ))}
+          </div>
+        </div>
+
+        <!-- Safety Certification -->
+        <div class="p-3.5 rounded-xl bg-emerald-950/20 border border-emerald-500/20 flex items-start gap-2.5">
+          <ShieldCheck class="w-4 h-4 text-emerald-400 shrink-0 mt-0.5" />
+          <div class="text-[11px] space-y-0.5">
+            <p class="font-semibold text-emerald-300">Verified SFW Profile</p>
+            <p class="text-slate-400">Strictly wholesome companion & roleplay lore. 18+ adult depiction standards.</p>
+          </div>
+        </div>
+
+        <!-- Session Privacy -->
+        <div class="text-[10px] text-slate-500 text-center pt-4 border-t border-white/[0.05]">
+          Client-side encrypted memory. Chats stay in your browser.
+        </div>
+      </aside>
+
+      <!-- Center: Immersive Chat Feed & Input -->
+      <section class="flex-1 flex flex-col h-full overflow-hidden bg-gradient-to-b from-[#090b17] to-[#060810] relative">
+        
+        <!-- BYOK Key Modal / Dropdown Tray -->
+        <div 
+          id="chat-byok-tray" 
+          class="hidden absolute top-0 left-0 right-0 z-30 bg-[#0c0f20]/95 backdrop-blur-xl border-b border-purple-500/30 p-4 shadow-2xl transition-all duration-300"
+        >
+          <div class="max-w-xl mx-auto space-y-3">
+            <div class="flex items-center justify-between">
+              <div class="flex items-center gap-2">
+                <KeyRound class="w-4 h-4 text-cyan-400" />
+                <h3 class="text-xs font-bold text-white uppercase tracking-wider">BYOK Direct Edge Inference</h3>
+              </div>
+              <button id="close-chat-byok" class="text-slate-400 hover:text-white text-xs">✕ Close</button>
+            </div>
+            <p class="text-[11px] text-slate-300">
+              Provide your personal API key for direct client-to-LLM streaming. Keys are stored locally in your browser.
+            </p>
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
+              <select id="chat-provider-select" class="px-3 py-2 rounded-xl bg-white/[0.06] border border-white/10 text-xs text-white outline-none">
+                <option value="demo">Demo Mode (Free Edge Simulator)</option>
+                <option value="groq">Groq (Ultra-Fast Free Tier)</option>
+                <option value="openai">OpenAI (GPT-4o / GPT-4o-mini)</option>
+                <option value="gemini">Google Gemini (Gemini 1.5 Flash)</option>
+                <option value="openrouter">OpenRouter (Multi-model)</option>
+              </select>
+              <input 
+                id="chat-key-input" 
+                type="password" 
+                placeholder="Enter API Key (sk-...)" 
+                class="px-3 py-2 rounded-xl bg-white/[0.06] border border-white/10 text-xs text-white placeholder:text-slate-500 outline-none"
+              />
+            </div>
+            <div class="flex justify-end gap-2 pt-1">
+              <button id="save-chat-byok" class="px-4 py-1.5 rounded-xl bg-purple-600 hover:bg-purple-500 text-white text-xs font-semibold shadow-md cursor-pointer">
+                Save Settings
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Chat Messages Scroll Stream -->
+        <div 
+          id="chat-stream" 
+          class="flex-1 overflow-y-auto p-4 sm:p-6 space-y-4 sm:space-y-5"
+        >
+          <!-- Messages will be populated dynamically from localStorage or greeting -->
+        </div>
+
+        <!-- Character Typing Indicator -->
+        <div 
+          id="full-typing-indicator" 
+          class="hidden px-4 sm:px-6 py-2 flex items-center gap-3 animate-pulse"
+        >
+          <img 
+            src={character.avatarUrl} 
+            alt={character.name} 
+            class="w-7 h-7 rounded-full object-cover ring-1 ring-purple-500/40" 
+          />
+          <div class="px-3.5 py-2 rounded-2xl rounded-tl-sm bg-white/[0.04] border border-white/[0.08] flex items-center gap-1.5 text-xs text-slate-400">
+            <span class="w-1.5 h-1.5 rounded-full bg-purple-400 animate-bounce"></span>
+            <span class="w-1.5 h-1.5 rounded-full bg-purple-400 animate-bounce [animation-delay:0.2s]"></span>
+            <span class="w-1.5 h-1.5 rounded-full bg-purple-400 animate-bounce [animation-delay:0.4s]"></span>
+            <span class="text-[11px] ml-1 text-slate-400">{character.name} is typing...</span>
+          </div>
+        </div>
+
+        <!-- Quick Starter Prompts Row -->
+        {character.starterPrompts && character.starterPrompts.length > 0 && (
+          <div class="px-4 sm:px-6 py-2 flex items-center gap-2 overflow-x-auto no-scrollbar shrink-0">
+            <span class="text-[10px] uppercase font-bold text-slate-500 tracking-wider shrink-0 flex items-center gap-1">
+              <Sparkles class="w-3 h-3 text-purple-400" />
+              <span>Prompt:</span>
+            </span>
+            {character.starterPrompts.map((prompt) => (
+              <button 
+                type="button"
+                class="room-starter-pill shrink-0 px-3 py-1.5 rounded-xl bg-white/[0.04] hover:bg-purple-900/30 hover:border-purple-500/40 border border-white/[0.08] text-xs text-slate-300 hover:text-white transition duration-200 cursor-pointer active:scale-95"
+                data-prompt={prompt}
+              >
+                "{prompt}"
+              </button>
+            ))}
+          </div>
+        )}
+
+        <!-- Bottom Chat Input Bar -->
+        <div class="p-3 sm:p-5 border-t border-white/[0.08] bg-[#080a15]/95 backdrop-blur-xl shrink-0">
+          <form id="room-input-form" class="max-w-4xl mx-auto flex items-end gap-2 sm:gap-3">
+            <div class="flex-1 relative rounded-2xl bg-white/[0.04] hover:bg-white/[0.06] focus-within:bg-[#0c0f1e] border border-white/[0.1] focus-within:border-purple-500/60 transition shadow-inner">
+              <textarea 
+                id="room-input" 
+                rows="1" 
+                placeholder={`Type a message to ${character.name}... (Press Enter to send, Shift+Enter for newline)`}
+                class="w-full px-4 py-3 bg-transparent text-sm text-white placeholder:text-slate-500 outline-none resize-none max-h-32 leading-relaxed"
+              ></textarea>
+            </div>
+
+            <!-- Send Button -->
+            <button 
+              type="submit" 
+              id="room-send-btn"
+              class="h-11 px-4 sm:px-5 rounded-2xl bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-500 hover:to-indigo-500 text-white font-semibold flex items-center justify-center gap-2 shadow-lg shadow-purple-900/40 hover:shadow-purple-600/50 transition-all duration-200 cursor-pointer active:scale-95 shrink-0"
+              title="Send Message"
+            >
+              <Send class="w-4 h-4" />
+              <span class="hidden sm:inline text-xs">Send</span>
+            </button>
+          </form>
+
+          <div class="max-w-4xl mx-auto flex items-center justify-between text-[10px] text-slate-500 mt-2 px-1">
+            <span class="flex items-center gap-1.5">
+              <span class="w-1.5 h-1.5 rounded-full bg-emerald-400"></span>
+              <span>Encrypted local session • Zero data logging</span>
+            </span>
+            <span id="active-scenario-tag" class="hidden sm:inline text-purple-400/80 font-mono">
+              Scenario: Default Encounter
+            </span>
+          </div>
+        </div>
+
+      </section>
+    </div>
+  </div>
+</Layout>
+
+<script define:vars={{ character }}>
+  // Client-side state & logic
+  let conversation = [];
+  const STORAGE_KEY = `aetheria_chat_${character.id}`;
+  let ttsEnabled = true;
+
+  // DOM Elements
+  const chatStream = document.getElementById('chat-stream');
+  const typingIndicator = document.getElementById('full-typing-indicator');
+  const inputForm = document.getElementById('room-input-form');
+  const input = document.getElementById('room-input');
+  const toggleSidebarBtn = document.getElementById('toggle-sidebar-btn');
+  const sidebar = document.getElementById('character-sidebar');
+  const clearChatBtn = document.getElementById('clear-chat-btn');
+  const exportChatBtn = document.getElementById('export-chat-btn');
+  const toggleTtsBtn = document.getElementById('toggle-tts-btn');
+  const ttsIconOn = document.getElementById('tts-icon-on');
+  const ttsIconOff = document.getElementById('tts-icon-off');
+  const starterPills = document.querySelectorAll('.room-starter-pill');
+  
+  // BYOK elements
+  const byokBtn = document.getElementById('chat-byok-btn');
+  const byokTray = document.getElementById('chat-byok-tray');
+  const closeByok = document.getElementById('close-chat-byok');
+  const saveByok = document.getElementById('save-chat-byok');
+  const providerSelect = document.getElementById('chat-provider-select');
+  const keyInput = document.getElementById('chat-key-input');
+  const engineLabel = document.getElementById('chat-engine-label');
+
+  // Format action text (*italic*) vs speech
+  function formatMessageText(text) {
+    if (!text) return '';
+    return text.replace(/\*([^*]+)\*/g, '<em class="text-purple-300 italic">$1</em>');
+  }
+
+  function initChat() {
+    // Load existing history or set default greeting
+    const saved = localStorage.getItem(STORAGE_KEY);
+    if (saved) {
+      try {
+        conversation = JSON.parse(saved);
+      } catch (e) {
+        conversation = [];
+      }
+    }
+
+    if (conversation.length === 0) {
+      conversation.push({
+        sender: 'character',
+        text: character.greeting,
+        timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
+      });
+      saveChat();
+    }
+
+    renderAllMessages();
+    checkByok();
+  }
+
+  function saveChat() {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(conversation));
+  }
+
+  function renderAllMessages() {
+    if (!chatStream) return;
+    chatStream.innerHTML = '';
+    conversation.forEach((msg, idx) => {
+      appendMessageToDOM(msg, idx);
+    });
+    chatStream.scrollTop = chatStream.scrollHeight;
+  }
+
+  function appendMessageToDOM(msg, idx) {
+    if (!chatStream) return;
+    const isChar = msg.sender === 'character';
+    
+    const wrapper = document.createElement('div');
+    wrapper.className = isChar 
+      ? 'flex items-start gap-3 max-w-2xl'
+      : 'flex items-start gap-3 max-w-2xl ml-auto justify-end';
+
+    if (isChar) {
+      wrapper.innerHTML = `
+        <img src="${character.avatarUrl}" alt="${character.name}" class="w-8 h-8 rounded-full object-cover ring-1 ring-purple-500/30 shrink-0 mt-1" />
+        <div class="space-y-1">
+          <div class="flex items-center gap-2">
+            <span class="text-xs font-bold text-slate-200">${character.name}</span>
+            <span class="text-[10px] text-slate-500">${msg.timestamp || 'Just now'}</span>
+          </div>
+          <div class="p-3.5 sm:p-4 rounded-2xl rounded-tl-sm bg-[#101426] border border-white/[0.08] text-xs sm:text-sm text-slate-200 leading-relaxed shadow-md">
+            ${formatMessageText(msg.text)}
+          </div>
+          <div class="flex items-center gap-2 pt-0.5">
+            <button class="msg-speak-btn text-[10px] text-slate-500 hover:text-purple-400 flex items-center gap-1 transition" data-idx="${idx}">
+              <span>🔊 Listen</span>
+            </button>
+            <button class="msg-copy-btn text-[10px] text-slate-500 hover:text-slate-300 flex items-center gap-1 transition" data-text="${encodeURIComponent(msg.text)}">
+              <span>📋 Copy</span>
+            </button>
+          </div>
+        </div>
+      `;
+    } else {
+      wrapper.innerHTML = `
+        <div class="space-y-1 text-right">
+          <div class="flex items-center justify-end gap-2">
+            <span class="text-[10px] text-slate-500">${msg.timestamp || 'Just now'}</span>
+            <span class="text-xs font-bold text-purple-300">You</span>
+          </div>
+          <div class="p-3.5 sm:p-4 rounded-2xl rounded-tr-sm bg-gradient-to-r from-purple-700 to-indigo-600 text-white text-xs sm:text-sm leading-relaxed shadow-lg shadow-purple-950/40 text-left">
+            ${msg.text}
+          </div>
+        </div>
+        <div class="w-8 h-8 rounded-full bg-purple-600 flex items-center justify-center text-white text-xs font-bold shrink-0 mt-1">
+          U
+        </div>
+      `;
+    }
+
+    chatStream.appendChild(wrapper);
+  }
+
+  // Voice Speech Synthesis
+  function speak(text) {
+    if (!ttsEnabled || !window.speechSynthesis) return;
+    window.speechSynthesis.cancel();
+    // Strip action asterisks
+    const cleanText = text.replace(/\*[^*]+\*/g, '').trim();
+    if (!cleanText) return;
+    
+    const utterance = new SpeechSynthesisUtterance(cleanText);
+    utterance.rate = 1.0;
+    utterance.pitch = 1.0;
+    utterance.lang = 'en-US';
+    window.speechSynthesis.speak(utterance);
+  }
+
+  // Handle Send Message
+  function handleSendMessage(userText) {
+    if (!userText.trim()) return;
+
+    const userMsg = {
+      sender: 'user',
+      text: userText.trim(),
+      timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
+    };
+
+    conversation.push(userMsg);
+    saveChat();
+    appendMessageToDOM(userMsg, conversation.length - 1);
+    if (chatStream) chatStream.scrollTop = chatStream.scrollHeight;
+
+    if (input) {
+      input.value = '';
+      input.style.height = 'auto';
+    }
+
+    // Show typing
+    if (typingIndicator) {
+      typingIndicator.classList.remove('hidden');
+      if (chatStream) chatStream.scrollTop = chatStream.scrollHeight;
+    }
+
+    // Generate response (BYOK or persona simulator)
+    setTimeout(() => {
+      if (typingIndicator) typingIndicator.classList.add('hidden');
+      
+      const replyText = pickResponse(userText);
+      const charMsg = {
+        sender: 'character',
+        text: replyText,
+        timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
+      };
+
+      conversation.push(charMsg);
+      saveChat();
+      appendMessageToDOM(charMsg, conversation.length - 1);
+      if (chatStream) chatStream.scrollTop = chatStream.scrollHeight;
+
+      if (ttsEnabled) {
+        speak(replyText);
+      }
+    }, 850 + Math.random() * 600);
+  }
+
+  function pickResponse(userText) {
+    const replies = character.fallbackReplies || [];
+    if (replies.length === 0) {
+      return `*Smiles faintly.* "Your words echo intriguing possibilities. Tell me more."`;
+    }
+    const idx = Math.floor(Math.random() * replies.length);
+    return replies[idx];
+  }
+
+  // Check BYOK state
+  function checkByok() {
+    const key = localStorage.getItem('aetheria_byok_key');
+    const provider = localStorage.getItem('aetheria_byok_provider') || 'demo';
+    if (key && provider !== 'demo') {
+      if (engineLabel) engineLabel.textContent = `BYOK (${provider.toUpperCase()})`;
+      if (providerSelect) providerSelect.value = provider;
+      if (keyInput) keyInput.value = key;
+    } else {
+      if (engineLabel) engineLabel.textContent = 'Edge Demo';
+    }
+  }
+
+  // Event Listeners
+  inputForm?.addEventListener('submit', (e) => {
+    e.preventDefault();
+    if (input) handleSendMessage(input.value);
+  });
+
+  input?.addEventListener('keydown', (e) => {
+    if (e.key === 'Enter' && !e.shiftKey) {
+      e.preventDefault();
+      handleSendMessage(input.value);
+    }
+  });
+
+  // Auto-resize textarea
+  input?.addEventListener('input', () => {
+    input.style.height = 'auto';
+    input.style.height = `${Math.min(input.scrollHeight, 128)}px`;
+  });
+
+  // Starter prompts click
+  starterPills.forEach((btn) => {
+    btn.addEventListener('click', () => {
+      const prompt = btn.getAttribute('data-prompt');
+      if (prompt) handleSendMessage(prompt);
+    });
+  });
+
+  // Listen / Copy delegation
+  chatStream?.addEventListener('click', (e) => {
+    const speakBtn = e.target.closest('.msg-speak-btn');
+    const copyBtn = e.target.closest('.msg-copy-btn');
+
+    if (speakBtn) {
+      const idx = parseInt(speakBtn.getAttribute('data-idx') || '0', 10);
+      const msg = conversation[idx];
+      if (msg) speak(msg.text);
+    }
+
+    if (copyBtn) {
+      const text = decodeURIComponent(copyBtn.getAttribute('data-text') || '');
+      navigator.clipboard.writeText(text);
+      copyBtn.innerHTML = '<span>✓ Copied!</span>';
+      setTimeout(() => {
+        copyBtn.innerHTML = '<span>📋 Copy</span>';
+      }, 1500);
+    }
+  });
+
+  // Sidebar toggle
+  toggleSidebarBtn?.addEventListener('click', () => {
+    sidebar?.classList.toggle('hidden');
+  });
+
+  // Clear chat
+  clearChatBtn?.addEventListener('click', () => {
+    if (confirm(`Clear your conversation history with ${character.name}?`)) {
+      conversation = [{
+        sender: 'character',
+        text: character.greeting,
+        timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
+      }];
+      saveChat();
+      renderAllMessages();
+    }
+  });
+
+  // Export conversation as Markdown
+  exportChatBtn?.addEventListener('click', () => {
+    let md = `# Conversation with ${character.name} (${character.title})\n`;
+    md += `Exported from Aetheria AI: ${new Date().toLocaleString()}\n\n---\n\n`;
+    conversation.forEach((msg) => {
+      const sender = msg.sender === 'character' ? character.name : 'User';
+      md += `**${sender}** (${msg.timestamp}):\n${msg.text}\n\n`;
+    });
+
+    const blob = new Blob([md], { type: 'text/markdown' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `${character.id}-conversation.md`;
+    a.click();
+    URL.revokeObjectURL(url);
+  });
+
+  // TTS Toggle
+  toggleTtsBtn?.addEventListener('click', () => {
+    ttsEnabled = !ttsEnabled;
+    if (ttsEnabled) {
+      ttsIconOn?.classList.remove('hidden');
+      ttsIconOff?.classList.add('hidden');
+    } else {
+      ttsIconOn?.classList.add('hidden');
+      ttsIconOff?.classList.remove('hidden');
+      if (window.speechSynthesis) window.speechSynthesis.cancel();
+    }
+  });
+
+  // BYOK Tray handlers
+  byokBtn?.addEventListener('click', () => byokTray?.classList.toggle('hidden'));
+  closeByok?.addEventListener('click', () => byokTray?.classList.add('hidden'));
+  saveByok?.addEventListener('click', () => {
+    const key = keyInput?.value.trim() || '';
+    const prov = providerSelect?.value || 'demo';
+    if (key && prov !== 'demo') {
+      localStorage.setItem('aetheria_byok_key', key);
+      localStorage.setItem('aetheria_byok_provider', prov);
+    } else {
+      localStorage.removeItem('aetheria_byok_key');
+      localStorage.setItem('aetheria_byok_provider', 'demo');
+    }
+    checkByok();
+    byokTray?.classList.add('hidden');
+  });
+
+  // Initialize
+  initChat();
+</script>
