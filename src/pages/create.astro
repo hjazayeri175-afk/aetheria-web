@@ -14,7 +14,14 @@ import {
   Wand2,
   Trash2,
   Send,
-  Plus
+  Layers,
+  FileCode2,
+  Sliders,
+  Image as ImageIcon,
+  BookOpen,
+  HelpCircle,
+  RefreshCw,
+  ExternalLink
 } from '@lucide/astro';
 
 const PRESET_AVATARS = [
@@ -29,7 +36,7 @@ const PRESET_AVATARS = [
 ];
 ---
 
-<Layout title="Character Studio — Craft & Export SFW AI Personas | Aetheria AI">
+<Layout title="Character Studio — Tavern V2 Specification Architect | Aetheria AI">
   <div class="min-h-screen flex flex-col bg-[#070913] text-slate-100">
     
     <!-- Top Studio Header -->
@@ -48,26 +55,41 @@ const PRESET_AVATARS = [
             <Wand2 class="w-4 h-4" />
           </div>
           <div>
-            <h1 class="text-xs sm:text-sm font-bold text-white tracking-wide">Character Creation Studio</h1>
-            <p class="text-[10px] text-slate-400 hidden sm:block">Craft, test, and export Tavern V2 compatible SFW personas</p>
+            <h1 class="text-xs sm:text-sm font-bold text-white tracking-wide">Tavern V2 Character Studio</h1>
+            <p class="text-[10px] text-slate-400 hidden sm:block">7-Section Deep Roleplay Architect with PNG Card Import & Export</p>
           </div>
         </div>
       </div>
 
+      <!-- Header Action Controls -->
       <div class="flex items-center gap-2">
-        <span class="hidden md:inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-[10px] font-semibold bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">
-          <ShieldCheck class="w-3 h-3" />
-          <span>SFW Verified Standard</span>
-        </span>
+        <!-- Hidden file input for Card Upload -->
+        <input 
+          id="card-file-input" 
+          type="file" 
+          accept=".png,.json,image/png,application/json" 
+          class="hidden" 
+        />
+        <button 
+          id="trigger-import-btn"
+          type="button" 
+          class="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-purple-950/40 hover:bg-purple-900/60 border border-purple-500/40 text-xs font-semibold text-purple-300 hover:text-white transition cursor-pointer"
+          title="Upload real PNG card or JSON"
+        >
+          <Upload class="w-3.5 h-3.5 text-cyan-400" />
+          <span class="hidden sm:inline">Import Card</span>
+        </button>
+
         <button 
           id="export-tavern-btn"
           type="button" 
           class="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-white/[0.05] hover:bg-white/[0.1] border border-white/[0.1] text-xs font-semibold text-slate-200 hover:text-white transition cursor-pointer"
           title="Download Tavern V2 JSON Card"
         >
-          <Download class="w-3.5 h-3.5 text-cyan-400" />
-          <span>Export V2</span>
+          <Download class="w-3.5 h-3.5 text-purple-400" />
+          <span class="hidden sm:inline">Export V2</span>
         </button>
+
         <button 
           id="save-character-btn"
           type="button" 
@@ -82,189 +104,384 @@ const PRESET_AVATARS = [
     <!-- Main Studio Grid -->
     <main class="flex-1 max-w-7xl w-full mx-auto p-4 sm:p-6 lg:p-8 grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-8">
       
-      <!-- Left Column: Form Editor (8 cols on large screens) -->
-      <div class="lg:col-span-7 space-y-6">
+      <!-- Left Column: 7-Section Tabbed Editor (7 cols on large screens) -->
+      <div class="lg:col-span-7 space-y-5">
         
-        <!-- Step 1: Core Identity -->
-        <div class="p-5 sm:p-6 rounded-2xl sm:rounded-3xl bg-[#090b17] border border-white/[0.08] shadow-lg space-y-4">
-          <div class="flex items-center justify-between border-b border-white/[0.06] pb-3">
-            <h2 class="text-sm font-bold text-white uppercase tracking-wider flex items-center gap-2">
-              <span class="w-5 h-5 rounded-full bg-purple-600/30 text-purple-400 flex items-center justify-center text-xs font-bold">1</span>
-              <span>Identity & Archetype</span>
-            </h2>
-            <span class="text-[10px] text-slate-500">Public profile details</span>
-          </div>
+        <!-- Tab Switcher Navigation -->
+        <div class="flex items-center p-1 rounded-2xl bg-[#0a0d1c] border border-white/[0.08] shadow-inner gap-1">
+          <button 
+            type="button"
+            class="tab-btn active flex-1 py-2.5 px-3 rounded-xl text-xs font-semibold flex items-center justify-center gap-1.5 transition cursor-pointer bg-purple-600/30 text-purple-200 border border-purple-500/40 shadow-sm"
+            data-tab="tab-identity"
+          >
+            <ImageIcon class="w-3.5 h-3.5 text-purple-400" />
+            <span>1. Identity & Card</span>
+          </button>
+          <button 
+            type="button"
+            class="tab-btn flex-1 py-2.5 px-3 rounded-xl text-xs font-semibold flex items-center justify-center gap-1.5 transition cursor-pointer text-slate-400 hover:text-slate-200 hover:bg-white/[0.04]"
+            data-tab="tab-persona"
+          >
+            <BookOpen class="w-3.5 h-3.5 text-cyan-400" />
+            <span>2. Persona & Lore</span>
+          </button>
+          <button 
+            type="button"
+            class="tab-btn flex-1 py-2.5 px-3 rounded-xl text-xs font-semibold flex items-center justify-center gap-1.5 transition cursor-pointer text-slate-400 hover:text-slate-200 hover:bg-white/[0.04]"
+            data-tab="tab-advanced"
+          >
+            <Sliders class="w-3.5 h-3.5 text-emerald-400" />
+            <span>3. Dialogue & Rules</span>
+          </button>
+        </div>
 
-          <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-            <div>
-              <label for="char-name" class="block text-xs font-semibold text-slate-300 mb-1.5">Character Name</label>
-              <input 
-                id="char-name" 
-                type="text" 
-                placeholder="e.g. Aurelia Vance" 
-                class="w-full px-3.5 py-2.5 rounded-xl bg-white/[0.04] border border-white/10 focus:border-purple-500/60 text-xs sm:text-sm text-white outline-none transition"
-                value="Aurelia Vance"
-              />
+        <!-- ================= TAB 1: IDENTITY, AVATAR & CARD IMPORT ================= -->
+        <div id="tab-identity" class="tab-pane space-y-5">
+          
+          <!-- Dropzone: Ingest Real Tavern PNG Card or JSON -->
+          <div 
+            id="drop-zone"
+            class="group relative border-2 border-dashed border-purple-500/30 hover:border-purple-500/70 rounded-2xl sm:rounded-3xl p-6 text-center bg-purple-950/10 hover:bg-purple-950/20 transition-all duration-300 cursor-pointer"
+          >
+            <div class="flex flex-col items-center justify-center space-y-2">
+              <div class="w-12 h-12 rounded-2xl bg-purple-600/20 border border-purple-500/30 flex items-center justify-center text-purple-300 group-hover:scale-110 transition-transform">
+                <Upload class="w-6 h-6 text-cyan-400 animate-pulse" />
+              </div>
+              <h3 class="text-sm font-bold text-white tracking-wide">
+                Drag & Drop Real Tavern PNG Card or JSON
+              </h3>
+              <p class="text-xs text-slate-400 max-w-sm">
+                Drop any Character Card (<code class="text-purple-300 font-mono">.png</code> or <code class="text-cyan-300 font-mono">.json</code>) from SillyTavern or Chub.ai to automatically parse and populate all 7 sections!
+              </p>
+              <span class="inline-block mt-1 text-[11px] font-semibold text-purple-400 group-hover:text-purple-300 underline underline-offset-4">
+                Or browse files from your computer
+              </span>
             </div>
-            <div>
-              <label for="char-title" class="block text-xs font-semibold text-slate-300 mb-1.5">Tagline / Role</label>
-              <input 
-                id="char-title" 
-                type="text" 
-                placeholder="e.g. Sub-orbital Flight Pilot" 
-                class="w-full px-3.5 py-2.5 rounded-xl bg-white/[0.04] border border-white/10 focus:border-purple-500/60 text-xs sm:text-sm text-white outline-none transition"
-                value="Quantum Cryptographer & Archival Scribe"
-              />
+          </div>
+
+          <!-- Section 1 & 2: Names and Visuals -->
+          <div class="p-5 sm:p-6 rounded-2xl sm:rounded-3xl bg-[#090b17] border border-white/[0.08] shadow-lg space-y-4">
+            <div class="flex items-center justify-between border-b border-white/[0.06] pb-3">
+              <h2 class="text-xs sm:text-sm font-bold text-white uppercase tracking-wider flex items-center gap-2">
+                <span class="w-5 h-5 rounded-full bg-purple-600/30 text-purple-400 flex items-center justify-center text-xs font-bold">1</span>
+                <span>Basic Identity & Role</span>
+              </h2>
+              <span class="text-[10px] text-slate-500">Core Metadata</span>
             </div>
-          </div>
 
-          <!-- Category Selection -->
-          <div>
-            <label for="char-category" class="block text-xs font-semibold text-slate-300 mb-1.5">Category</label>
-            <select 
-              id="char-category" 
-              class="w-full px-3.5 py-2.5 rounded-xl bg-[#0d1020] border border-white/10 focus:border-purple-500/60 text-xs sm:text-sm text-white outline-none transition"
-            >
-              <option value="Sci-Fi">Sci-Fi & Cyberpunk</option>
-              <option value="Fantasy">Fantasy & RPG</option>
-              <option value="Mystery">Mystery & Detective</option>
-              <option value="Philosophy">Philosophy & Mentors</option>
-              <option value="Slice of Life">Slice of Life & Cafe</option>
-              <option value="Anime & Manga">Anime & Manga</option>
-              <option value="Supernatural">Supernatural & Occult</option>
-            </select>
-          </div>
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <div>
+                <label for="char-name" class="block text-xs font-semibold text-slate-300 mb-1.5">Character Name</label>
+                <input 
+                  id="char-name" 
+                  type="text" 
+                  placeholder="e.g. Aurelia Vance" 
+                  class="w-full px-3.5 py-2.5 rounded-xl bg-white/[0.04] border border-white/10 focus:border-purple-500/60 text-xs sm:text-sm text-white outline-none transition"
+                  value="Aurelia Vance"
+                />
+              </div>
+              <div>
+                <label for="char-title" class="block text-xs font-semibold text-slate-300 mb-1.5">Title / Archetype Tagline</label>
+                <input 
+                  id="char-title" 
+                  type="text" 
+                  placeholder="e.g. Quantum Cryptographer & Archival Scribe" 
+                  class="w-full px-3.5 py-2.5 rounded-xl bg-white/[0.04] border border-white/10 focus:border-purple-500/60 text-xs sm:text-sm text-white outline-none transition"
+                  value="Quantum Cryptographer & Archival Scribe"
+                />
+              </div>
+            </div>
 
-          <!-- Avatar Selector -->
-          <div>
-            <label class="block text-xs font-semibold text-slate-300 mb-2">Preset SFW High-Res Avatars</label>
-            <div class="grid grid-cols-4 sm:grid-cols-8 gap-2 mb-3">
-              {PRESET_AVATARS.map((preset, index) => (
-                <button
-                  type="button"
-                  class="preset-avatar-btn relative aspect-square rounded-xl overflow-hidden border-2 border-white/10 hover:border-purple-500 focus:border-purple-500 transition cursor-pointer"
-                  data-url={preset.url}
-                  title={preset.label}
+            <!-- Category Selection -->
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <div>
+                <label for="char-category" class="block text-xs font-semibold text-slate-300 mb-1.5">Primary Category</label>
+                <select 
+                  id="char-category" 
+                  class="w-full px-3.5 py-2.5 rounded-xl bg-[#0d1020] border border-white/10 focus:border-purple-500/60 text-xs sm:text-sm text-white outline-none transition"
                 >
-                  <img src={preset.url} alt={preset.label} class="w-full h-full object-cover" />
-                </button>
-              ))}
+                  <option value="Sci-Fi">Sci-Fi & Cyberpunk</option>
+                  <option value="Fantasy">Fantasy & RPG</option>
+                  <option value="Mystery">Mystery & Detective</option>
+                  <option value="Philosophy">Philosophy & Mentors</option>
+                  <option value="Slice of Life">Slice of Life & Cafe</option>
+                  <option value="Anime & Manga">Anime & Manga</option>
+                  <option value="Supernatural">Supernatural & Occult</option>
+                </select>
+              </div>
+
+              <div>
+                <label for="char-tags" class="block text-xs font-semibold text-slate-300 mb-1.5">Tags (Comma-separated)</label>
+                <input 
+                  id="char-tags" 
+                  type="text" 
+                  placeholder="Cyberpunk, Hacker, Scribe, Cryptography" 
+                  class="w-full px-3.5 py-2.5 rounded-xl bg-white/[0.04] border border-white/10 text-xs sm:text-sm text-white outline-none transition"
+                  value="Cyberpunk, Hacker, Scribe, Cryptography"
+                />
+              </div>
             </div>
-            <div class="flex items-center gap-2">
+
+            <!-- Avatar Image Selection & Local Upload -->
+            <div>
+              <div class="flex items-center justify-between mb-2">
+                <label class="text-xs font-semibold text-slate-300">Avatar Portrait</label>
+                <label for="custom-avatar-file" class="text-[11px] font-semibold text-purple-400 hover:text-purple-300 cursor-pointer flex items-center gap-1">
+                  <Upload class="w-3 h-3" />
+                  <span>Upload from Computer</span>
+                </label>
+                <input id="custom-avatar-file" type="file" accept="image/*" class="hidden" />
+              </div>
+
+              <!-- Preset Avatars -->
+              <div class="grid grid-cols-4 sm:grid-cols-8 gap-2 mb-3">
+                {PRESET_AVATARS.map((preset) => (
+                  <button
+                    type="button"
+                    class="preset-avatar-btn relative aspect-square rounded-xl overflow-hidden border-2 border-white/10 hover:border-purple-500 focus:border-purple-500 transition cursor-pointer"
+                    data-url={preset.url}
+                    title={preset.label}
+                  >
+                    <img src={preset.url} alt={preset.label} class="w-full h-full object-cover" />
+                  </button>
+                ))}
+              </div>
+
               <input 
                 id="char-avatar-url" 
-                type="url" 
-                placeholder="Or paste custom image URL..." 
-                class="flex-1 px-3.5 py-2 rounded-xl bg-white/[0.04] border border-white/10 text-xs text-white placeholder:text-slate-500 outline-none"
+                type="text" 
+                placeholder="Or paste image URL / Base64..." 
+                class="w-full px-3.5 py-2 rounded-xl bg-white/[0.04] border border-white/10 text-xs text-white placeholder:text-slate-500 outline-none"
                 value={PRESET_AVATARS[0].url}
               />
             </div>
-          </div>
 
-          <!-- SFW Compliance Checkbox -->
-          <div class="p-3.5 rounded-xl bg-purple-950/20 border border-purple-500/20 flex items-start gap-2.5">
-            <input 
-              id="char-sfw-cert" 
-              type="checkbox" 
-              checked 
-              class="mt-0.5 rounded text-purple-600 focus:ring-purple-500 bg-white/10 border-white/20"
-            />
-            <label for="char-sfw-cert" class="text-[11px] text-slate-300 cursor-pointer">
-              <span class="font-semibold text-purple-300 block">SFW Standard Certification</span>
-              I certify this character portrays an adult (18+) and adheres to wholesome storytelling, adventuring, and conversational companion standards.
-            </label>
+            <!-- Physical Appearance & Visuals -->
+            <div>
+              <label for="char-appearance" class="block text-xs font-semibold text-slate-300 mb-1.5">
+                Physical Appearance & Physiology
+              </label>
+              <textarea 
+                id="char-appearance" 
+                rows="2" 
+                class="w-full px-3.5 py-2.5 rounded-xl bg-white/[0.04] border border-white/10 text-xs sm:text-sm text-white outline-none leading-relaxed resize-none"
+                placeholder="Visual details for roleplay description: Height, eyes, cybernetics, clothing, tattoos..."
+              >Silver short hair, ocular cyber-implant with azure HUD telemetry, draped in dark cryptographic coat with insulated fibre-optic wiring.</textarea>
+            </div>
+
+            <!-- SFW Standard Certification -->
+            <div class="p-3.5 rounded-xl bg-emerald-950/20 border border-emerald-500/20 flex items-start gap-2.5">
+              <input 
+                id="char-sfw-cert" 
+                type="checkbox" 
+                checked 
+                class="mt-0.5 rounded text-emerald-500 focus:ring-emerald-500 bg-white/10 border-white/20"
+              />
+              <label for="char-sfw-cert" class="text-[11px] text-slate-300 cursor-pointer">
+                <span class="font-semibold text-emerald-300 block">SFW Standard Certification</span>
+                I certify this character portrays an adult (18+) and adheres to wholesome storytelling, mystery, and companion standards.
+              </label>
+            </div>
           </div>
         </div>
 
-        <!-- Step 2: Persona & Lore -->
-        <div class="p-5 sm:p-6 rounded-2xl sm:rounded-3xl bg-[#090b17] border border-white/[0.08] shadow-lg space-y-4">
-          <div class="flex items-center justify-between border-b border-white/[0.06] pb-3">
-            <h2 class="text-sm font-bold text-white uppercase tracking-wider flex items-center gap-2">
-              <span class="w-5 h-5 rounded-full bg-purple-600/30 text-purple-400 flex items-center justify-center text-xs font-bold">2</span>
-              <span>Persona & Opening Greeting</span>
-            </h2>
-            <span class="text-[10px] text-slate-500">Behavior & Dialogue</span>
-          </div>
+        <!-- ================= TAB 2: PERSONA, LORE & SCENARIO ================= -->
+        <div id="tab-persona" class="tab-pane hidden space-y-5">
+          <div class="p-5 sm:p-6 rounded-2xl sm:rounded-3xl bg-[#090b17] border border-white/[0.08] shadow-lg space-y-4">
+            <div class="flex items-center justify-between border-b border-white/[0.06] pb-3">
+              <h2 class="text-xs sm:text-sm font-bold text-white uppercase tracking-wider flex items-center gap-2">
+                <span class="w-5 h-5 rounded-full bg-cyan-600/30 text-cyan-400 flex items-center justify-center text-xs font-bold">2</span>
+                <span>Persona, Psychology & World Lore</span>
+              </h2>
+              <span class="text-[10px] text-slate-500">Depth & Motivation</span>
+            </div>
 
-          <!-- Opening Greeting -->
-          <div>
-            <div class="flex items-center justify-between mb-1.5">
-              <label for="char-greeting" class="text-xs font-semibold text-slate-300">
-                Opening First Message
+            <!-- Personality Traits Pills / Summary -->
+            <div>
+              <div class="flex items-center justify-between mb-1.5">
+                <label for="char-personality" class="text-xs font-semibold text-slate-300">
+                  Personality Summary & Behavioral Traits
+                </label>
+                <span class="text-[10px] text-purple-400">Quick-click archetypes:</span>
+              </div>
+              <div class="flex flex-wrap gap-1.5 mb-2.5">
+                {['Analytical', 'Cynical', 'Enigmatic', 'Protective', 'Stoic', 'Witty', 'Empathetic', 'Rebellious', 'Formal'].map((trait) => (
+                  <button 
+                    type="button" 
+                    class="trait-chip px-2.5 py-1 rounded-lg bg-white/[0.04] hover:bg-purple-900/30 border border-white/[0.08] hover:border-purple-500/40 text-[11px] text-slate-300 hover:text-white transition cursor-pointer"
+                    data-trait={trait}
+                  >
+                    +{trait}
+                  </button>
+                ))}
+              </div>
+              <textarea 
+                id="char-personality" 
+                rows="3" 
+                class="w-full px-3.5 py-2.5 rounded-xl bg-white/[0.04] border border-white/10 focus:border-cyan-500/60 text-xs sm:text-sm text-white outline-none leading-relaxed resize-none"
+                placeholder="Personality attributes, psychological profile, tone of voice..."
+              >Analytical, observant, quietly sardonic towards authoritarian megacorps. Deeply loyal once trust is earned; values ancient literary knowledge above synthetic data streams.</textarea>
+            </div>
+
+            <!-- Backstory Lore -->
+            <div>
+              <label for="char-lore" class="block text-xs font-semibold text-slate-300 mb-1.5">
+                Backstory Lore & History
               </label>
-              <span class="text-[10px] text-slate-500 font-mono">Use *actions* for roleplay gestures</span>
+              <textarea 
+                id="char-lore" 
+                rows="4" 
+                class="w-full px-3.5 py-2.5 rounded-xl bg-white/[0.04] border border-white/10 focus:border-cyan-500/60 text-xs sm:text-sm text-white outline-none leading-relaxed resize-none"
+                placeholder="Origin, past encounters, motivations, secrets..."
+              >Former senior cipher archivist for the Obsidian Cartel. After uncovering a classified wipe order targeting non-synthetic humanities archives, she extracted seven quantum storage crystals and vanished into the lower neon districts. Now operates an encrypted sanctuary for seekers of lost truths.</textarea>
             </div>
-            <textarea 
-              id="char-greeting" 
-              rows="4" 
-              class="w-full px-3.5 py-2.5 rounded-xl bg-white/[0.04] border border-white/10 focus:border-purple-500/60 text-xs sm:text-sm text-white placeholder:text-slate-500 outline-none leading-relaxed resize-none"
-              placeholder="*Adjusts holo-terminal display.* Welcome to the node. What archive are you seeking to decrypt today?"
-            >*Adjusts holo-terminal display, glowing neon symbols casting reflections in her optics.* Welcome to the secure node. What archive are you seeking to decrypt today?</textarea>
-          </div>
 
-          <!-- Personality & Tags -->
-          <div>
-            <label for="char-tags" class="block text-xs font-semibold text-slate-300 mb-1.5">
-              Personality Tags (comma-separated)
-            </label>
-            <input 
-              id="char-tags" 
-              type="text" 
-              placeholder="Cyberpunk, Netrunner, Analytical, Stoic, Tech" 
-              class="w-full px-3.5 py-2.5 rounded-xl bg-white/[0.04] border border-white/10 text-xs sm:text-sm text-white outline-none"
-              value="Cyberpunk, Netrunner, Analytical, Stoic, Tech"
-            />
-          </div>
-
-          <!-- Backstory Lore -->
-          <div>
-            <label for="char-lore" class="block text-xs font-semibold text-slate-300 mb-1.5">
-              Character Lore & System Context
-            </label>
-            <textarea 
-              id="char-lore" 
-              rows="3" 
-              class="w-full px-3.5 py-2.5 rounded-xl bg-white/[0.04] border border-white/10 text-xs sm:text-sm text-white outline-none leading-relaxed resize-none"
-              placeholder="Background history, scenario setup, and behavioral instructions..."
-            >Former top cryptographic researcher who went rogue to preserve lost cultural archives. Sharp-witted, skeptical of megacorporations, but deeply loyal to trusted companions.</textarea>
-          </div>
-
-          <!-- Starter Prompts -->
-          <div>
-            <label class="block text-xs font-semibold text-slate-300 mb-1.5">
-              Conversation Starter Prompts (Up to 3)
-            </label>
-            <div class="space-y-2">
-              <input id="starter-1" type="text" class="w-full px-3 py-2 rounded-xl bg-white/[0.04] border border-white/10 text-xs text-white" value="What secrets are hidden in the archive?" />
-              <input id="starter-2" type="text" class="w-full px-3 py-2 rounded-xl bg-white/[0.04] border border-white/10 text-xs text-white" value="Can you bypass corporate surveillance?" />
-              <input id="starter-3" type="text" class="w-full px-3 py-2 rounded-xl bg-white/[0.04] border border-white/10 text-xs text-white" value="Why did you abandon your post?" />
+            <!-- Scenario & Setting -->
+            <div>
+              <label for="char-scenario" class="block text-xs font-semibold text-slate-300 mb-1.5">
+                Encounter Scenario & Setting
+              </label>
+              <textarea 
+                id="char-scenario" 
+                rows="3" 
+                class="w-full px-3.5 py-2.5 rounded-xl bg-white/[0.04] border border-white/10 focus:border-cyan-500/60 text-xs sm:text-sm text-white outline-none leading-relaxed resize-none"
+                placeholder="Where does the scene take place? How does the user enter?"
+              >A hidden subterranean data haven beneath the rainy neon alleys of Sector 4. The user has tracked an encrypted radio pulse and walked into her chamber uninvited.</textarea>
             </div>
+
+            <!-- Speech Style / Quirks -->
+            <div>
+              <label for="char-speech" class="block text-xs font-semibold text-slate-300 mb-1.5">
+                Speech Style & Dialect Quirks
+              </label>
+              <input 
+                id="char-speech" 
+                type="text" 
+                class="w-full px-3.5 py-2.5 rounded-xl bg-white/[0.04] border border-white/10 text-xs sm:text-sm text-white outline-none"
+                placeholder="e.g. Speaks in measured, clipped sentences with cryptic cryptographic analogies."
+                value="Speaks in measured, clipped sentences with cryptic cryptographic metaphors and quiet precision."
+              />
+            </div>
+          </div>
+        </div>
+
+        <!-- ================= TAB 3: DIALOGUE, SYSTEM GUARDRAILS & INFERENCE ================= -->
+        <div id="tab-advanced" class="tab-pane hidden space-y-5">
+          <div class="p-5 sm:p-6 rounded-2xl sm:rounded-3xl bg-[#090b17] border border-white/[0.08] shadow-lg space-y-4">
+            <div class="flex items-center justify-between border-b border-white/[0.06] pb-3">
+              <h2 class="text-xs sm:text-sm font-bold text-white uppercase tracking-wider flex items-center gap-2">
+                <span class="w-5 h-5 rounded-full bg-emerald-600/30 text-emerald-400 flex items-center justify-center text-xs font-bold">3</span>
+                <span>Greetings, Dialogue Examples & Engine Rules</span>
+              </h2>
+              <span class="text-[10px] text-slate-500">Tavern V2 Spec</span>
+            </div>
+
+            <!-- First Message / Greeting -->
+            <div>
+              <div class="flex items-center justify-between mb-1.5">
+                <label for="char-greeting" class="text-xs font-semibold text-slate-300">
+                  Primary First Message (Greeting)
+                </label>
+                <span class="text-[10px] text-emerald-400 font-mono">Use *actions* for roleplay gestures</span>
+              </div>
+              <textarea 
+                id="char-greeting" 
+                rows="4" 
+                class="w-full px-3.5 py-2.5 rounded-xl bg-white/[0.04] border border-white/10 focus:border-emerald-500/60 text-xs sm:text-sm text-white placeholder:text-slate-500 outline-none leading-relaxed resize-none"
+                placeholder="*Pushes aside a mess of glowing data-cables.* Who gave you this frequency?"
+              >*Adjusts the holographic focus of her visor, azure telemetry reflections flickering across her irises. Without glancing up from the decrypting terminal, her voice cuts through the hum of server racks.* "The security glyphs on that hatch were calibrated to incinerate unauthorized bio-signatures. You bypassed them in twelve seconds. Either you have an older cipher key... or you are very interesting. State your business."</textarea>
+            </div>
+
+            <!-- Alternate Greetings -->
+            <div>
+              <label for="char-alt-greeting" class="block text-xs font-semibold text-slate-300 mb-1.5">
+                Alternate Greetings (Optional, separated by &lt;START&gt;)
+              </label>
+              <textarea 
+                id="char-alt-greeting" 
+                rows="3" 
+                class="w-full px-3.5 py-2.5 rounded-xl bg-white/[0.04] border border-white/10 text-xs sm:text-sm text-white placeholder:text-slate-500 outline-none leading-relaxed resize-none"
+                placeholder="&lt;START&gt; *Sitting on the ledge of the rainy rooftop.* The megacity looks almost peaceful from here."
+              >&lt;START&gt;
+*Standing beside the cooling matrix with a steaming cup of synth-tea.* "Rain again in Sector 4. The static makes decrypting old archives easier."</textarea>
+            </div>
+
+            <!-- Dialogue Examples (Few-Shot) -->
+            <div>
+              <div class="flex items-center justify-between mb-1.5">
+                <label for="char-mes-example" class="text-xs font-semibold text-slate-300">
+                  Dialogue Examples (<code class="text-emerald-400 font-mono">&lt;START&gt;</code> Format)
+                </label>
+                <span class="text-[10px] text-slate-500">Guides AI tone & sentence length</span>
+              </div>
+              <textarea 
+                id="char-mes-example" 
+                rows="4" 
+                class="w-full px-3.5 py-2.5 rounded-xl bg-white/[0.04] border border-white/10 text-xs sm:text-sm text-white font-mono placeholder:text-slate-500 outline-none leading-relaxed resize-none"
+                placeholder="&lt;START&gt;
+&#123;&#123;user&#125;&#125;: What is in the archive?
+&#123;&#123;char&#125;&#125;: *A faint smirk touches her lips.* Everything they wanted forgotten."
+              >&lt;START&gt;
+&#123;&#123;user&#125;&#125;: Can you decrypt this memory core for me?
+&#123;&#123;char&#125;&#125;: *Extends a gloved hand, plugging the crystal directly into her sleeve interface.* "Give me ninety seconds. If it's corrupted, don't blame the tool. Blame whoever tried to hide it."
+&lt;START&gt;
+&#123;&#123;user&#125;&#125;: Are you afraid the Cartel will find you?
+&#123;&#123;char&#125;&#125;: *Leans back into the shadow of the rack, arms crossed.* "Fear is wasted bandwidth. Preparation is not."</textarea>
+            </div>
+
+            <!-- System Prompt & Instructions -->
+            <div>
+              <label for="char-system-prompt" class="block text-xs font-semibold text-slate-300 mb-1.5">
+                System Instructions & Guardrails
+              </label>
+              <textarea 
+                id="char-system-prompt" 
+                rows="3" 
+                class="w-full px-3.5 py-2.5 rounded-xl bg-white/[0.04] border border-white/10 text-xs sm:text-sm text-white outline-none leading-relaxed resize-none"
+                placeholder="Strict behavioral rules for the LLM..."
+              >Portray Aurelia Vance with immersive consistency. Maintain a sharp, calm, cryptographic demeanor. Do not speak or act on behalf of &#123;&#123;user&#125;&#125;. Maintain atmospheric sensory detail and wholesome SFW storytelling.</textarea>
+            </div>
+
+            <!-- Starter Prompts for User -->
+            <div>
+              <label class="block text-xs font-semibold text-slate-300 mb-1.5">
+                Suggested Starter Prompts for User
+              </label>
+              <div class="space-y-2">
+                <input id="starter-1" type="text" class="w-full px-3 py-2 rounded-xl bg-white/[0.04] border border-white/10 text-xs text-white" value="What secrets are hidden in the archive?" />
+                <input id="starter-2" type="text" class="w-full px-3 py-2 rounded-xl bg-white/[0.04] border border-white/10 text-xs text-white" value="Can you bypass corporate surveillance?" />
+                <input id="starter-3" type="text" class="w-full px-3 py-2 rounded-xl bg-white/[0.04] border border-white/10 text-xs text-white" value="Why did you abandon your post in the Cartel?" />
+              </div>
+            </div>
+
           </div>
         </div>
 
       </div>
 
-      <!-- Right Column: Live Card Preview & Sandbox (5 cols on large screens) -->
-      <div class="lg:col-span-5 space-y-6">
+      <!-- Right Column: Live Real-Time Card Preview & Sandbox (5 cols on large screens) -->
+      <div class="lg:col-span-5 space-y-5">
         
-        <!-- Live Visual Card Preview -->
         <div class="p-5 rounded-2xl sm:rounded-3xl bg-[#090b17] border border-white/[0.08] shadow-lg sticky top-20">
           <div class="flex items-center justify-between border-b border-white/[0.06] pb-3 mb-4">
             <h3 class="text-xs font-bold text-white uppercase tracking-wider flex items-center gap-2">
               <Eye class="w-4 h-4 text-purple-400" />
-              <span>Real-Time Card Preview</span>
+              <span>Real-Time Tavern V2 Preview</span>
             </h3>
-            <span class="text-[10px] text-emerald-400 font-medium">● Live</span>
+            <span class="text-[10px] text-emerald-400 font-medium flex items-center gap-1">
+              <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span>
+              <span>Live Ingestion</span>
+            </span>
           </div>
 
-          <!-- Mock Card -->
+          <!-- Obsidian Card Simulation -->
           <div class="rounded-2xl overflow-hidden bg-[#0c0e17] border border-purple-500/40 shadow-2xl shadow-purple-950/50 max-w-sm mx-auto">
             <div class="relative aspect-[3/4] w-full overflow-hidden bg-slate-900">
               <img 
                 id="preview-img" 
                 src={PRESET_AVATARS[0].url} 
                 alt="Preview" 
-                class="w-full h-full object-cover" 
+                class="w-full h-full object-cover transition-all duration-300" 
               />
               <div class="absolute inset-0 bg-gradient-to-t from-[#0c0e17] via-[#0c0e17]/30 to-transparent"></div>
               
@@ -296,18 +513,25 @@ const PRESET_AVATARS = [
             </div>
 
             <!-- Greeting Preview Snippet -->
-            <div class="p-3.5 bg-[#090b14] border-t border-white/[0.06] text-xs text-slate-300">
-              <p class="text-[10px] text-purple-400 uppercase font-semibold mb-1">First Message Snippet:</p>
-              <p id="preview-snippet" class="text-[11px] text-slate-400 line-clamp-2 italic leading-relaxed">
-                *Adjusts holo-terminal display...*
+            <div class="p-3.5 bg-[#090b14] border-t border-white/[0.06] text-xs text-slate-300 space-y-1.5">
+              <p class="text-[10px] text-purple-400 uppercase font-semibold">Opening Dialogue:</p>
+              <p id="preview-snippet" class="text-[11px] text-slate-300 line-clamp-3 leading-relaxed">
+                *Adjusts the holographic focus...*
               </p>
             </div>
           </div>
 
-          <!-- Confirmation Notification Box -->
-          <div id="status-toast" class="hidden mt-4 p-3 rounded-xl bg-purple-900/40 border border-purple-500/40 text-xs text-purple-200 flex items-center gap-2">
+          <!-- Spec Metadata Summary -->
+          <div class="mt-4 p-3 rounded-xl bg-white/[0.03] border border-white/[0.06] flex items-center justify-between text-[11px] text-slate-400">
+            <span>Tavern V2 Spec</span>
+            <span class="text-emerald-400 font-mono">chara_card_v2</span>
+            <span>UTF-8 Clean</span>
+          </div>
+
+          <!-- Toast Notification -->
+          <div id="status-toast" class="hidden mt-3 p-3 rounded-xl bg-purple-900/60 border border-purple-500/50 text-xs text-purple-200 flex items-center gap-2 shadow-lg">
             <Check class="w-4 h-4 text-emerald-400 shrink-0" />
-            <span id="toast-text">Character saved successfully!</span>
+            <span id="toast-text">Tavern Card loaded successfully!</span>
           </div>
         </div>
 
@@ -318,19 +542,54 @@ const PRESET_AVATARS = [
 </Layout>
 
 <script>
-  // Elements
+  // ================= TAB MANAGEMENT =================
+  const tabBtns = document.querySelectorAll('.tab-btn');
+  const tabPanes = document.querySelectorAll('.tab-pane');
+
+  tabBtns.forEach(btn => {
+    btn.addEventListener('click', () => {
+      const targetId = btn.getAttribute('data-tab');
+      
+      tabBtns.forEach(b => {
+        b.classList.remove('active', 'bg-purple-600/30', 'text-purple-200', 'border', 'border-purple-500/40', 'shadow-sm');
+        b.classList.add('text-slate-400');
+      });
+      btn.classList.add('active', 'bg-purple-600/30', 'text-purple-200', 'border', 'border-purple-500/40', 'shadow-sm');
+      btn.classList.remove('text-slate-400');
+
+      tabPanes.forEach(pane => {
+        if (pane.id === targetId) {
+          pane.classList.remove('hidden');
+        } else {
+          pane.classList.add('hidden');
+        }
+      });
+    });
+  });
+
+  // ================= FORM & PREVIEW ELEMENTS =================
   const nameInput = document.getElementById('char-name') as HTMLInputElement;
   const titleInput = document.getElementById('char-title') as HTMLInputElement;
   const catInput = document.getElementById('char-category') as HTMLSelectElement;
-  const avatarInput = document.getElementById('char-avatar-url') as HTMLInputElement;
-  const greetingInput = document.getElementById('char-greeting') as HTMLTextAreaElement;
   const tagsInput = document.getElementById('char-tags') as HTMLInputElement;
+  const avatarInput = document.getElementById('char-avatar-url') as HTMLInputElement;
+  const appearanceInput = document.getElementById('char-appearance') as HTMLTextAreaElement;
+  
+  const personalityInput = document.getElementById('char-personality') as HTMLTextAreaElement;
   const loreInput = document.getElementById('char-lore') as HTMLTextAreaElement;
+  const scenarioInput = document.getElementById('char-scenario') as HTMLTextAreaElement;
+  const speechInput = document.getElementById('char-speech') as HTMLInputElement;
+  
+  const greetingInput = document.getElementById('char-greeting') as HTMLTextAreaElement;
+  const altGreetingInput = document.getElementById('char-alt-greeting') as HTMLTextAreaElement;
+  const mesExampleInput = document.getElementById('char-mes-example') as HTMLTextAreaElement;
+  const sysPromptInput = document.getElementById('char-system-prompt') as HTMLTextAreaElement;
+  
   const starter1 = document.getElementById('starter-1') as HTMLInputElement;
   const starter2 = document.getElementById('starter-2') as HTMLInputElement;
   const starter3 = document.getElementById('starter-3') as HTMLInputElement;
 
-  // Preview elements
+  // Live Preview Elements
   const previewImg = document.getElementById('preview-img') as HTMLImageElement;
   const previewCat = document.getElementById('preview-cat') as HTMLElement;
   const previewName = document.getElementById('preview-name') as HTMLElement;
@@ -340,17 +599,32 @@ const PRESET_AVATARS = [
   const statusToast = document.getElementById('status-toast') as HTMLElement;
   const toastText = document.getElementById('toast-text') as HTMLElement;
 
-  // Action buttons
+  // Buttons & Inputs
+  const dropZone = document.getElementById('drop-zone');
+  const cardFileInput = document.getElementById('card-file-input') as HTMLInputElement;
+  const triggerImportBtn = document.getElementById('trigger-import-btn');
+  const customAvatarFile = document.getElementById('custom-avatar-file') as HTMLInputElement;
   const saveBtn = document.getElementById('save-character-btn');
   const exportBtn = document.getElementById('export-tavern-btn');
   const presetBtns = document.querySelectorAll('.preset-avatar-btn');
+  const traitChips = document.querySelectorAll('.trait-chip');
+
+  function showToast(msg: string) {
+    if (toastText && statusToast) {
+      toastText.textContent = msg;
+      statusToast.classList.remove('hidden');
+      setTimeout(() => {
+        statusToast.classList.add('hidden');
+      }, 3500);
+    }
+  }
 
   function updatePreview() {
     if (previewName && nameInput) previewName.textContent = nameInput.value || 'Unnamed Persona';
-    if (previewTitle && titleInput) previewTitle.textContent = titleInput.value || 'No Title';
+    if (previewTitle && titleInput) previewTitle.textContent = titleInput.value || 'Roleplay Companion';
     if (previewCat && catInput) previewCat.textContent = catInput.value;
     if (previewImg && avatarInput) previewImg.src = avatarInput.value;
-    if (previewSnippet && greetingInput) previewSnippet.textContent = greetingInput.value || 'No greeting set.';
+    if (previewSnippet && greetingInput) previewSnippet.textContent = greetingInput.value || 'No opening dialogue set.';
     
     if (previewTags && tagsInput) {
       const tags = tagsInput.value.split(',').map(t => t.trim()).filter(Boolean);
@@ -359,8 +633,21 @@ const PRESET_AVATARS = [
   }
 
   // Bind live updates
-  [nameInput, titleInput, catInput, avatarInput, greetingInput, tagsInput].forEach(el => {
+  [nameInput, titleInput, catInput, avatarInput, appearanceInput, personalityInput, loreInput, scenarioInput, greetingInput, tagsInput].forEach(el => {
     el?.addEventListener('input', updatePreview);
+  });
+
+  // Trait chips toggle
+  traitChips.forEach(chip => {
+    chip.addEventListener('click', () => {
+      const trait = chip.getAttribute('data-trait');
+      if (trait && personalityInput) {
+        if (!personalityInput.value.includes(trait)) {
+          personalityInput.value = personalityInput.value ? `${personalityInput.value}, ${trait}` : trait;
+          updatePreview();
+        }
+      }
+    });
   });
 
   // Preset avatar click
@@ -374,17 +661,158 @@ const PRESET_AVATARS = [
     });
   });
 
-  function showToast(msg: string) {
-    if (toastText && statusToast) {
-      toastText.textContent = msg;
-      statusToast.classList.remove('hidden');
-      setTimeout(() => {
-        statusToast.classList.add('hidden');
-      }, 3000);
+  // Custom local avatar upload from device
+  customAvatarFile?.addEventListener('change', (e: Event) => {
+    const file = (e.target as HTMLInputElement).files?.[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onload = (re) => {
+        const base64Url = re.target?.result as string;
+        if (avatarInput) avatarInput.value = base64Url;
+        updatePreview();
+        showToast('Avatar image loaded from your device!');
+      };
+      reader.readAsDataURL(file);
+    }
+  });
+
+  // ================= TAVERN PNG CHUNK & JSON PARSER =================
+  function parsePngChunks(arrayBuffer: ArrayBuffer) {
+    const bytes = new Uint8Array(arrayBuffer);
+    const textDecoder = new TextDecoder('latin1');
+    let pos = 8;
+    while (pos < bytes.length) {
+      const len = (bytes[pos] << 24) | (bytes[pos + 1] << 16) | (bytes[pos + 2] << 8) | bytes[pos + 3];
+      pos += 4;
+      const type = textDecoder.decode(bytes.subarray(pos, pos + 4));
+      pos += 4;
+      if (type === 'tEXt') {
+        const data = bytes.subarray(pos, pos + len);
+        const nullIdx = data.indexOf(0);
+        if (nullIdx !== -1) {
+          const keyword = textDecoder.decode(data.subarray(0, nullIdx));
+          if (keyword.toLowerCase() === 'chara') {
+            const raw = textDecoder.decode(data.subarray(nullIdx + 1));
+            // Base64 decode to UTF-8
+            const binaryStr = atob(raw);
+            const rawBytes = new Uint8Array(binaryStr.length);
+            for (let i = 0; i < binaryStr.length; i++) rawBytes[i] = binaryStr.charCodeAt(i);
+            const jsonStr = new TextDecoder('utf-8').decode(rawBytes);
+            return JSON.parse(jsonStr);
+          }
+        }
+      }
+      pos += len + 4; // skip data + CRC
+    }
+    return null;
+  }
+
+  function populateFromCardData(cardData: any, imageBase64?: string) {
+    // Standardize Tavern V2 (data wrapper) vs V1
+    const d = cardData.data || cardData;
+    
+    if (d.name && nameInput) nameInput.value = d.name;
+    if (d.personality && personalityInput) personalityInput.value = d.personality;
+    if (d.description) {
+      if (loreInput) loreInput.value = d.description;
+      if (appearanceInput && !appearanceInput.value) appearanceInput.value = d.description;
+    }
+    if (d.scenario && scenarioInput) scenarioInput.value = d.scenario;
+    if (d.first_mes && greetingInput) greetingInput.value = d.first_mes;
+    if (d.mes_example && mesExampleInput) mesExampleInput.value = d.mes_example;
+    if (d.system_prompt && sysPromptInput) sysPromptInput.value = d.system_prompt;
+    
+    if (d.alternate_greetings && Array.isArray(d.alternate_greetings) && altGreetingInput) {
+      altGreetingInput.value = d.alternate_greetings.join('\n<START>\n');
+    }
+
+    if (d.tags && Array.isArray(d.tags) && tagsInput) {
+      tagsInput.value = d.tags.join(', ');
+    }
+
+    if (imageBase64 && avatarInput) {
+      avatarInput.value = imageBase64;
+    }
+
+    updatePreview();
+    showToast(`Loaded character: "${d.name || 'Custom Character'}"! All 7 sections populated.`);
+  }
+
+  function handleFile(file: File) {
+    if (!file) return;
+
+    if (file.name.endsWith('.json') || file.type === 'application/json') {
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        try {
+          const json = JSON.parse(e.target?.result as string);
+          populateFromCardData(json);
+        } catch (err) {
+          alert('Could not parse JSON character card file.');
+        }
+      };
+      reader.readAsText(file);
+      return;
+    }
+
+    // PNG File (Tavern Character Card)
+    if (file.type === 'image/png' || file.name.endsWith('.png')) {
+      const bufferReader = new FileReader();
+      bufferReader.onload = (e) => {
+        try {
+          const buffer = e.target?.result as ArrayBuffer;
+          const parsed = parsePngChunks(buffer);
+
+          // Also read data URL for avatar
+          const dataUrlReader = new FileReader();
+          dataUrlReader.onload = (de) => {
+            const dataUrl = de.target?.result as string;
+            if (parsed) {
+              populateFromCardData(parsed, dataUrl);
+            } else {
+              // Valid PNG but no chara chunk -> use as custom avatar
+              if (avatarInput) avatarInput.value = dataUrl;
+              updatePreview();
+              showToast('Image loaded as Avatar! (No Tavern metadata chunk detected)');
+            }
+          };
+          dataUrlReader.readAsDataURL(file);
+
+        } catch (err) {
+          console.error(err);
+          showToast('Error parsing PNG metadata. Check console.');
+        }
+      };
+      bufferReader.readAsArrayBuffer(file);
     }
   }
 
-  // Save Character to LocalStorage
+  // Bind Dropzone & Card Input
+  triggerImportBtn?.addEventListener('click', () => cardFileInput?.click());
+  dropZone?.addEventListener('click', () => cardFileInput?.click());
+  
+  cardFileInput?.addEventListener('change', (e: Event) => {
+    const file = (e.target as HTMLInputElement).files?.[0];
+    if (file) handleFile(file);
+  });
+
+  dropZone?.addEventListener('dragover', (e) => {
+    e.preventDefault();
+    dropZone.classList.add('border-cyan-400', 'bg-purple-950/30');
+  });
+
+  dropZone?.addEventListener('dragleave', () => {
+    dropZone.classList.remove('border-cyan-400', 'bg-purple-950/30');
+  });
+
+  dropZone?.addEventListener('drop', (e) => {
+    e.preventDefault();
+    dropZone.classList.remove('border-cyan-400', 'bg-purple-950/30');
+    const file = e.dataTransfer?.files?.[0];
+    if (file) handleFile(file);
+  });
+
+  // ================= SAVE TO LOCAL STORAGE =================
   saveBtn?.addEventListener('click', () => {
     const characterData = {
       id: (nameInput.value || 'custom-character').toLowerCase().replace(/[^a-z0-9]+/g, '-'),
@@ -393,8 +821,15 @@ const PRESET_AVATARS = [
       category: catInput.value,
       avatarUrl: avatarInput.value,
       greeting: greetingInput.value,
+      personality: personalityInput.value,
       tags: tagsInput.value.split(',').map(t => t.trim()).filter(Boolean),
       description: loreInput.value,
+      scenario: scenarioInput.value,
+      appearance: appearanceInput.value,
+      speechStyle: speechInput.value,
+      mesExample: mesExampleInput.value,
+      systemPrompt: sysPromptInput.value,
+      alternateGreetings: altGreetingInput.value.split('<START>').map(s => s.trim()).filter(Boolean),
       starterPrompts: [starter1.value, starter2.value, starter3.value].filter(Boolean),
       rating: '5.0',
       chatsCount: '1',
@@ -402,13 +837,19 @@ const PRESET_AVATARS = [
     };
 
     const existing = JSON.parse(localStorage.getItem('aetheria_custom_characters') || '[]');
-    existing.push(characterData);
+    // Replace if exists, or append
+    const idx = existing.findIndex((c: any) => c.id === characterData.id);
+    if (idx !== -1) {
+      existing[idx] = characterData;
+    } else {
+      existing.push(characterData);
+    }
     localStorage.setItem('aetheria_custom_characters', JSON.stringify(existing));
 
     showToast(`"${characterData.name}" saved! Available in your local hub.`);
   });
 
-  // Export Tavern Card V2 (Community Standard JSON)
+  // ================= EXPORT TAVERN CARD V2 (JSON) =================
   exportBtn?.addEventListener('click', () => {
     const tavernCardV2 = {
       spec: 'chara_card_v2',
@@ -416,18 +857,18 @@ const PRESET_AVATARS = [
       data: {
         name: nameInput.value || 'Unnamed Persona',
         description: loreInput.value,
-        personality: tagsInput.value,
-        scenario: `Roleplay encounter with ${nameInput.value}`,
+        personality: personalityInput.value,
+        scenario: scenarioInput.value,
         first_mes: greetingInput.value,
-        mes_example: '',
+        mes_example: mesExampleInput.value,
         creator_notes: 'Created via Aetheria AI Character Studio. Strict SFW standard.',
-        system_prompt: 'Portray the character consistently. Adhere to wholesome, engaging SFW interactions.',
+        system_prompt: sysPromptInput.value || 'Portray the character with atmospheric consistency.',
         post_history_instructions: '',
-        alternate_greetings: [],
+        alternate_greetings: altGreetingInput.value.split('<START>').map(s => s.trim()).filter(Boolean),
         character_book: null,
         tags: tagsInput.value.split(',').map(t => t.trim()).filter(Boolean),
         creator: 'Aetheria Creator',
-        character_version: '1.0'
+        character_version: '2.0'
       }
     };
 
@@ -439,7 +880,7 @@ const PRESET_AVATARS = [
     a.click();
     URL.revokeObjectURL(url);
 
-    showToast('Tavern V2 Card JSON downloaded!');
+    showToast('Tavern V2 Card JSON exported!');
   });
 
   // Initial preview sync
