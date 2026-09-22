@@ -3,6 +3,8 @@ import Layout from '../layouts/Layout.astro';
 import Header from '../components/Header.astro';
 import CategoryPills from '../components/CategoryPills.astro';
 import CharacterGrid from '../components/CharacterGrid.astro';
+import BottomNav from '../components/BottomNav.astro';
+import QuickChatModal from '../components/QuickChatModal.astro';
 import { Sparkles, ShieldCheck, Zap } from '@lucide/astro';
 ---
 
@@ -10,7 +12,7 @@ import { Sparkles, ShieldCheck, Zap } from '@lucide/astro';
   <Header />
   <CategoryPills />
 
-  <main class="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-5 sm:py-8">
+  <main class="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-5 sm:py-8 pb-24 sm:pb-8">
     
     <!-- Hero / Headline Banner -->
     <div class="relative overflow-hidden rounded-2xl sm:rounded-3xl border border-white/[0.08] bg-gradient-to-b from-white/[0.03] to-transparent p-5 sm:p-8 mb-6 sm:mb-8">
@@ -65,4 +67,10 @@ import { Sparkles, ShieldCheck, Zap } from '@lucide/astro';
       <p class="text-slate-500">Designed for fluid desktop & mobile immersion.</p>
     </div>
   </footer>
+
+  <!-- Section 4: Mobile Bottom Navigation Bar -->
+  <BottomNav />
+
+  <!-- Section 5: Obsidian Quick Chat Preview Modal -->
+  <QuickChatModal />
 </Layout>
