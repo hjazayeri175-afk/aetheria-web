@@ -2,56 +2,67 @@
 import Layout from '../layouts/Layout.astro';
 import Header from '../components/Header.astro';
 import CategoryPills from '../components/CategoryPills.astro';
-import { Sparkles, ArrowRight, ShieldCheck, Zap } from '@lucide/astro';
+import CharacterGrid from '../components/CharacterGrid.astro';
+import { Sparkles, ShieldCheck, Zap } from '@lucide/astro';
 ---
 
 <Layout title="Aetheria — Next-Gen AI Character Roleplay & Exploration">
   <Header />
   <CategoryPills />
 
-  <main class="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-10">
+  <main class="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-5 sm:py-8">
     
-    <!-- Hero / Section 1 Showcase Area -->
-    <div class="relative overflow-hidden rounded-2xl sm:rounded-3xl border border-white/[0.08] bg-gradient-to-b from-white/[0.03] to-transparent p-6 sm:p-10 mb-8 sm:mb-12">
-      <!-- Glow effect -->
+    <!-- Hero / Headline Banner -->
+    <div class="relative overflow-hidden rounded-2xl sm:rounded-3xl border border-white/[0.08] bg-gradient-to-b from-white/[0.03] to-transparent p-5 sm:p-8 mb-6 sm:mb-8">
+      <!-- Ambient Glows -->
       <div class="absolute -right-20 -top-20 w-80 h-80 bg-purple-600/10 rounded-full blur-3xl pointer-events-none"></div>
       <div class="absolute -left-20 -bottom-20 w-80 h-80 bg-cyan-600/10 rounded-full blur-3xl pointer-events-none"></div>
 
       <div class="relative z-10 max-w-3xl">
-        <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-purple-500/10 border border-purple-500/20 text-xs font-medium text-purple-300 mb-4 sm:mb-6">
+        <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-purple-500/10 border border-purple-500/20 text-xs font-medium text-purple-300 mb-3 sm:mb-4">
           <Sparkles class="w-3.5 h-3.5 text-purple-400" />
-          <span>Section 1 Built & Live • Adaptive Hybrid UI</span>
+          <span>Intelligent Roleplay & Worlds • Zero Wait Time</span>
         </div>
 
-        <h1 class="text-2xl sm:text-4xl lg:text-5xl font-extrabold tracking-tight text-white leading-tight mb-4">
-          Immersive AI Companions, <br class="hidden sm:block" />
+        <h1 class="text-2xl sm:text-4xl font-extrabold tracking-tight text-white leading-tight mb-2 sm:mb-3">
+          Explore Characters, <br class="hidden sm:block" />
           <span class="bg-gradient-to-r from-purple-400 via-indigo-300 to-cyan-400 bg-clip-text text-transparent">
-            Unfiltered Imagination.
+            Forge Dynamic Lore.
           </span>
         </h1>
 
-        <p class="text-sm sm:text-base text-slate-400 leading-relaxed max-w-2xl mb-6 sm:mb-8">
-          Seamlessly explore rich storylines, design custom personas, and interact without artificial delays. Optimized for desktop clarity and mobile speed.
+        <p class="text-xs sm:text-sm text-slate-400 leading-relaxed max-w-2xl mb-4 sm:mb-6">
+          Engage with richly detailed AI companions or craft your own persona. Instant responses powered by custom BYOK and high-speed edge reasoning.
         </p>
 
-        <!-- Feature Pills -->
-        <div class="flex flex-wrap items-center gap-3 text-xs sm:text-sm text-slate-300">
-          <div class="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-white/[0.04] border border-white/[0.06]">
-            <Zap class="w-4 h-4 text-amber-400" />
-            <span>Zero Server Bloat</span>
+        <!-- Feature Badges -->
+        <div class="flex flex-wrap items-center gap-2 sm:gap-3 text-xs text-slate-300">
+          <div class="flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-white/[0.04] border border-white/[0.06]">
+            <Zap class="w-3.5 h-3.5 text-amber-400" />
+            <span>Edge Accelerated</span>
           </div>
-          <div class="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-white/[0.04] border border-white/[0.06]">
-            <ShieldCheck class="w-4 h-4 text-emerald-400" />
-            <span>Client-First & BYOK Ready</span>
+          <div class="flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-white/[0.04] border border-white/[0.06]">
+            <ShieldCheck class="w-3.5 h-3.5 text-emerald-400" />
+            <span>Strictly SFW & Safe</span>
           </div>
         </div>
       </div>
     </div>
 
+    <!-- Section 3: Character Cards Grid -->
+    <CharacterGrid />
+
   </main>
 
-  <!-- Footer placeholder -->
-  <footer class="border-t border-white/[0.06] py-6 text-center text-xs text-slate-500">
-    <p>© 2026 Aetheria. Engineered for performance and privacy.</p>
+  <!-- Footer -->
+  <footer class="border-t border-white/[0.06] py-8 text-center text-xs text-slate-500 bg-[#05060a]">
+    <div class="max-w-7xl mx-auto px-4 flex flex-col sm:flex-row items-center justify-between gap-4">
+      <div class="flex items-center gap-2">
+        <div class="w-2 h-2 rounded-full bg-purple-500"></div>
+        <span class="font-bold text-slate-300">Aetheria AI</span>
+        <span class="text-slate-600">v0.1.0</span>
+      </div>
+      <p class="text-slate-500">Designed for fluid desktop & mobile immersion.</p>
+    </div>
   </footer>
 </Layout>

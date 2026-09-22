@@ -1,0 +1,128 @@
+---
+import { characters } from '../data/characters';
+import CharacterCard from './CharacterCard.astro';
+import { Sparkles, SlidersHorizontal, SearchX, RotateCcw } from '@lucide/astro';
+---
+
+<section class="w-full mt-4 sm:mt-6">
+  <!-- Section Sub-Header -->
+  <div class="flex items-center justify-between mb-4 sm:mb-6">
+    <div class="flex items-center gap-2.5">
+      <div class="p-1.5 rounded-lg bg-purple-500/10 border border-purple-500/20 text-purple-400">
+        <Sparkles class="w-4 h-4" />
+      </div>
+      <div>
+        <h2 class="text-base sm:text-lg font-bold text-white tracking-tight">Featured Characters</h2>
+        <p class="text-xs text-slate-400 hidden sm:block">Curated personalities, roleplay companions & interactive lore</p>
+      </div>
+    </div>
+
+    <!-- Active Filters / Count status -->
+    <div class="flex items-center gap-3">
+      <span id="character-counter" class="text-xs text-slate-400 font-mono bg-white/[0.04] px-2.5 py-1 rounded-full border border-white/[0.06]">
+        {characters.length} Available
+      </span>
+    </div>
+  </div>
+
+  <!-- Responsive Character Cards Grid -->
+  <!-- Mobile: 2 cols (Photo 3) | Tablet: 3 cols | Desktop: 4 cols (Photo 1) -->
+  <div 
+    id="characters-grid"
+    class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 sm:gap-5 lg:gap-6 transition-opacity duration-200"
+  >
+    {characters.map((character) => (
+      <CharacterCard character={character} />
+    ))}
+  </div>
+
+  <!-- Empty State (When no filter match) -->
+  <div 
+    id="empty-state" 
+    class="hidden flex-col items-center justify-center py-16 px-4 text-center rounded-3xl border border-dashed border-white/10 bg-white/[0.01] my-6"
+  >
+    <div class="p-4 rounded-full bg-purple-500/10 border border-purple-500/20 text-purple-400 mb-4">
+      <SearchX class="w-8 h-8" />
+    </div>
+    <h3 class="text-base font-bold text-white mb-1">No characters found</h3>
+    <p class="text-xs text-slate-400 max-w-sm mb-4">
+      We couldn't find any persona matching your search or category filter.
+    </p>
+    <button 
+      id="reset-filter-btn"
+      class="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-white/[0.05] hover:bg-white/[0.1] border border-white/10 text-xs font-semibold text-purple-300 transition cursor-pointer"
+    >
+      <RotateCcw class="w-3.5 h-3.5" />
+      <span>Reset Filters</span>
+    </button>
+  </div>
+</section>
+
+<script>
+  let activeCategory = 'all';
+  let searchQuery = '';
+
+  const grid = document.getElementById('characters-grid');
+  const emptyState = document.getElementById('empty-state');
+  const counter = document.getElementById('character-counter');
+  const resetBtn = document.getElementById('reset-filter-btn');
+
+  function filterCards() {
+    const cards = document.querySelectorAll<HTMLElement>('.character-card');
+    let visibleCount = 0;
+
+    cards.forEach((card) => {
+      const cat = card.getAttribute('data-category') || '';
+      const name = card.getAttribute('data-name') || '';
+      const tags = card.getAttribute('data-tags') || '';
+
+      const matchCategory = (activeCategory === 'all' || cat === activeCategory);
+      const matchSearch = (!searchQuery || name.includes(searchQuery) || tags.includes(searchQuery));
+
+      if (matchCategory && matchSearch) {
+        card.style.display = 'flex';
+        visibleCount++;
+      } else {
+        card.style.display = 'none';
+      }
+    });
+
+    if (counter) {
+      counter.textContent = `${visibleCount} Available`;
+    }
+
+    if (visibleCount === 0) {
+      grid?.classList.add('hidden');
+      emptyState?.classList.remove('hidden');
+      emptyState?.classList.add('flex');
+    } else {
+      grid?.classList.remove('hidden');
+      emptyState?.classList.add('hidden');
+      emptyState?.classList.remove('flex');
+    }
+  }
+
+  // Listen for category change from CategoryPills
+  window.addEventListener('aetheria:category-change', (e: Event) => {
+    const detail = (e as CustomEvent).detail;
+    activeCategory = detail.category || 'all';
+    filterCards();
+  });
+
+  // Listen for search input from Header
+  const desktopSearch = document.getElementById('desktop-search') as HTMLInputElement | null;
+  desktopSearch?.addEventListener('input', (e) => {
+    searchQuery = (e.target as HTMLInputElement).value.trim().toLowerCase();
+    filterCards();
+  });
+
+  resetBtn?.addEventListener('click', () => {
+    activeCategory = 'all';
+    searchQuery = '';
+    if (desktopSearch) desktopSearch.value = '';
+    // Click 'all' pill
+    const allPill = document.querySelector<HTMLButtonElement>('[data-cat-btn="all"]');
+    allPill?.click();
+    filterCards();
+  });
+</script>
