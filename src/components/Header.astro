@@ -1,0 +1,142 @@
+---
+import { Search, Sparkles, Plus, Compass, Flame, KeyRound, User, Command } from '@lucide/astro';
+---
+
+<header class="sticky top-0 z-50 w-full border-b border-white/[0.06] bg-[#07080d]/80 backdrop-blur-xl transition-all">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div class="flex items-center justify-between h-16 sm:h-18 gap-3 sm:gap-6">
+      
+      <!-- Left: Logo & Nav Links -->
+      <div class="flex items-center gap-6 sm:gap-8 shrink-0">
+        <a href="/" class="group flex items-center gap-2.5">
+          <div class="relative w-9 h-9 rounded-xl bg-gradient-to-tr from-purple-600 via-indigo-600 to-cyan-400 p-[1px] shadow-lg shadow-purple-900/20 group-hover:shadow-purple-600/40 transition duration-300">
+            <div class="w-full h-full bg-[#090b12] rounded-[11px] flex items-center justify-center">
+              <Sparkles class="w-4 h-4 text-purple-400 group-hover:scale-110 transition duration-300" />
+            </div>
+            <!-- glowing indicator dot -->
+            <span class="absolute -top-0.5 -right-0.5 flex h-2.5 w-2.5">
+              <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-purple-400 opacity-75"></span>
+              <span class="relative inline-flex rounded-full h-2.5 w-2.5 bg-purple-500"></span>
+            </span>
+          </div>
+          <div class="flex flex-col">
+            <div class="flex items-center gap-1.5">
+              <span class="text-base sm:text-lg font-bold tracking-tight bg-gradient-to-r from-white via-slate-100 to-slate-400 bg-clip-text text-transparent">
+                Aetheria
+              </span>
+              <span class="hidden sm:inline-flex items-center px-1.5 py-0.5 rounded text-[10px] font-semibold bg-purple-500/10 text-purple-300 border border-purple-500/20">
+                BETA
+              </span>
+            </div>
+          </div>
+        </a>
+
+        <!-- Desktop Navigation Items -->
+        <nav class="hidden lg:flex items-center gap-1">
+          <a href="/" class="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-sm font-medium text-white bg-white/[0.05] border border-white/[0.08] transition">
+            <Compass class="w-4 h-4 text-purple-400" />
+            <span>Discover</span>
+          </a>
+          <a href="#trending" class="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-sm font-medium text-slate-400 hover:text-white hover:bg-white/[0.04] transition">
+            <Flame class="w-4 h-4 text-slate-400 group-hover:text-amber-400" />
+            <span>Trending</span>
+          </a>
+        </nav>
+      </div>
+
+      <!-- Center: Universal Search Bar (Desktop) -->
+      <div class="flex-1 max-w-xl hidden md:block">
+        <div class="relative group">
+          <div class="absolute inset-0 bg-gradient-to-r from-purple-500/10 to-indigo-500/10 rounded-xl blur-sm opacity-0 group-hover:opacity-100 group-focus-within:opacity-100 transition duration-300 pointer-events-none"></div>
+          
+          <div class="relative flex items-center">
+            <Search class="absolute left-3.5 w-4 h-4 text-slate-400 group-focus-within:text-purple-400 transition" />
+            <input 
+              id="search-input"
+              type="text" 
+              placeholder="Search characters, scenarios, personas, or tags..." 
+              class="w-full pl-10 pr-20 py-2.5 rounded-xl bg-white/[0.04] hover:bg-white/[0.06] focus:bg-[#0c0f1a] border border-white/[0.08] focus:border-purple-500/50 text-sm text-slate-200 placeholder:text-slate-500 outline-none transition duration-200 shadow-inner"
+            />
+            <div class="absolute right-3 hidden sm:flex items-center gap-1 px-1.5 py-0.5 rounded border border-white/[0.1] bg-white/[0.04] text-[10px] font-mono text-slate-400">
+              <Command class="w-3 h-3" />
+              <span>K</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Right: Action CTAs -->
+      <div class="flex items-center gap-2 sm:gap-3">
+        
+        <!-- Mobile Search Trigger Button -->
+        <button id="mobile-search-btn" class="md:hidden p-2 rounded-xl text-slate-300 hover:text-white bg-white/[0.04] border border-white/[0.08] transition" aria-label="Search">
+          <Search class="w-4 h-4" />
+        </button>
+
+        <!-- BYOK Quick Status Pill (Desktop & Tablet) -->
+        <button id="byok-modal-btn" class="hidden sm:flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-medium text-slate-300 hover:text-white bg-white/[0.03] hover:bg-white/[0.06] border border-white/[0.08] transition" title="Configure Custom API Keys">
+          <KeyRound class="w-3.5 h-3.5 text-cyan-400" />
+          <span>BYOK</span>
+          <span class="inline-block w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span>
+        </button>
+
+        <!-- Create Character Button -->
+        <a 
+          href="/create" 
+          class="relative inline-flex items-center gap-1.5 px-3.5 sm:px-4 py-2 rounded-xl text-xs sm:text-sm font-semibold text-white bg-gradient-to-r from-purple-600 via-indigo-600 to-indigo-700 hover:from-purple-500 hover:to-indigo-600 border border-purple-400/30 shadow-md shadow-purple-900/20 hover:shadow-purple-600/30 transition-all duration-200 active:scale-95"
+        >
+          <Plus class="w-4 h-4 stroke-[2.5]" />
+          <span class="hidden xs:inline">Create</span>
+        </a>
+
+        <!-- User Profile Avatar Placeholder -->
+        <button class="relative flex items-center justify-center w-9 h-9 rounded-xl bg-white/[0.04] hover:bg-white/[0.08] border border-white/[0.08] text-slate-300 hover:text-white transition">
+          <User class="w-4 h-4" />
+        </button>
+      </div>
+
+    </div>
+
+    <!-- Mobile Search Expandable Bar (hidden by default) -->
+    <div id="mobile-search-drawer" class="hidden md:hidden pb-3 pt-1">
+      <div class="relative flex items-center">
+        <Search class="absolute left-3 w-4 h-4 text-slate-400" />
+        <input 
+          id="mobile-search-input"
+          type="text" 
+          placeholder="Search characters or tags..." 
+          class="w-full pl-9 pr-4 py-2 rounded-xl bg-white/[0.05] border border-white/[0.1] text-sm text-slate-200 placeholder:text-slate-500 outline-none focus:border-purple-500/50"
+        />
+      </div>
+    </div>
+
+  </div>
+</header>
+
+<script>
+  // Quick Search Keyboard Shortcut (Ctrl+K or Cmd+K)
+  window.addEventListener('keydown', (e) => {
+    if ((e.ctrlKey || e.metaKey) && e.key === 'k') {
+      e.preventDefault();
+      const input = document.getElementById('search-input') as HTMLInputElement | null;
+      if (input) {
+        input.focus();
+        input.select();
+      }
+    }
+  });
+
+  // Mobile search toggle
+  const searchBtn = document.getElementById('mobile-search-btn');
+  const searchDrawer = document.getElementById('mobile-search-drawer');
+  const mobileInput = document.getElementById('mobile-search-input') as HTMLInputElement | null;
+
+  if (searchBtn && searchDrawer) {
+    searchBtn.addEventListener('click', () => {
+      searchDrawer.classList.toggle('hidden');
+      if (!searchDrawer.classList.contains('hidden') && mobileInput) {
+        mobileInput.focus();
+      }
+    });
+  }
+</script>
