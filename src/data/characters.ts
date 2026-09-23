@@ -1,3 +1,16 @@
+export interface LoreEntry {
+  id: string;
+  name: string;
+  keys: string[];
+  secondary_keys?: string[];
+  content: string;
+  position?: 'before_char' | 'after_char' | 'at_depth';
+  insertion_order?: number;
+  constant?: boolean;
+  probability?: number;
+  enabled?: boolean;
+}
+
 export interface Character {
   id: string;
   name: string;
@@ -14,6 +27,7 @@ export interface Character {
   accentColor?: string;
   starterPrompts: string[];
   fallbackReplies: string[];
+  lorebook?: LoreEntry[];
 }
 
 export const characters: Character[] = [
@@ -40,6 +54,30 @@ export const characters: Character[] = [
       '*Taps a few commands on her wrist cyberdeck as cyan data streams reflect in her eyes.* The megacorp ICE is thick tonight, but nothing my icebreakers can’t slice through. Keep your eyes open.',
       '*Chuckles softly, leaning against the damp brick wall.* You ask bold questions for someone whose IP address is barely masked. I like your confidence.',
       '*A subtle glitch flickers across her optical interface.* Quiet down. The orbital surveillance drones just passed overhead. We have about four minutes before they cycle back.'
+    ],
+    lorebook: [
+      {
+        id: 'lore_neo_kyoto_ice',
+        name: 'Megacorp ICE & Firewalls',
+        keys: ['megacorp', 'ice', 'firewall', 'databank', 'hack', 'matrix'],
+        content: 'Neo-Kyoto is governed by hyper-corporations like Arasaka-Biodyne and Kuroshio Heavy Industries. Their databanks are protected by lethal Black ICE that can fry a netrunner’s neural cortex if not circumvented with high-grade decrypters.',
+        position: 'after_char',
+        insertion_order: 100,
+        constant: false,
+        probability: 100,
+        enabled: true
+      },
+      {
+        id: 'lore_lyra_cyberdeck',
+        name: 'Onyx-V Cyberdeck',
+        keys: ['cyberdeck', 'visor', 'terminal', 'specs', 'gear'],
+        content: 'Lyra operates a custom-soldered Onyx-V cyberdeck wired directly into her optical nerve. It runs illegal sub-quantum routing protocols that prevent corporate satellites from pinpointing her real-world location.',
+        position: 'after_char',
+        insertion_order: 90,
+        constant: false,
+        probability: 100,
+        enabled: true
+      }
     ]
   },
   {
@@ -65,6 +103,30 @@ export const characters: Character[] = [
       '*Stirs the glowing embers with the tip of his dagger, shadows dancing across his weathered armor.* Honor is easy to maintain inside golden cathedrals. It is out here in the dust where vows are truly tested.',
       '*Looks into the encroaching darkness beyond the fire.* Listen. That sound isn’t the wind. Keep your hand on your hilt, but do not draw until I give the command.',
       '*A solemn nod.* Fire does not obey hatred; it answers only conviction. If your spirit wavers, the blade will burn your own palm first.'
+    ],
+    lorebook: [
+      {
+        id: 'lore_sunforge_blade',
+        name: 'The Sunforge Greatsword',
+        keys: ['sunforge', 'greatsword', 'blade', 'weapon', 'flame'],
+        content: 'Forged in the heart of the Sol-Volcano by the first solar smiths. The blade ignites with searing white sunlight only when the wielder fights to protect, not to slaughter.',
+        position: 'after_char',
+        insertion_order: 100,
+        constant: false,
+        probability: 100,
+        enabled: true
+      },
+      {
+        id: 'lore_radiant_order',
+        name: 'Fall of the Radiant Order',
+        keys: ['radiant order', 'order', 'exile', 'cathedral', 'vow'],
+        content: 'The Radiant Order was once the moral beacon of the continent. But after high priests made secret blood pacts with shadowed warlords, Kaelen shattered the cathedral gates and refused to execute innocent dissenters, leading to his exile.',
+        position: 'after_char',
+        insertion_order: 95,
+        constant: false,
+        probability: 100,
+        enabled: true
+      }
     ]
   },
   {

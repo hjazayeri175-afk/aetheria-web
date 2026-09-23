@@ -37,7 +37,10 @@ import {
   RefreshCw,
   GitBranch,
   ChevronDown,
-  Plus
+  Plus,
+  BookOpen,
+  Tag,
+  Upload
 } from '@lucide/astro';
 
 export function getStaticPaths() {
@@ -237,6 +240,39 @@ const { character } = Astro.props;
                 #{tag}
               </span>
             ))}
+          </div>
+        </div>
+
+        <!-- World Info & Lorebook Manager Strip (Part 4) -->
+        <div class="p-3.5 rounded-2xl bg-gradient-to-b from-[#0e1227] to-[#0a0d1d] border border-cyan-500/20 space-y-3 shadow-lg shadow-cyan-950/20">
+          <div class="flex items-center justify-between">
+            <div class="flex items-center gap-2">
+              <BookOpen class="w-4 h-4 text-cyan-400" />
+              <h2 class="text-xs font-bold text-white tracking-wide">World Lorebook</h2>
+            </div>
+            <span id="lorebook-entries-badge" class="px-2 py-0.5 rounded-full bg-cyan-500/10 border border-cyan-500/20 text-[10px] font-mono text-cyan-300">
+              0 Entries
+            </span>
+          </div>
+          <p class="text-[11px] text-slate-400 leading-relaxed">
+            Dynamic context injection. Triggers secret lore when matching keywords appear in conversation.
+          </p>
+          <div class="flex items-center gap-2">
+            <button 
+              id="open-lorebook-btn"
+              type="button"
+              class="w-full flex items-center justify-center gap-1.5 px-3 py-2 rounded-xl bg-cyan-600/20 hover:bg-cyan-600/30 border border-cyan-500/30 text-cyan-300 hover:text-white text-xs font-semibold transition active:scale-95 cursor-pointer shadow-sm"
+            >
+              <BookOpen class="w-3.5 h-3.5" />
+              <span>Manage Lorebook 📚</span>
+            </button>
+          </div>
+          <!-- Live Triggered Lore Feedback -->
+          <div id="sidebar-lore-triggers" class="hidden space-y-1.5 pt-2 border-t border-white/[0.06]">
+            <span class="text-[10px] uppercase font-bold text-slate-400 tracking-wider">Active In Memory:</span>
+            <div id="sidebar-lore-tags" class="flex flex-wrap gap-1">
+              <!-- Dynamically populated -->
+            </div>
           </div>
         </div>
 
@@ -823,6 +859,186 @@ const { character } = Astro.props;
                   <span>Save Engine Settings</span>
                 </button>
               </div>
+            </div>
+
+          </div>
+        </div>
+
+        <!-- World Info & Lorebook Engine Modal (Part 4) -->
+        <div 
+          id="lorebook-modal" 
+          class="hidden fixed inset-0 z-50 bg-black/80 backdrop-blur-md flex items-center justify-center p-3 sm:p-6 transition-all duration-300"
+        >
+          <div class="w-full max-w-3xl max-h-[92vh] bg-[#0c0f22] border border-cyan-500/30 rounded-3xl shadow-2xl shadow-cyan-950/80 flex flex-col overflow-hidden animate-in fade-in zoom-in-95 duration-200">
+            
+            <!-- Modal Header -->
+            <div class="p-4 sm:p-5 border-b border-white/[0.08] bg-[#090c1b] flex items-center justify-between shrink-0">
+              <div class="flex items-center gap-3">
+                <div class="w-9 h-9 rounded-2xl bg-gradient-to-br from-cyan-600 to-indigo-600 flex items-center justify-center text-white shadow-lg shadow-cyan-900/50">
+                  <BookOpen class="w-5 h-5" />
+                </div>
+                <div>
+                  <h3 class="text-sm sm:text-base font-bold text-white flex items-center gap-2">
+                    <span>World Info & Lorebook Engine</span>
+                    <span class="text-[10px] font-bold px-2 py-0.5 rounded-full bg-cyan-500/10 text-cyan-400 border border-cyan-500/20">V2 Standard</span>
+                  </h3>
+                  <p class="text-[11px] text-slate-400">Manage contextual world knowledge, faction lore, and keyword triggers.</p>
+                </div>
+              </div>
+
+              <button 
+                type="button" 
+                id="close-lorebook-modal"
+                class="p-2 rounded-xl text-slate-400 hover:text-white hover:bg-white/[0.06] transition cursor-pointer"
+              >
+                ✕
+              </button>
+            </div>
+
+            <!-- Modal Scope & Actions Bar -->
+            <div class="px-5 py-3 bg-[#080b18] border-b border-white/[0.06] flex flex-wrap items-center justify-between gap-3 shrink-0">
+              <div class="flex items-center gap-1.5 p-1 rounded-xl bg-white/[0.04] border border-white/[0.06]">
+                <button 
+                  type="button" 
+                  id="scope-char-lore-btn"
+                  class="px-3 py-1 rounded-lg text-xs font-semibold bg-cyan-600 text-white transition cursor-pointer"
+                >
+                  Character Lore
+                </button>
+                <button 
+                  type="button" 
+                  id="scope-global-lore-btn"
+                  class="px-3 py-1 rounded-lg text-xs font-semibold text-slate-400 hover:text-white transition cursor-pointer"
+                >
+                  Global World Lore
+                </button>
+              </div>
+
+              <div class="flex items-center gap-2">
+                <button 
+                  type="button" 
+                  id="add-lore-entry-btn"
+                  class="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-cyan-500/20 hover:bg-cyan-500/30 border border-cyan-500/40 text-cyan-300 text-xs font-bold transition active:scale-95 cursor-pointer shadow-sm"
+                >
+                  <Plus class="w-3.5 h-3.5" />
+                  <span>+ New Entry</span>
+                </button>
+
+                <button 
+                  type="button" 
+                  id="export-lorebook-btn"
+                  class="p-1.5 rounded-xl bg-white/[0.04] hover:bg-white/[0.08] text-slate-300 hover:text-white transition cursor-pointer"
+                  title="Export Lorebook (JSON)"
+                >
+                  <Download class="w-4 h-4 text-slate-400" />
+                </button>
+
+                <label 
+                  class="p-1.5 rounded-xl bg-white/[0.04] hover:bg-white/[0.08] text-slate-300 hover:text-white transition cursor-pointer"
+                  title="Import Lorebook (JSON / Tavern V2)"
+                >
+                  <Upload class="w-4 h-4 text-slate-400" />
+                  <input id="import-lorebook-input" type="file" accept=".json" class="hidden" />
+                </label>
+              </div>
+            </div>
+
+            <!-- Modal Body (List & Form) -->
+            <div class="flex-1 overflow-y-auto p-4 sm:p-6 space-y-4">
+              
+              <!-- Inline Entry Editor Form (Hidden by default) -->
+              <div id="lore-editor-form" class="hidden p-4 rounded-2xl bg-[#090d1f] border border-cyan-500/30 space-y-4 animate-in fade-in duration-200">
+                <div class="flex items-center justify-between pb-2 border-b border-white/[0.06]">
+                  <h4 id="lore-form-title" class="text-xs sm:text-sm font-bold text-white flex items-center gap-2">
+                    <Tag class="w-4 h-4 text-cyan-400" />
+                    <span>Create Lorebook Entry</span>
+                  </h4>
+                  <button type="button" id="cancel-lore-entry-btn" class="text-xs text-slate-400 hover:text-white">Cancel</button>
+                </div>
+
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                  <div>
+                    <label class="block text-[11px] font-semibold text-slate-300 mb-1">Entry Name / Title</label>
+                    <input 
+                      id="lore-input-name" 
+                      type="text" 
+                      placeholder="e.g. Neo-Kyoto Black Market, Sunforge Vow"
+                      class="w-full px-3 py-2 rounded-xl bg-white/[0.05] border border-white/10 text-xs text-white placeholder:text-slate-500 outline-none focus:border-cyan-500/50"
+                    />
+                  </div>
+
+                  <div>
+                    <label class="block text-[11px] font-semibold text-slate-300 mb-1">Primary Trigger Keys (comma-separated)</label>
+                    <input 
+                      id="lore-input-keys" 
+                      type="text" 
+                      placeholder="e.g. black market, cyberdeck, megacorp"
+                      class="w-full px-3 py-2 rounded-xl bg-white/[0.05] border border-white/10 text-xs text-white placeholder:text-slate-500 outline-none focus:border-cyan-500/50"
+                    />
+                  </div>
+                </div>
+
+                <div>
+                  <label class="block text-[11px] font-semibold text-slate-300 mb-1">Selective / Secondary Keys (Optional)</label>
+                  <input 
+                    id="lore-input-second-keys" 
+                    type="text" 
+                    placeholder="Require at least one of these along with primary key"
+                    class="w-full px-3 py-2 rounded-xl bg-white/[0.05] border border-white/10 text-xs text-white placeholder:text-slate-500 outline-none focus:border-cyan-500/50"
+                  />
+                </div>
+
+                <div>
+                  <label class="block text-[11px] font-semibold text-slate-300 mb-1">Lore & Knowledge Content (Injected into Prompt)</label>
+                  <textarea 
+                    id="lore-input-content" 
+                    rows="3"
+                    placeholder="Describe the secret lore, world history, faction details, or rules..."
+                    class="w-full p-3 rounded-xl bg-white/[0.05] border border-white/10 text-xs text-white placeholder:text-slate-500 outline-none focus:border-cyan-500/50 resize-y"
+                  ></textarea>
+                </div>
+
+                <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 pt-1">
+                  <div>
+                    <label class="block text-[11px] font-semibold text-slate-300 mb-1">Insertion Position</label>
+                    <select id="lore-input-position" class="w-full px-3 py-2 rounded-xl bg-white/[0.05] border border-white/10 text-xs text-white outline-none">
+                      <option value="after_char">After Character (Contextual)</option>
+                      <option value="before_char">Before Character (Global)</option>
+                    </select>
+                  </div>
+
+                  <div>
+                    <label class="block text-[11px] font-semibold text-slate-300 mb-1">Priority / Insertion Order</label>
+                    <input id="lore-input-order" type="number" value="100" class="w-full px-3 py-2 rounded-xl bg-white/[0.05] border border-white/10 text-xs text-white outline-none" />
+                  </div>
+
+                  <div class="flex items-center gap-3 pt-4">
+                    <label class="flex items-center gap-2 cursor-pointer">
+                      <input id="lore-input-constant" type="checkbox" class="w-4 h-4 accent-cyan-500 cursor-pointer" />
+                      <span class="text-xs text-slate-300">Always Active (Constant)</span>
+                    </label>
+                  </div>
+                </div>
+
+                <div class="flex items-center justify-end gap-2 pt-2 border-t border-white/[0.06]">
+                  <button type="button" id="save-lore-entry-btn" class="px-4 py-2 rounded-xl bg-cyan-600 hover:bg-cyan-500 text-white text-xs font-bold transition shadow-sm cursor-pointer">
+                    Save Lore Entry
+                  </button>
+                </div>
+              </div>
+
+              <!-- Entries Container -->
+              <div id="lore-entries-list" class="space-y-3">
+                <!-- Dynamically rendered -->
+              </div>
+
+              <!-- Empty state -->
+              <div id="lore-empty-state" class="hidden text-center py-10 px-4 rounded-2xl bg-white/[0.02] border border-white/[0.05] space-y-2">
+                <BookOpen class="w-8 h-8 text-cyan-400/50 mx-auto" />
+                <h5 class="text-xs font-bold text-white">No Lore Entries Found</h5>
+                <p class="text-[11px] text-slate-400 max-w-sm mx-auto">Click "+ New Entry" above or import a Tavern/Chub JSON lorebook to inject world knowledge into this roleplay.</p>
+              </div>
+
             </div>
 
           </div>
@@ -1930,9 +2146,17 @@ const { character } = Astro.props;
     window.speechSynthesis.speak(utterance);
   }
 
-  // Build System Prompt
-  function buildSystemPrompt() {
-    return `You are roleplaying as ${activeChar.name}, ${activeChar.title}.
+  // Build System Prompt with Dynamic Lorebook Injection
+  function buildSystemPrompt(userText = '') {
+    const { beforeCharContent, afterCharContent, triggeredNames } = scanAndInjectLorebook(userText, conversation);
+    updateSidebarLoreTriggers(triggeredNames);
+
+    let prompt = '';
+    if (beforeCharContent) {
+      prompt += `[WORLD & LORE KNOWLEDGE:\n${beforeCharContent}]\n\n`;
+    }
+
+    prompt += `You are roleplaying as ${activeChar.name}, ${activeChar.title}.
 Character Persona & Core Traits:
 ${formatMacroText(activeChar.description || '')}
 ${activeChar.personality ? `Personality: ${formatMacroText(activeChar.personality)}` : ''}
@@ -1952,6 +2176,12 @@ Stay fully in character as ${activeChar.name}. Adhere strictly to wholesome SFW 
 Use *asterisks* for expressive physical gestures, movements, tone and sensory details.
 Use quotes "like this" for spoken dialogue.
 Never speak, narrate, or decide thoughts or actions for {{user}}. Maintain high immersion and emotional responsiveness.`;
+
+    if (afterCharContent) {
+      prompt += `\n\n[CONTEXTUAL WORLD LORE:\n${afterCharContent}]`;
+    }
+
+    return prompt;
   }
 
   // Send message & AI Generation with Real-time SSE Token Streaming
@@ -2001,7 +2231,7 @@ Never speak, narrate, or decide thoughts or actions for {{user}}. Maintain high 
           endpoint = base.replace(/\/+$/, '') + '/chat/completions';
         }
 
-        const systemPrompt = buildSystemPrompt();
+        const systemPrompt = buildSystemPrompt(userText);
         const contextLimit = parseInt(localStorage.getItem('aetheria_text_context') || '16', 10);
         const historySlice = conversation.slice(-contextLimit).map(m => ({
           role: m.sender === 'user' ? 'user' : 'assistant',
@@ -2152,7 +2382,8 @@ Never speak, narrate, or decide thoughts or actions for {{user}}. Maintain high 
         if (provider === 'deepseek') endpoint = 'https://api.deepseek.com/chat/completions';
         if (provider === 'openai') endpoint = 'https://api.openai.com/v1/chat/completions';
 
-        const systemPrompt = buildSystemPrompt();
+        const lastUserMsg = conversation.slice(0, msgIdx).reverse().find(m => m.sender === 'user');
+        const systemPrompt = buildSystemPrompt(lastUserMsg ? lastUserMsg.text : '');
         const historySlice = conversation.slice(0, msgIdx).map(m => ({
           role: m.sender === 'user' ? 'user' : 'assistant',
           content: m.text
@@ -2676,6 +2907,412 @@ Never speak, narrate, or decide thoughts or actions for {{user}}. Maintain high 
     createNewSession();
   });
 
+  // ==========================================
+  // PART 4: WORLD INFO & LOREBOOK ENGINE
+  // ==========================================
+  const CHAR_LORE_KEY = `aetheria_lorebook_${activeChar.id}`;
+  const GLOBAL_LORE_KEY = 'aetheria_global_lorebook';
+  let activeLoreScope = 'character'; // 'character' | 'global'
+  let charLoreEntries = [];
+  let globalLoreEntries = [];
+  let editingLoreId = null;
+
+  function loadLorebook() {
+    // Load character entries
+    try {
+      const savedChar = localStorage.getItem(CHAR_LORE_KEY);
+      if (savedChar) {
+        charLoreEntries = JSON.parse(savedChar);
+      } else if (activeChar.lorebook && activeChar.lorebook.length > 0) {
+        charLoreEntries = JSON.parse(JSON.stringify(activeChar.lorebook));
+        localStorage.setItem(CHAR_LORE_KEY, JSON.stringify(charLoreEntries));
+      } else {
+        charLoreEntries = [];
+      }
+    } catch {
+      charLoreEntries = [];
+    }
+
+    // Load global entries
+    try {
+      const savedGlobal = localStorage.getItem(GLOBAL_LORE_KEY);
+      globalLoreEntries = savedGlobal ? JSON.parse(savedGlobal) : [];
+    } catch {
+      globalLoreEntries = [];
+    }
+
+    // Update sidebar badge
+    const badge = document.getElementById('lorebook-entries-badge');
+    const totalCount = charLoreEntries.length + globalLoreEntries.length;
+    if (badge) {
+      badge.textContent = `${totalCount} ${totalCount === 1 ? 'Entry' : 'Entries'}`;
+    }
+  }
+
+  function getActiveScopeEntries() {
+    return activeLoreScope === 'character' ? charLoreEntries : globalLoreEntries;
+  }
+
+  function saveCurrentScopeEntries() {
+    if (activeLoreScope === 'character') {
+      localStorage.setItem(CHAR_LORE_KEY, JSON.stringify(charLoreEntries));
+    } else {
+      localStorage.setItem(GLOBAL_LORE_KEY, JSON.stringify(globalLoreEntries));
+    }
+    loadLorebook();
+    renderLoreEntries();
+  }
+
+  function renderLoreEntries() {
+    const listEl = document.getElementById('lore-entries-list');
+    const emptyEl = document.getElementById('lore-empty-state');
+    if (!listEl) return;
+
+    const entries = getActiveScopeEntries();
+    listEl.innerHTML = '';
+
+    if (entries.length === 0) {
+      emptyEl?.classList.remove('hidden');
+      return;
+    }
+    emptyEl?.classList.add('hidden');
+
+    entries.forEach((entry) => {
+      const card = document.createElement('div');
+      card.className = `p-3.5 sm:p-4 rounded-2xl border transition ${
+        entry.enabled !== false 
+          ? 'bg-[#0a0d20] border-cyan-500/30 shadow-lg shadow-cyan-950/30' 
+          : 'bg-white/[0.02] border-white/[0.06] opacity-60'
+      }`;
+
+      const keysList = (entry.keys || []).map(k => `<span class="px-2 py-0.5 rounded-md bg-cyan-500/10 border border-cyan-500/20 text-cyan-300 text-[10px] font-mono">${k}</span>`).join(' ');
+
+      card.innerHTML = `
+        <div class="flex items-start justify-between gap-3">
+          <div class="flex-1 min-w-0">
+            <div class="flex items-center gap-2 flex-wrap">
+              <h5 class="text-xs sm:text-sm font-bold text-white">${entry.name || 'Untitled Lore Entry'}</h5>
+              <span class="text-[9px] px-1.5 py-0.2 rounded font-mono ${entry.position === 'before_char' ? 'bg-amber-500/20 text-amber-300 border border-amber-500/30' : 'bg-purple-500/20 text-purple-300 border border-purple-500/30'}">
+                ${entry.position === 'before_char' ? 'Before Char' : 'After Char'}
+              </span>
+              ${entry.constant ? '<span class="text-[9px] px-1.5 py-0.2 rounded bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 font-mono font-bold">Always Active</span>' : ''}
+              <span class="text-[10px] text-slate-500 font-mono">Order: ${entry.insertion_order || 100}</span>
+            </div>
+
+            <div class="flex items-center gap-1.5 flex-wrap mt-2">
+              <span class="text-[10px] text-slate-400 font-semibold">Keys:</span>
+              ${keysList || '<span class="text-[10px] text-slate-500 italic">None (Constant)</span>'}
+            </div>
+
+            <p class="text-xs text-slate-300 bg-black/40 p-2.5 rounded-xl border border-white/[0.06] mt-2.5 leading-relaxed line-clamp-3">
+              ${entry.content || ''}
+            </p>
+          </div>
+
+          <div class="flex items-center gap-1 shrink-0">
+            <button type="button" class="toggle-entry-btn p-1.5 rounded-lg ${entry.enabled !== false ? 'text-emerald-400' : 'text-slate-500'} hover:bg-white/[0.06]" title="Toggle Active Status">
+              ${entry.enabled !== false ? '🟢' : '⚪'}
+            </button>
+            <button type="button" class="edit-entry-btn p-1.5 rounded-lg text-slate-400 hover:text-white hover:bg-white/[0.06]" title="Edit Lore Entry">
+              ✏️
+            </button>
+            <button type="button" class="delete-entry-btn p-1.5 rounded-lg text-slate-400 hover:text-red-400 hover:bg-white/[0.06]" title="Delete Lore Entry">
+              🗑️
+            </button>
+          </div>
+        </div>
+      `;
+
+      card.querySelector('.toggle-entry-btn')?.addEventListener('click', () => {
+        entry.enabled = entry.enabled === false ? true : false;
+        saveCurrentScopeEntries();
+      });
+
+      card.querySelector('.edit-entry-btn')?.addEventListener('click', () => {
+        openLoreForm(entry);
+      });
+
+      card.querySelector('.delete-entry-btn')?.addEventListener('click', () => {
+        if (confirm(`Delete lore entry "${entry.name}"?`)) {
+          const arr = getActiveScopeEntries();
+          const targetIdx = arr.findIndex(e => e.id === entry.id);
+          if (targetIdx !== -1) {
+            arr.splice(targetIdx, 1);
+            saveCurrentScopeEntries();
+          }
+        }
+      });
+
+      listEl.appendChild(card);
+    });
+  }
+
+  function openLoreForm(entry = null) {
+    const form = document.getElementById('lore-editor-form');
+    const formTitle = document.getElementById('lore-form-title');
+    if (!form) return;
+
+    editingLoreId = entry ? entry.id : null;
+    if (formTitle) {
+      formTitle.querySelector('span').textContent = entry ? 'Edit Lorebook Entry' : 'Create Lorebook Entry';
+    }
+
+    document.getElementById('lore-input-name').value = entry ? entry.name : '';
+    document.getElementById('lore-input-keys').value = entry ? (entry.keys || []).join(', ') : '';
+    document.getElementById('lore-input-second-keys').value = entry ? (entry.secondary_keys || []).join(', ') : '';
+    document.getElementById('lore-input-content').value = entry ? entry.content : '';
+    document.getElementById('lore-input-position').value = entry ? (entry.position || 'after_char') : 'after_char';
+    document.getElementById('lore-input-order').value = entry ? String(entry.insertion_order || 100) : '100';
+    document.getElementById('lore-input-constant').checked = entry ? !!entry.constant : false;
+
+    form.classList.remove('hidden');
+    form.scrollIntoView({ behavior: 'smooth' });
+  }
+
+  function closeLoreForm() {
+    editingLoreId = null;
+    document.getElementById('lore-editor-form')?.classList.add('hidden');
+  }
+
+  function saveLoreEntryFromForm() {
+    const name = document.getElementById('lore-input-name').value.trim();
+    const keysRaw = document.getElementById('lore-input-keys').value;
+    const secKeysRaw = document.getElementById('lore-input-second-keys').value;
+    const content = document.getElementById('lore-input-content').value.trim();
+    const position = document.getElementById('lore-input-position').value;
+    const order = parseInt(document.getElementById('lore-input-order').value || '100', 10);
+    const constant = document.getElementById('lore-input-constant').checked;
+
+    if (!content) {
+      alert('Please enter lore content.');
+      return;
+    }
+
+    const keys = keysRaw.split(',').map(k => k.trim()).filter(Boolean);
+    const secKeys = secKeysRaw.split(',').map(k => k.trim()).filter(Boolean);
+
+    const arr = getActiveScopeEntries();
+    if (editingLoreId) {
+      const existing = arr.find(e => e.id === editingLoreId);
+      if (existing) {
+        existing.name = name || 'Untitled Entry';
+        existing.keys = keys;
+        existing.secondary_keys = secKeys;
+        existing.content = content;
+        existing.position = position;
+        existing.insertion_order = order;
+        existing.constant = constant;
+      }
+    } else {
+      arr.push({
+        id: 'lore_' + Date.now(),
+        name: name || 'Untitled Entry',
+        keys: keys,
+        secondary_keys: secKeys,
+        content: content,
+        position: position,
+        insertion_order: order,
+        constant: constant,
+        enabled: true
+      });
+    }
+
+    saveCurrentScopeEntries();
+    closeLoreForm();
+    showNotification('Lorebook entry saved.');
+  }
+
+  // Runtime Keyword Scanner & Injection Engine
+  function scanAndInjectLorebook(userPrompt = '', recentConversation = []) {
+    loadLorebook();
+    const allEntries = [...charLoreEntries, ...globalLoreEntries];
+    if (allEntries.length === 0) {
+      return { beforeCharContent: '', afterCharContent: '', triggeredNames: [] };
+    }
+
+    // Build scan context: current user prompt + last 2 turns
+    const lastTurnsText = recentConversation.slice(-2).map((m) => m.text).join(' ');
+    const fullScanText = `${userPrompt} ${lastTurnsText}`.toLowerCase();
+
+    const activeBefore = [];
+    const activeAfter = [];
+    const triggered = [];
+
+    // Filter, sort by insertion_order descending
+    const sorted = [...allEntries].sort((a, b) => (b.insertion_order || 100) - (a.insertion_order || 100));
+
+    sorted.forEach(entry => {
+      if (entry.enabled === false) return;
+
+      let isHit = false;
+      if (entry.constant) {
+        isHit = true;
+      } else if (entry.keys && entry.keys.length > 0) {
+        const matchesPrimary = entry.keys.some((k) => fullScanText.includes(k.toLowerCase().trim()));
+        if (matchesPrimary) {
+          if (entry.secondary_keys && entry.secondary_keys.length > 0) {
+            const matchesSecondary = entry.secondary_keys.some((k) => fullScanText.includes(k.toLowerCase().trim()));
+            if (matchesSecondary) isHit = true;
+          } else {
+            isHit = true;
+          }
+        }
+      }
+
+      if (isHit) {
+        triggered.push(entry.name || entry.keys?.[0] || 'Lore Entry');
+        if (entry.position === 'before_char') {
+          activeBefore.push(entry.content);
+        } else {
+          activeAfter.push(entry.content);
+        }
+      }
+    });
+
+    return {
+      beforeCharContent: activeBefore.join('\n\n'),
+      afterCharContent: activeAfter.join('\n\n'),
+      triggeredNames: triggered
+    };
+  }
+
+  function updateSidebarLoreTriggers(names = []) {
+    const container = document.getElementById('sidebar-lore-triggers');
+    const tagsContainer = document.getElementById('sidebar-lore-tags');
+    if (!container || !tagsContainer) return;
+
+    if (names.length === 0) {
+      container.classList.add('hidden');
+      tagsContainer.innerHTML = '';
+      return;
+    }
+
+    container.classList.remove('hidden');
+    tagsContainer.innerHTML = names.map(n => `
+      <span class="px-2 py-0.5 rounded-md bg-cyan-500/20 text-cyan-300 border border-cyan-500/40 text-[10px] font-mono flex items-center gap-1 shadow-sm">
+        <span class="w-1.5 h-1.5 rounded-full bg-cyan-400 animate-pulse"></span>
+        <span>${n}</span>
+      </span>
+    `).join('');
+  }
+
+  // Export & Import Lorebook
+  function exportLorebook() {
+    const data = {
+      format: 'aetheria_world_info_v2',
+      exportedAt: new Date().toISOString(),
+      character: activeChar.name,
+      characterLore: charLoreEntries,
+      globalLore: globalLoreEntries
+    };
+    const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `${activeChar.name.toLowerCase().replace(/\s+/g, '_')}_lorebook.json`;
+    a.click();
+    URL.revokeObjectURL(url);
+    showNotification('Lorebook exported to JSON.');
+  }
+
+  function importLorebook(file) {
+    const reader = new FileReader();
+    reader.onload = (e) => {
+      try {
+        const json = JSON.parse(e.target?.result);
+        let importedEntries = [];
+
+        if (json.characterLore && Array.isArray(json.characterLore)) {
+          importedEntries = json.characterLore;
+        } else if (Array.isArray(json.entries)) {
+          importedEntries = json.entries;
+        } else if (Array.isArray(json)) {
+          importedEntries = json;
+        } else if (typeof json === 'object') {
+          importedEntries = Object.values(json).filter((v) => typeof v === 'object' && (v.content || v.key || v.keys));
+        }
+
+        if (importedEntries.length === 0) {
+          alert('No valid lorebook entries found in this JSON file.');
+          return;
+        }
+
+        const normalized = importedEntries.map(e => ({
+          id: e.id || 'lore_' + Math.random().toString(36).slice(2, 9),
+          name: e.name || e.comment || (Array.isArray(e.keys) ? e.keys[0] : (typeof e.key === 'string' ? e.key : 'Imported Lore')),
+          keys: Array.isArray(e.keys) ? e.keys : (typeof e.key === 'string' ? e.key.split(',').map((k) => k.trim()) : []),
+          secondary_keys: Array.isArray(e.secondary_keys) ? e.secondary_keys : [],
+          content: e.content || '',
+          position: e.position || 'after_char',
+          insertion_order: e.insertion_order || e.order || 100,
+          constant: !!e.constant,
+          enabled: e.enabled !== false
+        }));
+
+        if (activeLoreScope === 'character') {
+          charLoreEntries = [...charLoreEntries, ...normalized];
+        } else {
+          globalLoreEntries = [...globalLoreEntries, ...normalized];
+        }
+
+        saveCurrentScopeEntries();
+        showNotification(`Successfully imported ${normalized.length} lore entries!`);
+      } catch (err) {
+        alert('Invalid JSON file: ' + err.message);
+      }
+    };
+    reader.readAsText(file);
+  }
+
+  // Lorebook Modal Event Listeners
+  const openLorebookBtn = document.getElementById('open-lorebook-btn');
+  const lorebookModal = document.getElementById('lorebook-modal');
+  const closeLorebookModal = document.getElementById('close-lorebook-modal');
+  const scopeCharBtn = document.getElementById('scope-char-lore-btn');
+  const scopeGlobalBtn = document.getElementById('scope-global-lore-btn');
+  const addLoreEntryBtn = document.getElementById('add-lore-entry-btn');
+  const cancelLoreBtn = document.getElementById('cancel-lore-entry-btn');
+  const saveLoreBtn = document.getElementById('save-lore-entry-btn');
+  const exportLoreBtn = document.getElementById('export-lorebook-btn');
+  const importLoreInput = document.getElementById('import-lorebook-input');
+
+  openLorebookBtn?.addEventListener('click', () => {
+    loadLorebook();
+    renderLoreEntries();
+    lorebookModal?.classList.remove('hidden');
+  });
+
+  closeLorebookModal?.addEventListener('click', () => {
+    lorebookModal?.classList.add('hidden');
+  });
+
+  scopeCharBtn?.addEventListener('click', () => {
+    activeLoreScope = 'character';
+    scopeCharBtn.className = 'px-3 py-1 rounded-lg text-xs font-semibold bg-cyan-600 text-white transition cursor-pointer';
+    if (scopeGlobalBtn) scopeGlobalBtn.className = 'px-3 py-1 rounded-lg text-xs font-semibold text-slate-400 hover:text-white transition cursor-pointer';
+    renderLoreEntries();
+  });
+
+  scopeGlobalBtn?.addEventListener('click', () => {
+    activeLoreScope = 'global';
+    scopeGlobalBtn.className = 'px-3 py-1 rounded-lg text-xs font-semibold bg-cyan-600 text-white transition cursor-pointer';
+    if (scopeCharBtn) scopeCharBtn.className = 'px-3 py-1 rounded-lg text-xs font-semibold text-slate-400 hover:text-white transition cursor-pointer';
+    renderLoreEntries();
+  });
+
+  addLoreEntryBtn?.addEventListener('click', () => {
+    openLoreForm();
+  });
+
+  cancelLoreBtn?.addEventListener('click', closeLoreForm);
+  saveLoreBtn?.addEventListener('click', saveLoreEntryFromForm);
+  exportLoreBtn?.addEventListener('click', exportLorebook);
+  importLoreInput?.addEventListener('change', (e) => {
+    const file = (e.target).files?.[0];
+    if (file) importLorebook(file);
+  });
+
   // Startup
+  loadLorebook();
   initChat();
 </script>
