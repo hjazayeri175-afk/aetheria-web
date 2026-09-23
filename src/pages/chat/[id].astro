@@ -276,6 +276,38 @@ const { character } = Astro.props;
           </div>
         </div>
 
+        <!-- Pinned Memory & Author's Note Box (SillyTavern Standard) -->
+        <div class="p-3.5 rounded-2xl bg-gradient-to-b from-[#161226] to-[#0c0919] border border-amber-500/25 space-y-2.5 shadow-lg shadow-amber-950/20">
+          <div class="flex items-center justify-between">
+            <div class="flex items-center gap-1.5">
+              <span class="text-sm">📌</span>
+              <h2 class="text-xs font-bold text-amber-200 tracking-wide">Pinned Memory</h2>
+            </div>
+            <span class="px-2 py-0.5 rounded-full bg-amber-500/10 border border-amber-500/20 text-[10px] font-mono text-amber-300">
+              Author's Note
+            </span>
+          </div>
+          <p class="text-[11px] text-slate-400 leading-relaxed">
+            Persistent context anchor. Injected into every AI turn to preserve key relationship facts and plot states across long chats.
+          </p>
+          <textarea 
+            id="pinned-note-input"
+            rows="3"
+            placeholder="e.g. {{char}} and {{user}} escaped Sector 4 together. They share a fragile trust and are currently hiding from patrols..."
+            class="w-full px-2.5 py-2 rounded-xl bg-black/40 border border-white/10 text-xs text-slate-200 placeholder-slate-500 focus:outline-none focus:border-amber-400/50 resize-none font-sans leading-relaxed"
+          ></textarea>
+          <div class="flex items-center justify-between pt-1">
+            <span id="pinned-note-status" class="text-[10px] text-slate-400 font-mono">0 chars</span>
+            <button 
+              id="save-pinned-note-btn"
+              type="button"
+              class="px-2.5 py-1 rounded-lg bg-amber-500/20 hover:bg-amber-500/30 border border-amber-500/40 text-amber-300 hover:text-white text-[11px] font-medium transition cursor-pointer active:scale-95"
+            >
+              Save Pin 📌
+            </button>
+          </div>
+        </div>
+
         <!-- Safety Certification -->
         <div class="p-3.5 rounded-xl bg-purple-950/20 border border-purple-500/20 space-y-1.5">
           <div class="flex items-center gap-1.5 text-xs font-semibold text-purple-300">
@@ -1380,10 +1412,37 @@ const { character } = Astro.props;
   const videoDurationSelect = document.getElementById('video-duration-select');
   const videoResSelect = document.getElementById('video-res-select');
 
-  // Format action text (*italic*) vs speech
+  // Format action text (*italic*), quotes ("dialogue"), bold, code, and paragraphs (Cinematic Markdown)
   function formatMessageText(text) {
     if (!text) return '';
-    return text.replace(/\*([^*]+)\*/g, '<em class="text-purple-300 italic font-serif">$1</em>');
+    // 1. Basic entity escaping
+    let s = text
+      .replace(/&/g, '&amp;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;');
+
+    // 2. Triple asterisks ***bold italic***
+    s = s.replace(/\*\*\*([^*]+)\*\*\*/g, '<strong class="font-bold text-purple-200"><em class="italic text-purple-300 font-serif">$1</em></strong>');
+
+    // 3. Double asterisks **bold**
+    s = s.replace(/\*\*([^*]+)\*\*/g, '<strong class="font-bold text-white">$1</strong>');
+
+    // 4. Single asterisks *action / sensory narration / thoughts*
+    s = s.replace(/\*([^*]+)\*/g, '<em class="text-purple-300/90 italic font-serif leading-relaxed">$1</em>');
+
+    // 5. Spoken dialogue in quotes: "dialogue" or “dialogue”
+    s = s.replace(/(["“][^"”]+["”])/g, '<span class="text-slate-50 font-medium tracking-normal drop-shadow-sm">$1</span>');
+
+    // 6. Inline code `code`
+    s = s.replace(/`([^`]+)`/g, '<code class="px-1.5 py-0.5 rounded bg-white/10 text-cyan-300 font-mono text-[11px]">$1</code>');
+
+    // 7. Multi-line paragraphs: double newlines become separate paragraphs
+    const paragraphs = s.split(/\n{2,}/);
+    if (paragraphs.length > 1) {
+      return paragraphs.map(p => `<p class="mb-2.5 last:mb-0 leading-relaxed">${p.replace(/\n/g, '<br/>')}</p>`).join('');
+    }
+
+    return `<p class="leading-relaxed">${s.replace(/\n/g, '<br/>')}</p>`;
   }
 
   // Load and apply settings from localStorage
@@ -1937,6 +1996,7 @@ const { character } = Astro.props;
     loadSessions();
     loadActiveSessionConversation();
     loadEngineSettings();
+    initPinnedNote();
   }
 
   function saveChat() {
@@ -2181,6 +2241,13 @@ Never speak, narrate, or decide thoughts or actions for {{user}}. Maintain high 
       prompt += `\n\n[CONTEXTUAL WORLD LORE:\n${afterCharContent}]`;
     }
 
+    // Pinned Memory / Author's Note Injection (SillyTavern Standard)
+    const pinnedNoteKey = 'aetheria_pinned_note_' + (activeChar.id || character.id || 'default');
+    const pinnedNote = localStorage.getItem(pinnedNoteKey) || '';
+    if (pinnedNote.trim()) {
+      prompt += `\n\n[AUTHOR NOTE & PINNED MEMORY:\n${formatMacroText(pinnedNote.trim())}\nImportant: The plot details, relationship status, and facts above are permanent anchors and must be respected.]`;
+    }
+
     return prompt;
   }
 
@@ -2326,9 +2393,41 @@ Never speak, narrate, or decide thoughts or actions for {{user}}. Maintain high 
 
     // Fallback response generator if API was not configured, failed, or streaming wasn't used
     if (!replyText) {
+      if (typingIndicator) typingIndicator.classList.remove('hidden');
+      try {
+        const pollHistory = recentHistory.map(m => ({
+          role: m.sender === 'user' ? 'user' : 'assistant',
+          content: m.text
+        }));
+        const pollRes = await fetch('https://text.pollinations.ai/', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            messages: [
+              { role: 'system', content: sysPrompt },
+              ...pollHistory
+            ],
+            model: 'openai',
+            temperature: 0.85
+          }),
+          signal: AbortSignal.timeout(8000)
+        });
+        if (pollRes.ok) {
+          const pollText = await pollRes.text();
+          if (pollText && !pollText.includes('"error"') && pollText.length > 5) {
+            replyText = pollText.trim();
+          }
+        }
+      } catch (e) {
+        console.warn('Anonymous keyless fallback error:', e);
+      }
+
+      if (!replyText) {
+        await new Promise(r => setTimeout(r, 500));
+        replyText = pickResponse(userText);
+      }
+
       if (typingIndicator) typingIndicator.classList.add('hidden');
-      await new Promise(r => setTimeout(r, 600 + Math.random() * 400));
-      replyText = pickResponse(userText);
 
       const charMsg = {
         sender: 'character',
@@ -2409,6 +2508,33 @@ Never speak, narrate, or decide thoughts or actions for {{user}}. Maintain high 
           newReply = data.choices?.[0]?.message?.content || '';
         }
       } catch (err) {}
+    }
+
+    if (!newReply) {
+      try {
+        const lastUserMsg = conversation.slice(0, msgIdx).reverse().find(m => m.sender === 'user');
+        const systemPrompt = buildSystemPrompt(lastUserMsg ? lastUserMsg.text : '');
+        const historySlice = conversation.slice(0, msgIdx).map(m => ({
+          role: m.sender === 'user' ? 'user' : 'assistant',
+          content: m.text
+        }));
+        const pollRes = await fetch('https://text.pollinations.ai/', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            messages: [{ role: 'system', content: systemPrompt }, ...historySlice],
+            model: 'openai',
+            temperature: 0.9
+          }),
+          signal: AbortSignal.timeout(8000)
+        });
+        if (pollRes.ok) {
+          const pollText = await pollRes.text();
+          if (pollText && !pollText.includes('"error"') && pollText.length > 5) {
+            newReply = pollText.trim();
+          }
+        }
+      } catch (e) {}
     }
 
     if (!newReply) {
@@ -3310,6 +3436,43 @@ Never speak, narrate, or decide thoughts or actions for {{user}}. Maintain high 
   importLoreInput?.addEventListener('change', (e) => {
     const file = (e.target).files?.[0];
     if (file) importLorebook(file);
+  });
+
+  // Pinned Memory (Author's Note) handlers
+  const pinnedInput = document.getElementById('pinned-note-input');
+  const pinnedStatus = document.getElementById('pinned-note-status');
+  const savePinnedBtn = document.getElementById('save-pinned-note-btn');
+
+  function initPinnedNote() {
+    const key = 'aetheria_pinned_note_' + (activeChar.id || character.id || 'default');
+    const val = localStorage.getItem(key) || '';
+    if (pinnedInput) {
+      pinnedInput.value = val;
+      updatePinnedStatus(val.length);
+    }
+  }
+
+  function updatePinnedStatus(len) {
+    if (pinnedStatus) {
+      pinnedStatus.textContent = `${len} chars`;
+      pinnedStatus.className = len > 0 ? 'text-[10px] text-amber-300 font-mono' : 'text-[10px] text-slate-500 font-mono';
+    }
+  }
+
+  pinnedInput?.addEventListener('input', (e) => {
+    updatePinnedStatus(e.target.value.length);
+  });
+
+  savePinnedBtn?.addEventListener('click', () => {
+    const key = 'aetheria_pinned_note_' + (activeChar.id || character.id || 'default');
+    const val = pinnedInput ? pinnedInput.value.trim() : '';
+    localStorage.setItem(key, val);
+    showNotification(val ? '📌 Pinned memory saved into prompt!' : '📌 Pinned memory cleared.');
+    if (savePinnedBtn) {
+      const orig = savePinnedBtn.innerHTML;
+      savePinnedBtn.innerHTML = 'Saved! ✓';
+      setTimeout(() => { savePinnedBtn.innerHTML = orig; }, 1500);
+    }
   });
 
   // Startup
