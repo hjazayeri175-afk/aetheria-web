@@ -1,0 +1,742 @@
+---
+import Layout from '../layouts/Layout.astro';
+import Header from '../components/Header.astro';
+import BottomNav from '../components/BottomNav.astro';
+import { 
+  User, 
+  Sparkles, 
+  ShieldCheck, 
+  Save, 
+  Upload, 
+  Download, 
+  Trash2, 
+  Plus, 
+  RotateCcw, 
+  Check, 
+  Copy, 
+  Eye, 
+  Sliders, 
+  MessageSquare, 
+  ArrowLeft, 
+  ExternalLink,
+  Bot
+} from '@lucide/astro';
+
+const PRESET_AVATARS = [
+  { url: '/avatars/asian_woman.webp', label: 'Neon Operator (Female)' },
+  { url: '/avatars/anime_girl.webp', label: 'Cyberpunk Rebel (Anime F)' },
+  { url: '/avatars/anime_androgynous.webp', label: 'Synth Specialist (Anime Androgynous)' },
+  { url: '/avatars/western_woman.webp', label: 'Corporate Agent (Female)' },
+  { url: '/avatars/white_man.webp', label: 'Deck Specialist (Male)' },
+  { url: '/avatars/black_man.webp', label: 'Vanguard Enforcer (Male)' },
+  { url: '/avatars/black_woman.webp', label: 'Cyber Strategist (Female)' },
+  { url: '/avatars/abstract_ai.webp', label: 'Nexus AI Core (Abstract)' },
+];
+---
+
+<Layout title="User Persona & Identity Studio — Aetheria AI">
+  <Header />
+
+  <main class="flex-1 max-w-5xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-10 pb-28 sm:pb-12 space-y-8">
+    
+    <!-- Top Nav / Breadcrumbs -->
+    <div class="flex items-center justify-between">
+      <div class="flex items-center gap-3">
+        <a 
+          href="/" 
+          class="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-white/[0.04] hover:bg-white/[0.08] border border-white/[0.08] text-slate-300 hover:text-white text-xs font-medium transition"
+        >
+          <ArrowLeft class="w-3.5 h-3.5 text-purple-400" />
+          <span>Hub</span>
+        </a>
+        <span class="text-slate-600">/</span>
+        <span class="text-xs font-semibold text-purple-300">User Identity & Persona</span>
+      </div>
+
+      <div class="flex items-center gap-2">
+        <a 
+          href="/create" 
+          class="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-purple-600/20 hover:bg-purple-600/30 border border-purple-500/30 text-purple-300 hover:text-purple-200 text-xs font-medium transition"
+        >
+          <Plus class="w-3.5 h-3.5" />
+          <span class="hidden sm:inline">Create Character</span>
+        </a>
+      </div>
+    </div>
+
+    <!-- Hero Header -->
+    <div class="relative overflow-hidden rounded-3xl border border-white/[0.08] bg-gradient-to-b from-purple-950/20 via-[#0a0d1a] to-[#070913] p-6 sm:p-8">
+      <div class="absolute -right-20 -top-20 w-80 h-80 bg-purple-600/10 rounded-full blur-3xl pointer-events-none"></div>
+      <div class="relative z-10 flex flex-col md:flex-row md:items-center justify-between gap-6">
+        <div>
+          <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-purple-500/10 border border-purple-500/20 text-xs font-medium text-purple-300 mb-3">
+            <User class="w-3.5 h-3.5 text-purple-400" />
+            <span>Tavern V2 & Janitor Compatible Persona Engine</span>
+          </div>
+          <h1 class="text-2xl sm:text-3xl font-extrabold text-white tracking-tight">
+            User Persona & Identity
+          </h1>
+          <p class="text-xs sm:text-sm text-slate-400 mt-2 max-w-2xl leading-relaxed">
+            Configure how characters perceive and address you. Your persona name seamlessly substitutes the 
+            <code class="px-1.5 py-0.5 rounded bg-white/10 text-cyan-300 font-mono text-xs">{"{{user}}"}</code> 
+            macro across all roleplay dialogues, system prompts, and memory contexts.
+          </p>
+        </div>
+
+        <!-- Quick Storage Status -->
+        <div class="bg-black/40 border border-white/10 rounded-2xl p-4 shrink-0 min-w-[200px] text-xs space-y-2">
+          <div class="flex items-center justify-between text-slate-400">
+            <span>Storage Mode:</span>
+            <span class="text-emerald-400 font-semibold flex items-center gap-1">
+              <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span>
+              Local (BYOK)
+            </span>
+          </div>
+          <div class="flex items-center justify-between text-slate-400">
+            <span>Custom Personas:</span>
+            <span id="persona-count-badge" class="text-white font-mono font-bold">1</span>
+          </div>
+          <div class="flex items-center justify-between text-slate-400">
+            <span>Custom Characters:</span>
+            <span id="char-count-badge" class="text-white font-mono font-bold">0</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Multi-Persona Switcher Tabs -->
+    <div class="p-4 rounded-2xl bg-[#090b17] border border-white/[0.08] flex items-center justify-between gap-3 overflow-x-auto">
+      <div class="flex items-center gap-2" id="persona-tabs-container">
+        <!-- Rendered dynamically -->
+      </div>
+      <button 
+        id="add-persona-btn"
+        type="button" 
+        class="shrink-0 flex items-center gap-1.5 px-3 py-2 rounded-xl bg-white/[0.04] hover:bg-white/[0.08] border border-white/10 text-xs font-semibold text-slate-300 hover:text-white transition cursor-pointer"
+      >
+        <Plus class="w-3.5 h-3.5 text-purple-400" />
+        <span>New Persona</span>
+      </button>
+    </div>
+
+    <!-- Main Persona Form -->
+    <form id="persona-form" class="space-y-6">
+      
+      <!-- Section 1: Appearance & Avatar -->
+      <div class="p-6 rounded-3xl bg-[#080a14] border border-white/[0.08] shadow-xl space-y-6">
+        <div class="border-b border-white/[0.06] pb-3 flex items-center justify-between">
+          <h2 class="text-base sm:text-lg font-bold text-white flex items-center gap-2">
+            <Eye class="w-5 h-5 text-purple-400" />
+            <span>1. Visual Avatar & Profile Picture</span>
+          </h2>
+          <span class="text-xs text-slate-400">Shown in chat dialogue bubbles</span>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-12 gap-6 items-center">
+          <!-- Active Avatar Display -->
+          <div class="md:col-span-4 flex flex-col items-center justify-center p-5 rounded-2xl bg-[#0c0e17] border border-purple-500/30 space-y-3">
+            <div class="relative w-28 h-28 rounded-full overflow-hidden ring-4 ring-purple-500/40 shadow-xl shadow-purple-950/50">
+              <img 
+                id="persona-avatar-preview" 
+                src={PRESET_AVATARS[0].url} 
+                alt="Active Persona" 
+                class="w-full h-full object-cover transition duration-200" 
+              />
+            </div>
+            <div class="text-center">
+              <h3 id="preview-persona-name" class="text-sm font-bold text-white">Traveler</h3>
+              <p id="preview-persona-pronouns" class="text-xs text-purple-400">They/Them</p>
+            </div>
+          </div>
+
+          <!-- Avatar Selectors -->
+          <div class="md:col-span-8 space-y-4">
+            <div>
+              <label class="block text-xs font-semibold text-slate-300 mb-2">
+                Choose from Studio Presets:
+              </label>
+              <div class="grid grid-cols-4 sm:grid-cols-8 gap-2">
+                {PRESET_AVATARS.map((avatar, idx) => (
+                  <button
+                    type="button"
+                    class={`preset-avatar-btn relative aspect-square rounded-xl overflow-hidden border-2 transition cursor-pointer ${idx === 0 ? 'border-purple-500 ring-2 ring-purple-500/50 scale-105' : 'border-white/10 hover:border-purple-400/50 opacity-70 hover:opacity-100'}`}
+                    data-url={avatar.url}
+                    title={avatar.label}
+                  >
+                    <img src={avatar.url} alt={avatar.label} class="w-full h-full object-cover" />
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            <!-- Custom Avatar URL -->
+            <div>
+              <label for="persona-avatar-url" class="block text-xs font-semibold text-slate-300 mb-1.5">
+                Or Custom Avatar Image URL:
+              </label>
+              <input 
+                id="persona-avatar-url" 
+                type="url" 
+                placeholder="https://images.unsplash.com/... or data:image/..." 
+                class="w-full px-4 py-2.5 rounded-xl bg-white/[0.04] border border-white/10 text-xs text-white placeholder:text-slate-500 outline-none focus:border-purple-500/70"
+                value={PRESET_AVATARS[0].url}
+              />
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Section 2: Identity & Pronouns -->
+      <div class="p-6 rounded-3xl bg-[#080a14] border border-white/[0.08] shadow-xl space-y-6">
+        <div class="border-b border-white/[0.06] pb-3">
+          <h2 class="text-base sm:text-lg font-bold text-white flex items-center gap-2">
+            <User class="w-5 h-5 text-cyan-400" />
+            <span>2. Identity & Macro Replacement</span>
+          </h2>
+          <p class="text-xs text-slate-400 mt-1">
+            Replaces <code class="text-cyan-300">{"{{user}}"}</code> in all greetings, starters, and dialogues.
+          </p>
+        </div>
+
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <!-- Display Name -->
+          <div>
+            <label for="persona-name" class="block text-xs sm:text-sm font-semibold text-slate-200 mb-1.5">
+              Display Name <span class="text-cyan-400 font-mono">({"{{user}}"})</span> <span class="text-rose-400">*</span>
+            </label>
+            <input 
+              id="persona-name" 
+              type="text" 
+              placeholder="e.g. Jason, Ren, Alex, Traveler" 
+              class="w-full px-4 py-3 rounded-2xl bg-white/[0.04] border border-white/10 focus:border-cyan-500/70 text-sm text-white placeholder:text-slate-500 outline-none"
+              value="Traveler" 
+              required
+            />
+          </div>
+
+          <!-- Pronouns -->
+          <div>
+            <label for="persona-pronouns" class="block text-xs sm:text-sm font-semibold text-slate-200 mb-1.5">
+              Pronouns
+            </label>
+            <input 
+              id="persona-pronouns" 
+              type="text" 
+              placeholder="e.g. He/Him, She/Her, They/Them" 
+              class="w-full px-4 py-3 rounded-2xl bg-white/[0.04] border border-white/10 focus:border-cyan-500/70 text-sm text-white placeholder:text-slate-500 outline-none"
+              value="They/Them" 
+            />
+          </div>
+        </div>
+
+        <!-- Role Archetype / Title -->
+        <div>
+          <label for="persona-title" class="block text-xs sm:text-sm font-semibold text-slate-200 mb-1.5">
+            Archetype / Title
+          </label>
+          <input 
+            id="persona-title" 
+            type="text" 
+            placeholder="e.g. Rogue Netrunner, Arcane Scholar, Wandering Detective" 
+            class="w-full px-4 py-3 rounded-2xl bg-white/[0.04] border border-white/10 focus:border-cyan-500/70 text-sm text-white placeholder:text-slate-500 outline-none"
+            value="Explorer of the Nexus" 
+          />
+        </div>
+      </div>
+
+      <!-- Section 3: Persona Description & Appearance -->
+      <div class="p-6 rounded-3xl bg-[#080a14] border border-white/[0.08] shadow-xl space-y-6">
+        <div class="border-b border-white/[0.06] pb-3 flex items-center justify-between">
+          <div>
+            <h2 class="text-base sm:text-lg font-bold text-white flex items-center gap-2">
+              <Sliders class="w-5 h-5 text-emerald-400" />
+              <span>3. Persona Description & Sensory Traits</span>
+            </h2>
+            <p class="text-xs text-slate-400 mt-1">
+              Passed to the LLM system prompt so characters know your appearance, traits, and background.
+            </p>
+          </div>
+          <span id="tok-persona-desc" class="text-xs font-mono text-emerald-400 bg-emerald-950/40 px-2.5 py-1 rounded-full border border-emerald-500/30">
+            ~0 tok
+          </span>
+        </div>
+
+        <!-- Persona Description Textarea -->
+        <div>
+          <textarea 
+            id="persona-desc" 
+            rows="6" 
+            class="w-full px-4 py-3.5 rounded-2xl bg-white/[0.04] border border-white/10 focus:border-emerald-500/70 text-sm sm:text-base text-white placeholder:text-slate-500 outline-none leading-relaxed resize-y min-h-[140px]"
+            placeholder="Describe your persona's physical appearance, clothing, demeanor, background, or equipment.&#10;&#10;Example:&#10;Tall build with dark hair and a cybernetic optical scanner over the left eye. Wears a weathered longcoat lined with thermal shielding. Speaks with calm deliberation and prefers subtle diplomacy before drawing weapons."
+          ></textarea>
+          <p class="text-[11px] text-slate-500 mt-1.5">
+            This context allows the AI to react to what you wear, your species, or your physical stature naturally.
+          </p>
+        </div>
+      </div>
+
+      <!-- Section 4: Global AI Guardrails & Directives -->
+      <div class="p-6 rounded-3xl bg-[#080a14] border border-white/[0.08] shadow-xl space-y-6">
+        <div class="border-b border-white/[0.06] pb-3 flex items-center justify-between">
+          <div>
+            <h2 class="text-base sm:text-lg font-bold text-white flex items-center gap-2">
+              <ShieldCheck class="w-5 h-5 text-amber-400" />
+              <span>4. Global Guardrails & Instructions</span>
+            </h2>
+            <p class="text-xs text-slate-400 mt-1">
+              Instructions injected into the system prompt for <strong>every character</strong> you chat with.
+            </p>
+          </div>
+          <span id="tok-persona-notes" class="text-xs font-mono text-amber-400 bg-amber-950/40 px-2.5 py-1 rounded-full border border-amber-500/30">
+            ~0 tok
+          </span>
+        </div>
+
+        <!-- Global Instructions Textarea -->
+        <div>
+          <textarea 
+            id="persona-notes" 
+            rows="4" 
+            class="w-full px-4 py-3.5 rounded-2xl bg-white/[0.04] border border-white/10 focus:border-amber-500/70 text-sm sm:text-base text-white placeholder:text-slate-500 outline-none leading-relaxed resize-y min-h-[110px]"
+            placeholder="Global behavior preferences across all characters.&#10;&#10;Example:&#10;Never narrate, speak, or assume actions for &#123;&#123;user&#125;&#125;. Maintain atmospheric immersion. Format sensory actions in *asterisks* and spoken dialogue in quotation marks."
+          ></textarea>
+        </div>
+      </div>
+
+      <!-- Section 5: Data Backup, Import & Vault -->
+      <div class="p-6 rounded-3xl bg-[#080a14] border border-white/[0.08] shadow-xl space-y-5">
+        <div class="border-b border-white/[0.06] pb-3">
+          <h2 class="text-base sm:text-lg font-bold text-white flex items-center gap-2">
+            <Download class="w-5 h-5 text-indigo-400" />
+            <span>5. Storage, Backup & Data Migration</span>
+          </h2>
+          <p class="text-xs text-slate-400 mt-1">
+            All your personas, custom characters, and chat settings reside in your browser's private storage.
+          </p>
+        </div>
+
+        <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
+          <!-- Backup Export -->
+          <button 
+            type="button" 
+            id="export-backup-btn"
+            class="p-4 rounded-2xl bg-white/[0.03] hover:bg-white/[0.06] border border-white/10 text-left transition cursor-pointer flex flex-col justify-between gap-3 group"
+          >
+            <div class="flex items-center justify-between">
+              <Download class="w-5 h-5 text-cyan-400 group-hover:scale-110 transition" />
+              <span class="text-[10px] text-slate-500 font-mono">.json</span>
+            </div>
+            <div>
+              <h4 class="text-xs font-bold text-white">Export Full Backup</h4>
+              <p class="text-[11px] text-slate-400 mt-0.5">Download all personas & custom characters</p>
+            </div>
+          </button>
+
+          <!-- Backup Import -->
+          <label 
+            class="p-4 rounded-2xl bg-white/[0.03] hover:bg-white/[0.06] border border-white/10 text-left transition cursor-pointer flex flex-col justify-between gap-3 group"
+          >
+            <div class="flex items-center justify-between">
+              <Upload class="w-5 h-5 text-purple-400 group-hover:scale-110 transition" />
+              <span class="text-[10px] text-slate-500 font-mono">Restore</span>
+            </div>
+            <div>
+              <h4 class="text-xs font-bold text-white">Import Backup File</h4>
+              <p class="text-[11px] text-slate-400 mt-0.5">Restore data from previous JSON file</p>
+            </div>
+            <input id="import-backup-file" type="file" accept=".json" class="hidden" />
+          </label>
+
+          <!-- Reset / Clear -->
+          <button 
+            type="button" 
+            id="clear-cache-btn"
+            class="p-4 rounded-2xl bg-rose-950/20 hover:bg-rose-950/40 border border-rose-500/20 text-left transition cursor-pointer flex flex-col justify-between gap-3 group"
+          >
+            <div class="flex items-center justify-between">
+              <Trash2 class="w-5 h-5 text-rose-400 group-hover:scale-110 transition" />
+              <span class="text-[10px] text-rose-400 font-mono">Reset</span>
+            </div>
+            <div>
+              <h4 class="text-xs font-bold text-rose-200">Clear Local Cache</h4>
+              <p class="text-[11px] text-rose-400/80 mt-0.5">Erase custom data from this device</p>
+            </div>
+          </button>
+        </div>
+      </div>
+
+      <!-- Bottom Sticky Save Bar -->
+      <div class="sticky bottom-4 z-40 p-4 rounded-3xl bg-[#090b17]/95 backdrop-blur-2xl border border-white/10 shadow-2xl flex items-center justify-between gap-3">
+        <div class="hidden sm:flex items-center gap-2 text-xs text-slate-400">
+          <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
+          <span>Ready to synchronize with active session</span>
+        </div>
+
+        <div class="flex items-center gap-2.5 w-full sm:w-auto justify-end">
+          <button 
+            type="button" 
+            id="reset-form-btn"
+            class="px-4 py-3 rounded-2xl bg-white/[0.05] hover:bg-white/[0.1] border border-white/10 text-xs font-semibold text-slate-300 hover:text-white transition cursor-pointer"
+          >
+            Reset Fields
+          </button>
+
+          <button 
+            type="submit" 
+            id="save-persona-btn"
+            class="flex-1 sm:flex-initial px-7 py-3 rounded-2xl bg-gradient-to-r from-emerald-600 via-teal-600 to-emerald-600 hover:from-emerald-500 hover:to-teal-500 text-xs sm:text-sm font-bold text-white shadow-lg shadow-emerald-950/50 flex items-center justify-center gap-2 transition cursor-pointer active:scale-95"
+          >
+            <Save class="w-4 h-4" />
+            <span>Save Persona</span>
+          </button>
+        </div>
+      </div>
+
+    </form>
+
+    <!-- Toast Notification -->
+    <div id="status-toast" class="fixed bottom-6 right-6 z-50 hidden p-3.5 rounded-2xl bg-emerald-950/90 border border-emerald-500/50 text-xs text-emerald-100 flex items-center gap-2.5 shadow-2xl backdrop-blur-xl">
+      <Check class="w-4 h-4 text-emerald-400 shrink-0" />
+      <span id="toast-text">Persona saved successfully!</span>
+    </div>
+
+  </main>
+
+  <BottomNav />
+</Layout>
+
+<script>
+  // ================= STORAGE CONSTANTS =================
+  const STORAGE_KEY_PERSONAS = 'aetheria_saved_personas';
+  const STORAGE_KEY_ACTIVE = 'aetheria_user_persona';
+  const STORAGE_KEY_CUSTOM_CHARS = 'aetheria_custom_characters';
+
+  interface UserPersona {
+    id: string;
+    name: string;
+    pronouns: string;
+    title: string;
+    avatar: string;
+    bio: string;
+    globalNotes: string;
+  }
+
+  const DEFAULT_PERSONA: UserPersona = {
+    id: 'default',
+    name: 'Traveler',
+    pronouns: 'They/Them',
+    title: 'Explorer of the Nexus',
+    avatar: '/avatars/asian_woman.webp',
+    bio: 'A resilient traveler walking the neon-drenched frontiers of the Aetheria nexus. Observant, curious, and quick to adapt to unpredictable environments.',
+    globalNotes: 'Never speak, narrate, or assume actions for {{user}}. Maintain atmospheric immersion. Format sensory actions in *asterisks* and spoken dialogue in quotes.'
+  };
+
+  // Form DOM elements
+  const form = document.getElementById('persona-form') as HTMLFormElement;
+  const nameInput = document.getElementById('persona-name') as HTMLInputElement;
+  const pronounsInput = document.getElementById('persona-pronouns') as HTMLInputElement;
+  const titleInput = document.getElementById('persona-title') as HTMLInputElement;
+  const avatarInput = document.getElementById('persona-avatar-url') as HTMLInputElement;
+  const descInput = document.getElementById('persona-desc') as HTMLTextAreaElement;
+  const notesInput = document.getElementById('persona-notes') as HTMLTextAreaElement;
+
+  const avatarPreview = document.getElementById('persona-avatar-preview') as HTMLImageElement;
+  const previewName = document.getElementById('preview-persona-name') as HTMLElement;
+  const previewPronouns = document.getElementById('preview-persona-pronouns') as HTMLElement;
+
+  const tokDesc = document.getElementById('tok-persona-desc') as HTMLElement;
+  const tokNotes = document.getElementById('tok-persona-notes') as HTMLElement;
+
+  const personaTabsContainer = document.getElementById('persona-tabs-container') as HTMLElement;
+  const addPersonaBtn = document.getElementById('add-persona-btn');
+  const exportBackupBtn = document.getElementById('export-backup-btn');
+  const importBackupFile = document.getElementById('import-backup-file') as HTMLInputElement;
+  const clearCacheBtn = document.getElementById('clear-cache-btn');
+  const resetFormBtn = document.getElementById('reset-form-btn');
+  const toast = document.getElementById('status-toast') as HTMLElement;
+  const toastText = document.getElementById('toast-text') as HTMLElement;
+
+  const personaCountBadge = document.getElementById('persona-count-badge') as HTMLElement;
+  const charCountBadge = document.getElementById('char-count-badge') as HTMLElement;
+
+  let personas: UserPersona[] = [];
+  let activeId = 'default';
+
+  function showToast(msg: string) {
+    if (!toast || !toastText) return;
+    toastText.textContent = msg;
+    toast.classList.remove('hidden');
+    setTimeout(() => {
+      toast.classList.add('hidden');
+    }, 3500);
+  }
+
+  function countTokens(text: string): number {
+    return Math.ceil(text.trim().length / 4);
+  }
+
+  function updateTokenCounters() {
+    if (tokDesc) tokDesc.textContent = `~${countTokens(descInput.value)} tok`;
+    if (tokNotes) tokNotes.textContent = `~${countTokens(notesInput.value)} tok`;
+  }
+
+  function updatePreview() {
+    if (previewName) previewName.textContent = nameInput.value.trim() || 'Traveler';
+    if (previewPronouns) previewPronouns.textContent = pronounsInput.value.trim() || 'They/Them';
+    if (avatarPreview && avatarInput.value) {
+      avatarPreview.src = avatarInput.value;
+    }
+  }
+
+  function loadPersonasFromStorage() {
+    try {
+      const saved = localStorage.getItem(STORAGE_KEY_PERSONAS);
+      if (saved) {
+        personas = JSON.parse(saved);
+      } else {
+        // Fallback to active single persona if exists
+        const single = localStorage.getItem(STORAGE_KEY_ACTIVE);
+        if (single) {
+          personas = [{ ...DEFAULT_PERSONA, ...JSON.parse(single), id: 'default' }];
+        } else {
+          personas = [{ ...DEFAULT_PERSONA }];
+        }
+      }
+
+      const active = localStorage.getItem(STORAGE_KEY_ACTIVE);
+      if (active) {
+        const parsed = JSON.parse(active);
+        activeId = parsed.id || personas[0]?.id || 'default';
+      } else {
+        activeId = personas[0]?.id || 'default';
+      }
+    } catch {
+      personas = [{ ...DEFAULT_PERSONA }];
+      activeId = 'default';
+    }
+
+    renderTabs();
+    populateFormWithActive();
+    updateBadges();
+  }
+
+  function updateBadges() {
+    if (personaCountBadge) personaCountBadge.textContent = String(personas.length);
+    if (charCountBadge) {
+      try {
+        const customChars = JSON.parse(localStorage.getItem(STORAGE_KEY_CUSTOM_CHARS) || '[]');
+        charCountBadge.textContent = String(customChars.length);
+      } catch {
+        charCountBadge.textContent = '0';
+      }
+    }
+  }
+
+  function renderTabs() {
+    if (!personaTabsContainer) return;
+    personaTabsContainer.innerHTML = '';
+
+    personas.forEach(p => {
+      const isActive = p.id === activeId;
+      const btn = document.createElement('button');
+      btn.type = 'button';
+      btn.className = `flex items-center gap-2 px-3.5 py-1.5 rounded-xl text-xs font-semibold transition cursor-pointer ${
+        isActive 
+          ? 'bg-purple-600 text-white shadow-md shadow-purple-900/40 ring-1 ring-purple-400/50' 
+          : 'bg-white/[0.04] text-slate-400 hover:text-white hover:bg-white/[0.08]'
+      }`;
+      btn.innerHTML = `
+        <span class="w-1.5 h-1.5 rounded-full ${isActive ? 'bg-cyan-300 animate-pulse' : 'bg-slate-500'}"></span>
+        <span>${p.name || 'Unnamed'}</span>
+      `;
+      btn.addEventListener('click', () => {
+        saveCurrentFormToActiveInMemory();
+        activeId = p.id;
+        renderTabs();
+        populateFormWithActive();
+      });
+      personaTabsContainer.appendChild(btn);
+    });
+  }
+
+  function populateFormWithActive() {
+    const active = personas.find(p => p.id === activeId) || personas[0] || DEFAULT_PERSONA;
+    nameInput.value = active.name || '';
+    pronounsInput.value = active.pronouns || '';
+    titleInput.value = active.title || '';
+    avatarInput.value = active.avatar || DEFAULT_PERSONA.avatar;
+    descInput.value = active.bio || '';
+    notesInput.value = active.globalNotes || '';
+
+    // Update preset avatar selection highlight
+    document.querySelectorAll('.preset-avatar-btn').forEach(btn => {
+      const url = btn.getAttribute('data-url');
+      if (url === avatarInput.value) {
+        btn.className = 'preset-avatar-btn relative aspect-square rounded-xl overflow-hidden border-2 transition cursor-pointer border-purple-500 ring-2 ring-purple-500/50 scale-105';
+      } else {
+        btn.className = 'preset-avatar-btn relative aspect-square rounded-xl overflow-hidden border-2 transition cursor-pointer border-white/10 hover:border-purple-400/50 opacity-70 hover:opacity-100';
+      }
+    });
+
+    updatePreview();
+    updateTokenCounters();
+  }
+
+  function saveCurrentFormToActiveInMemory() {
+    const current: UserPersona = {
+      id: activeId,
+      name: nameInput.value.trim() || 'Traveler',
+      pronouns: pronounsInput.value.trim() || 'They/Them',
+      title: titleInput.value.trim() || 'Explorer',
+      avatar: avatarInput.value.trim() || DEFAULT_PERSONA.avatar,
+      bio: descInput.value.trim(),
+      globalNotes: notesInput.value.trim()
+    };
+
+    const idx = personas.findIndex(p => p.id === activeId);
+    if (idx !== -1) {
+      personas[idx] = current;
+    } else {
+      personas.push(current);
+    }
+    return current;
+  }
+
+  function saveAllToStorage() {
+    const active = saveCurrentFormToActiveInMemory();
+    localStorage.setItem(STORAGE_KEY_PERSONAS, JSON.stringify(personas));
+    localStorage.setItem(STORAGE_KEY_ACTIVE, JSON.stringify(active));
+    renderTabs();
+    updateBadges();
+    showToast(`Persona "${active.name}" saved! Activated for all chats.`);
+  }
+
+  // Preset Avatar clicks
+  document.querySelectorAll('.preset-avatar-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const url = btn.getAttribute('data-url');
+      if (url) {
+        avatarInput.value = url;
+        document.querySelectorAll('.preset-avatar-btn').forEach(b => {
+          b.className = 'preset-avatar-btn relative aspect-square rounded-xl overflow-hidden border-2 transition cursor-pointer border-white/10 hover:border-purple-400/50 opacity-70 hover:opacity-100';
+        });
+        btn.className = 'preset-avatar-btn relative aspect-square rounded-xl overflow-hidden border-2 transition cursor-pointer border-purple-500 ring-2 ring-purple-500/50 scale-105';
+        updatePreview();
+      }
+    });
+  });
+
+  // Inputs live change
+  [nameInput, pronounsInput, titleInput, avatarInput].forEach(inp => {
+    inp?.addEventListener('input', updatePreview);
+  });
+  descInput?.addEventListener('input', updateTokenCounters);
+  notesInput?.addEventListener('input', updateTokenCounters);
+
+  // Form submit
+  form?.addEventListener('submit', (e) => {
+    e.preventDefault();
+    saveAllToStorage();
+  });
+
+  // Add new persona
+  addPersonaBtn?.addEventListener('click', () => {
+    saveCurrentFormToActiveInMemory();
+    const newId = 'persona_' + Date.now();
+    const newPersona: UserPersona = {
+      ...DEFAULT_PERSONA,
+      id: newId,
+      name: `Persona ${personas.length + 1}`,
+      title: 'New Roleplay Persona'
+    };
+    personas.push(newPersona);
+    activeId = newId;
+    renderTabs();
+    populateFormWithActive();
+    showToast('New persona profile created. Customize and save!');
+  });
+
+  // Reset Form
+  resetFormBtn?.addEventListener('click', () => {
+    if (confirm('Reset this persona to default values?')) {
+      populateFormWithActive();
+      showToast('Form reset to saved profile.');
+    }
+  });
+
+  // Export Full Backup
+  exportBackupBtn?.addEventListener('click', () => {
+    saveCurrentFormToActiveInMemory();
+    const backupData = {
+      timestamp: new Date().toISOString(),
+      version: '1.0',
+      activePersona: personas.find(p => p.id === activeId) || personas[0],
+      personas: personas,
+      customCharacters: JSON.parse(localStorage.getItem(STORAGE_KEY_CUSTOM_CHARS) || '[]'),
+      apiSettings: {
+        provider: localStorage.getItem('aetheria_text_provider'),
+        model: localStorage.getItem('aetheria_text_model'),
+        temp: localStorage.getItem('aetheria_text_temp'),
+        tokens: localStorage.getItem('aetheria_text_tokens')
+      }
+    };
+
+    const blob = new Blob([JSON.stringify(backupData, null, 2)], { type: 'application/json' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `aetheria_backup_${new Date().toISOString().slice(0, 10)}.json`;
+    a.click();
+    URL.revokeObjectURL(url);
+    showToast('Aetheria complete backup exported successfully!');
+  });
+
+  // Import Backup File
+  importBackupFile?.addEventListener('change', (e) => {
+    const file = (e.target as HTMLInputElement).files?.[0];
+    if (!file) return;
+
+    const reader = new FileReader();
+    reader.onload = (event) => {
+      try {
+        const data = JSON.parse(event.target?.result as string);
+        if (data.personas && Array.isArray(data.personas)) {
+          personas = data.personas;
+          localStorage.setItem(STORAGE_KEY_PERSONAS, JSON.stringify(personas));
+        }
+        if (data.activePersona) {
+          activeId = data.activePersona.id || personas[0]?.id || 'default';
+          localStorage.setItem(STORAGE_KEY_ACTIVE, JSON.stringify(data.activePersona));
+        }
+        if (data.customCharacters && Array.isArray(data.customCharacters)) {
+          localStorage.setItem(STORAGE_KEY_CUSTOM_CHARS, JSON.stringify(data.customCharacters));
+        }
+        renderTabs();
+        populateFormWithActive();
+        updateBadges();
+        showToast('Backup restored successfully! All data loaded.');
+      } catch (err) {
+        alert('Invalid JSON backup file format.');
+      }
+    };
+    reader.readAsText(file);
+  });
+
+  // Clear Local Cache
+  clearCacheBtn?.addEventListener('click', () => {
+    if (confirm('Are you sure you want to clear all local personas and custom characters? This action cannot be undone unless you have a backup.')) {
+      localStorage.removeItem(STORAGE_KEY_PERSONAS);
+      localStorage.removeItem(STORAGE_KEY_ACTIVE);
+      localStorage.removeItem(STORAGE_KEY_CUSTOM_CHARS);
+      personas = [{ ...DEFAULT_PERSONA }];
+      activeId = 'default';
+      renderTabs();
+      populateFormWithActive();
+      updateBadges();
+      showToast('Local cache cleared. Restored factory state.');
+    }
+  });
+
+  // Initial load
+  loadPersonasFromStorage();
+</script>

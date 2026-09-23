@@ -780,6 +780,17 @@ const PRESET_AVATARS = [
               <span id="preview-token-summary" class="font-mono text-purple-300">~0 tok</span>
             </div>
 
+            <!-- Instant Launch Action -->
+            <div class="mt-3">
+              <button 
+                id="sidebar-start-chat-btn" 
+                type="button" 
+                class="w-full py-3 px-4 rounded-2xl bg-gradient-to-r from-emerald-600 via-teal-600 to-emerald-600 hover:from-emerald-500 hover:to-teal-500 text-white font-bold text-xs sm:text-sm shadow-lg shadow-emerald-950/60 flex items-center justify-center gap-2 cursor-pointer transition active:scale-95"
+              >
+                <span>🚀 Save & Start Chatting</span>
+              </button>
+            </div>
+
             <!-- Collapsible Raw Tavern V2 JSON Viewer -->
             <div class="mt-3 border border-white/[0.08] rounded-2xl overflow-hidden bg-black/40">
               <button 
@@ -954,9 +965,9 @@ const PRESET_AVATARS = [
 
     if (nextStepBtn && nextBtnText) {
       if (currentStep === totalSteps) {
-        nextBtnText.textContent = '✓ Finish & Save Persona';
+        nextBtnText.textContent = '🚀 Save & Start Chatting';
         if (nextBtnIcon) nextBtnIcon.classList.add('hidden');
-        nextStepBtn.className = 'px-6 py-3.5 rounded-2xl bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 text-xs sm:text-sm font-bold text-white shadow-lg shadow-emerald-900/40 flex items-center gap-2 transition cursor-pointer active:scale-95';
+        nextStepBtn.className = 'px-6 py-3.5 rounded-2xl bg-gradient-to-r from-emerald-600 via-teal-600 to-emerald-600 hover:from-emerald-500 hover:to-teal-500 text-xs sm:text-sm font-bold text-white shadow-lg shadow-emerald-900/40 flex items-center gap-2 transition cursor-pointer active:scale-95';
       } else {
         const nextTitle = stepTitles[currentStep];
         nextBtnText.textContent = `Next: ${nextTitle}`;
@@ -985,7 +996,24 @@ const PRESET_AVATARS = [
     if (currentStep < totalSteps) {
       updateStepUI(currentStep + 1);
     } else {
-      saveCharacterData();
+      const savedChar = saveCharacterData();
+      if (savedChar && savedChar.id) {
+        showToast(`"${savedChar.name}" saved! Launching chat...`);
+        setTimeout(() => {
+          window.location.href = `/chat/custom?id=${encodeURIComponent(savedChar.id)}`;
+        }, 500);
+      }
+    }
+  });
+
+  const sidebarStartChatBtn = document.getElementById('sidebar-start-chat-btn');
+  sidebarStartChatBtn?.addEventListener('click', () => {
+    const savedChar = saveCharacterData();
+    if (savedChar && savedChar.id) {
+      showToast(`"${savedChar.name}" saved! Launching chat...`);
+      setTimeout(() => {
+        window.location.href = `/chat/custom?id=${encodeURIComponent(savedChar.id)}`;
+      }, 500);
     }
   });
 
@@ -1813,6 +1841,7 @@ const PRESET_AVATARS = [
     localStorage.setItem('aetheria_custom_characters', JSON.stringify(existing));
 
     showToast(`"${characterData.name}" saved! Character is ready for chat.`);
+    return characterData;
   }
 
   // ================= EXPORT TAVERN CARD V2 (JSON) =================

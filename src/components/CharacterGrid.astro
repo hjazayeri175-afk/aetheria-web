@@ -67,6 +67,88 @@ import { Sparkles, SlidersHorizontal, SearchX, RotateCcw } from '@lucide/astro';
   const counter = document.getElementById('character-counter');
   const resetBtn = document.getElementById('reset-filter-btn');
 
+  // Render custom characters from localStorage at top of grid
+  function loadCustomCharacters() {
+    try {
+      const customList = JSON.parse(localStorage.getItem('aetheria_custom_characters') || '[]');
+      if (customList.length === 0 || !grid) return;
+
+      customList.forEach((char: any) => {
+        if (document.querySelector(`[data-character-id="${char.id}"]`)) return;
+
+        const card = document.createElement('div');
+        card.className = 'character-card group relative flex flex-col rounded-2xl sm:rounded-3xl overflow-hidden bg-[#0c0e17] border border-purple-500/40 hover:border-purple-400 hover:shadow-2xl hover:shadow-purple-950/60 transition-all duration-300 transform hover:-translate-y-1 select-none cursor-pointer';
+        card.setAttribute('data-character-id', char.id);
+        card.setAttribute('data-category', char.category || 'custom');
+        card.setAttribute('data-name', (char.name || '').toLowerCase());
+        card.setAttribute('data-tags', (((char.tags || []).join(' ')) + ' custom roleplay').toLowerCase());
+
+        const tagsMarkup = (char.tags || ['Custom', 'User']).slice(0, 2).map((t: string) => `<span class="text-[10px] font-medium px-2 py-0.5 rounded-md bg-white/[0.08] text-slate-300 backdrop-blur-sm border border-white/[0.06]">${t}</span>`).join('');
+
+        card.innerHTML = `
+          <div class="relative w-full aspect-[3/4] sm:aspect-[4/5] overflow-hidden bg-[#090b12]">
+            <img 
+              src="${char.avatarUrl || '/avatars/asian_woman.webp'}" 
+              alt="${char.name}"
+              loading="lazy"
+              class="w-full h-full object-cover object-center group-hover:scale-105 transition-transform duration-700 ease-out"
+            />
+            <div class="absolute inset-0 bg-gradient-to-t from-[#07080d] via-[#07080d]/60 to-transparent opacity-95 group-hover:opacity-90 transition-opacity"></div>
+            <div class="absolute inset-0 bg-gradient-to-b from-[#07080d]/70 via-transparent to-transparent"></div>
+
+            <div class="absolute top-2.5 sm:top-3 left-2.5 sm:left-3 right-2.5 sm:right-3 flex items-center justify-between z-10">
+              <div class="flex items-center gap-1.5 px-2 py-0.5 rounded-full bg-black/60 backdrop-blur-md border border-white/10 text-[10px] font-medium text-slate-200">
+                <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span>
+                <span>Online</span>
+              </div>
+              <span class="px-2 py-0.5 rounded-full bg-gradient-to-r from-purple-600 to-indigo-600 border border-purple-400/40 text-[10px] font-bold text-white shadow-sm">
+                Custom
+              </span>
+            </div>
+
+            <div class="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300 z-20 pointer-events-none sm:pointer-events-auto">
+              <a 
+                href="/chat/custom?id=${encodeURIComponent(char.id)}"
+                class="open-chat-btn inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-purple-600/90 hover:bg-purple-500 active:scale-95 text-white font-semibold text-xs backdrop-blur-md shadow-lg shadow-purple-900/50 transform translate-y-2 group-hover:translate-y-0 transition duration-300 cursor-pointer pointer-events-auto"
+              >
+                <span>Chat Now</span>
+              </a>
+            </div>
+
+            <div class="absolute bottom-0 left-0 right-0 p-3 sm:p-4 z-10 flex flex-col justify-end">
+              <div class="hidden sm:flex flex-wrap items-center gap-1 mb-2">
+                ${tagsMarkup}
+              </div>
+              <h3 class="text-sm sm:text-base font-bold text-white tracking-tight group-hover:text-purple-300 transition-colors line-clamp-1">
+                ${char.name}
+              </h3>
+              <p class="text-[11px] sm:text-xs text-purple-400/90 font-medium line-clamp-1 mt-0.5">
+                ${char.title || 'Custom Character'}
+              </p>
+              <p class="hidden sm:block text-[11px] text-slate-400 line-clamp-2 mt-1.5 leading-relaxed">
+                ${char.description || ''}
+              </p>
+              <div class="flex items-center justify-between pt-2.5 mt-2 border-t border-white/[0.08] text-[11px] text-slate-400">
+                <span class="text-purple-300 font-mono text-[10px]">BYOK Ready</span>
+                <span class="text-amber-400 font-mono">★ 5.0</span>
+              </div>
+            </div>
+          </div>
+        `;
+
+        card.addEventListener('click', (e) => {
+          if (!(e.target as HTMLElement).closest('button') && !(e.target as HTMLElement).closest('a')) {
+            window.location.href = `/chat/custom?id=${encodeURIComponent(char.id)}`;
+          }
+        });
+
+        grid.prepend(card);
+      });
+    } catch {}
+  }
+
+  loadCustomCharacters();
+
   function filterCards() {
     const cards = document.querySelectorAll<HTMLElement>('.character-card');
     let visibleCount = 0;

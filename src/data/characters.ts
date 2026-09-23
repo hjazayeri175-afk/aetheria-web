@@ -218,3 +218,29 @@ export const characters: Character[] = [
     ]
   }
 ];
+
+export const customCharacterPlaceholder: Character = {
+  id: 'custom',
+  name: 'Custom Persona',
+  title: 'Custom Roleplay Persona',
+  category: 'custom',
+  tags: ['Custom', 'User Created', 'Roleplay'],
+  description: 'Custom character loaded from your local browser storage.',
+  avatarUrl: '/avatars/asian_woman.webp',
+  rating: '5.0',
+  chatsCount: '1',
+  greeting: '*Looks up with an attentive expression.* I am ready. What adventure or conversation shall we embark on today?',
+  status: 'online',
+  badge: 'Custom',
+  accentColor: '#8b5cf6',
+  starterPrompts: [
+    'Tell me about your background and history',
+    'What is our current situation or mission?',
+    'What should we do next?'
+  ],
+  fallbackReplies: [
+    '*Nods attentively, maintaining eye contact.* I am listening. Please proceed with whatever is on your mind.',
+    '*Smiles with quiet intrigue.* That is an interesting turn of events. How do you suggest we proceed?',
+    '*Takes a thoughtful breath before answering.* Every choice shapes the journey ahead. What direction are you leaning toward?'
+  ]
+};

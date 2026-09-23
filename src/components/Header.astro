@@ -89,10 +89,17 @@ import { Search, Sparkles, Plus, Compass, Flame, KeyRound, User, Command } from 
           <span class="hidden xs:inline">Create</span>
         </a>
 
-        <!-- User Profile Avatar Placeholder -->
-        <button class="relative flex items-center justify-center w-9 h-9 rounded-xl bg-white/[0.04] hover:bg-white/[0.08] border border-white/[0.08] text-slate-300 hover:text-white transition">
-          <User class="w-4 h-4" />
-        </button>
+        <!-- User Profile Avatar Link -->
+        <a 
+          href="/profile" 
+          id="header-user-profile-btn" 
+          title="User Persona & Profile ({{user}})" 
+          class="relative flex items-center justify-center w-9 h-9 rounded-xl bg-white/[0.04] hover:bg-white/[0.08] border border-white/[0.08] text-slate-300 hover:text-white transition overflow-hidden group"
+        >
+          <img id="header-user-avatar-img" class="hidden w-full h-full object-cover" alt="User Profile" />
+          <User id="header-user-icon" class="w-4 h-4 group-hover:scale-110 transition" />
+          <span class="absolute bottom-0.5 right-0.5 w-2 h-2 rounded-full bg-emerald-400 ring-2 ring-[#070913]"></span>
+        </a>
       </div>
 
     </div>
@@ -139,4 +146,19 @@ import { Search, Sparkles, Plus, Compass, Flame, KeyRound, User, Command } from 
       }
     });
   }
+
+  // Synchronize User Persona Avatar in Header
+  try {
+    const rawPersona = localStorage.getItem('aetheria_user_persona');
+    if (rawPersona) {
+      const persona = JSON.parse(rawPersona);
+      const img = document.getElementById('header-user-avatar-img') as HTMLImageElement | null;
+      const icon = document.getElementById('header-user-icon');
+      if (persona.avatar && img && icon) {
+        img.src = persona.avatar;
+        img.classList.remove('hidden');
+        icon.classList.add('hidden');
+      }
+    }
+  } catch {}
 </script>

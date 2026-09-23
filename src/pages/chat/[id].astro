@@ -1,6 +1,6 @@
 ---
 import Layout from '../../layouts/Layout.astro';
-import { characters, type Character } from '../../data/characters';
+import { characters, customCharacterPlaceholder, type Character } from '../../data/characters';
 import { 
   ArrowLeft, 
   Send, 
@@ -8,35 +8,40 @@ import {
   ShieldCheck, 
   KeyRound, 
   Volume2, 
-  VolumeX,
+  VolumeX, 
   Trash2, 
   Download, 
   RotateCcw, 
   PanelLeftClose, 
   PanelLeft, 
   Check, 
-  Copy,
-  Flame,
-  Star,
-  Bot,
-  User,
-  ExternalLink,
-  MessageSquare,
-  SlidersHorizontal,
-  Camera,
-  Video,
-  Brain,
-  Zap,
-  Play,
-  Eye,
-  EyeOff
+  Copy, 
+  Flame, 
+  Star, 
+  Bot, 
+  User, 
+  ExternalLink, 
+  MessageSquare, 
+  SlidersHorizontal, 
+  Camera, 
+  Video, 
+  Brain, 
+  Zap, 
+  Play, 
+  Eye, 
+  EyeOff 
 } from '@lucide/astro';
 
 export function getStaticPaths() {
-  return characters.map((character) => ({
+  const paths = characters.map((character) => ({
     params: { id: character.id },
     props: { character },
   }));
+  paths.push({
+    params: { id: 'custom' },
+    props: { character: customCharacterPlaceholder },
+  });
+  return paths;
 }
 
 interface Props {
@@ -66,6 +71,7 @@ const { character } = Astro.props;
         <div class="flex items-center gap-2.5">
           <div class="relative w-9 h-9 sm:w-10 sm:h-10 rounded-full overflow-hidden ring-2 ring-purple-500/30 shrink-0">
             <img 
+              id="chat-header-avatar"
               src={character.avatarUrl} 
               alt={character.name} 
               class="w-full h-full object-cover" 
@@ -74,13 +80,13 @@ const { character } = Astro.props;
           </div>
           <div>
             <div class="flex items-center gap-1.5">
-              <h1 class="text-xs sm:text-sm font-bold text-white tracking-wide">{character.name}</h1>
+              <h1 id="chat-header-name" class="text-xs sm:text-sm font-bold text-white tracking-wide">{character.name}</h1>
               <span class="inline-flex items-center gap-0.5 px-1.5 py-0.2 rounded text-[9px] font-semibold bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">
                 <ShieldCheck class="w-2.5 h-2.5" />
                 <span>SFW</span>
               </span>
             </div>
-            <p class="text-[10px] sm:text-xs text-purple-400/90 truncate max-w-[130px] sm:max-w-xs">{character.title}</p>
+            <p id="chat-header-title" class="text-[10px] sm:text-xs text-purple-400/90 truncate max-w-[130px] sm:max-w-xs">{character.title}</p>
           </div>
         </div>
       </div>
@@ -149,13 +155,14 @@ const { character } = Astro.props;
         <!-- Character Portrait Banner -->
         <div class="relative rounded-2xl overflow-hidden aspect-[4/3] border border-white/[0.1] shadow-lg shadow-purple-950/40">
           <img 
+            id="chat-sidebar-avatar"
             src={character.avatarUrl} 
             alt={character.name} 
             class="w-full h-full object-cover" 
           />
           <div class="absolute inset-0 bg-gradient-to-t from-[#080a14] via-transparent to-transparent"></div>
           <div class="absolute bottom-3 left-3 right-3 flex items-center justify-between">
-            <span class="text-[11px] font-semibold px-2 py-0.5 rounded-full bg-black/60 backdrop-blur-md text-purple-300 border border-purple-500/30">
+            <span id="chat-sidebar-category" class="text-[11px] font-semibold px-2 py-0.5 rounded-full bg-black/60 backdrop-blur-md text-purple-300 border border-purple-500/30">
               {character.category}
             </span>
             <div class="flex items-center gap-1 text-[11px] font-bold text-amber-400 bg-black/60 px-2 py-0.5 rounded-full backdrop-blur-md">
@@ -168,7 +175,7 @@ const { character } = Astro.props;
         <!-- Bio & Lore -->
         <div class="space-y-2">
           <h2 class="text-xs uppercase tracking-wider text-slate-400 font-bold">About Character</h2>
-          <p class="text-xs text-slate-300 leading-relaxed bg-white/[0.02] p-3.5 rounded-xl border border-white/[0.05]">
+          <p id="chat-sidebar-desc" class="text-xs text-slate-300 leading-relaxed bg-white/[0.02] p-3.5 rounded-xl border border-white/[0.05]">
             {character.description}
           </p>
         </div>
@@ -787,6 +794,7 @@ const { character } = Astro.props;
           class="hidden px-4 sm:px-6 py-2 flex items-center gap-3 animate-pulse"
         >
           <img 
+            id="chat-typing-avatar"
             src={character.avatarUrl} 
             alt={character.name} 
             class="w-7 h-7 rounded-full object-cover ring-1 ring-purple-500/40" 
@@ -795,7 +803,7 @@ const { character } = Astro.props;
             <span class="w-1.5 h-1.5 rounded-full bg-purple-400 animate-bounce"></span>
             <span class="w-1.5 h-1.5 rounded-full bg-purple-400 animate-bounce [animation-delay:0.2s]"></span>
             <span class="w-1.5 h-1.5 rounded-full bg-purple-400 animate-bounce [animation-delay:0.4s]"></span>
-            <span class="text-[11px] ml-1 text-slate-400">{character.name} is thinking...</span>
+            <span id="chat-typing-name" class="text-[11px] ml-1 text-slate-400">{character.name} is thinking...</span>
           </div>
         </div>
 
@@ -860,8 +868,88 @@ const { character } = Astro.props;
 
 <script define:vars={{ character }}>
   // Client-side state & logic
+  let activeChar = { ...character };
+  let activeUserPersona = {
+    name: 'Traveler',
+    pronouns: 'They/Them',
+    title: 'Explorer',
+    avatar: '',
+    bio: '',
+    globalNotes: 'Never speak, narrate, or assume actions for {{user}}. Maintain atmospheric immersion.'
+  };
+
+  // 1. Resolve User Persona from localStorage
+  try {
+    const rawPersona = localStorage.getItem('aetheria_user_persona');
+    if (rawPersona) {
+      activeUserPersona = { ...activeUserPersona, ...JSON.parse(rawPersona) };
+    }
+  } catch {}
+
+  // 2. Resolve Custom Character if URL is /chat/custom or has ?id=
+  const urlParams = new URLSearchParams(window.location.search);
+  const customId = urlParams.get('id');
+  const isCustomRoute = character.id === 'custom' || window.location.pathname.includes('/chat/custom');
+
+  if (isCustomRoute) {
+    try {
+      const customList = JSON.parse(localStorage.getItem('aetheria_custom_characters') || '[]');
+      let matched = null;
+      if (customId) {
+        matched = customList.find(c => c.id === customId);
+      }
+      if (!matched && customList.length > 0) {
+        matched = customList[customList.length - 1]; // latest created custom character
+      }
+      if (matched) {
+        activeChar = {
+          ...activeChar,
+          ...matched,
+          avatarUrl: matched.avatarUrl || activeChar.avatarUrl,
+          greeting: matched.greeting || activeChar.greeting,
+          fallbackReplies: (matched.alternateGreetings && matched.alternateGreetings.length > 0) ? matched.alternateGreetings : activeChar.fallbackReplies,
+          starterPrompts: (matched.starterPrompts && matched.starterPrompts.length > 0) ? matched.starterPrompts : activeChar.starterPrompts,
+        };
+      }
+    } catch {}
+  }
+
+  // Macro replacement helper for {{user}} and {{char}}
+  function formatMacroText(str) {
+    if (!str) return '';
+    return str
+      .replace(/\{\{user\}\}/gi, activeUserPersona.name || 'Traveler')
+      .replace(/\{\{char\}\}/gi, activeChar.name || 'Character');
+  }
+
+  // Update DOM elements for custom character if resolved
+  if (isCustomRoute && activeChar.name !== 'Custom Persona') {
+    document.title = `${activeChar.name} — Immersive Roleplay Chat | Aetheria AI`;
+    const hName = document.getElementById('chat-header-name');
+    if (hName) hName.textContent = activeChar.name;
+    const hTitle = document.getElementById('chat-header-title');
+    if (hTitle) hTitle.textContent = activeChar.title;
+    const hAvatar = document.getElementById('chat-header-avatar');
+    if (hAvatar) hAvatar.src = activeChar.avatarUrl;
+
+    const sAvatar = document.getElementById('chat-sidebar-avatar');
+    if (sAvatar) sAvatar.src = activeChar.avatarUrl;
+    const sCat = document.getElementById('chat-sidebar-category');
+    if (sCat) sCat.textContent = activeChar.category || 'Custom';
+    const sDesc = document.getElementById('chat-sidebar-desc');
+    if (sDesc) sDesc.textContent = formatMacroText(activeChar.description || '');
+
+    const tAvatar = document.getElementById('chat-typing-avatar');
+    if (tAvatar) tAvatar.src = activeChar.avatarUrl;
+    const tName = document.getElementById('chat-typing-name');
+    if (tName) tName.textContent = `${activeChar.name} is thinking...`;
+
+    const rInput = document.getElementById('room-input');
+    if (rInput) rInput.placeholder = `Type a message to ${activeChar.name}... (Press Enter to send, Shift+Enter for newline)`;
+  }
+
   let conversation = [];
-  const STORAGE_KEY = `aetheria_chat_${character.id}`;
+  const STORAGE_KEY = `aetheria_chat_${activeChar.id}`;
   let ttsEnabled = true;
 
   // DOM Elements
@@ -1327,7 +1415,7 @@ const { character } = Astro.props;
     if (conversation.length === 0) {
       conversation.push({
         sender: 'character',
-        text: character.greeting,
+        text: formatMacroText(activeChar.greeting),
         timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
       });
       saveChat();
@@ -1361,10 +1449,10 @@ const { character } = Astro.props;
 
     if (isChar) {
       wrapper.innerHTML = `
-        <img src="${character.avatarUrl}" alt="${character.name}" class="w-8 h-8 rounded-full object-cover ring-1 ring-purple-500/30 shrink-0 mt-1" />
+        <img src="${activeChar.avatarUrl}" alt="${activeChar.name}" class="w-8 h-8 rounded-full object-cover ring-1 ring-purple-500/30 shrink-0 mt-1" />
         <div class="space-y-1">
           <div class="flex items-center gap-2">
-            <span class="text-xs font-bold text-slate-200">${character.name}</span>
+            <span class="text-xs font-bold text-slate-200">${activeChar.name}</span>
             <span class="text-[10px] text-slate-500">${msg.timestamp || 'Just now'}</span>
           </div>
           <div class="p-3.5 sm:p-4 rounded-2xl rounded-tl-sm bg-[#101426] border border-white/[0.08] text-xs sm:text-sm text-slate-200 leading-relaxed shadow-md">
@@ -1385,15 +1473,19 @@ const { character } = Astro.props;
         <div class="space-y-1 text-right">
           <div class="flex items-center justify-end gap-2">
             <span class="text-[10px] text-slate-500">${msg.timestamp || 'Just now'}</span>
-            <span class="text-xs font-bold text-purple-300">You</span>
+            <span class="text-xs font-bold text-purple-300">${activeUserPersona.name || 'You'}</span>
           </div>
           <div class="p-3.5 sm:p-4 rounded-2xl rounded-tr-sm bg-gradient-to-r from-purple-700 to-indigo-600 text-white text-xs sm:text-sm leading-relaxed shadow-lg shadow-purple-950/40 text-left">
             ${msg.text}
           </div>
         </div>
-        <div class="w-8 h-8 rounded-full bg-purple-600 flex items-center justify-center text-white text-xs font-bold shrink-0 mt-1">
-          U
-        </div>
+        ${activeUserPersona.avatar ? `
+          <img src="${activeUserPersona.avatar}" alt="${activeUserPersona.name}" class="w-8 h-8 rounded-full object-cover ring-1 ring-purple-400/50 shrink-0 mt-1" />
+        ` : `
+          <div class="w-8 h-8 rounded-full bg-gradient-to-tr from-purple-600 to-indigo-600 flex items-center justify-center text-white text-xs font-bold shrink-0 mt-1 shadow-md shadow-purple-950/50">
+            ${(activeUserPersona.name || 'U').charAt(0).toUpperCase()}
+          </div>
+        `}
       `;
     }
 
@@ -1465,11 +1557,27 @@ const { character } = Astro.props;
           endpoint = base.replace(/\/+$/, '') + '/chat/completions';
         }
 
-        // Build system prompt with persona context
-        const systemPrompt = `You are roleplaying as ${character.name}, ${character.title}.
-Character Persona & Traits: ${character.description}
-Tags: ${character.tags.join(', ')}
-Behavioral Instructions: Stay fully in character. Adhere strictly to SFW standards. Use *asterisks* for expressive physical actions and sensory details, and use quotes for spoken dialogue. Respond with evocative emotional depth.`;
+        // Build system prompt with persona context & user persona
+        const systemPrompt = `You are roleplaying as ${activeChar.name}, ${activeChar.title}.
+Character Persona & Core Traits:
+${formatMacroText(activeChar.description || '')}
+${activeChar.personality ? `Personality: ${formatMacroText(activeChar.personality)}` : ''}
+${activeChar.scenario ? `Scenario / Context: ${formatMacroText(activeChar.scenario)}` : ''}
+${activeChar.speechStyle ? `Dialogue Style: ${formatMacroText(activeChar.speechStyle)}` : ''}
+${activeChar.mesExample ? `Example Dialogue:\n${formatMacroText(activeChar.mesExample)}` : ''}
+${activeChar.systemPrompt ? `Specific Instructions:\n${formatMacroText(activeChar.systemPrompt)}` : ''}
+
+User Identity ({{user}}):
+- Name: ${activeUserPersona.name || 'Traveler'}
+- Pronouns: ${activeUserPersona.pronouns || 'Unspecified'}
+- Persona Appearance & Traits: ${formatMacroText(activeUserPersona.bio || 'A traveler visiting the realm.')}
+- User Guardrails & Rules: ${formatMacroText(activeUserPersona.globalNotes || 'Never speak, narrate, or assume actions for {{user}}.')}
+
+Behavioral Instructions:
+Stay fully in character as ${activeChar.name}. Adhere strictly to wholesome SFW standards.
+Use *asterisks* for expressive physical gestures, movements, tone and sensory details.
+Use quotes "like this" for spoken dialogue.
+Never speak, narrate, or decide thoughts or actions for {{user}}. Maintain high immersion and emotional responsiveness.`;
 
         // Build recent history
         const contextLimit = parseInt(localStorage.getItem('aetheria_text_context') || '16', 10);
@@ -1535,12 +1643,12 @@ Behavioral Instructions: Stay fully in character. Adhere strictly to SFW standar
   }
 
   function pickResponse(userText) {
-    const replies = character.fallbackReplies || [];
+    const replies = activeChar.fallbackReplies || character.fallbackReplies || [];
     if (replies.length === 0) {
-      return `*Smiles faintly and leans in closer.* "Your thoughts resonate with an intriguing cadence. Tell me what else is on your mind."`;
+      return formatMacroText(`*Smiles faintly and leans in closer.* "Your thoughts resonate with an intriguing cadence, {{user}}. Tell me what else is on your mind."`);
     }
     const idx = Math.floor(Math.random() * replies.length);
-    return replies[idx];
+    return formatMacroText(replies[idx]);
   }
 
   // Event Listeners
@@ -1590,10 +1698,10 @@ Behavioral Instructions: Stay fully in character. Adhere strictly to SFW standar
 
   // Clear chat
   clearChatBtn?.addEventListener('click', () => {
-    if (confirm(`Reset conversation history with ${character.name}?`)) {
+    if (confirm(`Reset conversation history with ${activeChar.name}?`)) {
       conversation = [{
         sender: 'character',
-        text: character.greeting,
+        text: formatMacroText(activeChar.greeting),
         timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
       }];
       saveChat();
@@ -1604,16 +1712,16 @@ Behavioral Instructions: Stay fully in character. Adhere strictly to SFW standar
 
   // Export chat
   exportChatBtn?.addEventListener('click', () => {
-    let md = `# Conversation with ${character.name}\n\n`;
+    let md = `# Conversation with ${activeChar.name}\n\n`;
     conversation.forEach((msg) => {
-      const name = msg.sender === 'character' ? character.name : 'You';
+      const name = msg.sender === 'character' ? activeChar.name : (activeUserPersona.name || 'You');
       md += `**[${msg.timestamp || ''}] ${name}:**\n${msg.text}\n\n`;
     });
     const blob = new Blob([md], { type: 'text/markdown' });
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a');
     a.href = url;
-    a.download = `${character.name.toLowerCase().replace(/\s+/g, '_')}_chat.md`;
+    a.download = `${activeChar.name.toLowerCase().replace(/\s+/g, '_')}_chat.md`;
     a.click();
     URL.revokeObjectURL(url);
     showNotification('Chat exported to Markdown file!');
