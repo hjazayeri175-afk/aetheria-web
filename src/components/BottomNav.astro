@@ -50,20 +50,21 @@ import { Compass, Flame, Plus, MessageSquare, KeyRound, User } from '@lucide/ast
       <span class="text-[9px] font-bold text-slate-300 mt-1 uppercase tracking-wider">Create</span>
     </div>
 
-    <!-- 4. Chats -->
-    <button 
-      type="button" 
+    <!-- 4. Library / Chats -->
+    <a 
+      href="/library" 
       id="nav-btn-chats"
       class="nav-item group relative flex flex-col items-center justify-center py-1 px-2.5 text-slate-400 hover:text-slate-200 active:scale-95 transition-all cursor-pointer"
+      title="Conversation Library"
     >
       <div class="relative">
         <MessageSquare class="w-5 h-5 transition-transform duration-200 group-hover:scale-110 group-hover:text-cyan-400" />
         <!-- Pulse Active Badge -->
-        <span class="absolute -top-1 -right-1 w-2 h-2 rounded-full bg-cyan-400 ring-2 ring-[#070913] animate-pulse"></span>
+        <span class="absolute -top-1 -right-1 w-2 h-2 rounded-full bg-cyan-400 ring-2 ring-[#070913]"></span>
       </div>
-      <span class="text-[10px] font-medium tracking-tight mt-1">Chats</span>
+      <span class="text-[10px] font-medium tracking-tight mt-1">Library</span>
       <span class="nav-indicator hidden w-1 h-1 rounded-full bg-cyan-400 shadow-sm shadow-cyan-400 mt-0.5"></span>
-    </button>
+    </a>
 
     <!-- 5. Persona -->
     <a 

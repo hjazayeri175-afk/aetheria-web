@@ -34,7 +34,10 @@ import {
   Pencil,
   ChevronLeft,
   ChevronRight,
-  RefreshCw
+  RefreshCw,
+  GitBranch,
+  ChevronDown,
+  Plus
 } from '@lucide/astro';
 
 export function getStaticPaths() {
@@ -98,6 +101,46 @@ const { character } = Astro.props;
 
       <!-- Right Header Actions -->
       <div class="flex items-center gap-1 sm:gap-2">
+        <!-- Chat Branch / Sessions Dropdown Trigger -->
+        <div class="relative">
+          <button 
+            id="chat-sessions-btn"
+            type="button"
+            class="flex items-center gap-1.5 px-2.5 sm:px-3 py-1.5 rounded-xl bg-white/[0.04] hover:bg-white/[0.08] border border-white/[0.08] text-slate-300 hover:text-white text-xs font-medium transition cursor-pointer active:scale-95"
+            title="Manage Chat Branches & Sessions"
+          >
+            <GitBranch class="w-3.5 h-3.5 text-emerald-400" />
+            <span id="active-session-label" class="hidden sm:inline font-mono truncate max-w-[90px]">Main Branch</span>
+            <ChevronDown class="w-3 h-3 text-slate-400" />
+          </button>
+
+          <!-- Sessions Dropdown Popover -->
+          <div 
+            id="sessions-dropdown" 
+            class="hidden absolute right-0 mt-2 w-72 sm:w-80 rounded-2xl bg-[#0c0f20]/95 border border-purple-500/30 shadow-2xl shadow-purple-950/80 p-3 z-50 backdrop-blur-2xl"
+          >
+            <div class="flex items-center justify-between pb-2 mb-2 border-b border-white/[0.08]">
+              <div class="flex items-center gap-1.5">
+                <GitBranch class="w-3.5 h-3.5 text-emerald-400" />
+                <span class="text-xs font-bold text-white">Story Branches</span>
+              </div>
+              <button 
+                id="create-new-session-btn"
+                type="button"
+                class="px-2.5 py-1 rounded-lg bg-emerald-500/20 hover:bg-emerald-500/30 border border-emerald-500/40 text-emerald-300 text-[11px] font-bold flex items-center gap-1 transition cursor-pointer"
+              >
+                <Plus class="w-3 h-3" />
+                <span>New Branch</span>
+              </button>
+            </div>
+
+            <!-- List of Sessions Container -->
+            <div id="sessions-list" class="max-h-60 overflow-y-auto space-y-1.5 pr-0.5 text-xs">
+              <!-- Rendered via JS -->
+            </div>
+          </div>
+        </div>
+
         <!-- Multi-Modal Engine Button (Primary BYOK & Tuning Hub) -->
         <button 
           id="chat-byok-btn"
@@ -1006,8 +1049,24 @@ const { character } = Astro.props;
   }
 
   let conversation = [];
-  const STORAGE_KEY = `aetheria_chat_${activeChar.id}`;
   let ttsEnabled = true;
+
+  // Multi-session & Branching state
+  const SESSIONS_INDEX_KEY = `aetheria_chat_sessions_${activeChar.id}`;
+  let currentSessionId = 'session_default';
+  let chatSessions = [];
+
+  // Parse sessionId from URL if present (?sessionId=...)
+  const urlParams = new URLSearchParams(window.location.search);
+  if (urlParams.get('sessionId')) {
+    currentSessionId = urlParams.get('sessionId');
+  }
+
+  function getSessionStorageKey(sessionId) {
+    return sessionId === 'session_default' 
+      ? `aetheria_chat_${activeChar.id}` 
+      : `aetheria_chat_${activeChar.id}_${sessionId}`;
+  }
 
   // DOM Elements
   const chatStream = document.getElementById('chat-stream');
@@ -1458,13 +1517,177 @@ const { character } = Astro.props;
     if (e.target === byokTray) byokTray.classList.add('hidden');
   });
 
-  // Init Chat Function
-  function initChat() {
-    const saved = localStorage.getItem(STORAGE_KEY);
+  // Sessions & Branches Management
+  function loadSessions() {
+    try {
+      const saved = localStorage.getItem(SESSIONS_INDEX_KEY);
+      chatSessions = saved ? JSON.parse(saved) : [];
+    } catch {
+      chatSessions = [];
+    }
+
+    if (!chatSessions.some(s => s.id === 'session_default')) {
+      chatSessions.unshift({
+        id: 'session_default',
+        title: 'Main Timeline',
+        createdAt: new Date().toISOString(),
+        updatedAt: new Date().toISOString(),
+        messageCount: 0,
+        lastMessage: ''
+      });
+      saveSessionsIndex();
+    }
+
+    // Verify currentSessionId exists
+    if (!chatSessions.some(s => s.id === currentSessionId)) {
+      currentSessionId = 'session_default';
+    }
+
+    renderSessionsDropdown();
+  }
+
+  function saveSessionsIndex() {
+    localStorage.setItem(SESSIONS_INDEX_KEY, JSON.stringify(chatSessions));
+  }
+
+  function renderSessionsDropdown() {
+    const listEl = document.getElementById('sessions-list');
+    const labelEl = document.getElementById('active-session-label');
+    const currentSes = chatSessions.find(s => s.id === currentSessionId);
+    if (labelEl) {
+      labelEl.textContent = currentSes ? currentSes.title : 'Main Branch';
+    }
+
+    if (!listEl) return;
+    listEl.innerHTML = '';
+
+    chatSessions.forEach(ses => {
+      const isActive = ses.id === currentSessionId;
+      const item = document.createElement('div');
+      item.className = `p-2.5 rounded-xl border transition flex items-center justify-between gap-2 cursor-pointer ${
+        isActive 
+          ? 'bg-purple-900/40 border-purple-500/50 text-white shadow-sm shadow-purple-950/40' 
+          : 'bg-white/[0.03] hover:bg-white/[0.06] border-white/[0.06] text-slate-300'
+      }`;
+
+      item.innerHTML = `
+        <div class="flex-1 min-w-0 session-select-area" data-session-id="${ses.id}">
+          <div class="flex items-center gap-1.5">
+            <span class="font-bold text-xs truncate ${isActive ? 'text-purple-300' : 'text-slate-200'}">${ses.title}</span>
+            ${isActive ? '<span class="text-[9px] px-1.5 py-0.2 rounded bg-emerald-500/20 text-emerald-400 font-mono">Active</span>' : ''}
+          </div>
+          <div class="flex items-center gap-2 text-[10px] text-slate-500 mt-0.5">
+            <span>${ses.messageCount || 0} messages</span>
+            <span>•</span>
+            <span class="truncate max-w-[110px]">${ses.lastMessage ? `"${ses.lastMessage}"` : 'New timeline'}</span>
+          </div>
+        </div>
+        <div class="flex items-center gap-1 shrink-0">
+          <button type="button" class="rename-session-btn p-1 text-slate-400 hover:text-white transition" data-session-id="${ses.id}" title="Rename branch">
+            ✏️
+          </button>
+          ${ses.id !== 'session_default' ? `
+            <button type="button" class="delete-session-btn p-1 text-slate-400 hover:text-red-400 transition" data-session-id="${ses.id}" title="Delete branch">
+              🗑️
+            </button>
+          ` : ''}
+        </div>
+      `;
+
+      item.querySelector('.session-select-area')?.addEventListener('click', () => {
+        if (!isActive) switchSession(ses.id);
+      });
+
+      item.querySelector('.rename-session-btn')?.addEventListener('click', (e) => {
+        e.stopPropagation();
+        const newTitle = prompt('Rename story branch:', ses.title);
+        if (newTitle && newTitle.trim()) {
+          ses.title = newTitle.trim();
+          saveSessionsIndex();
+          renderSessionsDropdown();
+        }
+      });
+
+      item.querySelector('.delete-session-btn')?.addEventListener('click', (e) => {
+        e.stopPropagation();
+        deleteSession(ses.id);
+      });
+
+      listEl.appendChild(item);
+    });
+  }
+
+  function switchSession(sessionId) {
+    saveChat();
+    currentSessionId = sessionId;
+
+    const url = new URL(window.location.href);
+    url.searchParams.set('sessionId', sessionId);
+    window.history.replaceState({}, '', url.toString());
+
+    loadActiveSessionConversation();
+    renderSessionsDropdown();
+    document.getElementById('sessions-dropdown')?.classList.add('hidden');
+    const ses = chatSessions.find(s => s.id === sessionId);
+    showNotification(`Switched to branch: ${ses?.title || sessionId}`);
+  }
+
+  function createNewSession() {
+    const branchNum = chatSessions.length + 1;
+    const defaultTitle = `Branch #${branchNum}`;
+    const title = prompt('Enter a name for this new story branch:', defaultTitle) || defaultTitle;
+    const newId = 'session_' + Date.now();
+
+    const newSes = {
+      id: newId,
+      title: title.trim(),
+      createdAt: new Date().toISOString(),
+      updatedAt: new Date().toISOString(),
+      messageCount: 1,
+      lastMessage: activeChar.greeting
+    };
+
+    chatSessions.push(newSes);
+    saveSessionsIndex();
+
+    const initialGreeting = formatMacroText(activeChar.greeting);
+    const initialConv = [{
+      sender: 'character',
+      text: initialGreeting,
+      timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+      swipes: [initialGreeting],
+      swipeIndex: 0
+    }];
+    localStorage.setItem(getSessionStorageKey(newId), JSON.stringify(initialConv));
+
+    switchSession(newId);
+  }
+
+  function deleteSession(sessionId) {
+    if (sessionId === 'session_default') {
+      alert('Cannot delete the Main Timeline.');
+      return;
+    }
+    if (!confirm('Delete this story branch and all its messages? This cannot be undone.')) return;
+
+    localStorage.removeItem(getSessionStorageKey(sessionId));
+    chatSessions = chatSessions.filter(s => s.id !== sessionId);
+    saveSessionsIndex();
+
+    if (currentSessionId === sessionId) {
+      switchSession('session_default');
+    } else {
+      renderSessionsDropdown();
+    }
+    showNotification('Branch deleted.');
+  }
+
+  function loadActiveSessionConversation() {
+    const key = getSessionStorageKey(currentSessionId);
+    const saved = localStorage.getItem(key);
     if (saved) {
       try {
         conversation = JSON.parse(saved);
-        // Normalize messages to ensure swipe support
         conversation.forEach(m => {
           if (m.sender === 'character' && !m.swipes) {
             m.swipes = [m.text];
@@ -1474,6 +1697,8 @@ const { character } = Astro.props;
       } catch (e) {
         conversation = [];
       }
+    } else {
+      conversation = [];
     }
 
     if (conversation.length === 0) {
@@ -1489,11 +1714,28 @@ const { character } = Astro.props;
     }
 
     renderAllMessages();
+  }
+
+  // Init Chat Function
+  function initChat() {
+    loadSessions();
+    loadActiveSessionConversation();
     loadEngineSettings();
   }
 
   function saveChat() {
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(conversation));
+    const key = getSessionStorageKey(currentSessionId);
+    localStorage.setItem(key, JSON.stringify(conversation));
+
+    // Update session metadata
+    const activeSes = chatSessions.find(s => s.id === currentSessionId);
+    if (activeSes) {
+      activeSes.messageCount = conversation.length;
+      activeSes.updatedAt = new Date().toISOString();
+      const lastMsg = conversation[conversation.length - 1];
+      activeSes.lastMessage = lastMsg ? (lastMsg.text || '').slice(0, 100) : '';
+      saveSessionsIndex();
+    }
   }
 
   function renderAllMessages() {
@@ -2412,6 +2654,26 @@ Never speak, narrate, or decide thoughts or actions for {{user}}. Maintain high 
     a.click();
     URL.revokeObjectURL(url);
     showNotification('Chat exported to Markdown file!');
+  });
+
+  // Sessions dropdown toggle & listeners
+  const sessionsBtn = document.getElementById('chat-sessions-btn');
+  const sessionsDropdown = document.getElementById('sessions-dropdown');
+  const createNewSessionBtn = document.getElementById('create-new-session-btn');
+
+  sessionsBtn?.addEventListener('click', (e) => {
+    e.stopPropagation();
+    sessionsDropdown?.classList.toggle('hidden');
+  });
+
+  document.addEventListener('click', (e) => {
+    if (sessionsDropdown && !sessionsDropdown.contains(e.target) && e.target !== sessionsBtn) {
+      sessionsDropdown.classList.add('hidden');
+    }
+  });
+
+  createNewSessionBtn?.addEventListener('click', () => {
+    createNewSession();
   });
 
   // Startup
