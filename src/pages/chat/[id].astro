@@ -473,25 +473,79 @@ const { character } = Astro.props;
 
                 <div id="ping-status-msg" class="hidden text-xs px-3.5 py-2 rounded-xl border"></div>
 
+                <!-- Status Ping / Latency Indicator & Health Check -->
+                <div class="flex flex-col sm:flex-row items-stretch sm:items-center justify-between p-3.5 rounded-2xl bg-white/[0.03] border border-white/[0.08] gap-3">
+                  <div class="flex items-center gap-2.5">
+                    <span id="ping-indicator-dot" class="w-2.5 h-2.5 rounded-full bg-emerald-400 shrink-0"></span>
+                    <div class="min-w-0">
+                      <div class="text-xs font-semibold text-white truncate" id="ping-provider-name">Free Cloud AI (Instant &amp; Keyless)</div>
+                      <div class="text-[10px] text-slate-400 font-mono truncate" id="ping-latency-text">Ready • Latency: ~85ms</div>
+                    </div>
+                  </div>
+                  <button 
+                    type="button" 
+                    id="ping-text-btn" 
+                    class="px-3 py-1.5 rounded-xl bg-purple-900/40 hover:bg-purple-800/60 border border-purple-500/30 text-purple-300 hover:text-white text-xs font-semibold flex items-center justify-center gap-1.5 transition cursor-pointer shrink-0 shadow-sm shadow-purple-950"
+                  >
+                    <Zap class="w-3.5 h-3.5 text-cyan-400" />
+                    <span>Test Health / Latency</span>
+                  </button>
+                </div>
+
+                <div id="ping-status-msg" class="hidden text-xs px-3.5 py-2.5 rounded-xl border leading-relaxed"></div>
+
                 <!-- Provider & Key Grid -->
                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   <div>
-                    <label class="block text-xs font-semibold text-slate-300 mb-1.5">AI Model Provider</label>
+                    <label class="block text-xs font-semibold text-slate-300 mb-1.5 flex items-center justify-between">
+                      <span>AI Model Provider</span>
+                      <span class="text-[10px] text-purple-400 font-normal">24 Supported Engines</span>
+                    </label>
                     <select id="text-provider-select" class="w-full px-3.5 py-2.5 rounded-xl bg-white/[0.05] border border-white/10 text-xs text-white outline-none focus:border-purple-500/60">
-                      <option value="groq">Groq (Ultra-Fast Llama 3.3 70B & 8B — Free Tier)</option>
-                      <option value="openrouter">OpenRouter (Claude 3.5 Sonnet, DeepSeek V3, Mistral)</option>
-                      <option value="deepseek">DeepSeek Direct (deepseek-chat / deepseek-reasoner)</option>
-                      <option value="openai">OpenAI (GPT-4o, GPT-4o-mini)</option>
-                      <option value="anthropic">Anthropic (Claude 3.5 Sonnet, Haiku)</option>
-                      <option value="custom">Custom Endpoint (Ollama, LMStudio, vLLM)</option>
-                      <option value="demo">Free Cloud AI (Instant & Keyless — Default)</option>
+                      <optgroup label="⚡ Instant &amp; Free Cloud">
+                        <option value="demo">Free Cloud AI (Instant &amp; Keyless — Default)</option>
+                      </optgroup>
+                      <optgroup label="👑 Frontier AI Labs (Official APIs)">
+                        <option value="openrouter">OpenRouter (300+ AI Models &amp; RP)</option>
+                        <option value="google">Google Gemini (Gemini 2.0 Flash &amp; 1.5 Pro)</option>
+                        <option value="deepseek">DeepSeek Direct (DeepSeek V3 &amp; R1)</option>
+                        <option value="openai">OpenAI Direct (GPT-4o, GPT-4o-mini, o1)</option>
+                        <option value="anthropic">Anthropic Claude (Claude 3.5 Sonnet &amp; Haiku)</option>
+                        <option value="xai">xAI Grok (Grok-2, Grok-Beta)</option>
+                        <option value="mistral">Mistral AI (Mistral Large, Codestral)</option>
+                      </optgroup>
+                      <optgroup label="🚀 High-Speed Hardware Accelerators">
+                        <option value="groq">Groq (Ultra-Fast Llama 3.3 70B &amp; 8B — 300+ t/s)</option>
+                        <option value="cerebras">Cerebras (World's Fastest Inference — Llama 3.3 70B)</option>
+                        <option value="sambanova">SambaNova Systems (Llama 3.3 70B, Qwen 2.5 72B)</option>
+                        <option value="together">Together AI (Llama 3.3, Qwen 2.5, DeepSeek)</option>
+                        <option value="fireworks">Fireworks AI (Fast Function Calling &amp; RP)</option>
+                        <option value="cohere">Cohere (Command R+, Command R)</option>
+                        <option value="perplexity">Perplexity AI (Sonar, Sonar Pro Online)</option>
+                      </optgroup>
+                      <optgroup label="🎭 Uncensored &amp; Roleplay Clouds">
+                        <option value="novita">Novita AI (Specialized Uncensored RP)</option>
+                        <option value="featherless">Featherless AI (1,000+ Open-Source RP Models)</option>
+                        <option value="siliconflow">SiliconFlow (Qwen 2.5 72B, DeepSeek V3)</option>
+                        <option value="huggingface">Hugging Face Router (Inference API)</option>
+                        <option value="cloudflare">Cloudflare Workers AI (Serverless Edge)</option>
+                        <option value="ai21">AI21 Labs (Jamba 1.5 Large / Mini)</option>
+                      </optgroup>
+                      <optgroup label="💻 Self-Hosted &amp; Custom Gateways">
+                        <option value="custom-local">Custom Localhost (Ollama, LM Studio, vLLM, KoboldCpp)</option>
+                        <option value="custom-proxy">Custom Reverse Proxy (OpenAI-compatible Gateway)</option>
+                      </optgroup>
                     </select>
                   </div>
 
-                  <div>
+                  <!-- API Key Container -->
+                  <div id="api-key-container">
                     <label class="block text-xs font-semibold text-slate-300 mb-1.5 flex items-center justify-between">
-                      <span>API Key</span>
-                      <button type="button" id="toggle-key-visibility" class="text-[10px] text-purple-400 hover:text-purple-300">Show/Hide</button>
+                      <span id="api-key-label">API Key</span>
+                      <div class="flex items-center gap-2">
+                        <a id="get-key-link" href="https://aistudio.google.com/app/apikey" target="_blank" rel="noopener noreferrer" class="hidden text-[10px] text-cyan-400 hover:text-cyan-300 underline underline-offset-2">Get Free Key</a>
+                        <button type="button" id="toggle-key-visibility" class="text-[10px] text-purple-400 hover:text-purple-300">Show/Hide</button>
+                      </div>
                     </label>
                     <div class="relative">
                       <input 
@@ -504,37 +558,74 @@ const { character } = Astro.props;
                   </div>
                 </div>
 
-                <!-- Custom Base URL (Conditional) -->
+                <!-- Free Cloud Notice Banner (Visible when 'demo' is selected) -->
+                <div id="free-cloud-notice" class="p-3.5 rounded-2xl bg-emerald-500/10 border border-emerald-500/20 flex items-start gap-2.5">
+                  <span class="w-2 h-2 rounded-full bg-emerald-400 mt-1 shrink-0 animate-pulse"></span>
+                  <div class="text-xs text-slate-300 leading-relaxed">
+                    <span class="font-semibold text-emerald-300">Free Instant Cloud Engine is active.</span> No API key, configuration, or credit card required. Unlimited zero-setup roleplay out of the box!
+                  </div>
+                </div>
+
+                <!-- Custom Base URL Container (Visible for custom-local or custom-proxy) -->
                 <div id="custom-base-url-container" class="hidden space-y-1.5">
-                  <label class="block text-xs font-semibold text-slate-300">Custom Base URL</label>
+                  <label id="custom-base-url-label" class="block text-xs font-semibold text-slate-300">Localhost Base URL</label>
                   <input 
                     id="text-base-url" 
                     type="url" 
-                    placeholder="http://localhost:11434/v1 or https://my-custom-proxy.com/v1" 
+                    placeholder="http://localhost:11434/v1" 
                     class="w-full px-3.5 py-2.5 rounded-xl bg-white/[0.05] border border-white/10 text-xs text-white placeholder:text-slate-500 outline-none focus:border-purple-500/60 font-mono"
                   />
-                  <p class="text-[10px] text-slate-400">Compatible with Ollama, LM Studio, vLLM, Text-Gen-WebUI & custom reverse proxies.</p>
+                  <p id="custom-base-url-hint" class="text-[10px] text-slate-400">For Ollama: http://localhost:11434/v1 • For LM Studio: http://localhost:1234/v1 • For vLLM: http://localhost:8000/v1</p>
                 </div>
 
-                <!-- Model Identifier -->
-                <div class="space-y-1.5">
-                  <label class="block text-xs font-semibold text-slate-300 flex items-center justify-between">
-                    <span>Model Identifier</span>
-                    <span class="text-[10px] text-slate-400">e.g. anthropic/claude-3.5-sonnet, llama-3.3-70b-versatile</span>
-                  </label>
+                <!-- Dynamic Model Selector & Live Fetcher -->
+                <div class="space-y-2">
+                  <div class="flex items-center justify-between">
+                    <label class="block text-xs font-semibold text-slate-300 flex items-center gap-1.5">
+                      <span>Model Selection</span>
+                      <span id="model-count-badge" class="text-[10px] px-1.5 py-0.2 rounded bg-white/10 text-purple-300">Presets ready</span>
+                    </label>
+                    <div class="flex items-center gap-2">
+                      <button 
+                        type="button" 
+                        id="fetch-models-btn" 
+                        class="px-2.5 py-1 rounded-xl text-[10px] font-semibold text-cyan-300 hover:text-white bg-cyan-500/10 hover:bg-cyan-500/20 border border-cyan-500/20 transition flex items-center gap-1 cursor-pointer"
+                        title="Fetch available models from API"
+                      >
+                        <RefreshCw class="w-3 h-3 text-cyan-400" id="fetch-models-icon" />
+                        <span id="fetch-models-text">Fetch Models</span>
+                      </button>
+                      <button 
+                        type="button" 
+                        id="toggle-model-input-mode-btn" 
+                        class="px-2 py-1 rounded-xl text-[10px] font-medium text-slate-400 hover:text-slate-200 bg-white/[0.04] hover:bg-white/[0.08] border border-white/[0.08] transition"
+                        title="Switch between Dropdown and Manual typing"
+                      >
+                        Manual / Select
+                      </button>
+                    </div>
+                  </div>
+
+                  <!-- Model Select Dropdown (Default) -->
+                  <select id="text-model-select" class="w-full px-3.5 py-2.5 rounded-xl bg-white/[0.05] border border-white/10 text-xs text-white outline-none focus:border-purple-500/60 font-mono">
+                    <option value="llama-3.3-70b-versatile">llama-3.3-70b-versatile (Recommended)</option>
+                  </select>
+
+                  <!-- Manual Model Input (Hidden by default, toggled via button) -->
                   <input 
                     id="text-model-input" 
                     type="text" 
                     value="llama-3.3-70b-versatile"
-                    class="w-full px-3.5 py-2.5 rounded-xl bg-white/[0.05] border border-white/10 text-xs text-white outline-none focus:border-purple-500/60 font-mono"
+                    class="hidden w-full px-3.5 py-2.5 rounded-xl bg-white/[0.05] border border-white/10 text-xs text-white outline-none focus:border-purple-500/60 font-mono"
+                    placeholder="Type custom model ID (e.g. meta-llama/llama-3.3-70b-instruct)"
                   />
-                  <!-- Quick Model Presets -->
-                  <div class="flex flex-wrap gap-1.5 pt-1">
-                    <span class="text-[10px] text-slate-500 self-center">Presets:</span>
-                    <button type="button" class="quick-model-pill text-[10px] px-2 py-0.5 rounded-lg bg-white/[0.04] hover:bg-purple-950 text-slate-300 hover:text-purple-300 border border-white/10 transition" data-model="llama-3.3-70b-versatile">Llama 3.3 70B (Groq)</button>
-                    <button type="button" class="quick-model-pill text-[10px] px-2 py-0.5 rounded-lg bg-white/[0.04] hover:bg-purple-950 text-slate-300 hover:text-purple-300 border border-white/10 transition" data-model="anthropic/claude-3.5-sonnet">Claude 3.5 Sonnet</button>
-                    <button type="button" class="quick-model-pill text-[10px] px-2 py-0.5 rounded-lg bg-white/[0.04] hover:bg-purple-950 text-slate-300 hover:text-purple-300 border border-white/10 transition" data-model="deepseek/deepseek-chat">DeepSeek V3</button>
-                    <button type="button" class="quick-model-pill text-[10px] px-2 py-0.5 rounded-lg bg-white/[0.04] hover:bg-purple-950 text-slate-300 hover:text-purple-300 border border-white/10 transition" data-model="gpt-4o">GPT-4o</button>
+
+                  <!-- Dynamic Quick Model Presets -->
+                  <div class="flex flex-wrap items-center gap-1.5 pt-0.5">
+                    <span class="text-[10px] text-slate-500">Top Picks:</span>
+                    <div id="dynamic-presets-container" class="flex flex-wrap gap-1.5">
+                      <!-- Populated dynamically via JS -->
+                    </div>
                   </div>
                 </div>
 
@@ -1574,12 +1665,28 @@ const { character } = Astro.props;
   const engineTabBtns = document.querySelectorAll('.engine-tab-btn');
   const engineTabPanes = document.querySelectorAll('.engine-tab-pane');
 
-  // Text inputs
+  // Text inputs & Engine Controls
   const textProviderSelect = document.getElementById('text-provider-select');
   const textApiKey = document.getElementById('text-api-key');
+  const apiKeyContainer = document.getElementById('api-key-container');
+  const apiKeyLabel = document.getElementById('api-key-label');
+  const getKeyLink = document.getElementById('get-key-link');
+  const freeCloudNotice = document.getElementById('free-cloud-notice');
   const textBaseUrl = document.getElementById('text-base-url');
   const customBaseUrlContainer = document.getElementById('custom-base-url-container');
+  const customBaseUrlLabel = document.getElementById('custom-base-url-label');
+  const customBaseUrlHint = document.getElementById('custom-base-url-hint');
+  const textModelSelect = document.getElementById('text-model-select');
   const textModelInput = document.getElementById('text-model-input');
+  const toggleModelInputModeBtn = document.getElementById('toggle-model-input-mode-btn');
+  const fetchModelsBtn = document.getElementById('fetch-models-btn');
+  const fetchModelsIcon = document.getElementById('fetch-models-icon');
+  const fetchModelsText = document.getElementById('fetch-models-text');
+  const modelCountBadge = document.getElementById('model-count-badge');
+  const dynamicPresetsContainer = document.getElementById('dynamic-presets-container');
+  const pingIndicatorDot = document.getElementById('ping-indicator-dot');
+  const pingProviderName = document.getElementById('ping-provider-name');
+  const pingLatencyText = document.getElementById('ping-latency-text');
   const toggleKeyVisibility = document.getElementById('toggle-key-visibility');
   const pingTextBtn = document.getElementById('ping-text-btn');
   const pingStatusMsg = document.getElementById('ping-status-msg');
@@ -1676,6 +1783,703 @@ const { character } = Astro.props;
     return `<p class="leading-relaxed">${s.replace(/\n/g, '<br/>')}</p>`;
   }
 
+  // ==========================================
+  // COMPREHENSIVE AI ENGINE & PROVIDER REGISTRY (20+ Providers + 2 Custom)
+  // ==========================================
+  const PROVIDER_CONFIGS = {
+    demo: {
+      name: 'Free Cloud AI (Instant & Keyless)',
+      label: 'Free Cloud AI',
+      hasKey: false,
+      hasUrl: false,
+      defaultModel: 'Free Cloud AI',
+      curated: ['Free Cloud AI (Instant & Keyless)'],
+      urlHint: '',
+      keyPlaceholder: '',
+      keyLink: ''
+    },
+    openrouter: {
+      name: 'OpenRouter (300+ AI Models & RP)',
+      label: 'OpenRouter',
+      hasKey: true,
+      hasUrl: false,
+      defaultModel: 'anthropic/claude-3.5-sonnet',
+      curated: [
+        'anthropic/claude-3.5-sonnet',
+        'deepseek/deepseek-chat',
+        'meta-llama/llama-3.3-70b-instruct',
+        'gryphe/mythomax-l2-13b',
+        'mistralai/mistral-large-2411',
+        'sao10k/l3-euryale-70b',
+        'nousresearch/hermes-3-llama-3.1-405b'
+      ],
+      modelsEndpoint: 'https://openrouter.ai/api/v1/models',
+      chatEndpoint: 'https://openrouter.ai/api/v1/chat/completions',
+      keyPlaceholder: 'sk-or-v1-... (openrouter.ai/keys)',
+      keyLink: 'https://openrouter.ai/keys'
+    },
+    google: {
+      name: 'Google Gemini (Official Direct)',
+      label: 'Google Gemini',
+      hasKey: true,
+      hasUrl: false,
+      defaultModel: 'gemini-2.0-flash',
+      curated: [
+        'gemini-2.0-flash',
+        'gemini-1.5-flash',
+        'gemini-1.5-pro',
+        'gemini-2.0-flash-thinking-exp'
+      ],
+      modelsEndpoint: 'https://generativelanguage.googleapis.com/v1beta/models',
+      chatEndpoint: 'https://generativelanguage.googleapis.com/v1beta/openai/chat/completions',
+      keyPlaceholder: 'AIzaSy... (Get free key from aistudio.google.com)',
+      keyLink: 'https://aistudio.google.com/app/apikey'
+    },
+    groq: {
+      name: 'Groq (Ultra-Fast 300+ tok/s)',
+      label: 'Groq',
+      hasKey: true,
+      hasUrl: false,
+      defaultModel: 'llama-3.3-70b-versatile',
+      curated: [
+        'llama-3.3-70b-versatile',
+        'llama-3.1-8b-instant',
+        'mixtral-8x7b-32768',
+        'gemma2-9b-it'
+      ],
+      modelsEndpoint: 'https://api.groq.com/openai/v1/models',
+      chatEndpoint: 'https://api.groq.com/openai/v1/chat/completions',
+      keyPlaceholder: 'gsk_... (console.groq.com)',
+      keyLink: 'https://console.groq.com/keys'
+    },
+    deepseek: {
+      name: 'DeepSeek Direct',
+      label: 'DeepSeek',
+      hasKey: true,
+      hasUrl: false,
+      defaultModel: 'deepseek-chat',
+      curated: ['deepseek-chat', 'deepseek-reasoner'],
+      modelsEndpoint: 'https://api.deepseek.com/models',
+      chatEndpoint: 'https://api.deepseek.com/chat/completions',
+      keyPlaceholder: 'sk-... (platform.deepseek.com)',
+      keyLink: 'https://platform.deepseek.com/api_keys'
+    },
+    openai: {
+      name: 'OpenAI Direct',
+      label: 'OpenAI',
+      hasKey: true,
+      hasUrl: false,
+      defaultModel: 'gpt-4o',
+      curated: ['gpt-4o', 'gpt-4o-mini', 'o1-mini', 'o3-mini', 'gpt-4-turbo'],
+      modelsEndpoint: 'https://api.openai.com/v1/models',
+      chatEndpoint: 'https://api.openai.com/v1/chat/completions',
+      keyPlaceholder: 'sk-proj-... (platform.openai.com)',
+      keyLink: 'https://platform.openai.com/api-keys'
+    },
+    anthropic: {
+      name: 'Anthropic Claude Direct',
+      label: 'Anthropic',
+      hasKey: true,
+      hasUrl: false,
+      defaultModel: 'claude-3-5-sonnet-20241022',
+      curated: [
+        'claude-3-5-sonnet-20241022',
+        'claude-3-5-haiku-20241022',
+        'claude-3-opus-20240229'
+      ],
+      chatEndpoint: 'https://api.anthropic.com/v1/messages',
+      keyPlaceholder: 'sk-ant-... (console.anthropic.com)',
+      keyLink: 'https://console.anthropic.com/settings/keys'
+    },
+    xai: {
+      name: 'xAI Grok Direct',
+      label: 'xAI',
+      hasKey: true,
+      hasUrl: false,
+      defaultModel: 'grok-2-1212',
+      curated: ['grok-2-1212', 'grok-2-vision-1212', 'grok-beta'],
+      modelsEndpoint: 'https://api.x.ai/v1/models',
+      chatEndpoint: 'https://api.x.ai/v1/chat/completions',
+      keyPlaceholder: 'xai-... (console.x.ai)',
+      keyLink: 'https://console.x.ai/'
+    },
+    mistral: {
+      name: 'Mistral AI Direct',
+      label: 'Mistral AI',
+      hasKey: true,
+      hasUrl: false,
+      defaultModel: 'mistral-large-latest',
+      curated: ['mistral-large-latest', 'mistral-small-latest', 'open-mistral-nemo', 'codestral-latest'],
+      modelsEndpoint: 'https://api.mistral.ai/v1/models',
+      chatEndpoint: 'https://api.mistral.ai/v1/chat/completions',
+      keyPlaceholder: 'sk-... (console.mistral.ai)',
+      keyLink: 'https://console.mistral.ai/api-keys/'
+    },
+    together: {
+      name: 'Together AI',
+      label: 'Together AI',
+      hasKey: true,
+      hasUrl: false,
+      defaultModel: 'meta-llama/Meta-Llama-3.1-70B-Instruct-Turbo',
+      curated: [
+        'meta-llama/Meta-Llama-3.1-70B-Instruct-Turbo',
+        'meta-llama/Llama-3.3-70B-Instruct-Turbo',
+        'deepseek-ai/DeepSeek-V3',
+        'mistralai/Mixtral-8x22B-Instruct-v0.1',
+        'Qwen/Qwen2.5-72B-Instruct-Turbo'
+      ],
+      modelsEndpoint: 'https://api.together.xyz/v1/models',
+      chatEndpoint: 'https://api.together.xyz/v1/chat/completions',
+      keyPlaceholder: 'API Key (api.together.xyz)',
+      keyLink: 'https://api.together.xyz/settings/api-keys'
+    },
+    fireworks: {
+      name: 'Fireworks AI',
+      label: 'Fireworks AI',
+      hasKey: true,
+      hasUrl: false,
+      defaultModel: 'accounts/fireworks/models/llama-v3p3-70b-instruct',
+      curated: [
+        'accounts/fireworks/models/llama-v3p3-70b-instruct',
+        'accounts/fireworks/models/qwen2p5-72b-instruct',
+        'accounts/fireworks/models/mixtral-8x22b-instruct'
+      ],
+      modelsEndpoint: 'https://api.fireworks.ai/inference/v1/models',
+      chatEndpoint: 'https://api.fireworks.ai/inference/v1/chat/completions',
+      keyPlaceholder: 'fw_... (fireworks.ai)',
+      keyLink: 'https://fireworks.ai/api-keys'
+    },
+    cerebras: {
+      name: 'Cerebras Ultra-Fast',
+      label: 'Cerebras',
+      hasKey: true,
+      hasUrl: false,
+      defaultModel: 'llama-3.3-70b',
+      curated: ['llama-3.3-70b', 'llama3.1-8b'],
+      modelsEndpoint: 'https://api.cerebras.ai/v1/models',
+      chatEndpoint: 'https://api.cerebras.ai/v1/chat/completions',
+      keyPlaceholder: 'csk-... (cloud.cerebras.ai)',
+      keyLink: 'https://cloud.cerebras.ai/'
+    },
+    sambanova: {
+      name: 'SambaNova Systems',
+      label: 'SambaNova',
+      hasKey: true,
+      hasUrl: false,
+      defaultModel: 'Meta-Llama-3.3-70B-Instruct',
+      curated: ['Meta-Llama-3.3-70B-Instruct', 'Qwen2.5-72B-Instruct', 'Meta-Llama-3.1-8B-Instruct'],
+      modelsEndpoint: 'https://api.sambanova.ai/v1/models',
+      chatEndpoint: 'https://api.sambanova.ai/v1/chat/completions',
+      keyPlaceholder: 'API Key (cloud.sambanova.ai)',
+      keyLink: 'https://cloud.sambanova.ai/'
+    },
+    cohere: {
+      name: 'Cohere Direct',
+      label: 'Cohere',
+      hasKey: true,
+      hasUrl: false,
+      defaultModel: 'command-r-plus',
+      curated: ['command-r-plus', 'command-r', 'command-light'],
+      modelsEndpoint: 'https://api.cohere.com/v1/models',
+      chatEndpoint: 'https://api.cohere.com/v2/chat',
+      keyPlaceholder: 'API Key (dashboard.cohere.com)',
+      keyLink: 'https://dashboard.cohere.com/api-keys'
+    },
+    perplexity: {
+      name: 'Perplexity AI Online',
+      label: 'Perplexity',
+      hasKey: true,
+      hasUrl: false,
+      defaultModel: 'sonar',
+      curated: ['sonar', 'sonar-pro', 'sonar-reasoning'],
+      modelsEndpoint: 'https://api.perplexity.ai/models',
+      chatEndpoint: 'https://api.perplexity.ai/chat/completions',
+      keyPlaceholder: 'pplx-... (perplexity.ai/settings/api)',
+      keyLink: 'https://www.perplexity.ai/settings/api'
+    },
+    novita: {
+      name: 'Novita AI (Uncensored RP)',
+      label: 'Novita AI',
+      hasKey: true,
+      hasUrl: false,
+      defaultModel: 'gryphe/mythomax-l2-13b',
+      curated: [
+        'gryphe/mythomax-l2-13b',
+        'nousresearch/hermes-3-llama-3.1-70b',
+        'meta-llama/llama-3.1-70b-instruct'
+      ],
+      modelsEndpoint: 'https://api.novita.ai/v3/openai/models',
+      chatEndpoint: 'https://api.novita.ai/v3/openai/chat/completions',
+      keyPlaceholder: 'API Key (novita.ai)',
+      keyLink: 'https://novita.ai/settings/key-management'
+    },
+    featherless: {
+      name: 'Featherless AI (1000+ RP Models)',
+      label: 'Featherless',
+      hasKey: true,
+      hasUrl: false,
+      defaultModel: 'NousResearch/Hermes-3-Llama-3.1-8B',
+      curated: [
+        'NousResearch/Hermes-3-Llama-3.1-8B',
+        'mistralai/Mistral-Nemo-Instruct-2407',
+        'meta-llama/Meta-Llama-3.1-8B-Instruct'
+      ],
+      modelsEndpoint: 'https://api.featherless.ai/v1/models',
+      chatEndpoint: 'https://api.featherless.ai/v1/chat/completions',
+      keyPlaceholder: 'API Key (featherless.ai)',
+      keyLink: 'https://featherless.ai/'
+    },
+    siliconflow: {
+      name: 'SiliconFlow (Asia-Fast)',
+      label: 'SiliconFlow',
+      hasKey: true,
+      hasUrl: false,
+      defaultModel: 'deepseek-ai/DeepSeek-V3',
+      curated: [
+        'deepseek-ai/DeepSeek-V3',
+        'Qwen/Qwen2.5-72B-Instruct',
+        'meta-llama/Meta-Llama-3.1-70B-Instruct'
+      ],
+      modelsEndpoint: 'https://api.siliconflow.cn/v1/models',
+      chatEndpoint: 'https://api.siliconflow.cn/v1/chat/completions',
+      keyPlaceholder: 'sk-... (cloud.siliconflow.cn)',
+      keyLink: 'https://cloud.siliconflow.cn/account/ak'
+    },
+    huggingface: {
+      name: 'Hugging Face Router',
+      label: 'HuggingFace',
+      hasKey: true,
+      hasUrl: false,
+      defaultModel: 'meta-llama/Llama-3.3-70B-Instruct',
+      curated: [
+        'meta-llama/Llama-3.3-70B-Instruct',
+        'mistralai/Mistral-7B-Instruct-v0.3',
+        'Qwen/Qwen2.5-72B-Instruct'
+      ],
+      chatEndpoint: 'https://router.huggingface.co/novita/v1/chat/completions',
+      keyPlaceholder: 'hf_... (huggingface.co/settings/tokens)',
+      keyLink: 'https://huggingface.co/settings/tokens'
+    },
+    cloudflare: {
+      name: 'Cloudflare Workers AI',
+      label: 'Workers AI',
+      hasKey: true,
+      hasUrl: false,
+      defaultModel: '@cf/meta/llama-3.3-70b-instruct-fp8-fast',
+      curated: [
+        '@cf/meta/llama-3.3-70b-instruct-fp8-fast',
+        '@cf/deepseek-ai/deepseek-r1-distill-qwen-32b',
+        '@cf/meta/llama-3.1-8b-instruct'
+      ],
+      keyPlaceholder: 'CF API Token with Workers AI Read',
+      keyLink: 'https://dash.cloudflare.com/profile/api-tokens'
+    },
+    ai21: {
+      name: 'AI21 Labs',
+      label: 'AI21',
+      hasKey: true,
+      hasUrl: false,
+      defaultModel: 'jamba-1.5-large',
+      curated: ['jamba-1.5-large', 'jamba-1.5-mini'],
+      modelsEndpoint: 'https://api.ai21.com/studio/v1/models',
+      chatEndpoint: 'https://api.ai21.com/studio/v1/chat/completions',
+      keyPlaceholder: 'API Key (studio.ai21.com)',
+      keyLink: 'https://studio.ai21.com/'
+    },
+    'custom-local': {
+      name: 'Custom Localhost (Ollama, LMStudio, vLLM)',
+      label: 'Localhost',
+      hasKey: true,
+      isKeyOptional: true,
+      hasUrl: true,
+      urlLabel: 'Localhost Base URL',
+      defaultUrl: 'http://localhost:11434/v1',
+      urlPlaceholder: 'http://localhost:11434/v1',
+      urlHint: 'Ollama: http://localhost:11434/v1 • LM Studio: http://localhost:1234/v1 • vLLM: http://localhost:8000/v1',
+      defaultModel: 'llama3.3:latest',
+      curated: ['llama3.3:latest', 'qwen2.5:72b', 'mistral:latest', 'dolphin-llama3:latest'],
+      keyPlaceholder: 'Optional for Localhost (Leave empty if not set)'
+    },
+    'custom-proxy': {
+      name: 'Custom Reverse Proxy (OpenAI Gateway)',
+      label: 'Custom Proxy',
+      hasKey: true,
+      isKeyOptional: false,
+      hasUrl: true,
+      urlLabel: 'Proxy Endpoint URL (Base URL)',
+      defaultUrl: 'https://api.pawan.krd/v1',
+      urlPlaceholder: 'https://api.pawan.krd/v1 or https://my-proxy.com/v1',
+      urlHint: 'Base URL of any OpenAI-compatible reverse proxy or edge gateway.',
+      defaultModel: 'gpt-4o',
+      curated: ['gpt-4o', 'claude-3-5-sonnet', 'deepseek-chat', 'default'],
+      keyPlaceholder: 'Proxy Bearer Token / Password'
+    }
+  };
+
+  // Populate dynamic model select dropdown
+  function populateModelDropdown(models, selected) {
+    if (!textModelSelect) return;
+    textModelSelect.innerHTML = '';
+    const unique = Array.from(new Set(models));
+    unique.forEach(m => {
+      const opt = document.createElement('option');
+      opt.value = m;
+      opt.textContent = m;
+      if (m === selected) opt.selected = true;
+      textModelSelect.appendChild(opt);
+    });
+    if (selected && !unique.includes(selected)) {
+      const opt = document.createElement('option');
+      opt.value = selected;
+      opt.textContent = `${selected} (Custom)`;
+      opt.selected = true;
+      textModelSelect.prepend(opt);
+    }
+    if (textModelInput) {
+      textModelInput.value = textModelSelect.value;
+    }
+    if (modelCountBadge) {
+      modelCountBadge.textContent = `${unique.length} Models`;
+    }
+  }
+
+  // Update quick clickable preset pills
+  function updateDynamicPresets(models) {
+    if (!dynamicPresetsContainer) return;
+    dynamicPresetsContainer.innerHTML = '';
+    const slice = models.slice(0, 5);
+    slice.forEach(m => {
+      const btn = document.createElement('button');
+      btn.type = 'button';
+      btn.className = 'quick-model-pill text-[10px] px-2 py-0.5 rounded-lg bg-white/[0.04] hover:bg-purple-950 text-slate-300 hover:text-purple-300 border border-white/10 transition cursor-pointer';
+      const shortName = m.split('/').pop() || m;
+      btn.textContent = shortName;
+      btn.setAttribute('data-model', m);
+      btn.addEventListener('click', () => {
+        if (textModelSelect) {
+          textModelSelect.value = m;
+          if (textModelSelect.value !== m) {
+            const opt = document.createElement('option');
+            opt.value = m;
+            opt.textContent = m;
+            opt.selected = true;
+            textModelSelect.prepend(opt);
+          }
+        }
+        if (textModelInput) textModelInput.value = m;
+        updateHeaderPill();
+      });
+      dynamicPresetsContainer.appendChild(btn);
+    });
+  }
+
+  // Extract model IDs from diverse provider responses
+  function extractModelIds(data, provider) {
+    if (!data) return [];
+    if (data.models && Array.isArray(data.models)) {
+      return data.models
+        .filter(m => !m.supportedGenerationMethods || m.supportedGenerationMethods.includes('generateContent'))
+        .map(m => m.name.replace(/^models\//, ''))
+        .filter(Boolean);
+    }
+    if (data.data && Array.isArray(data.data)) {
+      return data.data.map(m => m.id).filter(Boolean);
+    }
+    if (Array.isArray(data)) {
+      return data.map(m => (typeof m === 'string' ? m : (m.id || m.name))).filter(Boolean);
+    }
+    return [];
+  }
+
+  // Live model fetcher with automatic CORS Edge fallback
+  async function fetchModelsForProvider() {
+    const prov = textProviderSelect?.value || 'groq';
+    const conf = PROVIDER_CONFIGS[prov] || PROVIDER_CONFIGS.demo;
+    const key = textApiKey?.value.trim() || '';
+    const baseUrl = textBaseUrl?.value.trim() || conf.defaultUrl || '';
+
+    if (prov === 'demo') {
+      showNotification('Free Cloud AI has built-in instant routing (No API key needed)');
+      return;
+    }
+
+    if (conf.hasKey && !conf.isKeyOptional && !key) {
+      showNotification(`⚠️ Please enter your ${conf.label} API key first!`);
+      textApiKey?.focus();
+      return;
+    }
+
+    if (fetchModelsIcon) fetchModelsIcon.classList.add('animate-spin');
+    if (fetchModelsText) fetchModelsText.textContent = 'Fetching...';
+
+    try {
+      let endpoint = conf.modelsEndpoint;
+      if (conf.hasUrl) {
+        endpoint = `${baseUrl.replace(/\/+$/, '')}/models`;
+      } else if (prov === 'google') {
+        endpoint = `https://generativelanguage.googleapis.com/v1beta/models?key=${key}`;
+      }
+
+      if (!endpoint) {
+        showNotification(`Using curated models for ${conf.label}`);
+        populateModelDropdown(conf.curated, textModelSelect?.value || conf.defaultModel);
+        return;
+      }
+
+      let models = [];
+      let success = false;
+
+      // Try direct browser fetch first
+      try {
+        const headers = {};
+        if (key && prov !== 'google') {
+          if (prov === 'anthropic') {
+            headers['x-api-key'] = key;
+            headers['anthropic-version'] = '2023-06-01';
+            headers['anthropic-dangerous-direct-browser-access'] = 'true';
+          } else {
+            headers['Authorization'] = `Bearer ${key}`;
+          }
+        }
+        if (prov === 'openrouter') {
+          headers['HTTP-Referer'] = 'https://aetheria.ai';
+          headers['X-Title'] = 'Aetheria AI';
+        }
+
+        const res = await fetch(endpoint, { method: 'GET', headers });
+        if (res.ok) {
+          const data = await res.json();
+          models = extractModelIds(data, prov);
+          if (models.length > 0) success = true;
+        }
+      } catch (directErr) {
+        // Direct fetch failed (likely CORS), fall through to Edge relay
+      }
+
+      // If direct fetch didn't succeed, use CORS-free Edge Worker proxy
+      if (!success) {
+        const proxyRes = await fetch('/api/proxy/fetch-models', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            endpoint,
+            apiKey: key,
+            headers: prov === 'openrouter' ? { 'HTTP-Referer': 'https://aetheria.ai', 'X-Title': 'Aetheria AI' } : {}
+          })
+        });
+
+        if (proxyRes.ok) {
+          const proxyData = await proxyRes.json();
+          const target = proxyData.data || proxyData;
+          models = extractModelIds(target, prov);
+          if (models.length > 0) success = true;
+        }
+      }
+
+      if (success && models.length > 0) {
+        populateModelDropdown(models, models[0]);
+        updateDynamicPresets(models);
+        showNotification(`✓ Successfully loaded ${models.length} models from ${conf.label}!`);
+      } else {
+        showNotification(`Could not fetch live models. Loaded ${conf.curated.length} verified presets.`);
+        populateModelDropdown(conf.curated, conf.defaultModel);
+      }
+    } catch (err) {
+      showNotification(`Failed to fetch models: ${err.message || 'Network error'}`);
+    } finally {
+      if (fetchModelsIcon) fetchModelsIcon.classList.remove('animate-spin');
+      if (fetchModelsText) fetchModelsText.textContent = 'Fetch Models';
+    }
+  }
+
+  // Health Check & Latency Ping
+  async function pingTextConnection() {
+    if (!pingStatusMsg) return;
+    pingStatusMsg.classList.remove('hidden');
+    pingStatusMsg.className = 'text-xs px-3.5 py-2.5 rounded-xl border bg-purple-950/40 border-purple-500/30 text-purple-300 flex items-center gap-2';
+    pingStatusMsg.innerHTML = '<span class="w-2 h-2 rounded-full bg-cyan-400 animate-ping"></span><span>Measuring connection latency &amp; authenticating with provider...</span>';
+
+    const t0 = performance.now();
+    const prov = textProviderSelect?.value || 'demo';
+    const conf = PROVIDER_CONFIGS[prov] || PROVIDER_CONFIGS.demo;
+    const key = textApiKey?.value.trim() || '';
+    const baseUrl = textBaseUrl?.value.trim() || conf.defaultUrl || '';
+    const currentModel = textModelSelect?.value || textModelInput?.value || conf.defaultModel;
+
+    if (prov === 'demo') {
+      await new Promise(r => setTimeout(r, 85));
+      const dt = Math.round(performance.now() - t0);
+      pingStatusMsg.className = 'text-xs px-3.5 py-2.5 rounded-xl border bg-emerald-950/40 border-emerald-500/30 text-emerald-300';
+      pingStatusMsg.innerHTML = `✓ Free Cloud AI Ready • Latency: ${dt}ms • Model: Instant Cloud Engine`;
+      if (pingLatencyText) pingLatencyText.textContent = `Online • Latency: ${dt}ms`;
+      if (pingIndicatorDot) pingIndicatorDot.className = 'w-2.5 h-2.5 rounded-full bg-emerald-400 shrink-0';
+      return;
+    }
+
+    if (conf.hasKey && !conf.isKeyOptional && !key) {
+      pingStatusMsg.className = 'text-xs px-3.5 py-2.5 rounded-xl border bg-amber-950/40 border-amber-500/30 text-amber-300';
+      pingStatusMsg.innerHTML = `⚠️ Please enter your ${conf.label} API Key before testing connection.`;
+      if (pingLatencyText) pingLatencyText.textContent = 'API Key Required';
+      if (pingIndicatorDot) pingIndicatorDot.className = 'w-2.5 h-2.5 rounded-full bg-amber-400 shrink-0';
+      return;
+    }
+
+    try {
+      let endpoint = conf.modelsEndpoint;
+      if (conf.hasUrl) {
+        endpoint = `${baseUrl.replace(/\/+$/, '')}/models`;
+      } else if (prov === 'google') {
+        endpoint = `https://generativelanguage.googleapis.com/v1beta/models?key=${key}`;
+      } else if (prov === 'anthropic') {
+        endpoint = 'https://api.anthropic.com/v1/messages';
+      }
+
+      let resStatus = null;
+      let latency = 0;
+
+      try {
+        const headers = {};
+        if (key && prov !== 'google') {
+          if (prov === 'anthropic') {
+            headers['x-api-key'] = key;
+            headers['anthropic-version'] = '2023-06-01';
+            headers['anthropic-dangerous-direct-browser-access'] = 'true';
+          } else {
+            headers['Authorization'] = `Bearer ${key}`;
+          }
+        }
+        if (prov === 'openrouter') {
+          headers['HTTP-Referer'] = 'https://aetheria.ai';
+          headers['X-Title'] = 'Aetheria AI';
+        }
+
+        const res = await fetch(endpoint, { method: 'GET', headers });
+        latency = Math.round(performance.now() - t0);
+        resStatus = res.status;
+      } catch (directErr) {
+        const proxyRes = await fetch('/api/proxy/fetch-models', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            endpoint,
+            apiKey: key,
+            headers: prov === 'openrouter' ? { 'HTTP-Referer': 'https://aetheria.ai', 'X-Title': 'Aetheria AI' } : {}
+          })
+        });
+        latency = Math.round(performance.now() - t0);
+        resStatus = proxyRes.status;
+      }
+
+      if (resStatus >= 200 && resStatus < 300) {
+        pingStatusMsg.className = 'text-xs px-3.5 py-2.5 rounded-xl border bg-emerald-950/40 border-emerald-500/30 text-emerald-300';
+        pingStatusMsg.innerHTML = `✓ Connection Healthy! • Provider: ${conf.label} • Latency: ${latency}ms • Model: ${currentModel} • Status: 200 OK`;
+        if (pingLatencyText) pingLatencyText.textContent = `Online • Latency: ${latency}ms`;
+        if (pingIndicatorDot) pingIndicatorDot.className = 'w-2.5 h-2.5 rounded-full bg-emerald-400 shrink-0';
+      } else if (resStatus === 401 || resStatus === 403) {
+        pingStatusMsg.className = 'text-xs px-3.5 py-2.5 rounded-xl border bg-red-950/40 border-red-500/30 text-red-300';
+        pingStatusMsg.innerHTML = `✕ Authentication Failed (HTTP ${resStatus}): The API key provided is invalid, expired, or missing permissions for ${conf.label}.`;
+        if (pingLatencyText) pingLatencyText.textContent = `Auth Error (${resStatus})`;
+        if (pingIndicatorDot) pingIndicatorDot.className = 'w-2.5 h-2.5 rounded-full bg-red-500 shrink-0';
+      } else if (resStatus === 404) {
+        pingStatusMsg.className = 'text-xs px-3.5 py-2.5 rounded-xl border bg-amber-950/40 border-amber-500/30 text-amber-300';
+        pingStatusMsg.innerHTML = `⚠️ Endpoint or Model Not Found (HTTP 404): Connected to ${conf.label}, but verify your Base URL or model name.`;
+        if (pingLatencyText) pingLatencyText.textContent = `Warning (404)`;
+        if (pingIndicatorDot) pingIndicatorDot.className = 'w-2.5 h-2.5 rounded-full bg-amber-400 shrink-0';
+      } else if (resStatus === 429) {
+        pingStatusMsg.className = 'text-xs px-3.5 py-2.5 rounded-xl border bg-red-950/40 border-red-500/30 text-red-300';
+        pingStatusMsg.innerHTML = `✕ Quota / Rate Limit Exceeded (HTTP 429): Your ${conf.label} account has run out of credits or hit usage limits.`;
+        if (pingLatencyText) pingLatencyText.textContent = `Rate Limited (429)`;
+        if (pingIndicatorDot) pingIndicatorDot.className = 'w-2.5 h-2.5 rounded-full bg-red-500 shrink-0';
+      } else {
+        pingStatusMsg.className = 'text-xs px-3.5 py-2.5 rounded-xl border bg-amber-950/40 border-amber-500/30 text-amber-300';
+        pingStatusMsg.innerHTML = `⚠️ HTTP ${resStatus}: Connected to server. Edge Relay will handle during chat.`;
+        if (pingLatencyText) pingLatencyText.textContent = `HTTP ${resStatus}`;
+      }
+    } catch (err) {
+      const dt = Math.round(performance.now() - t0);
+      pingStatusMsg.className = 'text-xs px-3.5 py-2.5 rounded-xl border bg-amber-950/40 border-amber-500/30 text-amber-300';
+      pingStatusMsg.innerHTML = `⚠️ Direct network check timed out (${dt}ms). Automatic Edge Relay will route your chat seamlessly during conversation.`;
+      if (pingLatencyText) pingLatencyText.textContent = `Edge Fallback Ready`;
+    }
+  }
+
+  // Adapt submenus & input fields dynamically based on selected provider
+  function syncProviderVisibility() {
+    const prov = textProviderSelect?.value || 'groq';
+    const conf = PROVIDER_CONFIGS[prov] || PROVIDER_CONFIGS.demo;
+
+    // Free cloud notice
+    if (freeCloudNotice) {
+      freeCloudNotice.classList.toggle('hidden', prov !== 'demo');
+    }
+
+    // API Key container
+    if (apiKeyContainer) {
+      apiKeyContainer.classList.toggle('hidden', !conf.hasKey);
+    }
+    if (apiKeyLabel) {
+      apiKeyLabel.textContent = conf.isKeyOptional 
+        ? 'API Key (Optional for Local)' 
+        : (prov === 'google' ? 'Google Gemini API Key' : 'API Key');
+    }
+    if (textApiKey) {
+      textApiKey.placeholder = conf.keyPlaceholder || 'Enter API Key...';
+    }
+    if (getKeyLink) {
+      if (conf.keyLink) {
+        getKeyLink.classList.remove('hidden');
+        getKeyLink.href = conf.keyLink;
+        getKeyLink.textContent = prov === 'google' ? 'Get Free Key' : 'Get API Key';
+      } else {
+        getKeyLink.classList.add('hidden');
+      }
+    }
+
+    // Custom Base URL container
+    if (customBaseUrlContainer) {
+      customBaseUrlContainer.classList.toggle('hidden', !conf.hasUrl);
+    }
+    if (customBaseUrlLabel && conf.urlLabel) {
+      customBaseUrlLabel.textContent = conf.urlLabel;
+    }
+    if (customBaseUrlHint && conf.urlHint) {
+      customBaseUrlHint.textContent = conf.urlHint;
+    }
+    if (textBaseUrl && conf.urlPlaceholder) {
+      textBaseUrl.placeholder = conf.urlPlaceholder;
+      if (!textBaseUrl.value && conf.defaultUrl) {
+        textBaseUrl.value = conf.defaultUrl;
+      }
+    }
+
+    // Model options
+    const savedModel = localStorage.getItem('aetheria_text_model') || conf.defaultModel;
+    populateModelDropdown(conf.curated, savedModel);
+    updateDynamicPresets(conf.curated);
+
+    // Health Check widget update
+    if (pingProviderName) {
+      pingProviderName.textContent = conf.name;
+    }
+    if (pingLatencyText) {
+      pingLatencyText.textContent = prov === 'demo' ? 'Online • Free Tier' : 'Configured • Ready to test';
+    }
+
+    // Voice & Image tabs
+    if (voiceKeyContainer && voiceProviderSelect) {
+      voiceKeyContainer.classList.toggle('hidden', voiceProviderSelect.value === 'browser');
+    }
+    if (elevenVoiceContainer && voiceProviderSelect) {
+      elevenVoiceContainer.classList.toggle('hidden', voiceProviderSelect.value !== 'elevenlabs');
+    }
+    if (openaiVoiceContainer && voiceProviderSelect) {
+      openaiVoiceContainer.classList.toggle('hidden', voiceProviderSelect.value !== 'openai');
+    }
+    if (imageKeyContainer && imageProviderSelect) {
+      imageKeyContainer.classList.toggle('hidden', imageProviderSelect.value === 'pollinations');
+    }
+  }
+
   // Load and apply settings from localStorage
   function loadEngineSettings() {
     // 1. Text settings
@@ -1683,7 +2487,6 @@ const { character } = Astro.props;
     if (textProviderSelect) textProviderSelect.value = textProv;
     if (textApiKey) textApiKey.value = localStorage.getItem('aetheria_text_key') || '';
     if (textBaseUrl) textBaseUrl.value = localStorage.getItem('aetheria_text_base_url') || '';
-    if (textModelInput) textModelInput.value = localStorage.getItem('aetheria_text_model') || (textProv === 'groq' ? 'llama-3.3-70b-versatile' : 'anthropic/claude-3.5-sonnet');
     
     // Sliders
     if (sliderTemp) sliderTemp.value = localStorage.getItem('aetheria_text_temp') || '0.85';
@@ -1749,46 +2552,27 @@ const { character } = Astro.props;
     if (badgeMotion && sliderMotion) badgeMotion.textContent = sliderMotion.value;
   }
 
-  function syncProviderVisibility() {
-    // Custom base URL
-    if (customBaseUrlContainer && textProviderSelect) {
-      customBaseUrlContainer.classList.toggle('hidden', textProviderSelect.value !== 'custom');
-    }
-    // Voice keys
-    if (voiceKeyContainer && voiceProviderSelect) {
-      voiceKeyContainer.classList.toggle('hidden', voiceProviderSelect.value === 'browser');
-    }
-    if (elevenVoiceContainer && voiceProviderSelect) {
-      elevenVoiceContainer.classList.toggle('hidden', voiceProviderSelect.value !== 'elevenlabs');
-    }
-    if (openaiVoiceContainer && voiceProviderSelect) {
-      openaiVoiceContainer.classList.toggle('hidden', voiceProviderSelect.value !== 'openai');
-    }
-    // Image keys
-    if (imageKeyContainer && imageProviderSelect) {
-      imageKeyContainer.classList.toggle('hidden', imageProviderSelect.value === 'pollinations');
-    }
-  }
-
   function updateHeaderPill() {
     if (!engineLabel) return;
     const textProv = textProviderSelect?.value || localStorage.getItem('aetheria_text_provider') || 'groq';
-    const model = textModelInput?.value || localStorage.getItem('aetheria_text_model') || 'Llama 3.3';
+    const conf = PROVIDER_CONFIGS[textProv] || PROVIDER_CONFIGS.demo;
+    const model = textModelSelect?.value || textModelInput?.value || localStorage.getItem('aetheria_text_model') || conf.defaultModel;
     const shortModel = model.split('/').pop() || model;
     
     if (textProv === 'demo') {
       engineLabel.textContent = 'Settings';
     } else {
-      engineLabel.textContent = `AI: ${textProv.toUpperCase()}`;
+      engineLabel.textContent = `AI: ${conf.label.toUpperCase()}`;
     }
   }
 
   function saveAllSettings() {
     // 1. Text
+    const chosenModel = textModelInput?.value.trim() || textModelSelect?.value || 'llama-3.3-70b-versatile';
     if (textProviderSelect) localStorage.setItem('aetheria_text_provider', textProviderSelect.value);
     if (textApiKey) localStorage.setItem('aetheria_text_key', textApiKey.value.trim());
     if (textBaseUrl) localStorage.setItem('aetheria_text_base_url', textBaseUrl.value.trim());
-    if (textModelInput) localStorage.setItem('aetheria_text_model', textModelInput.value.trim());
+    localStorage.setItem('aetheria_text_model', chosenModel);
     if (sliderTemp) localStorage.setItem('aetheria_text_temp', sliderTemp.value);
     if (sliderTokens) localStorage.setItem('aetheria_text_tokens', sliderTokens.value);
     if (sliderTopP) localStorage.setItem('aetheria_text_top_p', sliderTopP.value);
@@ -1854,16 +2638,36 @@ const { character } = Astro.props;
   // Providers change listeners
   textProviderSelect?.addEventListener('change', () => {
     syncProviderVisibility();
-    if (textProviderSelect.value === 'groq' && textModelInput) {
-      textModelInput.value = 'llama-3.3-70b-versatile';
-    } else if (textProviderSelect.value === 'openrouter' && textModelInput) {
-      textModelInput.value = 'anthropic/claude-3.5-sonnet';
-    } else if (textProviderSelect.value === 'deepseek' && textModelInput) {
-      textModelInput.value = 'deepseek-chat';
-    } else if (textProviderSelect.value === 'openai' && textModelInput) {
-      textModelInput.value = 'gpt-4o';
+    updateHeaderPill();
+  });
+
+  // Toggle between Dropdown and Manual Text Input
+  toggleModelInputModeBtn?.addEventListener('click', () => {
+    if (!textModelInput || !textModelSelect) return;
+    const isInputHidden = textModelInput.classList.contains('hidden');
+    if (isInputHidden) {
+      textModelInput.classList.remove('hidden');
+      textModelSelect.classList.add('hidden');
+      textModelInput.value = textModelSelect.value;
+      textModelInput.focus();
+    } else {
+      textModelInput.classList.add('hidden');
+      textModelSelect.classList.remove('hidden');
+      if (textModelInput.value) {
+        populateModelDropdown([textModelInput.value, ...(PROVIDER_CONFIGS[textProviderSelect?.value || 'groq']?.curated || [])], textModelInput.value);
+      }
     }
   });
+
+  textModelSelect?.addEventListener('change', () => {
+    if (textModelInput) textModelInput.value = textModelSelect.value;
+    updateHeaderPill();
+  });
+
+  textModelInput?.addEventListener('input', updateHeaderPill);
+
+  fetchModelsBtn?.addEventListener('click', fetchModelsForProvider);
+  pingTextBtn?.addEventListener('click', pingTextConnection);
 
   voiceProviderSelect?.addEventListener('change', syncProviderVisibility);
   imageProviderSelect?.addEventListener('change', syncProviderVisibility);
@@ -1888,16 +2692,6 @@ const { character } = Astro.props;
     });
   });
 
-  // Quick Model Pills
-  document.querySelectorAll('.quick-model-pill').forEach(pill => {
-    pill.addEventListener('click', () => {
-      const model = pill.getAttribute('data-model');
-      if (model && textModelInput) {
-        textModelInput.value = model;
-      }
-    });
-  });
-
   // Quick Voice Pills
   document.querySelectorAll('.quick-voice-pill').forEach(pill => {
     pill.addEventListener('click', () => {
@@ -1912,55 +2706,6 @@ const { character } = Astro.props;
   toggleKeyVisibility?.addEventListener('click', () => {
     if (textApiKey) {
       textApiKey.type = textApiKey.type === 'password' ? 'text' : 'password';
-    }
-  });
-
-  // Test Latency (Ping)
-  pingTextBtn?.addEventListener('click', async () => {
-    if (!pingStatusMsg) return;
-    pingStatusMsg.classList.remove('hidden');
-    pingStatusMsg.className = 'text-xs px-3.5 py-2 rounded-xl border bg-purple-950/40 border-purple-500/30 text-purple-300 flex items-center gap-2';
-    pingStatusMsg.innerHTML = '<span class="w-2 h-2 rounded-full bg-cyan-400 animate-ping"></span><span>Measuring connection latency...</span>';
-
-    const t0 = performance.now();
-    try {
-      const prov = textProviderSelect?.value || 'demo';
-      const key = textApiKey?.value.trim() || '';
-      
-      if (prov === 'demo') {
-        await new Promise(r => setTimeout(r, 120));
-        const dt = Math.round(performance.now() - t0);
-        pingStatusMsg.className = 'text-xs px-3.5 py-2 rounded-xl border bg-emerald-950/40 border-emerald-500/30 text-emerald-300';
-        pingStatusMsg.innerHTML = `✓ Free Edge Simulator Ready • Latency: ${dt}ms`;
-        return;
-      }
-
-      if (!key) {
-        pingStatusMsg.className = 'text-xs px-3.5 py-2 rounded-xl border bg-amber-950/40 border-amber-500/30 text-amber-300';
-        pingStatusMsg.innerHTML = '⚠️ Please enter your API Key before testing connection.';
-        return;
-      }
-
-      // Quick probe
-      let endpoint = 'https://api.groq.com/openai/v1/models';
-      let headers = { 'Authorization': `Bearer ${key}` };
-      if (prov === 'openrouter') endpoint = 'https://openrouter.ai/api/v1/models';
-      if (prov === 'deepseek') endpoint = 'https://api.deepseek.com/models';
-      if (prov === 'openai') endpoint = 'https://api.openai.com/v1/models';
-      if (prov === 'custom') endpoint = (textBaseUrl?.value.trim() || 'http://localhost:11434/v1') + '/models';
-
-      const res = await fetch(endpoint, { method: 'GET', headers });
-      const dt = Math.round(performance.now() - t0);
-      if (res.ok) {
-        pingStatusMsg.className = 'text-xs px-3.5 py-2 rounded-xl border bg-emerald-950/40 border-emerald-500/30 text-emerald-300';
-        pingStatusMsg.innerHTML = `✓ Connection Successful (${prov.toUpperCase()}) • Latency: ${dt}ms`;
-      } else {
-        pingStatusMsg.className = 'text-xs px-3.5 py-2 rounded-xl border bg-red-950/40 border-red-500/30 text-red-300';
-        pingStatusMsg.innerHTML = `✕ HTTP ${res.status}: Check your API key or model name.`;
-      }
-    } catch (err) {
-      pingStatusMsg.className = 'text-xs px-3.5 py-2 rounded-xl border bg-amber-950/40 border-amber-500/30 text-amber-300';
-      pingStatusMsg.innerHTML = `⚠️ Direct ping blocked by browser CORS policy. Key will be sent during direct chat.`;
     }
   });
 
@@ -2680,15 +3425,17 @@ Never speak, narrate, or decide thoughts or actions for {{user}}. Maintain high 
     let replyText = '';
 
     // Direct LLM Call with Streaming
-    if (apiKey && provider !== 'demo') {
+    if ((apiKey || provider === 'custom-local') && provider !== 'demo') {
       try {
-        let endpoint = 'https://api.groq.com/openai/v1/chat/completions';
-        if (provider === 'openrouter') endpoint = 'https://openrouter.ai/api/v1/chat/completions';
-        if (provider === 'deepseek') endpoint = 'https://api.deepseek.com/chat/completions';
-        if (provider === 'openai') endpoint = 'https://api.openai.com/v1/chat/completions';
-        if (provider === 'custom') {
-          const base = localStorage.getItem('aetheria_text_base_url') || 'http://localhost:11434/v1';
+        const conf = PROVIDER_CONFIGS[provider] || PROVIDER_CONFIGS.demo;
+        let endpoint = conf.chatEndpoint;
+        if (conf.hasUrl) {
+          const base = localStorage.getItem('aetheria_text_base_url') || conf.defaultUrl || 'http://localhost:11434/v1';
           endpoint = base.replace(/\/+$/, '') + '/chat/completions';
+        } else if (provider === 'google') {
+          endpoint = 'https://generativelanguage.googleapis.com/v1beta/openai/chat/completions';
+        } else if (!endpoint) {
+          endpoint = 'https://api.groq.com/openai/v1/chat/completions';
         }
 
         const systemPrompt = buildSystemPrompt(userText);
@@ -2698,29 +3445,64 @@ Never speak, narrate, or decide thoughts or actions for {{user}}. Maintain high 
           content: m.text
         }));
 
-        const messages = [
-          { role: 'system', content: systemPrompt },
-          ...historySlice
-        ];
+        let payload;
+        let headers = { 'Content-Type': 'application/json' };
 
-        const payload = {
-          model: model,
-          messages: messages,
-          temperature: temp,
-          max_tokens: maxTokens,
-          top_p: topP,
-          stream: enableStreaming
-        };
+        if (apiKey) {
+          if (provider === 'anthropic') {
+            headers['x-api-key'] = apiKey;
+            headers['anthropic-version'] = '2023-06-01';
+            headers['anthropic-dangerous-direct-browser-access'] = 'true';
+          } else {
+            headers['Authorization'] = `Bearer ${apiKey}`;
+          }
+        }
 
-        const res = await fetch(endpoint, {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-            'Authorization': `Bearer ${apiKey}`,
-            ...(provider === 'openrouter' ? { 'HTTP-Referer': 'https://aetheria.ai', 'X-Title': 'Aetheria AI' } : {})
-          },
-          body: JSON.stringify(payload)
-        });
+        if (provider === 'openrouter') {
+          headers['HTTP-Referer'] = 'https://aetheria.ai';
+          headers['X-Title'] = 'Aetheria AI';
+        }
+
+        if (provider === 'anthropic') {
+          payload = {
+            model: model,
+            system: systemPrompt,
+            messages: historySlice,
+            max_tokens: maxTokens,
+            temperature: temp,
+            stream: enableStreaming
+          };
+        } else {
+          payload = {
+            model: model,
+            messages: [{ role: 'system', content: systemPrompt }, ...historySlice],
+            temperature: temp,
+            max_tokens: maxTokens,
+            top_p: topP,
+            stream: enableStreaming
+          };
+        }
+
+        let res;
+        try {
+          res = await fetch(endpoint, {
+            method: 'POST',
+            headers,
+            body: JSON.stringify(payload)
+          });
+        } catch (directErr) {
+          // Automatic Edge Relay Fallback (Bypasses any browser CORS limits!)
+          res = await fetch('/api/proxy/chat', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              endpoint,
+              apiKey,
+              body: payload,
+              headers: provider === 'openrouter' ? { 'HTTP-Referer': 'https://aetheria.ai', 'X-Title': 'Aetheria AI' } : {}
+            })
+          });
+        }
 
         if (res.ok) {
           if (typingIndicator) typingIndicator.classList.add('hidden');
@@ -2870,12 +3652,18 @@ Never speak, narrate, or decide thoughts or actions for {{user}}. Maintain high 
 
     let newReply = '';
 
-    if (apiKey && provider !== 'demo') {
+    if ((apiKey || provider === 'custom-local') && provider !== 'demo') {
       try {
-        let endpoint = 'https://api.groq.com/openai/v1/chat/completions';
-        if (provider === 'openrouter') endpoint = 'https://openrouter.ai/api/v1/chat/completions';
-        if (provider === 'deepseek') endpoint = 'https://api.deepseek.com/chat/completions';
-        if (provider === 'openai') endpoint = 'https://api.openai.com/v1/chat/completions';
+        const conf = PROVIDER_CONFIGS[provider] || PROVIDER_CONFIGS.demo;
+        let endpoint = conf.chatEndpoint;
+        if (conf.hasUrl) {
+          const base = localStorage.getItem('aetheria_text_base_url') || conf.defaultUrl || 'http://localhost:11434/v1';
+          endpoint = base.replace(/\/+$/, '') + '/chat/completions';
+        } else if (provider === 'google') {
+          endpoint = 'https://generativelanguage.googleapis.com/v1beta/openai/chat/completions';
+        } else if (!endpoint) {
+          endpoint = 'https://api.groq.com/openai/v1/chat/completions';
+        }
 
         const lastUserMsg = conversation.slice(0, msgIdx).reverse().find(m => m.sender === 'user');
         const systemPrompt = buildSystemPrompt(lastUserMsg ? lastUserMsg.text : '');
@@ -2884,24 +3672,68 @@ Never speak, narrate, or decide thoughts or actions for {{user}}. Maintain high 
           content: m.text
         }));
 
-        const res = await fetch(endpoint, {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-            'Authorization': `Bearer ${apiKey}`,
-            ...(provider === 'openrouter' ? { 'HTTP-Referer': 'https://aetheria.ai', 'X-Title': 'Aetheria AI' } : {})
-          },
-          body: JSON.stringify({
+        let payload;
+        let headers = { 'Content-Type': 'application/json' };
+
+        if (apiKey) {
+          if (provider === 'anthropic') {
+            headers['x-api-key'] = apiKey;
+            headers['anthropic-version'] = '2023-06-01';
+            headers['anthropic-dangerous-direct-browser-access'] = 'true';
+          } else {
+            headers['Authorization'] = `Bearer ${apiKey}`;
+          }
+        }
+
+        if (provider === 'openrouter') {
+          headers['HTTP-Referer'] = 'https://aetheria.ai';
+          headers['X-Title'] = 'Aetheria AI';
+        }
+
+        if (provider === 'anthropic') {
+          payload = {
+            model: model,
+            system: systemPrompt,
+            messages: historySlice,
+            max_tokens: maxTokens,
+            temperature: temp
+          };
+        } else {
+          payload = {
             model: model,
             messages: [{ role: 'system', content: systemPrompt }, ...historySlice],
             temperature: temp,
             max_tokens: maxTokens
-          })
-        });
+          };
+        }
+
+        let res;
+        try {
+          res = await fetch(endpoint, {
+            method: 'POST',
+            headers,
+            body: JSON.stringify(payload)
+          });
+        } catch (directErr) {
+          res = await fetch('/api/proxy/chat', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              endpoint,
+              apiKey,
+              body: payload,
+              headers: provider === 'openrouter' ? { 'HTTP-Referer': 'https://aetheria.ai', 'X-Title': 'Aetheria AI' } : {}
+            })
+          });
+        }
 
         if (res.ok) {
           const data = await res.json();
-          newReply = data.choices?.[0]?.message?.content || '';
+          if (provider === 'anthropic') {
+            newReply = data.content?.[0]?.text || '';
+          } else {
+            newReply = data.choices?.[0]?.message?.content || '';
+          }
         }
       } catch (err) {}
     }

@@ -586,6 +586,93 @@ export default {
         return jsonResponse({ success: true, characters: characters.results });
       }
 
+      // ==========================================
+      // 11. CORS-FREE EDGE PROXY: MODELS & CHAT
+      // ==========================================
+      if (url.pathname === '/api/proxy/fetch-models' && request.method === 'POST') {
+        const payload = await request.json() as any;
+        const targetUrl = payload.endpoint;
+        const apiKey = payload.apiKey;
+        const customHeaders = payload.headers || {};
+
+        if (!targetUrl) {
+          return jsonResponse({ error: 'Endpoint URL is required' }, 400);
+        }
+
+        const fetchHeaders: Record<string, string> = {
+          'User-Agent': 'Aetheria-Edge-Client/1.0',
+          'Accept': 'application/json',
+          ...customHeaders
+        };
+
+        if (apiKey) {
+          if (targetUrl.includes('anthropic.com')) {
+            fetchHeaders['x-api-key'] = apiKey;
+            fetchHeaders['anthropic-version'] = '2023-06-01';
+          } else {
+            fetchHeaders['Authorization'] = `Bearer ${apiKey}`;
+          }
+        }
+
+        try {
+          const apiRes = await fetch(targetUrl, {
+            method: 'GET',
+            headers: fetchHeaders
+          });
+          const data = await apiRes.json();
+          return jsonResponse({ success: apiRes.ok, status: apiRes.status, data }, apiRes.status);
+        } catch (fetchErr: any) {
+          return jsonResponse({ success: false, error: fetchErr.message || 'Failed to reach endpoint' }, 502);
+        }
+      }
+
+      if (url.pathname === '/api/proxy/chat' && request.method === 'POST') {
+        const payload = await request.json() as any;
+        const targetUrl = payload.endpoint;
+        const apiKey = payload.apiKey;
+        const requestBody = payload.body;
+        const customHeaders = payload.headers || {};
+
+        if (!targetUrl || !requestBody) {
+          return jsonResponse({ error: 'Endpoint and request body are required' }, 400);
+        }
+
+        const fetchHeaders: Record<string, string> = {
+          'Content-Type': 'application/json',
+          'User-Agent': 'Aetheria-Edge-Client/1.0',
+          ...customHeaders
+        };
+
+        if (apiKey) {
+          if (targetUrl.includes('anthropic.com')) {
+            fetchHeaders['x-api-key'] = apiKey;
+            fetchHeaders['anthropic-version'] = '2023-06-01';
+          } else {
+            fetchHeaders['Authorization'] = `Bearer ${apiKey}`;
+          }
+        }
+
+        try {
+          const apiRes = await fetch(targetUrl, {
+            method: 'POST',
+            headers: fetchHeaders,
+            body: JSON.stringify(requestBody)
+          });
+
+          return new Response(apiRes.body, {
+            status: apiRes.status,
+            headers: {
+              'Content-Type': apiRes.headers.get('Content-Type') || 'application/json',
+              'Access-Control-Allow-Origin': '*',
+              'Access-Control-Allow-Methods': 'GET, POST, OPTIONS',
+              'Access-Control-Allow-Headers': '*'
+            }
+          });
+        } catch (fetchErr: any) {
+          return jsonResponse({ error: fetchErr.message || 'Failed to reach AI endpoint' }, 502);
+        }
+      }
+
       return jsonResponse({ error: 'Endpoint not found' }, 404);
     } catch (err: any) {
       return jsonResponse({ error: err.message || 'Internal Edge Error' }, 500);
