@@ -8,23 +8,23 @@ import {
   Download, 
   Save, 
   Eye, 
-  MessageSquare, 
+  EyeOff,
   Check, 
-  Info,
-  Wand2, 
+  Info, 
   Trash2, 
   FileText, 
-  Settings2, 
   Image as ImageIcon, 
   BookOpen, 
-  Sliders,
-  Globe,
-  Plus,
-  Database,
-  Copy,
-  RefreshCw,
-  AlertCircle,
-  ExternalLink
+  Sliders, 
+  Globe, 
+  Plus, 
+  Database, 
+  Copy, 
+  RefreshCw, 
+  AlertCircle, 
+  ChevronRight, 
+  ChevronLeft,
+  X
 } from '@lucide/astro';
 
 const PRESET_AVATARS = [
@@ -39,34 +39,31 @@ const PRESET_AVATARS = [
 ];
 ---
 
-<Layout title="Character Creation Studio | Aetheria AI (Tavern V2 Spec)">
-  <div class="min-h-screen bg-[#04060d] text-slate-100 flex flex-col">
+<Layout title="Character Studio | Aetheria AI (Tavern V2 Spec)">
+  <div class="min-h-screen bg-[#04060d] text-slate-100 flex flex-col pb-24 lg:pb-12">
     
-    <!-- Top Sticky Sub-Header -->
-    <header class="sticky top-0 z-30 h-16 border-b border-white/[0.08] bg-[#070913]/90 backdrop-blur-xl px-4 sm:px-6 flex items-center justify-between">
+    <!-- Top Sticky Header -->
+    <header class="sticky top-0 z-40 h-16 border-b border-white/[0.08] bg-[#070913]/95 backdrop-blur-xl px-4 sm:px-6 flex items-center justify-between">
       <div class="flex items-center gap-3">
         <a 
           href="/" 
-          class="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-white/[0.05] hover:bg-white/[0.1] border border-white/[0.1] text-xs font-medium text-slate-300 hover:text-white transition"
+          class="flex items-center justify-center w-9 h-9 rounded-xl bg-white/[0.05] hover:bg-white/[0.1] border border-white/[0.1] text-slate-300 hover:text-white transition"
+          title="Back to Hub"
         >
           <ArrowLeft class="w-4 h-4 text-purple-400" />
-          <span class="hidden sm:inline">Back to Hub</span>
         </a>
-        <div class="h-4 w-px bg-white/10 hidden sm:block"></div>
         <div>
-          <h1 class="text-xs sm:text-sm font-bold text-white flex items-center gap-2">
+          <h1 class="text-sm sm:text-base font-bold text-white flex items-center gap-2">
             <span>Character Studio</span>
             <span class="px-2 py-0.5 rounded-full text-[10px] font-semibold bg-purple-950/80 text-purple-300 border border-purple-500/30">
-              Tavern V2 Spec
+              V2 Spec
             </span>
           </h1>
-          <p class="text-[10px] text-slate-400 hidden sm:block">
-            Universal roleplay card architect & lorebook editor
-          </p>
+          <p class="text-[11px] text-slate-400 hidden sm:block">Step-by-step roleplay card architect</p>
         </div>
       </div>
 
-      <!-- Quick Action Controls -->
+      <!-- Quick Action Buttons -->
       <div class="flex items-center gap-2">
         <input 
           id="card-file-input" 
@@ -76,719 +73,898 @@ const PRESET_AVATARS = [
         />
         
         <button 
-          id="trigger-import-btn"
+          id="toggle-import-panel-btn"
           type="button" 
-          class="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-white/[0.05] hover:bg-white/[0.1] border border-white/[0.1] text-xs font-semibold text-slate-200 hover:text-white transition cursor-pointer"
-          title="Import from Tavern PNG or JSON card"
+          class="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-cyan-950/40 hover:bg-cyan-900/50 border border-cyan-500/30 text-xs font-semibold text-cyan-200 transition cursor-pointer"
+          title="Import card from file or Chub link"
         >
-          <Upload class="w-3.5 h-3.5 text-cyan-400" />
-          <span class="hidden sm:inline">Import Card</span>
+          <Upload class="w-3.5 h-3.5" />
+          <span class="hidden sm:inline">Import</span>
         </button>
 
         <button 
           id="export-tavern-btn"
           type="button" 
-          class="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-white/[0.05] hover:bg-white/[0.1] border border-white/[0.1] text-xs font-semibold text-slate-200 hover:text-white transition cursor-pointer"
+          class="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-white/[0.05] hover:bg-white/[0.1] border border-white/[0.1] text-xs font-semibold text-slate-200 transition cursor-pointer"
           title="Download Tavern V2 JSON Card"
         >
           <Download class="w-3.5 h-3.5 text-purple-400" />
-          <span class="hidden sm:inline">Export V2</span>
+          <span class="hidden sm:inline">Export</span>
         </button>
 
+        <!-- Mobile Preview Trigger -->
         <button 
-          id="save-character-btn"
+          id="mobile-open-preview-btn"
           type="button" 
-          class="flex items-center gap-1.5 px-4 py-1.5 rounded-xl bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-500 hover:to-indigo-500 text-xs font-semibold text-white shadow-md shadow-purple-900/30 transition cursor-pointer active:scale-95"
+          class="lg:hidden flex items-center justify-center w-9 h-9 rounded-xl bg-purple-600/20 border border-purple-500/40 text-purple-300"
+          title="View Card Preview"
         >
-          <Save class="w-3.5 h-3.5" />
-          <span>Save Persona</span>
+          <Eye class="w-4 h-4" />
         </button>
       </div>
     </header>
 
-    <!-- Main Studio Grid -->
-    <main class="flex-1 max-w-7xl w-full mx-auto p-4 sm:p-6 lg:p-8 grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-8">
+    <!-- Main Content Container -->
+    <div class="max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 pt-4 sm:pt-6">
       
-      <!-- Left Column: 4-Tab Architect with Live Token Counter & Lorebook (7 cols on large screens) -->
-      <div class="lg:col-span-7 space-y-5">
-        
-        <!-- ================= TOKEN BUDGET & CONTEXT HEALTH HUD ================= -->
-        <div class="p-3.5 sm:p-4 rounded-2xl bg-[#090b17] border border-white/[0.08] shadow-lg">
-          <div class="flex items-center justify-between border-b border-white/[0.06] pb-2.5 mb-3">
-            <div class="flex items-center gap-2">
-              <Sparkles class="w-4 h-4 text-purple-400" />
-              <span class="text-xs font-bold text-white tracking-wide uppercase">Context Memory & Token Budget</span>
-            </div>
-            <div class="flex items-center gap-1.5">
-              <span id="token-health-badge" class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-emerald-950/60 border border-emerald-500/40 text-emerald-300">
-                Optimal
-              </span>
-            </div>
+      <!-- ================= COMPACT FLOATING TOKEN & CONTEXT CAPSULE ================= -->
+      <div class="mb-4 sm:mb-6 p-2.5 sm:p-3 rounded-2xl bg-[#090b17]/90 border border-white/[0.08] backdrop-blur-md flex flex-wrap items-center justify-between gap-2 shadow-sm">
+        <div class="flex items-center gap-2">
+          <Sparkles class="w-4 h-4 text-purple-400 shrink-0" />
+          <span class="text-xs font-bold text-white tracking-wide">Context Footprint:</span>
+          <span id="hud-total-tokens" class="text-xs font-mono font-bold text-purple-300">~0 / 4096 tok</span>
+          <span id="token-health-badge" class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-emerald-950/60 border border-emerald-500/40 text-emerald-300">
+            Optimal
+          </span>
+        </div>
+        <div class="flex items-center gap-3 text-[11px] text-slate-400 font-mono">
+          <span>Perm: <strong id="hud-perm-tokens" class="text-slate-200">~0</strong></span>
+          <span class="text-slate-600">•</span>
+          <span>Dyn: <strong id="hud-dyn-tokens" class="text-slate-200">~0</strong></span>
+          <span class="text-slate-600">•</span>
+          <span>Lore: <strong id="hud-lore-tokens" class="text-amber-300">~0</strong></span>
+        </div>
+      </div>
+
+      <!-- ================= COLLAPSIBLE IMPORT DRAWER (CHUB & FILE) ================= -->
+      <div id="import-drawer" class="hidden mb-6 p-4 sm:p-5 rounded-2xl sm:rounded-3xl bg-[#090e1f] border border-cyan-500/30 shadow-xl transition-all">
+        <div class="flex items-center justify-between border-b border-white/[0.08] pb-3 mb-4">
+          <div class="flex items-center gap-2">
+            <Globe class="w-4 h-4 text-cyan-400" />
+            <h3 class="text-xs sm:text-sm font-bold text-white">Import Card from Chub.ai or Real Tavern PNG/JSON</h3>
           </div>
-
-          <div class="grid grid-cols-2 sm:grid-cols-4 gap-2 text-center">
-            <!-- Permanent Tokens -->
-            <div class="p-2 rounded-xl bg-white/[0.02] border border-white/[0.05]">
-              <span class="block text-[10px] text-slate-400 font-medium">Permanent Tokens</span>
-              <span id="hud-perm-tokens" class="text-sm font-bold text-purple-300 font-mono">~0</span>
-              <span class="block text-[9px] text-slate-500">Sent every turn</span>
-            </div>
-
-            <!-- Dynamic Tokens -->
-            <div class="p-2 rounded-xl bg-white/[0.02] border border-white/[0.05]">
-              <span class="block text-[10px] text-slate-400 font-medium">Greeting & Examples</span>
-              <span id="hud-dyn-tokens" class="text-sm font-bold text-cyan-300 font-mono">~0</span>
-              <span class="block text-[9px] text-slate-500">First message weight</span>
-            </div>
-
-            <!-- Lorebook Weight -->
-            <div class="p-2 rounded-xl bg-white/[0.02] border border-white/[0.05]">
-              <span class="block text-[10px] text-slate-400 font-medium">World Info (Lore)</span>
-              <span id="hud-lore-tokens" class="text-sm font-bold text-amber-300 font-mono">~0</span>
-              <span class="block text-[9px] text-slate-500">Active entries</span>
-            </div>
-
-            <!-- Total Card Weight -->
-            <div class="p-2 rounded-xl bg-white/[0.02] border border-white/[0.05]">
-              <span class="block text-[10px] text-slate-400 font-medium">Total Tokens</span>
-              <span id="hud-total-tokens" class="text-sm font-bold text-white font-mono">~0 / 4096</span>
-              <span class="block text-[9px] text-slate-500">Base weight</span>
-            </div>
-          </div>
+          <button id="close-import-drawer-btn" class="p-1 rounded-lg text-slate-400 hover:text-white transition">
+            <X class="w-4 h-4" />
+          </button>
         </div>
 
-        <!-- ================= CHUB.AI & REMOTE CARD QUICK IMPORT ================= -->
-        <div class="p-3.5 sm:p-4 rounded-2xl bg-[#090e1f] border border-cyan-500/20 shadow-md">
-          <div class="flex items-center justify-between mb-2">
-            <span class="text-xs font-bold text-cyan-300 flex items-center gap-1.5">
-              <Globe class="w-3.5 h-3.5 text-cyan-400" />
-              <span>Import via Chub.ai or Remote Card URL</span>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <!-- Method 1: Chub URL -->
+          <div class="p-3.5 rounded-xl bg-black/40 border border-white/5 space-y-2.5">
+            <span class="text-xs font-semibold text-cyan-300 flex items-center gap-1.5">
+              <span>Method A: Chub.ai or Remote URL</span>
             </span>
-            <span class="text-[10px] text-slate-400 hidden sm:inline">Chub URL, PNG, or JSON link</span>
-          </div>
-          
-          <div class="flex flex-col sm:flex-row gap-2">
-            <div class="relative flex-1">
-              <input 
-                id="remote-url-input"
-                type="text"
-                placeholder="https://chub.ai/characters/username/char-name or direct .png / .json URL..."
-                class="w-full px-3.5 py-2 rounded-xl bg-white/[0.04] border border-white/10 focus:border-cyan-400/60 text-xs text-white placeholder:text-slate-500 outline-none transition"
-              />
-            </div>
+            <input 
+              id="remote-url-input"
+              type="text"
+              placeholder="https://chub.ai/characters/author/slug or .png / .json link..."
+              class="w-full px-3.5 py-2.5 rounded-xl bg-white/[0.04] border border-white/10 focus:border-cyan-400/60 text-xs sm:text-sm text-white placeholder:text-slate-500 outline-none"
+            />
             <button 
               id="fetch-remote-card-btn"
               type="button"
-              class="px-4 py-2 rounded-xl bg-cyan-600/30 hover:bg-cyan-600/50 border border-cyan-500/40 text-xs font-bold text-cyan-200 hover:text-white flex items-center justify-center gap-1.5 transition cursor-pointer active:scale-95 shrink-0 shadow-sm shadow-cyan-900/40"
+              class="w-full py-2.5 rounded-xl bg-cyan-600/30 hover:bg-cyan-600/50 border border-cyan-500/40 text-xs font-bold text-cyan-200 hover:text-white flex items-center justify-center gap-1.5 transition cursor-pointer active:scale-95"
             >
               <RefreshCw id="fetch-spinner-icon" class="w-3.5 h-3.5" />
-              <span id="fetch-btn-label">Fetch & Populate</span>
+              <span id="fetch-btn-label">Fetch & Auto-Fill All Steps</span>
             </button>
+            <div id="remote-fetch-status" class="hidden text-[11px] text-slate-300 flex items-center gap-1.5">
+              <span id="remote-status-dot" class="w-2 h-2 rounded-full bg-cyan-400 animate-pulse"></span>
+              <span id="remote-status-text">Fetching...</span>
+            </div>
           </div>
 
-          <!-- Status indicator -->
-          <div id="remote-fetch-status" class="hidden mt-2 p-2 rounded-lg bg-black/40 border border-white/10 text-[11px] flex items-center gap-2">
-            <span id="remote-status-dot" class="w-2 h-2 rounded-full bg-cyan-400 animate-pulse"></span>
-            <span id="remote-status-text" class="text-slate-300">Ready</span>
-          </div>
-        </div>
-
-        <!-- ================= 4-TAB NAVIGATION ================= -->
-        <div class="flex items-center p-1 rounded-2xl bg-[#0a0d1c] border border-white/[0.08] shadow-inner gap-1 overflow-x-auto">
-          <button 
-            type="button"
-            class="tab-btn active flex-1 py-2 px-2.5 rounded-xl text-xs font-semibold flex items-center justify-center gap-1.5 transition cursor-pointer bg-purple-600/30 text-purple-200 border border-purple-500/40 shadow-sm shrink-0"
-            data-tab="tab-identity"
-          >
-            <ImageIcon class="w-3.5 h-3.5 text-purple-400" />
-            <span>1. Identity</span>
-          </button>
-          <button 
-            type="button"
-            class="tab-btn flex-1 py-2 px-2.5 rounded-xl text-xs font-semibold flex items-center justify-center gap-1.5 transition cursor-pointer text-slate-400 hover:text-slate-200 hover:bg-white/[0.04] shrink-0"
-            data-tab="tab-persona"
-          >
-            <BookOpen class="w-3.5 h-3.5 text-cyan-400" />
-            <span>2. Persona & Lore</span>
-          </button>
-          <button 
-            type="button"
-            class="tab-btn flex-1 py-2 px-2.5 rounded-xl text-xs font-semibold flex items-center justify-center gap-1.5 transition cursor-pointer text-slate-400 hover:text-slate-200 hover:bg-white/[0.04] shrink-0"
-            data-tab="tab-lorebook"
-          >
-            <Database class="w-3.5 h-3.5 text-amber-400" />
-            <span>3. World Info</span>
-          </button>
-          <button 
-            type="button"
-            class="tab-btn flex-1 py-2 px-2.5 rounded-xl text-xs font-semibold flex items-center justify-center gap-1.5 transition cursor-pointer text-slate-400 hover:text-slate-200 hover:bg-white/[0.04] shrink-0"
-            data-tab="tab-advanced"
-          >
-            <Sliders class="w-3.5 h-3.5 text-emerald-400" />
-            <span>4. Dialogue & Rules</span>
-          </button>
-        </div>
-
-        <!-- ================= TAB 1: IDENTITY, AVATAR & DROPZONE ================= -->
-        <div id="tab-identity" class="tab-pane space-y-5">
-          
-          <!-- Dropzone: Ingest Real Tavern PNG Card or JSON -->
+          <!-- Method 2: Local File Dropzone -->
           <div 
             id="drop-zone"
-            class="group relative border-2 border-dashed border-purple-500/30 hover:border-purple-500/70 rounded-2xl sm:rounded-3xl p-5 text-center bg-purple-950/10 hover:bg-purple-950/20 transition-all duration-300 cursor-pointer"
+            class="p-4 rounded-xl border-2 border-dashed border-purple-500/30 hover:border-purple-500/70 bg-purple-950/10 hover:bg-purple-950/20 text-center transition cursor-pointer flex flex-col items-center justify-center space-y-1.5"
           >
-            <div class="flex flex-col items-center justify-center space-y-2">
-              <div class="w-10 h-10 rounded-2xl bg-purple-600/20 border border-purple-500/30 flex items-center justify-center text-purple-300 group-hover:scale-110 transition-transform">
-                <Upload class="w-5 h-5 text-cyan-400 animate-pulse" />
-              </div>
-              <h3 class="text-xs sm:text-sm font-bold text-white tracking-wide">
-                Drag & Drop Real Tavern PNG Card or JSON
-              </h3>
-              <p class="text-[11px] text-slate-400 max-w-sm">
-                Drop any Character Card (<code class="text-purple-300 font-mono">.png</code> or <code class="text-cyan-300 font-mono">.json</code>) from SillyTavern or Chub.ai to automatically parse all 4 tabs and World Info!
-              </p>
-              <span class="inline-block mt-0.5 text-[11px] font-semibold text-purple-400 group-hover:text-purple-300 underline underline-offset-4">
-                Or browse files from your computer
-              </span>
-            </div>
-          </div>
-
-          <!-- Names and Basic Meta -->
-          <div class="p-5 sm:p-6 rounded-2xl sm:rounded-3xl bg-[#090b17] border border-white/[0.08] shadow-lg space-y-4">
-            <div class="flex items-center justify-between border-b border-white/[0.06] pb-3">
-              <h2 class="text-xs sm:text-sm font-bold text-white uppercase tracking-wider flex items-center gap-2">
-                <span class="w-5 h-5 rounded-full bg-purple-600/30 text-purple-400 flex items-center justify-center text-xs font-bold">1</span>
-                <span>Basic Identity & Role</span>
-              </h2>
-              <span class="text-[10px] text-slate-500">Core Metadata</span>
-            </div>
-
-            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-              <div>
-                <div class="flex items-center justify-between mb-1.5">
-                  <label for="char-name" class="text-xs font-semibold text-slate-300">Character Name</label>
-                  <span id="tok-name" class="text-[10px] font-mono text-slate-500">~2 tok</span>
-                </div>
-                <input 
-                  id="char-name" 
-                  type="text" 
-                  placeholder="e.g. Aurelia Vance" 
-                  class="w-full px-3.5 py-2.5 rounded-xl bg-white/[0.04] border border-white/10 focus:border-purple-500/60 text-xs sm:text-sm text-white outline-none transition"
-                  value="Aurelia Vance"
-                />
-              </div>
-              <div>
-                <div class="flex items-center justify-between mb-1.5">
-                  <label for="char-title" class="text-xs font-semibold text-slate-300">Title / Archetype Tagline</label>
-                  <span id="tok-title" class="text-[10px] font-mono text-slate-500">~5 tok</span>
-                </div>
-                <input 
-                  id="char-title" 
-                  type="text" 
-                  placeholder="e.g. Quantum Cryptographer & Archival Scribe" 
-                  class="w-full px-3.5 py-2.5 rounded-xl bg-white/[0.04] border border-white/10 focus:border-purple-500/60 text-xs sm:text-sm text-white outline-none transition"
-                  value="Quantum Cryptographer & Archival Scribe"
-                />
-              </div>
-            </div>
-
-            <!-- Category Selection -->
-            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-              <div>
-                <label for="char-category" class="block text-xs font-semibold text-slate-300 mb-1.5">Primary Category</label>
-                <select 
-                  id="char-category" 
-                  class="w-full px-3.5 py-2.5 rounded-xl bg-[#0d1020] border border-white/10 focus:border-purple-500/60 text-xs sm:text-sm text-white outline-none transition"
-                >
-                  <option value="Sci-Fi">Sci-Fi & Cyberpunk</option>
-                  <option value="Fantasy">Fantasy & RPG</option>
-                  <option value="Mystery">Mystery & Detective</option>
-                  <option value="Philosophy">Philosophy & Mentors</option>
-                  <option value="Slice of Life">Slice of Life & Cafe</option>
-                  <option value="Anime & Manga">Anime & Manga</option>
-                  <option value="Supernatural">Supernatural & Occult</option>
-                </select>
-              </div>
-
-              <div>
-                <label for="char-tags" class="block text-xs font-semibold text-slate-300 mb-1.5">Tags (Comma-separated)</label>
-                <input 
-                  id="char-tags" 
-                  type="text" 
-                  placeholder="Cyberpunk, Hacker, Scribe, Cryptography" 
-                  class="w-full px-3.5 py-2.5 rounded-xl bg-white/[0.04] border border-white/10 text-xs sm:text-sm text-white outline-none transition"
-                  value="Cyberpunk, Hacker, Scribe, Cryptography"
-                />
-              </div>
-            </div>
-
-            <!-- Avatar Image Selection & Local Upload -->
-            <div>
-              <div class="flex items-center justify-between mb-2">
-                <label class="text-xs font-semibold text-slate-300">Avatar Portrait</label>
-                <label for="custom-avatar-file" class="text-[11px] font-semibold text-purple-400 hover:text-purple-300 cursor-pointer flex items-center gap-1">
-                  <Upload class="w-3 h-3" />
-                  <span>Upload from Computer</span>
-                </label>
-                <input id="custom-avatar-file" type="file" accept="image/*" class="hidden" />
-              </div>
-
-              <!-- Preset Avatars -->
-              <div class="grid grid-cols-4 sm:grid-cols-8 gap-2 mb-3">
-                {PRESET_AVATARS.map((preset) => (
-                  <button
-                    type="button"
-                    class="preset-avatar-btn relative aspect-square rounded-xl overflow-hidden border-2 border-white/10 hover:border-purple-500 focus:border-purple-500 transition cursor-pointer"
-                    data-url={preset.url}
-                    title={preset.label}
-                  >
-                    <img src={preset.url} alt={preset.label} class="w-full h-full object-cover" />
-                  </button>
-                ))}
-              </div>
-
-              <input 
-                id="char-avatar-url" 
-                type="text" 
-                placeholder="Or paste image URL / Base64..." 
-                class="w-full px-3.5 py-2 rounded-xl bg-white/[0.04] border border-white/10 text-xs text-white placeholder:text-slate-500 outline-none"
-                value={PRESET_AVATARS[0].url}
-              />
-            </div>
-
-            <!-- Physical Appearance & Visuals -->
-            <div>
-              <div class="flex items-center justify-between mb-1.5">
-                <label for="char-appearance" class="text-xs font-semibold text-slate-300">
-                  Physical Appearance & Physiology
-                </label>
-                <span id="tok-appearance" class="text-[10px] font-mono text-purple-400">~24 tok</span>
-              </div>
-              <textarea 
-                id="char-appearance" 
-                rows="2" 
-                class="w-full px-3.5 py-2.5 rounded-xl bg-white/[0.04] border border-white/10 text-xs sm:text-sm text-white outline-none leading-relaxed resize-none"
-                placeholder="Visual details for roleplay description: Height, eyes, cybernetics, clothing, tattoos..."
-              >Silver short hair, ocular cyber-implant with azure HUD telemetry, draped in dark cryptographic coat with insulated fibre-optic wiring.</textarea>
-            </div>
-
-            <!-- SFW Standard Certification -->
-            <div class="p-3.5 rounded-xl bg-emerald-950/20 border border-emerald-500/20 flex items-start gap-2.5">
-              <input 
-                id="char-sfw-cert" 
-                type="checkbox" 
-                checked 
-                class="mt-0.5 rounded text-emerald-500 focus:ring-emerald-500 bg-white/10 border-white/20"
-              />
-              <label for="char-sfw-cert" class="text-[11px] text-slate-300 cursor-pointer">
-                <span class="font-semibold text-emerald-300 block">SFW Standard Certification</span>
-                I certify this character portrays an adult (18+) and adheres to wholesome storytelling, mystery, and companion standards.
-              </label>
-            </div>
+            <Upload class="w-5 h-5 text-purple-400" />
+            <span class="text-xs font-bold text-white">Method B: Drop PNG or JSON File</span>
+            <span class="text-[11px] text-slate-400">Click or drag Tavern card from PC/phone</span>
           </div>
         </div>
+      </div>
 
-        <!-- ================= TAB 2: PERSONA, LORE & SCENARIO ================= -->
-        <div id="tab-persona" class="tab-pane hidden space-y-5">
-          <div class="p-5 sm:p-6 rounded-2xl sm:rounded-3xl bg-[#090b17] border border-white/[0.08] shadow-lg space-y-4">
-            <div class="flex items-center justify-between border-b border-white/[0.06] pb-3">
-              <h2 class="text-xs sm:text-sm font-bold text-white uppercase tracking-wider flex items-center gap-2">
-                <span class="w-5 h-5 rounded-full bg-cyan-600/30 text-cyan-400 flex items-center justify-center text-xs font-bold">2</span>
-                <span>Persona, Psychology & World Lore</span>
-              </h2>
-              <span class="text-[10px] text-slate-500">Depth & Motivation</span>
+      <!-- ================= STEP WIZARD PROGRESS BAR (STEPPER) ================= -->
+      <div class="mb-6">
+        <!-- Desktop / Tablet Stepper (Horizontal) -->
+        <div class="hidden sm:grid sm:grid-cols-4 gap-2">
+          
+          <button 
+            type="button" 
+            class="step-tab-btn active text-left p-3 rounded-2xl border transition-all cursor-pointer bg-purple-950/30 border-purple-500/50 text-white shadow-md shadow-purple-950/30"
+            data-step="1"
+          >
+            <div class="flex items-center gap-2 mb-1">
+              <span class="step-num w-5 h-5 rounded-full bg-purple-600 text-white flex items-center justify-center text-xs font-bold">1</span>
+              <span class="text-xs font-bold">Identity & Card</span>
             </div>
+            <p class="text-[10px] text-slate-400 line-clamp-1">Name, visual portrait, SFW</p>
+          </button>
 
-            <!-- Personality Traits Pills / Summary -->
-            <div>
-              <div class="flex items-center justify-between mb-1.5">
-                <label for="char-personality" class="text-xs font-semibold text-slate-300">
-                  Personality Summary & Behavioral Traits
-                </label>
-                <div class="flex items-center gap-2">
-                  <span class="text-[10px] text-purple-400">Quick-click archetypes:</span>
-                  <span id="tok-personality" class="text-[10px] font-mono text-cyan-400">~28 tok</span>
+          <button 
+            type="button" 
+            class="step-tab-btn text-left p-3 rounded-2xl border transition-all cursor-pointer bg-white/[0.02] border-white/[0.06] text-slate-400 hover:text-slate-200 hover:bg-white/[0.04]"
+            data-step="2"
+          >
+            <div class="flex items-center gap-2 mb-1">
+              <span class="step-num w-5 h-5 rounded-full bg-white/10 text-slate-300 flex items-center justify-center text-xs font-bold">2</span>
+              <span class="text-xs font-bold">Persona & Lore</span>
+            </div>
+            <p class="text-[10px] text-slate-400 line-clamp-1">Traits, backstory, setting</p>
+          </button>
+
+          <button 
+            type="button" 
+            class="step-tab-btn text-left p-3 rounded-2xl border transition-all cursor-pointer bg-white/[0.02] border-white/[0.06] text-slate-400 hover:text-slate-200 hover:bg-white/[0.04]"
+            data-step="3"
+          >
+            <div class="flex items-center gap-2 mb-1">
+              <span class="step-num w-5 h-5 rounded-full bg-white/10 text-slate-300 flex items-center justify-center text-xs font-bold">3</span>
+              <span class="text-xs font-bold">World Info</span>
+            </div>
+            <p class="text-[10px] text-slate-400 line-clamp-1">Character book & Lorebook</p>
+          </button>
+
+          <button 
+            type="button" 
+            class="step-tab-btn text-left p-3 rounded-2xl border transition-all cursor-pointer bg-white/[0.02] border-white/[0.06] text-slate-400 hover:text-slate-200 hover:bg-white/[0.04]"
+            data-step="4"
+          >
+            <div class="flex items-center gap-2 mb-1">
+              <span class="step-num w-5 h-5 rounded-full bg-white/10 text-slate-300 flex items-center justify-center text-xs font-bold">4</span>
+              <span class="text-xs font-bold">Dialogue & Rules</span>
+            </div>
+            <p class="text-[10px] text-slate-400 line-clamp-1">Greeting, examples, prompt</p>
+          </button>
+
+        </div>
+
+        <!-- Mobile Stepper (Slim Card with Step Counter & Bar) -->
+        <div class="sm:hidden p-3.5 rounded-2xl bg-[#090b17] border border-white/[0.08]">
+          <div class="flex items-center justify-between mb-2">
+            <span id="mobile-step-title" class="text-xs font-bold text-white flex items-center gap-2">
+              <span class="w-5 h-5 rounded-full bg-purple-600 text-white flex items-center justify-center text-xs font-bold">1</span>
+              <span>Identity & Avatar</span>
+            </span>
+            <span id="mobile-step-fraction" class="text-[11px] font-mono text-purple-300">Step 1 of 4</span>
+          </div>
+          <!-- Progress bar track -->
+          <div class="w-full h-1.5 bg-white/10 rounded-full overflow-hidden">
+            <div id="mobile-step-progress-bar" class="h-full bg-gradient-to-r from-purple-500 to-indigo-500 transition-all duration-300 w-1/4"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ================= 2-COLUMN LAYOUT (FORM + DESKTOP PREVIEW) ================= -->
+      <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+        
+        <!-- Left: Form Steps (7 cols on Desktop) -->
+        <div class="lg:col-span-7">
+          <form id="character-form" onsubmit="return false;" class="space-y-6">
+
+            <!-- STEP 1: IDENTITY & VISUALS -->
+            <div id="step-pane-1" class="step-pane space-y-6">
+              <div class="p-5 sm:p-7 rounded-3xl bg-[#080a14] border border-white/[0.08] shadow-xl space-y-5">
+                
+                <div class="border-b border-white/[0.06] pb-3">
+                  <h2 class="text-base sm:text-lg font-bold text-white flex items-center gap-2">
+                    <ImageIcon class="w-5 h-5 text-purple-400" />
+                    <span>Step 1: Basic Identity & Visuals</span>
+                  </h2>
+                  <p class="text-xs text-slate-400 mt-1 leading-relaxed">
+                    Set your character's name, role archetype, portrait, and physical description.
+                  </p>
                 </div>
+
+                <!-- Character Name & Title -->
+                <div class="space-y-4">
+                  <div>
+                    <div class="flex items-center justify-between mb-1.5">
+                      <label for="char-name" class="text-xs sm:text-sm font-semibold text-slate-200">
+                        Character Name <span class="text-purple-400">*</span>
+                      </label>
+                      <span id="tok-name" class="text-[11px] font-mono text-slate-400">~2 tok</span>
+                    </div>
+                    <input 
+                      id="char-name" 
+                      type="text" 
+                      placeholder="e.g. Aurelia Vance" 
+                      class="w-full px-4 py-3 rounded-2xl bg-white/[0.04] border border-white/10 focus:border-purple-500/70 text-sm sm:text-base text-white outline-none transition"
+                      value="Aurelia Vance"
+                    />
+                  </div>
+
+                  <div>
+                    <div class="flex items-center justify-between mb-1.5">
+                      <label for="char-title" class="text-xs sm:text-sm font-semibold text-slate-200">
+                        Title / Tagline Archetype
+                      </label>
+                      <span id="tok-title" class="text-[11px] font-mono text-slate-400">~5 tok</span>
+                    </div>
+                    <input 
+                      id="char-title" 
+                      type="text" 
+                      placeholder="e.g. Quantum Cryptographer & Archival Scribe" 
+                      class="w-full px-4 py-3 rounded-2xl bg-white/[0.04] border border-white/10 focus:border-purple-500/70 text-sm sm:text-base text-white outline-none transition"
+                      value="Quantum Cryptographer & Archival Scribe"
+                    />
+                  </div>
+                </div>
+
+                <!-- Category & Tags -->
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  <div>
+                    <label for="char-category" class="block text-xs sm:text-sm font-semibold text-slate-200 mb-1.5">Category</label>
+                    <select 
+                      id="char-category" 
+                      class="w-full px-4 py-3 rounded-2xl bg-[#0d1020] border border-white/10 focus:border-purple-500/70 text-sm text-white outline-none transition"
+                    >
+                      <option value="Sci-Fi">Sci-Fi & Cyberpunk</option>
+                      <option value="Fantasy">Fantasy & RPG</option>
+                      <option value="Mystery">Mystery & Detective</option>
+                      <option value="Philosophy">Philosophy & Mentors</option>
+                      <option value="Slice of Life">Slice of Life & Cafe</option>
+                      <option value="Anime & Manga">Anime & Manga</option>
+                      <option value="Supernatural">Supernatural & Occult</option>
+                    </select>
+                  </div>
+
+                  <div>
+                    <label for="char-tags" class="block text-xs sm:text-sm font-semibold text-slate-200 mb-1.5">Tags (Comma-separated)</label>
+                    <input 
+                      id="char-tags" 
+                      type="text" 
+                      placeholder="Cyberpunk, Hacker, Scribe" 
+                      class="w-full px-4 py-3 rounded-2xl bg-white/[0.04] border border-white/10 text-sm text-white outline-none transition"
+                      value="Cyberpunk, Hacker, Scribe, Cryptography"
+                    />
+                  </div>
+                </div>
+
+                <!-- Avatar Selection & Upload -->
+                <div class="space-y-3 pt-2">
+                  <div class="flex items-center justify-between">
+                    <label class="text-xs sm:text-sm font-semibold text-slate-200">Avatar Portrait</label>
+                    <label for="custom-avatar-file" class="text-xs font-semibold text-purple-400 hover:text-purple-300 cursor-pointer flex items-center gap-1.5">
+                      <Upload class="w-3.5 h-3.5" />
+                      <span>Upload from Device</span>
+                    </label>
+                    <input id="custom-avatar-file" type="file" accept="image/*" class="hidden" />
+                  </div>
+
+                  <!-- Preset Thumbnails Grid -->
+                  <div class="grid grid-cols-4 sm:grid-cols-8 gap-2">
+                    {PRESET_AVATARS.map((preset) => (
+                      <button
+                        type="button"
+                        class="preset-avatar-btn relative aspect-square rounded-2xl overflow-hidden border-2 border-white/10 hover:border-purple-500 focus:border-purple-500 transition cursor-pointer"
+                        data-url={preset.url}
+                        title={preset.label}
+                      >
+                        <img src={preset.url} alt={preset.label} class="w-full h-full object-cover" />
+                      </button>
+                    ))}
+                  </div>
+
+                  <input 
+                    id="char-avatar-url" 
+                    type="text" 
+                    placeholder="Or paste direct image URL or Base64..." 
+                    class="w-full px-4 py-2.5 rounded-xl bg-white/[0.04] border border-white/10 text-xs text-slate-300 placeholder:text-slate-500 outline-none"
+                    value={PRESET_AVATARS[0].url}
+                  />
+                </div>
+
+                <!-- Physical Appearance Textarea (Spacious for mobile) -->
+                <div>
+                  <div class="flex items-center justify-between mb-1.5">
+                    <label for="char-appearance" class="text-xs sm:text-sm font-semibold text-slate-200">
+                      Physical Appearance & Physiology
+                    </label>
+                    <span id="tok-appearance" class="text-[11px] font-mono text-purple-400">~24 tok</span>
+                  </div>
+                  <textarea 
+                    id="char-appearance" 
+                    rows="4" 
+                    class="w-full px-4 py-3 rounded-2xl bg-white/[0.04] border border-white/10 focus:border-purple-500/70 text-sm sm:text-base text-white outline-none leading-relaxed resize-y min-h-[110px]"
+                    placeholder="Describe height, eyes, hair, clothing, signature gear, tattoos..."
+                  >Silver short hair, ocular cyber-implant with azure HUD telemetry, draped in dark cryptographic coat with insulated fibre-optic wiring.</textarea>
+                </div>
+
+                <!-- SFW Standard Badge -->
+                <div class="p-4 rounded-2xl bg-emerald-950/20 border border-emerald-500/20 flex items-start gap-3">
+                  <input 
+                    id="char-sfw-cert" 
+                    type="checkbox" 
+                    checked 
+                    class="mt-1 rounded text-emerald-500 focus:ring-emerald-500 bg-white/10 border-white/20 w-4 h-4"
+                  />
+                  <label for="char-sfw-cert" class="text-xs text-slate-300 cursor-pointer">
+                    <strong class="text-emerald-300 block mb-0.5">SFW Standard Certification</strong>
+                    I certify this persona portrays an adult (18+) and adheres to wholesome storytelling, mystery, and companion standards.
+                  </label>
+                </div>
+
               </div>
-              <div class="flex flex-wrap gap-1.5 mb-2.5">
-                {['Analytical', 'Cynical', 'Enigmatic', 'Protective', 'Stoic', 'Witty', 'Empathetic', 'Rebellious', 'Formal'].map((trait) => (
-                  <button 
-                    type="button" 
-                    class="trait-chip px-2.5 py-1 rounded-lg bg-white/[0.04] hover:bg-purple-900/30 border border-white/[0.08] hover:border-purple-500/40 text-[11px] text-slate-300 hover:text-white transition cursor-pointer"
-                    data-trait={trait}
-                  >
-                    +{trait}
-                  </button>
-                ))}
-              </div>
-              <textarea 
-                id="char-personality" 
-                rows="3" 
-                class="w-full px-3.5 py-2.5 rounded-xl bg-white/[0.04] border border-white/10 focus:border-cyan-500/60 text-xs sm:text-sm text-white outline-none leading-relaxed resize-none"
-                placeholder="Personality attributes, psychological profile, tone of voice..."
-              >Analytical, observant, quietly sardonic towards authoritarian megacorps. Deeply loyal once trust is earned; values ancient literary knowledge above synthetic data streams.</textarea>
             </div>
 
-            <!-- Backstory Lore -->
-            <div>
-              <div class="flex items-center justify-between mb-1.5">
-                <label for="char-lore" class="text-xs font-semibold text-slate-300">
-                  Backstory Lore & History
-                </label>
-                <span id="tok-lore" class="text-[10px] font-mono text-cyan-400">~45 tok</span>
-              </div>
-              <textarea 
-                id="char-lore" 
-                rows="4" 
-                class="w-full px-3.5 py-2.5 rounded-xl bg-white/[0.04] border border-white/10 focus:border-cyan-500/60 text-xs sm:text-sm text-white outline-none leading-relaxed resize-none"
-                placeholder="Origin, past encounters, motivations, secrets..."
-              >Former senior cipher archivist for the Obsidian Cartel. After uncovering a classified wipe order targeting non-synthetic humanities archives, she extracted seven quantum storage crystals and vanished into the lower neon districts. Now operates an encrypted sanctuary for seekers of lost truths.</textarea>
-            </div>
+            <!-- STEP 2: PERSONA, LORE & SCENARIO -->
+            <div id="step-pane-2" class="step-pane hidden space-y-6">
+              <div class="p-5 sm:p-7 rounded-3xl bg-[#080a14] border border-white/[0.08] shadow-xl space-y-6">
+                
+                <div class="border-b border-white/[0.06] pb-3">
+                  <h2 class="text-base sm:text-lg font-bold text-white flex items-center gap-2">
+                    <BookOpen class="w-5 h-5 text-cyan-400" />
+                    <span>Step 2: Persona, Psychology & Lore</span>
+                  </h2>
+                  <p class="text-xs text-slate-400 mt-1 leading-relaxed">
+                    Define the character's internal thoughts, behavioral patterns, origin story, and meeting setting.
+                  </p>
+                </div>
 
-            <!-- Scenario & Setting -->
-            <div>
-              <div class="flex items-center justify-between mb-1.5">
-                <label for="char-scenario" class="text-xs font-semibold text-slate-300">
-                  Encounter Scenario & Setting
-                </label>
-                <span id="tok-scenario" class="text-[10px] font-mono text-cyan-400">~26 tok</span>
-              </div>
-              <textarea 
-                id="char-scenario" 
-                rows="3" 
-                class="w-full px-3.5 py-2.5 rounded-xl bg-white/[0.04] border border-white/10 focus:border-cyan-500/60 text-xs sm:text-sm text-white outline-none leading-relaxed resize-none"
-                placeholder="Where does the scene take place? How does the user enter?"
-              >A hidden subterranean data haven beneath the rainy neon alleys of Sector 4. The user has tracked an encrypted radio pulse and walked into her chamber uninvited.</textarea>
-            </div>
+                <!-- Personality Summary (Spacious - 6+ lines) -->
+                <div>
+                  <div class="flex items-center justify-between mb-2">
+                    <label for="char-personality" class="text-xs sm:text-sm font-semibold text-slate-200">
+                      Personality Profile & Behavioral Traits
+                    </label>
+                    <span id="tok-personality" class="text-[11px] font-mono text-cyan-400">~28 tok</span>
+                  </div>
+                  
+                  <!-- Quick archetype chips -->
+                  <div class="flex flex-wrap gap-1.5 mb-2.5">
+                    {['Analytical', 'Cynical', 'Enigmatic', 'Protective', 'Stoic', 'Witty', 'Empathetic', 'Rebellious', 'Formal'].map((trait) => (
+                      <button 
+                        type="button" 
+                        class="trait-chip px-2.5 py-1 rounded-lg bg-white/[0.04] hover:bg-cyan-900/30 border border-white/[0.08] hover:border-cyan-500/40 text-xs text-slate-300 hover:text-white transition cursor-pointer"
+                        data-trait={trait}
+                      >
+                        +{trait}
+                      </button>
+                    ))}
+                  </div>
 
-            <!-- Speech Style / Quirks -->
-            <div>
-              <div class="flex items-center justify-between mb-1.5">
-                <label for="char-speech" class="text-xs font-semibold text-slate-300">
-                  Speech Style & Dialect Quirks
-                </label>
-                <span id="tok-speech" class="text-[10px] font-mono text-slate-500">~12 tok</span>
-              </div>
-              <input 
-                id="char-speech" 
-                type="text" 
-                class="w-full px-3.5 py-2.5 rounded-xl bg-white/[0.04] border border-white/10 text-xs sm:text-sm text-white outline-none"
-                placeholder="e.g. Speaks in measured, clipped sentences with cryptic cryptographic analogies."
-                value="Speaks in measured, clipped sentences with cryptic cryptographic metaphors and quiet precision."
-              />
-            </div>
-          </div>
-        </div>
+                  <textarea 
+                    id="char-personality" 
+                    rows="6" 
+                    class="w-full px-4 py-3 rounded-2xl bg-white/[0.04] border border-white/10 focus:border-cyan-500/70 text-sm sm:text-base text-white outline-none leading-relaxed resize-y min-h-[150px]"
+                    placeholder="Describe demeanor, attitude towards others, emotional triggers, philosophy..."
+                  >Analytical, observant, quietly sardonic towards authoritarian megacorps. Deeply loyal once trust is earned; values ancient literary knowledge above synthetic data streams.</textarea>
+                </div>
 
-        <!-- ================= TAB 3: WORLD INFO & CHARACTER BOOK (LOREBOOK) ================= -->
-        <div id="tab-lorebook" class="tab-pane hidden space-y-5">
-          <div class="p-5 sm:p-6 rounded-2xl sm:rounded-3xl bg-[#090b17] border border-white/[0.08] shadow-lg space-y-4">
-            
-            <div class="flex flex-col sm:flex-row sm:items-center justify-between border-b border-white/[0.06] pb-3 gap-2">
-              <div>
-                <h2 class="text-xs sm:text-sm font-bold text-white uppercase tracking-wider flex items-center gap-2">
-                  <span class="w-5 h-5 rounded-full bg-amber-600/30 text-amber-400 flex items-center justify-center text-xs font-bold">3</span>
-                  <span>World Info & Lorebook (Character Book)</span>
-                </h2>
-                <p class="text-[10px] text-slate-400 mt-0.5">
-                  Conditional memory entries triggered when keywords appear in chat
-                </p>
-              </div>
+                <!-- Backstory Lore (Deep Textarea - 8+ lines) -->
+                <div>
+                  <div class="flex items-center justify-between mb-2">
+                    <label for="char-lore" class="text-xs sm:text-sm font-semibold text-slate-200">
+                      Backstory Lore & History
+                    </label>
+                    <span id="tok-lore" class="text-[11px] font-mono text-cyan-400">~45 tok</span>
+                  </div>
+                  <textarea 
+                    id="char-lore" 
+                    rows="8" 
+                    class="w-full px-4 py-3 rounded-2xl bg-white/[0.04] border border-white/10 focus:border-cyan-500/70 text-sm sm:text-base text-white outline-none leading-relaxed resize-y min-h-[180px]"
+                    placeholder="Where did they come from? What secrets do they carry? Who are their allies and enemies?"
+                  >Former senior cipher archivist for the Obsidian Cartel. After uncovering a classified wipe order targeting non-synthetic humanities archives, she extracted seven quantum storage crystals and vanished into the lower neon districts. Now operates an encrypted sanctuary for seekers of lost truths.</textarea>
+                </div>
 
-              <!-- Lorebook actions -->
-              <div class="flex items-center gap-2">
-                <input id="lorebook-file-input" type="file" accept=".json,application/json" class="hidden" />
-                <button 
-                  id="import-lorebook-btn"
-                  type="button" 
-                  class="px-2.5 py-1 rounded-lg bg-white/[0.05] hover:bg-white/[0.1] border border-white/10 text-[11px] font-medium text-amber-300 flex items-center gap-1 cursor-pointer"
-                  title="Import standalone Lorebook JSON"
-                >
-                  <Upload class="w-3 h-3" />
-                  <span>Import Lorebook</span>
-                </button>
+                <!-- Scenario & Setting (Spacious - 5+ lines) -->
+                <div>
+                  <div class="flex items-center justify-between mb-2">
+                    <label for="char-scenario" class="text-xs sm:text-sm font-semibold text-slate-200">
+                      Encounter Scenario & Physical Setting
+                    </label>
+                    <span id="tok-scenario" class="text-[11px] font-mono text-cyan-400">~26 tok</span>
+                  </div>
+                  <textarea 
+                    id="char-scenario" 
+                    rows="5" 
+                    class="w-full px-4 py-3 rounded-2xl bg-white/[0.04] border border-white/10 focus:border-cyan-500/70 text-sm sm:text-base text-white outline-none leading-relaxed resize-y min-h-[130px]"
+                    placeholder="Where is the user meeting this persona? What is the current atmosphere, mood, and tension?"
+                  >A hidden subterranean data haven beneath the rainy neon alleys of Sector 4. The user has tracked an encrypted radio pulse and walked into her chamber uninvited.</textarea>
+                </div>
 
-                <button 
-                  id="add-lore-entry-btn"
-                  type="button" 
-                  class="px-3 py-1 rounded-lg bg-amber-600/30 hover:bg-amber-600/50 border border-amber-500/40 text-[11px] font-bold text-amber-200 flex items-center gap-1 cursor-pointer active:scale-95 shadow-sm"
-                >
-                  <Plus class="w-3.5 h-3.5" />
-                  <span>Add Entry</span>
-                </button>
-              </div>
-            </div>
+                <!-- Speech Style -->
+                <div>
+                  <div class="flex items-center justify-between mb-1.5">
+                    <label for="char-speech" class="text-xs sm:text-sm font-semibold text-slate-200">
+                      Speech Style & Dialect Quirks
+                    </label>
+                    <span id="tok-speech" class="text-[11px] font-mono text-slate-400">~12 tok</span>
+                  </div>
+                  <input 
+                    id="char-speech" 
+                    type="text" 
+                    class="w-full px-4 py-3 rounded-2xl bg-white/[0.04] border border-white/10 text-sm text-white outline-none"
+                    placeholder="e.g. Speaks in clipped, measured sentences with cryptographic metaphors."
+                    value="Speaks in measured, clipped sentences with cryptic cryptographic metaphors and quiet precision."
+                  />
+                </div>
 
-            <!-- Lorebook Metadata -->
-            <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 p-3 rounded-xl bg-amber-950/10 border border-amber-500/20">
-              <div>
-                <label for="lore-book-name" class="block text-[11px] font-semibold text-slate-300 mb-1">Book Name</label>
-                <input 
-                  id="lore-book-name" 
-                  type="text" 
-                  class="w-full px-3 py-1.5 rounded-lg bg-black/40 border border-white/10 text-xs text-white outline-none"
-                  value="Aetheria Cyberlore Chronicles" 
-                />
-              </div>
-              <div>
-                <label for="lore-book-desc" class="block text-[11px] font-semibold text-slate-300 mb-1">Description / World Setting</label>
-                <input 
-                  id="lore-book-desc" 
-                  type="text" 
-                  class="w-full px-3 py-1.5 rounded-lg bg-black/40 border border-white/10 text-xs text-white outline-none"
-                  value="World factions, secrets, and technology entries" 
-                />
               </div>
             </div>
 
-            <!-- Lore Entries Dynamic List Container -->
-            <div id="lore-entries-list" class="space-y-3 pt-1">
-              <!-- Dynamically populated via JS -->
-            </div>
+            <!-- STEP 3: WORLD INFO & LOREBOOK -->
+            <div id="step-pane-3" class="step-pane hidden space-y-6">
+              <div class="p-5 sm:p-7 rounded-3xl bg-[#080a14] border border-white/[0.08] shadow-xl space-y-6">
+                
+                <div class="flex flex-col sm:flex-row sm:items-center justify-between border-b border-white/[0.06] pb-3 gap-2">
+                  <div>
+                    <h2 class="text-base sm:text-lg font-bold text-white flex items-center gap-2">
+                      <Database class="w-5 h-5 text-amber-400" />
+                      <span>Step 3: World Info & Character Book</span>
+                    </h2>
+                    <p class="text-xs text-slate-400 mt-1 leading-relaxed">
+                      Conditional memory: facts, places, and factions injected when keywords appear in chat.
+                    </p>
+                  </div>
 
-            <div class="p-3 rounded-xl bg-white/[0.02] border border-white/[0.05] text-[11px] text-slate-400 flex items-start gap-2">
-              <Info class="w-4 h-4 text-amber-400 shrink-0 mt-0.5" />
-              <span>
-                <strong>How it works:</strong> Whenever the user or model mentions any of the trigger keys (e.g. <code>cartel</code> or <code>haven</code>), that entry's content is automatically injected into the model's active context window!
-              </span>
-            </div>
+                  <!-- Quick Action Buttons -->
+                  <div class="flex items-center gap-2">
+                    <input id="lorebook-file-input" type="file" accept=".json,application/json" class="hidden" />
+                    <button 
+                      id="import-lorebook-btn"
+                      type="button" 
+                      class="px-3 py-1.5 rounded-xl bg-white/[0.05] hover:bg-white/[0.1] border border-white/10 text-xs font-medium text-amber-300 flex items-center gap-1.5 cursor-pointer"
+                    >
+                      <Upload class="w-3.5 h-3.5" />
+                      <span>Import JSON</span>
+                    </button>
+                    <button 
+                      id="add-lore-entry-btn"
+                      type="button" 
+                      class="px-3 py-1.5 rounded-xl bg-amber-600/30 hover:bg-amber-600/50 border border-amber-500/40 text-xs font-bold text-amber-200 flex items-center gap-1.5 cursor-pointer active:scale-95"
+                    >
+                      <Plus class="w-3.5 h-3.5" />
+                      <span>Add Entry</span>
+                    </button>
+                  </div>
+                </div>
 
-          </div>
-        </div>
+                <!-- Lorebook Book Identity -->
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 p-4 rounded-2xl bg-amber-950/10 border border-amber-500/20">
+                  <div>
+                    <label for="lore-book-name" class="block text-xs font-semibold text-slate-300 mb-1">Book Name</label>
+                    <input 
+                      id="lore-book-name" 
+                      type="text" 
+                      class="w-full px-3.5 py-2 rounded-xl bg-black/40 border border-white/10 text-xs sm:text-sm text-white outline-none"
+                      value="Aetheria Cyberlore Chronicles" 
+                    />
+                  </div>
+                  <div>
+                    <label for="lore-book-desc" class="block text-xs font-semibold text-slate-300 mb-1">Book Description</label>
+                    <input 
+                      id="lore-book-desc" 
+                      type="text" 
+                      class="w-full px-3.5 py-2 rounded-xl bg-black/40 border border-white/10 text-xs sm:text-sm text-white outline-none"
+                      value="World factions, secrets, and technology entries" 
+                    />
+                  </div>
+                </div>
 
-        <!-- ================= TAB 4: DIALOGUE, SYSTEM GUARDRAILS & INFERENCE ================= -->
-        <div id="tab-advanced" class="tab-pane hidden space-y-5">
-          <div class="p-5 sm:p-6 rounded-2xl sm:rounded-3xl bg-[#090b17] border border-white/[0.08] shadow-lg space-y-4">
-            <div class="flex items-center justify-between border-b border-white/[0.06] pb-3">
-              <h2 class="text-xs sm:text-sm font-bold text-white uppercase tracking-wider flex items-center gap-2">
-                <span class="w-5 h-5 rounded-full bg-emerald-600/30 text-emerald-400 flex items-center justify-center text-xs font-bold">4</span>
-                <span>Dialogue & System Rules</span>
-              </h2>
-              <span class="text-[10px] text-slate-500">Inference Calibration</span>
-            </div>
+                <!-- Lore Entries Dynamic List Container -->
+                <div id="lore-entries-list" class="space-y-4">
+                  <!-- Dynamically rendered via JS -->
+                </div>
 
-            <!-- First Greeting Message -->
-            <div>
-              <div class="flex items-center justify-between mb-1.5">
-                <label for="char-greeting" class="text-xs font-semibold text-slate-300">
-                  First Message / Opening Greeting <span class="text-rose-400">*</span>
-                </label>
-                <span id="tok-greeting" class="text-[10px] font-mono text-emerald-400">~60 tok</span>
               </div>
-              <textarea 
-                id="char-greeting" 
-                rows="4" 
-                class="w-full px-3.5 py-2.5 rounded-xl bg-white/[0.04] border border-white/10 focus:border-emerald-500/60 text-xs sm:text-sm text-white outline-none leading-relaxed resize-none"
-                placeholder="*Adjusts the holographic focus on her visor...* What brings an unverified signal into my sub-level?"
-              >*Adjusts the holographic focus on her ocular implant, barely glancing up from a flickering console of deciphered data-packets.* 
+            </div>
+
+            <!-- STEP 4: DIALOGUE, SYSTEM GUARDRAILS & INFERENCE -->
+            <div id="step-pane-4" class="step-pane hidden space-y-6">
+              <div class="p-5 sm:p-7 rounded-3xl bg-[#080a14] border border-white/[0.08] shadow-xl space-y-6">
+                
+                <div class="border-b border-white/[0.06] pb-3">
+                  <h2 class="text-base sm:text-lg font-bold text-white flex items-center gap-2">
+                    <Sliders class="w-5 h-5 text-emerald-400" />
+                    <span>Step 4: Dialogue Calibration & Rules</span>
+                  </h2>
+                  <p class="text-xs text-slate-400 mt-1 leading-relaxed">
+                    Set the greeting message, few-shot dialogue examples, and system prompt instructions.
+                  </p>
+                </div>
+
+                <!-- First Greeting Message (Huge Textarea - 8+ lines) -->
+                <div>
+                  <div class="flex items-center justify-between mb-2">
+                    <label for="char-greeting" class="text-xs sm:text-sm font-semibold text-slate-200">
+                      Opening Greeting (First Message) <span class="text-rose-400">*</span>
+                    </label>
+                    <span id="tok-greeting" class="text-[11px] font-mono text-emerald-400">~60 tok</span>
+                  </div>
+                  <textarea 
+                    id="char-greeting" 
+                    rows="8" 
+                    class="w-full px-4 py-3 rounded-2xl bg-white/[0.04] border border-white/10 focus:border-emerald-500/70 text-sm sm:text-base text-white outline-none leading-relaxed resize-y min-h-[180px]"
+                    placeholder="Write the initial message the user sees when entering the chatroom..."
+                  >*Adjusts the holographic focus on her ocular implant, barely glancing up from a flickering console of deciphered data-packets.* 
 
 Step back into the scan radius. The perimeter tripwires aren't known for patience—and neither am I. State your encryption clearance, stranger, or tell me who gave you this frequency.</textarea>
-            </div>
+                </div>
 
-            <!-- Alternate Greetings -->
-            <div>
-              <div class="flex items-center justify-between mb-1.5">
-                <label for="char-alt-greeting" class="text-xs font-semibold text-slate-300">
-                  Alternate Greetings (Separated by &lt;START&gt;)
-                </label>
-                <span id="tok-alt-greeting" class="text-[10px] font-mono text-slate-500">~0 tok</span>
-              </div>
-              <textarea 
-                id="char-alt-greeting" 
-                rows="3" 
-                class="w-full px-3.5 py-2.5 rounded-xl bg-white/[0.04] border border-white/10 text-xs sm:text-sm text-white outline-none leading-relaxed resize-none"
-                placeholder="&lt;START&gt; *Sitting on the ledge of the rainy rooftop.* The megacity looks almost peaceful from here."
-              ></textarea>
-            </div>
+                <!-- Alternate Greetings (Spacious - 4+ lines) -->
+                <div>
+                  <div class="flex items-center justify-between mb-2">
+                    <label for="char-alt-greeting" class="text-xs sm:text-sm font-semibold text-slate-200">
+                      Alternate Greetings (Separated by &lt;START&gt;)
+                    </label>
+                    <span id="tok-alt-greeting" class="text-[11px] font-mono text-slate-400">~0 tok</span>
+                  </div>
+                  <textarea 
+                    id="char-alt-greeting" 
+                    rows="4" 
+                    class="w-full px-4 py-3 rounded-2xl bg-white/[0.04] border border-white/10 text-sm sm:text-base text-white outline-none leading-relaxed resize-y min-h-[120px]"
+                    placeholder="&lt;START&gt; *Leaning over the rail of the neon terrace...*"
+                  ></textarea>
+                </div>
 
-            <!-- Dialogue Examples (mes_example) -->
-            <div>
-              <div class="flex items-center justify-between mb-1.5">
-                <label for="char-mes-example" class="text-xs font-semibold text-slate-300">
-                  Dialogue Examples (Few-Shot Tuning)
-                </label>
-                <span id="tok-mes-example" class="text-[10px] font-mono text-slate-500">~55 tok</span>
-              </div>
-              <textarea 
-                id="char-mes-example" 
-                rows="4" 
-                class="w-full px-3.5 py-2.5 rounded-xl bg-white/[0.04] border border-white/10 text-xs sm:text-sm text-white outline-none leading-relaxed resize-none font-mono"
-                placeholder="&lt;START&gt;
-&#123;&#123;user&#125;&#125;: Can you break this code?
-&#123;&#123;char&#125;&#125;: *Smirks faintly, tapping her fingers over the keys.* Give me thirty seconds and complete silence."
-              >&lt;START&gt;
+                <!-- Dialogue Examples (mes_example - Huge Textarea - 8+ lines) -->
+                <div>
+                  <div class="flex items-center justify-between mb-2">
+                    <label for="char-mes-example" class="text-xs sm:text-sm font-semibold text-slate-200">
+                      Dialogue Examples (Few-Shot Tuning)
+                    </label>
+                    <span id="tok-mes-example" class="text-[11px] font-mono text-slate-400">~55 tok</span>
+                  </div>
+                  <textarea 
+                    id="char-mes-example" 
+                    rows="8" 
+                    class="w-full px-4 py-3 rounded-2xl bg-white/[0.04] border border-white/10 text-sm sm:text-base text-white outline-none leading-relaxed resize-y min-h-[180px] font-mono"
+                    placeholder="&lt;START&gt;
+&#123;&#123;user&#125;&#125;: Question
+&#123;&#123;char&#125;&#125;: *Action* Answer"
+                  >&lt;START&gt;
 &#123;&#123;user&#125;&#125;: Can you break into the corporate central archives?
 &#123;&#123;char&#125;&#125;: *Taps the terminal, azure telemetry reflecting across her visor.* Breaking in isn't the challenge. Surviving the synthetic purge that follows is. What exactly are you looking for?</textarea>
-            </div>
+                </div>
 
-            <!-- System Prompt & Instructions -->
-            <div>
-              <div class="flex items-center justify-between mb-1.5">
-                <label for="char-system-prompt" class="text-xs font-semibold text-slate-300">
-                  System Instructions & Guardrails
-                </label>
-                <span id="tok-system-prompt" class="text-[10px] font-mono text-purple-400">~38 tok</span>
+                <!-- System Prompt Instructions (6+ lines) -->
+                <div>
+                  <div class="flex items-center justify-between mb-2">
+                    <label for="char-system-prompt" class="text-xs sm:text-sm font-semibold text-slate-200">
+                      System Instructions & Guardrails
+                    </label>
+                    <span id="tok-system-prompt" class="text-[11px] font-mono text-purple-400">~38 tok</span>
+                  </div>
+                  <textarea 
+                    id="char-system-prompt" 
+                    rows="5" 
+                    class="w-full px-4 py-3 rounded-2xl bg-white/[0.04] border border-white/10 text-sm sm:text-base text-white outline-none leading-relaxed resize-y min-h-[130px]"
+                    placeholder="Strict rules for the AI model..."
+                  >Portray Aurelia Vance with immersive consistency. Maintain a sharp, calm, cryptographic demeanor. Do not speak or act on behalf of &#123;&#123;user&#125;&#125;. Maintain atmospheric sensory detail and wholesome SFW storytelling.</textarea>
+                </div>
+
+                <!-- Suggested Starter Prompts -->
+                <div>
+                  <label class="block text-xs sm:text-sm font-semibold text-slate-200 mb-2">
+                    Suggested Starter Prompts for User
+                  </label>
+                  <div class="space-y-2">
+                    <input id="starter-1" type="text" class="w-full px-4 py-2.5 rounded-xl bg-white/[0.04] border border-white/10 text-sm text-white" value="What secrets are hidden in the archive?" />
+                    <input id="starter-2" type="text" class="w-full px-4 py-2.5 rounded-xl bg-white/[0.04] border border-white/10 text-sm text-white" value="Can you bypass corporate surveillance?" />
+                    <input id="starter-3" type="text" class="w-full px-4 py-2.5 rounded-xl bg-white/[0.04] border border-white/10 text-sm text-white" value="Why did you abandon your post in the Cartel?" />
+                  </div>
+                </div>
+
               </div>
-              <textarea 
-                id="char-system-prompt" 
-                rows="3" 
-                class="w-full px-3.5 py-2.5 rounded-xl bg-white/[0.04] border border-white/10 text-xs sm:text-sm text-white outline-none leading-relaxed resize-none"
-                placeholder="Strict behavioral rules for the LLM..."
-              >Portray Aurelia Vance with immersive consistency. Maintain a sharp, calm, cryptographic demeanor. Do not speak or act on behalf of &#123;&#123;user&#125;&#125;. Maintain atmospheric sensory detail and wholesome SFW storytelling.</textarea>
             </div>
 
-            <!-- Starter Prompts for User -->
-            <div>
-              <label class="block text-xs font-semibold text-slate-300 mb-1.5">
-                Suggested Starter Prompts for User
-              </label>
-              <div class="space-y-2">
-                <input id="starter-1" type="text" class="w-full px-3 py-2 rounded-xl bg-white/[0.04] border border-white/10 text-xs text-white" value="What secrets are hidden in the archive?" />
-                <input id="starter-2" type="text" class="w-full px-3 py-2 rounded-xl bg-white/[0.04] border border-white/10 text-xs text-white" value="Can you bypass corporate surveillance?" />
-                <input id="starter-3" type="text" class="w-full px-3 py-2 rounded-xl bg-white/[0.04] border border-white/10 text-xs text-white" value="Why did you abandon your post in the Cartel?" />
-              </div>
+            <!-- ================= STEPPER BOTTOM NAVIGATION BAR (UNMISSABLE) ================= -->
+            <div class="p-4 sm:p-5 rounded-3xl bg-[#090b17] border border-white/[0.08] shadow-xl flex items-center justify-between gap-3">
+              <button 
+                id="prev-step-btn"
+                type="button" 
+                class="hidden px-5 py-3.5 rounded-2xl bg-white/[0.05] hover:bg-white/[0.1] border border-white/10 text-xs sm:text-sm font-semibold text-slate-300 hover:text-white flex items-center gap-2 transition cursor-pointer active:scale-95"
+              >
+                <ChevronLeft class="w-4 h-4" />
+                <span>Previous Step</span>
+              </button>
+
+              <div class="flex-1"></div>
+
+              <button 
+                id="next-step-btn"
+                type="button" 
+                class="px-6 py-3.5 rounded-2xl bg-gradient-to-r from-purple-600 via-indigo-600 to-purple-600 hover:from-purple-500 hover:to-indigo-500 text-xs sm:text-sm font-bold text-white shadow-lg shadow-purple-900/40 flex items-center gap-2 transition cursor-pointer active:scale-95"
+              >
+                <span id="next-btn-text">Next: Persona & Lore</span>
+                <ChevronRight id="next-btn-icon" class="w-4 h-4" />
+              </button>
             </div>
 
-          </div>
+          </form>
         </div>
 
-      </div>
+        <!-- Right: Real-time Live Obsidian Card Preview & Raw JSON Spec (5 cols on Desktop) -->
+        <div id="desktop-preview-column" class="lg:col-span-5 sticky top-20 space-y-5">
+          
+          <div class="p-5 rounded-3xl bg-[#080a14] border border-white/[0.08] shadow-xl">
+            <div class="flex items-center justify-between border-b border-white/[0.06] pb-3 mb-4">
+              <h3 class="text-xs sm:text-sm font-bold text-white uppercase tracking-wider flex items-center gap-2">
+                <Eye class="w-4 h-4 text-purple-400" />
+                <span>Live Card Preview</span>
+              </h3>
+              <span class="text-[11px] text-emerald-400 font-medium flex items-center gap-1.5">
+                <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
+                <span>Real-Time Sync</span>
+              </span>
+            </div>
 
-      <!-- Right Column: Live Real-Time Card Preview & Raw JSON Inspector (5 cols on large screens) -->
-      <div class="lg:col-span-5 space-y-5">
-        
-        <div class="p-5 rounded-2xl sm:rounded-3xl bg-[#090b17] border border-white/[0.08] shadow-lg sticky top-20">
-          <div class="flex items-center justify-between border-b border-white/[0.06] pb-3 mb-4">
-            <h3 class="text-xs font-bold text-white uppercase tracking-wider flex items-center gap-2">
-              <Eye class="w-4 h-4 text-purple-400" />
-              <span>Real-Time Tavern V2 Preview</span>
-            </h3>
-            <span class="text-[10px] text-emerald-400 font-medium flex items-center gap-1">
-              <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span>
-              <span>Live Ingestion</span>
-            </span>
-          </div>
+            <!-- Obsidian Character Card Simulation -->
+            <div class="rounded-2xl overflow-hidden bg-[#0c0e17] border border-purple-500/40 shadow-2xl shadow-purple-950/50 max-w-sm mx-auto">
+              <div class="relative aspect-[3/4] w-full overflow-hidden bg-slate-900">
+                <img 
+                  id="preview-img" 
+                  src={PRESET_AVATARS[0].url} 
+                  alt="Preview" 
+                  class="w-full h-full object-cover transition-all duration-300" 
+                />
+                <div class="absolute inset-0 bg-gradient-to-t from-[#0c0e17] via-[#0c0e17]/30 to-transparent"></div>
+                
+                <!-- Category Pill -->
+                <div class="absolute top-3 left-3">
+                  <span id="preview-cat" class="px-2.5 py-1 rounded-full text-[10px] font-semibold bg-black/60 backdrop-blur-md text-purple-300 border border-purple-500/30 shadow-md">
+                    Sci-Fi
+                  </span>
+                </div>
 
-          <!-- Obsidian Card Simulation -->
-          <div class="rounded-2xl overflow-hidden bg-[#0c0e17] border border-purple-500/40 shadow-2xl shadow-purple-950/50 max-w-sm mx-auto">
-            <div class="relative aspect-[3/4] w-full overflow-hidden bg-slate-900">
-              <img 
-                id="preview-img" 
-                src={PRESET_AVATARS[0].url} 
-                alt="Preview" 
-                class="w-full h-full object-cover transition-all duration-300" 
-              />
-              <div class="absolute inset-0 bg-gradient-to-t from-[#0c0e17] via-[#0c0e17]/30 to-transparent"></div>
-              
-              <!-- Category Pill -->
-              <div class="absolute top-3 left-3">
-                <span id="preview-cat" class="px-2.5 py-1 rounded-full text-[10px] font-semibold bg-black/60 backdrop-blur-md text-purple-300 border border-purple-500/30 shadow-md">
-                  Sci-Fi
-                </span>
-              </div>
+                <!-- Rating Badge -->
+                <div class="absolute top-3 right-3 flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-bold bg-black/60 backdrop-blur-md text-amber-400 border border-white/10 shadow-md">
+                  <span>★ 5.0</span>
+                </div>
 
-              <!-- Rating Badge -->
-              <div class="absolute top-3 right-3 flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-bold bg-black/60 backdrop-blur-md text-amber-400 border border-white/10 shadow-md">
-                <span>★ 5.0</span>
-              </div>
-
-              <!-- Character Details overlay -->
-              <div class="absolute bottom-3 left-3 right-3 space-y-1.5">
-                <h4 id="preview-name" class="text-base font-bold text-white tracking-wide">
-                  Aurelia Vance
-                </h4>
-                <p id="preview-title" class="text-xs text-purple-300 font-medium line-clamp-1">
-                  Quantum Cryptographer & Archival Scribe
-                </p>
-                <div id="preview-tags" class="flex flex-wrap gap-1 pt-1">
-                  <span class="px-1.5 py-0.5 rounded bg-white/[0.08] text-[9px] text-slate-300">#Cyberpunk</span>
-                  <span class="px-1.5 py-0.5 rounded bg-white/[0.08] text-[9px] text-slate-300">#Netrunner</span>
+                <!-- Character Details Overlay -->
+                <div class="absolute bottom-3 left-3 right-3 space-y-1">
+                  <h4 id="preview-name" class="text-base font-bold text-white tracking-wide">
+                    Aurelia Vance
+                  </h4>
+                  <p id="preview-title" class="text-xs text-purple-300 font-medium line-clamp-1">
+                    Quantum Cryptographer & Archival Scribe
+                  </p>
+                  <div id="preview-tags" class="flex flex-wrap gap-1 pt-1">
+                    <span class="px-1.5 py-0.5 rounded bg-white/[0.08] text-[9px] text-slate-300">#Cyberpunk</span>
+                    <span class="px-1.5 py-0.5 rounded bg-white/[0.08] text-[9px] text-slate-300">#Hacker</span>
+                  </div>
                 </div>
               </div>
-            </div>
 
-            <!-- Greeting Preview Snippet -->
-            <div class="p-3.5 bg-[#090b14] border-t border-white/[0.06] text-xs text-slate-300 space-y-1.5">
-              <p class="text-[10px] text-purple-400 uppercase font-semibold">Opening Dialogue:</p>
-              <p id="preview-snippet" class="text-[11px] text-slate-300 line-clamp-3 leading-relaxed">
-                *Adjusts the holographic focus...*
-              </p>
-            </div>
-          </div>
-
-          <!-- Spec Metadata Summary -->
-          <div class="mt-4 p-3 rounded-xl bg-white/[0.03] border border-white/[0.06] flex items-center justify-between text-[11px] text-slate-400">
-            <span>Tavern V2 Spec</span>
-            <span class="text-emerald-400 font-mono">chara_card_v2</span>
-            <span id="preview-token-summary" class="font-mono text-purple-300">~0 tok</span>
-          </div>
-
-          <!-- ================= RAW TAVERN V2 JSON SPEC VIEWER ================= -->
-          <div class="mt-3 border border-white/[0.08] rounded-xl overflow-hidden bg-black/40">
-            <button 
-              id="toggle-raw-json-btn"
-              type="button" 
-              class="w-full px-3 py-2 bg-white/[0.03] hover:bg-white/[0.06] flex items-center justify-between text-xs font-semibold text-slate-300 cursor-pointer transition"
-            >
-              <span class="flex items-center gap-1.5">
-                <FileText class="w-3.5 h-3.5 text-cyan-400" />
-                <span>Raw Tavern V2 JSON Spec</span>
-              </span>
-              <span id="json-toggle-arrow" class="text-[10px] text-slate-500">▼ Expand</span>
-            </button>
-            <div id="raw-json-panel" class="hidden p-3 border-t border-white/[0.06] space-y-2">
-              <div class="flex items-center justify-between">
-                <span class="text-[10px] text-slate-400">Valid Tavern V2 Structure</span>
-                <button 
-                  id="copy-raw-json-btn"
-                  type="button" 
-                  class="px-2 py-0.5 rounded bg-white/10 hover:bg-white/20 text-[10px] text-slate-200 flex items-center gap-1 cursor-pointer"
-                >
-                  <Copy class="w-3 h-3" />
-                  <span id="copy-btn-text">Copy JSON</span>
-                </button>
+              <!-- Greeting Snippet -->
+              <div class="p-3.5 bg-[#090b14] border-t border-white/[0.06] text-xs text-slate-300 space-y-1">
+                <p class="text-[10px] text-purple-400 uppercase font-semibold">Opening Greeting:</p>
+                <p id="preview-snippet" class="text-[11px] text-slate-300 line-clamp-3 leading-relaxed">
+                  *Adjusts the holographic focus...*
+                </p>
               </div>
-              <pre id="raw-json-code" class="text-[10px] font-mono text-cyan-200/90 bg-[#060810] p-2.5 rounded-lg overflow-x-auto max-h-52 leading-relaxed border border-white/5"></pre>
             </div>
+
+            <!-- Spec Footer -->
+            <div class="mt-4 p-3 rounded-2xl bg-white/[0.03] border border-white/[0.06] flex items-center justify-between text-xs text-slate-400">
+              <span>Tavern V2 Spec</span>
+              <span class="text-emerald-400 font-mono">chara_card_v2</span>
+              <span id="preview-token-summary" class="font-mono text-purple-300">~0 tok</span>
+            </div>
+
+            <!-- Collapsible Raw Tavern V2 JSON Viewer -->
+            <div class="mt-3 border border-white/[0.08] rounded-2xl overflow-hidden bg-black/40">
+              <button 
+                id="toggle-raw-json-btn"
+                type="button" 
+                class="w-full px-3.5 py-2.5 bg-white/[0.03] hover:bg-white/[0.06] flex items-center justify-between text-xs font-semibold text-slate-300 cursor-pointer transition"
+              >
+                <span class="flex items-center gap-1.5">
+                  <FileText class="w-3.5 h-3.5 text-cyan-400" />
+                  <span>Inspect Raw Tavern V2 JSON</span>
+                </span>
+                <span id="json-toggle-arrow" class="text-[10px] text-slate-500">▼ Expand</span>
+              </button>
+              <div id="raw-json-panel" class="hidden p-3 border-t border-white/[0.06] space-y-2">
+                <div class="flex items-center justify-between">
+                  <span class="text-[10px] text-slate-400">Standard Spec Export</span>
+                  <button 
+                    id="copy-raw-json-btn"
+                    type="button" 
+                    class="px-2 py-0.5 rounded bg-white/10 hover:bg-white/20 text-[10px] text-slate-200 flex items-center gap-1 cursor-pointer"
+                  >
+                    <Copy class="w-3 h-3" />
+                    <span id="copy-btn-text">Copy JSON</span>
+                  </button>
+                </div>
+                <pre id="raw-json-code" class="text-[10px] font-mono text-cyan-200/90 bg-[#060810] p-2.5 rounded-xl overflow-x-auto max-h-52 leading-relaxed border border-white/5"></pre>
+              </div>
+            </div>
+
           </div>
 
-          <!-- Toast Notification -->
-          <div id="status-toast" class="hidden mt-3 p-3 rounded-xl bg-purple-900/60 border border-purple-500/50 text-xs text-purple-200 flex items-center gap-2 shadow-lg">
-            <Check class="w-4 h-4 text-emerald-400 shrink-0" />
-            <span id="toast-text">Tavern Card loaded successfully!</span>
-          </div>
         </div>
 
       </div>
 
-    </main>
+    </div>
+
+    <!-- ================= MOBILE PREVIEW MODAL / DRAWER ================= -->
+    <div id="mobile-preview-drawer" class="fixed inset-0 z-50 bg-black/80 backdrop-blur-md hidden flex flex-col justify-end p-4">
+      <div class="bg-[#080a14] border border-white/10 rounded-3xl p-5 max-w-md w-full mx-auto space-y-4 max-h-[85vh] overflow-y-auto">
+        <div class="flex items-center justify-between border-b border-white/10 pb-3">
+          <span class="text-sm font-bold text-white flex items-center gap-2">
+            <Eye class="w-4 h-4 text-purple-400" />
+            <span>Card Preview</span>
+          </span>
+          <button id="close-mobile-preview-btn" class="p-1 rounded-lg text-slate-400 hover:text-white">
+            <X class="w-5 h-5" />
+          </button>
+        </div>
+
+        <!-- Simulated Card in Mobile Drawer -->
+        <div class="rounded-2xl overflow-hidden bg-[#0c0e17] border border-purple-500/40 shadow-2xl">
+          <div class="relative aspect-[3/4] w-full overflow-hidden bg-slate-900">
+            <img id="mobile-preview-img" src={PRESET_AVATARS[0].url} alt="Preview" class="w-full h-full object-cover" />
+            <div class="absolute inset-0 bg-gradient-to-t from-[#0c0e17] via-[#0c0e17]/30 to-transparent"></div>
+            <div class="absolute bottom-3 left-3 right-3 space-y-1">
+              <h4 id="mobile-preview-name" class="text-base font-bold text-white">Aurelia Vance</h4>
+              <p id="mobile-preview-title" class="text-xs text-purple-300 font-medium line-clamp-1">Quantum Cryptographer</p>
+            </div>
+          </div>
+          <div class="p-3 bg-[#090b14] border-t border-white/[0.06] text-xs text-slate-300">
+            <p class="text-[10px] text-purple-400 uppercase font-semibold">Opening Dialogue:</p>
+            <p id="mobile-preview-snippet" class="text-[11px] text-slate-300 line-clamp-3 leading-relaxed mt-1">
+              *Adjusts holographic focus...*
+            </p>
+          </div>
+        </div>
+
+        <button id="mobile-drawer-close-btn" class="w-full py-3 rounded-2xl bg-white/[0.05] border border-white/10 text-xs font-semibold text-white">
+          Back to Editing
+        </button>
+      </div>
+    </div>
+
+    <!-- ================= TOAST NOTIFICATION ================= -->
+    <div id="status-toast" class="fixed bottom-6 right-6 z-50 hidden p-3.5 rounded-2xl bg-purple-900/90 border border-purple-500/50 text-xs text-purple-100 flex items-center gap-2.5 shadow-2xl backdrop-blur-xl">
+      <Check class="w-4 h-4 text-emerald-400 shrink-0" />
+      <span id="toast-text">Tavern Card loaded successfully!</span>
+    </div>
+
   </div>
 </Layout>
 
 <script>
-  // ================= 4-TAB NAVIGATION =================
-  const tabBtns = document.querySelectorAll('.tab-btn');
-  const tabPanes = document.querySelectorAll('.tab-pane');
+  // ================= STEP WIZARD LOGIC =================
+  let currentStep = 1;
+  const totalSteps = 4;
 
-  tabBtns.forEach(btn => {
-    btn.addEventListener('click', () => {
-      const targetId = btn.getAttribute('data-tab');
-      
-      tabBtns.forEach(b => {
-        b.classList.remove('active', 'bg-purple-600/30', 'text-purple-200', 'border', 'border-purple-500/40', 'shadow-sm');
-        b.classList.add('text-slate-400');
-      });
-      btn.classList.add('active', 'bg-purple-600/30', 'text-purple-200', 'border', 'border-purple-500/40', 'shadow-sm');
-      btn.classList.remove('text-slate-400');
+  const stepTitles = [
+    'Identity & Card',
+    'Persona & Lore',
+    'World Info (Lorebook)',
+    'Dialogue & Rules'
+  ];
 
-      tabPanes.forEach(pane => {
-        if (pane.id === targetId) {
+  const stepPanes = [
+    document.getElementById('step-pane-1'),
+    document.getElementById('step-pane-2'),
+    document.getElementById('step-pane-3'),
+    document.getElementById('step-pane-4')
+  ];
+
+  const desktopStepBtns = document.querySelectorAll('.step-tab-btn');
+  const prevStepBtn = document.getElementById('prev-step-btn');
+  const nextStepBtn = document.getElementById('next-step-btn');
+  const nextBtnText = document.getElementById('next-btn-text');
+  const nextBtnIcon = document.getElementById('next-btn-icon');
+  
+  const mobileStepTitle = document.getElementById('mobile-step-title');
+  const mobileStepFraction = document.getElementById('mobile-step-fraction');
+  const mobileStepProgressBar = document.getElementById('mobile-step-progress-bar');
+
+  function updateStepUI(step: number) {
+    currentStep = step;
+
+    // 1. Show/hide panes
+    stepPanes.forEach((pane, idx) => {
+      if (pane) {
+        if (idx + 1 === currentStep) {
           pane.classList.remove('hidden');
         } else {
           pane.classList.add('hidden');
         }
-      });
+      }
     });
+
+    // 2. Update Desktop Stepper
+    desktopStepBtns.forEach((btn, idx) => {
+      const stepIdx = idx + 1;
+      const numSpan = btn.querySelector('.step-num') as HTMLElement;
+      
+      if (stepIdx === currentStep) {
+        btn.className = 'step-tab-btn text-left p-3 rounded-2xl border transition-all cursor-pointer bg-purple-950/30 border-purple-500/50 text-white shadow-md shadow-purple-950/30';
+        if (numSpan) numSpan.className = 'step-num w-5 h-5 rounded-full bg-purple-600 text-white flex items-center justify-center text-xs font-bold';
+      } else if (stepIdx < currentStep) {
+        btn.className = 'step-tab-btn text-left p-3 rounded-2xl border transition-all cursor-pointer bg-emerald-950/20 border-emerald-500/30 text-emerald-200';
+        if (numSpan) {
+          numSpan.className = 'step-num w-5 h-5 rounded-full bg-emerald-600 text-white flex items-center justify-center text-xs font-bold';
+          numSpan.innerHTML = '✓';
+        }
+      } else {
+        btn.className = 'step-tab-btn text-left p-3 rounded-2xl border transition-all cursor-pointer bg-white/[0.02] border-white/[0.06] text-slate-400 hover:text-slate-200 hover:bg-white/[0.04]';
+        if (numSpan) {
+          numSpan.className = 'step-num w-5 h-5 rounded-full bg-white/10 text-slate-300 flex items-center justify-center text-xs font-bold';
+          numSpan.innerHTML = String(stepIdx);
+        }
+      }
+    });
+
+    // 3. Update Mobile Stepper
+    if (mobileStepTitle) {
+      mobileStepTitle.innerHTML = `
+        <span class="w-5 h-5 rounded-full bg-purple-600 text-white flex items-center justify-center text-xs font-bold">${currentStep}</span>
+        <span>${stepTitles[currentStep - 1]}</span>
+      `;
+    }
+    if (mobileStepFraction) {
+      mobileStepFraction.textContent = `Step ${currentStep} of ${totalSteps}`;
+    }
+    if (mobileStepProgressBar) {
+      mobileStepProgressBar.style.width = `${(currentStep / totalSteps) * 100}%`;
+    }
+
+    // 4. Update Navigation Buttons
+    if (prevStepBtn) {
+      if (currentStep === 1) {
+        prevStepBtn.classList.add('hidden');
+      } else {
+        prevStepBtn.classList.remove('hidden');
+      }
+    }
+
+    if (nextStepBtn && nextBtnText) {
+      if (currentStep === totalSteps) {
+        nextBtnText.textContent = '✓ Finish & Save Persona';
+        if (nextBtnIcon) nextBtnIcon.classList.add('hidden');
+        nextStepBtn.className = 'px-6 py-3.5 rounded-2xl bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 text-xs sm:text-sm font-bold text-white shadow-lg shadow-emerald-900/40 flex items-center gap-2 transition cursor-pointer active:scale-95';
+      } else {
+        const nextTitle = stepTitles[currentStep];
+        nextBtnText.textContent = `Next: ${nextTitle}`;
+        if (nextBtnIcon) nextBtnIcon.classList.remove('hidden');
+        nextStepBtn.className = 'px-6 py-3.5 rounded-2xl bg-gradient-to-r from-purple-600 via-indigo-600 to-purple-600 hover:from-purple-500 hover:to-indigo-500 text-xs sm:text-sm font-bold text-white shadow-lg shadow-purple-900/40 flex items-center gap-2 transition cursor-pointer active:scale-95';
+      }
+    }
+
+    // Scroll smoothly to top of form
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+
+  // Stepper Button Clicks
+  desktopStepBtns.forEach(btn => {
+    btn.addEventListener('click', () => {
+      const step = Number(btn.getAttribute('data-step'));
+      if (step >= 1 && step <= totalSteps) updateStepUI(step);
+    });
+  });
+
+  prevStepBtn?.addEventListener('click', () => {
+    if (currentStep > 1) updateStepUI(currentStep - 1);
+  });
+
+  nextStepBtn?.addEventListener('click', () => {
+    if (currentStep < totalSteps) {
+      updateStepUI(currentStep + 1);
+    } else {
+      // Final Step: Trigger Save Persona
+      saveCharacterData();
+    }
   });
 
   // ================= FORM & PREVIEW ELEMENTS =================
@@ -832,12 +1008,27 @@ Step back into the scan radius. The perimeter tripwires aren't known for patienc
   const statusToast = document.getElementById('status-toast') as HTMLElement;
   const toastText = document.getElementById('toast-text') as HTMLElement;
 
+  // Mobile Drawer Elements
+  const mobilePreviewDrawer = document.getElementById('mobile-preview-drawer');
+  const mobileOpenPreviewBtn = document.getElementById('mobile-open-preview-btn');
+  const closeMobilePreviewBtn = document.getElementById('close-mobile-preview-btn');
+  const mobileDrawerCloseBtn = document.getElementById('mobile-drawer-close-btn');
+  const mobilePreviewImg = document.getElementById('mobile-preview-img') as HTMLImageElement;
+  const mobilePreviewName = document.getElementById('mobile-preview-name') as HTMLElement;
+  const mobilePreviewTitle = document.getElementById('mobile-preview-title') as HTMLElement;
+  const mobilePreviewSnippet = document.getElementById('mobile-preview-snippet') as HTMLElement;
+
   // HUD Elements
   const hudPermTokens = document.getElementById('hud-perm-tokens') as HTMLElement;
   const hudDynTokens = document.getElementById('hud-dyn-tokens') as HTMLElement;
   const hudLoreTokens = document.getElementById('hud-lore-tokens') as HTMLElement;
   const hudTotalTokens = document.getElementById('hud-total-tokens') as HTMLElement;
   const tokenHealthBadge = document.getElementById('token-health-badge') as HTMLElement;
+
+  // Import Drawer Elements
+  const importDrawer = document.getElementById('import-drawer');
+  const toggleImportPanelBtn = document.getElementById('toggle-import-panel-btn');
+  const closeImportDrawerBtn = document.getElementById('close-import-drawer-btn');
 
   // Raw JSON Inspector Elements
   const toggleRawJsonBtn = document.getElementById('toggle-raw-json-btn');
@@ -859,9 +1050,7 @@ Step back into the scan radius. The perimeter tripwires aren't known for patienc
   // Buttons & Inputs
   const dropZone = document.getElementById('drop-zone');
   const cardFileInput = document.getElementById('card-file-input') as HTMLInputElement;
-  const triggerImportBtn = document.getElementById('trigger-import-btn');
   const customAvatarFile = document.getElementById('custom-avatar-file') as HTMLInputElement;
-  const saveBtn = document.getElementById('save-character-btn');
   const exportBtn = document.getElementById('export-tavern-btn');
   const presetBtns = document.querySelectorAll('.preset-avatar-btn');
   const traitChips = document.querySelectorAll('.trait-chip');
@@ -918,7 +1107,7 @@ Step back into the scan radius. The perimeter tripwires aren't known for patienc
 
     if (loreEntries.length === 0) {
       loreEntriesList.innerHTML = `
-        <div class="p-6 text-center rounded-xl bg-white/[0.02] border border-white/5 text-slate-500 text-xs">
+        <div class="p-6 text-center rounded-2xl bg-white/[0.02] border border-white/5 text-slate-500 text-xs">
           No lorebook entries yet. Click "+ Add Entry" or import a Character Book!
         </div>
       `;
@@ -928,7 +1117,7 @@ Step back into the scan radius. The perimeter tripwires aren't known for patienc
 
     loreEntries.forEach((entry, idx) => {
       const entryDiv = document.createElement('div');
-      entryDiv.className = 'p-3.5 rounded-xl bg-[#070914] border border-amber-500/20 shadow-sm space-y-2.5';
+      entryDiv.className = 'p-4 rounded-2xl bg-[#070914] border border-amber-500/20 shadow-md space-y-3';
       entryDiv.setAttribute('data-id', entry.id);
 
       const entryTok = estimateTokens(entry.content);
@@ -936,50 +1125,50 @@ Step back into the scan radius. The perimeter tripwires aren't known for patienc
       entryDiv.innerHTML = `
         <div class="flex items-center justify-between border-b border-white/[0.06] pb-2">
           <div class="flex items-center gap-2">
-            <span class="w-4 h-4 rounded-full bg-amber-500/20 text-amber-400 flex items-center justify-center text-[10px] font-bold">#${idx + 1}</span>
+            <span class="w-5 h-5 rounded-full bg-amber-500/20 text-amber-400 flex items-center justify-center text-xs font-bold">#${idx + 1}</span>
             <input 
               type="text" 
-              class="entry-title-input px-2 py-0.5 rounded bg-white/[0.04] border border-white/10 text-xs font-semibold text-amber-200 outline-none w-44 sm:w-60" 
+              class="entry-title-input px-2.5 py-1 rounded-xl bg-white/[0.04] border border-white/10 text-xs sm:text-sm font-semibold text-amber-200 outline-none w-48 sm:w-64" 
               value="${entry.comment.replace(/"/g, '&quot;')}" 
               placeholder="Entry Title / Comment" 
             />
           </div>
           <div class="flex items-center gap-2">
-            <span class="text-[10px] font-mono text-amber-400">~${entryTok} tok</span>
-            <button type="button" class="delete-entry-btn p-1 rounded hover:bg-rose-950/40 text-rose-400 transition cursor-pointer" title="Delete entry">
-              <svg xmlns="http://www.w3.org/2000/svg" class="w-3.5 h-3.5 pointer-events-none" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 6h18m-2 0v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6m3 0V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"/></svg>
+            <span class="text-xs font-mono text-amber-400">~${entryTok} tok</span>
+            <button type="button" class="delete-entry-btn p-1.5 rounded-lg hover:bg-rose-950/40 text-rose-400 transition cursor-pointer" title="Delete entry">
+              <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 pointer-events-none" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 6h18m-2 0v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6m3 0V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"/></svg>
             </button>
           </div>
         </div>
 
         <div>
-          <label class="block text-[10px] font-medium text-slate-400 mb-1">Activation Trigger Keys (Comma-separated)</label>
+          <label class="block text-xs font-medium text-slate-300 mb-1">Activation Trigger Keys (Comma-separated)</label>
           <input 
             type="text" 
-            class="entry-keys-input w-full px-2.5 py-1.5 rounded-lg bg-black/40 border border-white/10 text-xs text-white outline-none" 
+            class="entry-keys-input w-full px-3 py-2 rounded-xl bg-black/40 border border-white/10 text-xs sm:text-sm text-white outline-none" 
             value="${entry.keys.replace(/"/g, '&quot;')}" 
             placeholder="e.g. cartel, obsidian, cipher" 
           />
         </div>
 
         <div>
-          <label class="block text-[10px] font-medium text-slate-400 mb-1">Lore Knowledge & Definition</label>
+          <label class="block text-xs font-medium text-slate-300 mb-1">Lore Knowledge & Details (Injected when triggered)</label>
           <textarea 
-            rows="2" 
-            class="entry-content-input w-full px-2.5 py-1.5 rounded-lg bg-black/40 border border-white/10 text-xs text-slate-200 outline-none resize-none leading-relaxed" 
+            rows="4" 
+            class="entry-content-input w-full px-3 py-2 rounded-xl bg-black/40 border border-white/10 text-xs sm:text-sm text-slate-200 outline-none resize-y min-h-[90px] leading-relaxed" 
             placeholder="Injected when trigger keys appear in dialogue..."
           >${entry.content}</textarea>
         </div>
 
         <div class="flex items-center justify-between pt-1">
-          <label class="flex items-center gap-1.5 text-[10px] text-slate-400 cursor-pointer">
-            <input type="checkbox" class="entry-constant-chk rounded text-amber-500 bg-white/10 border-white/20" ${entry.constant ? 'checked' : ''} />
-            <span>Always Active (Constant memory, bypasses keyword filter)</span>
+          <label class="flex items-center gap-2 text-xs text-slate-400 cursor-pointer">
+            <input type="checkbox" class="entry-constant-chk rounded text-amber-500 bg-white/10 border-white/20 w-3.5 h-3.5" ${entry.constant ? 'checked' : ''} />
+            <span>Always Active (Constant memory, ignores keyword match)</span>
           </label>
         </div>
       `;
 
-      // Event bindings for this entry
+      // Event bindings
       const titleInp = entryDiv.querySelector('.entry-title-input') as HTMLInputElement;
       const keysInp = entryDiv.querySelector('.entry-keys-input') as HTMLInputElement;
       const contentInp = entryDiv.querySelector('.entry-content-input') as HTMLTextAreaElement;
@@ -1110,7 +1299,7 @@ Step back into the scan radius. The perimeter tripwires aren't known for patienc
     // Health badge
     if (tokenHealthBadge) {
       if (permanentTokens < 1000) {
-        tokenHealthBadge.textContent = 'Optimal (<1k tok)';
+        tokenHealthBadge.textContent = 'Optimal (<1k)';
         tokenHealthBadge.className = 'px-2 py-0.5 rounded-full text-[10px] font-bold bg-emerald-950/60 border border-emerald-500/40 text-emerald-300';
       } else if (permanentTokens < 1800) {
         tokenHealthBadge.textContent = 'Standard (1k-1.8k)';
@@ -1121,13 +1310,25 @@ Step back into the scan radius. The perimeter tripwires aren't known for patienc
       }
     }
 
-    // 2. Update Card Preview
-    if (previewName && nameInput) previewName.textContent = nameInput.value || 'Unnamed Persona';
-    if (previewTitle && titleInput) previewTitle.textContent = titleInput.value || 'Roleplay Companion';
-    if (previewCat && catInput) previewCat.textContent = catInput.value;
-    if (previewImg && avatarInput) previewImg.src = avatarInput.value;
-    if (previewSnippet && greetingInput) previewSnippet.textContent = greetingInput.value || 'No opening dialogue set.';
-    
+    // 2. Update Desktop & Mobile Card Previews
+    const nameVal = nameInput?.value || 'Unnamed Persona';
+    const titleVal = titleInput?.value || 'Roleplay Companion';
+    const catVal = catInput?.value || 'Sci-Fi';
+    const avatarVal = avatarInput?.value || PRESET_AVATARS[0].url;
+    const greetVal = greetingInput?.value || 'No opening dialogue set.';
+
+    if (previewName) previewName.textContent = nameVal;
+    if (previewTitle) previewTitle.textContent = titleVal;
+    if (previewCat) previewCat.textContent = catVal;
+    if (previewImg) previewImg.src = avatarVal;
+    if (previewSnippet) previewSnippet.textContent = greetVal;
+
+    // Mobile drawer sync
+    if (mobilePreviewName) mobilePreviewName.textContent = nameVal;
+    if (mobilePreviewTitle) mobilePreviewTitle.textContent = titleVal;
+    if (mobilePreviewImg) mobilePreviewImg.src = avatarVal;
+    if (mobilePreviewSnippet) mobilePreviewSnippet.textContent = greetVal;
+
     if (previewTags && tagsInput) {
       const tags = tagsInput.value.split(',').map(t => t.trim()).filter(Boolean);
       previewTags.innerHTML = tags.slice(0, 3).map(t => `<span class="px-1.5 py-0.5 rounded bg-white/[0.08] text-[9px] text-slate-300">#${t}</span>`).join('');
@@ -1200,6 +1401,25 @@ Step back into the scan radius. The perimeter tripwires aren't known for patienc
       setTimeout(() => { if (copyBtnText) copyBtnText.textContent = 'Copy JSON'; }, 2000);
       showToast('Raw Tavern V2 JSON copied to clipboard!');
     });
+  });
+
+  // Toggle Import Drawer
+  toggleImportPanelBtn?.addEventListener('click', () => {
+    importDrawer?.classList.toggle('hidden');
+  });
+  closeImportDrawerBtn?.addEventListener('click', () => {
+    importDrawer?.classList.add('hidden');
+  });
+
+  // Mobile Drawer Open / Close
+  mobileOpenPreviewBtn?.addEventListener('click', () => {
+    mobilePreviewDrawer?.classList.remove('hidden');
+  });
+  closeMobilePreviewBtn?.addEventListener('click', () => {
+    mobilePreviewDrawer?.classList.add('hidden');
+  });
+  mobileDrawerCloseBtn?.addEventListener('click', () => {
+    mobilePreviewDrawer?.classList.add('hidden');
   });
 
   // Bind live updates to all inputs
@@ -1278,7 +1498,6 @@ Step back into the scan radius. The perimeter tripwires aren't known for patienc
   }
 
   function populateFromCardData(cardData: any, imageBase64?: string) {
-    // Standardize Tavern V2 vs V1
     const d = cardData.data || cardData;
     
     if (d.name && nameInput) nameInput.value = d.name;
@@ -1322,7 +1541,9 @@ Step back into the scan radius. The perimeter tripwires aren't known for patienc
     }
 
     updateAllCalculations();
-    showToast(`Loaded character: "${d.name || 'Custom Character'}"! Populated all 4 tabs & Lorebook.`);
+    showToast(`Loaded character: "${d.name || 'Custom Character'}"! Populated all 4 steps & Lorebook.`);
+    // Automatically close import drawer on success
+    importDrawer?.classList.add('hidden');
   }
 
   function handleFile(file: File) {
@@ -1386,11 +1607,11 @@ Step back into the scan radius. The perimeter tripwires aren't known for patienc
     } else if (state === 'success') {
       remoteStatusDot.className = 'w-2 h-2 rounded-full bg-emerald-400';
       if (fetchSpinnerIcon) fetchSpinnerIcon.classList.remove('animate-spin');
-      if (fetchBtnLabel) fetchBtnLabel.textContent = 'Fetch & Populate';
+      if (fetchBtnLabel) fetchBtnLabel.textContent = 'Fetch & Auto-Fill All Steps';
     } else {
       remoteStatusDot.className = 'w-2 h-2 rounded-full bg-rose-400';
       if (fetchSpinnerIcon) fetchSpinnerIcon.classList.remove('animate-spin');
-      if (fetchBtnLabel) fetchBtnLabel.textContent = 'Fetch & Populate';
+      if (fetchBtnLabel) fetchBtnLabel.textContent = 'Fetch & Auto-Fill All Steps';
     }
   }
 
@@ -1416,7 +1637,7 @@ Step back into the scan radius. The perimeter tripwires aren't known for patienc
         targetUrl = `https://avatars.charhub.io/avatars/${chubMatch2[1]}/${chubMatch2[2]}/chara_card_v2.png`;
       }
 
-      setFetchStatus('loading', `Downloading card from ${new URL(targetUrl).hostname}...`);
+      setFetchStatus('loading', `Downloading card...`);
 
       const resp = await fetch(targetUrl);
       if (!resp.ok) {
@@ -1466,7 +1687,6 @@ Step back into the scan radius. The perimeter tripwires aren't known for patienc
   });
 
   // Bind Dropzone & Card Input
-  triggerImportBtn?.addEventListener('click', () => cardFileInput?.click());
   dropZone?.addEventListener('click', () => cardFileInput?.click());
   
   cardFileInput?.addEventListener('change', (e: Event) => {
@@ -1491,7 +1711,7 @@ Step back into the scan radius. The perimeter tripwires aren't known for patienc
   });
 
   // ================= SAVE TO LOCAL STORAGE =================
-  saveBtn?.addEventListener('click', () => {
+  function saveCharacterData() {
     const characterData = {
       id: (nameInput.value || 'custom-character').toLowerCase().replace(/[^a-z0-9]+/g, '-'),
       name: nameInput.value || 'Unnamed Persona',
@@ -1528,8 +1748,8 @@ Step back into the scan radius. The perimeter tripwires aren't known for patienc
     }
     localStorage.setItem('aetheria_custom_characters', JSON.stringify(existing));
 
-    showToast(`"${characterData.name}" saved! Available in your local hub.`);
-  });
+    showToast(`"${characterData.name}" saved! Character is ready for chat.`);
+  }
 
   // ================= EXPORT TAVERN CARD V2 (JSON) =================
   exportBtn?.addEventListener('click', () => {
@@ -1547,5 +1767,6 @@ Step back into the scan radius. The perimeter tripwires aren't known for patienc
 
   // Initial render
   renderLoreEntries();
+  updateStepUI(1);
   updateAllCalculations();
 </script>
