@@ -300,7 +300,7 @@ import {
     if (titleEl) titleEl.textContent = currentCharacter.title;
     if (input) input.placeholder = `Message ${currentCharacter.name}...`;
 
-    const fullPageLink = document.getElementById('modal-fullpage-link') as HTMLAnchorElement | null;
+    const fullPageLink = document.getElementById('modal-fullpage-link');
     if (fullPageLink) fullPageLink.href = `/chat/${currentCharacter.id}`;
 
     // Clear previous messages and show initial greeting

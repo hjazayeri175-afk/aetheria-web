@@ -63,15 +63,15 @@ const { character } = Astro.props;
 ---
 
 <Layout title={`${character.name} — Immersive Roleplay Chat | Aetheria AI`}>
-  <div class="h-screen flex flex-col bg-[#070913] text-slate-100 overflow-hidden font-sans">
+  <div class="h-screen w-full max-w-[100vw] flex flex-col bg-[#070913] text-slate-100 overflow-hidden font-sans">
     
     <!-- Top Navigation Header -->
-    <header class="h-14 sm:h-16 border-b border-white/[0.08] bg-[#090b17]/95 backdrop-blur-xl px-3 sm:px-6 flex items-center justify-between z-30 shrink-0">
-      <div class="flex items-center gap-2.5 sm:gap-4">
+    <header class="h-14 sm:h-16 border-b border-white/[0.08] bg-[#090b17]/95 backdrop-blur-xl px-2 sm:px-6 flex items-center justify-between z-30 shrink-0 w-full max-w-full overflow-hidden">
+      <div class="flex items-center gap-1.5 sm:gap-4 min-w-0">
         <!-- Back to Hub -->
         <a 
           href="/" 
-          class="flex items-center gap-1.5 px-2.5 py-1.5 rounded-xl bg-white/[0.04] hover:bg-white/[0.08] border border-white/[0.08] text-slate-300 hover:text-white text-xs font-medium transition active:scale-95"
+          class="flex items-center gap-1 p-2 sm:px-2.5 sm:py-1.5 rounded-xl bg-white/[0.04] hover:bg-white/[0.08] border border-white/[0.08] text-slate-300 hover:text-white text-xs font-medium transition active:scale-95 shrink-0"
           title="Back to Hub"
         >
           <ArrowLeft class="w-4 h-4 text-purple-400" />
@@ -79,42 +79,42 @@ const { character } = Astro.props;
         </a>
 
         <!-- Character Status Header -->
-        <div class="flex items-center gap-2.5">
-          <div class="relative w-9 h-9 sm:w-10 sm:h-10 rounded-full overflow-hidden ring-2 ring-purple-500/30 shrink-0">
+        <div class="flex items-center gap-2 min-w-0">
+          <div class="relative w-8 h-8 sm:w-10 sm:h-10 rounded-full overflow-hidden ring-2 ring-purple-500/30 shrink-0">
             <img 
               id="chat-header-avatar"
               src={character.avatarUrl} 
               alt={character.name} 
               class="w-full h-full object-cover" 
             />
-            <span class="absolute bottom-0 right-0 w-2.5 h-2.5 rounded-full bg-emerald-400 ring-2 ring-[#090b17]"></span>
+            <span class="absolute bottom-0 right-0 w-2 h-2 sm:w-2.5 sm:h-2.5 rounded-full bg-emerald-400 ring-2 ring-[#090b17]"></span>
           </div>
-          <div>
-            <div class="flex items-center gap-1.5">
-              <h1 id="chat-header-name" class="text-xs sm:text-sm font-bold text-white tracking-wide">{character.name}</h1>
-              <span class="inline-flex items-center gap-0.5 px-1.5 py-0.2 rounded text-[9px] font-semibold bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">
+          <div class="min-w-0">
+            <div class="flex items-center gap-1">
+              <h1 id="chat-header-name" class="text-xs sm:text-sm font-bold text-white tracking-wide truncate max-w-[85px] xs:max-w-[130px] sm:max-w-none">{character.name}</h1>
+              <span class="inline-flex items-center gap-0.5 px-1 py-0.2 rounded text-[8px] sm:text-[9px] font-semibold bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 shrink-0">
                 <ShieldCheck class="w-2.5 h-2.5" />
                 <span>SFW</span>
               </span>
             </div>
-            <p id="chat-header-title" class="text-[10px] sm:text-xs text-purple-400/90 truncate max-w-[130px] sm:max-w-xs">{character.title}</p>
+            <p id="chat-header-title" class="text-[10px] sm:text-xs text-purple-400/90 truncate max-w-[85px] xs:max-w-[130px] sm:max-w-xs">{character.title}</p>
           </div>
         </div>
       </div>
 
       <!-- Right Header Actions -->
-      <div class="flex items-center gap-1 sm:gap-2">
+      <div class="flex items-center gap-1 sm:gap-2 shrink-0">
         <!-- Chat Branch / Sessions Dropdown Trigger -->
         <div class="relative">
           <button 
             id="chat-sessions-btn"
             type="button"
-            class="flex items-center gap-1.5 px-2.5 sm:px-3 py-1.5 rounded-xl bg-white/[0.04] hover:bg-white/[0.08] border border-white/[0.08] text-slate-300 hover:text-white text-xs font-medium transition cursor-pointer active:scale-95"
+            class="flex items-center gap-1 p-2 sm:px-3 sm:py-1.5 rounded-xl bg-white/[0.04] hover:bg-white/[0.08] border border-white/[0.08] text-slate-300 hover:text-white text-xs font-medium transition cursor-pointer active:scale-95"
             title="Manage Chat Branches & Sessions"
           >
             <GitBranch class="w-3.5 h-3.5 text-emerald-400" />
-            <span id="active-session-label" class="hidden sm:inline font-mono truncate max-w-[90px]">Main Branch</span>
-            <ChevronDown class="w-3 h-3 text-slate-400" />
+            <span id="active-session-label" class="hidden md:inline font-mono truncate max-w-[90px]">Main Branch</span>
+            <ChevronDown class="w-3 h-3 text-slate-400 hidden sm:inline" />
           </button>
 
           <!-- Sessions Dropdown Popover -->
@@ -147,19 +147,19 @@ const { character } = Astro.props;
         <!-- Multi-Modal Engine Button (Primary BYOK & Tuning Hub) -->
         <button 
           id="chat-byok-btn"
-          class="flex items-center gap-1.5 px-2.5 sm:px-3 py-1.5 rounded-xl bg-purple-950/50 hover:bg-purple-900/60 border border-purple-500/40 text-purple-200 text-xs font-medium transition cursor-pointer shadow-lg shadow-purple-950/50 active:scale-95 group"
+          class="flex items-center gap-1 p-2 sm:px-3 sm:py-1.5 rounded-xl bg-purple-950/50 hover:bg-purple-900/60 border border-purple-500/40 text-purple-200 text-xs font-medium transition cursor-pointer shadow-lg shadow-purple-950/50 active:scale-95 group"
           title="Configure Multi-Modal AI Engine (Text, Voice, Image, Video)"
         >
           <SlidersHorizontal class="w-3.5 h-3.5 text-cyan-400 group-hover:rotate-45 transition duration-300" />
           <span class="hidden md:inline font-mono font-semibold" id="chat-engine-label">Engine: Groq (Llama 3.3)</span>
-          <span class="inline md:hidden font-mono font-semibold">Engine</span>
+          <span class="hidden sm:inline md:hidden font-mono font-semibold">Engine</span>
         </button>
 
-        <!-- Toggle Lore Sidebar (Desktop / Tablet) -->
+        <!-- Toggle Lore Sidebar (Desktop / Mobile Drawer) -->
         <button 
           id="toggle-sidebar-btn"
           class="p-2 rounded-xl bg-white/[0.04] hover:bg-white/[0.08] border border-white/[0.08] text-slate-400 hover:text-slate-200 text-xs transition cursor-pointer"
-          title="Toggle Character Persona Details"
+          title="Toggle Character Details"
         >
           <PanelLeft class="w-4 h-4 text-purple-400" />
         </button>
@@ -196,13 +196,31 @@ const { character } = Astro.props;
     </header>
 
     <!-- Main Content Area: Sidebar + Chat Thread -->
-    <div class="flex-1 flex overflow-hidden relative">
+    <div class="flex-1 flex overflow-hidden relative w-full max-w-full min-w-0">
       
+      <!-- Backdrop for mobile drawer -->
+      <div 
+        id="sidebar-backdrop" 
+        class="fixed inset-0 bg-black/75 backdrop-blur-sm z-40 hidden transition-opacity"
+      ></div>
+
       <!-- Left Sidebar: Character Persona & Lore Drawer -->
       <aside 
         id="character-sidebar"
-        class="w-80 shrink-0 border-r border-white/[0.08] bg-[#080a14] overflow-y-auto hidden lg:flex flex-col p-5 space-y-5 transition-all duration-300 z-20"
+        class="fixed inset-y-0 left-0 z-50 w-80 max-w-[85vw] border-r border-white/[0.08] bg-[#080a14] overflow-y-auto hidden lg:flex lg:relative lg:inset-auto lg:z-20 flex-col p-4 sm:p-5 space-y-4 sm:space-y-5 transition-all duration-300 shadow-2xl lg:shadow-none"
       >
+        <!-- Mobile Close Header -->
+        <div class="flex items-center justify-between lg:hidden pb-3 border-b border-white/[0.08]">
+          <span class="text-xs font-bold text-white uppercase tracking-wider">Character Lore & Details</span>
+          <button 
+            id="close-sidebar-mobile-btn" 
+            type="button" 
+            class="p-1.5 rounded-xl bg-white/[0.05] hover:bg-white/[0.1] text-slate-300 hover:text-white transition cursor-pointer"
+            title="Close Drawer"
+          >
+            <PanelLeftClose class="w-4 h-4 text-purple-400" />
+          </button>
+        </div>
         <!-- Character Portrait Banner -->
         <div class="relative rounded-2xl overflow-hidden aspect-[4/3] border border-white/[0.1] shadow-lg shadow-purple-950/40">
           <img 
@@ -326,7 +344,7 @@ const { character } = Astro.props;
       </aside>
 
       <!-- Center: Immersive Chat Feed & Input -->
-      <section class="flex-1 flex flex-col h-full overflow-hidden bg-gradient-to-b from-[#090b17] to-[#060810] relative">
+      <section class="flex-1 min-w-0 flex flex-col h-full overflow-hidden bg-gradient-to-b from-[#090b17] to-[#060810] relative w-full max-w-full">
         
         <!-- Multi-Modal AI Engine Suite Modal / Drawer -->
         <div 
@@ -1105,84 +1123,86 @@ const { character } = Astro.props;
 
         <!-- Quick Starter Prompts Row -->
         {character.starterPrompts && character.starterPrompts.length > 0 && (
-          <div class="px-4 sm:px-6 py-2 flex items-center gap-2 overflow-x-auto no-scrollbar shrink-0">
+          <div class="px-2.5 sm:px-6 py-2 flex items-center gap-2 overflow-x-auto no-scrollbar shrink-0 w-full max-w-full">
             <span class="text-[10px] uppercase font-bold text-slate-500 tracking-wider shrink-0 flex items-center gap-1">
               <Sparkles class="w-3 h-3 text-purple-400" />
-              <span>Prompt:</span>
+              <span>Ideas:</span>
             </span>
-            {character.starterPrompts.map((prompt) => (
-              <button 
-                type="button"
-                class="room-starter-pill shrink-0 px-3 py-1.5 rounded-xl bg-white/[0.04] hover:bg-purple-900/30 hover:border-purple-500/40 border border-white/[0.08] text-xs text-slate-300 hover:text-white transition duration-200 cursor-pointer active:scale-95"
-                data-prompt={prompt}
-              >
-                "{prompt}"
-              </button>
-            ))}
+            <div class="flex items-center gap-2 overflow-x-auto no-scrollbar scroll-smooth">
+              {character.starterPrompts.map((prompt) => (
+                <button 
+                  type="button"
+                  class="room-starter-pill shrink-0 px-3 py-1.5 rounded-xl bg-white/[0.04] hover:bg-purple-900/30 hover:border-purple-500/40 border border-white/[0.08] text-xs text-slate-300 hover:text-white transition duration-200 cursor-pointer active:scale-95 whitespace-nowrap"
+                  data-prompt={prompt}
+                >
+                  "{prompt}"
+                </button>
+              ))}
+            </div>
           </div>
         )}
 
         <!-- In-Chat Multi-Modal & Action Toolbar (Part 2) -->
-        <div class="px-3 sm:px-6 py-2 bg-[#070913]/90 border-t border-white/[0.06] flex items-center justify-between gap-2 overflow-x-auto no-scrollbar shrink-0">
-          <div class="flex items-center gap-2">
+        <div class="px-2.5 sm:px-6 py-1.5 bg-[#070913]/90 border-t border-white/[0.06] flex items-center justify-between gap-1.5 overflow-x-auto no-scrollbar shrink-0 w-full max-w-full">
+          <div class="flex items-center gap-1.5 shrink-0">
             <!-- 1. Request Selfie Photo -->
             <button 
               type="button" 
               id="chat-action-selfie-btn"
-              class="px-2.5 py-1.5 rounded-xl bg-purple-500/10 hover:bg-purple-500/20 border border-purple-500/30 text-purple-300 hover:text-white text-xs font-medium flex items-center gap-1.5 transition active:scale-95 cursor-pointer shadow-sm"
+              class="px-2.5 py-1.5 rounded-xl bg-purple-500/10 hover:bg-purple-500/20 border border-purple-500/30 text-purple-300 hover:text-white text-[11px] sm:text-xs font-medium flex items-center gap-1.5 transition active:scale-95 cursor-pointer shadow-sm shrink-0"
               title="Request a contextual selfie photo from character"
             >
               <Camera class="w-3.5 h-3.5 text-purple-400" />
-              <span>Send Selfie 📷</span>
+              <span>Selfie</span>
             </button>
 
             <!-- 2. Request Living Video (BYOK Protected) -->
             <button 
               type="button" 
               id="chat-action-video-btn"
-              class="px-2.5 py-1.5 rounded-xl bg-pink-500/10 hover:bg-pink-500/20 border border-pink-500/30 text-pink-300 hover:text-white text-xs font-medium flex items-center gap-1.5 transition active:scale-95 cursor-pointer shadow-sm group"
+              class="px-2.5 py-1.5 rounded-xl bg-pink-500/10 hover:bg-pink-500/20 border border-pink-500/30 text-pink-300 hover:text-white text-[11px] sm:text-xs font-medium flex items-center gap-1.5 transition active:scale-95 cursor-pointer shadow-sm group shrink-0"
               title="Generate a dynamic cinematic living video (Requires Fal.ai / Luma API Key)"
             >
               <Film class="w-3.5 h-3.5 text-pink-400 group-hover:animate-pulse" />
-              <span>Living Video 🎬</span>
-              <span class="text-[9px] px-1 py-0.2 rounded bg-pink-500/30 text-pink-200 border border-pink-400/40 font-mono">BYOK</span>
+              <span>Video</span>
+              <span class="text-[8px] px-1 py-0.2 rounded bg-pink-500/30 text-pink-200 border border-pink-400/40 font-mono">BYOK</span>
             </button>
           </div>
 
-          <div class="flex items-center gap-2">
+          <div class="flex items-center gap-1.5 shrink-0">
             <!-- 3. Regenerate / Swipe Last Reply -->
             <button 
               type="button" 
               id="chat-action-regenerate-btn"
-              class="px-2.5 py-1.5 rounded-xl bg-white/[0.04] hover:bg-white/[0.08] border border-white/[0.08] text-slate-300 hover:text-white text-xs font-medium flex items-center gap-1.5 transition active:scale-95 cursor-pointer"
+              class="px-2.5 py-1.5 rounded-xl bg-white/[0.04] hover:bg-white/[0.08] border border-white/[0.08] text-slate-300 hover:text-white text-[11px] sm:text-xs font-medium flex items-center gap-1.5 transition active:scale-95 cursor-pointer shrink-0"
               title="Regenerate alternative response for last character message"
             >
               <RefreshCw class="w-3 h-3 text-cyan-400" />
-              <span class="hidden sm:inline">Regenerate</span>
+              <span class="inline">Swipe</span>
             </button>
 
             <!-- 4. Rewind Last Turn -->
             <button 
               type="button" 
               id="chat-action-rewind-btn"
-              class="px-2.5 py-1.5 rounded-xl bg-white/[0.04] hover:bg-white/[0.08] border border-white/[0.08] text-slate-300 hover:text-amber-300 text-xs font-medium flex items-center gap-1.5 transition active:scale-95 cursor-pointer"
+              class="px-2.5 py-1.5 rounded-xl bg-white/[0.04] hover:bg-white/[0.08] border border-white/[0.08] text-slate-300 hover:text-amber-300 text-[11px] sm:text-xs font-medium flex items-center gap-1.5 transition active:scale-95 cursor-pointer shrink-0"
               title="Rewind last turn (restore your prompt to input box)"
             >
               <RotateCcw class="w-3 h-3 text-amber-400" />
-              <span class="hidden sm:inline">Rewind</span>
+              <span class="inline">Rewind</span>
             </button>
           </div>
         </div>
 
         <!-- Bottom Chat Input Bar -->
-        <div class="p-3 sm:p-5 border-t border-white/[0.08] bg-[#080a15]/95 backdrop-blur-xl shrink-0">
-          <form id="room-input-form" class="max-w-4xl mx-auto flex items-end gap-2 sm:gap-3">
-            <div class="flex-1 relative rounded-2xl bg-white/[0.04] hover:bg-white/[0.06] focus-within:bg-[#0c0f1e] border border-white/[0.1] focus-within:border-purple-500/60 transition shadow-inner">
+        <div class="p-2 sm:p-5 border-t border-white/[0.08] bg-[#080a15]/95 backdrop-blur-xl shrink-0 w-full max-w-full">
+          <form id="room-input-form" class="w-full max-w-4xl mx-auto flex items-end gap-2">
+            <div class="flex-1 min-w-0 relative rounded-2xl bg-white/[0.04] hover:bg-white/[0.06] focus-within:bg-[#0c0f1e] border border-white/[0.1] focus-within:border-purple-500/60 transition shadow-inner">
               <textarea 
                 id="room-input" 
                 rows="1" 
-                placeholder={`Type a message to ${character.name}... (Press Enter to send, Shift+Enter for newline)`}
-                class="w-full px-4 py-3 bg-transparent text-sm text-white placeholder:text-slate-500 outline-none resize-none max-h-32 leading-relaxed"
+                placeholder={`Message ${character.name}...`}
+                class="w-full px-3.5 py-2.5 sm:px-4 sm:py-3 bg-transparent text-xs sm:text-sm text-white placeholder:text-slate-500 outline-none resize-none max-h-32 leading-relaxed"
               ></textarea>
             </div>
 
@@ -1190,7 +1210,7 @@ const { character } = Astro.props;
             <button 
               type="submit" 
               id="room-send-btn"
-              class="h-11 px-4 sm:px-5 rounded-2xl bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-500 hover:to-indigo-500 text-white font-semibold flex items-center justify-center gap-2 shadow-lg shadow-purple-900/40 hover:shadow-purple-600/50 transition-all duration-200 cursor-pointer active:scale-95 shrink-0"
+              class="h-10 w-10 sm:h-11 sm:w-auto sm:px-5 rounded-2xl bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-500 hover:to-indigo-500 text-white font-semibold flex items-center justify-center gap-1.5 shadow-lg shadow-purple-900/40 hover:shadow-purple-600/50 transition-all duration-200 cursor-pointer active:scale-95 shrink-0"
               title="Send Message"
             >
               <Send class="w-4 h-4" />
@@ -1198,12 +1218,12 @@ const { character } = Astro.props;
             </button>
           </form>
 
-          <div class="max-w-4xl mx-auto flex items-center justify-between text-[10px] text-slate-500 mt-2 px-1">
-            <span class="flex items-center gap-1.5">
-              <span class="w-1.5 h-1.5 rounded-full bg-emerald-400"></span>
-              <span id="active-privacy-tag">Client-side encrypted memory • Zero server logging</span>
+          <div class="max-w-4xl mx-auto flex items-center justify-between text-[10px] text-slate-500 mt-1.5 px-1">
+            <span class="flex items-center gap-1.5 truncate">
+              <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 shrink-0"></span>
+              <span id="active-privacy-tag" class="truncate">Encrypted memory • Zero server logs</span>
             </span>
-            <span id="active-scenario-tag" class="hidden sm:inline text-purple-400/80 font-mono">
+            <span id="active-scenario-tag" class="hidden sm:inline text-purple-400/80 font-mono shrink-0">
               Scenario: Default Encounter
             </span>
           </div>
@@ -1305,7 +1325,6 @@ const { character } = Astro.props;
   let chatSessions = [];
 
   // Parse sessionId from URL if present (?sessionId=...)
-  const urlParams = new URLSearchParams(window.location.search);
   if (urlParams.get('sessionId')) {
     currentSessionId = urlParams.get('sessionId');
   }
@@ -1323,6 +1342,8 @@ const { character } = Astro.props;
   const input = document.getElementById('room-input');
   const toggleSidebarBtn = document.getElementById('toggle-sidebar-btn');
   const sidebar = document.getElementById('character-sidebar');
+  const sidebarBackdrop = document.getElementById('sidebar-backdrop');
+  const closeSidebarMobileBtn = document.getElementById('close-sidebar-mobile-btn');
   const clearChatBtn = document.getElementById('clear-chat-btn');
   const exportChatBtn = document.getElementById('export-chat-btn');
   const toggleTtsBtn = document.getElementById('toggle-tts-btn');
@@ -3033,11 +3054,34 @@ Never speak, narrate, or decide thoughts or actions for {{user}}. Maintain high 
     });
   });
 
-  // Toggle Lore Sidebar
+  // Toggle Lore Sidebar (Mobile Drawer + Desktop Toggle)
+  function openMobileSidebar() {
+    sidebar?.classList.remove('hidden');
+    sidebar?.classList.add('flex');
+    sidebarBackdrop?.classList.remove('hidden');
+  }
+
+  function closeMobileSidebar() {
+    sidebar?.classList.add('hidden');
+    sidebar?.classList.remove('flex');
+    sidebarBackdrop?.classList.add('hidden');
+  }
+
   toggleSidebarBtn?.addEventListener('click', () => {
-    sidebar?.classList.toggle('hidden');
-    sidebar?.classList.toggle('flex');
+    if (window.innerWidth < 1024) {
+      if (sidebar?.classList.contains('hidden')) {
+        openMobileSidebar();
+      } else {
+        closeMobileSidebar();
+      }
+    } else {
+      sidebar?.classList.toggle('lg:flex');
+      sidebar?.classList.toggle('hidden');
+    }
   });
+
+  sidebarBackdrop?.addEventListener('click', closeMobileSidebar);
+  closeSidebarMobileBtn?.addEventListener('click', closeMobileSidebar);
 
   // Toggle Voice TTS
   toggleTtsBtn?.addEventListener('click', () => {
