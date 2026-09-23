@@ -21,7 +21,15 @@ import {
   Bot,
   User,
   ExternalLink,
-  MessageSquare
+  MessageSquare,
+  SlidersHorizontal,
+  Camera,
+  Video,
+  Brain,
+  Zap,
+  Play,
+  Eye,
+  EyeOff
 } from '@lucide/astro';
 
 export function getStaticPaths() {
@@ -39,7 +47,7 @@ const { character } = Astro.props;
 ---
 
 <Layout title={`${character.name} — Immersive Roleplay Chat | Aetheria AI`}>
-  <div class="h-screen flex flex-col bg-[#070913] text-slate-100 overflow-hidden">
+  <div class="h-screen flex flex-col bg-[#070913] text-slate-100 overflow-hidden font-sans">
     
     <!-- Top Navigation Header -->
     <header class="h-14 sm:h-16 border-b border-white/[0.08] bg-[#090b17]/95 backdrop-blur-xl px-3 sm:px-6 flex items-center justify-between z-30 shrink-0">
@@ -72,13 +80,24 @@ const { character } = Astro.props;
                 <span>SFW</span>
               </span>
             </div>
-            <p class="text-[10px] sm:text-xs text-purple-400/90 truncate max-w-[140px] sm:max-w-xs">{character.title}</p>
+            <p class="text-[10px] sm:text-xs text-purple-400/90 truncate max-w-[130px] sm:max-w-xs">{character.title}</p>
           </div>
         </div>
       </div>
 
       <!-- Right Header Actions -->
       <div class="flex items-center gap-1 sm:gap-2">
+        <!-- Multi-Modal Engine Button (Primary BYOK & Tuning Hub) -->
+        <button 
+          id="chat-byok-btn"
+          class="flex items-center gap-1.5 px-2.5 sm:px-3 py-1.5 rounded-xl bg-purple-950/50 hover:bg-purple-900/60 border border-purple-500/40 text-purple-200 text-xs font-medium transition cursor-pointer shadow-lg shadow-purple-950/50 active:scale-95 group"
+          title="Configure Multi-Modal AI Engine (Text, Voice, Image, Video)"
+        >
+          <SlidersHorizontal class="w-3.5 h-3.5 text-cyan-400 group-hover:rotate-45 transition duration-300" />
+          <span class="hidden md:inline font-mono font-semibold" id="chat-engine-label">Engine: Groq (Llama 3.3)</span>
+          <span class="inline md:hidden font-mono font-semibold">Engine</span>
+        </button>
+
         <!-- Toggle Lore Sidebar (Desktop / Tablet) -->
         <button 
           id="toggle-sidebar-btn"
@@ -88,11 +107,11 @@ const { character } = Astro.props;
           <PanelLeft class="w-4 h-4 text-purple-400" />
         </button>
 
-        <!-- Voice Read Aloud Toggle -->
+        <!-- Voice Read Aloud Quick Toggle -->
         <button 
           id="toggle-tts-btn"
           class="p-2 rounded-xl bg-white/[0.04] hover:bg-white/[0.08] border border-white/[0.08] text-slate-400 hover:text-purple-300 text-xs transition cursor-pointer"
-          title="Toggle Voice Read Aloud (Web Speech)"
+          title="Toggle Voice Read Aloud"
         >
           <Volume2 id="tts-icon-on" class="w-4 h-4 text-purple-400" />
           <VolumeX id="tts-icon-off" class="w-4 h-4 text-slate-500 hidden" />
@@ -115,16 +134,6 @@ const { character } = Astro.props;
           title="Clear Conversation History"
         >
           <Trash2 class="w-4 h-4" />
-        </button>
-
-        <!-- BYOK Pill -->
-        <button 
-          id="chat-byok-btn"
-          class="flex items-center gap-1.5 px-2 sm:px-3 py-1.5 rounded-xl bg-purple-950/40 hover:bg-purple-900/50 border border-purple-500/30 text-purple-300 text-xs font-medium transition cursor-pointer"
-          title="Configure BYOK API Key"
-        >
-          <KeyRound class="w-3.5 h-3.5 text-cyan-400" />
-          <span class="hidden md:inline" id="chat-engine-label">Edge Demo</span>
         </button>
       </div>
     </header>
@@ -177,59 +186,590 @@ const { character } = Astro.props;
         </div>
 
         <!-- Safety Certification -->
-        <div class="p-3.5 rounded-xl bg-emerald-950/20 border border-emerald-500/20 flex items-start gap-2.5">
-          <ShieldCheck class="w-4 h-4 text-emerald-400 shrink-0 mt-0.5" />
-          <div class="text-[11px] space-y-0.5">
-            <p class="font-semibold text-emerald-300">Verified SFW Profile</p>
-            <p class="text-slate-400">Strictly wholesome companion & roleplay lore. 18+ adult depiction standards.</p>
+        <div class="p-3.5 rounded-xl bg-purple-950/20 border border-purple-500/20 space-y-1.5">
+          <div class="flex items-center gap-1.5 text-xs font-semibold text-purple-300">
+            <Sparkles class="w-3.5 h-3.5 text-cyan-400" />
+            <span>Tavern V2 Compliant</span>
           </div>
+          <p class="text-[11px] text-slate-400 leading-normal">
+            Multi-modal roleplay ready. Supports live LLM cognition, streaming speech synthesis, and dynamic scene selfies.
+          </p>
         </div>
 
         <!-- Session Privacy -->
         <div class="text-[10px] text-slate-500 text-center pt-4 border-t border-white/[0.05]">
-          Client-side encrypted memory. Chats stay in your browser.
+          Client-side encrypted memory. Chats & API keys stay 100% in your browser.
         </div>
       </aside>
 
       <!-- Center: Immersive Chat Feed & Input -->
       <section class="flex-1 flex flex-col h-full overflow-hidden bg-gradient-to-b from-[#090b17] to-[#060810] relative">
         
-        <!-- BYOK Key Modal / Dropdown Tray -->
+        <!-- Multi-Modal AI Engine Suite Modal / Drawer -->
         <div 
           id="chat-byok-tray" 
-          class="hidden absolute top-0 left-0 right-0 z-30 bg-[#0c0f20]/95 backdrop-blur-xl border-b border-purple-500/30 p-4 shadow-2xl transition-all duration-300"
+          class="hidden fixed inset-0 z-50 bg-black/80 backdrop-blur-md flex items-center justify-center p-3 sm:p-6 transition-all duration-300"
         >
-          <div class="max-w-xl mx-auto space-y-3">
-            <div class="flex items-center justify-between">
-              <div class="flex items-center gap-2">
-                <KeyRound class="w-4 h-4 text-cyan-400" />
-                <h3 class="text-xs font-bold text-white uppercase tracking-wider">BYOK Direct Edge Inference</h3>
+          <div class="w-full max-w-3xl max-h-[92vh] bg-[#0c0f22] border border-purple-500/30 rounded-3xl shadow-2xl shadow-purple-950/80 flex flex-col overflow-hidden animate-in fade-in zoom-in-95 duration-200">
+            
+            <!-- Modal Header -->
+            <div class="p-4 sm:p-5 border-b border-white/[0.08] bg-[#090c1b] flex items-center justify-between shrink-0">
+              <div class="flex items-center gap-3">
+                <div class="w-9 h-9 rounded-2xl bg-gradient-to-br from-purple-600 to-cyan-500 flex items-center justify-center text-white shadow-lg shadow-purple-900/50">
+                  <SlidersHorizontal class="w-5 h-5" />
+                </div>
+                <div>
+                  <h3 class="text-sm sm:text-base font-bold text-white flex items-center gap-2">
+                    <span>Multi-Modal AI Engine Suite</span>
+                    <span class="text-[10px] font-bold px-2 py-0.5 rounded-full bg-cyan-500/10 text-cyan-400 border border-cyan-500/20">BYOK Pro</span>
+                  </h3>
+                  <p class="text-[11px] text-slate-400">Configure text cognition, voice synthesis, image generation & video motion.</p>
+                </div>
               </div>
-              <button id="close-chat-byok" class="text-slate-400 hover:text-white text-xs">✕ Close</button>
+              <button id="close-chat-byok" class="w-8 h-8 rounded-full bg-white/[0.06] hover:bg-white/[0.12] text-slate-300 hover:text-white flex items-center justify-center transition cursor-pointer text-sm">✕</button>
             </div>
-            <p class="text-[11px] text-slate-300">
-              Provide your personal API key for direct client-to-LLM streaming. Keys are stored locally in your browser.
-            </p>
-            <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
-              <select id="chat-provider-select" class="px-3 py-2 rounded-xl bg-white/[0.06] border border-white/10 text-xs text-white outline-none">
-                <option value="demo">Demo Mode (Free Edge Simulator)</option>
-                <option value="groq">Groq (Ultra-Fast Free Tier)</option>
-                <option value="openai">OpenAI (GPT-4o / GPT-4o-mini)</option>
-                <option value="gemini">Google Gemini (Gemini 1.5 Flash)</option>
-                <option value="openrouter">OpenRouter (Multi-model)</option>
-              </select>
-              <input 
-                id="chat-key-input" 
-                type="password" 
-                placeholder="Enter API Key (sk-...)" 
-                class="px-3 py-2 rounded-xl bg-white/[0.06] border border-white/10 text-xs text-white placeholder:text-slate-500 outline-none"
-              />
-            </div>
-            <div class="flex justify-end gap-2 pt-1">
-              <button id="save-chat-byok" class="px-4 py-1.5 rounded-xl bg-purple-600 hover:bg-purple-500 text-white text-xs font-semibold shadow-md cursor-pointer">
-                Save Settings
+
+            <!-- Tab Navigation Bar (4 Modalities) -->
+            <div class="px-4 sm:px-6 pt-3 border-b border-white/[0.08] bg-[#0a0d1e] flex gap-2 overflow-x-auto no-scrollbar shrink-0">
+              <button type="button" class="engine-tab-btn px-4 py-2.5 text-xs font-bold rounded-t-xl transition flex items-center gap-2 cursor-pointer border-b-2 border-purple-500 text-purple-300 bg-purple-950/30" data-tab="tab-text">
+                <Brain class="w-4 h-4 text-purple-400" />
+                <span>Text (Brain & LLM)</span>
+              </button>
+              <button type="button" class="engine-tab-btn px-4 py-2.5 text-xs font-bold rounded-t-xl transition flex items-center gap-2 cursor-pointer border-b-2 border-transparent text-slate-400 hover:text-slate-200" data-tab="tab-voice">
+                <Volume2 class="w-4 h-4 text-emerald-400" />
+                <span>Voice (Speech & TTS)</span>
+              </button>
+              <button type="button" class="engine-tab-btn px-4 py-2.5 text-xs font-bold rounded-t-xl transition flex items-center gap-2 cursor-pointer border-b-2 border-transparent text-slate-400 hover:text-slate-200" data-tab="tab-image">
+                <Camera class="w-4 h-4 text-amber-400" />
+                <span>Image (Selfies & Art)</span>
+              </button>
+              <button type="button" class="engine-tab-btn px-4 py-2.5 text-xs font-bold rounded-t-xl transition flex items-center gap-2 cursor-pointer border-b-2 border-transparent text-slate-400 hover:text-slate-200" data-tab="tab-video">
+                <Video class="w-4 h-4 text-cyan-400" />
+                <span>Video (Living Motion)</span>
               </button>
             </div>
+
+            <!-- Modal Body (Scrollable Settings Panes) -->
+            <div class="p-4 sm:p-6 overflow-y-auto flex-1 space-y-6">
+              
+              <!-- ================= 1. TAB: TEXT ENGINE ================= -->
+              <div id="tab-text" class="engine-tab-pane space-y-5">
+                <div class="flex items-center justify-between pb-2 border-b border-white/[0.06]">
+                  <div>
+                    <h4 class="text-xs sm:text-sm font-bold text-white flex items-center gap-2">
+                      <Brain class="w-4 h-4 text-purple-400" />
+                      <span>Text Model & Cognition Hyperparameters</span>
+                    </h4>
+                    <p class="text-[11px] text-slate-400">Controls character reasoning, creativity, response length & conversational fidelity.</p>
+                  </div>
+                  <button type="button" id="ping-text-btn" class="px-3 py-1.5 rounded-xl bg-purple-900/40 hover:bg-purple-800/60 border border-purple-500/30 text-purple-300 text-xs font-semibold flex items-center gap-1.5 transition cursor-pointer">
+                    <Zap class="w-3.5 h-3.5 text-cyan-400" />
+                    <span>Test Latency</span>
+                  </button>
+                </div>
+
+                <div id="ping-status-msg" class="hidden text-xs px-3.5 py-2 rounded-xl border"></div>
+
+                <!-- Provider & Key Grid -->
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  <div>
+                    <label class="block text-xs font-semibold text-slate-300 mb-1.5">LLM Provider</label>
+                    <select id="text-provider-select" class="w-full px-3.5 py-2.5 rounded-xl bg-white/[0.05] border border-white/10 text-xs text-white outline-none focus:border-purple-500/60">
+                      <option value="groq">Groq (Ultra-Fast Llama 3.3 70B & 8B — Free Tier)</option>
+                      <option value="openrouter">OpenRouter (Claude 3.5 Sonnet, DeepSeek V3, Mistral)</option>
+                      <option value="deepseek">DeepSeek Direct (deepseek-chat / deepseek-reasoner)</option>
+                      <option value="openai">OpenAI (GPT-4o, GPT-4o-mini)</option>
+                      <option value="anthropic">Anthropic (Claude 3.5 Sonnet, Haiku)</option>
+                      <option value="custom">Custom OpenAI-Compatible Endpoint (Ollama, LMStudio, vLLM)</option>
+                      <option value="demo">Free Edge Simulator (No API Key Required)</option>
+                    </select>
+                  </div>
+
+                  <div>
+                    <label class="block text-xs font-semibold text-slate-300 mb-1.5 flex items-center justify-between">
+                      <span>API Key</span>
+                      <button type="button" id="toggle-key-visibility" class="text-[10px] text-purple-400 hover:text-purple-300">Show/Hide</button>
+                    </label>
+                    <div class="relative">
+                      <input 
+                        id="text-api-key" 
+                        type="password" 
+                        placeholder="sk-... or gsk_..." 
+                        class="w-full px-3.5 py-2.5 rounded-xl bg-white/[0.05] border border-white/10 text-xs text-white placeholder:text-slate-500 outline-none focus:border-purple-500/60 font-mono"
+                      />
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Custom Base URL (Conditional) -->
+                <div id="custom-base-url-container" class="hidden space-y-1.5">
+                  <label class="block text-xs font-semibold text-slate-300">Custom Base URL</label>
+                  <input 
+                    id="text-base-url" 
+                    type="url" 
+                    placeholder="http://localhost:11434/v1 or https://my-custom-proxy.com/v1" 
+                    class="w-full px-3.5 py-2.5 rounded-xl bg-white/[0.05] border border-white/10 text-xs text-white placeholder:text-slate-500 outline-none focus:border-purple-500/60 font-mono"
+                  />
+                  <p class="text-[10px] text-slate-400">Compatible with Ollama, LM Studio, vLLM, Text-Gen-WebUI & custom reverse proxies.</p>
+                </div>
+
+                <!-- Model Identifier -->
+                <div class="space-y-1.5">
+                  <label class="block text-xs font-semibold text-slate-300 flex items-center justify-between">
+                    <span>Model Identifier</span>
+                    <span class="text-[10px] text-slate-400">e.g. anthropic/claude-3.5-sonnet, llama-3.3-70b-versatile</span>
+                  </label>
+                  <input 
+                    id="text-model-input" 
+                    type="text" 
+                    value="llama-3.3-70b-versatile"
+                    class="w-full px-3.5 py-2.5 rounded-xl bg-white/[0.05] border border-white/10 text-xs text-white outline-none focus:border-purple-500/60 font-mono"
+                  />
+                  <!-- Quick Model Presets -->
+                  <div class="flex flex-wrap gap-1.5 pt-1">
+                    <span class="text-[10px] text-slate-500 self-center">Presets:</span>
+                    <button type="button" class="quick-model-pill text-[10px] px-2 py-0.5 rounded-lg bg-white/[0.04] hover:bg-purple-950 text-slate-300 hover:text-purple-300 border border-white/10 transition" data-model="llama-3.3-70b-versatile">Llama 3.3 70B (Groq)</button>
+                    <button type="button" class="quick-model-pill text-[10px] px-2 py-0.5 rounded-lg bg-white/[0.04] hover:bg-purple-950 text-slate-300 hover:text-purple-300 border border-white/10 transition" data-model="anthropic/claude-3.5-sonnet">Claude 3.5 Sonnet</button>
+                    <button type="button" class="quick-model-pill text-[10px] px-2 py-0.5 rounded-lg bg-white/[0.04] hover:bg-purple-950 text-slate-300 hover:text-purple-300 border border-white/10 transition" data-model="deepseek/deepseek-chat">DeepSeek V3</button>
+                    <button type="button" class="quick-model-pill text-[10px] px-2 py-0.5 rounded-lg bg-white/[0.04] hover:bg-purple-950 text-slate-300 hover:text-purple-300 border border-white/10 transition" data-model="gpt-4o">GPT-4o</button>
+                  </div>
+                </div>
+
+                <!-- Sliders Grid (Hyperparameters) -->
+                <div class="p-4 rounded-2xl bg-white/[0.02] border border-white/[0.06] space-y-4">
+                  <div class="flex items-center justify-between text-xs font-bold text-slate-300 uppercase tracking-wider">
+                    <span>Hyperparameter Tuning</span>
+                    <span class="text-[10px] text-purple-400 font-normal lowercase">real-time probability sampling</span>
+                  </div>
+
+                  <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <!-- Temperature -->
+                    <div class="space-y-1.5">
+                      <div class="flex items-center justify-between text-xs">
+                        <span class="text-slate-300 font-medium">Temperature</span>
+                        <span id="badge-temp" class="text-purple-300 font-mono font-bold text-xs bg-purple-950/60 px-2 py-0.5 rounded-lg">0.85</span>
+                      </div>
+                      <input id="slider-temp" type="range" min="0.0" max="2.0" step="0.05" value="0.85" class="w-full accent-purple-500 cursor-pointer" />
+                      <div class="flex justify-between text-[10px] text-slate-500">
+                        <span>Precise (0.1)</span>
+                        <span>Balanced (0.85)</span>
+                        <span>Creative (1.5)</span>
+                      </div>
+                    </div>
+
+                    <!-- Max Response Tokens -->
+                    <div class="space-y-1.5">
+                      <div class="flex items-center justify-between text-xs">
+                        <span class="text-slate-300 font-medium">Max Response Tokens</span>
+                        <span id="badge-tokens" class="text-purple-300 font-mono font-bold text-xs bg-purple-950/60 px-2 py-0.5 rounded-lg">350 tok</span>
+                      </div>
+                      <input id="slider-tokens" type="range" min="64" max="2048" step="16" value="350" class="w-full accent-purple-500 cursor-pointer" />
+                      <div class="flex justify-between text-[10px] text-slate-500">
+                        <span>Short (150)</span>
+                        <span>Standard (350)</span>
+                        <span>Novella (1024+)</span>
+                      </div>
+                    </div>
+
+                    <!-- Top-P -->
+                    <div class="space-y-1.5">
+                      <div class="flex items-center justify-between text-xs">
+                        <span class="text-slate-300 font-medium">Top-P (Nucleus Sampling)</span>
+                        <span id="badge-top-p" class="text-purple-300 font-mono font-bold text-xs bg-purple-950/60 px-2 py-0.5 rounded-lg">0.95</span>
+                      </div>
+                      <input id="slider-top-p" type="range" min="0.1" max="1.0" step="0.05" value="0.95" class="w-full accent-purple-500 cursor-pointer" />
+                      <p class="text-[10px] text-slate-500">Filters out tokens below cumulative probability threshold.</p>
+                    </div>
+
+                    <!-- Repetition Penalty -->
+                    <div class="space-y-1.5">
+                      <div class="flex items-center justify-between text-xs">
+                        <span class="text-slate-300 font-medium">Repetition Penalty</span>
+                        <span id="badge-rep-pen" class="text-purple-300 font-mono font-bold text-xs bg-purple-950/60 px-2 py-0.5 rounded-lg">1.10</span>
+                      </div>
+                      <input id="slider-rep-pen" type="range" min="1.0" max="2.0" step="0.02" value="1.10" class="w-full accent-purple-500 cursor-pointer" />
+                      <p class="text-[10px] text-slate-500">Prevents the model from repeating recurring dialogue loops.</p>
+                    </div>
+
+                    <!-- Frequency Penalty -->
+                    <div class="space-y-1.5">
+                      <div class="flex items-center justify-between text-xs">
+                        <span class="text-slate-300 font-medium">Frequency Penalty</span>
+                        <span id="badge-freq-pen" class="text-purple-300 font-mono font-bold text-xs bg-purple-950/60 px-2 py-0.5 rounded-lg">0.00</span>
+                      </div>
+                      <input id="slider-freq-pen" type="range" min="-2.0" max="2.0" step="0.1" value="0.0" class="w-full accent-purple-500 cursor-pointer" />
+                    </div>
+
+                    <!-- Presence Penalty -->
+                    <div class="space-y-1.5">
+                      <div class="flex items-center justify-between text-xs">
+                        <span class="text-slate-300 font-medium">Presence Penalty</span>
+                        <span id="badge-pres-pen" class="text-purple-300 font-mono font-bold text-xs bg-purple-950/60 px-2 py-0.5 rounded-lg">0.00</span>
+                      </div>
+                      <input id="slider-pres-pen" type="range" min="-2.0" max="2.0" step="0.1" value="0.0" class="w-full accent-purple-500 cursor-pointer" />
+                    </div>
+
+                    <!-- Context Turns -->
+                    <div class="space-y-1.5">
+                      <div class="flex items-center justify-between text-xs">
+                        <span class="text-slate-300 font-medium">Context Memory Window</span>
+                        <span id="badge-context" class="text-purple-300 font-mono font-bold text-xs bg-purple-950/60 px-2 py-0.5 rounded-lg">16 Turns</span>
+                      </div>
+                      <input id="slider-context" type="range" min="4" max="40" step="2" value="16" class="w-full accent-purple-500 cursor-pointer" />
+                    </div>
+
+                    <!-- Streaming Toggle -->
+                    <div class="flex items-center justify-between p-3 rounded-xl bg-white/[0.03] border border-white/10 self-end">
+                      <div>
+                        <span class="text-xs font-semibold text-slate-200 block">Token Streaming</span>
+                        <span class="text-[10px] text-slate-400">Stream words in real-time as generated</span>
+                      </div>
+                      <input id="toggle-streaming" type="checkbox" checked class="w-4 h-4 accent-purple-500 cursor-pointer" />
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- ================= 2. TAB: VOICE ENGINE ================= -->
+              <div id="tab-voice" class="engine-tab-pane hidden space-y-5">
+                <div class="flex items-center justify-between pb-2 border-b border-white/[0.06]">
+                  <div>
+                    <h4 class="text-xs sm:text-sm font-bold text-white flex items-center gap-2">
+                      <Volume2 class="w-4 h-4 text-emerald-400" />
+                      <span>Voice Synthesis & TTS Engine (VIP / BYOK)</span>
+                    </h4>
+                    <p class="text-[11px] text-slate-400">Reads character dialogue aloud with lifelike emotions and pacing.</p>
+                  </div>
+                  <button type="button" id="test-voice-btn" class="px-3 py-1.5 rounded-xl bg-emerald-950/40 hover:bg-emerald-900/60 border border-emerald-500/30 text-emerald-300 text-xs font-semibold flex items-center gap-1.5 transition cursor-pointer">
+                    <Play class="w-3.5 h-3.5 text-emerald-400" />
+                    <span>Test Voice</span>
+                  </button>
+                </div>
+
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  <div>
+                    <label class="block text-xs font-semibold text-slate-300 mb-1.5">TTS Engine Provider</label>
+                    <select id="voice-provider-select" class="w-full px-3.5 py-2.5 rounded-xl bg-white/[0.05] border border-white/10 text-xs text-white outline-none focus:border-emerald-500/60">
+                      <option value="browser">Web Speech API (100% Free Browser Engine — Zero Cost)</option>
+                      <option value="elevenlabs">ElevenLabs (VIP / BYOK — Ultra Realistic Emotional Cloning)</option>
+                      <option value="openai">OpenAI Audio TTS (VIP / BYOK — tts-1 / tts-1-hd)</option>
+                      <option value="custom">Custom Audio Endpoint (Kokoro, XTTS, Piper)</option>
+                    </select>
+                  </div>
+
+                  <div id="voice-key-container" class="hidden">
+                    <label class="block text-xs font-semibold text-slate-300 mb-1.5">Voice Engine API Key</label>
+                    <input 
+                      id="voice-api-key" 
+                      type="password" 
+                      placeholder="ElevenLabs or OpenAI key..." 
+                      class="w-full px-3.5 py-2.5 rounded-xl bg-white/[0.05] border border-white/10 text-xs text-white placeholder:text-slate-500 outline-none focus:border-emerald-500/60 font-mono"
+                    />
+                  </div>
+                </div>
+
+                <!-- Voice ID / Presets -->
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  <div id="eleven-voice-container">
+                    <label class="block text-xs font-semibold text-slate-300 mb-1.5">ElevenLabs Voice ID / Preset</label>
+                    <input 
+                      id="voice-id-input" 
+                      type="text" 
+                      value="21m00Tcm4TlvDq8ikWAM"
+                      placeholder="e.g. 21m00Tcm4TlvDq8ikWAM or EXAVITQu4vr4xnSDxMaL"
+                      class="w-full px-3.5 py-2.5 rounded-xl bg-white/[0.05] border border-white/10 text-xs text-white outline-none focus:border-emerald-500/60 font-mono"
+                    />
+                    <div class="flex flex-wrap gap-1.5 pt-1.5">
+                      <button type="button" class="quick-voice-pill text-[10px] px-2 py-0.5 rounded-lg bg-white/[0.04] text-slate-300 hover:text-emerald-300 border border-white/10 transition" data-voice="21m00Tcm4TlvDq8ikWAM">Rachel (Calm)</button>
+                      <button type="button" class="quick-voice-pill text-[10px] px-2 py-0.5 rounded-lg bg-white/[0.04] text-slate-300 hover:text-emerald-300 border border-white/10 transition" data-voice="pNInz6obpgDQGcFmaJgB">Adam (Deep Male)</button>
+                      <button type="button" class="quick-voice-pill text-[10px] px-2 py-0.5 rounded-lg bg-white/[0.04] text-slate-300 hover:text-emerald-300 border border-white/10 transition" data-voice="EXAVITQu4vr4xnSDxMaL">Bella (Expressive)</button>
+                      <button type="button" class="quick-voice-pill text-[10px] px-2 py-0.5 rounded-lg bg-white/[0.04] text-slate-300 hover:text-emerald-300 border border-white/10 transition" data-voice="ErXwobaYiN019PkySvjV">Antoni (Storyteller)</button>
+                    </div>
+                  </div>
+
+                  <div id="openai-voice-container" class="hidden">
+                    <label class="block text-xs font-semibold text-slate-300 mb-1.5">OpenAI Voice Archetype</label>
+                    <select id="openai-voice-select" class="w-full px-3.5 py-2.5 rounded-xl bg-white/[0.05] border border-white/10 text-xs text-white outline-none">
+                      <option value="nova">Nova (Warm & Energetic Female)</option>
+                      <option value="shimmer">Shimmer (Clear & Expressive Female)</option>
+                      <option value="onyx">Onyx (Deep Authoritative Male)</option>
+                      <option value="alloy">Alloy (Versatile & Balanced)</option>
+                      <option value="echo">Echo (Soft & Resonant Male)</option>
+                      <option value="fable">Fable (British Cadence)</option>
+                    </select>
+                  </div>
+                </div>
+
+                <!-- Voice Sliders -->
+                <div class="p-4 rounded-2xl bg-white/[0.02] border border-white/[0.06] space-y-4">
+                  <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <!-- Stability -->
+                    <div class="space-y-1.5">
+                      <div class="flex items-center justify-between text-xs">
+                        <span class="text-slate-300 font-medium">Stability (Consistency vs Emotion)</span>
+                        <span id="badge-stability" class="text-emerald-300 font-mono font-bold text-xs bg-emerald-950/60 px-2 py-0.5 rounded-lg">0.50</span>
+                      </div>
+                      <input id="slider-stability" type="range" min="0.0" max="1.0" step="0.05" value="0.50" class="w-full accent-emerald-500 cursor-pointer" />
+                    </div>
+
+                    <!-- Similarity / Clarity -->
+                    <div class="space-y-1.5">
+                      <div class="flex items-center justify-between text-xs">
+                        <span class="text-slate-300 font-medium">Clarity & Similarity Boost</span>
+                        <span id="badge-clarity" class="text-emerald-300 font-mono font-bold text-xs bg-emerald-950/60 px-2 py-0.5 rounded-lg">0.75</span>
+                      </div>
+                      <input id="slider-clarity" type="range" min="0.0" max="1.0" step="0.05" value="0.75" class="w-full accent-emerald-500 cursor-pointer" />
+                    </div>
+
+                    <!-- Speed Rate -->
+                    <div class="space-y-1.5">
+                      <div class="flex items-center justify-between text-xs">
+                        <span class="text-slate-300 font-medium">Speech Rate</span>
+                        <span id="badge-voice-rate" class="text-emerald-300 font-mono font-bold text-xs bg-emerald-950/60 px-2 py-0.5 rounded-lg">1.0x</span>
+                      </div>
+                      <input id="slider-voice-rate" type="range" min="0.5" max="2.0" step="0.1" value="1.0" class="w-full accent-emerald-500 cursor-pointer" />
+                    </div>
+
+                    <!-- Pitch -->
+                    <div class="space-y-1.5">
+                      <div class="flex items-center justify-between text-xs">
+                        <span class="text-slate-300 font-medium">Tone Pitch</span>
+                        <span id="badge-voice-pitch" class="text-emerald-300 font-mono font-bold text-xs bg-emerald-950/60 px-2 py-0.5 rounded-lg">1.0</span>
+                      </div>
+                      <input id="slider-voice-pitch" type="range" min="0.5" max="1.5" step="0.05" value="1.0" class="w-full accent-emerald-500 cursor-pointer" />
+                    </div>
+                  </div>
+
+                  <!-- Roleplay Audio Toggles -->
+                  <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-2">
+                    <label class="flex items-center justify-between p-3 rounded-xl bg-white/[0.03] border border-white/10 cursor-pointer">
+                      <div>
+                        <span class="text-xs font-semibold text-slate-200 block">Filter Narration (*actions*)</span>
+                        <span class="text-[10px] text-slate-400">Only speaks spoken quotes; ignores asterisks</span>
+                      </div>
+                      <input id="toggle-filter-narration" type="checkbox" checked class="w-4 h-4 accent-emerald-500 cursor-pointer" />
+                    </label>
+
+                    <label class="flex items-center justify-between p-3 rounded-xl bg-white/[0.03] border border-white/10 cursor-pointer">
+                      <div>
+                        <span class="text-xs font-semibold text-slate-200 block">Auto-Play Voice</span>
+                        <span class="text-[10px] text-slate-400">Play voice automatically when message arrives</span>
+                      </div>
+                      <input id="toggle-autoplay-voice" type="checkbox" class="w-4 h-4 accent-emerald-500 cursor-pointer" />
+                    </label>
+                  </div>
+                </div>
+              </div>
+
+              <!-- ================= 3. TAB: IMAGE ENGINE ================= -->
+              <div id="tab-image" class="engine-tab-pane hidden space-y-5">
+                <div class="flex items-center justify-between pb-2 border-b border-white/[0.06]">
+                  <div>
+                    <h4 class="text-xs sm:text-sm font-bold text-white flex items-center gap-2">
+                      <Camera class="w-4 h-4 text-amber-400" />
+                      <span>In-Chat Image Generation (Selfies & Scenes)</span>
+                    </h4>
+                    <p class="text-[11px] text-slate-400">Generates character selfies, location snapshots and visual reactions in chat.</p>
+                  </div>
+                  <button type="button" id="test-image-btn" class="px-3 py-1.5 rounded-xl bg-amber-950/40 hover:bg-amber-900/60 border border-amber-500/30 text-amber-300 text-xs font-semibold flex items-center gap-1.5 transition cursor-pointer">
+                    <Sparkles class="w-3.5 h-3.5 text-amber-400" />
+                    <span>Test Image</span>
+                  </button>
+                </div>
+
+                <div id="test-image-preview-container" class="hidden p-3 rounded-2xl bg-black/50 border border-amber-500/30 flex items-center justify-center">
+                  <img id="test-image-preview" src="" alt="Test render" class="max-h-60 rounded-xl object-contain border border-white/10" />
+                </div>
+
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  <div>
+                    <label class="block text-xs font-semibold text-slate-300 mb-1.5">Image Generation Engine</label>
+                    <select id="image-provider-select" class="w-full px-3.5 py-2.5 rounded-xl bg-white/[0.05] border border-white/10 text-xs text-white outline-none focus:border-amber-500/60">
+                      <option value="pollinations">Pollinations.ai (Free Flux/SDXL — 100% Free & No Key)</option>
+                      <option value="fal">Fal.ai Flux 1.1 Pro / Dev (VIP / BYOK — Ultra High Res)</option>
+                      <option value="openai">OpenAI DALL-E 3 (VIP / BYOK)</option>
+                      <option value="custom">Custom SD / ComfyUI / Automatic1111 Endpoint</option>
+                    </select>
+                  </div>
+
+                  <div id="image-key-container" class="hidden">
+                    <label class="block text-xs font-semibold text-slate-300 mb-1.5">Image API Key</label>
+                    <input 
+                      id="image-api-key" 
+                      type="password" 
+                      placeholder="Fal.ai or OpenAI key..." 
+                      class="w-full px-3.5 py-2.5 rounded-xl bg-white/[0.05] border border-white/10 text-xs text-white placeholder:text-slate-500 outline-none focus:border-amber-500/60 font-mono"
+                    />
+                  </div>
+                </div>
+
+                <!-- Aspect Ratio & Resolution Grid -->
+                <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                  <div>
+                    <label class="block text-xs font-semibold text-slate-300 mb-1.5">Aspect Ratio</label>
+                    <select id="image-aspect-select" class="w-full px-3.5 py-2.5 rounded-xl bg-white/[0.05] border border-white/10 text-xs text-white outline-none">
+                      <option value="1:1">1:1 Square (1024x1024)</option>
+                      <option value="9:16">9:16 Mobile Portrait (768x1344)</option>
+                      <option value="16:9">16:9 Cinematic (1344x768)</option>
+                      <option value="3:4">3:4 Classic Portrait</option>
+                    </select>
+                  </div>
+
+                  <div>
+                    <label class="block text-xs font-semibold text-slate-300 mb-1.5">Inference Steps</label>
+                    <input id="image-steps-input" type="number" min="4" max="50" value="20" class="w-full px-3.5 py-2 rounded-xl bg-white/[0.05] border border-white/10 text-xs text-white outline-none" />
+                  </div>
+
+                  <div>
+                    <label class="block text-xs font-semibold text-slate-300 mb-1.5">Guidance / CFG Scale</label>
+                    <input id="image-cfg-input" type="number" min="1.0" max="15.0" step="0.5" value="3.5" class="w-full px-3.5 py-2 rounded-xl bg-white/[0.05] border border-white/10 text-xs text-white outline-none" />
+                  </div>
+                </div>
+
+                <!-- Character Anchor & Negative Prompt -->
+                <div class="space-y-3">
+                  <label class="flex items-center justify-between p-3 rounded-xl bg-white/[0.03] border border-white/10 cursor-pointer">
+                    <div>
+                      <span class="text-xs font-semibold text-slate-200 block">Character Visual Consistency Anchor</span>
+                      <span class="text-[10px] text-slate-400">Automatically injects character hair, eye color & clothing tags into selfie prompts</span>
+                    </div>
+                    <input id="toggle-image-anchor" type="checkbox" checked class="w-4 h-4 accent-amber-500 cursor-pointer" />
+                  </label>
+
+                  <div>
+                    <label class="block text-xs font-semibold text-slate-300 mb-1.5">Negative Prompt Filter</label>
+                    <input 
+                      id="image-negative-prompt" 
+                      type="text" 
+                      value="blurry, distorted, low quality, bad anatomy, deformed limbs, extra fingers, watermark"
+                      class="w-full px-3.5 py-2 rounded-xl bg-white/[0.05] border border-white/10 text-xs text-slate-300 outline-none"
+                    />
+                  </div>
+                </div>
+              </div>
+
+              <!-- ================= 4. TAB: VIDEO ENGINE ================= -->
+              <div id="tab-video" class="engine-tab-pane hidden space-y-5">
+                <div class="flex items-center justify-between pb-2 border-b border-white/[0.06]">
+                  <div>
+                    <h4 class="text-xs sm:text-sm font-bold text-white flex items-center gap-2">
+                      <Video class="w-4 h-4 text-cyan-400" />
+                      <span>Motion & Video Generation (Living Avatar / BYOK)</span>
+                    </h4>
+                    <p class="text-[11px] text-slate-400">Animates character avatar and moments into fluid cinematic video clips.</p>
+                  </div>
+                  <span class="text-[10px] font-bold px-2.5 py-1 rounded-full bg-cyan-950 text-cyan-300 border border-cyan-500/30">BYOK / VIP Only</span>
+                </div>
+
+                <div class="p-3.5 rounded-2xl bg-cyan-950/20 border border-cyan-500/20 text-xs text-slate-300 leading-relaxed">
+                  💡 <strong>Direct BYOK Architecture:</strong> Video generation is GPU-intensive. Users configure their personal key directly. Zero server markups or hidden fees.
+                </div>
+
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  <div>
+                    <label class="block text-xs font-semibold text-slate-300 mb-1.5">Video Generation Engine</label>
+                    <select id="video-provider-select" class="w-full px-3.5 py-2.5 rounded-xl bg-white/[0.05] border border-white/10 text-xs text-white outline-none focus:border-cyan-500/60">
+                      <option value="fal-kling">Fal.ai (Kling 1.5 Pro — Ultra Realistic Human Motion)</option>
+                      <option value="fal-luma">Fal.ai (Luma Dream Machine — Cinematic Camera Movements)</option>
+                      <option value="fal-minimax">Fal.ai (MiniMax Hailuo-01 — Lifelike Expressions)</option>
+                      <option value="replicate">Replicate (Runway Gen-3 Alpha)</option>
+                      <option value="custom">Custom AnimateDiff / Video API Endpoint</option>
+                    </select>
+                  </div>
+
+                  <div>
+                    <label class="block text-xs font-semibold text-slate-300 mb-1.5">Video API Key</label>
+                    <input 
+                      id="video-api-key" 
+                      type="password" 
+                      placeholder="fal_... or r8_..." 
+                      class="w-full px-3.5 py-2.5 rounded-xl bg-white/[0.05] border border-white/10 text-xs text-white placeholder:text-slate-500 outline-none focus:border-cyan-500/60 font-mono"
+                    />
+                  </div>
+                </div>
+
+                <!-- Video Parameters -->
+                <div class="p-4 rounded-2xl bg-white/[0.02] border border-white/[0.06] space-y-4">
+                  <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <!-- Motion Strength -->
+                    <div class="space-y-1.5">
+                      <div class="flex items-center justify-between text-xs">
+                        <span class="text-slate-300 font-medium">Motion Intensity (1-100)</span>
+                        <span id="badge-motion" class="text-cyan-300 font-mono font-bold text-xs bg-cyan-950/60 px-2 py-0.5 rounded-lg">50</span>
+                      </div>
+                      <input id="slider-motion" type="range" min="1" max="100" step="1" value="50" class="w-full accent-cyan-500 cursor-pointer" />
+                      <div class="flex justify-between text-[10px] text-slate-500">
+                        <span>Subtle Breathing (10)</span>
+                        <span>Natural (50)</span>
+                        <span>Dynamic Action (90)</span>
+                      </div>
+                    </div>
+
+                    <!-- Camera Movement Preset -->
+                    <div class="space-y-1.5">
+                      <label class="block text-xs font-semibold text-slate-300">Camera Movement Preset</label>
+                      <select id="video-camera-select" class="w-full px-3.5 py-2 rounded-xl bg-white/[0.05] border border-white/10 text-xs text-white outline-none">
+                        <option value="subtle">Living Avatar (Gentle Breathing & Eye Blink)</option>
+                        <option value="zoom-in">Slow Cinematic Push In</option>
+                        <option value="pan-left">Dolly Pan Left</option>
+                        <option value="pan-right">Dolly Pan Right</option>
+                        <option value="orbit">Gentle Orbit Arc</option>
+                      </select>
+                    </div>
+
+                    <!-- Duration -->
+                    <div class="space-y-1.5">
+                      <label class="block text-xs font-semibold text-slate-300">Video Duration</label>
+                      <select id="video-duration-select" class="w-full px-3.5 py-2 rounded-xl bg-white/[0.05] border border-white/10 text-xs text-white outline-none">
+                        <option value="5s">5 Seconds (Fast & Cost Efficient)</option>
+                        <option value="10s">10 Seconds (Extended Cinematic Sequence)</option>
+                      </select>
+                    </div>
+
+                    <!-- Resolution & FPS -->
+                    <div class="space-y-1.5">
+                      <label class="block text-xs font-semibold text-slate-300">Resolution & Frame Rate</label>
+                      <select id="video-res-select" class="w-full px-3.5 py-2 rounded-xl bg-white/[0.05] border border-white/10 text-xs text-white outline-none">
+                        <option value="720p-24fps">720p HD @ 24fps (Cinematic)</option>
+                        <option value="1080p-30fps">1080p Full HD @ 30fps (Fluid)</option>
+                      </select>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+            </div>
+
+            <!-- Modal Footer (Actions) -->
+            <div class="p-4 sm:p-5 border-t border-white/[0.08] bg-[#090c1b] flex flex-col sm:flex-row items-center justify-between gap-3 shrink-0">
+              <button 
+                type="button" 
+                id="reset-engine-defaults-btn"
+                class="text-xs text-slate-400 hover:text-red-400 transition flex items-center gap-1 cursor-pointer"
+              >
+                <RotateCcw class="w-3.5 h-3.5" />
+                <span>Reset to Optimal Defaults</span>
+              </button>
+
+              <div class="flex items-center gap-2 w-full sm:w-auto justify-end">
+                <button 
+                  type="button" 
+                  id="cancel-engine-modal"
+                  class="px-4 py-2 rounded-xl bg-white/[0.05] hover:bg-white/[0.1] text-slate-300 text-xs font-medium transition cursor-pointer"
+                >
+                  Cancel
+                </button>
+                <button 
+                  type="button" 
+                  id="save-engine-settings-btn"
+                  class="px-5 py-2 rounded-xl bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-500 hover:to-indigo-500 text-white text-xs font-bold shadow-lg shadow-purple-900/50 hover:shadow-purple-600/50 transition cursor-pointer active:scale-95 flex items-center gap-1.5"
+                >
+                  <Check class="w-4 h-4" />
+                  <span>Save Engine Settings</span>
+                </button>
+              </div>
+            </div>
+
           </div>
         </div>
 
@@ -255,7 +795,7 @@ const { character } = Astro.props;
             <span class="w-1.5 h-1.5 rounded-full bg-purple-400 animate-bounce"></span>
             <span class="w-1.5 h-1.5 rounded-full bg-purple-400 animate-bounce [animation-delay:0.2s]"></span>
             <span class="w-1.5 h-1.5 rounded-full bg-purple-400 animate-bounce [animation-delay:0.4s]"></span>
-            <span class="text-[11px] ml-1 text-slate-400">{character.name} is typing...</span>
+            <span class="text-[11px] ml-1 text-slate-400">{character.name} is thinking...</span>
           </div>
         </div>
 
@@ -305,7 +845,7 @@ const { character } = Astro.props;
           <div class="max-w-4xl mx-auto flex items-center justify-between text-[10px] text-slate-500 mt-2 px-1">
             <span class="flex items-center gap-1.5">
               <span class="w-1.5 h-1.5 rounded-full bg-emerald-400"></span>
-              <span>Encrypted local session • Zero data logging</span>
+              <span id="active-privacy-tag">Client-side encrypted memory • Zero server logging</span>
             </span>
             <span id="active-scenario-tag" class="hidden sm:inline text-purple-400/80 font-mono">
               Scenario: Default Encounter
@@ -338,23 +878,443 @@ const { character } = Astro.props;
   const ttsIconOff = document.getElementById('tts-icon-off');
   const starterPills = document.querySelectorAll('.room-starter-pill');
   
-  // BYOK elements
+  // Multi-Modal Suite Modal elements
   const byokBtn = document.getElementById('chat-byok-btn');
   const byokTray = document.getElementById('chat-byok-tray');
   const closeByok = document.getElementById('close-chat-byok');
-  const saveByok = document.getElementById('save-chat-byok');
-  const providerSelect = document.getElementById('chat-provider-select');
-  const keyInput = document.getElementById('chat-key-input');
+  const cancelByok = document.getElementById('cancel-engine-modal');
+  const saveEngineBtn = document.getElementById('save-engine-settings-btn');
+  const resetDefaultsBtn = document.getElementById('reset-engine-defaults-btn');
   const engineLabel = document.getElementById('chat-engine-label');
+
+  // Tabs
+  const engineTabBtns = document.querySelectorAll('.engine-tab-btn');
+  const engineTabPanes = document.querySelectorAll('.engine-tab-pane');
+
+  // Text inputs
+  const textProviderSelect = document.getElementById('text-provider-select');
+  const textApiKey = document.getElementById('text-api-key');
+  const textBaseUrl = document.getElementById('text-base-url');
+  const customBaseUrlContainer = document.getElementById('custom-base-url-container');
+  const textModelInput = document.getElementById('text-model-input');
+  const toggleKeyVisibility = document.getElementById('toggle-key-visibility');
+  const pingTextBtn = document.getElementById('ping-text-btn');
+  const pingStatusMsg = document.getElementById('ping-status-msg');
+
+  // Text Sliders & Badges
+  const sliderTemp = document.getElementById('slider-temp');
+  const badgeTemp = document.getElementById('badge-temp');
+  const sliderTokens = document.getElementById('slider-tokens');
+  const badgeTokens = document.getElementById('badge-tokens');
+  const sliderTopP = document.getElementById('slider-top-p');
+  const badgeTopP = document.getElementById('badge-top-p');
+  const sliderRepPen = document.getElementById('slider-rep-pen');
+  const badgeRepPen = document.getElementById('badge-rep-pen');
+  const sliderFreqPen = document.getElementById('slider-freq-pen');
+  const badgeFreqPen = document.getElementById('badge-freq-pen');
+  const sliderPresPen = document.getElementById('slider-pres-pen');
+  const badgePresPen = document.getElementById('badge-pres-pen');
+  const sliderContext = document.getElementById('slider-context');
+  const badgeContext = document.getElementById('badge-context');
+  const toggleStreaming = document.getElementById('toggle-streaming');
+
+  // Voice Inputs
+  const voiceProviderSelect = document.getElementById('voice-provider-select');
+  const voiceApiKey = document.getElementById('voice-api-key');
+  const voiceKeyContainer = document.getElementById('voice-key-container');
+  const voiceIdInput = document.getElementById('voice-id-input');
+  const elevenVoiceContainer = document.getElementById('eleven-voice-container');
+  const openaiVoiceContainer = document.getElementById('openai-voice-container');
+  const openaiVoiceSelect = document.getElementById('openai-voice-select');
+  const sliderStability = document.getElementById('slider-stability');
+  const badgeStability = document.getElementById('badge-stability');
+  const sliderClarity = document.getElementById('slider-clarity');
+  const badgeClarity = document.getElementById('badge-clarity');
+  const sliderVoiceRate = document.getElementById('slider-voice-rate');
+  const badgeVoiceRate = document.getElementById('badge-voice-rate');
+  const sliderVoicePitch = document.getElementById('slider-voice-pitch');
+  const badgeVoicePitch = document.getElementById('badge-voice-pitch');
+  const toggleFilterNarration = document.getElementById('toggle-filter-narration');
+  const toggleAutoplayVoice = document.getElementById('toggle-autoplay-voice');
+  const testVoiceBtn = document.getElementById('test-voice-btn');
+
+  // Image Inputs
+  const imageProviderSelect = document.getElementById('image-provider-select');
+  const imageApiKey = document.getElementById('image-api-key');
+  const imageKeyContainer = document.getElementById('image-key-container');
+  const imageAspectSelect = document.getElementById('image-aspect-select');
+  const imageStepsInput = document.getElementById('image-steps-input');
+  const imageCfgInput = document.getElementById('image-cfg-input');
+  const toggleImageAnchor = document.getElementById('toggle-image-anchor');
+  const imageNegativePrompt = document.getElementById('image-negative-prompt');
+  const testImageBtn = document.getElementById('test-image-btn');
+  const testImagePreviewContainer = document.getElementById('test-image-preview-container');
+  const testImagePreview = document.getElementById('test-image-preview');
+
+  // Video Inputs
+  const videoProviderSelect = document.getElementById('video-provider-select');
+  const videoApiKey = document.getElementById('video-api-key');
+  const sliderMotion = document.getElementById('slider-motion');
+  const badgeMotion = document.getElementById('badge-motion');
+  const videoCameraSelect = document.getElementById('video-camera-select');
+  const videoDurationSelect = document.getElementById('video-duration-select');
+  const videoResSelect = document.getElementById('video-res-select');
 
   // Format action text (*italic*) vs speech
   function formatMessageText(text) {
     if (!text) return '';
-    return text.replace(/\*([^*]+)\*/g, '<em class="text-purple-300 italic">$1</em>');
+    return text.replace(/\*([^*]+)\*/g, '<em class="text-purple-300 italic font-serif">$1</em>');
   }
 
+  // Load and apply settings from localStorage
+  function loadEngineSettings() {
+    // 1. Text settings
+    const textProv = localStorage.getItem('aetheria_text_provider') || 'groq';
+    if (textProviderSelect) textProviderSelect.value = textProv;
+    if (textApiKey) textApiKey.value = localStorage.getItem('aetheria_text_key') || '';
+    if (textBaseUrl) textBaseUrl.value = localStorage.getItem('aetheria_text_base_url') || '';
+    if (textModelInput) textModelInput.value = localStorage.getItem('aetheria_text_model') || (textProv === 'groq' ? 'llama-3.3-70b-versatile' : 'anthropic/claude-3.5-sonnet');
+    
+    // Sliders
+    if (sliderTemp) sliderTemp.value = localStorage.getItem('aetheria_text_temp') || '0.85';
+    if (sliderTokens) sliderTokens.value = localStorage.getItem('aetheria_text_tokens') || '350';
+    if (sliderTopP) sliderTopP.value = localStorage.getItem('aetheria_text_top_p') || '0.95';
+    if (sliderRepPen) sliderRepPen.value = localStorage.getItem('aetheria_text_rep_pen') || '1.10';
+    if (sliderFreqPen) sliderFreqPen.value = localStorage.getItem('aetheria_text_freq_pen') || '0.00';
+    if (sliderPresPen) sliderPresPen.value = localStorage.getItem('aetheria_text_pres_pen') || '0.00';
+    if (sliderContext) sliderContext.value = localStorage.getItem('aetheria_text_context') || '16';
+    if (toggleStreaming) toggleStreaming.checked = localStorage.getItem('aetheria_text_streaming') !== 'false';
+
+    // 2. Voice settings
+    const voiceProv = localStorage.getItem('aetheria_voice_provider') || 'browser';
+    if (voiceProviderSelect) voiceProviderSelect.value = voiceProv;
+    if (voiceApiKey) voiceApiKey.value = localStorage.getItem('aetheria_voice_key') || '';
+    if (voiceIdInput) voiceIdInput.value = localStorage.getItem('aetheria_voice_id') || '21m00Tcm4TlvDq8ikWAM';
+    if (openaiVoiceSelect) openaiVoiceSelect.value = localStorage.getItem('aetheria_voice_openai') || 'nova';
+    if (sliderStability) sliderStability.value = localStorage.getItem('aetheria_voice_stability') || '0.50';
+    if (sliderClarity) sliderClarity.value = localStorage.getItem('aetheria_voice_clarity') || '0.75';
+    if (sliderVoiceRate) sliderVoiceRate.value = localStorage.getItem('aetheria_voice_rate') || '1.0';
+    if (sliderVoicePitch) sliderVoicePitch.value = localStorage.getItem('aetheria_voice_pitch') || '1.0';
+    if (toggleFilterNarration) toggleFilterNarration.checked = localStorage.getItem('aetheria_voice_filter') !== 'false';
+    if (toggleAutoplayVoice) toggleAutoplayVoice.checked = localStorage.getItem('aetheria_voice_autoplay') === 'true';
+
+    // 3. Image settings
+    const imageProv = localStorage.getItem('aetheria_image_provider') || 'pollinations';
+    if (imageProviderSelect) imageProviderSelect.value = imageProv;
+    if (imageApiKey) imageApiKey.value = localStorage.getItem('aetheria_image_key') || '';
+    if (imageAspectSelect) imageAspectSelect.value = localStorage.getItem('aetheria_image_aspect') || '1:1';
+    if (imageStepsInput) imageStepsInput.value = localStorage.getItem('aetheria_image_steps') || '20';
+    if (imageCfgInput) imageCfgInput.value = localStorage.getItem('aetheria_image_cfg') || '3.5';
+    if (toggleImageAnchor) toggleImageAnchor.checked = localStorage.getItem('aetheria_image_anchor') !== 'false';
+    if (imageNegativePrompt) imageNegativePrompt.value = localStorage.getItem('aetheria_image_negative') || 'blurry, distorted, low quality, bad anatomy, deformed limbs, extra fingers, watermark';
+
+    // 4. Video settings
+    const videoProv = localStorage.getItem('aetheria_video_provider') || 'fal-kling';
+    if (videoProviderSelect) videoProviderSelect.value = videoProv;
+    if (videoApiKey) videoApiKey.value = localStorage.getItem('aetheria_video_key') || '';
+    if (sliderMotion) sliderMotion.value = localStorage.getItem('aetheria_video_motion') || '50';
+    if (videoCameraSelect) videoCameraSelect.value = localStorage.getItem('aetheria_video_camera') || 'subtle';
+    if (videoDurationSelect) videoDurationSelect.value = localStorage.getItem('aetheria_video_duration') || '5s';
+    if (videoResSelect) videoResSelect.value = localStorage.getItem('aetheria_video_res') || '720p-24fps';
+
+    updateAllBadges();
+    syncProviderVisibility();
+    updateHeaderPill();
+  }
+
+  function updateAllBadges() {
+    if (badgeTemp && sliderTemp) badgeTemp.textContent = parseFloat(sliderTemp.value).toFixed(2);
+    if (badgeTokens && sliderTokens) badgeTokens.textContent = `${sliderTokens.value} tok`;
+    if (badgeTopP && sliderTopP) badgeTopP.textContent = parseFloat(sliderTopP.value).toFixed(2);
+    if (badgeRepPen && sliderRepPen) badgeRepPen.textContent = parseFloat(sliderRepPen.value).toFixed(2);
+    if (badgeFreqPen && sliderFreqPen) badgeFreqPen.textContent = parseFloat(sliderFreqPen.value).toFixed(2);
+    if (badgePresPen && sliderPresPen) badgePresPen.textContent = parseFloat(sliderPresPen.value).toFixed(2);
+    if (badgeContext && sliderContext) badgeContext.textContent = `${sliderContext.value} Turns`;
+
+    if (badgeStability && sliderStability) badgeStability.textContent = parseFloat(sliderStability.value).toFixed(2);
+    if (badgeClarity && sliderClarity) badgeClarity.textContent = parseFloat(sliderClarity.value).toFixed(2);
+    if (badgeVoiceRate && sliderVoiceRate) badgeVoiceRate.textContent = `${parseFloat(sliderVoiceRate.value).toFixed(1)}x`;
+    if (badgeVoicePitch && sliderVoicePitch) badgeVoicePitch.textContent = parseFloat(sliderVoicePitch.value).toFixed(2);
+
+    if (badgeMotion && sliderMotion) badgeMotion.textContent = sliderMotion.value;
+  }
+
+  function syncProviderVisibility() {
+    // Custom base URL
+    if (customBaseUrlContainer && textProviderSelect) {
+      customBaseUrlContainer.classList.toggle('hidden', textProviderSelect.value !== 'custom');
+    }
+    // Voice keys
+    if (voiceKeyContainer && voiceProviderSelect) {
+      voiceKeyContainer.classList.toggle('hidden', voiceProviderSelect.value === 'browser');
+    }
+    if (elevenVoiceContainer && voiceProviderSelect) {
+      elevenVoiceContainer.classList.toggle('hidden', voiceProviderSelect.value !== 'elevenlabs');
+    }
+    if (openaiVoiceContainer && voiceProviderSelect) {
+      openaiVoiceContainer.classList.toggle('hidden', voiceProviderSelect.value !== 'openai');
+    }
+    // Image keys
+    if (imageKeyContainer && imageProviderSelect) {
+      imageKeyContainer.classList.toggle('hidden', imageProviderSelect.value === 'pollinations');
+    }
+  }
+
+  function updateHeaderPill() {
+    if (!engineLabel) return;
+    const textProv = textProviderSelect?.value || localStorage.getItem('aetheria_text_provider') || 'groq';
+    const model = textModelInput?.value || localStorage.getItem('aetheria_text_model') || 'Llama 3.3';
+    const shortModel = model.split('/').pop() || model;
+    
+    if (textProv === 'demo') {
+      engineLabel.textContent = 'Engine: Free Edge Simulator';
+    } else {
+      engineLabel.textContent = `Engine: ${textProv.toUpperCase()} (${shortModel.slice(0, 16)})`;
+    }
+  }
+
+  function saveAllSettings() {
+    // 1. Text
+    if (textProviderSelect) localStorage.setItem('aetheria_text_provider', textProviderSelect.value);
+    if (textApiKey) localStorage.setItem('aetheria_text_key', textApiKey.value.trim());
+    if (textBaseUrl) localStorage.setItem('aetheria_text_base_url', textBaseUrl.value.trim());
+    if (textModelInput) localStorage.setItem('aetheria_text_model', textModelInput.value.trim());
+    if (sliderTemp) localStorage.setItem('aetheria_text_temp', sliderTemp.value);
+    if (sliderTokens) localStorage.setItem('aetheria_text_tokens', sliderTokens.value);
+    if (sliderTopP) localStorage.setItem('aetheria_text_top_p', sliderTopP.value);
+    if (sliderRepPen) localStorage.setItem('aetheria_text_rep_pen', sliderRepPen.value);
+    if (sliderFreqPen) localStorage.setItem('aetheria_text_freq_pen', sliderFreqPen.value);
+    if (sliderPresPen) localStorage.setItem('aetheria_text_pres_pen', sliderPresPen.value);
+    if (sliderContext) localStorage.setItem('aetheria_text_context', sliderContext.value);
+    if (toggleStreaming) localStorage.setItem('aetheria_text_streaming', toggleStreaming.checked ? 'true' : 'false');
+
+    // 2. Voice
+    if (voiceProviderSelect) localStorage.setItem('aetheria_voice_provider', voiceProviderSelect.value);
+    if (voiceApiKey) localStorage.setItem('aetheria_voice_key', voiceApiKey.value.trim());
+    if (voiceIdInput) localStorage.setItem('aetheria_voice_id', voiceIdInput.value.trim());
+    if (openaiVoiceSelect) localStorage.setItem('aetheria_voice_openai', openaiVoiceSelect.value);
+    if (sliderStability) localStorage.setItem('aetheria_voice_stability', sliderStability.value);
+    if (sliderClarity) localStorage.setItem('aetheria_voice_clarity', sliderClarity.value);
+    if (sliderVoiceRate) localStorage.setItem('aetheria_voice_rate', sliderVoiceRate.value);
+    if (sliderVoicePitch) localStorage.setItem('aetheria_voice_pitch', sliderVoicePitch.value);
+    if (toggleFilterNarration) localStorage.setItem('aetheria_voice_filter', toggleFilterNarration.checked ? 'true' : 'false');
+    if (toggleAutoplayVoice) localStorage.setItem('aetheria_voice_autoplay', toggleAutoplayVoice.checked ? 'true' : 'false');
+
+    // 3. Image
+    if (imageProviderSelect) localStorage.setItem('aetheria_image_provider', imageProviderSelect.value);
+    if (imageApiKey) localStorage.setItem('aetheria_image_key', imageApiKey.value.trim());
+    if (imageAspectSelect) localStorage.setItem('aetheria_image_aspect', imageAspectSelect.value);
+    if (imageStepsInput) localStorage.setItem('aetheria_image_steps', imageStepsInput.value);
+    if (imageCfgInput) localStorage.setItem('aetheria_image_cfg', imageCfgInput.value);
+    if (toggleImageAnchor) localStorage.setItem('aetheria_image_anchor', toggleImageAnchor.checked ? 'true' : 'false');
+    if (imageNegativePrompt) localStorage.setItem('aetheria_image_negative', imageNegativePrompt.value.trim());
+
+    // 4. Video
+    if (videoProviderSelect) localStorage.setItem('aetheria_video_provider', videoProviderSelect.value);
+    if (videoApiKey) localStorage.setItem('aetheria_video_key', videoApiKey.value.trim());
+    if (sliderMotion) localStorage.setItem('aetheria_video_motion', sliderMotion.value);
+    if (videoCameraSelect) localStorage.setItem('aetheria_video_camera', videoCameraSelect.value);
+    if (videoDurationSelect) localStorage.setItem('aetheria_video_duration', videoDurationSelect.value);
+    if (videoResSelect) localStorage.setItem('aetheria_video_res', videoResSelect.value);
+
+    updateHeaderPill();
+    byokTray?.classList.add('hidden');
+    showNotification('Multi-Modal Engine settings saved successfully!');
+  }
+
+  function showNotification(msg) {
+    const toast = document.createElement('div');
+    toast.className = 'fixed bottom-20 left-1/2 -translate-x-1/2 z-50 px-4 py-2.5 rounded-2xl bg-[#12162b] border border-purple-500/50 text-white text-xs font-semibold shadow-2xl shadow-purple-950 flex items-center gap-2 animate-in fade-in slide-in-from-bottom-3 duration-200';
+    toast.innerHTML = `<span class="w-2 h-2 rounded-full bg-emerald-400"></span><span>${msg}</span>`;
+    document.body.appendChild(toast);
+    setTimeout(() => {
+      toast.classList.add('opacity-0', 'transition', 'duration-300');
+      setTimeout(() => toast.remove(), 300);
+    }, 2500);
+  }
+
+  // Sliders real-time listeners
+  [
+    sliderTemp, sliderTokens, sliderTopP, sliderRepPen, sliderFreqPen, sliderPresPen, sliderContext,
+    sliderStability, sliderClarity, sliderVoiceRate, sliderVoicePitch, sliderMotion
+  ].forEach(slider => {
+    slider?.addEventListener('input', updateAllBadges);
+  });
+
+  // Providers change listeners
+  textProviderSelect?.addEventListener('change', () => {
+    syncProviderVisibility();
+    if (textProviderSelect.value === 'groq' && textModelInput) {
+      textModelInput.value = 'llama-3.3-70b-versatile';
+    } else if (textProviderSelect.value === 'openrouter' && textModelInput) {
+      textModelInput.value = 'anthropic/claude-3.5-sonnet';
+    } else if (textProviderSelect.value === 'deepseek' && textModelInput) {
+      textModelInput.value = 'deepseek-chat';
+    } else if (textProviderSelect.value === 'openai' && textModelInput) {
+      textModelInput.value = 'gpt-4o';
+    }
+  });
+
+  voiceProviderSelect?.addEventListener('change', syncProviderVisibility);
+  imageProviderSelect?.addEventListener('change', syncProviderVisibility);
+
+  // Tab switching
+  engineTabBtns.forEach(btn => {
+    btn.addEventListener('click', () => {
+      const targetId = btn.getAttribute('data-tab');
+      engineTabBtns.forEach(b => {
+        b.className = 'engine-tab-btn px-4 py-2.5 text-xs font-bold rounded-t-xl transition flex items-center gap-2 cursor-pointer border-b-2 border-transparent text-slate-400 hover:text-slate-200';
+      });
+      btn.className = 'engine-tab-btn px-4 py-2.5 text-xs font-bold rounded-t-xl transition flex items-center gap-2 cursor-pointer border-b-2 border-purple-500 text-purple-300 bg-purple-950/30';
+
+      engineTabPanes.forEach(pane => {
+        pane.classList.toggle('hidden', pane.id !== targetId);
+      });
+    });
+  });
+
+  // Quick Model Pills
+  document.querySelectorAll('.quick-model-pill').forEach(pill => {
+    pill.addEventListener('click', () => {
+      const model = pill.getAttribute('data-model');
+      if (model && textModelInput) {
+        textModelInput.value = model;
+      }
+    });
+  });
+
+  // Quick Voice Pills
+  document.querySelectorAll('.quick-voice-pill').forEach(pill => {
+    pill.addEventListener('click', () => {
+      const voice = pill.getAttribute('data-voice');
+      if (voice && voiceIdInput) {
+        voiceIdInput.value = voice;
+      }
+    });
+  });
+
+  // Show/Hide Key toggle
+  toggleKeyVisibility?.addEventListener('click', () => {
+    if (textApiKey) {
+      textApiKey.type = textApiKey.type === 'password' ? 'text' : 'password';
+    }
+  });
+
+  // Test Latency (Ping)
+  pingTextBtn?.addEventListener('click', async () => {
+    if (!pingStatusMsg) return;
+    pingStatusMsg.classList.remove('hidden');
+    pingStatusMsg.className = 'text-xs px-3.5 py-2 rounded-xl border bg-purple-950/40 border-purple-500/30 text-purple-300 flex items-center gap-2';
+    pingStatusMsg.innerHTML = '<span class="w-2 h-2 rounded-full bg-cyan-400 animate-ping"></span><span>Measuring connection latency...</span>';
+
+    const t0 = performance.now();
+    try {
+      const prov = textProviderSelect?.value || 'demo';
+      const key = textApiKey?.value.trim() || '';
+      
+      if (prov === 'demo') {
+        await new Promise(r => setTimeout(r, 120));
+        const dt = Math.round(performance.now() - t0);
+        pingStatusMsg.className = 'text-xs px-3.5 py-2 rounded-xl border bg-emerald-950/40 border-emerald-500/30 text-emerald-300';
+        pingStatusMsg.innerHTML = `✓ Free Edge Simulator Ready • Latency: ${dt}ms`;
+        return;
+      }
+
+      if (!key) {
+        pingStatusMsg.className = 'text-xs px-3.5 py-2 rounded-xl border bg-amber-950/40 border-amber-500/30 text-amber-300';
+        pingStatusMsg.innerHTML = '⚠️ Please enter your API Key before testing connection.';
+        return;
+      }
+
+      // Quick probe
+      let endpoint = 'https://api.groq.com/openai/v1/models';
+      let headers = { 'Authorization': `Bearer ${key}` };
+      if (prov === 'openrouter') endpoint = 'https://openrouter.ai/api/v1/models';
+      if (prov === 'deepseek') endpoint = 'https://api.deepseek.com/models';
+      if (prov === 'openai') endpoint = 'https://api.openai.com/v1/models';
+      if (prov === 'custom') endpoint = (textBaseUrl?.value.trim() || 'http://localhost:11434/v1') + '/models';
+
+      const res = await fetch(endpoint, { method: 'GET', headers });
+      const dt = Math.round(performance.now() - t0);
+      if (res.ok) {
+        pingStatusMsg.className = 'text-xs px-3.5 py-2 rounded-xl border bg-emerald-950/40 border-emerald-500/30 text-emerald-300';
+        pingStatusMsg.innerHTML = `✓ Connection Successful (${prov.toUpperCase()}) • Latency: ${dt}ms`;
+      } else {
+        pingStatusMsg.className = 'text-xs px-3.5 py-2 rounded-xl border bg-red-950/40 border-red-500/30 text-red-300';
+        pingStatusMsg.innerHTML = `✕ HTTP ${res.status}: Check your API key or model name.`;
+      }
+    } catch (err) {
+      pingStatusMsg.className = 'text-xs px-3.5 py-2 rounded-xl border bg-amber-950/40 border-amber-500/30 text-amber-300';
+      pingStatusMsg.innerHTML = `⚠️ Direct ping blocked by browser CORS policy. Key will be sent during direct chat.`;
+    }
+  });
+
+  // Test Voice button
+  testVoiceBtn?.addEventListener('click', () => {
+    const prov = voiceProviderSelect?.value || 'browser';
+    const rate = parseFloat(sliderVoiceRate?.value || '1.0');
+    const pitch = parseFloat(sliderVoicePitch?.value || '1.0');
+    
+    if (window.speechSynthesis) {
+      window.speechSynthesis.cancel();
+      const utterance = new SpeechSynthesisUtterance(`Greetings traveler. I am ${character.name}. This is a live voice preview.`);
+      utterance.rate = rate;
+      utterance.pitch = pitch;
+      utterance.lang = 'en-US';
+      window.speechSynthesis.speak(utterance);
+      showNotification('Playing speech synthesis preview...');
+    }
+  });
+
+  // Test Image button
+  testImageBtn?.addEventListener('click', () => {
+    if (!testImagePreview || !testImagePreviewContainer) return;
+    testImagePreviewContainer.classList.remove('hidden');
+    const prompt = encodeURIComponent(`${character.name}, ${character.title}, aesthetic studio portrait, dramatic cinematic lighting, masterpiece 8k`);
+    const seed = Math.floor(Math.random() * 1000000);
+    const testUrl = `https://image.pollinations.ai/prompt/${prompt}?width=512&height=512&seed=${seed}&nologo=true`;
+    
+    testImagePreview.src = testUrl;
+    showNotification('Rendering in-chat test image preview...');
+  });
+
+  // Reset Defaults
+  resetDefaultsBtn?.addEventListener('click', () => {
+    if (confirm('Reset all 4 engine settings to optimal roleplay defaults?')) {
+      localStorage.removeItem('aetheria_text_provider');
+      localStorage.removeItem('aetheria_text_key');
+      localStorage.removeItem('aetheria_text_base_url');
+      localStorage.removeItem('aetheria_text_model');
+      localStorage.removeItem('aetheria_text_temp');
+      localStorage.removeItem('aetheria_text_tokens');
+      localStorage.removeItem('aetheria_text_top_p');
+      localStorage.removeItem('aetheria_text_rep_pen');
+      localStorage.removeItem('aetheria_text_freq_pen');
+      localStorage.removeItem('aetheria_text_pres_pen');
+      localStorage.removeItem('aetheria_text_context');
+      localStorage.removeItem('aetheria_text_streaming');
+      localStorage.removeItem('aetheria_voice_provider');
+      localStorage.removeItem('aetheria_voice_key');
+      localStorage.removeItem('aetheria_image_provider');
+      localStorage.removeItem('aetheria_video_provider');
+      loadEngineSettings();
+      showNotification('Restored optimal roleplay defaults.');
+    }
+  });
+
+  // Modal Open/Close
+  byokBtn?.addEventListener('click', () => byokTray?.classList.remove('hidden'));
+  closeByok?.addEventListener('click', () => byokTray?.classList.add('hidden'));
+  cancelByok?.addEventListener('click', () => byokTray?.classList.add('hidden'));
+  saveEngineBtn?.addEventListener('click', saveAllSettings);
+
+  // Close modal on backdrop click
+  byokTray?.addEventListener('click', (e) => {
+    if (e.target === byokTray) byokTray.classList.add('hidden');
+  });
+
+  // Init Chat Function
   function initChat() {
-    // Load existing history or set default greeting
     const saved = localStorage.getItem(STORAGE_KEY);
     if (saved) {
       try {
@@ -374,7 +1334,7 @@ const { character } = Astro.props;
     }
 
     renderAllMessages();
-    checkByok();
+    loadEngineSettings();
   }
 
   function saveChat() {
@@ -411,10 +1371,10 @@ const { character } = Astro.props;
             ${formatMessageText(msg.text)}
           </div>
           <div class="flex items-center gap-2 pt-0.5">
-            <button class="msg-speak-btn text-[10px] text-slate-500 hover:text-purple-400 flex items-center gap-1 transition" data-idx="${idx}">
+            <button class="msg-speak-btn text-[10px] text-slate-500 hover:text-purple-400 flex items-center gap-1 transition cursor-pointer" data-idx="${idx}">
               <span>🔊 Listen</span>
             </button>
-            <button class="msg-copy-btn text-[10px] text-slate-500 hover:text-slate-300 flex items-center gap-1 transition" data-text="${encodeURIComponent(msg.text)}">
+            <button class="msg-copy-btn text-[10px] text-slate-500 hover:text-slate-300 flex items-center gap-1 transition cursor-pointer" data-text="${encodeURIComponent(msg.text)}">
               <span>📋 Copy</span>
             </button>
           </div>
@@ -440,23 +1400,26 @@ const { character } = Astro.props;
     chatStream.appendChild(wrapper);
   }
 
-  // Voice Speech Synthesis
+  // Voice speech synthesis
   function speak(text) {
     if (!ttsEnabled || !window.speechSynthesis) return;
-    window.speechSynthesis.cancel();
-    // Strip action asterisks
-    const cleanText = text.replace(/\*[^*]+\*/g, '').trim();
+    const filterActions = localStorage.getItem('aetheria_voice_filter') !== 'false';
+    let cleanText = text;
+    if (filterActions) {
+      cleanText = text.replace(/\*[^*]+\*/g, '').trim();
+    }
     if (!cleanText) return;
-    
+
+    window.speechSynthesis.cancel();
     const utterance = new SpeechSynthesisUtterance(cleanText);
-    utterance.rate = 1.0;
-    utterance.pitch = 1.0;
+    utterance.rate = parseFloat(localStorage.getItem('aetheria_voice_rate') || '1.0');
+    utterance.pitch = parseFloat(localStorage.getItem('aetheria_voice_pitch') || '1.0');
     utterance.lang = 'en-US';
     window.speechSynthesis.speak(utterance);
   }
 
-  // Handle Send Message
-  function handleSendMessage(userText) {
+  // Send message & AI Generation
+  async function handleSendMessage(userText) {
     if (!userText.trim()) return;
 
     const userMsg = {
@@ -481,48 +1444,103 @@ const { character } = Astro.props;
       if (chatStream) chatStream.scrollTop = chatStream.scrollHeight;
     }
 
-    // Generate response (BYOK or persona simulator)
-    setTimeout(() => {
-      if (typingIndicator) typingIndicator.classList.add('hidden');
-      
-      const replyText = pickResponse(userText);
-      const charMsg = {
-        sender: 'character',
-        text: replyText,
-        timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
-      };
+    const provider = localStorage.getItem('aetheria_text_provider') || 'demo';
+    const apiKey = localStorage.getItem('aetheria_text_key') || '';
+    const model = localStorage.getItem('aetheria_text_model') || 'llama-3.3-70b-versatile';
+    const temp = parseFloat(localStorage.getItem('aetheria_text_temp') || '0.85');
+    const maxTokens = parseInt(localStorage.getItem('aetheria_text_tokens') || '350', 10);
+    const topP = parseFloat(localStorage.getItem('aetheria_text_top_p') || '0.95');
 
-      conversation.push(charMsg);
-      saveChat();
-      appendMessageToDOM(charMsg, conversation.length - 1);
-      if (chatStream) chatStream.scrollTop = chatStream.scrollHeight;
+    let replyText = '';
 
-      if (ttsEnabled) {
-        speak(replyText);
+    // If BYOK key provided and not demo, attempt direct API call
+    if (apiKey && provider !== 'demo') {
+      try {
+        let endpoint = 'https://api.groq.com/openai/v1/chat/completions';
+        if (provider === 'openrouter') endpoint = 'https://openrouter.ai/api/v1/chat/completions';
+        if (provider === 'deepseek') endpoint = 'https://api.deepseek.com/chat/completions';
+        if (provider === 'openai') endpoint = 'https://api.openai.com/v1/chat/completions';
+        if (provider === 'custom') {
+          const base = localStorage.getItem('aetheria_text_base_url') || 'http://localhost:11434/v1';
+          endpoint = base.replace(/\/+$/, '') + '/chat/completions';
+        }
+
+        // Build system prompt with persona context
+        const systemPrompt = `You are roleplaying as ${character.name}, ${character.title}.
+Character Persona & Traits: ${character.description}
+Tags: ${character.tags.join(', ')}
+Behavioral Instructions: Stay fully in character. Adhere strictly to SFW standards. Use *asterisks* for expressive physical actions and sensory details, and use quotes for spoken dialogue. Respond with evocative emotional depth.`;
+
+        // Build recent history
+        const contextLimit = parseInt(localStorage.getItem('aetheria_text_context') || '16', 10);
+        const historySlice = conversation.slice(-contextLimit).map(m => ({
+          role: m.sender === 'user' ? 'user' : 'assistant',
+          content: m.text
+        }));
+
+        const messages = [
+          { role: 'system', content: systemPrompt },
+          ...historySlice
+        ];
+
+        const res = await fetch(endpoint, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${apiKey}`,
+            ...(provider === 'openrouter' ? { 'HTTP-Referer': 'https://aetheria.ai', 'X-Title': 'Aetheria AI' } : {})
+          },
+          body: JSON.stringify({
+            model: model,
+            messages: messages,
+            temperature: temp,
+            max_tokens: maxTokens,
+            top_p: topP
+          })
+        });
+
+        if (res.ok) {
+          const data = await res.json();
+          replyText = data.choices?.[0]?.message?.content || '';
+        } else {
+          console.warn('API returned error status, falling back to simulator', res.status);
+        }
+      } catch (err) {
+        console.warn('API call failed, falling back to persona engine', err);
       }
-    }, 850 + Math.random() * 600);
+    }
+
+    // Fallback response generator if API was not configured or errored
+    if (!replyText) {
+      await new Promise(r => setTimeout(r, 700 + Math.random() * 500));
+      replyText = pickResponse(userText);
+    }
+
+    if (typingIndicator) typingIndicator.classList.add('hidden');
+
+    const charMsg = {
+      sender: 'character',
+      text: replyText,
+      timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
+    };
+
+    conversation.push(charMsg);
+    saveChat();
+    appendMessageToDOM(charMsg, conversation.length - 1);
+    if (chatStream) chatStream.scrollTop = chatStream.scrollHeight;
+
+    if (ttsEnabled || localStorage.getItem('aetheria_voice_autoplay') === 'true') {
+      speak(replyText);
+    }
   }
 
   function pickResponse(userText) {
     const replies = character.fallbackReplies || [];
     if (replies.length === 0) {
-      return `*Smiles faintly.* "Your words echo intriguing possibilities. Tell me more."`;
+      return `*Smiles faintly and leans in closer.* "Your thoughts resonate with an intriguing cadence. Tell me what else is on your mind."`;
     }
     const idx = Math.floor(Math.random() * replies.length);
     return replies[idx];
-  }
-
-  // Check BYOK state
-  function checkByok() {
-    const key = localStorage.getItem('aetheria_byok_key');
-    const provider = localStorage.getItem('aetheria_byok_provider') || 'demo';
-    if (key && provider !== 'demo') {
-      if (engineLabel) engineLabel.textContent = `BYOK (${provider.toUpperCase()})`;
-      if (providerSelect) providerSelect.value = provider;
-      if (keyInput) keyInput.value = key;
-    } else {
-      if (engineLabel) engineLabel.textContent = 'Edge Demo';
-    }
   }
 
   // Event Listeners
@@ -544,43 +1562,35 @@ const { character } = Astro.props;
     input.style.height = `${Math.min(input.scrollHeight, 128)}px`;
   });
 
-  // Starter prompts click
+  // Starter prompts
   starterPills.forEach((btn) => {
     btn.addEventListener('click', () => {
       const prompt = btn.getAttribute('data-prompt');
-      if (prompt) handleSendMessage(prompt);
+      if (prompt && input) {
+        input.value = prompt;
+        input.focus();
+        handleSendMessage(prompt);
+      }
     });
   });
 
-  // Listen / Copy delegation
-  chatStream?.addEventListener('click', (e) => {
-    const speakBtn = e.target.closest('.msg-speak-btn');
-    const copyBtn = e.target.closest('.msg-copy-btn');
-
-    if (speakBtn) {
-      const idx = parseInt(speakBtn.getAttribute('data-idx') || '0', 10);
-      const msg = conversation[idx];
-      if (msg) speak(msg.text);
-    }
-
-    if (copyBtn) {
-      const text = decodeURIComponent(copyBtn.getAttribute('data-text') || '');
-      navigator.clipboard.writeText(text);
-      copyBtn.innerHTML = '<span>✓ Copied!</span>';
-      setTimeout(() => {
-        copyBtn.innerHTML = '<span>📋 Copy</span>';
-      }, 1500);
-    }
-  });
-
-  // Sidebar toggle
+  // Toggle Lore Sidebar
   toggleSidebarBtn?.addEventListener('click', () => {
     sidebar?.classList.toggle('hidden');
+    sidebar?.classList.toggle('flex');
+  });
+
+  // Toggle Voice TTS
+  toggleTtsBtn?.addEventListener('click', () => {
+    ttsEnabled = !ttsEnabled;
+    ttsIconOn?.classList.toggle('hidden', !ttsEnabled);
+    ttsIconOff?.classList.toggle('hidden', ttsEnabled);
+    showNotification(ttsEnabled ? 'Voice Read Aloud enabled' : 'Voice Read Aloud muted');
   });
 
   // Clear chat
   clearChatBtn?.addEventListener('click', () => {
-    if (confirm(`Clear your conversation history with ${character.name}?`)) {
+    if (confirm(`Reset conversation history with ${character.name}?`)) {
       conversation = [{
         sender: 'character',
         text: character.greeting,
@@ -588,57 +1598,46 @@ const { character } = Astro.props;
       }];
       saveChat();
       renderAllMessages();
+      showNotification('Conversation reset to beginning.');
     }
   });
 
-  // Export conversation as Markdown
+  // Export chat
   exportChatBtn?.addEventListener('click', () => {
-    let md = `# Conversation with ${character.name} (${character.title})\n`;
-    md += `Exported from Aetheria AI: ${new Date().toLocaleString()}\n\n---\n\n`;
+    let md = `# Conversation with ${character.name}\n\n`;
     conversation.forEach((msg) => {
-      const sender = msg.sender === 'character' ? character.name : 'User';
-      md += `**${sender}** (${msg.timestamp}):\n${msg.text}\n\n`;
+      const name = msg.sender === 'character' ? character.name : 'You';
+      md += `**[${msg.timestamp || ''}] ${name}:**\n${msg.text}\n\n`;
     });
-
     const blob = new Blob([md], { type: 'text/markdown' });
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a');
     a.href = url;
-    a.download = `${character.id}-conversation.md`;
+    a.download = `${character.name.toLowerCase().replace(/\s+/g, '_')}_chat.md`;
     a.click();
     URL.revokeObjectURL(url);
+    showNotification('Chat exported to Markdown file!');
   });
 
-  // TTS Toggle
-  toggleTtsBtn?.addEventListener('click', () => {
-    ttsEnabled = !ttsEnabled;
-    if (ttsEnabled) {
-      ttsIconOn?.classList.remove('hidden');
-      ttsIconOff?.classList.add('hidden');
-    } else {
-      ttsIconOn?.classList.add('hidden');
-      ttsIconOff?.classList.remove('hidden');
-      if (window.speechSynthesis) window.speechSynthesis.cancel();
+  // Delegate copy and speak
+  document.addEventListener('click', (e) => {
+    const target = e.target;
+    const copyBtn = target.closest('.msg-copy-btn');
+    if (copyBtn) {
+      const text = decodeURIComponent(copyBtn.getAttribute('data-text') || '');
+      navigator.clipboard.writeText(text);
+      showNotification('Copied message to clipboard!');
+      return;
+    }
+
+    const speakBtn = target.closest('.msg-speak-btn');
+    if (speakBtn) {
+      const idx = parseInt(speakBtn.getAttribute('data-idx') || '0', 10);
+      const msg = conversation[idx];
+      if (msg) speak(msg.text);
     }
   });
 
-  // BYOK Tray handlers
-  byokBtn?.addEventListener('click', () => byokTray?.classList.toggle('hidden'));
-  closeByok?.addEventListener('click', () => byokTray?.classList.add('hidden'));
-  saveByok?.addEventListener('click', () => {
-    const key = keyInput?.value.trim() || '';
-    const prov = providerSelect?.value || 'demo';
-    if (key && prov !== 'demo') {
-      localStorage.setItem('aetheria_byok_key', key);
-      localStorage.setItem('aetheria_byok_provider', prov);
-    } else {
-      localStorage.removeItem('aetheria_byok_key');
-      localStorage.setItem('aetheria_byok_provider', 'demo');
-    }
-    checkByok();
-    byokTray?.classList.add('hidden');
-  });
-
-  // Initialize
+  // Startup
   initChat();
 </script>
