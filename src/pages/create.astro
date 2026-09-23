@@ -34,8 +34,8 @@ const PRESET_AVATARS = [
   { url: '/avatars/black_woman.webp', label: 'Black Woman (Radiant Magenta)', name: 'Amara' },
   { url: '/avatars/white_man.webp', label: 'White / Caucasian Man (Golden Studio)', name: 'Julian' },
   { url: '/avatars/black_man.webp', label: 'Black Man (Emerald Cyan)', name: 'Darius' },
-  { url: '/avatars/anime_girl.webp', label: 'Anime Girl (Semi-Realistic Neon Violet)', name: 'Kira' },
-  { url: '/avatars/anime_androgynous.webp', label: 'Anime Androgynous / Boy (Dual Tone)', name: 'Ren' },
+  { url: '/avatars/anime_girl.webp', label: 'Anime Girl (Painterly Cyberpunk Concept Art)', name: 'Kira' },
+  { url: '/avatars/anime_androgynous.webp', label: 'Anime Androgynous / Boy (Painterly Cyberpunk Concept Art)', name: 'Ren' },
   { url: '/avatars/abstract_ai.webp', label: 'Abstract AI / Intelligent Entity (Neural Core)', name: 'Nexus Core' },
 ];
 ---
@@ -351,31 +351,42 @@ const PRESET_AVATARS = [
                   </div>
 
                   <!-- Preset Thumbnails Grid (8 Diverse Avatars) -->
-                  <div class="grid grid-cols-4 sm:grid-cols-8 gap-2">
+                  <div class="grid grid-cols-4 sm:grid-cols-8 gap-2.5">
                     {PRESET_AVATARS.map((preset, idx) => (
                       <button
                         type="button"
-                        class={`preset-avatar-btn relative aspect-square rounded-2xl overflow-hidden border-2 transition cursor-pointer group ${idx === 0 ? 'border-purple-500 ring-2 ring-purple-500/50' : 'border-white/10 hover:border-purple-500/60'}`}
+                        class={`preset-avatar-btn relative aspect-square rounded-xl overflow-hidden border-2 transition cursor-pointer ${idx === 0 ? 'border-purple-500 ring-2 ring-purple-500/50 shadow-lg shadow-purple-950/60' : 'border-white/10 hover:border-purple-500/60'}`}
                         data-url={preset.url}
-                        data-name={preset.name}
                         title={preset.label}
                       >
-                        <img src={preset.url} alt={preset.label} class="w-full h-full object-cover group-hover:scale-105 transition duration-300" />
-                        <div class="absolute inset-0 bg-black/30 group-hover:bg-transparent transition"></div>
-                        <span class="absolute bottom-0.5 inset-x-0 text-center text-[9px] font-bold text-white bg-black/60 backdrop-blur-sm line-clamp-1 py-0.5 px-0.5">
-                          {preset.name}
-                        </span>
+                        <img src={preset.url} alt={preset.label} class="w-full h-full object-cover transition duration-200" />
                       </button>
                     ))}
                   </div>
 
-                  <input 
-                    id="char-avatar-url" 
-                    type="text" 
-                    placeholder="Or paste any direct image URL (PNG, JPG, WebP)..." 
-                    class="w-full px-4 py-2.5 rounded-xl bg-white/[0.04] border border-white/10 text-xs text-slate-300 placeholder:text-slate-500 outline-none"
-                    value={PRESET_AVATARS[0].url}
-                  />
+                  <!-- Hidden Input storing active image URL -->
+                  <input id="char-avatar-url" type="hidden" value={PRESET_AVATARS[0].url} />
+
+                  <!-- Optional Custom Image Link Toggle (Clean & Unobtrusive) -->
+                  <div class="flex items-center justify-between pt-0.5">
+                    <button 
+                      type="button" 
+                      id="toggle-url-input-btn"
+                      class="text-[11px] text-slate-400 hover:text-purple-400 transition flex items-center gap-1 cursor-pointer"
+                    >
+                      <span>+ Paste direct image link</span>
+                    </button>
+                    <span class="text-[10px] text-slate-500">Supports WebP, PNG, JPG</span>
+                  </div>
+
+                  <div id="custom-url-container" class="hidden">
+                    <input 
+                      id="custom-url-input" 
+                      type="url" 
+                      placeholder="Paste direct image URL (https://...)" 
+                      class="w-full px-3.5 py-2 rounded-xl bg-white/[0.04] border border-white/10 text-xs text-slate-200 placeholder:text-slate-500 outline-none focus:border-purple-500/60"
+                    />
+                  </div>
                 </div>
 
                 <!-- Physical Appearance Textarea (Spacious for mobile) -->
@@ -1464,9 +1475,9 @@ const PRESET_AVATARS = [
     btn.addEventListener('click', () => {
       // Remove ring from all
       presetBtns.forEach(b => {
-        b.className = 'preset-avatar-btn relative aspect-square rounded-2xl overflow-hidden border-2 border-white/10 hover:border-purple-500/60 transition cursor-pointer group';
+        b.className = 'preset-avatar-btn relative aspect-square rounded-xl overflow-hidden border-2 border-white/10 hover:border-purple-500/60 transition cursor-pointer';
       });
-      btn.className = 'preset-avatar-btn relative aspect-square rounded-2xl overflow-hidden border-2 border-purple-500 ring-2 ring-purple-500/50 transition cursor-pointer group';
+      btn.className = 'preset-avatar-btn relative aspect-square rounded-xl overflow-hidden border-2 border-purple-500 ring-2 ring-purple-500/50 shadow-lg shadow-purple-950/60 transition cursor-pointer';
 
       const url = btn.getAttribute('data-url');
       if (url && avatarInput) {
@@ -1474,6 +1485,29 @@ const PRESET_AVATARS = [
         updateAllCalculations();
       }
     });
+  });
+
+  // Toggle custom URL input container
+  const toggleUrlBtn = document.getElementById('toggle-url-input-btn');
+  const customUrlContainer = document.getElementById('custom-url-container');
+  const customUrlInput = document.getElementById('custom-url-input') as HTMLInputElement | null;
+
+  toggleUrlBtn?.addEventListener('click', () => {
+    customUrlContainer?.classList.toggle('hidden');
+    if (!customUrlContainer?.classList.contains('hidden')) {
+      customUrlInput?.focus();
+    }
+  });
+
+  customUrlInput?.addEventListener('input', () => {
+    const val = customUrlInput.value.trim();
+    if (val && avatarInput) {
+      avatarInput.value = val;
+      presetBtns.forEach(b => {
+        b.className = 'preset-avatar-btn relative aspect-square rounded-xl overflow-hidden border-2 border-white/10 hover:border-purple-500/60 transition cursor-pointer';
+      });
+      updateAllCalculations();
+    }
   });
 
   // Custom local avatar upload from device
@@ -1486,7 +1520,7 @@ const PRESET_AVATARS = [
         if (avatarInput) avatarInput.value = base64Url;
         // remove ring from presets
         presetBtns.forEach(b => {
-          b.className = 'preset-avatar-btn relative aspect-square rounded-2xl overflow-hidden border-2 border-white/10 hover:border-purple-500/60 transition cursor-pointer group';
+          b.className = 'preset-avatar-btn relative aspect-square rounded-xl overflow-hidden border-2 border-white/10 hover:border-purple-500/60 transition cursor-pointer';
         });
         updateAllCalculations();
         showToast('Custom avatar loaded from your device!');
