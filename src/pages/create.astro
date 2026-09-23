@@ -24,18 +24,19 @@ import {
   AlertCircle, 
   ChevronRight, 
   ChevronLeft,
-  X
+  X,
+  HelpCircle
 } from '@lucide/astro';
 
 const PRESET_AVATARS = [
-  { url: 'https://images.unsplash.com/photo-1578632767115-351597cf2477?w=800&auto=format&fit=crop&q=80', label: 'Lyra Vance / Cyberpunk' },
-  { url: 'https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=800&auto=format&fit=crop&q=80', label: 'Seraphina / Victorian' },
-  { url: 'https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?w=800&auto=format&fit=crop&q=80', label: 'Kaelen / Scholar' },
-  { url: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=800&auto=format&fit=crop&q=80', label: 'Marcus / Tactical' },
-  { url: 'https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?w=800&auto=format&fit=crop&q=80', label: 'Nexus-07 / Synth' },
-  { url: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=800&auto=format&fit=crop&q=80', label: 'Morrigan / Occult' },
-  { url: 'https://images.unsplash.com/photo-1492562080023-ab3db95bfbce?w=800&auto=format&fit=crop&q=80', label: 'Solon / Mentor' },
-  { url: 'https://images.unsplash.com/photo-1517841905240-472988babdf9?w=800&auto=format&fit=crop&q=80', label: 'Hana / Barista' },
+  { url: '/avatars/asian_woman.webp', label: 'Asian / Japanese Woman (Studio Neon)', name: 'Aiko' },
+  { url: '/avatars/western_woman.webp', label: 'Western / Caucasian Woman (Coral Amber)', name: 'Elena' },
+  { url: '/avatars/black_woman.webp', label: 'Black Woman (Radiant Magenta)', name: 'Amara' },
+  { url: '/avatars/white_man.webp', label: 'White / Caucasian Man (Golden Studio)', name: 'Julian' },
+  { url: '/avatars/black_man.webp', label: 'Black Man (Emerald Cyan)', name: 'Darius' },
+  { url: '/avatars/anime_girl.webp', label: 'Anime Girl (Semi-Realistic Neon Violet)', name: 'Kira' },
+  { url: '/avatars/anime_androgynous.webp', label: 'Anime Androgynous / Boy (Dual Tone)', name: 'Ren' },
+  { url: '/avatars/abstract_ai.webp', label: 'Abstract AI / Intelligent Entity (Neural Core)', name: 'Nexus Core' },
 ];
 ---
 
@@ -59,7 +60,7 @@ const PRESET_AVATARS = [
               V2 Spec
             </span>
           </h1>
-          <p class="text-[11px] text-slate-400 hidden sm:block">Step-by-step roleplay card architect</p>
+          <p class="text-[11px] text-slate-400 hidden sm:block">Clean slate character architect & token manager</p>
         </div>
       </div>
 
@@ -79,7 +80,7 @@ const PRESET_AVATARS = [
           title="Import card from file or Chub link"
         >
           <Upload class="w-3.5 h-3.5" />
-          <span class="hidden sm:inline">Import</span>
+          <span class="hidden sm:inline">Import Card</span>
         </button>
 
         <button 
@@ -114,7 +115,7 @@ const PRESET_AVATARS = [
           <span class="text-xs font-bold text-white tracking-wide">Context Footprint:</span>
           <span id="hud-total-tokens" class="text-xs font-mono font-bold text-purple-300">~0 / 4096 tok</span>
           <span id="token-health-badge" class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-emerald-950/60 border border-emerald-500/40 text-emerald-300">
-            Optimal
+            Optimal (&lt;1k)
           </span>
         </div>
         <div class="flex items-center gap-3 text-[11px] text-slate-400 font-mono">
@@ -142,12 +143,12 @@ const PRESET_AVATARS = [
           <!-- Method 1: Chub URL -->
           <div class="p-3.5 rounded-xl bg-black/40 border border-white/5 space-y-2.5">
             <span class="text-xs font-semibold text-cyan-300 flex items-center gap-1.5">
-              <span>Method A: Chub.ai or Remote URL</span>
+              <span>Method A: Chub.ai URL or Direct Link</span>
             </span>
             <input 
               id="remote-url-input"
               type="text"
-              placeholder="https://chub.ai/characters/author/slug or .png / .json link..."
+              placeholder="e.g. https://chub.ai/characters/author/slug or username/slug..."
               class="w-full px-3.5 py-2.5 rounded-xl bg-white/[0.04] border border-white/10 focus:border-cyan-400/60 text-xs sm:text-sm text-white placeholder:text-slate-500 outline-none"
             />
             <button 
@@ -171,7 +172,7 @@ const PRESET_AVATARS = [
           >
             <Upload class="w-5 h-5 text-purple-400" />
             <span class="text-xs font-bold text-white">Method B: Drop PNG or JSON File</span>
-            <span class="text-[11px] text-slate-400">Click or drag Tavern card from PC/phone</span>
+            <span class="text-[11px] text-slate-400">Click or drag Tavern card from PC or phone</span>
           </div>
         </div>
       </div>
@@ -190,7 +191,7 @@ const PRESET_AVATARS = [
               <span class="step-num w-5 h-5 rounded-full bg-purple-600 text-white flex items-center justify-center text-xs font-bold">1</span>
               <span class="text-xs font-bold">Identity & Card</span>
             </div>
-            <p class="text-[10px] text-slate-400 line-clamp-1">Name, visual portrait, SFW</p>
+            <p class="text-[10px] text-slate-400 line-clamp-1">Name, portrait, archetype, SFW</p>
           </button>
 
           <button 
@@ -202,7 +203,7 @@ const PRESET_AVATARS = [
               <span class="step-num w-5 h-5 rounded-full bg-white/10 text-slate-300 flex items-center justify-center text-xs font-bold">2</span>
               <span class="text-xs font-bold">Persona & Lore</span>
             </div>
-            <p class="text-[10px] text-slate-400 line-clamp-1">Traits, backstory, setting</p>
+            <p class="text-[10px] text-slate-400 line-clamp-1">Personality, backstory, setting</p>
           </button>
 
           <button 
@@ -214,7 +215,7 @@ const PRESET_AVATARS = [
               <span class="step-num w-5 h-5 rounded-full bg-white/10 text-slate-300 flex items-center justify-center text-xs font-bold">3</span>
               <span class="text-xs font-bold">World Info</span>
             </div>
-            <p class="text-[10px] text-slate-400 line-clamp-1">Character book & Lorebook</p>
+            <p class="text-[10px] text-slate-400 line-clamp-1">Lorebook & dynamic keywords</p>
           </button>
 
           <button 
@@ -226,7 +227,7 @@ const PRESET_AVATARS = [
               <span class="step-num w-5 h-5 rounded-full bg-white/10 text-slate-300 flex items-center justify-center text-xs font-bold">4</span>
               <span class="text-xs font-bold">Dialogue & Rules</span>
             </div>
-            <p class="text-[10px] text-slate-400 line-clamp-1">Greeting, examples, prompt</p>
+            <p class="text-[10px] text-slate-400 line-clamp-1">Greeting, few-shot examples, prompt</p>
           </button>
 
         </div>
@@ -264,7 +265,7 @@ const PRESET_AVATARS = [
                     <span>Step 1: Basic Identity & Visuals</span>
                   </h2>
                   <p class="text-xs text-slate-400 mt-1 leading-relaxed">
-                    Set your character's name, role archetype, portrait, and physical description.
+                    Set your character's name, role archetype, portrait, and physical appearance. Form starts clean so you can build from scratch or import anytime.
                   </p>
                 </div>
 
@@ -275,31 +276,33 @@ const PRESET_AVATARS = [
                       <label for="char-name" class="text-xs sm:text-sm font-semibold text-slate-200">
                         Character Name <span class="text-purple-400">*</span>
                       </label>
-                      <span id="tok-name" class="text-[11px] font-mono text-slate-400">~2 tok</span>
+                      <span id="tok-name" class="text-[11px] font-mono text-slate-500">~0 tok</span>
                     </div>
                     <input 
                       id="char-name" 
                       type="text" 
-                      placeholder="e.g. Aurelia Vance" 
-                      class="w-full px-4 py-3 rounded-2xl bg-white/[0.04] border border-white/10 focus:border-purple-500/70 text-sm sm:text-base text-white outline-none transition"
-                      value="Aurelia Vance"
+                      placeholder="e.g. Aiko Tanaka, Elena, Julian, Marcus..." 
+                      class="w-full px-4 py-3 rounded-2xl bg-white/[0.04] border border-white/10 focus:border-purple-500/70 text-sm sm:text-base text-white placeholder:text-slate-500 outline-none transition"
+                      value=""
                     />
+                    <p class="text-[11px] text-slate-500 mt-1">The primary name &#123;&#123;user&#125;&#125; and &#123;&#123;char&#125;&#125; will refer to during conversations.</p>
                   </div>
 
                   <div>
                     <div class="flex items-center justify-between mb-1.5">
                       <label for="char-title" class="text-xs sm:text-sm font-semibold text-slate-200">
-                        Title / Tagline Archetype
+                        Title / Role Archetype
                       </label>
-                      <span id="tok-title" class="text-[11px] font-mono text-slate-400">~5 tok</span>
+                      <span id="tok-title" class="text-[11px] font-mono text-slate-500">~0 tok</span>
                     </div>
                     <input 
                       id="char-title" 
                       type="text" 
-                      placeholder="e.g. Quantum Cryptographer & Archival Scribe" 
-                      class="w-full px-4 py-3 rounded-2xl bg-white/[0.04] border border-white/10 focus:border-purple-500/70 text-sm sm:text-base text-white outline-none transition"
-                      value="Quantum Cryptographer & Archival Scribe"
+                      placeholder="e.g. Quantum Cryptographer, Noir Detective, Astral Guardian..." 
+                      class="w-full px-4 py-3 rounded-2xl bg-white/[0.04] border border-white/10 focus:border-purple-500/70 text-sm sm:text-base text-white placeholder:text-slate-500 outline-none transition"
+                      value=""
                     />
+                    <p class="text-[11px] text-slate-500 mt-1">A brief one-line summary displayed under the name on character cards.</p>
                   </div>
                 </div>
 
@@ -315,7 +318,7 @@ const PRESET_AVATARS = [
                       <option value="Fantasy">Fantasy & RPG</option>
                       <option value="Mystery">Mystery & Detective</option>
                       <option value="Philosophy">Philosophy & Mentors</option>
-                      <option value="Slice of Life">Slice of Life & Cafe</option>
+                      <option value="Slice of Life">Slice of Life & Companion</option>
                       <option value="Anime & Manga">Anime & Manga</option>
                       <option value="Supernatural">Supernatural & Occult</option>
                     </select>
@@ -326,34 +329,42 @@ const PRESET_AVATARS = [
                     <input 
                       id="char-tags" 
                       type="text" 
-                      placeholder="Cyberpunk, Hacker, Scribe" 
-                      class="w-full px-4 py-3 rounded-2xl bg-white/[0.04] border border-white/10 text-sm text-white outline-none transition"
-                      value="Cyberpunk, Hacker, Scribe, Cryptography"
+                      placeholder="e.g. SFW, Companion, Cyberpunk, Scribe" 
+                      class="w-full px-4 py-3 rounded-2xl bg-white/[0.04] border border-white/10 placeholder:text-slate-500 text-sm text-white outline-none transition"
+                      value=""
                     />
                   </div>
                 </div>
 
-                <!-- Avatar Selection & Upload -->
+                <!-- Avatar Selection & Upload (Studio Lighting Presets) -->
                 <div class="space-y-3 pt-2">
                   <div class="flex items-center justify-between">
-                    <label class="text-xs sm:text-sm font-semibold text-slate-200">Avatar Portrait</label>
+                    <div>
+                      <label class="text-xs sm:text-sm font-semibold text-slate-200">Avatar Presets (Studio Neon Dual-Lighting)</label>
+                      <p class="text-[11px] text-slate-400">Diverse styles: Asian, Western, Black, Anime & Abstract AI</p>
+                    </div>
                     <label for="custom-avatar-file" class="text-xs font-semibold text-purple-400 hover:text-purple-300 cursor-pointer flex items-center gap-1.5">
                       <Upload class="w-3.5 h-3.5" />
-                      <span>Upload from Device</span>
+                      <span>Upload Image</span>
                     </label>
                     <input id="custom-avatar-file" type="file" accept="image/*" class="hidden" />
                   </div>
 
-                  <!-- Preset Thumbnails Grid -->
+                  <!-- Preset Thumbnails Grid (8 Diverse Avatars) -->
                   <div class="grid grid-cols-4 sm:grid-cols-8 gap-2">
-                    {PRESET_AVATARS.map((preset) => (
+                    {PRESET_AVATARS.map((preset, idx) => (
                       <button
                         type="button"
-                        class="preset-avatar-btn relative aspect-square rounded-2xl overflow-hidden border-2 border-white/10 hover:border-purple-500 focus:border-purple-500 transition cursor-pointer"
+                        class={`preset-avatar-btn relative aspect-square rounded-2xl overflow-hidden border-2 transition cursor-pointer group ${idx === 0 ? 'border-purple-500 ring-2 ring-purple-500/50' : 'border-white/10 hover:border-purple-500/60'}`}
                         data-url={preset.url}
+                        data-name={preset.name}
                         title={preset.label}
                       >
-                        <img src={preset.url} alt={preset.label} class="w-full h-full object-cover" />
+                        <img src={preset.url} alt={preset.label} class="w-full h-full object-cover group-hover:scale-105 transition duration-300" />
+                        <div class="absolute inset-0 bg-black/30 group-hover:bg-transparent transition"></div>
+                        <span class="absolute bottom-0.5 inset-x-0 text-center text-[9px] font-bold text-white bg-black/60 backdrop-blur-sm line-clamp-1 py-0.5 px-0.5">
+                          {preset.name}
+                        </span>
                       </button>
                     ))}
                   </div>
@@ -361,7 +372,7 @@ const PRESET_AVATARS = [
                   <input 
                     id="char-avatar-url" 
                     type="text" 
-                    placeholder="Or paste direct image URL or Base64..." 
+                    placeholder="Or paste any direct image URL (PNG, JPG, WebP)..." 
                     class="w-full px-4 py-2.5 rounded-xl bg-white/[0.04] border border-white/10 text-xs text-slate-300 placeholder:text-slate-500 outline-none"
                     value={PRESET_AVATARS[0].url}
                   />
@@ -371,16 +382,17 @@ const PRESET_AVATARS = [
                 <div>
                   <div class="flex items-center justify-between mb-1.5">
                     <label for="char-appearance" class="text-xs sm:text-sm font-semibold text-slate-200">
-                      Physical Appearance & Physiology
+                      Physical Appearance & Sensory Cues
                     </label>
-                    <span id="tok-appearance" class="text-[11px] font-mono text-purple-400">~24 tok</span>
+                    <span id="tok-appearance" class="text-[11px] font-mono text-slate-500">~0 tok</span>
                   </div>
                   <textarea 
                     id="char-appearance" 
                     rows="4" 
-                    class="w-full px-4 py-3 rounded-2xl bg-white/[0.04] border border-white/10 focus:border-purple-500/70 text-sm sm:text-base text-white outline-none leading-relaxed resize-y min-h-[110px]"
-                    placeholder="Describe height, eyes, hair, clothing, signature gear, tattoos..."
-                  >Silver short hair, ocular cyber-implant with azure HUD telemetry, draped in dark cryptographic coat with insulated fibre-optic wiring.</textarea>
+                    class="w-full px-4 py-3 rounded-2xl bg-white/[0.04] border border-white/10 focus:border-purple-500/70 text-sm sm:text-base text-white placeholder:text-slate-500 outline-none leading-relaxed resize-y min-h-[110px]"
+                    placeholder="Describe height, eye color, hairstyle, distinct physical traits, clothing style, sensory details, and signature gear (e.g. 5'8'', silver hair tied back, piercing blue eyes, wears a dark tailored coat)..."
+                  ></textarea>
+                  <p class="text-[11px] text-slate-500 mt-1">Helps the AI describe physical actions, gestures, eye contact, and clothing interaction.</p>
                 </div>
 
                 <!-- SFW Standard Badge -->
@@ -420,12 +432,12 @@ const PRESET_AVATARS = [
                     <label for="char-personality" class="text-xs sm:text-sm font-semibold text-slate-200">
                       Personality Profile & Behavioral Traits
                     </label>
-                    <span id="tok-personality" class="text-[11px] font-mono text-cyan-400">~28 tok</span>
+                    <span id="tok-personality" class="text-[11px] font-mono text-slate-500">~0 tok</span>
                   </div>
                   
                   <!-- Quick archetype chips -->
                   <div class="flex flex-wrap gap-1.5 mb-2.5">
-                    {['Analytical', 'Cynical', 'Enigmatic', 'Protective', 'Stoic', 'Witty', 'Empathetic', 'Rebellious', 'Formal'].map((trait) => (
+                    {['Analytical', 'Cynical', 'Enigmatic', 'Protective', 'Stoic', 'Witty', 'Empathetic', 'Rebellious', 'Formal', 'Playful'].map((trait) => (
                       <button 
                         type="button" 
                         class="trait-chip px-2.5 py-1 rounded-lg bg-white/[0.04] hover:bg-cyan-900/30 border border-white/[0.08] hover:border-cyan-500/40 text-xs text-slate-300 hover:text-white transition cursor-pointer"
@@ -439,9 +451,10 @@ const PRESET_AVATARS = [
                   <textarea 
                     id="char-personality" 
                     rows="6" 
-                    class="w-full px-4 py-3 rounded-2xl bg-white/[0.04] border border-white/10 focus:border-cyan-500/70 text-sm sm:text-base text-white outline-none leading-relaxed resize-y min-h-[150px]"
-                    placeholder="Describe demeanor, attitude towards others, emotional triggers, philosophy..."
-                  >Analytical, observant, quietly sardonic towards authoritarian megacorps. Deeply loyal once trust is earned; values ancient literary knowledge above synthetic data streams.</textarea>
+                    class="w-full px-4 py-3 rounded-2xl bg-white/[0.04] border border-white/10 focus:border-cyan-500/70 text-sm sm:text-base text-white placeholder:text-slate-500 outline-none leading-relaxed resize-y min-h-[150px]"
+                    placeholder="Define psychological profile, demeanor, temper, core values, quirks, and emotional triggers (e.g. Calm, analytical, guarded against strangers but deeply protective once trust is formed. Speaks with measured precision)..."
+                  ></textarea>
+                  <p class="text-[11px] text-slate-500 mt-1">Tip: You can use comma-separated traits or full descriptive paragraphs.</p>
                 </div>
 
                 <!-- Backstory Lore (Deep Textarea - 8+ lines) -->
@@ -450,14 +463,15 @@ const PRESET_AVATARS = [
                     <label for="char-lore" class="text-xs sm:text-sm font-semibold text-slate-200">
                       Backstory Lore & History
                     </label>
-                    <span id="tok-lore" class="text-[11px] font-mono text-cyan-400">~45 tok</span>
+                    <span id="tok-lore" class="text-[11px] font-mono text-slate-500">~0 tok</span>
                   </div>
                   <textarea 
                     id="char-lore" 
                     rows="8" 
-                    class="w-full px-4 py-3 rounded-2xl bg-white/[0.04] border border-white/10 focus:border-cyan-500/70 text-sm sm:text-base text-white outline-none leading-relaxed resize-y min-h-[180px]"
-                    placeholder="Where did they come from? What secrets do they carry? Who are their allies and enemies?"
-                  >Former senior cipher archivist for the Obsidian Cartel. After uncovering a classified wipe order targeting non-synthetic humanities archives, she extracted seven quantum storage crystals and vanished into the lower neon districts. Now operates an encrypted sanctuary for seekers of lost truths.</textarea>
+                    class="w-full px-4 py-3 rounded-2xl bg-white/[0.04] border border-white/10 focus:border-cyan-500/70 text-sm sm:text-base text-white placeholder:text-slate-500 outline-none leading-relaxed resize-y min-h-[180px]"
+                    placeholder="Detail origins, history, motivations, key relationships, factions, and personal secrets (e.g. Former archivist who fled the Obsidian Syndicate with classified data crystals)..."
+                  ></textarea>
+                  <p class="text-[11px] text-slate-500 mt-1">This forms the permanent lore context the AI consults during roleplay.</p>
                 </div>
 
                 <!-- Scenario & Setting (Spacious - 5+ lines) -->
@@ -466,14 +480,15 @@ const PRESET_AVATARS = [
                     <label for="char-scenario" class="text-xs sm:text-sm font-semibold text-slate-200">
                       Encounter Scenario & Physical Setting
                     </label>
-                    <span id="tok-scenario" class="text-[11px] font-mono text-cyan-400">~26 tok</span>
+                    <span id="tok-scenario" class="text-[11px] font-mono text-slate-500">~0 tok</span>
                   </div>
                   <textarea 
                     id="char-scenario" 
                     rows="5" 
-                    class="w-full px-4 py-3 rounded-2xl bg-white/[0.04] border border-white/10 focus:border-cyan-500/70 text-sm sm:text-base text-white outline-none leading-relaxed resize-y min-h-[130px]"
-                    placeholder="Where is the user meeting this persona? What is the current atmosphere, mood, and tension?"
-                  >A hidden subterranean data haven beneath the rainy neon alleys of Sector 4. The user has tracked an encrypted radio pulse and walked into her chamber uninvited.</textarea>
+                    class="w-full px-4 py-3 rounded-2xl bg-white/[0.04] border border-white/10 focus:border-cyan-500/70 text-sm sm:text-base text-white placeholder:text-slate-500 outline-none leading-relaxed resize-y min-h-[130px]"
+                    placeholder="Set the opening scene, environment, atmosphere, and meeting context (e.g. A rain-slicked alleyway outside an underground data lounge where &#123;&#123;user&#125;&#125; seeks an encrypted contact)..."
+                  ></textarea>
+                  <p class="text-[11px] text-slate-500 mt-1">Establishes the immediate environment and why the two characters are talking.</p>
                 </div>
 
                 <!-- Speech Style -->
@@ -482,14 +497,14 @@ const PRESET_AVATARS = [
                     <label for="char-speech" class="text-xs sm:text-sm font-semibold text-slate-200">
                       Speech Style & Dialect Quirks
                     </label>
-                    <span id="tok-speech" class="text-[11px] font-mono text-slate-400">~12 tok</span>
+                    <span id="tok-speech" class="text-[11px] font-mono text-slate-500">~0 tok</span>
                   </div>
                   <input 
                     id="char-speech" 
                     type="text" 
-                    class="w-full px-4 py-3 rounded-2xl bg-white/[0.04] border border-white/10 text-sm text-white outline-none"
-                    placeholder="e.g. Speaks in clipped, measured sentences with cryptographic metaphors."
-                    value="Speaks in measured, clipped sentences with cryptic cryptographic metaphors and quiet precision."
+                    class="w-full px-4 py-3 rounded-2xl bg-white/[0.04] border border-white/10 text-sm text-white placeholder:text-slate-500 outline-none"
+                    placeholder="e.g. Speaks in measured, clipped sentences with cryptic cryptographic metaphors and quiet precision."
+                    value=""
                   />
                 </div>
 
@@ -507,7 +522,7 @@ const PRESET_AVATARS = [
                       <span>Step 3: World Info & Character Book</span>
                     </h2>
                     <p class="text-xs text-slate-400 mt-1 leading-relaxed">
-                      Conditional memory: facts, places, and factions injected when keywords appear in chat.
+                      Conditional memory: facts, places, and factions injected ONLY when keywords appear in chat (saves tokens).
                     </p>
                   </div>
 
@@ -540,8 +555,9 @@ const PRESET_AVATARS = [
                     <input 
                       id="lore-book-name" 
                       type="text" 
-                      class="w-full px-3.5 py-2 rounded-xl bg-black/40 border border-white/10 text-xs sm:text-sm text-white outline-none"
-                      value="Aetheria Cyberlore Chronicles" 
+                      class="w-full px-3.5 py-2 rounded-xl bg-black/40 border border-white/10 text-xs sm:text-sm text-white placeholder:text-slate-500 outline-none"
+                      placeholder="e.g. World Lorebook" 
+                      value=""
                     />
                   </div>
                   <div>
@@ -549,8 +565,9 @@ const PRESET_AVATARS = [
                     <input 
                       id="lore-book-desc" 
                       type="text" 
-                      class="w-full px-3.5 py-2 rounded-xl bg-black/40 border border-white/10 text-xs sm:text-sm text-white outline-none"
-                      value="World factions, secrets, and technology entries" 
+                      class="w-full px-3.5 py-2 rounded-xl bg-black/40 border border-white/10 text-xs sm:text-sm text-white placeholder:text-slate-500 outline-none"
+                      placeholder="e.g. Key factions, cities, technologies..." 
+                      value=""
                     />
                   </div>
                 </div>
@@ -583,16 +600,15 @@ const PRESET_AVATARS = [
                     <label for="char-greeting" class="text-xs sm:text-sm font-semibold text-slate-200">
                       Opening Greeting (First Message) <span class="text-rose-400">*</span>
                     </label>
-                    <span id="tok-greeting" class="text-[11px] font-mono text-emerald-400">~60 tok</span>
+                    <span id="tok-greeting" class="text-[11px] font-mono text-slate-500">~0 tok</span>
                   </div>
                   <textarea 
                     id="char-greeting" 
                     rows="8" 
-                    class="w-full px-4 py-3 rounded-2xl bg-white/[0.04] border border-white/10 focus:border-emerald-500/70 text-sm sm:text-base text-white outline-none leading-relaxed resize-y min-h-[180px]"
-                    placeholder="Write the initial message the user sees when entering the chatroom..."
-                  >*Adjusts the holographic focus on her ocular implant, barely glancing up from a flickering console of deciphered data-packets.* 
-
-Step back into the scan radius. The perimeter tripwires aren't known for patience—and neither am I. State your encryption clearance, stranger, or tell me who gave you this frequency.</textarea>
+                    class="w-full px-4 py-3 rounded-2xl bg-white/[0.04] border border-white/10 focus:border-emerald-500/70 text-sm sm:text-base text-white placeholder:text-slate-500 outline-none leading-relaxed resize-y min-h-[180px]"
+                    placeholder="The first message the persona sends when starting a conversation. Set the tone, actions in asterisks, and speech in quotes.&#10;&#10;Example:&#10;*Glances up from a dimly lit workbench, adjusting the neon visor.* 'You took your time getting here. Did anyone follow you?'"
+                  ></textarea>
+                  <p class="text-[11px] text-slate-500 mt-1">Use asterisks *like this* for actions/body language and quotation marks for spoken words.</p>
                 </div>
 
                 <!-- Alternate Greetings (Spacious - 4+ lines) -->
@@ -601,13 +617,13 @@ Step back into the scan radius. The perimeter tripwires aren't known for patienc
                     <label for="char-alt-greeting" class="text-xs sm:text-sm font-semibold text-slate-200">
                       Alternate Greetings (Separated by &lt;START&gt;)
                     </label>
-                    <span id="tok-alt-greeting" class="text-[11px] font-mono text-slate-400">~0 tok</span>
+                    <span id="tok-alt-greeting" class="text-[11px] font-mono text-slate-500">~0 tok</span>
                   </div>
                   <textarea 
                     id="char-alt-greeting" 
                     rows="4" 
-                    class="w-full px-4 py-3 rounded-2xl bg-white/[0.04] border border-white/10 text-sm sm:text-base text-white outline-none leading-relaxed resize-y min-h-[120px]"
-                    placeholder="&lt;START&gt; *Leaning over the rail of the neon terrace...*"
+                    class="w-full px-4 py-3 rounded-2xl bg-white/[0.04] border border-white/10 text-sm sm:text-base text-white placeholder:text-slate-500 outline-none leading-relaxed resize-y min-h-[120px]"
+                    placeholder="Optional alternate greetings separated by <START>. Gives variety on chat reset.&#10;&#10;Example:&#10;<START>&#10;*Standing near the rain-streaked window.* 'I knew you would return.'"
                   ></textarea>
                 </div>
 
@@ -617,18 +633,14 @@ Step back into the scan radius. The perimeter tripwires aren't known for patienc
                     <label for="char-mes-example" class="text-xs sm:text-sm font-semibold text-slate-200">
                       Dialogue Examples (Few-Shot Tuning)
                     </label>
-                    <span id="tok-mes-example" class="text-[11px] font-mono text-slate-400">~55 tok</span>
+                    <span id="tok-mes-example" class="text-[11px] font-mono text-slate-500">~0 tok</span>
                   </div>
                   <textarea 
                     id="char-mes-example" 
                     rows="8" 
-                    class="w-full px-4 py-3 rounded-2xl bg-white/[0.04] border border-white/10 text-sm sm:text-base text-white outline-none leading-relaxed resize-y min-h-[180px] font-mono"
-                    placeholder="&lt;START&gt;
-&#123;&#123;user&#125;&#125;: Question
-&#123;&#123;char&#125;&#125;: *Action* Answer"
-                  >&lt;START&gt;
-&#123;&#123;user&#125;&#125;: Can you break into the corporate central archives?
-&#123;&#123;char&#125;&#125;: *Taps the terminal, azure telemetry reflecting across her visor.* Breaking in isn't the challenge. Surviving the synthetic purge that follows is. What exactly are you looking for?</textarea>
+                    class="w-full px-4 py-3 rounded-2xl bg-white/[0.04] border border-white/10 text-sm sm:text-base text-white placeholder:text-slate-500 outline-none leading-relaxed resize-y min-h-[180px] font-mono"
+                    placeholder="Few-shot dialogue examples showing how the persona speaks and responds.&#10;&#10;Example:&#10;<START>&#10;&#123;&#123;user&#125;&#125;: What brings you here?&#10;&#123;&#123;char&#125;&#125;: *Folds arms with a calm smile.* 'Information, mostly. And perhaps a bit of company.'"
+                  ></textarea>
                 </div>
 
                 <!-- System Prompt Instructions (6+ lines) -->
@@ -637,14 +649,14 @@ Step back into the scan radius. The perimeter tripwires aren't known for patienc
                     <label for="char-system-prompt" class="text-xs sm:text-sm font-semibold text-slate-200">
                       System Instructions & Guardrails
                     </label>
-                    <span id="tok-system-prompt" class="text-[11px] font-mono text-purple-400">~38 tok</span>
+                    <span id="tok-system-prompt" class="text-[11px] font-mono text-slate-500">~0 tok</span>
                   </div>
                   <textarea 
                     id="char-system-prompt" 
                     rows="5" 
-                    class="w-full px-4 py-3 rounded-2xl bg-white/[0.04] border border-white/10 text-sm sm:text-base text-white outline-none leading-relaxed resize-y min-h-[130px]"
-                    placeholder="Strict rules for the AI model..."
-                  >Portray Aurelia Vance with immersive consistency. Maintain a sharp, calm, cryptographic demeanor. Do not speak or act on behalf of &#123;&#123;user&#125;&#125;. Maintain atmospheric sensory detail and wholesome SFW storytelling.</textarea>
+                    class="w-full px-4 py-3 rounded-2xl bg-white/[0.04] border border-white/10 text-sm sm:text-base text-white placeholder:text-slate-500 outline-none leading-relaxed resize-y min-h-[130px]"
+                    placeholder="Core behavioral instructions and guardrails for the AI model.&#10;&#10;Example:&#10;Portray &#123;&#123;char&#125;&#125; with atmospheric fidelity and psychological depth. Never narrate or decide actions for &#123;&#123;user&#125;&#125;. Maintain immersion and adhere to wholesome SFW standards."
+                  ></textarea>
                 </div>
 
                 <!-- Suggested Starter Prompts -->
@@ -653,9 +665,9 @@ Step back into the scan radius. The perimeter tripwires aren't known for patienc
                     Suggested Starter Prompts for User
                   </label>
                   <div class="space-y-2">
-                    <input id="starter-1" type="text" class="w-full px-4 py-2.5 rounded-xl bg-white/[0.04] border border-white/10 text-sm text-white" value="What secrets are hidden in the archive?" />
-                    <input id="starter-2" type="text" class="w-full px-4 py-2.5 rounded-xl bg-white/[0.04] border border-white/10 text-sm text-white" value="Can you bypass corporate surveillance?" />
-                    <input id="starter-3" type="text" class="w-full px-4 py-2.5 rounded-xl bg-white/[0.04] border border-white/10 text-sm text-white" value="Why did you abandon your post in the Cartel?" />
+                    <input id="starter-1" type="text" placeholder="e.g. Tell me about your background" class="w-full px-4 py-2.5 rounded-xl bg-white/[0.04] border border-white/10 text-sm text-white placeholder:text-slate-500" value="" />
+                    <input id="starter-2" type="text" placeholder="e.g. What is our current objective?" class="w-full px-4 py-2.5 rounded-xl bg-white/[0.04] border border-white/10 text-sm text-white placeholder:text-slate-500" value="" />
+                    <input id="starter-3" type="text" placeholder="e.g. How did you end up here?" class="w-full px-4 py-2.5 rounded-xl bg-white/[0.04] border border-white/10 text-sm text-white placeholder:text-slate-500" value="" />
                   </div>
                 </div>
 
@@ -729,23 +741,23 @@ Step back into the scan radius. The perimeter tripwires aren't known for patienc
                 <!-- Character Details Overlay -->
                 <div class="absolute bottom-3 left-3 right-3 space-y-1">
                   <h4 id="preview-name" class="text-base font-bold text-white tracking-wide">
-                    Aurelia Vance
+                    Your Character Name
                   </h4>
                   <p id="preview-title" class="text-xs text-purple-300 font-medium line-clamp-1">
-                    Quantum Cryptographer & Archival Scribe
+                    Role Archetype & Title
                   </p>
                   <div id="preview-tags" class="flex flex-wrap gap-1 pt-1">
-                    <span class="px-1.5 py-0.5 rounded bg-white/[0.08] text-[9px] text-slate-300">#Cyberpunk</span>
-                    <span class="px-1.5 py-0.5 rounded bg-white/[0.08] text-[9px] text-slate-300">#Hacker</span>
+                    <span class="px-1.5 py-0.5 rounded bg-white/[0.08] text-[9px] text-slate-300">#Companion</span>
+                    <span class="px-1.5 py-0.5 rounded bg-white/[0.08] text-[9px] text-slate-300">#SFW</span>
                   </div>
                 </div>
               </div>
 
               <!-- Greeting Snippet -->
               <div class="p-3.5 bg-[#090b14] border-t border-white/[0.06] text-xs text-slate-300 space-y-1">
-                <p class="text-[10px] text-purple-400 uppercase font-semibold">Opening Greeting:</p>
-                <p id="preview-snippet" class="text-[11px] text-slate-300 line-clamp-3 leading-relaxed">
-                  *Adjusts the holographic focus...*
+                <p class="text-[10px] text-purple-400 uppercase font-semibold">Opening Greeting Preview:</p>
+                <p id="preview-snippet" class="text-[11px] text-slate-400 line-clamp-3 leading-relaxed italic">
+                  Type your character's opening greeting in Step 4 to preview it here...
                 </p>
               </div>
             </div>
@@ -813,14 +825,14 @@ Step back into the scan radius. The perimeter tripwires aren't known for patienc
             <img id="mobile-preview-img" src={PRESET_AVATARS[0].url} alt="Preview" class="w-full h-full object-cover" />
             <div class="absolute inset-0 bg-gradient-to-t from-[#0c0e17] via-[#0c0e17]/30 to-transparent"></div>
             <div class="absolute bottom-3 left-3 right-3 space-y-1">
-              <h4 id="mobile-preview-name" class="text-base font-bold text-white">Aurelia Vance</h4>
-              <p id="mobile-preview-title" class="text-xs text-purple-300 font-medium line-clamp-1">Quantum Cryptographer</p>
+              <h4 id="mobile-preview-name" class="text-base font-bold text-white">Your Character Name</h4>
+              <p id="mobile-preview-title" class="text-xs text-purple-300 font-medium line-clamp-1">Role Archetype & Title</p>
             </div>
           </div>
           <div class="p-3 bg-[#090b14] border-t border-white/[0.06] text-xs text-slate-300">
             <p class="text-[10px] text-purple-400 uppercase font-semibold">Opening Dialogue:</p>
-            <p id="mobile-preview-snippet" class="text-[11px] text-slate-300 line-clamp-3 leading-relaxed mt-1">
-              *Adjusts holographic focus...*
+            <p id="mobile-preview-snippet" class="text-[11px] text-slate-400 line-clamp-3 leading-relaxed mt-1 italic">
+              Type your character's opening greeting in Step 4 to preview it here...
             </p>
           </div>
         </div>
@@ -962,7 +974,6 @@ Step back into the scan radius. The perimeter tripwires aren't known for patienc
     if (currentStep < totalSteps) {
       updateStepUI(currentStep + 1);
     } else {
-      // Final Step: Trigger Save Persona
       saveCharacterData();
     }
   });
@@ -1084,22 +1095,8 @@ Step back into the scan radius. The perimeter tripwires aren't known for patienc
     constant: boolean;
   }
 
-  let loreEntries: LoreEntry[] = [
-    {
-      id: 'entry-1',
-      comment: 'The Obsidian Cartel',
-      keys: 'cartel, obsidian, syndicate, data wipe',
-      content: 'A powerful authoritarian technological conglomerate that controls planetary communication networks and systematically purges uncensored cultural records.',
-      constant: false
-    },
-    {
-      id: 'entry-2',
-      comment: 'Sector 4 Data Haven',
-      keys: 'sector 4, haven, sanctuary, subterranean',
-      content: 'An underground subterranean bunker beneath the neon slums of Sector 4 where dissidents, scribes, and hackers preserve unauthorized human history.',
-      constant: false
-    }
-  ];
+  // Start with clean slate for Lorebook
+  let loreEntries: LoreEntry[] = [];
 
   function renderLoreEntries() {
     if (!loreEntriesList) return;
@@ -1107,8 +1104,12 @@ Step back into the scan radius. The perimeter tripwires aren't known for patienc
 
     if (loreEntries.length === 0) {
       loreEntriesList.innerHTML = `
-        <div class="p-6 text-center rounded-2xl bg-white/[0.02] border border-white/5 text-slate-500 text-xs">
-          No lorebook entries yet. Click "+ Add Entry" or import a Character Book!
+        <div class="p-6 text-center rounded-2xl bg-white/[0.02] border border-white/5 space-y-2">
+          <Database class="w-8 h-8 text-amber-400/40 mx-auto" />
+          <p class="text-xs font-semibold text-slate-300">No Lorebook Entries Yet</p>
+          <p class="text-[11px] text-slate-500 max-w-sm mx-auto leading-relaxed">
+            World Info injects background lore, factions, or items into context only when mentioned in chat. Click "Add Entry" to create your first entry or import a JSON book.
+          </p>
         </div>
       `;
       updateAllCalculations();
@@ -1130,7 +1131,7 @@ Step back into the scan radius. The perimeter tripwires aren't known for patienc
               type="text" 
               class="entry-title-input px-2.5 py-1 rounded-xl bg-white/[0.04] border border-white/10 text-xs sm:text-sm font-semibold text-amber-200 outline-none w-48 sm:w-64" 
               value="${entry.comment.replace(/"/g, '&quot;')}" 
-              placeholder="Entry Title / Comment" 
+              placeholder="e.g. City of Neo-Kyoto, The Syndicate" 
             />
           </div>
           <div class="flex items-center gap-2">
@@ -1145,9 +1146,9 @@ Step back into the scan radius. The perimeter tripwires aren't known for patienc
           <label class="block text-xs font-medium text-slate-300 mb-1">Activation Trigger Keys (Comma-separated)</label>
           <input 
             type="text" 
-            class="entry-keys-input w-full px-3 py-2 rounded-xl bg-black/40 border border-white/10 text-xs sm:text-sm text-white outline-none" 
+            class="entry-keys-input w-full px-3 py-2 rounded-xl bg-black/40 border border-white/10 text-xs sm:text-sm text-white placeholder:text-slate-500 outline-none" 
             value="${entry.keys.replace(/"/g, '&quot;')}" 
-            placeholder="e.g. cartel, obsidian, cipher" 
+            placeholder="e.g. neo-kyoto, sector 4, syndicate, cipher" 
           />
         </div>
 
@@ -1155,8 +1156,8 @@ Step back into the scan radius. The perimeter tripwires aren't known for patienc
           <label class="block text-xs font-medium text-slate-300 mb-1">Lore Knowledge & Details (Injected when triggered)</label>
           <textarea 
             rows="4" 
-            class="entry-content-input w-full px-3 py-2 rounded-xl bg-black/40 border border-white/10 text-xs sm:text-sm text-slate-200 outline-none resize-y min-h-[90px] leading-relaxed" 
-            placeholder="Injected when trigger keys appear in dialogue..."
+            class="entry-content-input w-full px-3 py-2 rounded-xl bg-black/40 border border-white/10 text-xs sm:text-sm text-slate-200 placeholder:text-slate-500 outline-none resize-y min-h-[90px] leading-relaxed" 
+            placeholder="Describe facts, history, or secrets injected into the AI's mind whenever the trigger keys are mentioned..."
           >${entry.content}</textarea>
         </div>
 
@@ -1193,9 +1194,9 @@ Step back into the scan radius. The perimeter tripwires aren't known for patienc
   addLoreEntryBtn?.addEventListener('click', () => {
     const newEntry: LoreEntry = {
       id: 'entry-' + Date.now(),
-      comment: 'New Lore Entry',
-      keys: 'keyword1, keyword2',
-      content: 'Detailed world facts or background information injected when mentioned.',
+      comment: '',
+      keys: '',
+      content: '',
       constant: false
     };
     loreEntries.push(newEntry);
@@ -1311,27 +1312,45 @@ Step back into the scan radius. The perimeter tripwires aren't known for patienc
     }
 
     // 2. Update Desktop & Mobile Card Previews
-    const nameVal = nameInput?.value || 'Unnamed Persona';
-    const titleVal = titleInput?.value || 'Roleplay Companion';
+    const nameVal = nameInput?.value.trim() || 'Your Character Name';
+    const titleVal = titleInput?.value.trim() || 'Role Archetype & Title';
     const catVal = catInput?.value || 'Sci-Fi';
     const avatarVal = avatarInput?.value || PRESET_AVATARS[0].url;
-    const greetVal = greetingInput?.value || 'No opening dialogue set.';
+    const greetVal = greetingInput?.value.trim() || "Type your character's opening greeting in Step 4 to preview it here...";
 
     if (previewName) previewName.textContent = nameVal;
     if (previewTitle) previewTitle.textContent = titleVal;
     if (previewCat) previewCat.textContent = catVal;
     if (previewImg) previewImg.src = avatarVal;
-    if (previewSnippet) previewSnippet.textContent = greetVal;
+    if (previewSnippet) {
+      previewSnippet.textContent = greetVal;
+      if (!greetingInput?.value.trim()) {
+        previewSnippet.className = 'text-[11px] text-slate-500 line-clamp-3 leading-relaxed italic';
+      } else {
+        previewSnippet.className = 'text-[11px] text-slate-300 line-clamp-3 leading-relaxed';
+      }
+    }
 
     // Mobile drawer sync
     if (mobilePreviewName) mobilePreviewName.textContent = nameVal;
     if (mobilePreviewTitle) mobilePreviewTitle.textContent = titleVal;
     if (mobilePreviewImg) mobilePreviewImg.src = avatarVal;
-    if (mobilePreviewSnippet) mobilePreviewSnippet.textContent = greetVal;
+    if (mobilePreviewSnippet) {
+      mobilePreviewSnippet.textContent = greetVal;
+      if (!greetingInput?.value.trim()) {
+        mobilePreviewSnippet.className = 'text-[11px] text-slate-500 line-clamp-3 leading-relaxed mt-1 italic';
+      } else {
+        mobilePreviewSnippet.className = 'text-[11px] text-slate-300 line-clamp-3 leading-relaxed mt-1';
+      }
+    }
 
     if (previewTags && tagsInput) {
       const tags = tagsInput.value.split(',').map(t => t.trim()).filter(Boolean);
-      previewTags.innerHTML = tags.slice(0, 3).map(t => `<span class="px-1.5 py-0.5 rounded bg-white/[0.08] text-[9px] text-slate-300">#${t}</span>`).join('');
+      if (tags.length > 0) {
+        previewTags.innerHTML = tags.slice(0, 3).map(t => `<span class="px-1.5 py-0.5 rounded bg-white/[0.08] text-[9px] text-slate-300">#${t}</span>`).join('');
+      } else {
+        previewTags.innerHTML = `<span class="px-1.5 py-0.5 rounded bg-white/[0.08] text-[9px] text-slate-400">#Companion</span><span class="px-1.5 py-0.5 rounded bg-white/[0.08] text-[9px] text-slate-400">#SFW</span>`;
+      }
     }
 
     // 3. Update Raw JSON Inspector
@@ -1343,7 +1362,7 @@ Step back into the scan radius. The perimeter tripwires aren't known for patienc
       spec: 'chara_card_v2',
       spec_version: '2.0',
       data: {
-        name: nameInput?.value || 'Unnamed Persona',
+        name: nameInput?.value.trim() || 'Custom Character',
         description: loreInput?.value || '',
         personality: personalityInput?.value || '',
         scenario: scenarioInput?.value || '',
@@ -1443,6 +1462,12 @@ Step back into the scan radius. The perimeter tripwires aren't known for patienc
   // Preset avatar click
   presetBtns.forEach(btn => {
     btn.addEventListener('click', () => {
+      // Remove ring from all
+      presetBtns.forEach(b => {
+        b.className = 'preset-avatar-btn relative aspect-square rounded-2xl overflow-hidden border-2 border-white/10 hover:border-purple-500/60 transition cursor-pointer group';
+      });
+      btn.className = 'preset-avatar-btn relative aspect-square rounded-2xl overflow-hidden border-2 border-purple-500 ring-2 ring-purple-500/50 transition cursor-pointer group';
+
       const url = btn.getAttribute('data-url');
       if (url && avatarInput) {
         avatarInput.value = url;
@@ -1459,8 +1484,12 @@ Step back into the scan radius. The perimeter tripwires aren't known for patienc
       reader.onload = (re) => {
         const base64Url = re.target?.result as string;
         if (avatarInput) avatarInput.value = base64Url;
+        // remove ring from presets
+        presetBtns.forEach(b => {
+          b.className = 'preset-avatar-btn relative aspect-square rounded-2xl overflow-hidden border-2 border-white/10 hover:border-purple-500/60 transition cursor-pointer group';
+        });
         updateAllCalculations();
-        showToast('Avatar image loaded from your device!');
+        showToast('Custom avatar loaded from your device!');
       };
       reader.readAsDataURL(file);
     }
@@ -1712,26 +1741,27 @@ Step back into the scan radius. The perimeter tripwires aren't known for patienc
 
   // ================= SAVE TO LOCAL STORAGE =================
   function saveCharacterData() {
+    const charName = nameInput.value.trim() || 'Custom Persona';
     const characterData = {
-      id: (nameInput.value || 'custom-character').toLowerCase().replace(/[^a-z0-9]+/g, '-'),
-      name: nameInput.value || 'Unnamed Persona',
-      title: titleInput.value || 'Companion',
+      id: charName.toLowerCase().replace(/[^a-z0-9]+/g, '-'),
+      name: charName,
+      title: titleInput.value.trim() || 'Companion',
       category: catInput.value,
       avatarUrl: avatarInput.value,
-      greeting: greetingInput.value,
-      personality: personalityInput.value,
+      greeting: greetingInput.value.trim(),
+      personality: personalityInput.value.trim(),
       tags: tagsInput.value.split(',').map(t => t.trim()).filter(Boolean),
-      description: loreInput.value,
-      scenario: scenarioInput.value,
-      appearance: appearanceInput.value,
-      speechStyle: speechInput.value,
-      mesExample: mesExampleInput.value,
-      systemPrompt: sysPromptInput.value,
+      description: loreInput.value.trim(),
+      scenario: scenarioInput.value.trim(),
+      appearance: appearanceInput.value.trim(),
+      speechStyle: speechInput.value.trim(),
+      mesExample: mesExampleInput.value.trim(),
+      systemPrompt: sysPromptInput.value.trim(),
       alternateGreetings: altGreetingInput.value.split('<START>').map(s => s.trim()).filter(Boolean),
-      starterPrompts: [starter1.value, starter2.value, starter3.value].filter(Boolean),
+      starterPrompts: [starter1.value.trim(), starter2.value.trim(), starter3.value.trim()].filter(Boolean),
       lorebook: {
-        name: loreBookName.value,
-        description: loreBookDesc.value,
+        name: loreBookName.value.trim(),
+        description: loreBookDesc.value.trim(),
         entries: loreEntries
       },
       rating: '5.0',
@@ -1758,7 +1788,7 @@ Step back into the scan radius. The perimeter tripwires aren't known for patienc
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a');
     a.href = url;
-    a.download = `${(nameInput.value || 'character').toLowerCase().replace(/[^a-z0-9]+/g, '-')}-card.json`;
+    a.download = `${(nameInput.value.trim() || 'character').toLowerCase().replace(/[^a-z0-9]+/g, '-')}-card.json`;
     a.click();
     URL.revokeObjectURL(url);
 
