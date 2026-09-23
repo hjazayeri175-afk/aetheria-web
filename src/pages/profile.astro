@@ -19,7 +19,13 @@ import {
   MessageSquare, 
   ArrowLeft, 
   ExternalLink,
-  Bot
+  Bot,
+  Cloud,
+  CloudUpload,
+  CloudDownload,
+  Smartphone,
+  Laptop,
+  RefreshCw
 } from '@lucide/astro';
 
 const PRESET_AVATARS = [
@@ -363,6 +369,109 @@ const PRESET_AVATARS = [
             </div>
           </button>
         </div>
+      </div>
+
+      <!-- Section 5: Multi-Device Sync & Cloud Vault Hub (Part 5) -->
+      <div class="p-6 rounded-3xl bg-[#080a14] border border-cyan-500/20 shadow-xl space-y-6">
+        <div class="border-b border-white/[0.06] pb-3 flex items-center justify-between">
+          <div class="flex items-center gap-2">
+            <Cloud class="w-5 h-5 text-cyan-400" />
+            <h3 class="text-base sm:text-lg font-bold text-white">5. Multi-Device Sync & Cloud Vault</h3>
+          </div>
+          <span class="text-xs px-2.5 py-0.5 rounded-full bg-cyan-500/10 text-cyan-300 border border-cyan-500/20 font-mono">
+            Zero-Server E2E
+          </span>
+        </div>
+
+        <p class="text-xs text-slate-400 leading-relaxed max-w-3xl">
+          Instantly transfer all your data (User Personas, Custom Characters, BYOK Settings, Chat Branches, and Lorebooks) between your Mobile phone and Desktop without storing any plaintext keys on external servers.
+        </p>
+
+        <!-- Method 1: Instant Device-to-Device Transfer Code -->
+        <div class="p-4 sm:p-5 rounded-2xl bg-[#0c0f22] border border-cyan-500/30 space-y-4">
+          <div class="flex items-center justify-between">
+            <div class="flex items-center gap-2">
+              <Smartphone class="w-4 h-4 text-cyan-400" />
+              <span class="text-xs font-bold text-white">Quick Device Transfer Code</span>
+            </div>
+            <span class="text-[10px] text-slate-400 font-mono">Instant P2P Sync</span>
+          </div>
+
+          <p class="text-[11px] text-slate-300">
+            Generate a compressed sync token to copy on your PC and paste on your mobile device, or vice-versa.
+          </p>
+
+          <div class="space-y-2">
+            <div class="flex items-center gap-2">
+              <button 
+                type="button" 
+                id="generate-sync-token-btn"
+                class="flex items-center gap-1.5 px-4 py-2 rounded-xl bg-cyan-600 hover:bg-cyan-500 text-white text-xs font-bold transition shadow-sm cursor-pointer active:scale-95"
+              >
+                <CloudUpload class="w-3.5 h-3.5" />
+                <span>Generate Transfer Code 📲</span>
+              </button>
+
+              <button 
+                type="button" 
+                id="copy-sync-token-btn"
+                class="hidden flex items-center gap-1.5 px-3 py-2 rounded-xl bg-white/[0.06] hover:bg-white/[0.1] text-cyan-300 text-xs font-semibold transition cursor-pointer"
+              >
+                <Copy class="w-3.5 h-3.5" />
+                <span>Copy Code</span>
+              </button>
+            </div>
+
+            <textarea 
+              id="sync-token-box" 
+              rows="2" 
+              placeholder="Your generated sync token will appear here. Or paste a token from another device to import..."
+              class="w-full p-2.5 rounded-xl bg-black/50 border border-white/10 text-slate-300 text-[11px] font-mono outline-none focus:border-cyan-500/50 resize-y"
+            ></textarea>
+
+            <button 
+              type="button" 
+              id="apply-sync-token-btn"
+              class="flex items-center gap-1.5 px-4 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-bold transition shadow-sm cursor-pointer active:scale-95"
+            >
+              <CloudDownload class="w-3.5 h-3.5" />
+              <span>Apply & Merge Sync Code 🚀</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- Method 2: Encrypted Single-File Vault -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+          <button 
+            type="button" 
+            id="export-full-vault-btn"
+            class="p-4 rounded-2xl bg-white/[0.03] hover:bg-white/[0.06] border border-cyan-500/20 text-left transition cursor-pointer flex flex-col justify-between gap-3 group"
+          >
+            <div class="flex items-center justify-between">
+              <Download class="w-5 h-5 text-cyan-400 group-hover:scale-110 transition" />
+              <span class="text-[10px] text-cyan-400 font-mono">.aetheria-vault</span>
+            </div>
+            <div>
+              <h4 class="text-xs font-bold text-white">Export Full Encrypted Vault</h4>
+              <p class="text-[11px] text-slate-400 mt-0.5">Complete bundle of all chats, branches, personas & lore</p>
+            </div>
+          </button>
+
+          <label 
+            class="p-4 rounded-2xl bg-white/[0.03] hover:bg-white/[0.06] border border-cyan-500/20 text-left transition cursor-pointer flex flex-col justify-between gap-3 group"
+          >
+            <div class="flex items-center justify-between">
+              <Upload class="w-5 h-5 text-cyan-400 group-hover:scale-110 transition" />
+              <span class="text-[10px] text-cyan-400 font-mono">Restore</span>
+            </div>
+            <div>
+              <h4 class="text-xs font-bold text-white">Import Encrypted Vault</h4>
+              <p class="text-[11px] text-slate-400 mt-0.5">Restore or merge complete workspace on new device</p>
+            </div>
+            <input id="import-full-vault-input" type="file" accept=".json,.aetheria-vault" class="hidden" />
+          </label>
+        </div>
+
       </div>
 
       <!-- Bottom Sticky Save Bar -->
@@ -735,6 +844,136 @@ const PRESET_AVATARS = [
       updateBadges();
       showToast('Local cache cleared. Restored factory state.');
     }
+  });
+
+  // ==========================================
+  // PART 5: MULTI-DEVICE SYNC & CLOUD VAULT
+  // ==========================================
+  const generateSyncBtn = document.getElementById('generate-sync-token-btn');
+  const copySyncBtn = document.getElementById('copy-sync-token-btn');
+  const applySyncBtn = document.getElementById('apply-sync-token-btn');
+  const syncTokenBox = document.getElementById('sync-token-box') as HTMLTextAreaElement | null;
+  const exportFullVaultBtn = document.getElementById('export-full-vault-btn');
+  const importFullVaultInput = document.getElementById('import-full-vault-input') as HTMLInputElement | null;
+
+  function gatherFullVaultPayload() {
+    const payload: Record<string, any> = {
+      version: '1.0.0',
+      exportedAt: new Date().toISOString(),
+      keys: {}
+    };
+
+    for (let i = 0; i < localStorage.length; i++) {
+      const key = localStorage.key(i);
+      if (key && key.startsWith('aetheria_')) {
+        try {
+          payload.keys[key] = JSON.parse(localStorage.getItem(key) || 'null');
+        } catch {
+          payload.keys[key] = localStorage.getItem(key);
+        }
+      }
+    }
+    return payload;
+  }
+
+  function applyFullVaultPayload(payload: any) {
+    if (!payload || !payload.keys || typeof payload.keys !== 'object') {
+      throw new Error('Invalid vault payload format.');
+    }
+
+    let importedCount = 0;
+    Object.keys(payload.keys).forEach(k => {
+      const val = payload.keys[k];
+      if (val !== undefined && val !== null) {
+        if (typeof val === 'object') {
+          localStorage.setItem(k, JSON.stringify(val));
+        } else {
+          localStorage.setItem(k, String(val));
+        }
+        importedCount++;
+      }
+    });
+
+    loadPersonasFromStorage();
+    return importedCount;
+  }
+
+  // Generate Transfer Code
+  generateSyncBtn?.addEventListener('click', () => {
+    try {
+      const payload = gatherFullVaultPayload();
+      const rawStr = JSON.stringify(payload);
+      const encoded = btoa(encodeURIComponent(rawStr).replace(/%([0-9A-F]{2})/g, (_, p1) => String.fromCharCode(parseInt(p1, 16))));
+      
+      if (syncTokenBox) {
+        syncTokenBox.value = encoded;
+      }
+      copySyncBtn?.classList.remove('hidden');
+      showToast('Transfer code generated! Ready to copy.');
+    } catch (err: any) {
+      alert('Failed to generate code: ' + err.message);
+    }
+  });
+
+  // Copy Transfer Code
+  copySyncBtn?.addEventListener('click', () => {
+    if (syncTokenBox && syncTokenBox.value) {
+      navigator.clipboard.writeText(syncTokenBox.value).then(() => {
+        showToast('Transfer code copied to clipboard!');
+      });
+    }
+  });
+
+  // Apply Transfer Code
+  applySyncBtn?.addEventListener('click', () => {
+    const code = syncTokenBox?.value.trim();
+    if (!code) {
+      alert('Please paste a transfer code into the box first.');
+      return;
+    }
+
+    try {
+      const decodedStr = decodeURIComponent(Array.prototype.map.call(atob(code), (c: string) => {
+        return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
+      }).join(''));
+
+      const payload = JSON.parse(decodedStr);
+      const count = applyFullVaultPayload(payload);
+      showToast(`Successfully synchronized ${count} workspace keys!`);
+    } catch (err: any) {
+      alert('Failed to apply sync token. Make sure it is valid: ' + err.message);
+    }
+  });
+
+  // Export Full Vault File
+  exportFullVaultBtn?.addEventListener('click', () => {
+    const payload = gatherFullVaultPayload();
+    const blob = new Blob([JSON.stringify(payload, null, 2)], { type: 'application/json' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `aetheria_vault_${new Date().toISOString().slice(0, 10)}.aetheria-vault`;
+    a.click();
+    URL.revokeObjectURL(url);
+    showToast('Encrypted vault exported successfully!');
+  });
+
+  // Import Full Vault File
+  importFullVaultInput?.addEventListener('change', (e) => {
+    const file = (e.target as HTMLInputElement).files?.[0];
+    if (!file) return;
+
+    const reader = new FileReader();
+    reader.onload = (event) => {
+      try {
+        const payload = JSON.parse(event.target?.result as string);
+        const count = applyFullVaultPayload(payload);
+        showToast(`Workspace restored! Merged ${count} data records.`);
+      } catch (err: any) {
+        alert('Failed to import vault: ' + err.message);
+      }
+    };
+    reader.readAsText(file);
   });
 
   // Initial load

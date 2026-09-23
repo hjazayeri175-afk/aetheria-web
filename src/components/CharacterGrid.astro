@@ -1,32 +1,90 @@
 ---
 import { characters } from '../data/characters';
 import CharacterCard from './CharacterCard.astro';
-import { Sparkles, SlidersHorizontal, SearchX, RotateCcw } from '@lucide/astro';
+import { 
+  Sparkles, 
+  SlidersHorizontal, 
+  SearchX, 
+  RotateCcw, 
+  ArrowUpDown, 
+  Tag, 
+  BookOpen, 
+  Flame, 
+  Star 
+} from '@lucide/astro';
+
+const QUICK_TAGS = [
+  { id: 'all', label: 'All Tags' },
+  { id: 'lorebook', label: '📚 Lorebook' },
+  { id: 'cyberpunk', label: '#Cyberpunk' },
+  { id: 'fantasy', label: '#Fantasy' },
+  { id: 'anime', label: '#Anime' },
+  { id: 'mage', label: '#Mage' },
+  { id: 'android', label: '#Android' },
+  { id: 'noir', label: '#Noir' },
+  { id: 'custom', label: '✨ Custom' },
+];
 ---
 
-<section class="w-full mt-4 sm:mt-6">
-  <!-- Section Sub-Header -->
-  <div class="flex items-center justify-between mb-4 sm:mb-6">
+<section class="w-full mt-4 sm:mt-6 space-y-4">
+  <!-- Section Sub-Header & Controls Bar -->
+  <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-3 border-b border-white/[0.06]">
     <div class="flex items-center gap-2.5">
       <div class="p-1.5 rounded-lg bg-purple-500/10 border border-purple-500/20 text-purple-400">
         <Sparkles class="w-4 h-4" />
       </div>
       <div>
-        <h2 class="text-base sm:text-lg font-bold text-white tracking-tight">Featured Characters</h2>
+        <h2 class="text-base sm:text-lg font-bold text-white tracking-tight">Explore Characters & Lore</h2>
         <p class="text-xs text-slate-400 hidden sm:block">Curated personalities, roleplay companions & interactive lore</p>
       </div>
     </div>
 
-    <!-- Active Filters / Count status -->
-    <div class="flex items-center gap-3">
+    <!-- Active Count & Sort Selector -->
+    <div class="flex items-center justify-between sm:justify-end gap-2.5">
       <span id="character-counter" class="text-xs text-slate-400 font-mono bg-white/[0.04] px-2.5 py-1 rounded-full border border-white/[0.06]">
         {characters.length} Available
       </span>
+
+      <!-- Sorting Selector -->
+      <div class="flex items-center gap-1.5 bg-[#0a0d1a] border border-white/10 rounded-xl px-2.5 py-1">
+        <ArrowUpDown class="w-3.5 h-3.5 text-purple-400 shrink-0" />
+        <select 
+          id="sort-selector" 
+          class="bg-transparent text-xs text-slate-300 font-medium outline-none cursor-pointer pr-1"
+        >
+          <option value="popular" class="bg-[#0a0d1a] text-slate-200">Sort: Popular 🔥</option>
+          <option value="rating" class="bg-[#0a0d1a] text-slate-200">Sort: Highest Rated ⭐</option>
+          <option value="custom-first" class="bg-[#0a0d1a] text-slate-200">Sort: Custom First ✨</option>
+          <option value="lorebook" class="bg-[#0a0d1a] text-slate-200">Sort: Lorebook Ready 📚</option>
+          <option value="az" class="bg-[#0a0d1a] text-slate-200">Sort: Name (A-Z)</option>
+        </select>
+      </div>
     </div>
   </div>
 
+  <!-- Tag Pills Scroll Bar -->
+  <div class="flex items-center gap-1.5 overflow-x-auto no-scrollbar py-1">
+    <span class="text-[11px] font-semibold text-slate-500 uppercase tracking-wider shrink-0 pr-1 flex items-center gap-1">
+      <Tag class="w-3 h-3 text-slate-500" />
+      <span>Tags:</span>
+    </span>
+    {QUICK_TAGS.map((tag, idx) => (
+      <button
+        type="button"
+        data-quick-tag={tag.id}
+        class={`quick-tag-btn shrink-0 px-2.5 py-1 rounded-lg text-[11px] font-medium transition cursor-pointer select-none ${
+          idx === 0
+            ? 'active-tag bg-purple-600/20 text-purple-300 border border-purple-500/40 shadow-sm'
+            : 'bg-white/[0.03] text-slate-400 hover:text-white hover:bg-white/[0.06] border border-white/[0.06]'
+        }`}
+      >
+        {tag.label}
+      </button>
+    ))}
+  </div>
+
   <!-- Responsive Character Cards Grid -->
-  <!-- Mobile: 2 cols (Photo 3) | Tablet: 3 cols | Desktop: 4 cols (Photo 1) -->
+  <!-- Mobile: 2 cols | Tablet: 3 cols | Desktop: 4 cols -->
   <div 
     id="characters-grid"
     class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 sm:gap-5 lg:gap-6 transition-opacity duration-200"
@@ -46,7 +104,7 @@ import { Sparkles, SlidersHorizontal, SearchX, RotateCcw } from '@lucide/astro';
     </div>
     <h3 class="text-base font-bold text-white mb-1">No characters found</h3>
     <p class="text-xs text-slate-400 max-w-sm mb-4">
-      We couldn't find any persona matching your search or category filter.
+      We couldn't find any persona matching your search, category, or tag filter.
     </p>
     <button 
       id="reset-filter-btn"
@@ -60,12 +118,16 @@ import { Sparkles, SlidersHorizontal, SearchX, RotateCcw } from '@lucide/astro';
 
 <script>
   let activeCategory = 'all';
+  let activeTag = 'all';
   let searchQuery = '';
+  let activeSort = 'popular';
 
   const grid = document.getElementById('characters-grid');
   const emptyState = document.getElementById('empty-state');
   const counter = document.getElementById('character-counter');
   const resetBtn = document.getElementById('reset-filter-btn');
+  const sortSelector = document.getElementById('sort-selector') as HTMLSelectElement | null;
+  const tagButtons = document.querySelectorAll<HTMLButtonElement>('[data-quick-tag]');
 
   // Render custom characters from localStorage at top of grid
   function loadCustomCharacters() {
@@ -82,6 +144,9 @@ import { Sparkles, SlidersHorizontal, SearchX, RotateCcw } from '@lucide/astro';
         card.setAttribute('data-category', char.category || 'custom');
         card.setAttribute('data-name', (char.name || '').toLowerCase());
         card.setAttribute('data-tags', (((char.tags || []).join(' ')) + ' custom roleplay').toLowerCase());
+        card.setAttribute('data-rating', '5.0');
+        card.setAttribute('data-chats', '1.2k');
+        card.setAttribute('data-has-lorebook', (char.lorebook && char.lorebook.length > 0) ? 'true' : 'false');
 
         const tagsMarkup = (char.tags || ['Custom', 'User']).slice(0, 2).map((t: string) => `<span class="text-[10px] font-medium px-2 py-0.5 rounded-md bg-white/[0.08] text-slate-300 backdrop-blur-sm border border-white/[0.06]">${t}</span>`).join('');
 
@@ -91,6 +156,7 @@ import { Sparkles, SlidersHorizontal, SearchX, RotateCcw } from '@lucide/astro';
               src="${char.avatarUrl || '/avatars/asian_woman.webp'}" 
               alt="${char.name}"
               loading="lazy"
+              decoding="async"
               class="w-full h-full object-cover object-center group-hover:scale-105 transition-transform duration-700 ease-out"
             />
             <div class="absolute inset-0 bg-gradient-to-t from-[#07080d] via-[#07080d]/60 to-transparent opacity-95 group-hover:opacity-90 transition-opacity"></div>
@@ -101,9 +167,12 @@ import { Sparkles, SlidersHorizontal, SearchX, RotateCcw } from '@lucide/astro';
                 <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span>
                 <span>Online</span>
               </div>
-              <span class="px-2 py-0.5 rounded-full bg-gradient-to-r from-purple-600 to-indigo-600 border border-purple-400/40 text-[10px] font-bold text-white shadow-sm">
-                Custom
-              </span>
+              <div class="flex items-center gap-1">
+                ${(char.lorebook && char.lorebook.length > 0) ? '<span class="px-2 py-0.5 rounded-full bg-cyan-500/20 backdrop-blur-md border border-cyan-500/30 text-[10px] font-semibold text-cyan-300 shadow-sm">📚 Lore</span>' : ''}
+                <span class="px-2 py-0.5 rounded-full bg-gradient-to-r from-purple-600 to-indigo-600 border border-purple-400/40 text-[10px] font-bold text-white shadow-sm">
+                  Custom
+                </span>
+              </div>
             </div>
 
             <div class="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300 z-20 pointer-events-none sm:pointer-events-auto">
@@ -149,6 +218,44 @@ import { Sparkles, SlidersHorizontal, SearchX, RotateCcw } from '@lucide/astro';
 
   loadCustomCharacters();
 
+  function sortCards() {
+    if (!grid) return;
+    const cards = Array.from(document.querySelectorAll<HTMLElement>('.character-card'));
+
+    cards.sort((a, b) => {
+      if (activeSort === 'rating') {
+        const rA = parseFloat(a.getAttribute('data-rating') || '0');
+        const rB = parseFloat(b.getAttribute('data-rating') || '0');
+        return rB - rA;
+      }
+      if (activeSort === 'custom-first') {
+        const isCA = a.getAttribute('data-category') === 'custom' ? 1 : 0;
+        const isCB = b.getAttribute('data-category') === 'custom' ? 1 : 0;
+        return isCB - isCA;
+      }
+      if (activeSort === 'lorebook') {
+        const lA = a.getAttribute('data-has-lorebook') === 'true' ? 1 : 0;
+        const lB = b.getAttribute('data-has-lorebook') === 'true' ? 1 : 0;
+        return lB - lA;
+      }
+      if (activeSort === 'az') {
+        const nA = a.getAttribute('data-name') || '';
+        const nB = b.getAttribute('data-name') || '';
+        return nA.localeCompare(nB);
+      }
+      // default: popular (chats count)
+      const parseChats = (val: string) => {
+        val = val.toLowerCase();
+        if (val.includes('k')) return parseFloat(val) * 1000;
+        if (val.includes('m')) return parseFloat(val) * 1000000;
+        return parseFloat(val) || 0;
+      };
+      return parseChats(b.getAttribute('data-chats') || '0') - parseChats(a.getAttribute('data-chats') || '0');
+    });
+
+    cards.forEach(card => grid.appendChild(card));
+  }
+
   function filterCards() {
     const cards = document.querySelectorAll<HTMLElement>('.character-card');
     let visibleCount = 0;
@@ -157,11 +264,18 @@ import { Sparkles, SlidersHorizontal, SearchX, RotateCcw } from '@lucide/astro';
       const cat = card.getAttribute('data-category') || '';
       const name = card.getAttribute('data-name') || '';
       const tags = card.getAttribute('data-tags') || '';
+      const hasLore = card.getAttribute('data-has-lorebook') === 'true';
 
       const matchCategory = (activeCategory === 'all' || cat === activeCategory);
-      const matchSearch = (!searchQuery || name.includes(searchQuery) || tags.includes(searchQuery));
+      
+      let matchTag = true;
+      if (activeTag === 'lorebook') matchTag = hasLore;
+      else if (activeTag === 'custom') matchTag = (cat === 'custom' || tags.includes('custom'));
+      else if (activeTag !== 'all') matchTag = (tags.includes(activeTag) || name.includes(activeTag) || cat.includes(activeTag));
 
-      if (matchCategory && matchSearch) {
+      const matchSearch = (!searchQuery || name.includes(searchQuery) || tags.includes(searchQuery) || cat.includes(searchQuery));
+
+      if (matchCategory && matchTag && matchSearch) {
         card.style.display = 'flex';
         visibleCount++;
       } else {
@@ -184,6 +298,28 @@ import { Sparkles, SlidersHorizontal, SearchX, RotateCcw } from '@lucide/astro';
     }
   }
 
+  // Quick Tags selection
+  tagButtons.forEach(btn => {
+    btn.addEventListener('click', () => {
+      tagButtons.forEach(b => {
+        b.classList.remove('active-tag', 'bg-purple-600/20', 'text-purple-300', 'border-purple-500/40', 'shadow-sm');
+        b.classList.add('bg-white/[0.03]', 'text-slate-400', 'border-white/[0.06]');
+      });
+
+      btn.classList.add('active-tag', 'bg-purple-600/20', 'text-purple-300', 'border-purple-500/40', 'shadow-sm');
+      btn.classList.remove('bg-white/[0.03]', 'text-slate-400', 'border-white/[0.06]');
+
+      activeTag = btn.getAttribute('data-quick-tag') || 'all';
+      filterCards();
+    });
+  });
+
+  // Sort selector change
+  sortSelector?.addEventListener('change', () => {
+    activeSort = sortSelector.value;
+    sortCards();
+  });
+
   // Listen for category change from CategoryPills
   window.addEventListener('aetheria:category-change', (e: Event) => {
     const detail = (e as CustomEvent).detail;
@@ -200,11 +336,21 @@ import { Sparkles, SlidersHorizontal, SearchX, RotateCcw } from '@lucide/astro';
 
   resetBtn?.addEventListener('click', () => {
     activeCategory = 'all';
+    activeTag = 'all';
     searchQuery = '';
+    activeSort = 'popular';
+    if (sortSelector) sortSelector.value = 'popular';
     if (desktopSearch) desktopSearch.value = '';
-    // Click 'all' pill
+    
+    // Reset tag pill
+    const firstTag = document.querySelector<HTMLButtonElement>('[data-quick-tag="all"]');
+    firstTag?.click();
+
+    // Click 'all' category pill
     const allPill = document.querySelector<HTMLButtonElement>('[data-cat-btn="all"]');
     allPill?.click();
+
+    sortCards();
     filterCards();
   });
 </script>

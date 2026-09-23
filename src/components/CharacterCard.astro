@@ -15,6 +15,9 @@ const { character } = Astro.props;
   data-category={character.category}
   data-name={character.name.toLowerCase()}
   data-tags={character.tags.join(' ').toLowerCase()}
+  data-rating={character.rating}
+  data-chats={character.chatsCount}
+  data-has-lorebook={character.lorebook && character.lorebook.length > 0 ? "true" : "false"}
 >
   <!-- Image Poster Container -->
   <div class="relative w-full aspect-[3/4] sm:aspect-[4/5] overflow-hidden bg-[#090b12]">
@@ -37,12 +40,19 @@ const { character } = Astro.props;
         <span class="capitalize">{character.status}</span>
       </div>
 
-      <!-- Badge (Trending / Top Rated / Featured) -->
-      {character.badge && (
-        <span class="px-2 py-0.5 rounded-full bg-purple-500/20 backdrop-blur-md border border-purple-500/30 text-[10px] font-semibold text-purple-200 shadow-sm">
-          {character.badge}
-        </span>
-      )}
+      <!-- Badges -->
+      <div class="flex items-center gap-1">
+        {character.lorebook && character.lorebook.length > 0 && (
+          <span class="px-2 py-0.5 rounded-full bg-cyan-500/20 backdrop-blur-md border border-cyan-500/30 text-[10px] font-semibold text-cyan-300 shadow-sm" title="Features rich World Info & Lorebook">
+            📚 Lore
+          </span>
+        )}
+        {character.badge && (
+          <span class="px-2 py-0.5 rounded-full bg-purple-500/20 backdrop-blur-md border border-purple-500/30 text-[10px] font-semibold text-purple-200 shadow-sm">
+            {character.badge}
+          </span>
+        )}
+      </div>
     </div>
 
     <!-- Quick Floating Chat Button (Appears on Hover / Direct Tap) -->
