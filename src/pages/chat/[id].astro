@@ -354,39 +354,74 @@ const { character } = Astro.props;
           <div class="w-full max-w-3xl max-h-[92vh] bg-[#0c0f22] border border-purple-500/30 rounded-3xl shadow-2xl shadow-purple-950/80 flex flex-col overflow-hidden animate-in fade-in zoom-in-95 duration-200">
             
             <!-- Modal Header -->
-            <div class="p-4 sm:p-5 border-b border-white/[0.08] bg-[#090c1b] flex items-center justify-between shrink-0">
-              <div class="flex items-center gap-3">
-                <div class="w-9 h-9 rounded-2xl bg-gradient-to-br from-purple-600 to-cyan-500 flex items-center justify-center text-white shadow-lg shadow-purple-900/50">
-                  <SlidersHorizontal class="w-5 h-5" />
+            <div class="p-3.5 sm:p-5 border-b border-white/[0.08] bg-[#090c1b] flex items-center justify-between shrink-0">
+              <div class="flex items-center gap-2.5 sm:gap-3 min-w-0">
+                <div class="w-8 h-8 sm:w-9 sm:h-9 rounded-2xl bg-gradient-to-br from-purple-600 to-cyan-500 flex items-center justify-center text-white shadow-lg shadow-purple-900/50 shrink-0">
+                  <SlidersHorizontal class="w-4 h-4 sm:w-5 sm:h-5" />
                 </div>
-                <div>
-                  <h3 class="text-sm sm:text-base font-bold text-white flex items-center gap-2">
-                    <span>Multi-Modal AI Engine Suite</span>
-                    <span class="text-[10px] font-bold px-2 py-0.5 rounded-full bg-cyan-500/10 text-cyan-400 border border-cyan-500/20">BYOK Pro</span>
+                <div class="min-w-0">
+                  <h3 class="text-xs sm:text-base font-bold text-white flex items-center gap-1.5 truncate">
+                    <span class="truncate">AI Engine Suite</span>
+                    <span class="text-[9px] sm:text-[10px] font-bold px-1.5 sm:px-2 py-0.5 rounded-full bg-cyan-500/10 text-cyan-400 border border-cyan-500/20 shrink-0">BYOK</span>
                   </h3>
-                  <p class="text-[11px] text-slate-400">Configure text cognition, voice synthesis, image generation & video motion.</p>
+                  <p class="text-[10px] sm:text-[11px] text-slate-400 truncate">Configure text, voice, image & video models</p>
                 </div>
               </div>
-              <button id="close-chat-byok" class="w-8 h-8 rounded-full bg-white/[0.06] hover:bg-white/[0.12] text-slate-300 hover:text-white flex items-center justify-center transition cursor-pointer text-sm">✕</button>
+              <button id="close-chat-byok" class="w-7 h-7 sm:w-8 sm:h-8 rounded-full bg-white/[0.06] hover:bg-white/[0.12] text-slate-300 hover:text-white flex items-center justify-center transition cursor-pointer text-xs sm:text-sm shrink-0">✕</button>
             </div>
 
-            <!-- Tab Navigation Bar (4 Modalities) -->
-            <div class="px-4 sm:px-6 pt-3 border-b border-white/[0.08] bg-[#0a0d1e] flex gap-2 overflow-x-auto no-scrollbar shrink-0">
-              <button type="button" class="engine-tab-btn px-4 py-2.5 text-xs font-bold rounded-t-xl transition flex items-center gap-2 cursor-pointer border-b-2 border-purple-500 text-purple-300 bg-purple-950/30" data-tab="tab-text">
-                <Brain class="w-4 h-4 text-purple-400" />
-                <span>Text (Brain & LLM)</span>
+            <!-- Tab Navigation Bar (4 Modalities - 4-Column Grid) -->
+            <div class="p-2 sm:px-6 sm:py-3 border-b border-white/[0.08] bg-[#0a0d1e] grid grid-cols-4 gap-1.5 sm:gap-3 shrink-0">
+              <!-- Tab 1: Text -->
+              <button 
+                type="button" 
+                class="engine-tab-btn flex flex-col sm:flex-row items-center justify-center gap-1 sm:gap-2 py-2 px-1 sm:px-3 rounded-xl border transition cursor-pointer text-center bg-purple-950/60 border-purple-500/50 text-white shadow-md shadow-purple-950/40" 
+                data-tab="tab-text"
+              >
+                <Brain class="w-4 h-4 sm:w-4 sm:h-4 text-purple-400 shrink-0" />
+                <div class="flex flex-col sm:flex-row items-center sm:gap-1 min-w-0">
+                  <span class="text-[11px] sm:text-xs font-bold leading-tight truncate">Text</span>
+                  <span class="hidden md:inline text-[9px] text-purple-300/80 font-mono">(LLM)</span>
+                </div>
               </button>
-              <button type="button" class="engine-tab-btn px-4 py-2.5 text-xs font-bold rounded-t-xl transition flex items-center gap-2 cursor-pointer border-b-2 border-transparent text-slate-400 hover:text-slate-200" data-tab="tab-voice">
-                <Volume2 class="w-4 h-4 text-emerald-400" />
-                <span>Voice (Speech & TTS)</span>
+
+              <!-- Tab 2: Voice -->
+              <button 
+                type="button" 
+                class="engine-tab-btn flex flex-col sm:flex-row items-center justify-center gap-1 sm:gap-2 py-2 px-1 sm:px-3 rounded-xl border transition cursor-pointer text-center bg-white/[0.03] hover:bg-white/[0.07] border-white/[0.06] text-slate-400 hover:text-slate-200" 
+                data-tab="tab-voice"
+              >
+                <Volume2 class="w-4 h-4 sm:w-4 sm:h-4 text-emerald-400 shrink-0" />
+                <div class="flex flex-col sm:flex-row items-center sm:gap-1 min-w-0">
+                  <span class="text-[11px] sm:text-xs font-bold leading-tight truncate">Voice</span>
+                  <span class="hidden md:inline text-[9px] text-emerald-300/80 font-mono">(TTS)</span>
+                </div>
               </button>
-              <button type="button" class="engine-tab-btn px-4 py-2.5 text-xs font-bold rounded-t-xl transition flex items-center gap-2 cursor-pointer border-b-2 border-transparent text-slate-400 hover:text-slate-200" data-tab="tab-image">
-                <Camera class="w-4 h-4 text-amber-400" />
-                <span>Image (Selfies & Art)</span>
+
+              <!-- Tab 3: Image -->
+              <button 
+                type="button" 
+                class="engine-tab-btn flex flex-col sm:flex-row items-center justify-center gap-1 sm:gap-2 py-2 px-1 sm:px-3 rounded-xl border transition cursor-pointer text-center bg-white/[0.03] hover:bg-white/[0.07] border-white/[0.06] text-slate-400 hover:text-slate-200" 
+                data-tab="tab-image"
+              >
+                <Camera class="w-4 h-4 sm:w-4 sm:h-4 text-amber-400 shrink-0" />
+                <div class="flex flex-col sm:flex-row items-center sm:gap-1 min-w-0">
+                  <span class="text-[11px] sm:text-xs font-bold leading-tight truncate">Image</span>
+                  <span class="hidden md:inline text-[9px] text-amber-300/80 font-mono">(Photo)</span>
+                </div>
               </button>
-              <button type="button" class="engine-tab-btn px-4 py-2.5 text-xs font-bold rounded-t-xl transition flex items-center gap-2 cursor-pointer border-b-2 border-transparent text-slate-400 hover:text-slate-200" data-tab="tab-video">
-                <Video class="w-4 h-4 text-cyan-400" />
-                <span>Video (Living Motion)</span>
+
+              <!-- Tab 4: Video -->
+              <button 
+                type="button" 
+                class="engine-tab-btn flex flex-col sm:flex-row items-center justify-center gap-1 sm:gap-2 py-2 px-1 sm:px-3 rounded-xl border transition cursor-pointer text-center bg-white/[0.03] hover:bg-white/[0.07] border-white/[0.06] text-slate-400 hover:text-slate-200" 
+                data-tab="tab-video"
+              >
+                <Video class="w-4 h-4 sm:w-4 sm:h-4 text-cyan-400 shrink-0" />
+                <div class="flex flex-col sm:flex-row items-center sm:gap-1 min-w-0">
+                  <span class="text-[11px] sm:text-xs font-bold leading-tight truncate">Video</span>
+                  <span class="hidden md:inline text-[9px] text-cyan-300/80 font-mono">(Motion)</span>
+                </div>
               </button>
             </div>
 
@@ -1680,13 +1715,18 @@ const { character } = Astro.props;
   imageProviderSelect?.addEventListener('change', syncProviderVisibility);
 
   // Tab switching
+  const activeTabClasses = ['bg-purple-950/60', 'border-purple-500/50', 'text-white', 'shadow-md', 'shadow-purple-950/40'];
+  const inactiveTabClasses = ['bg-white/[0.03]', 'border-white/[0.06]', 'text-slate-400'];
+
   engineTabBtns.forEach(btn => {
     btn.addEventListener('click', () => {
       const targetId = btn.getAttribute('data-tab');
       engineTabBtns.forEach(b => {
-        b.className = 'engine-tab-btn px-4 py-2.5 text-xs font-bold rounded-t-xl transition flex items-center gap-2 cursor-pointer border-b-2 border-transparent text-slate-400 hover:text-slate-200';
+        b.classList.remove(...activeTabClasses);
+        b.classList.add(...inactiveTabClasses);
       });
-      btn.className = 'engine-tab-btn px-4 py-2.5 text-xs font-bold rounded-t-xl transition flex items-center gap-2 cursor-pointer border-b-2 border-purple-500 text-purple-300 bg-purple-950/30';
+      btn.classList.remove(...inactiveTabClasses);
+      btn.classList.add(...activeTabClasses);
 
       engineTabPanes.forEach(pane => {
         pane.classList.toggle('hidden', pane.id !== targetId);
