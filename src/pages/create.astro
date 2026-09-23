@@ -11,70 +11,75 @@ import {
   MessageSquare, 
   Check, 
   Info,
-  Wand2,
-  Trash2,
-  Send,
-  Layers,
-  FileCode2,
+  Wand2, 
+  Trash2, 
+  FileText, 
+  Settings2, 
+  Image as ImageIcon, 
+  BookOpen, 
   Sliders,
-  Image as ImageIcon,
-  BookOpen,
-  HelpCircle,
+  Globe,
+  Plus,
+  Database,
+  Copy,
   RefreshCw,
+  AlertCircle,
   ExternalLink
 } from '@lucide/astro';
 
 const PRESET_AVATARS = [
-  { label: 'Cyberpunk Netrunner', url: 'https://images.unsplash.com/photo-1578632767115-351597cf2477?w=800&auto=format&fit=crop&q=80' },
-  { label: 'Knight of Light', url: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=800&auto=format&fit=crop&q=80' },
-  { label: 'Celestial Scholar', url: 'https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=800&auto=format&fit=crop&q=80' },
-  { label: 'Noir Detective', url: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=800&auto=format&fit=crop&q=80' },
-  { label: 'Android Diplomat', url: 'https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?w=800&auto=format&fit=crop&q=80' },
-  { label: 'Shadow Sorceress', url: 'https://images.unsplash.com/photo-1517841905240-472988babdf9?w=800&auto=format&fit=crop&q=80' },
-  { label: 'Stoic Philosopher', url: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=800&auto=format&fit=crop&q=80' },
-  { label: 'Tea Master & Florist', url: 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=800&auto=format&fit=crop&q=80' }
+  { url: 'https://images.unsplash.com/photo-1578632767115-351597cf2477?w=800&auto=format&fit=crop&q=80', label: 'Lyra Vance / Cyberpunk' },
+  { url: 'https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=800&auto=format&fit=crop&q=80', label: 'Seraphina / Victorian' },
+  { url: 'https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?w=800&auto=format&fit=crop&q=80', label: 'Kaelen / Scholar' },
+  { url: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=800&auto=format&fit=crop&q=80', label: 'Marcus / Tactical' },
+  { url: 'https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?w=800&auto=format&fit=crop&q=80', label: 'Nexus-07 / Synth' },
+  { url: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=800&auto=format&fit=crop&q=80', label: 'Morrigan / Occult' },
+  { url: 'https://images.unsplash.com/photo-1492562080023-ab3db95bfbce?w=800&auto=format&fit=crop&q=80', label: 'Solon / Mentor' },
+  { url: 'https://images.unsplash.com/photo-1517841905240-472988babdf9?w=800&auto=format&fit=crop&q=80', label: 'Hana / Barista' },
 ];
 ---
 
-<Layout title="Character Studio — Tavern V2 Specification Architect | Aetheria AI">
-  <div class="min-h-screen flex flex-col bg-[#070913] text-slate-100">
+<Layout title="Character Creation Studio | Aetheria AI (Tavern V2 Spec)">
+  <div class="min-h-screen bg-[#04060d] text-slate-100 flex flex-col">
     
-    <!-- Top Studio Header -->
-    <header class="h-16 border-b border-white/[0.08] bg-[#090b17]/95 backdrop-blur-xl px-4 sm:px-8 flex items-center justify-between sticky top-0 z-30">
-      <div class="flex items-center gap-3 sm:gap-4">
+    <!-- Top Sticky Sub-Header -->
+    <header class="sticky top-0 z-30 h-16 border-b border-white/[0.08] bg-[#070913]/90 backdrop-blur-xl px-4 sm:px-6 flex items-center justify-between">
+      <div class="flex items-center gap-3">
         <a 
           href="/" 
-          class="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-white/[0.04] hover:bg-white/[0.08] border border-white/[0.08] text-slate-300 hover:text-white text-xs font-medium transition"
+          class="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-white/[0.05] hover:bg-white/[0.1] border border-white/[0.1] text-xs font-medium text-slate-300 hover:text-white transition"
         >
           <ArrowLeft class="w-4 h-4 text-purple-400" />
-          <span>Hub</span>
+          <span class="hidden sm:inline">Back to Hub</span>
         </a>
-        <div class="h-4 w-[1px] bg-white/10 hidden sm:block"></div>
-        <div class="flex items-center gap-2">
-          <div class="p-1.5 rounded-lg bg-purple-600/20 border border-purple-500/30 text-purple-400">
-            <Wand2 class="w-4 h-4" />
-          </div>
-          <div>
-            <h1 class="text-xs sm:text-sm font-bold text-white tracking-wide">Tavern V2 Character Studio</h1>
-            <p class="text-[10px] text-slate-400 hidden sm:block">7-Section Deep Roleplay Architect with PNG Card Import & Export</p>
-          </div>
+        <div class="h-4 w-px bg-white/10 hidden sm:block"></div>
+        <div>
+          <h1 class="text-xs sm:text-sm font-bold text-white flex items-center gap-2">
+            <span>Character Studio</span>
+            <span class="px-2 py-0.5 rounded-full text-[10px] font-semibold bg-purple-950/80 text-purple-300 border border-purple-500/30">
+              Tavern V2 Spec
+            </span>
+          </h1>
+          <p class="text-[10px] text-slate-400 hidden sm:block">
+            Universal roleplay card architect & lorebook editor
+          </p>
         </div>
       </div>
 
-      <!-- Header Action Controls -->
+      <!-- Quick Action Controls -->
       <div class="flex items-center gap-2">
-        <!-- Hidden file input for Card Upload -->
         <input 
           id="card-file-input" 
           type="file" 
           accept=".png,.json,image/png,application/json" 
           class="hidden" 
         />
+        
         <button 
           id="trigger-import-btn"
           type="button" 
-          class="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-purple-950/40 hover:bg-purple-900/60 border border-purple-500/40 text-xs font-semibold text-purple-300 hover:text-white transition cursor-pointer"
-          title="Upload real PNG card or JSON"
+          class="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-white/[0.05] hover:bg-white/[0.1] border border-white/[0.1] text-xs font-semibold text-slate-200 hover:text-white transition cursor-pointer"
+          title="Import from Tavern PNG or JSON card"
         >
           <Upload class="w-3.5 h-3.5 text-cyan-400" />
           <span class="hidden sm:inline">Import Card</span>
@@ -104,22 +109,103 @@ const PRESET_AVATARS = [
     <!-- Main Studio Grid -->
     <main class="flex-1 max-w-7xl w-full mx-auto p-4 sm:p-6 lg:p-8 grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-8">
       
-      <!-- Left Column: 7-Section Tabbed Editor (7 cols on large screens) -->
+      <!-- Left Column: 4-Tab Architect with Live Token Counter & Lorebook (7 cols on large screens) -->
       <div class="lg:col-span-7 space-y-5">
         
-        <!-- Tab Switcher Navigation -->
-        <div class="flex items-center p-1 rounded-2xl bg-[#0a0d1c] border border-white/[0.08] shadow-inner gap-1">
+        <!-- ================= TOKEN BUDGET & CONTEXT HEALTH HUD ================= -->
+        <div class="p-3.5 sm:p-4 rounded-2xl bg-[#090b17] border border-white/[0.08] shadow-lg">
+          <div class="flex items-center justify-between border-b border-white/[0.06] pb-2.5 mb-3">
+            <div class="flex items-center gap-2">
+              <Sparkles class="w-4 h-4 text-purple-400" />
+              <span class="text-xs font-bold text-white tracking-wide uppercase">Context Memory & Token Budget</span>
+            </div>
+            <div class="flex items-center gap-1.5">
+              <span id="token-health-badge" class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-emerald-950/60 border border-emerald-500/40 text-emerald-300">
+                Optimal
+              </span>
+            </div>
+          </div>
+
+          <div class="grid grid-cols-2 sm:grid-cols-4 gap-2 text-center">
+            <!-- Permanent Tokens -->
+            <div class="p-2 rounded-xl bg-white/[0.02] border border-white/[0.05]">
+              <span class="block text-[10px] text-slate-400 font-medium">Permanent Tokens</span>
+              <span id="hud-perm-tokens" class="text-sm font-bold text-purple-300 font-mono">~0</span>
+              <span class="block text-[9px] text-slate-500">Sent every turn</span>
+            </div>
+
+            <!-- Dynamic Tokens -->
+            <div class="p-2 rounded-xl bg-white/[0.02] border border-white/[0.05]">
+              <span class="block text-[10px] text-slate-400 font-medium">Greeting & Examples</span>
+              <span id="hud-dyn-tokens" class="text-sm font-bold text-cyan-300 font-mono">~0</span>
+              <span class="block text-[9px] text-slate-500">First message weight</span>
+            </div>
+
+            <!-- Lorebook Weight -->
+            <div class="p-2 rounded-xl bg-white/[0.02] border border-white/[0.05]">
+              <span class="block text-[10px] text-slate-400 font-medium">World Info (Lore)</span>
+              <span id="hud-lore-tokens" class="text-sm font-bold text-amber-300 font-mono">~0</span>
+              <span class="block text-[9px] text-slate-500">Active entries</span>
+            </div>
+
+            <!-- Total Card Weight -->
+            <div class="p-2 rounded-xl bg-white/[0.02] border border-white/[0.05]">
+              <span class="block text-[10px] text-slate-400 font-medium">Total Tokens</span>
+              <span id="hud-total-tokens" class="text-sm font-bold text-white font-mono">~0 / 4096</span>
+              <span class="block text-[9px] text-slate-500">Base weight</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- ================= CHUB.AI & REMOTE CARD QUICK IMPORT ================= -->
+        <div class="p-3.5 sm:p-4 rounded-2xl bg-[#090e1f] border border-cyan-500/20 shadow-md">
+          <div class="flex items-center justify-between mb-2">
+            <span class="text-xs font-bold text-cyan-300 flex items-center gap-1.5">
+              <Globe class="w-3.5 h-3.5 text-cyan-400" />
+              <span>Import via Chub.ai or Remote Card URL</span>
+            </span>
+            <span class="text-[10px] text-slate-400 hidden sm:inline">Chub URL, PNG, or JSON link</span>
+          </div>
+          
+          <div class="flex flex-col sm:flex-row gap-2">
+            <div class="relative flex-1">
+              <input 
+                id="remote-url-input"
+                type="text"
+                placeholder="https://chub.ai/characters/username/char-name or direct .png / .json URL..."
+                class="w-full px-3.5 py-2 rounded-xl bg-white/[0.04] border border-white/10 focus:border-cyan-400/60 text-xs text-white placeholder:text-slate-500 outline-none transition"
+              />
+            </div>
+            <button 
+              id="fetch-remote-card-btn"
+              type="button"
+              class="px-4 py-2 rounded-xl bg-cyan-600/30 hover:bg-cyan-600/50 border border-cyan-500/40 text-xs font-bold text-cyan-200 hover:text-white flex items-center justify-center gap-1.5 transition cursor-pointer active:scale-95 shrink-0 shadow-sm shadow-cyan-900/40"
+            >
+              <RefreshCw id="fetch-spinner-icon" class="w-3.5 h-3.5" />
+              <span id="fetch-btn-label">Fetch & Populate</span>
+            </button>
+          </div>
+
+          <!-- Status indicator -->
+          <div id="remote-fetch-status" class="hidden mt-2 p-2 rounded-lg bg-black/40 border border-white/10 text-[11px] flex items-center gap-2">
+            <span id="remote-status-dot" class="w-2 h-2 rounded-full bg-cyan-400 animate-pulse"></span>
+            <span id="remote-status-text" class="text-slate-300">Ready</span>
+          </div>
+        </div>
+
+        <!-- ================= 4-TAB NAVIGATION ================= -->
+        <div class="flex items-center p-1 rounded-2xl bg-[#0a0d1c] border border-white/[0.08] shadow-inner gap-1 overflow-x-auto">
           <button 
             type="button"
-            class="tab-btn active flex-1 py-2.5 px-3 rounded-xl text-xs font-semibold flex items-center justify-center gap-1.5 transition cursor-pointer bg-purple-600/30 text-purple-200 border border-purple-500/40 shadow-sm"
+            class="tab-btn active flex-1 py-2 px-2.5 rounded-xl text-xs font-semibold flex items-center justify-center gap-1.5 transition cursor-pointer bg-purple-600/30 text-purple-200 border border-purple-500/40 shadow-sm shrink-0"
             data-tab="tab-identity"
           >
             <ImageIcon class="w-3.5 h-3.5 text-purple-400" />
-            <span>1. Identity & Card</span>
+            <span>1. Identity</span>
           </button>
           <button 
             type="button"
-            class="tab-btn flex-1 py-2.5 px-3 rounded-xl text-xs font-semibold flex items-center justify-center gap-1.5 transition cursor-pointer text-slate-400 hover:text-slate-200 hover:bg-white/[0.04]"
+            class="tab-btn flex-1 py-2 px-2.5 rounded-xl text-xs font-semibold flex items-center justify-center gap-1.5 transition cursor-pointer text-slate-400 hover:text-slate-200 hover:bg-white/[0.04] shrink-0"
             data-tab="tab-persona"
           >
             <BookOpen class="w-3.5 h-3.5 text-cyan-400" />
@@ -127,39 +213,47 @@ const PRESET_AVATARS = [
           </button>
           <button 
             type="button"
-            class="tab-btn flex-1 py-2.5 px-3 rounded-xl text-xs font-semibold flex items-center justify-center gap-1.5 transition cursor-pointer text-slate-400 hover:text-slate-200 hover:bg-white/[0.04]"
+            class="tab-btn flex-1 py-2 px-2.5 rounded-xl text-xs font-semibold flex items-center justify-center gap-1.5 transition cursor-pointer text-slate-400 hover:text-slate-200 hover:bg-white/[0.04] shrink-0"
+            data-tab="tab-lorebook"
+          >
+            <Database class="w-3.5 h-3.5 text-amber-400" />
+            <span>3. World Info</span>
+          </button>
+          <button 
+            type="button"
+            class="tab-btn flex-1 py-2 px-2.5 rounded-xl text-xs font-semibold flex items-center justify-center gap-1.5 transition cursor-pointer text-slate-400 hover:text-slate-200 hover:bg-white/[0.04] shrink-0"
             data-tab="tab-advanced"
           >
             <Sliders class="w-3.5 h-3.5 text-emerald-400" />
-            <span>3. Dialogue & Rules</span>
+            <span>4. Dialogue & Rules</span>
           </button>
         </div>
 
-        <!-- ================= TAB 1: IDENTITY, AVATAR & CARD IMPORT ================= -->
+        <!-- ================= TAB 1: IDENTITY, AVATAR & DROPZONE ================= -->
         <div id="tab-identity" class="tab-pane space-y-5">
           
           <!-- Dropzone: Ingest Real Tavern PNG Card or JSON -->
           <div 
             id="drop-zone"
-            class="group relative border-2 border-dashed border-purple-500/30 hover:border-purple-500/70 rounded-2xl sm:rounded-3xl p-6 text-center bg-purple-950/10 hover:bg-purple-950/20 transition-all duration-300 cursor-pointer"
+            class="group relative border-2 border-dashed border-purple-500/30 hover:border-purple-500/70 rounded-2xl sm:rounded-3xl p-5 text-center bg-purple-950/10 hover:bg-purple-950/20 transition-all duration-300 cursor-pointer"
           >
             <div class="flex flex-col items-center justify-center space-y-2">
-              <div class="w-12 h-12 rounded-2xl bg-purple-600/20 border border-purple-500/30 flex items-center justify-center text-purple-300 group-hover:scale-110 transition-transform">
-                <Upload class="w-6 h-6 text-cyan-400 animate-pulse" />
+              <div class="w-10 h-10 rounded-2xl bg-purple-600/20 border border-purple-500/30 flex items-center justify-center text-purple-300 group-hover:scale-110 transition-transform">
+                <Upload class="w-5 h-5 text-cyan-400 animate-pulse" />
               </div>
-              <h3 class="text-sm font-bold text-white tracking-wide">
+              <h3 class="text-xs sm:text-sm font-bold text-white tracking-wide">
                 Drag & Drop Real Tavern PNG Card or JSON
               </h3>
-              <p class="text-xs text-slate-400 max-w-sm">
-                Drop any Character Card (<code class="text-purple-300 font-mono">.png</code> or <code class="text-cyan-300 font-mono">.json</code>) from SillyTavern or Chub.ai to automatically parse and populate all 7 sections!
+              <p class="text-[11px] text-slate-400 max-w-sm">
+                Drop any Character Card (<code class="text-purple-300 font-mono">.png</code> or <code class="text-cyan-300 font-mono">.json</code>) from SillyTavern or Chub.ai to automatically parse all 4 tabs and World Info!
               </p>
-              <span class="inline-block mt-1 text-[11px] font-semibold text-purple-400 group-hover:text-purple-300 underline underline-offset-4">
+              <span class="inline-block mt-0.5 text-[11px] font-semibold text-purple-400 group-hover:text-purple-300 underline underline-offset-4">
                 Or browse files from your computer
               </span>
             </div>
           </div>
 
-          <!-- Section 1 & 2: Names and Visuals -->
+          <!-- Names and Basic Meta -->
           <div class="p-5 sm:p-6 rounded-2xl sm:rounded-3xl bg-[#090b17] border border-white/[0.08] shadow-lg space-y-4">
             <div class="flex items-center justify-between border-b border-white/[0.06] pb-3">
               <h2 class="text-xs sm:text-sm font-bold text-white uppercase tracking-wider flex items-center gap-2">
@@ -171,7 +265,10 @@ const PRESET_AVATARS = [
 
             <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div>
-                <label for="char-name" class="block text-xs font-semibold text-slate-300 mb-1.5">Character Name</label>
+                <div class="flex items-center justify-between mb-1.5">
+                  <label for="char-name" class="text-xs font-semibold text-slate-300">Character Name</label>
+                  <span id="tok-name" class="text-[10px] font-mono text-slate-500">~2 tok</span>
+                </div>
                 <input 
                   id="char-name" 
                   type="text" 
@@ -181,7 +278,10 @@ const PRESET_AVATARS = [
                 />
               </div>
               <div>
-                <label for="char-title" class="block text-xs font-semibold text-slate-300 mb-1.5">Title / Archetype Tagline</label>
+                <div class="flex items-center justify-between mb-1.5">
+                  <label for="char-title" class="text-xs font-semibold text-slate-300">Title / Archetype Tagline</label>
+                  <span id="tok-title" class="text-[10px] font-mono text-slate-500">~5 tok</span>
+                </div>
                 <input 
                   id="char-title" 
                   type="text" 
@@ -258,9 +358,12 @@ const PRESET_AVATARS = [
 
             <!-- Physical Appearance & Visuals -->
             <div>
-              <label for="char-appearance" class="block text-xs font-semibold text-slate-300 mb-1.5">
-                Physical Appearance & Physiology
-              </label>
+              <div class="flex items-center justify-between mb-1.5">
+                <label for="char-appearance" class="text-xs font-semibold text-slate-300">
+                  Physical Appearance & Physiology
+                </label>
+                <span id="tok-appearance" class="text-[10px] font-mono text-purple-400">~24 tok</span>
+              </div>
               <textarea 
                 id="char-appearance" 
                 rows="2" 
@@ -302,7 +405,10 @@ const PRESET_AVATARS = [
                 <label for="char-personality" class="text-xs font-semibold text-slate-300">
                   Personality Summary & Behavioral Traits
                 </label>
-                <span class="text-[10px] text-purple-400">Quick-click archetypes:</span>
+                <div class="flex items-center gap-2">
+                  <span class="text-[10px] text-purple-400">Quick-click archetypes:</span>
+                  <span id="tok-personality" class="text-[10px] font-mono text-cyan-400">~28 tok</span>
+                </div>
               </div>
               <div class="flex flex-wrap gap-1.5 mb-2.5">
                 {['Analytical', 'Cynical', 'Enigmatic', 'Protective', 'Stoic', 'Witty', 'Empathetic', 'Rebellious', 'Formal'].map((trait) => (
@@ -325,9 +431,12 @@ const PRESET_AVATARS = [
 
             <!-- Backstory Lore -->
             <div>
-              <label for="char-lore" class="block text-xs font-semibold text-slate-300 mb-1.5">
-                Backstory Lore & History
-              </label>
+              <div class="flex items-center justify-between mb-1.5">
+                <label for="char-lore" class="text-xs font-semibold text-slate-300">
+                  Backstory Lore & History
+                </label>
+                <span id="tok-lore" class="text-[10px] font-mono text-cyan-400">~45 tok</span>
+              </div>
               <textarea 
                 id="char-lore" 
                 rows="4" 
@@ -338,9 +447,12 @@ const PRESET_AVATARS = [
 
             <!-- Scenario & Setting -->
             <div>
-              <label for="char-scenario" class="block text-xs font-semibold text-slate-300 mb-1.5">
-                Encounter Scenario & Setting
-              </label>
+              <div class="flex items-center justify-between mb-1.5">
+                <label for="char-scenario" class="text-xs font-semibold text-slate-300">
+                  Encounter Scenario & Setting
+                </label>
+                <span id="tok-scenario" class="text-[10px] font-mono text-cyan-400">~26 tok</span>
+              </div>
               <textarea 
                 id="char-scenario" 
                 rows="3" 
@@ -351,9 +463,12 @@ const PRESET_AVATARS = [
 
             <!-- Speech Style / Quirks -->
             <div>
-              <label for="char-speech" class="block text-xs font-semibold text-slate-300 mb-1.5">
-                Speech Style & Dialect Quirks
-              </label>
+              <div class="flex items-center justify-between mb-1.5">
+                <label for="char-speech" class="text-xs font-semibold text-slate-300">
+                  Speech Style & Dialect Quirks
+                </label>
+                <span id="tok-speech" class="text-[10px] font-mono text-slate-500">~12 tok</span>
+              </div>
               <input 
                 id="char-speech" 
                 type="text" 
@@ -365,75 +480,155 @@ const PRESET_AVATARS = [
           </div>
         </div>
 
-        <!-- ================= TAB 3: DIALOGUE, SYSTEM GUARDRAILS & INFERENCE ================= -->
+        <!-- ================= TAB 3: WORLD INFO & CHARACTER BOOK (LOREBOOK) ================= -->
+        <div id="tab-lorebook" class="tab-pane hidden space-y-5">
+          <div class="p-5 sm:p-6 rounded-2xl sm:rounded-3xl bg-[#090b17] border border-white/[0.08] shadow-lg space-y-4">
+            
+            <div class="flex flex-col sm:flex-row sm:items-center justify-between border-b border-white/[0.06] pb-3 gap-2">
+              <div>
+                <h2 class="text-xs sm:text-sm font-bold text-white uppercase tracking-wider flex items-center gap-2">
+                  <span class="w-5 h-5 rounded-full bg-amber-600/30 text-amber-400 flex items-center justify-center text-xs font-bold">3</span>
+                  <span>World Info & Lorebook (Character Book)</span>
+                </h2>
+                <p class="text-[10px] text-slate-400 mt-0.5">
+                  Conditional memory entries triggered when keywords appear in chat
+                </p>
+              </div>
+
+              <!-- Lorebook actions -->
+              <div class="flex items-center gap-2">
+                <input id="lorebook-file-input" type="file" accept=".json,application/json" class="hidden" />
+                <button 
+                  id="import-lorebook-btn"
+                  type="button" 
+                  class="px-2.5 py-1 rounded-lg bg-white/[0.05] hover:bg-white/[0.1] border border-white/10 text-[11px] font-medium text-amber-300 flex items-center gap-1 cursor-pointer"
+                  title="Import standalone Lorebook JSON"
+                >
+                  <Upload class="w-3 h-3" />
+                  <span>Import Lorebook</span>
+                </button>
+
+                <button 
+                  id="add-lore-entry-btn"
+                  type="button" 
+                  class="px-3 py-1 rounded-lg bg-amber-600/30 hover:bg-amber-600/50 border border-amber-500/40 text-[11px] font-bold text-amber-200 flex items-center gap-1 cursor-pointer active:scale-95 shadow-sm"
+                >
+                  <Plus class="w-3.5 h-3.5" />
+                  <span>Add Entry</span>
+                </button>
+              </div>
+            </div>
+
+            <!-- Lorebook Metadata -->
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 p-3 rounded-xl bg-amber-950/10 border border-amber-500/20">
+              <div>
+                <label for="lore-book-name" class="block text-[11px] font-semibold text-slate-300 mb-1">Book Name</label>
+                <input 
+                  id="lore-book-name" 
+                  type="text" 
+                  class="w-full px-3 py-1.5 rounded-lg bg-black/40 border border-white/10 text-xs text-white outline-none"
+                  value="Aetheria Cyberlore Chronicles" 
+                />
+              </div>
+              <div>
+                <label for="lore-book-desc" class="block text-[11px] font-semibold text-slate-300 mb-1">Description / World Setting</label>
+                <input 
+                  id="lore-book-desc" 
+                  type="text" 
+                  class="w-full px-3 py-1.5 rounded-lg bg-black/40 border border-white/10 text-xs text-white outline-none"
+                  value="World factions, secrets, and technology entries" 
+                />
+              </div>
+            </div>
+
+            <!-- Lore Entries Dynamic List Container -->
+            <div id="lore-entries-list" class="space-y-3 pt-1">
+              <!-- Dynamically populated via JS -->
+            </div>
+
+            <div class="p-3 rounded-xl bg-white/[0.02] border border-white/[0.05] text-[11px] text-slate-400 flex items-start gap-2">
+              <Info class="w-4 h-4 text-amber-400 shrink-0 mt-0.5" />
+              <span>
+                <strong>How it works:</strong> Whenever the user or model mentions any of the trigger keys (e.g. <code>cartel</code> or <code>haven</code>), that entry's content is automatically injected into the model's active context window!
+              </span>
+            </div>
+
+          </div>
+        </div>
+
+        <!-- ================= TAB 4: DIALOGUE, SYSTEM GUARDRAILS & INFERENCE ================= -->
         <div id="tab-advanced" class="tab-pane hidden space-y-5">
           <div class="p-5 sm:p-6 rounded-2xl sm:rounded-3xl bg-[#090b17] border border-white/[0.08] shadow-lg space-y-4">
             <div class="flex items-center justify-between border-b border-white/[0.06] pb-3">
               <h2 class="text-xs sm:text-sm font-bold text-white uppercase tracking-wider flex items-center gap-2">
-                <span class="w-5 h-5 rounded-full bg-emerald-600/30 text-emerald-400 flex items-center justify-center text-xs font-bold">3</span>
-                <span>Greetings, Dialogue Examples & Engine Rules</span>
+                <span class="w-5 h-5 rounded-full bg-emerald-600/30 text-emerald-400 flex items-center justify-center text-xs font-bold">4</span>
+                <span>Dialogue & System Rules</span>
               </h2>
-              <span class="text-[10px] text-slate-500">Tavern V2 Spec</span>
+              <span class="text-[10px] text-slate-500">Inference Calibration</span>
             </div>
 
-            <!-- First Message / Greeting -->
+            <!-- First Greeting Message -->
             <div>
               <div class="flex items-center justify-between mb-1.5">
                 <label for="char-greeting" class="text-xs font-semibold text-slate-300">
-                  Primary First Message (Greeting)
+                  First Message / Opening Greeting <span class="text-rose-400">*</span>
                 </label>
-                <span class="text-[10px] text-emerald-400 font-mono">Use *actions* for roleplay gestures</span>
+                <span id="tok-greeting" class="text-[10px] font-mono text-emerald-400">~60 tok</span>
               </div>
               <textarea 
                 id="char-greeting" 
                 rows="4" 
-                class="w-full px-3.5 py-2.5 rounded-xl bg-white/[0.04] border border-white/10 focus:border-emerald-500/60 text-xs sm:text-sm text-white placeholder:text-slate-500 outline-none leading-relaxed resize-none"
-                placeholder="*Pushes aside a mess of glowing data-cables.* Who gave you this frequency?"
-              >*Adjusts the holographic focus of her visor, azure telemetry reflections flickering across her irises. Without glancing up from the decrypting terminal, her voice cuts through the hum of server racks.* "The security glyphs on that hatch were calibrated to incinerate unauthorized bio-signatures. You bypassed them in twelve seconds. Either you have an older cipher key... or you are very interesting. State your business."</textarea>
+                class="w-full px-3.5 py-2.5 rounded-xl bg-white/[0.04] border border-white/10 focus:border-emerald-500/60 text-xs sm:text-sm text-white outline-none leading-relaxed resize-none"
+                placeholder="*Adjusts the holographic focus on her visor...* What brings an unverified signal into my sub-level?"
+              >*Adjusts the holographic focus on her ocular implant, barely glancing up from a flickering console of deciphered data-packets.* 
+
+Step back into the scan radius. The perimeter tripwires aren't known for patience—and neither am I. State your encryption clearance, stranger, or tell me who gave you this frequency.</textarea>
             </div>
 
             <!-- Alternate Greetings -->
             <div>
-              <label for="char-alt-greeting" class="block text-xs font-semibold text-slate-300 mb-1.5">
-                Alternate Greetings (Optional, separated by &lt;START&gt;)
-              </label>
+              <div class="flex items-center justify-between mb-1.5">
+                <label for="char-alt-greeting" class="text-xs font-semibold text-slate-300">
+                  Alternate Greetings (Separated by &lt;START&gt;)
+                </label>
+                <span id="tok-alt-greeting" class="text-[10px] font-mono text-slate-500">~0 tok</span>
+              </div>
               <textarea 
                 id="char-alt-greeting" 
                 rows="3" 
-                class="w-full px-3.5 py-2.5 rounded-xl bg-white/[0.04] border border-white/10 text-xs sm:text-sm text-white placeholder:text-slate-500 outline-none leading-relaxed resize-none"
+                class="w-full px-3.5 py-2.5 rounded-xl bg-white/[0.04] border border-white/10 text-xs sm:text-sm text-white outline-none leading-relaxed resize-none"
                 placeholder="&lt;START&gt; *Sitting on the ledge of the rainy rooftop.* The megacity looks almost peaceful from here."
-              >&lt;START&gt;
-*Standing beside the cooling matrix with a steaming cup of synth-tea.* "Rain again in Sector 4. The static makes decrypting old archives easier."</textarea>
+              ></textarea>
             </div>
 
-            <!-- Dialogue Examples (Few-Shot) -->
+            <!-- Dialogue Examples (mes_example) -->
             <div>
               <div class="flex items-center justify-between mb-1.5">
                 <label for="char-mes-example" class="text-xs font-semibold text-slate-300">
-                  Dialogue Examples (<code class="text-emerald-400 font-mono">&lt;START&gt;</code> Format)
+                  Dialogue Examples (Few-Shot Tuning)
                 </label>
-                <span class="text-[10px] text-slate-500">Guides AI tone & sentence length</span>
+                <span id="tok-mes-example" class="text-[10px] font-mono text-slate-500">~55 tok</span>
               </div>
               <textarea 
                 id="char-mes-example" 
                 rows="4" 
-                class="w-full px-3.5 py-2.5 rounded-xl bg-white/[0.04] border border-white/10 text-xs sm:text-sm text-white font-mono placeholder:text-slate-500 outline-none leading-relaxed resize-none"
+                class="w-full px-3.5 py-2.5 rounded-xl bg-white/[0.04] border border-white/10 text-xs sm:text-sm text-white outline-none leading-relaxed resize-none font-mono"
                 placeholder="&lt;START&gt;
-&#123;&#123;user&#125;&#125;: What is in the archive?
-&#123;&#123;char&#125;&#125;: *A faint smirk touches her lips.* Everything they wanted forgotten."
+&#123;&#123;user&#125;&#125;: Can you break this code?
+&#123;&#123;char&#125;&#125;: *Smirks faintly, tapping her fingers over the keys.* Give me thirty seconds and complete silence."
               >&lt;START&gt;
-&#123;&#123;user&#125;&#125;: Can you decrypt this memory core for me?
-&#123;&#123;char&#125;&#125;: *Extends a gloved hand, plugging the crystal directly into her sleeve interface.* "Give me ninety seconds. If it's corrupted, don't blame the tool. Blame whoever tried to hide it."
-&lt;START&gt;
-&#123;&#123;user&#125;&#125;: Are you afraid the Cartel will find you?
-&#123;&#123;char&#125;&#125;: *Leans back into the shadow of the rack, arms crossed.* "Fear is wasted bandwidth. Preparation is not."</textarea>
+&#123;&#123;user&#125;&#125;: Can you break into the corporate central archives?
+&#123;&#123;char&#125;&#125;: *Taps the terminal, azure telemetry reflecting across her visor.* Breaking in isn't the challenge. Surviving the synthetic purge that follows is. What exactly are you looking for?</textarea>
             </div>
 
             <!-- System Prompt & Instructions -->
             <div>
-              <label for="char-system-prompt" class="block text-xs font-semibold text-slate-300 mb-1.5">
-                System Instructions & Guardrails
-              </label>
+              <div class="flex items-center justify-between mb-1.5">
+                <label for="char-system-prompt" class="text-xs font-semibold text-slate-300">
+                  System Instructions & Guardrails
+                </label>
+                <span id="tok-system-prompt" class="text-[10px] font-mono text-purple-400">~38 tok</span>
+              </div>
               <textarea 
                 id="char-system-prompt" 
                 rows="3" 
@@ -459,7 +654,7 @@ const PRESET_AVATARS = [
 
       </div>
 
-      <!-- Right Column: Live Real-Time Card Preview & Sandbox (5 cols on large screens) -->
+      <!-- Right Column: Live Real-Time Card Preview & Raw JSON Inspector (5 cols on large screens) -->
       <div class="lg:col-span-5 space-y-5">
         
         <div class="p-5 rounded-2xl sm:rounded-3xl bg-[#090b17] border border-white/[0.08] shadow-lg sticky top-20">
@@ -525,7 +720,36 @@ const PRESET_AVATARS = [
           <div class="mt-4 p-3 rounded-xl bg-white/[0.03] border border-white/[0.06] flex items-center justify-between text-[11px] text-slate-400">
             <span>Tavern V2 Spec</span>
             <span class="text-emerald-400 font-mono">chara_card_v2</span>
-            <span>UTF-8 Clean</span>
+            <span id="preview-token-summary" class="font-mono text-purple-300">~0 tok</span>
+          </div>
+
+          <!-- ================= RAW TAVERN V2 JSON SPEC VIEWER ================= -->
+          <div class="mt-3 border border-white/[0.08] rounded-xl overflow-hidden bg-black/40">
+            <button 
+              id="toggle-raw-json-btn"
+              type="button" 
+              class="w-full px-3 py-2 bg-white/[0.03] hover:bg-white/[0.06] flex items-center justify-between text-xs font-semibold text-slate-300 cursor-pointer transition"
+            >
+              <span class="flex items-center gap-1.5">
+                <FileText class="w-3.5 h-3.5 text-cyan-400" />
+                <span>Raw Tavern V2 JSON Spec</span>
+              </span>
+              <span id="json-toggle-arrow" class="text-[10px] text-slate-500">▼ Expand</span>
+            </button>
+            <div id="raw-json-panel" class="hidden p-3 border-t border-white/[0.06] space-y-2">
+              <div class="flex items-center justify-between">
+                <span class="text-[10px] text-slate-400">Valid Tavern V2 Structure</span>
+                <button 
+                  id="copy-raw-json-btn"
+                  type="button" 
+                  class="px-2 py-0.5 rounded bg-white/10 hover:bg-white/20 text-[10px] text-slate-200 flex items-center gap-1 cursor-pointer"
+                >
+                  <Copy class="w-3 h-3" />
+                  <span id="copy-btn-text">Copy JSON</span>
+                </button>
+              </div>
+              <pre id="raw-json-code" class="text-[10px] font-mono text-cyan-200/90 bg-[#060810] p-2.5 rounded-lg overflow-x-auto max-h-52 leading-relaxed border border-white/5"></pre>
+            </div>
           </div>
 
           <!-- Toast Notification -->
@@ -542,7 +766,7 @@ const PRESET_AVATARS = [
 </Layout>
 
 <script>
-  // ================= TAB MANAGEMENT =================
+  // ================= 4-TAB NAVIGATION =================
   const tabBtns = document.querySelectorAll('.tab-btn');
   const tabPanes = document.querySelectorAll('.tab-pane');
 
@@ -589,6 +813,14 @@ const PRESET_AVATARS = [
   const starter2 = document.getElementById('starter-2') as HTMLInputElement;
   const starter3 = document.getElementById('starter-3') as HTMLInputElement;
 
+  // Lorebook inputs
+  const loreBookName = document.getElementById('lore-book-name') as HTMLInputElement;
+  const loreBookDesc = document.getElementById('lore-book-desc') as HTMLInputElement;
+  const loreEntriesList = document.getElementById('lore-entries-list') as HTMLElement;
+  const addLoreEntryBtn = document.getElementById('add-lore-entry-btn');
+  const importLorebookBtn = document.getElementById('import-lorebook-btn');
+  const lorebookFileInput = document.getElementById('lorebook-file-input') as HTMLInputElement;
+
   // Live Preview Elements
   const previewImg = document.getElementById('preview-img') as HTMLImageElement;
   const previewCat = document.getElementById('preview-cat') as HTMLElement;
@@ -596,8 +828,33 @@ const PRESET_AVATARS = [
   const previewTitle = document.getElementById('preview-title') as HTMLElement;
   const previewTags = document.getElementById('preview-tags') as HTMLElement;
   const previewSnippet = document.getElementById('preview-snippet') as HTMLElement;
+  const previewTokenSummary = document.getElementById('preview-token-summary') as HTMLElement;
   const statusToast = document.getElementById('status-toast') as HTMLElement;
   const toastText = document.getElementById('toast-text') as HTMLElement;
+
+  // HUD Elements
+  const hudPermTokens = document.getElementById('hud-perm-tokens') as HTMLElement;
+  const hudDynTokens = document.getElementById('hud-dyn-tokens') as HTMLElement;
+  const hudLoreTokens = document.getElementById('hud-lore-tokens') as HTMLElement;
+  const hudTotalTokens = document.getElementById('hud-total-tokens') as HTMLElement;
+  const tokenHealthBadge = document.getElementById('token-health-badge') as HTMLElement;
+
+  // Raw JSON Inspector Elements
+  const toggleRawJsonBtn = document.getElementById('toggle-raw-json-btn');
+  const rawJsonPanel = document.getElementById('raw-json-panel') as HTMLElement;
+  const jsonToggleArrow = document.getElementById('json-toggle-arrow') as HTMLElement;
+  const rawJsonCode = document.getElementById('raw-json-code') as HTMLElement;
+  const copyRawJsonBtn = document.getElementById('copy-raw-json-btn');
+  const copyBtnText = document.getElementById('copy-btn-text') as HTMLElement;
+
+  // Chub / Remote Importer Elements
+  const remoteUrlInput = document.getElementById('remote-url-input') as HTMLInputElement;
+  const fetchRemoteCardBtn = document.getElementById('fetch-remote-card-btn');
+  const fetchSpinnerIcon = document.getElementById('fetch-spinner-icon') as HTMLElement;
+  const fetchBtnLabel = document.getElementById('fetch-btn-label') as HTMLElement;
+  const remoteFetchStatus = document.getElementById('remote-fetch-status') as HTMLElement;
+  const remoteStatusDot = document.getElementById('remote-status-dot') as HTMLElement;
+  const remoteStatusText = document.getElementById('remote-status-text') as HTMLElement;
 
   // Buttons & Inputs
   const dropZone = document.getElementById('drop-zone');
@@ -609,17 +866,262 @@ const PRESET_AVATARS = [
   const presetBtns = document.querySelectorAll('.preset-avatar-btn');
   const traitChips = document.querySelectorAll('.trait-chip');
 
+  // ================= TOKEN COUNTER HEURISTIC =================
+  function estimateTokens(text: string): number {
+    if (!text || typeof text !== 'string') return 0;
+    const tokens = text.match(/\w+|[^\w\s]|\s+/g) || [];
+    let count = 0;
+    for (let i = 0; i < tokens.length; i++) {
+      const t = tokens[i];
+      if (/^[\x00-\x7F]+$/.test(t)) {
+        if (/^\s+$/.test(t)) {
+          count += Math.ceil(t.length / 4);
+        } else {
+          count += Math.max(1, Math.ceil(t.length / 3.8));
+        }
+      } else {
+        count += Math.ceil(t.length * 1.3);
+      }
+    }
+    return count;
+  }
+
+  // ================= DYNAMIC WORLD INFO (LOREBOOK) STATE =================
+  interface LoreEntry {
+    id: string;
+    comment: string;
+    keys: string;
+    content: string;
+    constant: boolean;
+  }
+
+  let loreEntries: LoreEntry[] = [
+    {
+      id: 'entry-1',
+      comment: 'The Obsidian Cartel',
+      keys: 'cartel, obsidian, syndicate, data wipe',
+      content: 'A powerful authoritarian technological conglomerate that controls planetary communication networks and systematically purges uncensored cultural records.',
+      constant: false
+    },
+    {
+      id: 'entry-2',
+      comment: 'Sector 4 Data Haven',
+      keys: 'sector 4, haven, sanctuary, subterranean',
+      content: 'An underground subterranean bunker beneath the neon slums of Sector 4 where dissidents, scribes, and hackers preserve unauthorized human history.',
+      constant: false
+    }
+  ];
+
+  function renderLoreEntries() {
+    if (!loreEntriesList) return;
+    loreEntriesList.innerHTML = '';
+
+    if (loreEntries.length === 0) {
+      loreEntriesList.innerHTML = `
+        <div class="p-6 text-center rounded-xl bg-white/[0.02] border border-white/5 text-slate-500 text-xs">
+          No lorebook entries yet. Click "+ Add Entry" or import a Character Book!
+        </div>
+      `;
+      updateAllCalculations();
+      return;
+    }
+
+    loreEntries.forEach((entry, idx) => {
+      const entryDiv = document.createElement('div');
+      entryDiv.className = 'p-3.5 rounded-xl bg-[#070914] border border-amber-500/20 shadow-sm space-y-2.5';
+      entryDiv.setAttribute('data-id', entry.id);
+
+      const entryTok = estimateTokens(entry.content);
+
+      entryDiv.innerHTML = `
+        <div class="flex items-center justify-between border-b border-white/[0.06] pb-2">
+          <div class="flex items-center gap-2">
+            <span class="w-4 h-4 rounded-full bg-amber-500/20 text-amber-400 flex items-center justify-center text-[10px] font-bold">#${idx + 1}</span>
+            <input 
+              type="text" 
+              class="entry-title-input px-2 py-0.5 rounded bg-white/[0.04] border border-white/10 text-xs font-semibold text-amber-200 outline-none w-44 sm:w-60" 
+              value="${entry.comment.replace(/"/g, '&quot;')}" 
+              placeholder="Entry Title / Comment" 
+            />
+          </div>
+          <div class="flex items-center gap-2">
+            <span class="text-[10px] font-mono text-amber-400">~${entryTok} tok</span>
+            <button type="button" class="delete-entry-btn p-1 rounded hover:bg-rose-950/40 text-rose-400 transition cursor-pointer" title="Delete entry">
+              <svg xmlns="http://www.w3.org/2000/svg" class="w-3.5 h-3.5 pointer-events-none" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 6h18m-2 0v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6m3 0V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"/></svg>
+            </button>
+          </div>
+        </div>
+
+        <div>
+          <label class="block text-[10px] font-medium text-slate-400 mb-1">Activation Trigger Keys (Comma-separated)</label>
+          <input 
+            type="text" 
+            class="entry-keys-input w-full px-2.5 py-1.5 rounded-lg bg-black/40 border border-white/10 text-xs text-white outline-none" 
+            value="${entry.keys.replace(/"/g, '&quot;')}" 
+            placeholder="e.g. cartel, obsidian, cipher" 
+          />
+        </div>
+
+        <div>
+          <label class="block text-[10px] font-medium text-slate-400 mb-1">Lore Knowledge & Definition</label>
+          <textarea 
+            rows="2" 
+            class="entry-content-input w-full px-2.5 py-1.5 rounded-lg bg-black/40 border border-white/10 text-xs text-slate-200 outline-none resize-none leading-relaxed" 
+            placeholder="Injected when trigger keys appear in dialogue..."
+          >${entry.content}</textarea>
+        </div>
+
+        <div class="flex items-center justify-between pt-1">
+          <label class="flex items-center gap-1.5 text-[10px] text-slate-400 cursor-pointer">
+            <input type="checkbox" class="entry-constant-chk rounded text-amber-500 bg-white/10 border-white/20" ${entry.constant ? 'checked' : ''} />
+            <span>Always Active (Constant memory, bypasses keyword filter)</span>
+          </label>
+        </div>
+      `;
+
+      // Event bindings for this entry
+      const titleInp = entryDiv.querySelector('.entry-title-input') as HTMLInputElement;
+      const keysInp = entryDiv.querySelector('.entry-keys-input') as HTMLInputElement;
+      const contentInp = entryDiv.querySelector('.entry-content-input') as HTMLTextAreaElement;
+      const constChk = entryDiv.querySelector('.entry-constant-chk') as HTMLInputElement;
+      const delBtn = entryDiv.querySelector('.delete-entry-btn') as HTMLButtonElement;
+
+      titleInp?.addEventListener('input', () => { entry.comment = titleInp.value; updateAllCalculations(); });
+      keysInp?.addEventListener('input', () => { entry.keys = keysInp.value; updateAllCalculations(); });
+      contentInp?.addEventListener('input', () => { entry.content = contentInp.value; updateAllCalculations(); });
+      constChk?.addEventListener('change', () => { entry.constant = constChk.checked; updateAllCalculations(); });
+      delBtn?.addEventListener('click', () => {
+        loreEntries = loreEntries.filter(e => e.id !== entry.id);
+        renderLoreEntries();
+      });
+
+      loreEntriesList.appendChild(entryDiv);
+    });
+
+    updateAllCalculations();
+  }
+
+  addLoreEntryBtn?.addEventListener('click', () => {
+    const newEntry: LoreEntry = {
+      id: 'entry-' + Date.now(),
+      comment: 'New Lore Entry',
+      keys: 'keyword1, keyword2',
+      content: 'Detailed world facts or background information injected when mentioned.',
+      constant: false
+    };
+    loreEntries.push(newEntry);
+    renderLoreEntries();
+  });
+
+  // Standalone lorebook import
+  importLorebookBtn?.addEventListener('click', () => lorebookFileInput?.click());
+  lorebookFileInput?.addEventListener('change', (e: Event) => {
+    const file = (e.target as HTMLInputElement).files?.[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onload = (re) => {
+        try {
+          const json = JSON.parse(re.target?.result as string);
+          const entries = json.entries || json.character_book?.entries || [];
+          if (Array.isArray(entries) && entries.length > 0) {
+            loreEntries = entries.map((en: any, i: number) => ({
+              id: 'imp-' + i + '-' + Date.now(),
+              comment: en.comment || en.name || `Lore Entry ${i + 1}`,
+              keys: Array.isArray(en.keys) ? en.keys.join(', ') : (en.keys || ''),
+              content: en.content || '',
+              constant: Boolean(en.constant)
+            }));
+            if (json.name && loreBookName) loreBookName.value = json.name;
+            if (json.description && loreBookDesc) loreBookDesc.value = json.description;
+            renderLoreEntries();
+            showToast(`Imported ${entries.length} Lorebook entries!`);
+          } else {
+            showToast('No entries found in Lorebook JSON.');
+          }
+        } catch (err) {
+          showToast('Invalid Lorebook JSON format.');
+        }
+      };
+      reader.readAsText(file);
+    }
+  });
+
+  // ================= TOAST NOTIFICATION =================
   function showToast(msg: string) {
     if (toastText && statusToast) {
       toastText.textContent = msg;
       statusToast.classList.remove('hidden');
       setTimeout(() => {
         statusToast.classList.add('hidden');
-      }, 3500);
+      }, 4000);
     }
   }
 
-  function updatePreview() {
+  // ================= CALCULATION & PREVIEW SYNC =================
+  function updateAllCalculations() {
+    // 1. Calculate individual badge tokens
+    const tokName = estimateTokens(nameInput?.value || '');
+    const tokTitle = estimateTokens(titleInput?.value || '');
+    const tokApp = estimateTokens(appearanceInput?.value || '');
+    const tokPers = estimateTokens(personalityInput?.value || '');
+    const tokLore = estimateTokens(loreInput?.value || '');
+    const tokScen = estimateTokens(scenarioInput?.value || '');
+    const tokSpeech = estimateTokens(speechInput?.value || '');
+    const tokGreet = estimateTokens(greetingInput?.value || '');
+    const tokAltGreet = estimateTokens(altGreetingInput?.value || '');
+    const tokMesEx = estimateTokens(mesExampleInput?.value || '');
+    const tokSys = estimateTokens(sysPromptInput?.value || '');
+
+    // Update mini badges
+    const setBadge = (id: string, count: number) => {
+      const el = document.getElementById(id);
+      if (el) el.textContent = `~${count} tok`;
+    };
+    setBadge('tok-name', tokName);
+    setBadge('tok-title', tokTitle);
+    setBadge('tok-appearance', tokApp);
+    setBadge('tok-personality', tokPers);
+    setBadge('tok-lore', tokLore);
+    setBadge('tok-scenario', tokScen);
+    setBadge('tok-speech', tokSpeech);
+    setBadge('tok-greeting', tokGreet);
+    setBadge('tok-alt-greeting', tokAltGreet);
+    setBadge('tok-mes-example', tokMesEx);
+    setBadge('tok-system-prompt', tokSys);
+
+    // Lorebook total tokens
+    let loreTokens = 0;
+    loreEntries.forEach(en => {
+      loreTokens += estimateTokens(en.content);
+    });
+
+    // Permanent Tokens: System Prompt + Personality + Backstory + Appearance + Scenario + Lorebook
+    const permanentTokens = tokSys + tokPers + tokLore + tokApp + tokScen + tokSpeech + loreTokens;
+    // Dynamic Tokens: Greeting + Alt Greeting + Examples
+    const dynamicTokens = tokGreet + tokAltGreet + tokMesEx;
+    const totalTokens = permanentTokens + dynamicTokens;
+
+    if (hudPermTokens) hudPermTokens.textContent = `~${permanentTokens}`;
+    if (hudDynTokens) hudDynTokens.textContent = `~${dynamicTokens}`;
+    if (hudLoreTokens) hudLoreTokens.textContent = `~${loreTokens}`;
+    if (hudTotalTokens) hudTotalTokens.textContent = `~${totalTokens} / 4096`;
+    if (previewTokenSummary) previewTokenSummary.textContent = `~${totalTokens} tok`;
+
+    // Health badge
+    if (tokenHealthBadge) {
+      if (permanentTokens < 1000) {
+        tokenHealthBadge.textContent = 'Optimal (<1k tok)';
+        tokenHealthBadge.className = 'px-2 py-0.5 rounded-full text-[10px] font-bold bg-emerald-950/60 border border-emerald-500/40 text-emerald-300';
+      } else if (permanentTokens < 1800) {
+        tokenHealthBadge.textContent = 'Standard (1k-1.8k)';
+        tokenHealthBadge.className = 'px-2 py-0.5 rounded-full text-[10px] font-bold bg-amber-950/60 border border-amber-500/40 text-amber-300';
+      } else {
+        tokenHealthBadge.textContent = 'Heavy (>1.8k)';
+        tokenHealthBadge.className = 'px-2 py-0.5 rounded-full text-[10px] font-bold bg-rose-950/60 border border-rose-500/40 text-rose-300';
+      }
+    }
+
+    // 2. Update Card Preview
     if (previewName && nameInput) previewName.textContent = nameInput.value || 'Unnamed Persona';
     if (previewTitle && titleInput) previewTitle.textContent = titleInput.value || 'Roleplay Companion';
     if (previewCat && catInput) previewCat.textContent = catInput.value;
@@ -630,11 +1132,79 @@ const PRESET_AVATARS = [
       const tags = tagsInput.value.split(',').map(t => t.trim()).filter(Boolean);
       previewTags.innerHTML = tags.slice(0, 3).map(t => `<span class="px-1.5 py-0.5 rounded bg-white/[0.08] text-[9px] text-slate-300">#${t}</span>`).join('');
     }
+
+    // 3. Update Raw JSON Inspector
+    updateRawJsonViewer();
   }
 
-  // Bind live updates
-  [nameInput, titleInput, catInput, avatarInput, appearanceInput, personalityInput, loreInput, scenarioInput, greetingInput, tagsInput].forEach(el => {
-    el?.addEventListener('input', updatePreview);
+  function generateTavernCardObject() {
+    return {
+      spec: 'chara_card_v2',
+      spec_version: '2.0',
+      data: {
+        name: nameInput?.value || 'Unnamed Persona',
+        description: loreInput?.value || '',
+        personality: personalityInput?.value || '',
+        scenario: scenarioInput?.value || '',
+        first_mes: greetingInput?.value || '',
+        mes_example: mesExampleInput?.value || '',
+        creator_notes: 'Created via Aetheria AI Character Studio. Strict SFW standard.',
+        system_prompt: sysPromptInput?.value || 'Portray the character with atmospheric consistency.',
+        post_history_instructions: '',
+        alternate_greetings: altGreetingInput?.value.split('<START>').map(s => s.trim()).filter(Boolean) || [],
+        character_book: {
+          name: loreBookName?.value || 'Aetheria Lorebook',
+          description: loreBookDesc?.value || 'World Info Book',
+          scan_depth: 100,
+          token_budget: 1000,
+          recursive_scanning: false,
+          entries: loreEntries.map((en, idx) => ({
+            id: idx + 1,
+            keys: en.keys.split(',').map(k => k.trim()).filter(Boolean),
+            content: en.content,
+            comment: en.comment,
+            enabled: true,
+            insertion_order: 100 + idx,
+            constant: en.constant,
+            case_sensitive: false
+          }))
+        },
+        tags: tagsInput?.value.split(',').map(t => t.trim()).filter(Boolean) || [],
+        creator: 'Aetheria Creator',
+        character_version: '2.0'
+      }
+    };
+  }
+
+  function updateRawJsonViewer() {
+    if (rawJsonCode && !rawJsonPanel?.classList.contains('hidden')) {
+      const card = generateTavernCardObject();
+      rawJsonCode.textContent = JSON.stringify(card, null, 2);
+    }
+  }
+
+  // Toggle Raw JSON inspector
+  toggleRawJsonBtn?.addEventListener('click', () => {
+    if (rawJsonPanel) {
+      const isHidden = rawJsonPanel.classList.toggle('hidden');
+      if (jsonToggleArrow) jsonToggleArrow.textContent = isHidden ? '▼ Expand' : '▲ Collapse';
+      if (!isHidden) updateRawJsonViewer();
+    }
+  });
+
+  // Copy raw JSON
+  copyRawJsonBtn?.addEventListener('click', () => {
+    const card = generateTavernCardObject();
+    navigator.clipboard.writeText(JSON.stringify(card, null, 2)).then(() => {
+      if (copyBtnText) copyBtnText.textContent = 'Copied!';
+      setTimeout(() => { if (copyBtnText) copyBtnText.textContent = 'Copy JSON'; }, 2000);
+      showToast('Raw Tavern V2 JSON copied to clipboard!');
+    });
+  });
+
+  // Bind live updates to all inputs
+  [nameInput, titleInput, catInput, avatarInput, appearanceInput, personalityInput, loreInput, scenarioInput, greetingInput, altGreetingInput, mesExampleInput, sysPromptInput, tagsInput, loreBookName, loreBookDesc].forEach(el => {
+    el?.addEventListener('input', updateAllCalculations);
   });
 
   // Trait chips toggle
@@ -644,7 +1214,7 @@ const PRESET_AVATARS = [
       if (trait && personalityInput) {
         if (!personalityInput.value.includes(trait)) {
           personalityInput.value = personalityInput.value ? `${personalityInput.value}, ${trait}` : trait;
-          updatePreview();
+          updateAllCalculations();
         }
       }
     });
@@ -656,7 +1226,7 @@ const PRESET_AVATARS = [
       const url = btn.getAttribute('data-url');
       if (url && avatarInput) {
         avatarInput.value = url;
-        updatePreview();
+        updateAllCalculations();
       }
     });
   });
@@ -669,7 +1239,7 @@ const PRESET_AVATARS = [
       reader.onload = (re) => {
         const base64Url = re.target?.result as string;
         if (avatarInput) avatarInput.value = base64Url;
-        updatePreview();
+        updateAllCalculations();
         showToast('Avatar image loaded from your device!');
       };
       reader.readAsDataURL(file);
@@ -708,7 +1278,7 @@ const PRESET_AVATARS = [
   }
 
   function populateFromCardData(cardData: any, imageBase64?: string) {
-    // Standardize Tavern V2 (data wrapper) vs V1
+    // Standardize Tavern V2 vs V1
     const d = cardData.data || cardData;
     
     if (d.name && nameInput) nameInput.value = d.name;
@@ -730,12 +1300,29 @@ const PRESET_AVATARS = [
       tagsInput.value = d.tags.join(', ');
     }
 
+    // Populate Character Book (World Info / Lorebook)
+    const book = d.character_book || cardData.character_book || d.lorebook || cardData.lorebook;
+    if (book) {
+      if (book.name && loreBookName) loreBookName.value = book.name;
+      if (book.description && loreBookDesc) loreBookDesc.value = book.description;
+      if (Array.isArray(book.entries) && book.entries.length > 0) {
+        loreEntries = book.entries.map((en: any, i: number) => ({
+          id: 'card-entry-' + i + '-' + Date.now(),
+          comment: en.comment || en.name || `Lore ${i + 1}`,
+          keys: Array.isArray(en.keys) ? en.keys.join(', ') : (en.keys || ''),
+          content: en.content || '',
+          constant: Boolean(en.constant)
+        }));
+        renderLoreEntries();
+      }
+    }
+
     if (imageBase64 && avatarInput) {
       avatarInput.value = imageBase64;
     }
 
-    updatePreview();
-    showToast(`Loaded character: "${d.name || 'Custom Character'}"! All 7 sections populated.`);
+    updateAllCalculations();
+    showToast(`Loaded character: "${d.name || 'Custom Character'}"! Populated all 4 tabs & Lorebook.`);
   }
 
   function handleFile(file: File) {
@@ -763,16 +1350,15 @@ const PRESET_AVATARS = [
           const buffer = e.target?.result as ArrayBuffer;
           const parsed = parsePngChunks(buffer);
 
-          // Also read data URL for avatar
+          // Read data URL for avatar
           const dataUrlReader = new FileReader();
           dataUrlReader.onload = (de) => {
             const dataUrl = de.target?.result as string;
             if (parsed) {
               populateFromCardData(parsed, dataUrl);
             } else {
-              // Valid PNG but no chara chunk -> use as custom avatar
               if (avatarInput) avatarInput.value = dataUrl;
-              updatePreview();
+              updateAllCalculations();
               showToast('Image loaded as Avatar! (No Tavern metadata chunk detected)');
             }
           };
@@ -786,6 +1372,98 @@ const PRESET_AVATARS = [
       bufferReader.readAsArrayBuffer(file);
     }
   }
+
+  // ================= CHUB.AI & REMOTE CARD FETCHER =================
+  function setFetchStatus(state: 'loading' | 'success' | 'error', message: string) {
+    if (!remoteFetchStatus || !remoteStatusDot || !remoteStatusText) return;
+    remoteFetchStatus.classList.remove('hidden');
+    remoteStatusText.textContent = message;
+
+    if (state === 'loading') {
+      remoteStatusDot.className = 'w-2 h-2 rounded-full bg-cyan-400 animate-ping';
+      if (fetchSpinnerIcon) fetchSpinnerIcon.classList.add('animate-spin');
+      if (fetchBtnLabel) fetchBtnLabel.textContent = 'Fetching...';
+    } else if (state === 'success') {
+      remoteStatusDot.className = 'w-2 h-2 rounded-full bg-emerald-400';
+      if (fetchSpinnerIcon) fetchSpinnerIcon.classList.remove('animate-spin');
+      if (fetchBtnLabel) fetchBtnLabel.textContent = 'Fetch & Populate';
+    } else {
+      remoteStatusDot.className = 'w-2 h-2 rounded-full bg-rose-400';
+      if (fetchSpinnerIcon) fetchSpinnerIcon.classList.remove('animate-spin');
+      if (fetchBtnLabel) fetchBtnLabel.textContent = 'Fetch & Populate';
+    }
+  }
+
+  async function fetchRemoteCard() {
+    const rawInput = remoteUrlInput?.value.trim();
+    if (!rawInput) {
+      alert('Please enter a Chub URL, character identifier, or direct card URL.');
+      return;
+    }
+
+    setFetchStatus('loading', 'Resolving card location...');
+
+    try {
+      let targetUrl = rawInput;
+
+      // Check if it's a Chub URL or identifier (e.g. username/character-slug)
+      const chubMatch1 = rawInput.match(/(?:chub\.ai|characterhub\.org)\/characters\/([^\/\?#]+)\/([^\/\?#]+)/);
+      const chubMatch2 = rawInput.match(/^([a-zA-Z0-9_\-\.]+)\/([a-zA-Z0-9_\-\.]+)$/);
+
+      if (chubMatch1) {
+        targetUrl = `https://avatars.charhub.io/avatars/${chubMatch1[1]}/${chubMatch1[2]}/chara_card_v2.png`;
+      } else if (chubMatch2) {
+        targetUrl = `https://avatars.charhub.io/avatars/${chubMatch2[1]}/${chubMatch2[2]}/chara_card_v2.png`;
+      }
+
+      setFetchStatus('loading', `Downloading card from ${new URL(targetUrl).hostname}...`);
+
+      const resp = await fetch(targetUrl);
+      if (!resp.ok) {
+        throw new Error(`HTTP ${resp.status}: Could not retrieve card`);
+      }
+
+      const contentType = resp.headers.get('content-type') || '';
+      
+      if (contentType.includes('application/json') || targetUrl.endsWith('.json')) {
+        const json = await resp.json();
+        populateFromCardData(json);
+        setFetchStatus('success', 'Card JSON downloaded and populated successfully!');
+        return;
+      }
+
+      // Treat as PNG card
+      const buffer = await resp.arrayBuffer();
+      const parsed = parsePngChunks(buffer);
+
+      // Convert buffer to DataURL for avatar
+      const bytes = new Uint8Array(buffer);
+      let binary = '';
+      const chunkSize = 8192;
+      for (let i = 0; i < bytes.length; i += chunkSize) {
+        binary += String.fromCharCode.apply(null, bytes.subarray(i, i + chunkSize) as unknown as number[]);
+      }
+      const dataUrl = 'data:image/png;base64,' + btoa(binary);
+
+      if (parsed) {
+        populateFromCardData(parsed, dataUrl);
+        setFetchStatus('success', `Decoded Tavern V2 Card ("${parsed.data?.name || 'Character'}") successfully!`);
+      } else {
+        if (avatarInput) avatarInput.value = dataUrl;
+        updateAllCalculations();
+        setFetchStatus('success', 'Image loaded as Avatar (No embedded Tavern metadata detected).');
+      }
+
+    } catch (err: any) {
+      console.error(err);
+      setFetchStatus('error', `Failed: ${err.message || 'CORS or Network Error'}`);
+    }
+  }
+
+  fetchRemoteCardBtn?.addEventListener('click', fetchRemoteCard);
+  remoteUrlInput?.addEventListener('keydown', (e) => {
+    if (e.key === 'Enter') fetchRemoteCard();
+  });
 
   // Bind Dropzone & Card Input
   triggerImportBtn?.addEventListener('click', () => cardFileInput?.click());
@@ -831,13 +1509,17 @@ const PRESET_AVATARS = [
       systemPrompt: sysPromptInput.value,
       alternateGreetings: altGreetingInput.value.split('<START>').map(s => s.trim()).filter(Boolean),
       starterPrompts: [starter1.value, starter2.value, starter3.value].filter(Boolean),
+      lorebook: {
+        name: loreBookName.value,
+        description: loreBookDesc.value,
+        entries: loreEntries
+      },
       rating: '5.0',
       chatsCount: '1',
       isCustom: true
     };
 
     const existing = JSON.parse(localStorage.getItem('aetheria_custom_characters') || '[]');
-    // Replace if exists, or append
     const idx = existing.findIndex((c: any) => c.id === characterData.id);
     if (idx !== -1) {
       existing[idx] = characterData;
@@ -851,27 +1533,7 @@ const PRESET_AVATARS = [
 
   // ================= EXPORT TAVERN CARD V2 (JSON) =================
   exportBtn?.addEventListener('click', () => {
-    const tavernCardV2 = {
-      spec: 'chara_card_v2',
-      spec_version: '2.0',
-      data: {
-        name: nameInput.value || 'Unnamed Persona',
-        description: loreInput.value,
-        personality: personalityInput.value,
-        scenario: scenarioInput.value,
-        first_mes: greetingInput.value,
-        mes_example: mesExampleInput.value,
-        creator_notes: 'Created via Aetheria AI Character Studio. Strict SFW standard.',
-        system_prompt: sysPromptInput.value || 'Portray the character with atmospheric consistency.',
-        post_history_instructions: '',
-        alternate_greetings: altGreetingInput.value.split('<START>').map(s => s.trim()).filter(Boolean),
-        character_book: null,
-        tags: tagsInput.value.split(',').map(t => t.trim()).filter(Boolean),
-        creator: 'Aetheria Creator',
-        character_version: '2.0'
-      }
-    };
-
+    const tavernCardV2 = generateTavernCardObject();
     const blob = new Blob([JSON.stringify(tavernCardV2, null, 2)], { type: 'application/json' });
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a');
@@ -880,9 +1542,10 @@ const PRESET_AVATARS = [
     a.click();
     URL.revokeObjectURL(url);
 
-    showToast('Tavern V2 Card JSON exported!');
+    showToast('Tavern V2 Card JSON exported with World Info!');
   });
 
-  // Initial preview sync
-  updatePreview();
+  // Initial render
+  renderLoreEntries();
+  updateAllCalculations();
 </script>
