@@ -1,5 +1,5 @@
 ---
-import { Search, Sparkles, Plus, Compass, Flame, KeyRound, User, Command, MessageSquare } from '@lucide/astro';
+import { Search, Sparkles, Plus, Compass, Flame, KeyRound, User, Command, MessageSquare, SlidersHorizontal } from '@lucide/astro';
 ---
 
 <header class="sticky top-0 z-50 w-full border-b border-white/[0.06] bg-[#07080d]/80 backdrop-blur-xl transition-all">
@@ -77,11 +77,10 @@ import { Search, Sparkles, Plus, Compass, Flame, KeyRound, User, Command, Messag
           <Search class="w-4 h-4" />
         </button>
 
-        <!-- BYOK Quick Status Pill (Desktop & Tablet) -->
-        <button id="byok-modal-btn" class="hidden sm:flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-medium text-slate-300 hover:text-white bg-white/[0.03] hover:bg-white/[0.06] border border-white/[0.08] transition" title="Configure Custom API Keys">
-          <KeyRound class="w-3.5 h-3.5 text-cyan-400" />
-          <span>BYOK</span>
-          <span class="inline-block w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span>
+        <!-- Settings / AI Models Status Pill (Desktop & Tablet) -->
+        <button id="byok-modal-btn" class="hidden sm:flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-medium text-slate-300 hover:text-white bg-white/[0.03] hover:bg-white/[0.06] border border-white/[0.08] transition" title="Chat & AI Preferences">
+          <SlidersHorizontal class="w-3.5 h-3.5 text-purple-400" />
+          <span>Settings</span>
         </button>
 
         <!-- Create Character Button -->

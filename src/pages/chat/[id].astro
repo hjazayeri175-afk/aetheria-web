@@ -144,15 +144,14 @@ const { character } = Astro.props;
           </div>
         </div>
 
-        <!-- Multi-Modal Engine Button (Primary BYOK & Tuning Hub) -->
+        <!-- Chat Settings Button -->
         <button 
           id="chat-byok-btn"
-          class="flex items-center gap-1 p-2 sm:px-3 sm:py-1.5 rounded-xl bg-purple-950/50 hover:bg-purple-900/60 border border-purple-500/40 text-purple-200 text-xs font-medium transition cursor-pointer shadow-lg shadow-purple-950/50 active:scale-95 group"
-          title="Configure Multi-Modal AI Engine (Text, Voice, Image, Video)"
+          class="flex items-center gap-1.5 p-2 sm:px-3 sm:py-1.5 rounded-xl bg-purple-950/50 hover:bg-purple-900/60 border border-purple-500/40 text-purple-200 text-xs font-medium transition cursor-pointer shadow-lg shadow-purple-950/50 active:scale-95 group"
+          title="Chat Preferences (Voice, Selfies & AI Settings)"
         >
-          <SlidersHorizontal class="w-3.5 h-3.5 text-cyan-400 group-hover:rotate-45 transition duration-300" />
-          <span class="hidden md:inline font-mono font-semibold" id="chat-engine-label">Engine: Groq (Llama 3.3)</span>
-          <span class="hidden sm:inline md:hidden font-mono font-semibold">Engine</span>
+          <SlidersHorizontal class="w-3.5 h-3.5 text-purple-400 group-hover:rotate-45 transition duration-300" />
+          <span class="hidden sm:inline font-medium" id="chat-engine-label">Settings</span>
         </button>
 
         <!-- Toggle Lore Sidebar (Desktop / Mobile Drawer) -->
@@ -361,10 +360,9 @@ const { character } = Astro.props;
                 </div>
                 <div class="min-w-0">
                   <h3 class="text-xs sm:text-base font-bold text-white flex items-center gap-1.5 truncate">
-                    <span class="truncate">AI Engine Suite</span>
-                    <span class="text-[9px] sm:text-[10px] font-bold px-1.5 sm:px-2 py-0.5 rounded-full bg-cyan-500/10 text-cyan-400 border border-cyan-500/20 shrink-0">BYOK</span>
+                    <span class="truncate">Chat & Media Settings</span>
                   </h3>
-                  <p class="text-[10px] sm:text-[11px] text-slate-400 truncate">Configure text, voice, image & video models</p>
+                  <p class="text-[10px] sm:text-[11px] text-slate-400 truncate">Customize voices, character selfies, animations & AI models</p>
                 </div>
               </div>
               <button id="close-chat-byok" class="w-7 h-7 sm:w-8 sm:h-8 rounded-full bg-white/[0.06] hover:bg-white/[0.12] text-slate-300 hover:text-white flex items-center justify-center transition cursor-pointer text-xs sm:text-sm shrink-0">✕</button>
@@ -381,7 +379,7 @@ const { character } = Astro.props;
                 <Brain class="w-4 h-4 sm:w-4 sm:h-4 text-purple-400 shrink-0" />
                 <div class="flex flex-col sm:flex-row items-center sm:gap-1 min-w-0">
                   <span class="text-[11px] sm:text-xs font-bold leading-tight truncate">Text</span>
-                  <span class="hidden md:inline text-[9px] text-purple-300/80 font-mono">(LLM)</span>
+                  <span class="hidden md:inline text-[9px] text-purple-300/80 font-mono">(Story)</span>
                 </div>
               </button>
 
@@ -394,7 +392,7 @@ const { character } = Astro.props;
                 <Volume2 class="w-4 h-4 sm:w-4 sm:h-4 text-emerald-400 shrink-0" />
                 <div class="flex flex-col sm:flex-row items-center sm:gap-1 min-w-0">
                   <span class="text-[11px] sm:text-xs font-bold leading-tight truncate">Voice</span>
-                  <span class="hidden md:inline text-[9px] text-emerald-300/80 font-mono">(TTS)</span>
+                  <span class="hidden md:inline text-[9px] text-emerald-300/80 font-mono">(Speech)</span>
                 </div>
               </button>
 
@@ -406,8 +404,8 @@ const { character } = Astro.props;
               >
                 <Camera class="w-4 h-4 sm:w-4 sm:h-4 text-amber-400 shrink-0" />
                 <div class="flex flex-col sm:flex-row items-center sm:gap-1 min-w-0">
-                  <span class="text-[11px] sm:text-xs font-bold leading-tight truncate">Image</span>
-                  <span class="hidden md:inline text-[9px] text-amber-300/80 font-mono">(Photo)</span>
+                  <span class="text-[11px] sm:text-xs font-bold leading-tight truncate">Selfies</span>
+                  <span class="hidden md:inline text-[9px] text-amber-300/80 font-mono">(Photos)</span>
                 </div>
               </button>
 
@@ -434,13 +432,13 @@ const { character } = Astro.props;
                   <div>
                     <h4 class="text-xs sm:text-sm font-bold text-white flex items-center gap-2">
                       <Brain class="w-4 h-4 text-purple-400" />
-                      <span>Text Model & Cognition Hyperparameters</span>
+                      <span>Chat Model & AI Personality</span>
                     </h4>
-                    <p class="text-[11px] text-slate-400">Controls character reasoning, creativity, response length & conversational fidelity.</p>
+                    <p class="text-[11px] text-slate-400">Controls character reasoning, creativity, response length & conversational style.</p>
                   </div>
                   <button type="button" id="ping-text-btn" class="px-3 py-1.5 rounded-xl bg-purple-900/40 hover:bg-purple-800/60 border border-purple-500/30 text-purple-300 text-xs font-semibold flex items-center gap-1.5 transition cursor-pointer">
                     <Zap class="w-3.5 h-3.5 text-cyan-400" />
-                    <span>Test Latency</span>
+                    <span>Test Connection</span>
                   </button>
                 </div>
 
@@ -449,15 +447,15 @@ const { character } = Astro.props;
                 <!-- Provider & Key Grid -->
                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   <div>
-                    <label class="block text-xs font-semibold text-slate-300 mb-1.5">LLM Provider</label>
+                    <label class="block text-xs font-semibold text-slate-300 mb-1.5">AI Model Provider</label>
                     <select id="text-provider-select" class="w-full px-3.5 py-2.5 rounded-xl bg-white/[0.05] border border-white/10 text-xs text-white outline-none focus:border-purple-500/60">
                       <option value="groq">Groq (Ultra-Fast Llama 3.3 70B & 8B — Free Tier)</option>
                       <option value="openrouter">OpenRouter (Claude 3.5 Sonnet, DeepSeek V3, Mistral)</option>
                       <option value="deepseek">DeepSeek Direct (deepseek-chat / deepseek-reasoner)</option>
                       <option value="openai">OpenAI (GPT-4o, GPT-4o-mini)</option>
                       <option value="anthropic">Anthropic (Claude 3.5 Sonnet, Haiku)</option>
-                      <option value="custom">Custom OpenAI-Compatible Endpoint (Ollama, LMStudio, vLLM)</option>
-                      <option value="demo">Free Edge Simulator (No API Key Required)</option>
+                      <option value="custom">Custom Endpoint (Ollama, LMStudio, vLLM)</option>
+                      <option value="demo">Free Cloud AI (Instant & Keyless — Default)</option>
                     </select>
                   </div>
 
@@ -612,9 +610,9 @@ const { character } = Astro.props;
                   <div>
                     <h4 class="text-xs sm:text-sm font-bold text-white flex items-center gap-2">
                       <Volume2 class="w-4 h-4 text-emerald-400" />
-                      <span>Voice Synthesis & TTS Engine (VIP / BYOK)</span>
+                      <span>Voice & Spoken Audio</span>
                     </h4>
-                    <p class="text-[11px] text-slate-400">Reads character dialogue aloud with lifelike emotions and pacing.</p>
+                    <p class="text-[11px] text-slate-400">Reads character dialogue aloud with natural emotion and pacing.</p>
                   </div>
                   <button type="button" id="test-voice-btn" class="px-3 py-1.5 rounded-xl bg-emerald-950/40 hover:bg-emerald-900/60 border border-emerald-500/30 text-emerald-300 text-xs font-semibold flex items-center gap-1.5 transition cursor-pointer">
                     <Play class="w-3.5 h-3.5 text-emerald-400" />
@@ -624,17 +622,17 @@ const { character } = Astro.props;
 
                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   <div>
-                    <label class="block text-xs font-semibold text-slate-300 mb-1.5">TTS Engine Provider</label>
+                    <label class="block text-xs font-semibold text-slate-300 mb-1.5">Voice Provider</label>
                     <select id="voice-provider-select" class="w-full px-3.5 py-2.5 rounded-xl bg-white/[0.05] border border-white/10 text-xs text-white outline-none focus:border-emerald-500/60">
-                      <option value="browser">Web Speech API (100% Free Browser Engine — Zero Cost)</option>
-                      <option value="elevenlabs">ElevenLabs (VIP / BYOK — Ultra Realistic Emotional Cloning)</option>
-                      <option value="openai">OpenAI Audio TTS (VIP / BYOK — tts-1 / tts-1-hd)</option>
-                      <option value="custom">Custom Audio Endpoint (Kokoro, XTTS, Piper)</option>
+                      <option value="browser">Built-in Device Voice (100% Free)</option>
+                      <option value="elevenlabs">ElevenLabs (Ultra-Realistic Emotional Voice)</option>
+                      <option value="openai">OpenAI Audio (Clear & Expressive)</option>
+                      <option value="custom">Custom Audio Endpoint (Kokoro, XTTS)</option>
                     </select>
                   </div>
 
                   <div id="voice-key-container" class="hidden">
-                    <label class="block text-xs font-semibold text-slate-300 mb-1.5">Voice Engine API Key</label>
+                    <label class="block text-xs font-semibold text-slate-300 mb-1.5">Voice API Key</label>
                     <input 
                       id="voice-api-key" 
                       type="password" 
@@ -743,9 +741,9 @@ const { character } = Astro.props;
                   <div>
                     <h4 class="text-xs sm:text-sm font-bold text-white flex items-center gap-2">
                       <Camera class="w-4 h-4 text-amber-400" />
-                      <span>In-Chat Image Generation (Selfies & Scenes)</span>
+                      <span>Character Selfies & Photos</span>
                     </h4>
-                    <p class="text-[11px] text-slate-400">Generates character selfies, location snapshots and visual reactions in chat.</p>
+                    <p class="text-[11px] text-slate-400">Generates character selfies, location photos and scene artwork directly in chat.</p>
                   </div>
                   <button type="button" id="test-image-btn" class="px-3 py-1.5 rounded-xl bg-amber-950/40 hover:bg-amber-900/60 border border-amber-500/30 text-amber-300 text-xs font-semibold flex items-center gap-1.5 transition cursor-pointer">
                     <Sparkles class="w-3.5 h-3.5 text-amber-400" />
@@ -759,12 +757,12 @@ const { character } = Astro.props;
 
                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   <div>
-                    <label class="block text-xs font-semibold text-slate-300 mb-1.5">Image Generation Engine</label>
+                    <label class="block text-xs font-semibold text-slate-300 mb-1.5">Image Provider</label>
                     <select id="image-provider-select" class="w-full px-3.5 py-2.5 rounded-xl bg-white/[0.05] border border-white/10 text-xs text-white outline-none focus:border-amber-500/60">
-                      <option value="pollinations">Pollinations.ai (Free Flux/SDXL — 100% Free & No Key)</option>
-                      <option value="fal">Fal.ai Flux 1.1 Pro / Dev (VIP / BYOK — Ultra High Res)</option>
-                      <option value="openai">OpenAI DALL-E 3 (VIP / BYOK)</option>
-                      <option value="custom">Custom SD / ComfyUI / Automatic1111 Endpoint</option>
+                      <option value="pollinations">Free Flux AI (Fast & Keyless — Default)</option>
+                      <option value="fal">Fal.ai Flux 1.1 Pro (Ultra High Definition)</option>
+                      <option value="openai">OpenAI DALL-E 3 (Artistic & Expressive)</option>
+                      <option value="custom">Custom Endpoint (ComfyUI / SD)</option>
                     </select>
                   </div>
 
@@ -830,26 +828,25 @@ const { character } = Astro.props;
                   <div>
                     <h4 class="text-xs sm:text-sm font-bold text-white flex items-center gap-2">
                       <Video class="w-4 h-4 text-cyan-400" />
-                      <span>Motion & Video Generation (Living Avatar / BYOK)</span>
+                      <span>Character Animation & Video Clips</span>
                     </h4>
-                    <p class="text-[11px] text-slate-400">Animates character avatar and moments into fluid cinematic video clips.</p>
+                    <p class="text-[11px] text-slate-400">Animates character moments into fluid cinematic video clips.</p>
                   </div>
-                  <span class="text-[10px] font-bold px-2.5 py-1 rounded-full bg-cyan-950 text-cyan-300 border border-cyan-500/30">BYOK / VIP Only</span>
                 </div>
 
                 <div class="p-3.5 rounded-2xl bg-cyan-950/20 border border-cyan-500/20 text-xs text-slate-300 leading-relaxed">
-                  💡 <strong>Direct BYOK Architecture:</strong> Video generation is GPU-intensive. Users configure their personal key directly. Zero server markups or hidden fees.
+                  🎬 <strong>Cinematic Video Clips:</strong> Generate smooth motion animations of characters. Connect your personal Fal.ai or Replicate key below to enable video clips.
                 </div>
 
                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   <div>
-                    <label class="block text-xs font-semibold text-slate-300 mb-1.5">Video Generation Engine</label>
+                    <label class="block text-xs font-semibold text-slate-300 mb-1.5">Video Model</label>
                     <select id="video-provider-select" class="w-full px-3.5 py-2.5 rounded-xl bg-white/[0.05] border border-white/10 text-xs text-white outline-none focus:border-cyan-500/60">
-                      <option value="fal-kling">Fal.ai (Kling 1.5 Pro — Ultra Realistic Human Motion)</option>
-                      <option value="fal-luma">Fal.ai (Luma Dream Machine — Cinematic Camera Movements)</option>
+                      <option value="fal-kling">Fal.ai (Kling 1.5 Pro — Realistic Motion)</option>
+                      <option value="fal-luma">Fal.ai (Luma Dream Machine — Cinematic Camera)</option>
                       <option value="fal-minimax">Fal.ai (MiniMax Hailuo-01 — Lifelike Expressions)</option>
-                      <option value="replicate">Replicate (Runway Gen-3 Alpha)</option>
-                      <option value="custom">Custom AnimateDiff / Video API Endpoint</option>
+                      <option value="replicate">Replicate (Runway Gen-3)</option>
+                      <option value="custom">Custom Video Endpoint</option>
                     </select>
                   </div>
 
@@ -1205,16 +1202,15 @@ const { character } = Astro.props;
               <span>Selfie</span>
             </button>
 
-            <!-- 2. Request Living Video (BYOK Protected) -->
+            <!-- 2. Request Living Video Clip -->
             <button 
               type="button" 
               id="chat-action-video-btn"
               class="px-2.5 py-1.5 rounded-xl bg-pink-500/10 hover:bg-pink-500/20 border border-pink-500/30 text-pink-300 hover:text-white text-[11px] sm:text-xs font-medium flex items-center gap-1.5 transition active:scale-95 cursor-pointer shadow-sm group shrink-0"
-              title="Generate a dynamic cinematic living video (Requires Fal.ai / Luma API Key)"
+              title="Generate a dynamic cinematic video animation"
             >
               <Film class="w-3.5 h-3.5 text-pink-400 group-hover:animate-pulse" />
               <span>Video</span>
-              <span class="text-[8px] px-1 py-0.2 rounded bg-pink-500/30 text-pink-200 border border-pink-400/40 font-mono">BYOK</span>
             </button>
           </div>
 
@@ -1623,9 +1619,9 @@ const { character } = Astro.props;
     const shortModel = model.split('/').pop() || model;
     
     if (textProv === 'demo') {
-      engineLabel.textContent = 'Engine: Free Edge Simulator';
+      engineLabel.textContent = 'Settings';
     } else {
-      engineLabel.textContent = `Engine: ${textProv.toUpperCase()} (${shortModel.slice(0, 16)})`;
+      engineLabel.textContent = `AI: ${textProv.toUpperCase()}`;
     }
   }
 

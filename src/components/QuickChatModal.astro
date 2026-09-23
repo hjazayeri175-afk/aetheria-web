@@ -13,7 +13,8 @@ import {
   CheckCircle2,
   Lock,
   ChevronDown,
-  ExternalLink
+  ExternalLink,
+  SlidersHorizontal
 } from '@lucide/astro';
 ---
 
@@ -84,15 +85,15 @@ import {
           <ExternalLink class="w-4 h-4" />
         </a>
 
-        <!-- BYOK Settings Toggle Button -->
+        <!-- Settings Toggle Button -->
         <button 
           type="button" 
           id="toggle-byok-btn"
           class="flex items-center gap-1.5 px-2.5 py-1.5 rounded-xl bg-white/[0.05] hover:bg-white/[0.1] border border-white/[0.08] text-[11px] font-medium text-slate-300 hover:text-white transition cursor-pointer"
-          title="Configure BYOK (Bring Your Own Key)"
+          title="Chat & Model Settings"
         >
-          <KeyRound class="w-3.5 h-3.5 text-purple-400" />
-          <span class="hidden sm:inline">BYOK</span>
+          <SlidersHorizontal class="w-3.5 h-3.5 text-purple-400" />
+          <span class="hidden sm:inline">Settings</span>
           <span id="byok-badge-dot" class="w-1.5 h-1.5 rounded-full bg-slate-500"></span>
         </button>
 
@@ -108,15 +109,15 @@ import {
       </div>
     </header>
 
-    <!-- BYOK Configuration Tray (Collapsible) -->
+    <!-- Settings Configuration Tray (Collapsible) -->
     <div 
       id="byok-tray" 
       class="hidden px-4 py-3 bg-[#0f1325] border-b border-purple-500/20 text-xs text-slate-300 transition-all duration-200"
     >
       <div class="flex items-center justify-between mb-2">
         <div class="flex items-center gap-1.5 text-purple-300 font-semibold text-[11px] uppercase tracking-wider">
-          <Lock class="w-3.5 h-3.5" />
-          <span>Client-Side BYOK Key (Stored in LocalStorage)</span>
+          <SlidersHorizontal class="w-3.5 h-3.5" />
+          <span>Connect Custom AI (Optional)</span>
         </div>
         <button type="button" id="close-byok-tray" class="text-slate-400 hover:text-white text-[11px] cursor-pointer">
           Close
@@ -228,9 +229,9 @@ import {
       <div class="flex items-center justify-between text-[10px] text-slate-500 mt-2 px-1">
         <div class="flex items-center gap-1">
           <CheckCircle2 class="w-3 h-3 text-emerald-400" />
-          <span>SFW Roleplay • 100% Client-Side Privacy</span>
+          <span>Private & Safe Chat</span>
         </div>
-        <span id="chat-mode-indicator" class="text-purple-400 font-mono">Edge Mode</span>
+        <span id="chat-mode-indicator" class="text-purple-400">Ready</span>
       </div>
     </footer>
 
