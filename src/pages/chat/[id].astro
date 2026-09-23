@@ -42,7 +42,8 @@ import {
   Tag,
   Upload,
   Maximize2,
-  X
+  X,
+  Cloud
 } from '@lucide/astro';
 
 export function getStaticPaths() {
@@ -105,6 +106,12 @@ const { character } = Astro.props;
               <span class="inline-flex items-center gap-0.5 px-1 py-0.2 rounded text-[8px] sm:text-[9px] font-semibold bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 shrink-0">
                 <ShieldCheck class="w-2.5 h-2.5" />
                 <span>SFW</span>
+              </span>
+
+              <!-- Cloud Sync Indicator (Anti-Clear Cache) -->
+              <span id="chat-cloud-sync-badge" class="hidden items-center gap-1 px-1.5 py-0.2 rounded text-[8px] sm:text-[9px] font-semibold bg-cyan-500/10 text-cyan-400 border border-cyan-500/20 shrink-0" title="Connected to Cloud Edge Storage">
+                <Cloud class="w-2.5 h-2.5" />
+                <span id="chat-cloud-sync-text">Cloud</span>
               </span>
             </div>
             <p id="chat-header-title" class="text-[10px] sm:text-xs text-purple-400/90 truncate max-w-[85px] xs:max-w-[130px] sm:max-w-xs">{character.title}</p>
@@ -2220,6 +2227,105 @@ const { character } = Astro.props;
     renderAllMessages();
   }
 
+  // Cloud Sync System (Anti-Clear Cache Resilience)
+  const cloudBadge = document.getElementById('chat-cloud-sync-badge');
+  const cloudText = document.getElementById('chat-cloud-sync-text');
+
+  function updateCloudBadge(status) {
+    if (!cloudBadge || !cloudText) return;
+    const token = localStorage.getItem('aetheria_auth_token');
+    if (!token) {
+      cloudBadge.classList.add('hidden');
+      return;
+    }
+
+    cloudBadge.classList.remove('hidden');
+    cloudBadge.classList.add('inline-flex');
+    if (status) cloudText.textContent = status;
+  }
+
+  async function syncFromCloud() {
+    const token = localStorage.getItem('aetheria_auth_token');
+    if (!token) return;
+    updateCloudBadge('Syncing...');
+
+    try {
+      const res = await fetch(`/api/chats/${activeChar.id}`, {
+        headers: { 'Authorization': `Bearer ${token}` }
+      });
+      if (!res.ok) {
+        updateCloudBadge('Cloud');
+        return;
+      }
+      const data = await res.json();
+      if (data.success && Array.isArray(data.messages) && data.messages.length > 0) {
+        // If local conversation was wiped by clear-cache (<= 1 msg) but cloud has full story:
+        if (conversation.length <= 1 && data.messages.length > 1) {
+          conversation = data.messages.map(m => ({
+            id: m.id,
+            sender: m.role === 'user' ? 'user' : 'character',
+            text: m.text,
+            mediaType: m.media_type,
+            mediaUrl: m.media_url,
+            timestamp: new Date(m.created_at * 1000).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+            swipes: [m.text],
+            swipeIndex: 0
+          }));
+          saveChat(false);
+          renderAllMessages();
+          updateCloudBadge('Restored');
+          setTimeout(() => updateCloudBadge('Cloud'), 3000);
+          return;
+        }
+      }
+      updateCloudBadge('Cloud');
+    } catch (e) {
+      console.warn('Cloud sync from server failed:', e);
+      updateCloudBadge('Offline');
+    }
+  }
+
+  let cloudSyncTimeout = null;
+  function syncToCloud() {
+    const token = localStorage.getItem('aetheria_auth_token');
+    if (!token) return;
+
+    if (cloudSyncTimeout) clearTimeout(cloudSyncTimeout);
+    cloudSyncTimeout = setTimeout(async () => {
+      try {
+        updateCloudBadge('Saving...');
+        const payload = {
+          characterId: activeChar.id,
+          title: activeChar.name,
+          messages: conversation.map(m => ({
+            id: m.id || undefined,
+            role: m.sender === 'user' ? 'user' : 'assistant',
+            text: m.text,
+            mediaType: m.mediaType,
+            mediaUrl: m.mediaUrl,
+            timestamp: Date.now()
+          }))
+        };
+
+        const res = await fetch('/api/chats/sync', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}`
+          },
+          body: JSON.stringify(payload)
+        });
+
+        if (res.ok) {
+          updateCloudBadge('Saved');
+          setTimeout(() => updateCloudBadge('Cloud'), 2500);
+        }
+      } catch (e) {
+        console.warn('Cloud sync to server failed:', e);
+      }
+    }, 1200);
+  }
+
   // Init Chat Function
   function initChat() {
     loadSessions();
@@ -2227,9 +2333,10 @@ const { character } = Astro.props;
     loadEngineSettings();
     initPinnedNote();
     fetchDynamicSuggestions();
+    syncFromCloud();
   }
 
-  function saveChat() {
+  function saveChat(triggerCloud = true) {
     const key = getSessionStorageKey(currentSessionId);
     localStorage.setItem(key, JSON.stringify(conversation));
 
@@ -2241,6 +2348,10 @@ const { character } = Astro.props;
       const lastMsg = conversation[conversation.length - 1];
       activeSes.lastMessage = lastMsg ? (lastMsg.text || '').slice(0, 100) : '';
       saveSessionsIndex();
+    }
+
+    if (triggerCloud) {
+      syncToCloud();
     }
   }
 
