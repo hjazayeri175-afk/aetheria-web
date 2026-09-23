@@ -1567,19 +1567,33 @@ const PRESET_AVATARS = [
       pos += 4;
       const type = textDecoder.decode(bytes.subarray(pos, pos + 4));
       pos += 4;
-      if (type === 'tEXt') {
+      if (type === 'tEXt' || type === 'iTXt') {
         const data = bytes.subarray(pos, pos + len);
         const nullIdx = data.indexOf(0);
         if (nullIdx !== -1) {
-          const keyword = textDecoder.decode(data.subarray(0, nullIdx));
-          if (keyword.toLowerCase() === 'chara') {
-            const raw = textDecoder.decode(data.subarray(nullIdx + 1));
-            // Base64 decode to UTF-8
-            const binaryStr = atob(raw);
-            const rawBytes = new Uint8Array(binaryStr.length);
-            for (let i = 0; i < binaryStr.length; i++) rawBytes[i] = binaryStr.charCodeAt(i);
-            const jsonStr = new TextDecoder('utf-8').decode(rawBytes);
-            return JSON.parse(jsonStr);
+          const keyword = textDecoder.decode(data.subarray(0, nullIdx)).toLowerCase();
+          if (keyword === 'chara' || keyword === 'ccv3') {
+            let rawData = data.subarray(nullIdx + 1);
+            if (type === 'iTXt') {
+              let subPos = 2; // skip compression flag + method
+              while (subPos < rawData.length && rawData[subPos] !== 0) subPos++; // lang
+              subPos++;
+              while (subPos < rawData.length && rawData[subPos] !== 0) subPos++; // trans keyword
+              subPos++;
+              rawData = rawData.subarray(subPos);
+            }
+            const raw = new TextDecoder('utf-8').decode(rawData);
+            try {
+              const binaryStr = atob(raw.trim());
+              const rawBytes = new Uint8Array(binaryStr.length);
+              for (let i = 0; i < binaryStr.length; i++) rawBytes[i] = binaryStr.charCodeAt(i);
+              const jsonStr = new TextDecoder('utf-8').decode(rawBytes);
+              return JSON.parse(jsonStr);
+            } catch {
+              try {
+                return JSON.parse(raw);
+              } catch {}
+            }
           }
         }
       }
