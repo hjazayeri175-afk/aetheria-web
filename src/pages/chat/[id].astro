@@ -62,8 +62,8 @@ interface Props {
 const { character } = Astro.props;
 ---
 
-<Layout title={`${character.name} — Immersive Roleplay Chat | Aetheria AI`}>
-  <div class="h-screen w-full max-w-[100vw] flex flex-col bg-[#070913] text-slate-100 overflow-hidden font-sans">
+<Layout title={`${character.name} — Immersive Roleplay Chat | Aetheria AI`} noScroll={true}>
+  <div class="h-[100dvh] max-h-[100dvh] w-full max-w-[100vw] flex flex-col bg-[#070913] text-slate-100 overflow-hidden font-sans">
     
     <!-- Top Navigation Header -->
     <header class="h-14 sm:h-16 border-b border-white/[0.08] bg-[#090b17]/95 backdrop-blur-xl px-2 sm:px-6 flex items-center justify-between z-30 shrink-0 w-full max-w-full overflow-hidden">
@@ -1121,26 +1121,40 @@ const { character } = Astro.props;
           </div>
         </div>
 
-        <!-- Quick Starter Prompts Row -->
-        {character.starterPrompts && character.starterPrompts.length > 0 && (
-          <div class="px-2.5 sm:px-6 py-2 flex items-center gap-2 overflow-x-auto no-scrollbar shrink-0 w-full max-w-full">
-            <span class="text-[10px] uppercase font-bold text-slate-500 tracking-wider shrink-0 flex items-center gap-1">
-              <Sparkles class="w-3 h-3 text-purple-400" />
-              <span>Ideas:</span>
-            </span>
-            <div class="flex items-center gap-2 overflow-x-auto no-scrollbar scroll-smooth">
-              {character.starterPrompts.map((prompt) => (
-                <button 
-                  type="button"
-                  class="room-starter-pill shrink-0 px-3 py-1.5 rounded-xl bg-white/[0.04] hover:bg-purple-900/30 hover:border-purple-500/40 border border-white/[0.08] text-xs text-slate-300 hover:text-white transition duration-200 cursor-pointer active:scale-95 whitespace-nowrap"
-                  data-prompt={prompt}
-                >
-                  "{prompt}"
-                </button>
-              ))}
-            </div>
+        <!-- Dynamic Smart Prompts / Contextual AI Suggestions Row -->
+        <div id="smart-prompts-bar" class="px-2.5 sm:px-6 py-1.5 flex items-center gap-2 overflow-x-auto no-scrollbar shrink-0 w-full max-w-full bg-[#080a17]/80 border-t border-white/[0.04]">
+          <div class="flex items-center gap-1.5 shrink-0 text-slate-400">
+            <Sparkles class="w-3.5 h-3.5 text-purple-400 animate-pulse" />
+            <span class="text-[10px] uppercase font-bold tracking-wider text-slate-300">Smart Ideas</span>
+            <button 
+              id="refresh-smart-prompts-btn" 
+              type="button" 
+              class="p-1 rounded-md hover:bg-white/[0.08] text-slate-400 hover:text-purple-300 transition cursor-pointer active:scale-90"
+              title="Generate new contextual suggestions based on story"
+            >
+              <RefreshCw class="w-2.5 h-2.5" id="smart-prompts-refresh-icon" />
+            </button>
           </div>
-        )}
+
+          <!-- Loading indicator -->
+          <div id="smart-prompts-loading" class="hidden items-center gap-1.5 text-[11px] text-purple-300/80 font-mono animate-pulse shrink-0">
+            <span class="w-1.5 h-1.5 rounded-full bg-purple-400 animate-ping"></span>
+            <span>Thinking options...</span>
+          </div>
+
+          <!-- Dynamic Prompts Container -->
+          <div id="smart-prompts-container" class="flex items-center gap-2 overflow-x-auto no-scrollbar scroll-smooth py-0.5">
+            {character.starterPrompts && character.starterPrompts.map((prompt) => (
+              <button 
+                type="button"
+                class="room-starter-pill shrink-0 px-3 py-1.5 rounded-xl bg-white/[0.04] hover:bg-purple-900/30 hover:border-purple-500/40 border border-white/[0.08] text-xs text-slate-300 hover:text-white transition duration-200 cursor-pointer active:scale-95 whitespace-nowrap"
+                data-prompt={prompt}
+              >
+                "{prompt}"
+              </button>
+            ))}
+          </div>
+        </div>
 
         <!-- In-Chat Multi-Modal & Action Toolbar (Part 2) -->
         <div class="px-2.5 sm:px-6 py-1.5 bg-[#070913]/90 border-t border-white/[0.06] flex items-center justify-between gap-1.5 overflow-x-auto no-scrollbar shrink-0 w-full max-w-full">
@@ -1349,7 +1363,14 @@ const { character } = Astro.props;
   const toggleTtsBtn = document.getElementById('toggle-tts-btn');
   const ttsIconOn = document.getElementById('tts-icon-on');
   const ttsIconOff = document.getElementById('tts-icon-off');
-  const starterPills = document.querySelectorAll('.room-starter-pill');
+  
+  // Dynamic Smart Prompts elements
+  const smartPromptsBar = document.getElementById('smart-prompts-bar');
+  const smartPromptsContainer = document.getElementById('smart-prompts-container');
+  const smartPromptsLoading = document.getElementById('smart-prompts-loading');
+  const refreshSmartPromptsBtn = document.getElementById('refresh-smart-prompts-btn');
+  const smartPromptsRefreshIcon = document.getElementById('smart-prompts-refresh-icon');
+  let isGeneratingSmartPrompts = false;
   
   // Multi-Modal Suite Modal elements
   const byokBtn = document.getElementById('chat-byok-btn');
@@ -2018,6 +2039,7 @@ const { character } = Astro.props;
     loadActiveSessionConversation();
     loadEngineSettings();
     initPinnedNote();
+    fetchDynamicSuggestions();
   }
 
   function saveChat() {
@@ -2517,6 +2539,9 @@ Never speak, narrate, or decide thoughts or actions for {{user}}. Maintain high 
     if (ttsEnabled || localStorage.getItem('aetheria_voice_autoplay') === 'true') {
       speak(replyText);
     }
+
+    // Trigger Contextual Smart Prompts Generation
+    fetchDynamicSuggestions(replyText);
   }
 
   function pickResponse(userText) {
@@ -2622,6 +2647,7 @@ Never speak, narrate, or decide thoughts or actions for {{user}}. Maintain high 
     saveChat();
     renderAllMessages();
     showNotification(`Swipe ${msg.swipeIndex + 1}/${msg.swipes.length} ready!`);
+    fetchDynamicSuggestions(newReply);
   }
 
   // Handle Swipe Navigation
@@ -2635,6 +2661,7 @@ Never speak, narrate, or decide thoughts or actions for {{user}}. Maintain high 
         msg.text = msg.swipes[msg.swipeIndex];
         saveChat();
         renderAllMessages();
+        fetchDynamicSuggestions(msg.text);
       }
     } else if (action === 'next') {
       const nextIdx = (msg.swipeIndex || 0) + 1;
@@ -2643,6 +2670,7 @@ Never speak, narrate, or decide thoughts or actions for {{user}}. Maintain high 
         msg.text = msg.swipes[msg.swipeIndex];
         saveChat();
         renderAllMessages();
+        fetchDynamicSuggestions(msg.text);
       } else if (msgIdx === conversation.length - 1) {
         generateNewSwipe(msgIdx);
       }
@@ -3042,17 +3070,127 @@ Never speak, narrate, or decide thoughts or actions for {{user}}. Maintain high 
     input.style.height = `${Math.min(input.scrollHeight, 128)}px`;
   });
 
-  // Starter prompts
-  starterPills.forEach((btn) => {
-    btn.addEventListener('click', () => {
-      const prompt = btn.getAttribute('data-prompt');
-      if (prompt && input) {
-        input.value = prompt;
-        input.focus();
-        handleSendMessage(prompt);
-      }
+  // Dynamic Smart Prompts System
+  function renderSmartPrompts(prompts) {
+    if (!smartPromptsContainer) return;
+    if (!prompts || prompts.length === 0) {
+      prompts = activeChar.starterPrompts || character.starterPrompts || [];
+    }
+    smartPromptsContainer.innerHTML = prompts.map(p => `
+      <button 
+        type="button"
+        class="room-starter-pill shrink-0 px-3 py-1.5 rounded-xl bg-purple-950/40 hover:bg-purple-900/60 hover:border-purple-400/50 border border-purple-500/25 text-xs text-purple-200 hover:text-white transition duration-200 cursor-pointer active:scale-95 whitespace-nowrap shadow-sm"
+        data-prompt="${p.replace(/"/g, '&quot;')}"
+      >
+        "${p.replace(/"/g, '&quot;')}"
+      </button>
+    `).join('');
+
+    smartPromptsContainer.querySelectorAll('.room-starter-pill').forEach((btn) => {
+      btn.addEventListener('click', () => {
+        const prompt = btn.getAttribute('data-prompt');
+        if (prompt && input) {
+          input.value = prompt;
+          input.focus();
+          input.style.height = 'auto';
+          input.style.height = `${Math.min(input.scrollHeight, 128)}px`;
+        }
+      });
     });
+  }
+
+  async function fetchDynamicSuggestions(contextText) {
+    if (isGeneratingSmartPrompts) return;
+    isGeneratingSmartPrompts = true;
+
+    if (smartPromptsLoading) {
+      smartPromptsLoading.classList.remove('hidden');
+      smartPromptsLoading.classList.add('flex');
+    }
+    if (smartPromptsRefreshIcon) {
+      smartPromptsRefreshIcon.classList.add('animate-spin');
+    }
+
+    try {
+      let targetText = contextText;
+      if (!targetText) {
+        for (let i = conversation.length - 1; i >= 0; i--) {
+          if (conversation[i].sender === 'character') {
+            targetText = conversation[i].text;
+            break;
+          }
+        }
+      }
+      if (!targetText) targetText = activeChar.greeting || character.greeting || '';
+
+      const cleanText = targetText.replace(/\*[^*]+\*/g, '').slice(0, 400).trim();
+
+      const systemPrompt = `You are a roleplay co-writer for an interactive story with "${activeChar.name}".
+Based on the character's last message, suggest exactly 3 short, diverse, high-impact options the user could say or do next.
+Requirements:
+1. Return ONLY a valid JSON array of 3 strings: ["option 1", "option 2", "option 3"].
+2. Each option must be under 10 words.
+3. Diverse roleplay angles: one conversational/witty reply, one story-progressing question, one bold physical or tactical action.
+4. Language must match the dialogue.
+5. Absolutely NO markdown, NO codeblocks, NO extra text.`;
+
+      const userPrompt = `Character: ${activeChar.name}\nLast words:\n"${cleanText}"`;
+
+      const res = await fetch('https://text.pollinations.ai/', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          messages: [
+            { role: 'system', content: systemPrompt },
+            { role: 'user', content: userPrompt }
+          ],
+          model: 'openai',
+          seed: Math.floor(Math.random() * 100000)
+        }),
+        signal: AbortSignal.timeout(7000)
+      });
+
+      if (res.ok) {
+        const raw = await res.text();
+        let parsed = null;
+        try {
+          parsed = JSON.parse(raw.trim());
+        } catch {
+          const match = raw.match(/\[[\s\S]*?\]/);
+          if (match) {
+            try { parsed = JSON.parse(match[0]); } catch {}
+          }
+        }
+
+        if (Array.isArray(parsed) && parsed.length > 0) {
+          const cleanPills = parsed.filter(p => typeof p === 'string' && p.trim().length > 0).slice(0, 4);
+          if (cleanPills.length > 0) {
+            renderSmartPrompts(cleanPills);
+            return;
+          }
+        }
+      }
+    } catch (err) {
+      console.warn('Smart suggestions fetch error:', err);
+    } finally {
+      isGeneratingSmartPrompts = false;
+      if (smartPromptsLoading) {
+        smartPromptsLoading.classList.add('hidden');
+        smartPromptsLoading.classList.remove('flex');
+      }
+      if (smartPromptsRefreshIcon) {
+        smartPromptsRefreshIcon.classList.remove('animate-spin');
+      }
+    }
+  }
+
+  // Refresh Smart Prompts on click
+  refreshSmartPromptsBtn?.addEventListener('click', () => {
+    fetchDynamicSuggestions();
   });
+
+  // Initial render of smart prompts on load
+  renderSmartPrompts(activeChar.starterPrompts || character.starterPrompts || []);
 
   // Toggle Lore Sidebar (Mobile Drawer + Desktop Toggle)
   function openMobileSidebar() {
