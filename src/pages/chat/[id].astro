@@ -25,11 +25,16 @@ import {
   SlidersHorizontal, 
   Camera, 
   Video, 
+  Film,
   Brain, 
   Zap, 
   Play, 
   Eye, 
-  EyeOff 
+  EyeOff,
+  Pencil,
+  ChevronLeft,
+  ChevronRight,
+  RefreshCw
 } from '@lucide/astro';
 
 export function getStaticPaths() {
@@ -826,6 +831,58 @@ const { character } = Astro.props;
           </div>
         )}
 
+        <!-- In-Chat Multi-Modal & Action Toolbar (Part 2) -->
+        <div class="px-3 sm:px-6 py-2 bg-[#070913]/90 border-t border-white/[0.06] flex items-center justify-between gap-2 overflow-x-auto no-scrollbar shrink-0">
+          <div class="flex items-center gap-2">
+            <!-- 1. Request Selfie Photo -->
+            <button 
+              type="button" 
+              id="chat-action-selfie-btn"
+              class="px-2.5 py-1.5 rounded-xl bg-purple-500/10 hover:bg-purple-500/20 border border-purple-500/30 text-purple-300 hover:text-white text-xs font-medium flex items-center gap-1.5 transition active:scale-95 cursor-pointer shadow-sm"
+              title="Request a contextual selfie photo from character"
+            >
+              <Camera class="w-3.5 h-3.5 text-purple-400" />
+              <span>Send Selfie 📷</span>
+            </button>
+
+            <!-- 2. Request Living Video (BYOK Protected) -->
+            <button 
+              type="button" 
+              id="chat-action-video-btn"
+              class="px-2.5 py-1.5 rounded-xl bg-pink-500/10 hover:bg-pink-500/20 border border-pink-500/30 text-pink-300 hover:text-white text-xs font-medium flex items-center gap-1.5 transition active:scale-95 cursor-pointer shadow-sm group"
+              title="Generate a dynamic cinematic living video (Requires Fal.ai / Luma API Key)"
+            >
+              <Film class="w-3.5 h-3.5 text-pink-400 group-hover:animate-pulse" />
+              <span>Living Video 🎬</span>
+              <span class="text-[9px] px-1 py-0.2 rounded bg-pink-500/30 text-pink-200 border border-pink-400/40 font-mono">BYOK</span>
+            </button>
+          </div>
+
+          <div class="flex items-center gap-2">
+            <!-- 3. Regenerate / Swipe Last Reply -->
+            <button 
+              type="button" 
+              id="chat-action-regenerate-btn"
+              class="px-2.5 py-1.5 rounded-xl bg-white/[0.04] hover:bg-white/[0.08] border border-white/[0.08] text-slate-300 hover:text-white text-xs font-medium flex items-center gap-1.5 transition active:scale-95 cursor-pointer"
+              title="Regenerate alternative response for last character message"
+            >
+              <RefreshCw class="w-3 h-3 text-cyan-400" />
+              <span class="hidden sm:inline">Regenerate</span>
+            </button>
+
+            <!-- 4. Rewind Last Turn -->
+            <button 
+              type="button" 
+              id="chat-action-rewind-btn"
+              class="px-2.5 py-1.5 rounded-xl bg-white/[0.04] hover:bg-white/[0.08] border border-white/[0.08] text-slate-300 hover:text-amber-300 text-xs font-medium flex items-center gap-1.5 transition active:scale-95 cursor-pointer"
+              title="Rewind last turn (restore your prompt to input box)"
+            >
+              <RotateCcw class="w-3 h-3 text-amber-400" />
+              <span class="hidden sm:inline">Rewind</span>
+            </button>
+          </div>
+        </div>
+
         <!-- Bottom Chat Input Bar -->
         <div class="p-3 sm:p-5 border-t border-white/[0.08] bg-[#080a15]/95 backdrop-blur-xl shrink-0">
           <form id="room-input-form" class="max-w-4xl mx-auto flex items-end gap-2 sm:gap-3">
@@ -1407,16 +1464,26 @@ const { character } = Astro.props;
     if (saved) {
       try {
         conversation = JSON.parse(saved);
+        // Normalize messages to ensure swipe support
+        conversation.forEach(m => {
+          if (m.sender === 'character' && !m.swipes) {
+            m.swipes = [m.text];
+            m.swipeIndex = 0;
+          }
+        });
       } catch (e) {
         conversation = [];
       }
     }
 
     if (conversation.length === 0) {
+      const initialGreeting = formatMacroText(activeChar.greeting);
       conversation.push({
         sender: 'character',
-        text: formatMacroText(activeChar.greeting),
-        timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
+        text: initialGreeting,
+        timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+        swipes: [initialGreeting],
+        swipeIndex: 0
       });
       saveChat();
     }
@@ -1441,42 +1508,153 @@ const { character } = Astro.props;
   function appendMessageToDOM(msg, idx) {
     if (!chatStream) return;
     const isChar = msg.sender === 'character';
+    const isLast = idx === conversation.length - 1;
     
     const wrapper = document.createElement('div');
+    wrapper.id = `chat-msg-row-${idx}`;
     wrapper.className = isChar 
-      ? 'flex items-start gap-3 max-w-2xl'
-      : 'flex items-start gap-3 max-w-2xl ml-auto justify-end';
+      ? 'flex items-start gap-3 max-w-2xl group/msg'
+      : 'flex items-start gap-3 max-w-2xl ml-auto justify-end group/msg';
 
     if (isChar) {
+      // Swipes bar rendering
+      let swipesHtml = '';
+      if (msg.swipes && msg.swipes.length > 0) {
+        const currentSwipe = (msg.swipeIndex || 0) + 1;
+        const totalSwipes = msg.swipes.length;
+        swipesHtml = `
+          <div class="flex items-center gap-1 px-2 py-0.5 rounded-lg bg-white/[0.04] border border-white/[0.08] text-[10px] text-slate-400">
+            <button class="msg-swipe-btn hover:text-white disabled:opacity-30 disabled:pointer-events-none transition cursor-pointer p-0.5" data-action="prev" data-idx="${idx}" ${currentSwipe <= 1 ? 'disabled' : ''} title="Previous reply variation">
+              ‹
+            </button>
+            <span class="font-mono text-purple-300 px-1">${currentSwipe}/${totalSwipes}</span>
+            <button class="msg-swipe-btn hover:text-white transition cursor-pointer p-0.5" data-action="next" data-idx="${idx}" title="${currentSwipe >= totalSwipes && isLast ? 'Generate fresh new variation (+)' : 'Next variation'}">
+              ${currentSwipe >= totalSwipes && isLast ? '+' : '›'}
+            </button>
+          </div>
+        `;
+      }
+
+      // Media rendering
+      let contentHtml = '';
+      if (msg.mediaType === 'image') {
+        contentHtml = `
+          <div class="rounded-2xl overflow-hidden border border-purple-500/40 bg-[#090c18] shadow-2xl shadow-purple-950/60 max-w-sm sm:max-w-md">
+            <a href="${msg.mediaUrl}" target="_blank" class="block relative group/img cursor-zoom-in">
+              <img src="${msg.mediaUrl}" alt="${msg.text || 'Selfie'}" class="w-full h-auto object-cover max-h-96 rounded-t-2xl transition duration-300 group-hover/img:scale-105" loading="lazy" />
+              <div class="absolute inset-0 bg-black/30 opacity-0 group-hover/img:opacity-100 transition flex items-center justify-center text-xs text-white font-medium backdrop-blur-xs">
+                🔍 Click to Expand
+              </div>
+            </a>
+            <div class="p-3 bg-[#0d1022] border-t border-white/[0.08] flex items-center justify-between gap-2 text-xs">
+              <span class="text-purple-300 font-medium truncate max-w-[200px] flex items-center gap-1.5">
+                <span>📷</span>
+                <span class="truncate">${msg.text || 'Scene Snapshot'}</span>
+              </span>
+              <a href="${msg.mediaUrl}" target="_blank" download="selfie.png" class="px-2.5 py-1 rounded-lg bg-purple-600/30 hover:bg-purple-600 text-purple-200 hover:text-white border border-purple-500/40 text-[10px] font-mono transition">
+                Save
+              </a>
+            </div>
+          </div>
+        `;
+      } else if (msg.mediaType === 'video') {
+        contentHtml = `
+          <div class="rounded-2xl overflow-hidden border border-pink-500/40 bg-[#090c18] shadow-2xl shadow-pink-950/60 max-w-sm sm:max-w-md">
+            <video src="${msg.mediaUrl}" controls autoplay loop playsinline class="w-full h-auto max-h-96 rounded-t-2xl bg-black"></video>
+            <div class="p-3 bg-[#0d1022] border-t border-white/[0.08] flex items-center justify-between gap-2 text-xs">
+              <span class="text-pink-300 font-medium truncate max-w-[200px] flex items-center gap-1.5">
+                <span class="w-1.5 h-1.5 rounded-full bg-pink-400 animate-pulse"></span>
+                <span>Living Video Clip</span>
+              </span>
+              <a href="${msg.mediaUrl}" target="_blank" download="living_video.mp4" class="px-2.5 py-1 rounded-lg bg-pink-600/30 hover:bg-pink-600 text-pink-200 hover:text-white border border-pink-500/40 text-[10px] font-mono transition">
+                Download MP4
+              </a>
+            </div>
+          </div>
+        `;
+      } else if (msg.mediaType === 'image_generating') {
+        contentHtml = `
+          <div class="p-4 rounded-2xl bg-purple-950/30 border border-purple-500/40 flex items-center gap-3 animate-pulse">
+            <div class="w-8 h-8 rounded-xl bg-purple-600/20 border border-purple-500/50 flex items-center justify-center text-purple-300 shrink-0">
+              📷
+            </div>
+            <div class="text-xs space-y-0.5">
+              <p class="font-bold text-purple-200">Capturing Scene Photo...</p>
+              <p class="text-[11px] text-purple-400/80 font-mono">Synthesizing visual context on GPU cluster</p>
+            </div>
+          </div>
+        `;
+      } else if (msg.mediaType === 'video_generating') {
+        contentHtml = `
+          <div class="p-4 rounded-2xl bg-pink-950/30 border border-pink-500/40 flex items-center gap-3 animate-pulse">
+            <div class="w-8 h-8 rounded-xl bg-pink-600/20 border border-pink-500/50 flex items-center justify-center text-pink-300 shrink-0">
+              🎬
+            </div>
+            <div class="text-xs space-y-0.5">
+              <p class="font-bold text-pink-200">Fal.ai Kling Video Rendering...</p>
+              <p class="text-[11px] text-pink-400/80 font-mono">Synthesizing 4k living avatar motion frames</p>
+            </div>
+          </div>
+        `;
+      } else {
+        contentHtml = `
+          <div id="msg-bubble-${idx}" class="p-3.5 sm:p-4 rounded-2xl rounded-tl-sm bg-[#101426] border border-white/[0.08] text-xs sm:text-sm text-slate-200 leading-relaxed shadow-md select-text">
+            ${formatMessageText(msg.text)}
+          </div>
+        `;
+      }
+
       wrapper.innerHTML = `
         <img src="${activeChar.avatarUrl}" alt="${activeChar.name}" class="w-8 h-8 rounded-full object-cover ring-1 ring-purple-500/30 shrink-0 mt-1" />
-        <div class="space-y-1">
+        <div class="space-y-1.5 flex-1 min-w-0">
           <div class="flex items-center gap-2">
             <span class="text-xs font-bold text-slate-200">${activeChar.name}</span>
             <span class="text-[10px] text-slate-500">${msg.timestamp || 'Just now'}</span>
           </div>
-          <div class="p-3.5 sm:p-4 rounded-2xl rounded-tl-sm bg-[#101426] border border-white/[0.08] text-xs sm:text-sm text-slate-200 leading-relaxed shadow-md">
-            ${formatMessageText(msg.text)}
-          </div>
-          <div class="flex items-center gap-2 pt-0.5">
-            <button class="msg-speak-btn text-[10px] text-slate-500 hover:text-purple-400 flex items-center gap-1 transition cursor-pointer" data-idx="${idx}">
+          ${contentHtml}
+          <div class="flex flex-wrap items-center gap-2 pt-0.5">
+            ${swipesHtml}
+            <button class="msg-edit-btn text-[10px] text-slate-500 hover:text-purple-300 flex items-center gap-1 transition cursor-pointer" data-idx="${idx}" title="Edit message">
+              <span>✏️ Edit</span>
+            </button>
+            <button class="msg-rewind-btn text-[10px] text-slate-500 hover:text-amber-300 flex items-center gap-1 transition cursor-pointer" data-idx="${idx}" title="Rewind chat to this point">
+              <span>⏪ Rewind</span>
+            </button>
+            <button class="msg-speak-btn text-[10px] text-slate-500 hover:text-purple-400 flex items-center gap-1 transition cursor-pointer" data-idx="${idx}" title="Listen to message">
               <span>🔊 Listen</span>
             </button>
-            <button class="msg-copy-btn text-[10px] text-slate-500 hover:text-slate-300 flex items-center gap-1 transition cursor-pointer" data-text="${encodeURIComponent(msg.text)}">
+            <button class="msg-copy-btn text-[10px] text-slate-500 hover:text-slate-300 flex items-center gap-1 transition cursor-pointer" data-text="${encodeURIComponent(msg.text)}" title="Copy message">
               <span>📋 Copy</span>
+            </button>
+            <button class="msg-delete-btn text-[10px] text-slate-500 hover:text-red-400 flex items-center gap-1 transition cursor-pointer" data-idx="${idx}" title="Delete message">
+              <span>🗑️</span>
             </button>
           </div>
         </div>
       `;
     } else {
       wrapper.innerHTML = `
-        <div class="space-y-1 text-right">
+        <div class="space-y-1.5 text-right flex-1 min-w-0 max-w-lg">
           <div class="flex items-center justify-end gap-2">
             <span class="text-[10px] text-slate-500">${msg.timestamp || 'Just now'}</span>
             <span class="text-xs font-bold text-purple-300">${activeUserPersona.name || 'You'}</span>
           </div>
-          <div class="p-3.5 sm:p-4 rounded-2xl rounded-tr-sm bg-gradient-to-r from-purple-700 to-indigo-600 text-white text-xs sm:text-sm leading-relaxed shadow-lg shadow-purple-950/40 text-left">
+          <div id="msg-bubble-${idx}" class="p-3.5 sm:p-4 rounded-2xl rounded-tr-sm bg-gradient-to-r from-purple-700 to-indigo-600 text-white text-xs sm:text-sm leading-relaxed shadow-lg shadow-purple-950/40 text-left select-text">
             ${msg.text}
+          </div>
+          <div class="flex items-center justify-end gap-2 pt-0.5">
+            <button class="msg-edit-btn text-[10px] text-slate-500 hover:text-purple-300 flex items-center gap-1 transition cursor-pointer" data-idx="${idx}" title="Edit your message">
+              <span>✏️ Edit</span>
+            </button>
+            <button class="msg-rewind-btn text-[10px] text-slate-500 hover:text-amber-300 flex items-center gap-1 transition cursor-pointer" data-idx="${idx}" title="Rewind prompt to input box">
+              <span>⏪ Rewind</span>
+            </button>
+            <button class="msg-copy-btn text-[10px] text-slate-500 hover:text-slate-300 flex items-center gap-1 transition cursor-pointer" data-text="${encodeURIComponent(msg.text)}" title="Copy text">
+              <span>📋 Copy</span>
+            </button>
+            <button class="msg-delete-btn text-[10px] text-slate-500 hover:text-red-400 flex items-center gap-1 transition cursor-pointer" data-idx="${idx}" title="Delete message">
+              <span>🗑️</span>
+            </button>
           </div>
         </div>
         ${activeUserPersona.avatar ? `
@@ -1510,55 +1688,9 @@ const { character } = Astro.props;
     window.speechSynthesis.speak(utterance);
   }
 
-  // Send message & AI Generation
-  async function handleSendMessage(userText) {
-    if (!userText.trim()) return;
-
-    const userMsg = {
-      sender: 'user',
-      text: userText.trim(),
-      timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
-    };
-
-    conversation.push(userMsg);
-    saveChat();
-    appendMessageToDOM(userMsg, conversation.length - 1);
-    if (chatStream) chatStream.scrollTop = chatStream.scrollHeight;
-
-    if (input) {
-      input.value = '';
-      input.style.height = 'auto';
-    }
-
-    // Show typing
-    if (typingIndicator) {
-      typingIndicator.classList.remove('hidden');
-      if (chatStream) chatStream.scrollTop = chatStream.scrollHeight;
-    }
-
-    const provider = localStorage.getItem('aetheria_text_provider') || 'demo';
-    const apiKey = localStorage.getItem('aetheria_text_key') || '';
-    const model = localStorage.getItem('aetheria_text_model') || 'llama-3.3-70b-versatile';
-    const temp = parseFloat(localStorage.getItem('aetheria_text_temp') || '0.85');
-    const maxTokens = parseInt(localStorage.getItem('aetheria_text_tokens') || '350', 10);
-    const topP = parseFloat(localStorage.getItem('aetheria_text_top_p') || '0.95');
-
-    let replyText = '';
-
-    // If BYOK key provided and not demo, attempt direct API call
-    if (apiKey && provider !== 'demo') {
-      try {
-        let endpoint = 'https://api.groq.com/openai/v1/chat/completions';
-        if (provider === 'openrouter') endpoint = 'https://openrouter.ai/api/v1/chat/completions';
-        if (provider === 'deepseek') endpoint = 'https://api.deepseek.com/chat/completions';
-        if (provider === 'openai') endpoint = 'https://api.openai.com/v1/chat/completions';
-        if (provider === 'custom') {
-          const base = localStorage.getItem('aetheria_text_base_url') || 'http://localhost:11434/v1';
-          endpoint = base.replace(/\/+$/, '') + '/chat/completions';
-        }
-
-        // Build system prompt with persona context & user persona
-        const systemPrompt = `You are roleplaying as ${activeChar.name}, ${activeChar.title}.
+  // Build System Prompt
+  function buildSystemPrompt() {
+    return `You are roleplaying as ${activeChar.name}, ${activeChar.title}.
 Character Persona & Core Traits:
 ${formatMacroText(activeChar.description || '')}
 ${activeChar.personality ? `Personality: ${formatMacroText(activeChar.personality)}` : ''}
@@ -1578,8 +1710,56 @@ Stay fully in character as ${activeChar.name}. Adhere strictly to wholesome SFW 
 Use *asterisks* for expressive physical gestures, movements, tone and sensory details.
 Use quotes "like this" for spoken dialogue.
 Never speak, narrate, or decide thoughts or actions for {{user}}. Maintain high immersion and emotional responsiveness.`;
+  }
 
-        // Build recent history
+  // Send message & AI Generation with Real-time SSE Token Streaming
+  async function handleSendMessage(userText) {
+    if (!userText.trim()) return;
+
+    const userMsg = {
+      sender: 'user',
+      text: userText.trim(),
+      timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
+    };
+
+    conversation.push(userMsg);
+    saveChat();
+    appendMessageToDOM(userMsg, conversation.length - 1);
+    if (chatStream) chatStream.scrollTop = chatStream.scrollHeight;
+
+    if (input) {
+      input.value = '';
+      input.style.height = 'auto';
+    }
+
+    if (typingIndicator) {
+      typingIndicator.classList.remove('hidden');
+      if (chatStream) chatStream.scrollTop = chatStream.scrollHeight;
+    }
+
+    const provider = localStorage.getItem('aetheria_text_provider') || 'demo';
+    const apiKey = localStorage.getItem('aetheria_text_key') || '';
+    const model = localStorage.getItem('aetheria_text_model') || 'llama-3.3-70b-versatile';
+    const temp = parseFloat(localStorage.getItem('aetheria_text_temp') || '0.85');
+    const maxTokens = parseInt(localStorage.getItem('aetheria_text_tokens') || '350', 10);
+    const topP = parseFloat(localStorage.getItem('aetheria_text_top_p') || '0.95');
+    const enableStreaming = localStorage.getItem('aetheria_text_streaming') !== 'false';
+
+    let replyText = '';
+
+    // Direct LLM Call with Streaming
+    if (apiKey && provider !== 'demo') {
+      try {
+        let endpoint = 'https://api.groq.com/openai/v1/chat/completions';
+        if (provider === 'openrouter') endpoint = 'https://openrouter.ai/api/v1/chat/completions';
+        if (provider === 'deepseek') endpoint = 'https://api.deepseek.com/chat/completions';
+        if (provider === 'openai') endpoint = 'https://api.openai.com/v1/chat/completions';
+        if (provider === 'custom') {
+          const base = localStorage.getItem('aetheria_text_base_url') || 'http://localhost:11434/v1';
+          endpoint = base.replace(/\/+$/, '') + '/chat/completions';
+        }
+
+        const systemPrompt = buildSystemPrompt();
         const contextLimit = parseInt(localStorage.getItem('aetheria_text_context') || '16', 10);
         const historySlice = conversation.slice(-contextLimit).map(m => ({
           role: m.sender === 'user' ? 'user' : 'assistant',
@@ -1591,6 +1771,15 @@ Never speak, narrate, or decide thoughts or actions for {{user}}. Maintain high 
           ...historySlice
         ];
 
+        const payload = {
+          model: model,
+          messages: messages,
+          temperature: temp,
+          max_tokens: maxTokens,
+          top_p: topP,
+          stream: enableStreaming
+        };
+
         const res = await fetch(endpoint, {
           method: 'POST',
           headers: {
@@ -1598,44 +1787,91 @@ Never speak, narrate, or decide thoughts or actions for {{user}}. Maintain high 
             'Authorization': `Bearer ${apiKey}`,
             ...(provider === 'openrouter' ? { 'HTTP-Referer': 'https://aetheria.ai', 'X-Title': 'Aetheria AI' } : {})
           },
-          body: JSON.stringify({
-            model: model,
-            messages: messages,
-            temperature: temp,
-            max_tokens: maxTokens,
-            top_p: topP
-          })
+          body: JSON.stringify(payload)
         });
 
         if (res.ok) {
-          const data = await res.json();
-          replyText = data.choices?.[0]?.message?.content || '';
+          if (typingIndicator) typingIndicator.classList.add('hidden');
+
+          if (enableStreaming && res.body) {
+            // Token Streaming Execution
+            const charMsg = {
+              sender: 'character',
+              text: '',
+              timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+              swipes: [''],
+              swipeIndex: 0
+            };
+            conversation.push(charMsg);
+            const msgIdx = conversation.length - 1;
+            appendMessageToDOM(charMsg, msgIdx);
+            const bubbleEl = document.getElementById(`msg-bubble-${msgIdx}`);
+
+            const reader = res.body.getReader();
+            const decoder = new TextDecoder('utf-8');
+            let buffer = '';
+
+            while (true) {
+              const { done, value } = await reader.read();
+              if (done) break;
+              buffer += decoder.decode(value, { stream: true });
+              const lines = buffer.split('\n');
+              buffer = lines.pop() || '';
+
+              for (const line of lines) {
+                const trimmed = line.trim();
+                if (trimmed.startsWith('data: ')) {
+                  const dataStr = trimmed.slice(6);
+                  if (dataStr === '[DONE]') continue;
+                  try {
+                    const parsed = JSON.parse(dataStr);
+                    const token = parsed.choices?.[0]?.delta?.content || '';
+                    if (token) {
+                      replyText += token;
+                      charMsg.text = replyText;
+                      charMsg.swipes[0] = replyText;
+                      if (bubbleEl) {
+                        bubbleEl.innerHTML = formatMessageText(replyText);
+                      }
+                      if (chatStream) chatStream.scrollTop = chatStream.scrollHeight;
+                    }
+                  } catch (e) {}
+                }
+              }
+            }
+            saveChat();
+          } else {
+            const data = await res.json();
+            replyText = data.choices?.[0]?.message?.content || '';
+          }
         } else {
-          console.warn('API returned error status, falling back to simulator', res.status);
+          console.warn('API returned non-OK status', res.status);
         }
       } catch (err) {
-        console.warn('API call failed, falling back to persona engine', err);
+        console.warn('API call failed, falling back to simulator', err);
       }
     }
 
-    // Fallback response generator if API was not configured or errored
+    // Fallback response generator if API was not configured, failed, or streaming wasn't used
     if (!replyText) {
-      await new Promise(r => setTimeout(r, 700 + Math.random() * 500));
+      if (typingIndicator) typingIndicator.classList.add('hidden');
+      await new Promise(r => setTimeout(r, 600 + Math.random() * 400));
       replyText = pickResponse(userText);
+
+      const charMsg = {
+        sender: 'character',
+        text: replyText,
+        timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+        swipes: [replyText],
+        swipeIndex: 0
+      };
+      conversation.push(charMsg);
+      saveChat();
+      appendMessageToDOM(charMsg, conversation.length - 1);
+      if (chatStream) chatStream.scrollTop = chatStream.scrollHeight;
     }
 
     if (typingIndicator) typingIndicator.classList.add('hidden');
-
-    const charMsg = {
-      sender: 'character',
-      text: replyText,
-      timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
-    };
-
-    conversation.push(charMsg);
-    saveChat();
-    appendMessageToDOM(charMsg, conversation.length - 1);
-    if (chatStream) chatStream.scrollTop = chatStream.scrollHeight;
 
     if (ttsEnabled || localStorage.getItem('aetheria_voice_autoplay') === 'true') {
       speak(replyText);
@@ -1650,6 +1886,454 @@ Never speak, narrate, or decide thoughts or actions for {{user}}. Maintain high 
     const idx = Math.floor(Math.random() * replies.length);
     return formatMacroText(replies[idx]);
   }
+
+  // Generate Alternative Swipe Variation
+  async function generateNewSwipe(msgIdx) {
+    const msg = conversation[msgIdx];
+    if (!msg || msg.sender !== 'character') return;
+
+    showNotification('✨ Generating alternative response variation...');
+    if (typingIndicator) typingIndicator.classList.remove('hidden');
+
+    const provider = localStorage.getItem('aetheria_text_provider') || 'demo';
+    const apiKey = localStorage.getItem('aetheria_text_key') || '';
+    const model = localStorage.getItem('aetheria_text_model') || 'llama-3.3-70b-versatile';
+    const temp = Math.min(1.2, parseFloat(localStorage.getItem('aetheria_text_temp') || '0.85') + 0.15); // higher temperature for variety
+    const maxTokens = parseInt(localStorage.getItem('aetheria_text_tokens') || '350', 10);
+
+    let newReply = '';
+
+    if (apiKey && provider !== 'demo') {
+      try {
+        let endpoint = 'https://api.groq.com/openai/v1/chat/completions';
+        if (provider === 'openrouter') endpoint = 'https://openrouter.ai/api/v1/chat/completions';
+        if (provider === 'deepseek') endpoint = 'https://api.deepseek.com/chat/completions';
+        if (provider === 'openai') endpoint = 'https://api.openai.com/v1/chat/completions';
+
+        const systemPrompt = buildSystemPrompt();
+        const historySlice = conversation.slice(0, msgIdx).map(m => ({
+          role: m.sender === 'user' ? 'user' : 'assistant',
+          content: m.text
+        }));
+
+        const res = await fetch(endpoint, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${apiKey}`,
+            ...(provider === 'openrouter' ? { 'HTTP-Referer': 'https://aetheria.ai', 'X-Title': 'Aetheria AI' } : {})
+          },
+          body: JSON.stringify({
+            model: model,
+            messages: [{ role: 'system', content: systemPrompt }, ...historySlice],
+            temperature: temp,
+            max_tokens: maxTokens
+          })
+        });
+
+        if (res.ok) {
+          const data = await res.json();
+          newReply = data.choices?.[0]?.message?.content || '';
+        }
+      } catch (err) {}
+    }
+
+    if (!newReply) {
+      await new Promise(r => setTimeout(r, 600));
+      newReply = pickResponse('');
+    }
+
+    if (typingIndicator) typingIndicator.classList.add('hidden');
+
+    if (!msg.swipes) msg.swipes = [msg.text];
+    msg.swipes.push(newReply);
+    msg.swipeIndex = msg.swipes.length - 1;
+    msg.text = newReply;
+
+    saveChat();
+    renderAllMessages();
+    showNotification(`Swipe ${msg.swipeIndex + 1}/${msg.swipes.length} ready!`);
+  }
+
+  // Handle Swipe Navigation
+  function handleSwipeNavigation(msgIdx, action) {
+    const msg = conversation[msgIdx];
+    if (!msg || !msg.swipes) return;
+
+    if (action === 'prev') {
+      if ((msg.swipeIndex || 0) > 0) {
+        msg.swipeIndex--;
+        msg.text = msg.swipes[msg.swipeIndex];
+        saveChat();
+        renderAllMessages();
+      }
+    } else if (action === 'next') {
+      const nextIdx = (msg.swipeIndex || 0) + 1;
+      if (nextIdx < msg.swipes.length) {
+        msg.swipeIndex = nextIdx;
+        msg.text = msg.swipes[msg.swipeIndex];
+        saveChat();
+        renderAllMessages();
+      } else if (msgIdx === conversation.length - 1) {
+        generateNewSwipe(msgIdx);
+      }
+    }
+  }
+
+  // Inline Message Editing
+  function enableEditMessage(idx) {
+    const msg = conversation[idx];
+    if (!msg) return;
+
+    const bubble = document.getElementById(`msg-bubble-${idx}`);
+    if (!bubble) return;
+
+    bubble.innerHTML = `
+      <div class="space-y-2 w-full">
+        <textarea id="edit-textarea-${idx}" rows="4" class="w-full p-3 rounded-xl bg-[#080a18] border border-purple-500/60 text-white text-xs sm:text-sm focus:outline-none focus:ring-2 focus:ring-purple-400 resize-y leading-relaxed">${msg.text}</textarea>
+        <div class="flex items-center justify-end gap-2">
+          <button id="cancel-edit-${idx}" type="button" class="px-3 py-1.5 rounded-xl bg-white/[0.06] hover:bg-white/[0.1] text-xs text-slate-300 transition cursor-pointer">Cancel</button>
+          <button id="save-edit-${idx}" type="button" class="px-4 py-1.5 rounded-xl bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-500 text-xs font-bold text-white transition shadow-sm cursor-pointer">Save Changes</button>
+        </div>
+      </div>
+    `;
+
+    document.getElementById(`cancel-edit-${idx}`)?.addEventListener('click', () => {
+      renderAllMessages();
+    });
+
+    document.getElementById(`save-edit-${idx}`)?.addEventListener('click', () => {
+      const textarea = document.getElementById(`edit-textarea-${idx}`);
+      if (textarea && textarea.value.trim()) {
+        const val = textarea.value.trim();
+        msg.text = val;
+        if (msg.swipes && msg.swipeIndex !== undefined) {
+          msg.swipes[msg.swipeIndex] = val;
+        }
+        saveChat();
+        renderAllMessages();
+        showNotification('Message updated.');
+      }
+    });
+  }
+
+  // Rewind Turn Function
+  function rewindTurn(idx) {
+    const msg = conversation[idx];
+    if (!msg) return;
+
+    if (!confirm('Rewind conversation to this turn? Subsequent messages will be removed.')) return;
+
+    let restoredPrompt = '';
+    if (msg.sender === 'user') {
+      restoredPrompt = msg.text;
+      conversation = conversation.slice(0, idx);
+    } else {
+      // Find the user message before this character reply
+      if (idx > 0 && conversation[idx - 1].sender === 'user') {
+        restoredPrompt = conversation[idx - 1].text;
+        conversation = conversation.slice(0, idx - 1);
+      } else {
+        conversation = conversation.slice(0, idx);
+      }
+    }
+
+    saveChat();
+    renderAllMessages();
+
+    if (input && restoredPrompt) {
+      input.value = restoredPrompt;
+      input.focus();
+    }
+    showNotification('Chat rewound! Prompt restored to input box.');
+  }
+
+  // Contextual Image Prompt Synthesizer
+  function buildContextualSelfiePrompt() {
+    const recent = conversation.slice(-3);
+    let actions = [];
+    recent.forEach(m => {
+      const matched = m.text.match(/\*[^*]+\*/g);
+      if (matched) actions.push(...matched.map(a => a.replace(/\*/g, '')));
+    });
+
+    const actionText = actions.slice(-2).join(', ');
+    const charName = activeChar.name;
+    const charTitle = activeChar.title || 'character';
+    const charDesc = (activeChar.description || '').slice(0, 140);
+    const scenario = (activeChar.scenario || '').slice(0, 100);
+
+    return `Candid smartphone selfie photograph of ${charName}, ${charTitle}. Visual appearance: ${charDesc}. Action & expression: ${actionText || 'looking warmly into the camera, gentle smile'}. Environment setting: ${scenario || 'atmospheric cinematic scene'}. Award-winning photography, detailed face, photorealistic, 8k resolution.`;
+  }
+
+  // Contextual Video Motion Prompt Synthesizer
+  function buildContextualVideoPrompt() {
+    const recent = conversation.slice(-2);
+    let actions = [];
+    recent.forEach(m => {
+      const matched = m.text.match(/\*[^*]+\*/g);
+      if (matched) actions.push(...matched.map(a => a.replace(/\*/g, '')));
+    });
+
+    const actionText = actions.slice(-1).join('');
+    const charName = activeChar.name;
+    const charDesc = (activeChar.description || '').slice(0, 120);
+
+    return `Cinematic 4k video of ${charName}, ${charDesc}. Dynamic action: ${actionText || 'looking towards camera, natural facial expressions and gentle head movement'}, highly detailed, photorealistic lighting, fluid 60fps motion.`;
+  }
+
+  // Selfie / Photo Generation
+  async function handleGenerateSelfie() {
+    const prompt = buildContextualSelfiePrompt();
+    const imageProvider = localStorage.getItem('aetheria_image_provider') || 'pollinations';
+    const falKey = localStorage.getItem('aetheria_fal_key') || localStorage.getItem('aetheria_api_key_fal');
+    const openaiKey = localStorage.getItem('aetheria_api_key_openai');
+
+    if (imageProvider === 'fal' && !falKey) {
+      showNotification('⚠️ Fal Flux requires an API Key. Opening settings...');
+      byokTray?.classList.remove('hidden');
+      document.querySelector('[data-engine-tab="image"]')?.click();
+      return;
+    }
+    if (imageProvider === 'dalle' && !openaiKey) {
+      showNotification('⚠️ DALL-E 3 requires an OpenAI API Key. Opening settings...');
+      byokTray?.classList.remove('hidden');
+      document.querySelector('[data-engine-tab="image"]')?.click();
+      return;
+    }
+
+    showNotification('📷 Capturing scene selfie...');
+
+    const pendingId = 'selfie_' + Date.now();
+    const placeholderMsg = {
+      sender: 'character',
+      text: `*Snaps a candid selfie:* "${activeChar.name}"`,
+      timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+      mediaType: 'image_generating',
+      mediaPrompt: prompt,
+      pendingId: pendingId
+    };
+    conversation.push(placeholderMsg);
+    saveChat();
+    renderAllMessages();
+
+    try {
+      let finalUrl = '';
+      if (imageProvider === 'pollinations' || !falKey) {
+        const encoded = encodeURIComponent(prompt);
+        finalUrl = `https://image.pollinations.ai/prompt/${encoded}?width=768&height=1024&nologo=true&seed=${Date.now()}`;
+      } else if (imageProvider === 'fal' && falKey) {
+        const res = await fetch('https://queue.fal.run/fal-ai/flux/schnell', {
+          method: 'POST',
+          headers: {
+            'Authorization': `Key ${falKey}`,
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({ prompt: prompt, image_size: "portrait_4_3" })
+        });
+        const data = await res.json();
+        finalUrl = data.images?.[0]?.url || '';
+      }
+
+      if (finalUrl) {
+        placeholderMsg.mediaType = 'image';
+        placeholderMsg.mediaUrl = finalUrl;
+        delete placeholderMsg.pendingId;
+        saveChat();
+        renderAllMessages();
+        showNotification('📷 Photo delivered!');
+      } else {
+        throw new Error('Image URL could not be resolved.');
+      }
+    } catch (err) {
+      showNotification(`Photo error: ${err.message}`);
+      conversation = conversation.filter(m => m.pendingId !== pendingId);
+      saveChat();
+      renderAllMessages();
+    }
+  }
+
+  // Living Video Generation (BYOK Protected)
+  async function handleGenerateVideo() {
+    const falKey = localStorage.getItem('aetheria_fal_key') || localStorage.getItem('aetheria_api_key_fal');
+    const lumaKey = localStorage.getItem('aetheria_luma_key');
+
+    // Strict Gatekeeper: Only available for users who provided API Key
+    if (!falKey && !lumaKey) {
+      showNotification('⚠️ Living Video requires an API Key (Fal.ai Kling or Luma). Opening settings...');
+      byokTray?.classList.remove('hidden');
+      document.querySelector('[data-engine-tab="video"]')?.click();
+      return;
+    }
+
+    const prompt = buildContextualVideoPrompt();
+    showNotification('🎬 Requesting Living Video render...');
+
+    const pendingId = 'video_' + Date.now();
+    const placeholderMsg = {
+      sender: 'character',
+      text: `*Sends living video clip:* "${activeChar.name} in motion"`,
+      timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+      mediaType: 'video_generating',
+      mediaPrompt: prompt,
+      pendingId: pendingId
+    };
+    conversation.push(placeholderMsg);
+    saveChat();
+    renderAllMessages();
+
+    try {
+      if (falKey) {
+        const avatarFullUrl = activeChar.avatarUrl.startsWith('http') 
+          ? activeChar.avatarUrl 
+          : `${window.location.origin}${activeChar.avatarUrl}`;
+
+        const res = await fetch('https://queue.fal.run/fal-ai/kling-video/v1.5/pro/image-to-video', {
+          method: 'POST',
+          headers: {
+            'Authorization': `Key ${falKey}`,
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({
+            prompt: prompt,
+            image_url: avatarFullUrl,
+            duration: "5",
+            aspect_ratio: "16:9"
+          })
+        });
+
+        if (!res.ok) {
+          const err = await res.json().catch(() => ({}));
+          throw new Error(err.detail || err.message || `HTTP ${res.status}`);
+        }
+
+        const data = await res.json();
+        const requestId = data.request_id;
+        showNotification('Rendering video frames on Fal cluster...');
+
+        let videoUrl = '';
+        for (let i = 0; i < 25; i++) {
+          await new Promise(r => setTimeout(r, 4000));
+          const checkRes = await fetch(`https://queue.fal.run/fal-ai/kling-video/requests/${requestId}/status`, {
+            headers: { 'Authorization': `Key ${falKey}` }
+          });
+          if (checkRes.ok) {
+            const checkData = await checkRes.json();
+            if (checkData.status === 'COMPLETED') {
+              const resFinal = await fetch(`https://queue.fal.run/fal-ai/kling-video/requests/${requestId}`, {
+                headers: { 'Authorization': `Key ${falKey}` }
+              });
+              const finalData = await resFinal.json();
+              videoUrl = finalData.video?.url || '';
+              break;
+            } else if (checkData.status === 'FAILED') {
+              throw new Error('Fal GPU render failed.');
+            }
+          }
+        }
+
+        if (videoUrl) {
+          placeholderMsg.mediaType = 'video';
+          placeholderMsg.mediaUrl = videoUrl;
+          delete placeholderMsg.pendingId;
+          saveChat();
+          renderAllMessages();
+          showNotification('🎬 Living Video ready!');
+        } else {
+          throw new Error('Render timed out.');
+        }
+      }
+    } catch (err) {
+      showNotification(`Video error: ${err.message}`);
+      conversation = conversation.filter(m => m.pendingId !== pendingId);
+      saveChat();
+      renderAllMessages();
+    }
+  }
+
+  // Toolbar Actions Listeners
+  const selfieBtn = document.getElementById('chat-action-selfie-btn');
+  const videoBtn = document.getElementById('chat-action-video-btn');
+  const regenBtn = document.getElementById('chat-action-regenerate-btn');
+  const rewindBtn = document.getElementById('chat-action-rewind-btn');
+
+  selfieBtn?.addEventListener('click', handleGenerateSelfie);
+  videoBtn?.addEventListener('click', handleGenerateVideo);
+  regenBtn?.addEventListener('click', () => {
+    if (conversation.length > 0) {
+      const lastIdx = conversation.length - 1;
+      if (conversation[lastIdx].sender === 'character') {
+        generateNewSwipe(lastIdx);
+      } else {
+        handleSendMessage(conversation[lastIdx].text);
+      }
+    }
+  });
+  rewindBtn?.addEventListener('click', () => {
+    if (conversation.length > 0) {
+      rewindTurn(conversation.length - 1);
+    }
+  });
+
+  // Global delegation for dynamic message buttons (Edit, Rewind, Swipes, Speak, Copy, Delete)
+  document.addEventListener('click', (e) => {
+    const target = e.target;
+
+    // Swipe buttons
+    const swipeBtn = target.closest('.msg-swipe-btn');
+    if (swipeBtn) {
+      const idx = parseInt(swipeBtn.getAttribute('data-idx') || '0', 10);
+      const action = swipeBtn.getAttribute('data-action') || 'next';
+      handleSwipeNavigation(idx, action);
+      return;
+    }
+
+    // Edit button
+    const editBtn = target.closest('.msg-edit-btn');
+    if (editBtn) {
+      const idx = parseInt(editBtn.getAttribute('data-idx') || '0', 10);
+      enableEditMessage(idx);
+      return;
+    }
+
+    // Rewind button
+    const rewindMsgBtn = target.closest('.msg-rewind-btn');
+    if (rewindMsgBtn) {
+      const idx = parseInt(rewindMsgBtn.getAttribute('data-idx') || '0', 10);
+      rewindTurn(idx);
+      return;
+    }
+
+    // Delete button
+    const deleteBtn = target.closest('.msg-delete-btn');
+    if (deleteBtn) {
+      const idx = parseInt(deleteBtn.getAttribute('data-idx') || '0', 10);
+      if (confirm('Delete this message?')) {
+        conversation.splice(idx, 1);
+        saveChat();
+        renderAllMessages();
+        showNotification('Message deleted.');
+      }
+      return;
+    }
+
+    // Copy button
+    const copyBtn = target.closest('.msg-copy-btn');
+    if (copyBtn) {
+      const text = decodeURIComponent(copyBtn.getAttribute('data-text') || '');
+      navigator.clipboard.writeText(text);
+      showNotification('Copied message to clipboard!');
+      return;
+    }
+
+    // Speak button
+    const speakBtn = target.closest('.msg-speak-btn');
+    if (speakBtn) {
+      const idx = parseInt(speakBtn.getAttribute('data-idx') || '0', 10);
+      const msg = conversation[idx];
+      if (msg) speak(msg.text);
+    }
+  });
 
   // Event Listeners
   inputForm?.addEventListener('submit', (e) => {
@@ -1699,10 +2383,13 @@ Never speak, narrate, or decide thoughts or actions for {{user}}. Maintain high 
   // Clear chat
   clearChatBtn?.addEventListener('click', () => {
     if (confirm(`Reset conversation history with ${activeChar.name}?`)) {
+      const initialGreeting = formatMacroText(activeChar.greeting);
       conversation = [{
         sender: 'character',
-        text: formatMacroText(activeChar.greeting),
-        timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
+        text: initialGreeting,
+        timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+        swipes: [initialGreeting],
+        swipeIndex: 0
       }];
       saveChat();
       renderAllMessages();
@@ -1725,25 +2412,6 @@ Never speak, narrate, or decide thoughts or actions for {{user}}. Maintain high 
     a.click();
     URL.revokeObjectURL(url);
     showNotification('Chat exported to Markdown file!');
-  });
-
-  // Delegate copy and speak
-  document.addEventListener('click', (e) => {
-    const target = e.target;
-    const copyBtn = target.closest('.msg-copy-btn');
-    if (copyBtn) {
-      const text = decodeURIComponent(copyBtn.getAttribute('data-text') || '');
-      navigator.clipboard.writeText(text);
-      showNotification('Copied message to clipboard!');
-      return;
-    }
-
-    const speakBtn = target.closest('.msg-speak-btn');
-    if (speakBtn) {
-      const idx = parseInt(speakBtn.getAttribute('data-idx') || '0', 10);
-      const msg = conversation[idx];
-      if (msg) speak(msg.text);
-    }
   });
 
   // Startup
