@@ -794,8 +794,38 @@ const { character } = Astro.props;
                     </div>
                   </div>
 
-                  <!-- Model Select Dropdown (Default) -->
-                  <select id="text-model-select" class="w-full px-3.5 py-2.5 rounded-xl bg-white/[0.05] border border-white/10 text-xs text-white outline-none focus:border-purple-500/60 font-mono" disabled>
+                  <!-- Custom Luxury Searchable Model Trigger -->
+                  <div id="custom-model-trigger-container" class="relative w-full">
+                    <button
+                      type="button"
+                      id="custom-model-trigger-btn"
+                      class="w-full flex items-center justify-between px-3.5 py-2.5 rounded-xl bg-gradient-to-r from-[#11142e] via-[#161a3f] to-[#0e1128] border border-purple-500/30 hover:border-purple-400/60 text-xs text-white transition-all shadow-md group cursor-pointer"
+                    >
+                      <div class="flex items-center gap-2.5 min-w-0">
+                        <div id="trigger-model-badge" class="px-2 py-0.5 rounded-md text-[10px] font-bold tracking-wide uppercase bg-purple-500/20 text-purple-300 border border-purple-500/30 shrink-0">
+                          AI
+                        </div>
+                        <div class="flex flex-col text-left truncate">
+                          <span id="trigger-model-title" class="font-semibold text-white truncate text-xs">
+                            Select AI Model
+                          </span>
+                          <span id="trigger-model-subtitle" class="text-[10px] text-slate-400 truncate font-mono">
+                            No model selected
+                          </span>
+                        </div>
+                      </div>
+                      <div class="flex items-center gap-1.5 shrink-0 pl-2">
+                        <span class="text-[10px] px-2.5 py-1 rounded-lg bg-purple-500/15 text-purple-300 group-hover:bg-purple-500/25 border border-purple-500/30 transition flex items-center gap-1 font-medium">
+                          <svg class="w-3 h-3 text-purple-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
+                          <span>Search 450+</span>
+                        </span>
+                        <svg class="w-3.5 h-3.5 text-slate-400 group-hover:text-white transition transform group-hover:translate-y-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
+                      </div>
+                    </button>
+                  </div>
+
+                  <!-- Native select kept hidden for 100% DOM synchronization -->
+                  <select id="text-model-select" class="hidden" disabled>
                     <option value="" disabled selected>No API connected — Enter API key &amp; fetch models</option>
                   </select>
 
@@ -1670,6 +1700,119 @@ const { character } = Astro.props;
       </section>
     </div>
   </div>
+  <!-- ======================================================== -->
+  <!-- LUXURY MODEL SEARCH & DISCOVERY MODAL (z-[70])            -->
+  <!-- ======================================================== -->
+  <div 
+    id="model-search-modal" 
+    class="fixed inset-0 z-[70] hidden items-center justify-center bg-black/85 backdrop-blur-md p-3 sm:p-5 transition-all duration-300"
+  >
+    <div 
+      class="relative w-full max-w-2xl bg-[#0b0e24] border border-purple-500/30 rounded-2xl sm:rounded-3xl shadow-2xl shadow-purple-950/90 flex flex-col max-h-[88vh] overflow-hidden"
+    >
+      <!-- Modal Header -->
+      <div class="p-4 sm:p-5 border-b border-white/[0.08] flex items-center justify-between bg-gradient-to-r from-purple-950/50 via-transparent to-indigo-950/50 shrink-0">
+        <div class="flex items-center gap-2.5">
+          <div class="w-9 h-9 rounded-xl bg-purple-500/20 border border-purple-500/30 flex items-center justify-center text-purple-300 shadow-inner">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19.428 15.428a2 2 0 00-1.022-.547l-2.387-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547M8 4h8l-1 1v5.172a2 2 0 00.586 1.414l5 5c1.26 1.26.367 3.414-1.415 3.414H4.828c-1.782 0-2.674-2.154-1.414-3.414l5-5A2 2 0 009 10.172V5L8 4z"/></svg>
+          </div>
+          <div>
+            <div class="flex items-center gap-2">
+              <h3 class="text-sm sm:text-base font-bold text-white tracking-wide">Model Catalog & Search</h3>
+              <span id="modal-models-count-badge" class="px-2 py-0.5 rounded-full text-[10px] font-mono bg-purple-500/20 text-purple-300 border border-purple-500/30">
+                0 Models
+              </span>
+            </div>
+            <p class="text-[11px] text-slate-400">Search and filter live synced models with zero latency</p>
+          </div>
+        </div>
+        <button 
+          type="button" 
+          id="close-model-search-modal-btn" 
+          class="w-8 h-8 rounded-xl bg-white/[0.05] hover:bg-white/[0.1] text-slate-400 hover:text-white flex items-center justify-center transition cursor-pointer"
+        >
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+        </button>
+      </div>
+
+      <!-- Search Bar & Filters -->
+      <div class="p-3 sm:p-4 border-b border-white/[0.06] bg-black/25 shrink-0 space-y-2.5">
+        <!-- Search Input -->
+        <div class="relative">
+          <svg class="w-4 h-4 absolute left-3.5 top-1/2 -translate-y-1/2 text-purple-400 pointer-events-none" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
+          <input 
+            id="model-search-input" 
+            type="text" 
+            placeholder="Search 450+ models... (e.g. deepseek, claude, llama, free, 70b)" 
+            class="w-full pl-10 pr-9 py-2.5 rounded-xl bg-white/[0.06] border border-white/10 text-xs sm:text-sm text-white placeholder-slate-500 outline-none focus:border-purple-500/80 focus:ring-1 focus:ring-purple-500/50 transition font-sans"
+          />
+          <button 
+            type="button" 
+            id="clear-model-search-btn" 
+            class="hidden absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-white text-xs p-1"
+          >
+            ✕
+          </button>
+        </div>
+
+        <!-- Category Filter Chips -->
+        <div class="flex items-center gap-1.5 overflow-x-auto no-scrollbar py-0.5 text-[11px]">
+          <button type="button" data-filter="all" class="model-cat-chip px-2.5 py-1 rounded-lg bg-purple-600 text-white font-medium shrink-0 transition">
+            All
+          </button>
+          <button type="button" data-filter="roleplay" class="model-cat-chip px-2.5 py-1 rounded-lg bg-white/[0.05] hover:bg-white/[0.1] text-slate-300 font-medium shrink-0 transition flex items-center gap-1">
+            <span>🔥</span> Top Roleplay
+          </button>
+          <button type="button" data-filter="deepseek" class="model-cat-chip px-2.5 py-1 rounded-lg bg-white/[0.05] hover:bg-white/[0.1] text-cyan-300 font-medium shrink-0 transition">
+            DeepSeek
+          </button>
+          <button type="button" data-filter="anthropic" class="model-cat-chip px-2.5 py-1 rounded-lg bg-white/[0.05] hover:bg-white/[0.1] text-amber-300 font-medium shrink-0 transition">
+            Claude
+          </button>
+          <button type="button" data-filter="meta" class="model-cat-chip px-2.5 py-1 rounded-lg bg-white/[0.05] hover:bg-white/[0.1] text-blue-300 font-medium shrink-0 transition">
+            Llama
+          </button>
+          <button type="button" data-filter="google" class="model-cat-chip px-2.5 py-1 rounded-lg bg-white/[0.05] hover:bg-white/[0.1] text-emerald-300 font-medium shrink-0 transition">
+            Gemini
+          </button>
+          <button type="button" data-filter="mistral" class="model-cat-chip px-2.5 py-1 rounded-lg bg-white/[0.05] hover:bg-white/[0.1] text-orange-300 font-medium shrink-0 transition">
+            Mistral
+          </button>
+          <button type="button" data-filter="free" class="model-cat-chip px-2.5 py-1 rounded-lg bg-white/[0.05] hover:bg-white/[0.1] text-green-300 font-medium shrink-0 transition flex items-center gap-1">
+            <span>🎁</span> Free (:free)
+          </button>
+        </div>
+      </div>
+
+      <!-- Models List Scroll Area -->
+      <div id="models-list-scroll" class="flex-1 overflow-y-auto p-3 sm:p-4 space-y-1.5 custom-scrollbar min-h-[300px]">
+        <div id="models-list-empty" class="hidden py-12 text-center text-slate-400">
+          <div class="text-3xl mb-2">🔍</div>
+          <div class="text-sm font-medium text-white mb-1">No models found</div>
+          <div class="text-xs text-slate-500">Try typing a different keyword or category filter</div>
+        </div>
+        <div id="models-list-items" class="space-y-1.5">
+          <!-- Rendered dynamically -->
+        </div>
+      </div>
+
+      <!-- Modal Footer -->
+      <div class="p-3 sm:p-3.5 border-t border-white/[0.08] bg-black/40 flex items-center justify-between text-[11px] text-slate-400 shrink-0">
+        <div class="flex items-center gap-1.5 min-w-0 pr-2">
+          <span class="w-2 h-2 rounded-full bg-emerald-400 shrink-0"></span>
+          <span id="active-selected-model-text" class="font-mono text-purple-300 truncate max-w-[200px] sm:max-w-md">No model selected</span>
+        </div>
+        <button 
+          type="button" 
+          id="manual-input-from-modal-btn" 
+          class="text-slate-400 hover:text-white underline transition shrink-0 cursor-pointer"
+        >
+          Type Custom ID
+        </button>
+      </div>
+    </div>
+  </div>
+
 </Layout>
 
 <script define:vars={{ character }}>
@@ -2298,12 +2441,321 @@ const { character } = Astro.props;
     }
   };
 
+  // ==========================================
+  // LUXURY MODEL SELECTOR & SEARCH STATE
+  // ==========================================
+  const customModelTriggerContainer = document.getElementById('custom-model-trigger-container');
+  const customModelTriggerBtn = document.getElementById('custom-model-trigger-btn');
+  const triggerModelBadge = document.getElementById('trigger-model-badge');
+  const triggerModelTitle = document.getElementById('trigger-model-title');
+  const triggerModelSubtitle = document.getElementById('trigger-model-subtitle');
+
+  const modelSearchModal = document.getElementById('model-search-modal');
+  const closeModelSearchModalBtn = document.getElementById('close-model-search-modal-btn');
+  const modelSearchInput = document.getElementById('model-search-input');
+  const clearModelSearchBtn = document.getElementById('clear-model-search-btn');
+  const modelsListItems = document.getElementById('models-list-items');
+  const modelsListEmpty = document.getElementById('models-list-empty');
+  const modalModelsCountBadge = document.getElementById('modal-models-count-badge');
+  const activeSelectedModelText = document.getElementById('active-selected-model-text');
+  const manualInputFromModalBtn = document.getElementById('manual-input-from-modal-btn');
+  const modelCatChips = document.querySelectorAll('.model-cat-chip');
+
+  let currentSyncedModels = [];
+  let activeModelCategory = 'all';
+  let activeModelSearchQuery = '';
+
+  function getModelMeta(id) {
+    if (!id) return { id: '', brand: 'AI', badgeClass: 'bg-purple-500/20 text-purple-300 border-purple-500/30', cleanName: 'No Model Selected', isFree: false };
+    const lower = id.toLowerCase();
+    let brand = 'AI';
+    let badgeClass = 'bg-purple-500/20 text-purple-300 border-purple-500/30';
+    const isFree = lower.includes(':free');
+
+    if (lower.includes('deepseek')) {
+      brand = 'DeepSeek';
+      badgeClass = 'bg-cyan-500/20 text-cyan-300 border-cyan-500/30';
+    } else if (lower.includes('anthropic') || lower.includes('claude')) {
+      brand = 'Claude';
+      badgeClass = 'bg-amber-500/20 text-amber-300 border-amber-500/30';
+    } else if (lower.includes('meta') || lower.includes('llama')) {
+      brand = 'Llama';
+      badgeClass = 'bg-blue-500/20 text-blue-300 border-blue-500/30';
+    } else if (lower.includes('google') || lower.includes('gemini')) {
+      brand = 'Gemini';
+      badgeClass = 'bg-emerald-500/20 text-emerald-300 border-emerald-500/30';
+    } else if (lower.includes('mistral')) {
+      brand = 'Mistral';
+      badgeClass = 'bg-orange-500/20 text-orange-300 border-orange-500/30';
+    } else if (lower.includes('nous') || lower.includes('hermes')) {
+      brand = 'Hermes';
+      badgeClass = 'bg-fuchsia-500/20 text-fuchsia-300 border-fuchsia-500/30';
+    } else if (lower.includes('openai') || lower.includes('gpt')) {
+      brand = 'OpenAI';
+      badgeClass = 'bg-emerald-500/20 text-emerald-300 border-emerald-500/30';
+    } else if (id.includes('/')) {
+      brand = id.split('/')[0].toUpperCase();
+      badgeClass = 'bg-slate-500/20 text-slate-300 border-slate-500/30';
+    }
+
+    let cleanName = id.includes('/') ? id.split('/').slice(1).join('/') : id;
+    if (cleanName.endsWith(':free')) cleanName = cleanName.replace(':free', '');
+
+    return { id, brand, badgeClass, cleanName, isFree };
+  }
+
+  function updateCustomModelTrigger(mId) {
+    if (!triggerModelTitle || !triggerModelSubtitle || !triggerModelBadge) return;
+    if (!mId || mId.includes('No API connected')) {
+      triggerModelTitle.textContent = 'Select AI Model';
+      triggerModelSubtitle.textContent = 'Tap to search & choose from live models';
+      triggerModelBadge.textContent = 'AI';
+      triggerModelBadge.className = 'px-2 py-0.5 rounded-md text-[10px] font-bold tracking-wide uppercase bg-purple-500/20 text-purple-300 border border-purple-500/30 shrink-0';
+      if (activeSelectedModelText) activeSelectedModelText.textContent = 'No model selected';
+      return;
+    }
+
+    const meta = getModelMeta(mId);
+    triggerModelTitle.textContent = meta.cleanName;
+    triggerModelSubtitle.textContent = meta.id;
+    triggerModelBadge.textContent = meta.brand;
+    triggerModelBadge.className = `px-2 py-0.5 rounded-md text-[10px] font-bold tracking-wide uppercase border shrink-0 ${meta.badgeClass}`;
+    if (activeSelectedModelText) activeSelectedModelText.textContent = meta.id;
+  }
+
+  function filterModelsList() {
+    if (!currentSyncedModels || currentSyncedModels.length === 0) return [];
+    const q = (activeModelSearchQuery || '').toLowerCase().trim();
+    const cat = activeModelCategory || 'all';
+
+    const topRoleplayKeywords = [
+      'deepseek/deepseek-chat', 'deepseek/deepseek-r1', 'claude-3.5-sonnet', 'claude-3.7-sonnet',
+      'llama-3.3-70b', 'lumimaid', 'gemini-2.0-flash', 'hermes-3', 'mistral-large', 'mythomax'
+    ];
+
+    return currentSyncedModels.filter(m => {
+      const lower = m.toLowerCase();
+
+      // Category filter
+      if (cat === 'roleplay') {
+        const isRp = topRoleplayKeywords.some(rp => lower.includes(rp));
+        if (!isRp) return false;
+      } else if (cat === 'deepseek') {
+        if (!lower.includes('deepseek')) return false;
+      } else if (cat === 'anthropic') {
+        if (!lower.includes('anthropic') && !lower.includes('claude')) return false;
+      } else if (cat === 'meta') {
+        if (!lower.includes('meta') && !lower.includes('llama')) return false;
+      } else if (cat === 'google') {
+        if (!lower.includes('google') && !lower.includes('gemini')) return false;
+      } else if (cat === 'mistral') {
+        if (!lower.includes('mistral')) return false;
+      } else if (cat === 'free') {
+        if (!lower.includes(':free')) return false;
+      }
+
+      // Search keyword
+      if (q) {
+        return lower.includes(q);
+      }
+      return true;
+    });
+  }
+
+  function renderModelSearchResults() {
+    if (!modelsListItems) return;
+    const filtered = filterModelsList();
+    const currentSelected = textModelSelect?.value || localStorage.getItem('aetheria_text_model') || '';
+
+    if (modalModelsCountBadge) {
+      modalModelsCountBadge.textContent = `${filtered.length} of ${currentSyncedModels.length} Models`;
+    }
+
+    if (filtered.length === 0) {
+      modelsListItems.innerHTML = '';
+      if (modelsListEmpty) modelsListEmpty.classList.remove('hidden');
+      return;
+    }
+
+    if (modelsListEmpty) modelsListEmpty.classList.add('hidden');
+
+    const renderChunk = filtered.slice(0, 100);
+
+    let html = '';
+    renderChunk.forEach(mId => {
+      const meta = getModelMeta(mId);
+      const isSelected = mId === currentSelected;
+
+      html += `
+        <button
+          type="button"
+          data-model-id="${mId}"
+          class="model-select-card w-full flex items-center justify-between p-3 rounded-2xl border transition-all cursor-pointer text-left group ${
+            isSelected 
+              ? 'bg-purple-900/35 border-purple-500/60 shadow-lg shadow-purple-950/60' 
+              : 'bg-white/[0.02] hover:bg-white/[0.06] border-white/[0.06] hover:border-purple-500/30'
+          }"
+        >
+          <div class="flex items-center gap-3 min-w-0 pr-2">
+            <span class="px-2 py-1 rounded-md text-[10px] font-bold tracking-wider uppercase border shrink-0 ${meta.badgeClass}">
+              ${meta.brand}
+            </span>
+            <div class="min-w-0 flex flex-col">
+              <div class="flex items-center gap-1.5 flex-wrap">
+                <span class="text-xs sm:text-sm font-semibold text-white truncate">${meta.cleanName}</span>
+                ${meta.isFree ? '<span class="px-1.5 py-0.2 rounded text-[9px] font-bold bg-green-500/20 text-green-300 border border-green-500/30">FREE</span>' : ''}
+              </div>
+              <span class="text-[10px] text-slate-400 font-mono truncate">${meta.id}</span>
+            </div>
+          </div>
+          <div class="shrink-0 pl-1">
+            ${isSelected 
+              ? '<div class="w-6 h-6 rounded-full bg-purple-600 flex items-center justify-center text-white shadow"><svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"/></svg></div>'
+              : '<div class="w-6 h-6 rounded-full border border-white/10 group-hover:border-purple-400/50 flex items-center justify-center text-slate-400 group-hover:text-purple-300 text-xs transition">→</div>'
+            }
+          </div>
+        </button>
+      `;
+    });
+
+    modelsListItems.innerHTML = html;
+
+    modelsListItems.querySelectorAll('.model-select-card').forEach(card => {
+      card.addEventListener('click', () => {
+        const mId = card.getAttribute('data-model-id');
+        if (mId) {
+          selectModel(mId);
+        }
+      });
+    });
+  }
+
+  function selectModel(mId) {
+    if (!mId) return;
+    if (textModelSelect) {
+      textModelSelect.disabled = false;
+      textModelSelect.value = mId;
+      if (textModelSelect.value !== mId) {
+        const opt = document.createElement('option');
+        opt.value = mId;
+        opt.textContent = mId;
+        opt.selected = true;
+        textModelSelect.prepend(opt);
+      }
+    }
+    if (textModelInput) textModelInput.value = mId;
+    localStorage.setItem('aetheria_text_model', mId);
+    updateCustomModelTrigger(mId);
+    updateHeaderPill();
+    closeModelSearchModal();
+    showNotification(`Active Model: ${mId}`);
+  }
+
+  function openModelSearchModal() {
+    if (!modelSearchModal) return;
+    const prov = textProviderSelect?.value || localStorage.getItem('aetheria_text_provider') || 'groq';
+
+    if (!currentSyncedModels || currentSyncedModels.length === 0) {
+      const cached = localStorage.getItem('aetheria_synced_models_' + prov);
+      if (cached) {
+        try {
+          currentSyncedModels = JSON.parse(cached);
+        } catch (e) {}
+      }
+    }
+
+    activeModelCategory = 'all';
+    activeModelSearchQuery = '';
+    if (modelSearchInput) modelSearchInput.value = '';
+    if (clearModelSearchBtn) clearModelSearchBtn.classList.add('hidden');
+
+    modelCatChips.forEach(chip => {
+      const filter = chip.getAttribute('data-filter');
+      if (filter === 'all') {
+        chip.className = 'model-cat-chip px-2.5 py-1 rounded-lg bg-purple-600 text-white font-medium shrink-0 transition cursor-pointer';
+      } else {
+        chip.className = 'model-cat-chip px-2.5 py-1 rounded-lg bg-white/[0.05] hover:bg-white/[0.1] text-slate-300 font-medium shrink-0 transition cursor-pointer';
+      }
+    });
+
+    renderModelSearchResults();
+    modelSearchModal.classList.remove('hidden');
+    modelSearchModal.classList.add('flex');
+    setTimeout(() => modelSearchInput?.focus(), 100);
+  }
+
+  function closeModelSearchModal() {
+    if (!modelSearchModal) return;
+    modelSearchModal.classList.add('hidden');
+    modelSearchModal.classList.remove('flex');
+  }
+
+  // Setup event listeners for custom model selector
+  customModelTriggerBtn?.addEventListener('click', openModelSearchModal);
+  closeModelSearchModalBtn?.addEventListener('click', closeModelSearchModal);
+
+  modelSearchModal?.addEventListener('click', (e) => {
+    if (e.target === modelSearchModal) {
+      closeModelSearchModal();
+    }
+  });
+
+  modelSearchInput?.addEventListener('input', (e) => {
+    activeModelSearchQuery = e.target.value;
+    if (clearModelSearchBtn) {
+      clearModelSearchBtn.classList.toggle('hidden', !activeModelSearchQuery);
+    }
+    renderModelSearchResults();
+  });
+
+  clearModelSearchBtn?.addEventListener('click', () => {
+    if (modelSearchInput) {
+      modelSearchInput.value = '';
+      activeModelSearchQuery = '';
+      clearModelSearchBtn.classList.add('hidden');
+      renderModelSearchResults();
+      modelSearchInput.focus();
+    }
+  });
+
+  modelCatChips.forEach(chip => {
+    chip.addEventListener('click', () => {
+      const filter = chip.getAttribute('data-filter') || 'all';
+      activeModelCategory = filter;
+
+      modelCatChips.forEach(c => {
+        if (c === chip) {
+          c.className = 'model-cat-chip px-2.5 py-1 rounded-lg bg-purple-600 text-white font-medium shrink-0 transition cursor-pointer';
+        } else {
+          c.className = 'model-cat-chip px-2.5 py-1 rounded-lg bg-white/[0.05] hover:bg-white/[0.1] text-slate-300 font-medium shrink-0 transition cursor-pointer';
+        }
+      });
+
+      renderModelSearchResults();
+    });
+  });
+
+  manualInputFromModalBtn?.addEventListener('click', () => {
+    closeModelSearchModal();
+    if (toggleModelInputModeBtn) {
+      toggleModelInputModeBtn.click();
+    }
+  });
+
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape' && modelSearchModal && !modelSearchModal.classList.contains('hidden')) {
+      closeModelSearchModal();
+    }
+  });
+
   // Helper: Set empty state for model dropdown when not connected
   function setEmptyModelDropdown() {
+    currentSyncedModels = [];
     if (!textModelSelect) return;
     textModelSelect.innerHTML = '<option value="" disabled selected>No API connected — Enter API key &amp; fetch models</option>';
     textModelSelect.disabled = true;
     if (textModelInput) textModelInput.value = '';
+    updateCustomModelTrigger('');
     if (modelCountBadge) modelCountBadge.textContent = 'Not connected';
     if (dynamicPresetsContainer) {
       dynamicPresetsContainer.innerHTML = '<span class="text-[10px] text-slate-500 italic">No models loaded. Connect API key to sync.</span>';
@@ -2314,6 +2766,8 @@ const { character } = Astro.props;
   function populateModelDropdown(models, selected) {
     if (!textModelSelect) return;
     const unique = Array.from(new Set(models || [])).filter(Boolean);
+    currentSyncedModels = unique;
+
     if (unique.length === 0) {
       setEmptyModelDropdown();
       return;
@@ -2334,9 +2788,11 @@ const { character } = Astro.props;
       opt.selected = true;
       textModelSelect.prepend(opt);
     }
+    const finalSelected = selected || unique[0];
     if (textModelInput) {
-      textModelInput.value = textModelSelect.value;
+      textModelInput.value = finalSelected;
     }
+    updateCustomModelTrigger(finalSelected);
     if (modelCountBadge) {
       modelCountBadge.textContent = `${unique.length} Models Synced`;
     }
@@ -2373,6 +2829,7 @@ const { character } = Astro.props;
         }
         if (textModelInput) textModelInput.value = m;
         localStorage.setItem('aetheria_text_model', m);
+        updateCustomModelTrigger(m);
         updateHeaderPill();
       });
       dynamicPresetsContainer.appendChild(btn);
@@ -3641,17 +4098,17 @@ const { character } = Astro.props;
     localStorage.setItem('aetheria_text_model', textModelInput.value.trim());
   });
 
-  // Toggle model input mode (dropdown vs custom text)
+  // Toggle model input mode (Custom Luxury Trigger vs custom text input)
   toggleModelInputModeBtn?.addEventListener('click', () => {
-    const isHidden = textModelSelect?.classList.contains('hidden');
-    if (isHidden) {
-      textModelSelect?.classList.remove('hidden');
+    const isCustomHidden = customModelTriggerContainer?.classList.contains('hidden');
+    if (isCustomHidden) {
+      customModelTriggerContainer?.classList.remove('hidden');
       textModelInput?.classList.add('hidden');
-      if (textModelSelect && textModelInput && textModelInput.value) {
-        textModelSelect.value = textModelInput.value;
+      if (textModelInput && textModelInput.value) {
+        selectModel(textModelInput.value.trim());
       }
     } else {
-      textModelSelect?.classList.add('hidden');
+      customModelTriggerContainer?.classList.add('hidden');
       textModelInput?.classList.remove('hidden');
       if (textModelSelect && textModelInput) {
         textModelInput.value = textModelSelect.value;
