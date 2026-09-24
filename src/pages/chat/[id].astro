@@ -2190,11 +2190,27 @@ const { character } = Astro.props;
   const videoDurationSelect = document.getElementById('video-duration-select');
   const videoResSelect = document.getElementById('video-res-select');
 
-  // Format action text (*italic*), bold, code, and paragraphs (Cinematic Markdown)
+  // Format action text (*italic*), bold, code, markdown images, and paragraphs (Cinematic Markdown)
   function formatMessageText(text) {
     if (!text) return '';
+
+    // 0. Extract markdown images before escaping: ![alt](url)
+    const mediaPlaceholders = [];
+    let s = text.replace(/!\[([^\]]*)\]\((https?:\/\/[^\s\)]+)\)/g, (_, alt, url) => {
+      const idx = mediaPlaceholders.length;
+      mediaPlaceholders.push(`<div class="my-3 rounded-2xl overflow-hidden border border-white/10 shadow-lg bg-black/40 max-w-md"><img src="${url}" alt="${alt || 'Scene illustration'}" class="max-h-96 w-auto max-w-full rounded-2xl object-contain mx-auto block hover:scale-[1.02] transition-transform duration-300" loading="lazy" /></div>`);
+      return `__MEDIA_IMG_${idx}__`;
+    });
+
+    // Also detect standalone image URLs ending in png/jpg/jpeg/webp/gif
+    s = s.replace(/(^|\n|\s)(https?:\/\/[^\s<>]+\.(?:png|jpe?g|webp|gif))(?=\s|\n|$)/gi, (_, prefix, url) => {
+      const idx = mediaPlaceholders.length;
+      mediaPlaceholders.push(`<div class="my-3 rounded-2xl overflow-hidden border border-white/10 shadow-lg bg-black/40 max-w-md"><img src="${url}" alt="Scene illustration" class="max-h-96 w-auto max-w-full rounded-2xl object-contain mx-auto block hover:scale-[1.02] transition-transform duration-300" loading="lazy" /></div>`);
+      return `${prefix}__MEDIA_IMG_${idx}__`;
+    });
+
     // 1. Basic entity escaping
-    let s = text
+    s = s
       .replace(/&/g, '&amp;')
       .replace(/</g, '&lt;')
       .replace(/>/g, '&gt;');
@@ -2218,6 +2234,9 @@ const { character } = Astro.props;
 
     // 6. Restore inline code
     s = s.replace(/__CODE_BLOCK_(\d+)__/g, (_, idx) => codeBlocks[idx] || '');
+
+    // Restore media images
+    s = s.replace(/__MEDIA_IMG_(\d+)__/g, (_, idx) => mediaPlaceholders[idx] || '');
 
     // 7. Multi-line paragraphs: double newlines become separate paragraphs
     const paragraphs = s.split(/\n{2,}/);
