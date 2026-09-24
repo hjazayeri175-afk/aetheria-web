@@ -498,9 +498,9 @@ const { character } = Astro.props;
                         <div>
                           <div class="flex items-center gap-2">
                             <h5 class="text-sm font-bold text-white">Nova</h5>
-                            <span class="text-[10px] px-2 py-0.5 rounded-full bg-purple-500/20 text-purple-300 border border-purple-500/30">Aetheria AI Guide</span>
+                            <span id="wizard-step-badge" class="text-[10px] font-bold px-2 py-0.5 rounded-full bg-purple-500/20 text-purple-300 border border-purple-500/30">مرحله ۱ از ۴: نام شما</span>
                           </div>
-                          <p class="text-[11px] text-slate-400">دستیار هوشمند راه‌اندازی و اتصال موتور چت</p>
+                          <p class="text-[11px] text-slate-400">راهنمای هوشمند اتصال موتور هوش مصنوعی و مدل‌ها</p>
                         </div>
                       </div>
                       <button type="button" id="btn-wizard-restart" class="px-2.5 py-1.5 rounded-xl text-slate-400 hover:text-white bg-white/[0.04] hover:bg-white/[0.08] transition flex items-center gap-1.5 text-xs cursor-pointer border border-white/[0.06]" title="شروع دوباره راهنما">
@@ -509,9 +509,163 @@ const { character } = Astro.props;
                       </button>
                     </div>
 
-                    <!-- Wizard Chat Messages Stream -->
-                    <div id="wizard-chat-box" class="space-y-4 max-h-[480px] overflow-y-auto pr-1">
-                      <!-- Rendered dynamically by JS -->
+                    <!-- VIEW A: Interactive Chat Stream (Steps 1, 2, 3) -->
+                    <div id="wizard-chat-view" class="space-y-3">
+                      <!-- Chat Messages -->
+                      <div id="wizard-chat-box" class="space-y-4 max-h-[380px] overflow-y-auto pr-1">
+                        <!-- Rendered dynamically by JS -->
+                      </div>
+
+                      <!-- Bottom Chat Input Bar -->
+                      <div id="wizard-bottom-bar" class="pt-3 border-t border-white/[0.08] flex items-center gap-2">
+                        <div class="relative flex-1">
+                          <input 
+                            id="wizard-chat-input" 
+                            type="text" 
+                            placeholder="نام یا لقبتان را اینجا بنویسید..." 
+                            class="w-full pl-14 pr-3.5 py-2.5 rounded-xl bg-white/[0.05] border border-white/10 text-xs text-white placeholder:text-slate-500 outline-none focus:border-purple-500/60 font-sans"
+                          />
+                          <button 
+                            type="button" 
+                            id="wizard-paste-btn" 
+                            class="hidden absolute left-2 top-1/2 -translate-y-1/2 px-2 py-1 rounded-lg bg-white/10 hover:bg-white/20 text-[10px] text-cyan-300 transition cursor-pointer"
+                          >
+                            Paste
+                          </button>
+                        </div>
+                        <button 
+                          type="button" 
+                          id="wizard-chat-send-btn" 
+                          class="px-4 py-2.5 rounded-xl bg-gradient-to-r from-purple-600 via-indigo-600 to-purple-700 hover:from-purple-500 hover:to-indigo-500 text-white text-xs font-bold transition shadow-md shadow-purple-950 flex items-center gap-1.5 cursor-pointer shrink-0"
+                        >
+                          <span>ارسال</span>
+                          <Send class="w-3.5 h-3.5" />
+                        </button>
+                      </div>
+                    </div>
+
+                    <!-- VIEW B: Step 4 - Final Settings Screen with Crystal-Clear Persian Descriptions -->
+                    <div id="wizard-settings-view" class="hidden space-y-4">
+                      <!-- Summary Card -->
+                      <div class="p-3.5 rounded-2xl bg-white/[0.03] border border-white/[0.08] flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                        <div class="flex items-center gap-2.5">
+                          <span class="w-2.5 h-2.5 rounded-full bg-emerald-400 shrink-0 animate-pulse"></span>
+                          <div>
+                            <div class="text-xs font-bold text-white flex items-center gap-2">
+                              <span id="wiz-sum-prov">Google Gemini</span>
+                              <span class="text-[10px] px-2 py-0.5 rounded-full bg-emerald-500/20 text-emerald-300 border border-emerald-500/30">API Key Verified ✓</span>
+                            </div>
+                            <div class="text-[10px] text-slate-400 font-mono" id="wiz-sum-model">Model: gemini-2.0-flash • Latency: ~110ms</div>
+                          </div>
+                        </div>
+                        <button 
+                          type="button" 
+                          id="wiz-btn-reconfigure" 
+                          class="px-3 py-1.5 rounded-xl bg-white/[0.05] hover:bg-white/[0.1] text-slate-300 hover:text-white text-xs font-medium transition cursor-pointer self-start sm:self-auto flex items-center gap-1"
+                        >
+                          <RotateCcw class="w-3 h-3 text-purple-400" />
+                          <span>تغییر کلید / مدل</span>
+                        </button>
+                      </div>
+
+                      <div class="text-xs text-slate-300 bg-purple-950/20 border border-purple-500/20 p-3 rounded-xl leading-relaxed">
+                        <span class="font-bold text-purple-300">💡 تنظیمات پیشرفته رفتار هوش مصنوعی:</span>
+                        اسلایدرهای زیر به زبان ساده برای شما توضیح داده شده‌اند تا شیوه صحبت و خلاقیت کاراکتر را طبق سلیقه خود تنظیم کنید.
+                      </div>
+
+                      <!-- Explained Sliders Grid -->
+                      <div class="space-y-3.5">
+                        <!-- 1. Temperature -->
+                        <div class="p-3.5 rounded-xl bg-white/[0.02] border border-white/[0.06] space-y-2">
+                          <div class="flex items-center justify-between text-xs">
+                            <span class="font-bold text-white flex items-center gap-1.5">
+                              <span>🔥</span>
+                              <span>میزان خلاقیت و هیجان (Temperature)</span>
+                            </span>
+                            <span id="wiz-val-temp" class="text-purple-300 font-mono font-bold bg-purple-950/60 px-2 py-0.5 rounded-lg border border-purple-500/30">0.85</span>
+                          </div>
+                          <input id="wiz-slider-temp" type="range" min="0.0" max="2.0" step="0.05" value="0.85" class="w-full accent-purple-500 cursor-pointer" />
+                          <div class="text-[11px] text-slate-400 leading-relaxed bg-black/20 p-2 rounded-lg">
+                            <p><strong>توضیح ساده:</strong> چقدر کاراکتر در جواب‌هایش غیرقابل‌پیش‌بینی، احساسی و داستان‌پرداز باشد؟</p>
+                            <div class="flex items-center justify-between text-[10px] text-slate-500 pt-1">
+                              <span>کمتر از ۰.۵: کاملاً منطقی و دقیق</span>
+                              <span class="text-purple-400 font-semibold">۰.۸۵: پیشنهادی (طبیعی و زنده)</span>
+                              <span>بیشتر از ۱.۲: بسیار خلاق و هیجانی</span>
+                            </div>
+                          </div>
+                        </div>
+
+                        <!-- 2. Max Response Tokens -->
+                        <div class="p-3.5 rounded-xl bg-white/[0.02] border border-white/[0.06] space-y-2">
+                          <div class="flex items-center justify-between text-xs">
+                            <span class="font-bold text-white flex items-center gap-1.5">
+                              <span>📏</span>
+                              <span>طول هر پاسخ کاراکتر (Max Response Length)</span>
+                            </span>
+                            <span id="wiz-val-tokens" class="text-purple-300 font-mono font-bold bg-purple-950/60 px-2 py-0.5 rounded-lg border border-purple-500/30">350 tok</span>
+                          </div>
+                          <input id="wiz-slider-tokens" type="range" min="64" max="2048" step="16" value="350" class="w-full accent-purple-500 cursor-pointer" />
+                          <div class="text-[11px] text-slate-400 leading-relaxed bg-black/20 p-2 rounded-lg">
+                            <p><strong>توضیح ساده:</strong> هر پیامی که کاراکتر برایتان ارسال می‌کند چقدر طولانی باشد؟</p>
+                            <div class="flex items-center justify-between text-[10px] text-slate-500 pt-1">
+                              <span>۱۵۰: کوتاه و پیامکی</span>
+                              <span class="text-purple-400 font-semibold">۳۵۰: استاندارد همراه با کنش‌های حسی</span>
+                              <span>۸۰۰+: رمان‌گونه و بلند</span>
+                            </div>
+                          </div>
+                        </div>
+
+                        <!-- 3. Context Memory Window -->
+                        <div class="p-3.5 rounded-xl bg-white/[0.02] border border-white/[0.06] space-y-2">
+                          <div class="flex items-center justify-between text-xs">
+                            <span class="font-bold text-white flex items-center gap-1.5">
+                              <span>🧠</span>
+                              <span>حافظه مکالمه (Context Memory Window)</span>
+                            </span>
+                            <span id="wiz-val-context" class="text-purple-300 font-mono font-bold bg-purple-950/60 px-2 py-0.5 rounded-lg border border-purple-500/30">16 نوبت</span>
+                          </div>
+                          <input id="wiz-slider-context" type="range" min="4" max="40" step="2" value="16" class="w-full accent-purple-500 cursor-pointer" />
+                          <p class="text-[11px] text-slate-400 leading-relaxed bg-black/20 p-2 rounded-lg">
+                            <strong>توضیح ساده:</strong> کاراکتر تا چند پیام گذشته را در ذهن خود نگه دارد؟ مقدار ۱۶ تا ۲۴ نوبت باعث می‌شود بدون افت سرعت، اتفاقات گذشته گفتگو فراموش نشود.
+                          </p>
+                        </div>
+
+                        <!-- 4. Repetition Penalty -->
+                        <div class="p-3.5 rounded-xl bg-white/[0.02] border border-white/[0.06] space-y-2">
+                          <div class="flex items-center justify-between text-xs">
+                            <span class="font-bold text-white flex items-center gap-1.5">
+                              <span>🔁</span>
+                              <span>جلوگیری از تکرار جملات (Repetition Penalty)</span>
+                            </span>
+                            <span id="wiz-val-rep-pen" class="text-purple-300 font-mono font-bold bg-purple-950/60 px-2 py-0.5 rounded-lg border border-purple-500/30">1.10</span>
+                          </div>
+                          <input id="wiz-slider-rep-pen" type="range" min="1.0" max="2.0" step="0.02" value="1.10" class="w-full accent-purple-500 cursor-pointer" />
+                          <p class="text-[11px] text-slate-400 leading-relaxed bg-black/20 p-2 rounded-lg">
+                            <strong>توضیح ساده:</strong> مانع از این می‌شود که کاراکتر تکه‌کلام‌ها، صفت‌ها یا جملات مشابه را در پیام‌هایش تکرار کند (مقدار ۱.۱۰ ایده‌آل است).
+                          </p>
+                        </div>
+
+                        <!-- 5. Streaming Toggle -->
+                        <div class="flex items-center justify-between p-3.5 rounded-xl bg-white/[0.02] border border-white/[0.06]">
+                          <div>
+                            <span class="text-xs font-bold text-white block">تایپ زنده کلمات (Token Streaming)</span>
+                            <span class="text-[11px] text-slate-400">کلمات به صورت زنده و کلمه به کلمه تایپ شوند تا حس یک گفتگوی آنلاین و طبیعی القا شود.</span>
+                          </div>
+                          <input id="wiz-toggle-streaming" type="checkbox" checked class="w-4 h-4 accent-purple-500 cursor-pointer" />
+                        </div>
+                      </div>
+
+                      <!-- Big Finish Action Button -->
+                      <div class="pt-2">
+                        <button 
+                          type="button" 
+                          id="wiz-btn-complete-all" 
+                          class="w-full py-3.5 rounded-2xl bg-gradient-to-r from-purple-600 via-indigo-600 to-purple-700 hover:from-purple-500 hover:to-indigo-500 text-white font-bold text-sm transition shadow-lg shadow-purple-950/80 flex items-center justify-center gap-2 cursor-pointer"
+                        >
+                          <Sparkles class="w-4 h-4 text-cyan-300" />
+                          <span>🚀 تایید نهایی و شروع گفتگو با کاراکتر</span>
+                        </button>
+                      </div>
                     </div>
                   </div>
                 </div>
@@ -2560,15 +2714,70 @@ const { character } = Astro.props;
   const manualPane = document.getElementById('manual-pane');
   const btnToggleWizard = document.getElementById('btn-toggle-wizard');
   const btnToggleManual = document.getElementById('btn-toggle-manual');
+  const wizardStepBadge = document.getElementById('wizard-step-badge');
+  const wizardChatView = document.getElementById('wizard-chat-view');
   const wizardChatBox = document.getElementById('wizard-chat-box');
+  const wizardChatInput = document.getElementById('wizard-chat-input');
+  const wizardPasteBtn = document.getElementById('wizard-paste-btn');
+  const wizardChatSendBtn = document.getElementById('wizard-chat-send-btn');
   const btnWizardRestart = document.getElementById('btn-wizard-restart');
+  const wizardSettingsView = document.getElementById('wizard-settings-view');
+  const wizSumProv = document.getElementById('wiz-sum-prov');
+  const wizSumModel = document.getElementById('wiz-sum-model');
+  const wizBtnReconfigure = document.getElementById('wiz-btn-reconfigure');
+  const wizBtnCompleteAll = document.getElementById('wiz-btn-complete-all');
+  
+  // Explained Sliders in Step 4
+  const wizSliderTemp = document.getElementById('wiz-slider-temp');
+  const wizValTemp = document.getElementById('wiz-val-temp');
+  const wizSliderTokens = document.getElementById('wiz-slider-tokens');
+  const wizValTokens = document.getElementById('wiz-val-tokens');
+  const wizSliderContext = document.getElementById('wiz-slider-context');
+  const wizValContext = document.getElementById('wiz-val-context');
+  const wizSliderRepPen = document.getElementById('wiz-slider-rep-pen');
+  const wizValRepPen = document.getElementById('wiz-val-rep-pen');
+  const wizToggleStreaming = document.getElementById('wiz-toggle-streaming');
+
   const hyperparamsLockOverlay = document.getElementById('hyperparams-lock-overlay');
   const hyperparamsLockBadge = document.getElementById('hyperparams-lock-badge');
   const btnLockGotoWizard = document.getElementById('btn-lock-goto-wizard');
   const btnForceUnlock = document.getElementById('btn-force-unlock');
 
   let isEngineUnlocked = false;
+  let wizardCurrentStep = 1; // 1: Name, 2: Provider, 3: Key, 4: Settings
+  let wizardUserName = localStorage.getItem('aetheria_user_name') || '';
+  let wizardSelectedProv = null;
+  let wizardApiKey = '';
+  let wizardSelectedModel = '';
+  let wizardLatency = 0;
 
+  // Sync step 4 slider events
+  wizSliderTemp?.addEventListener('input', () => {
+    if (wizValTemp) wizValTemp.textContent = Number(wizSliderTemp.value).toFixed(2);
+    if (sliderTemp) sliderTemp.value = wizSliderTemp.value;
+    const badge = document.getElementById('badge-temp');
+    if (badge) badge.textContent = Number(wizSliderTemp.value).toFixed(2);
+  });
+  wizSliderTokens?.addEventListener('input', () => {
+    if (wizValTokens) wizValTokens.textContent = `${wizSliderTokens.value} tok`;
+    if (sliderTokens) sliderTokens.value = wizSliderTokens.value;
+    const badge = document.getElementById('badge-tokens');
+    if (badge) badge.textContent = `${wizSliderTokens.value} tok`;
+  });
+  wizSliderContext?.addEventListener('input', () => {
+    if (wizValContext) wizValContext.textContent = `${wizSliderContext.value} نوبت`;
+    if (sliderContext) sliderContext.value = wizSliderContext.value;
+    const badge = document.getElementById('badge-context');
+    if (badge) badge.textContent = `${wizSliderContext.value} Turns`;
+  });
+  wizSliderRepPen?.addEventListener('input', () => {
+    if (wizValRepPen) wizValRepPen.textContent = Number(wizSliderRepPen.value).toFixed(2);
+    if (sliderRepPen) sliderRepPen.value = wizSliderRepPen.value;
+    const badge = document.getElementById('badge-rep-pen');
+    if (badge) badge.textContent = Number(wizSliderRepPen.value).toFixed(2);
+  });
+
+  // Switch between Wizard View and Manual View
   function switchEngineViewMode(mode) {
     if (mode === 'wizard') {
       wizardPane?.classList.remove('hidden');
@@ -2591,7 +2800,7 @@ const { character } = Astro.props;
   btnToggleManual?.addEventListener('click', () => switchEngineViewMode('manual'));
   btnLockGotoWizard?.addEventListener('click', () => {
     switchEngineViewMode('wizard');
-    wizardChatBox?.scrollIntoView({ behavior: 'smooth' });
+    wizardPane?.scrollIntoView({ behavior: 'smooth' });
   });
 
   function unlockHyperparameters(showNotify = false) {
@@ -2606,7 +2815,7 @@ const { character } = Astro.props;
       hyperparamsLockBadge.innerHTML = '<span class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span> Unlocked';
     }
     if (showNotify) {
-      showNotification('🔓 تنظیمات پیشرفته (دما، خلاقیت و حافظه) آنلاک شد!');
+      showNotification('🔓 تنظیمات پیشرفته هوش مصنوعی فعال شد!');
     }
   }
 
@@ -2627,64 +2836,67 @@ const { character } = Astro.props;
     unlockHyperparameters(true);
   });
 
-  const WIZARD_OPTIONS = [
+  const WIZARD_PROVIDERS = [
     {
       id: 'google',
       name: 'Google Gemini',
       tag: 'پیشنهادی • ۱۰۰٪ رایگان',
       tagClass: 'bg-emerald-500/20 text-emerald-300 border-emerald-500/40',
       icon: '💎',
-      desc: 'سریع‌ترین مدل رایگان دنیا (Gemini 2.0 Flash)، درک فارسی فوق‌العاده قوی، بدون نیاز به کارت اعتباری.',
+      desc: 'سریع‌ترین مدل رایگان دنیا (Gemini 2.0 Flash)، درک فارسی فوق‌العاده قوی و بدون نیاز به کارت بانکی.',
       keyUrl: 'https://aistudio.google.com/app/apikey',
-      keyLinkText: 'دریافت رایگان کلید از Google AI Studio',
+      keyText: 'ورود به Google AI Studio و دریافت کلید رایگان',
       keyPlaceholder: 'AIzaSy...',
       models: [
         { id: 'gemini-2.0-flash', label: 'Gemini 2.0 Flash (پیشنهادی و پرسرعت)' },
-        { id: 'gemini-1.5-pro', label: 'Gemini 1.5 Pro (استدلال عمیق)' },
+        { id: 'gemini-1.5-pro', label: 'Gemini 1.5 Pro (استدلال و عمق بالا)' },
         { id: 'gemini-2.0-flash-exp', label: 'Gemini 2.0 Flash Exp' }
-      ]
-    },
-    {
-      id: 'demo',
-      name: 'Free Cloud AI',
-      tag: 'آماده و بدون کلید',
-      tagClass: 'bg-blue-500/20 text-blue-300 border-blue-500/40',
-      icon: '⚡',
-      desc: 'بدون نیاز به ثبت‌نام یا وارد کردن هیچ کلیدی؛ آماده چت فوری با کیفیت استاندارد ابری.',
-      keyUrl: null,
-      models: [
-        { id: 'Free Cloud AI (Instant & Keyless)', label: 'Cloud AI Default' }
-      ]
-    },
-    {
-      id: 'openrouter',
-      name: 'OpenRouter',
-      tag: '۳۰۰+ مدل • بدون سانسور (Deep RP)',
-      tagClass: 'bg-purple-500/20 text-purple-300 border-purple-500/40',
-      icon: '🌐',
-      desc: 'دسترسی به ۳۰۰+ مدل متن‌باز جهان، مدل‌های تخصصی کاراکتر و آزادی کامل در Roleplay بدون سانسور.',
-      keyUrl: 'https://openrouter.ai/keys',
-      keyLinkText: 'ورود به OpenRouter و ساخت کلید API',
-      keyPlaceholder: 'sk-or-v1-...',
-      models: [
-        { id: 'anthropic/claude-3.5-sonnet', label: 'Claude 3.5 Sonnet' },
-        { id: 'meta-llama/llama-3.3-70b-instruct', label: 'Llama 3.3 70B Instruct' },
-        { id: 'gryphe/mythomax-l2-13b', label: 'MythoMax 13B (RP کلاسیک)' }
       ]
     },
     {
       id: 'anthropic',
       name: 'Anthropic Claude',
-      tag: 'کیفیت پرچمدار (Flagship)',
+      tag: 'برترین کیفیت ادبی و روایی',
       tagClass: 'bg-amber-500/20 text-amber-300 border-amber-500/40',
       icon: '👑',
-      desc: 'عمیق‌ترین خلاقیت روایی، لحن طبیعی و غنای شخصیتی کاراکترها با مدل تحسین‌شده Claude 3.5 Sonnet.',
+      desc: 'شاهکار هوش مصنوعی برای داستان‌سرایی، دیالوگ‌های پرکشش و درک عاطفی عمیق کاراکترها (Claude 3.5 Sonnet).',
       keyUrl: 'https://console.anthropic.com/settings/keys',
-      keyLinkText: 'کنسول Anthropic برای ساخت کلید',
+      keyText: 'ورود به کنسول Anthropic برای ساخت کلید',
       keyPlaceholder: 'sk-ant-api03-...',
       models: [
-        { id: 'claude-3-5-sonnet-20241022', label: 'Claude 3.5 Sonnet' },
-        { id: 'claude-3-5-haiku-20241022', label: 'Claude 3.5 Haiku' }
+        { id: 'claude-3-5-sonnet-20241022', label: 'Claude 3.5 Sonnet (پرچمدار)' },
+        { id: 'claude-3-5-haiku-20241022', label: 'Claude 3.5 Haiku (سریع و سبک)' }
+      ]
+    },
+    {
+      id: 'openai',
+      name: 'OpenAI Direct',
+      tag: 'هوش قدرتمند و پرچمدار',
+      tagClass: 'bg-blue-500/20 text-blue-300 border-blue-500/40',
+      icon: '🧠',
+      desc: 'مدل‌های محبوب جهانی سری GPT-4o و GPT-4o-mini؛ باهوش، منطقی، دقیق و همه‌فن‌حریف.',
+      keyUrl: 'https://platform.openai.com/api-keys',
+      keyText: 'ورود به پنل OpenAI برای دریافت کلید',
+      keyPlaceholder: 'sk-proj-...',
+      models: [
+        { id: 'gpt-4o', label: 'GPT-4o (پرچمدار هوش)' },
+        { id: 'gpt-4o-mini', label: 'GPT-4o Mini (سریع و اقتصادی)' }
+      ]
+    },
+    {
+      id: 'openrouter',
+      name: 'OpenRouter',
+      tag: '۳۰۰+ مدل • بدون فیلتر (Deep RP)',
+      tagClass: 'bg-purple-500/20 text-purple-300 border-purple-500/40',
+      icon: '🌐',
+      desc: 'دسترسی به ۳۰۰+ مدل متن‌باز جهان، مدل‌های بدون فیلتر ویژه سناریوهای خاص کاراکتر و Roleplay.',
+      keyUrl: 'https://openrouter.ai/keys',
+      keyText: 'ورود به OpenRouter و ساخت کلید API',
+      keyPlaceholder: 'sk-or-v1-...',
+      models: [
+        { id: 'anthropic/claude-3.5-sonnet', label: 'Claude 3.5 Sonnet' },
+        { id: 'meta-llama/llama-3.3-70b-instruct', label: 'Llama 3.3 70B Instruct' },
+        { id: 'gryphe/mythomax-l2-13b', label: 'MythoMax 13B (RP کلاسیک)' }
       ]
     },
     {
@@ -2695,325 +2907,57 @@ const { character } = Astro.props;
       icon: '🚀',
       desc: 'پاسخ‌دهی آنی و بلادرنگ بدون کوچک‌ترین معطلی روی چیپ‌های سخت‌افزاری Groq LPU.',
       keyUrl: 'https://console.groq.com/keys',
-      keyLinkText: 'کنسول Groq برای کلید رایگان',
+      keyText: 'کنسول Groq برای کلید رایگان',
       keyPlaceholder: 'gsk_...',
       models: [
         { id: 'llama-3.3-70b-versatile', label: 'Llama 3.3 70B Versatile' },
         { id: 'mixtral-8x7b-32768', label: 'Mixtral 8x7B' }
       ]
-    },
-    {
-      id: 'custom-local',
-      name: 'Localhost (Ollama / LM Studio)',
-      tag: 'کاملاً آفلاین و محرمانه',
-      tagClass: 'bg-slate-500/20 text-slate-300 border-slate-500/40',
-      icon: '💻',
-      desc: 'اتصال به مدل‌های نصب‌شده روی کامپیوتر شخصی خودتان؛ بدون مصرف اینترنت و ۱۰۰٪ امن.',
-      keyUrl: null,
-      defaultUrl: 'http://localhost:11434/v1',
-      models: [
-        { id: 'llama3:latest', label: 'Ollama Llama 3' },
-        { id: 'local-model', label: 'مدل فعلی سیستم' }
-      ]
     }
   ];
 
-  function renderWizardInitialState() {
-    if (!wizardChatBox) return;
-    wizardChatBox.innerHTML = '';
-
-    const currentProv = localStorage.getItem('aetheria_text_provider') || 'groq';
-    const currentModel = localStorage.getItem('aetheria_text_model') || 'llama-3.3-70b-versatile';
-    const isConfigured = localStorage.getItem('aetheria_engine_unlocked') === 'true';
-
-    const welcomeBubble = document.createElement('div');
-    welcomeBubble.className = 'flex items-start gap-3';
-    welcomeBubble.innerHTML = `
+  function appendNovaBubble(htmlContent) {
+    if (!wizardChatBox) return null;
+    const bubble = document.createElement('div');
+    bubble.className = 'flex items-start gap-3';
+    bubble.innerHTML = `
       <div class="w-8 h-8 rounded-full bg-gradient-to-tr from-purple-600 to-cyan-400 p-0.5 shrink-0 mt-0.5 shadow-md shadow-purple-900/40">
         <div class="w-full h-full rounded-full bg-[#0d1026] flex items-center justify-center text-cyan-300 text-xs font-bold">N</div>
       </div>
-      <div class="flex-1 space-y-3">
+      <div class="flex-1 space-y-2">
         <div class="p-4 rounded-2xl rounded-tl-sm bg-white/[0.04] border border-white/10 text-xs text-slate-200 leading-relaxed space-y-2">
-          <p>
-            سلام! من <strong>Nova</strong> هستم؛ دستیار هوشمند شما در Aetheria 👋
-          </p>
-          <p>
-            من اینجام تا در کمتر از ۱ دقیقه بهترین موتور هوش مصنوعی رو بر اساس سلیقه‌ات فعال کنم تا بتونی با نهایت سرعت و کیفیت با کاراکترها صحبت کنی.
-          </p>
-          \${isConfigured ? \`
-            <div class="p-2.5 rounded-xl bg-purple-950/40 border border-purple-500/30 text-purple-300 text-[11px] flex items-center justify-between">
-              <span>موتور فعال فعلی: <strong>\${currentProv} (\${currentModel.split('/').pop()})</strong></span>
-              <span class="text-emerald-400 font-bold">فعال و آماده</span>
-            </div>
-            <p class="text-[11px] text-slate-400">آیا مایلید سرویس یا مدل را تغییر دهید؟ از بین گزینه‌های زیر انتخاب کنید:</p>
-          \` : \`
-            <p class="font-semibold text-white">برای شروع، کدام سرویس را ترجیح می‌دهید؟</p>
-          \`}
-        </div>
-
-        <div class="grid grid-cols-1 sm:grid-cols-2 gap-2.5" id="wiz-provider-cards">
-          \${WIZARD_OPTIONS.map(opt => \`
-            <button 
-              type="button" 
-              data-wiz-prov="\${opt.id}" 
-              class="wiz-card-btn text-right p-3 rounded-xl bg-white/[0.03] hover:bg-purple-900/25 border border-white/[0.08] hover:border-purple-500/50 transition flex flex-col justify-between gap-2 group cursor-pointer"
-            >
-              <div class="flex items-center justify-between w-full">
-                <span class="text-xs font-bold text-white group-hover:text-purple-300 flex items-center gap-1.5">
-                  <span>\${opt.icon}</span>
-                  <span>\${opt.name}</span>
-                </span>
-                <span class="text-[9px] font-bold px-1.5 py-0.5 rounded-full border \${opt.tagClass}">\${opt.tag}</span>
-              </div>
-              <p class="text-[11px] text-slate-400 leading-relaxed text-right">\${opt.desc}</p>
-            </button>
-          \`).join('')}
-        </div>
-
-        <div class="text-center pt-1">
-          <button type="button" id="wiz-goto-manual-btn" class="text-[11px] text-purple-400 hover:text-purple-300 underline underline-offset-2 transition cursor-pointer">
-            تنظیمات ۲۰+ ارائه‌دهنده دیگر در حالت دستی (DeepSeek, Mistral, xAI, Cerebras...) →
-          </button>
+          ${htmlContent}
         </div>
       </div>
     `;
-
-    wizardChatBox.appendChild(welcomeBubble);
-
-    welcomeBubble.querySelectorAll('.wiz-card-btn').forEach(btn => {
-      btn.addEventListener('click', () => {
-        const provId = btn.getAttribute('data-wiz-prov');
-        if (provId) handleWizardSelectProvider(provId);
-      });
-    });
-
-    welcomeBubble.querySelector('#wiz-goto-manual-btn')?.addEventListener('click', () => {
-      switchEngineViewMode('manual');
-    });
+    wizardChatBox.appendChild(bubble);
+    wizardChatBox.scrollTo({ top: wizardChatBox.scrollHeight, behavior: 'smooth' });
+    return bubble;
   }
 
-  function handleWizardSelectProvider(provId) {
-    const opt = WIZARD_OPTIONS.find(o => o.id === provId);
-    if (!opt || !wizardChatBox) return;
-
-    const userBubble = document.createElement('div');
-    userBubble.className = 'flex justify-end';
-    userBubble.innerHTML = `
-      <div class="px-4 py-2 rounded-2xl rounded-tr-sm bg-gradient-to-r from-purple-600 to-indigo-600 text-white text-xs font-semibold shadow-md shadow-purple-950">
-        \${opt.icon} گزینه \${opt.name} را انتخاب کردم.
+  function appendUserBubble(text) {
+    if (!wizardChatBox) return;
+    const bubble = document.createElement('div');
+    bubble.className = 'flex justify-end';
+    bubble.innerHTML = `
+      <div class="px-4 py-2 rounded-2xl rounded-tr-sm bg-gradient-to-r from-purple-600 to-indigo-600 text-white text-xs font-semibold shadow-md shadow-purple-950 max-w-[80%] break-all">
+        ${text}
       </div>
     `;
-    wizardChatBox.appendChild(userBubble);
+    wizardChatBox.appendChild(bubble);
     wizardChatBox.scrollTo({ top: wizardChatBox.scrollHeight, behavior: 'smooth' });
-
-    if (provId === 'demo') {
-      setTimeout(() => {
-        const demoBotBubble = document.createElement('div');
-        demoBotBubble.className = 'flex items-start gap-3';
-        demoBotBubble.innerHTML = `
-          <div class="w-8 h-8 rounded-full bg-gradient-to-tr from-purple-600 to-cyan-400 p-0.5 shrink-0 mt-0.5 shadow-md shadow-purple-900/40">
-            <div class="w-full h-full rounded-full bg-[#0d1026] flex items-center justify-center text-cyan-300 text-xs font-bold">N</div>
-          </div>
-          <div class="flex-1 space-y-3">
-            <div class="p-4 rounded-2xl rounded-tl-sm bg-emerald-950/40 border border-emerald-500/30 text-xs text-slate-200 leading-relaxed space-y-2">
-              <p class="font-bold text-emerald-300">✅ سرویس Free Cloud AI فعال شد!</p>
-              <p>این سرویس نیازی به وارد کردن کلید API ندارد و به صورت ابری آماده به کار است.</p>
-              <div class="pt-2">
-                <button type="button" id="wiz-confirm-free-btn" class="w-full py-2.5 rounded-xl bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 text-white font-bold text-xs transition shadow-md shadow-emerald-950 flex items-center justify-center gap-1.5 cursor-pointer">
-                  <span>تکمیل و فعال‌سازی فوری</span>
-                </button>
-              </div>
-            </div>
-          </div>
-        `;
-        wizardChatBox.appendChild(demoBotBubble);
-        wizardChatBox.scrollTo({ top: wizardChatBox.scrollHeight, behavior: 'smooth' });
-
-        demoBotBubble.querySelector('#wiz-confirm-free-btn')?.addEventListener('click', () => {
-          completeWizardStep(provId, 'Free Cloud AI (Instant & Keyless)', '', '');
-        });
-      }, 400);
-      return;
-    }
-
-    setTimeout(() => {
-      const step2Bubble = document.createElement('div');
-      step2Bubble.className = 'flex items-start gap-3';
-      
-      let instructionsHtml = '';
-      if (provId === 'google') {
-        instructionsHtml = `
-          <p class="font-semibold text-white">عالیه! Google Gemini بهترین سرعت و درک زبان فارسی را دارد.</p>
-          <div class="space-y-1.5 text-slate-300">
-            <p><strong>مراحل دریافت کلید کاملاً رایگان:</strong></p>
-            <p>۱. روی لینک زیر کلیک کنید تا وارد Google AI Studio شوید:</p>
-            <a href="\${opt.keyUrl}" target="_blank" rel="noopener noreferrer" class="inline-flex items-center gap-1.5 text-cyan-400 hover:text-cyan-300 underline font-medium">
-              <span>🔗 \${opt.keyLinkText}</span>
-              <span class="text-[10px] bg-cyan-500/20 px-1.5 py-0.5 rounded text-cyan-300">بدون نیاز به ویزاکارت</span>
-            </a>
-            <p>۲. با حساب گوگل خود لاگین کنید و دکمه آبی <strong>Create API key</strong> را بزنید.</p>
-            <p>۳. کلید ساخته‌شده (که معمولاً با <code>AIzaSy...</code> شروع می‌شود) را در کادر زیر قرار دهید:</p>
-          </div>
-        `;
-      } else if (provId === 'openrouter') {
-        instructionsHtml = `
-          <p class="font-semibold text-white">سرویس OpenRouter دسترسی به بیش از ۳۰۰ مدل را بدون فیلتر فراهم می‌کند.</p>
-          <div class="space-y-1.5 text-slate-300">
-            <p><strong>مراحل ساخت کلید:</strong></p>
-            <p>۱. وارد پنل OpenRouter شوید:</p>
-            <a href="\${opt.keyUrl}" target="_blank" rel="noopener noreferrer" class="inline-flex items-center gap-1.5 text-cyan-400 hover:text-cyan-300 underline font-medium">
-              <span>🔗 \${opt.keyLinkText}</span>
-            </a>
-            <p>۲. روی <strong>Create Key</strong> کلیک کنید و کلید <code>sk-or-v1-...</code> را در کادر زیر وارد کنید:</p>
-          </div>
-        `;
-      } else if (provId === 'custom-local') {
-        instructionsHtml = `
-          <p class="font-semibold text-white">اتصال به مدل‌های لوکال نصب‌شده روی سیستم شما (Ollama / LM Studio).</p>
-          <div class="space-y-1.5 text-slate-300">
-            <p>آدرس اندپوینت لوکال خود را وارد کنید (پیش‌فرض Ollama: <code>http://localhost:11434/v1</code>):</p>
-          </div>
-        `;
-      } else {
-        instructionsHtml = `
-          <p class="font-semibold text-white">سرویس \${opt.name} انتخاب شد.</p>
-          <div class="space-y-1.5 text-slate-300">
-            <p>۱. از طریق لینک زیر کلید خود را دریافت یا کپی کنید:</p>
-            <a href="\${opt.keyUrl}" target="_blank" rel="noopener noreferrer" class="inline-flex items-center gap-1.5 text-cyan-400 hover:text-cyan-300 underline font-medium">
-              <span>🔗 \${opt.keyLinkText}</span>
-            </a>
-            <p>۲. کلید را در کادر زیر وارد کنید:</p>
-          </div>
-        `;
-      }
-
-      step2Bubble.innerHTML = `
-        <div class="w-8 h-8 rounded-full bg-gradient-to-tr from-purple-600 to-cyan-400 p-0.5 shrink-0 mt-0.5 shadow-md shadow-purple-900/40">
-          <div class="w-full h-full rounded-full bg-[#0d1026] flex items-center justify-center text-cyan-300 text-xs font-bold">N</div>
-        </div>
-        <div class="flex-1 space-y-3">
-          <div class="p-4 rounded-2xl rounded-tl-sm bg-white/[0.04] border border-white/10 text-xs text-slate-200 leading-relaxed space-y-3">
-            \${instructionsHtml}
-
-            <div class="pt-1 space-y-2">
-              \${provId === 'custom-local' ? \`
-                <div class="space-y-1">
-                  <label class="block text-[11px] text-slate-400">Localhost Base URL:</label>
-                  <input 
-                    type="url" 
-                    id="wiz-local-url" 
-                    value="\${opt.defaultUrl || 'http://localhost:11434/v1'}" 
-                    class="w-full px-3 py-2 rounded-xl bg-black/40 border border-white/10 text-xs text-white font-mono outline-none focus:border-purple-400"
-                  />
-                </div>
-              \` : \`
-                <div class="space-y-1">
-                  <div class="flex items-center justify-between text-[11px] text-slate-400">
-                    <span>کلید API:</span>
-                    <button type="button" id="wiz-paste-btn" class="text-purple-400 hover:text-purple-300 cursor-pointer">Paste from Clipboard</button>
-                  </div>
-                  <div class="relative">
-                    <input 
-                      type="password" 
-                      id="wiz-input-key" 
-                      placeholder="\${opt.keyPlaceholder}" 
-                      class="w-full px-3 py-2 rounded-xl bg-black/40 border border-white/10 text-xs text-white font-mono outline-none focus:border-purple-400"
-                    />
-                  </div>
-                </div>
-              \`}
-
-              <div id="wiz-error-box" class="hidden text-[11px] p-2.5 rounded-xl bg-red-950/60 border border-red-500/40 text-red-300 leading-relaxed"></div>
-
-              <div class="pt-1 flex items-center gap-2">
-                <button 
-                  type="button" 
-                  id="wiz-submit-test-btn" 
-                  class="flex-1 py-2.5 rounded-xl bg-gradient-to-r from-purple-600 via-indigo-600 to-purple-700 hover:from-purple-500 hover:to-indigo-500 text-white font-bold text-xs transition shadow-md shadow-purple-950 flex items-center justify-center gap-2 cursor-pointer"
-                >
-                  <Zap class="w-3.5 h-3.5 text-cyan-300" />
-                  <span>تست سلامت و اعتبارسنجی کلید</span>
-                </button>
-              </div>
-            </div>
-          </div>
-        </div>
-      `;
-
-      wizardChatBox.appendChild(step2Bubble);
-      wizardChatBox.scrollTo({ top: wizardChatBox.scrollHeight, behavior: 'smooth' });
-
-      const pasteBtn = step2Bubble.querySelector('#wiz-paste-btn');
-      const inputKey = step2Bubble.querySelector('#wiz-input-key');
-      const localUrl = step2Bubble.querySelector('#wiz-local-url');
-      const errorBox = step2Bubble.querySelector('#wiz-error-box');
-      const submitBtn = step2Bubble.querySelector('#wiz-submit-test-btn');
-
-      pasteBtn?.addEventListener('click', async () => {
-        try {
-          const text = await navigator.clipboard.readText();
-          if (text && inputKey) {
-            inputKey.value = text.trim();
-            inputKey.type = 'text';
-            showNotification('کلید کپی‌شده در کادر قرار گرفت.');
-          }
-        } catch {
-          inputKey?.focus();
-        }
-      });
-
-      submitBtn?.addEventListener('click', async () => {
-        const keyVal = inputKey ? inputKey.value.trim() : '';
-        const urlVal = localUrl ? localUrl.value.trim() : (opt.defaultUrl || '');
-
-        if (provId !== 'custom-local' && !keyVal) {
-          if (errorBox) {
-            errorBox.classList.remove('hidden');
-            errorBox.textContent = '⚠️ لطفاً ابتدا کلید API را وارد کنید.';
-          }
-          inputKey?.focus();
-          return;
-        }
-
-        if (errorBox) errorBox.classList.add('hidden');
-        if (submitBtn) {
-          submitBtn.setAttribute('disabled', 'true');
-          submitBtn.innerHTML = '<span class="inline-block w-3.5 h-3.5 border-2 border-white/30 border-t-white rounded-full animate-spin"></span> <span>در حال پینگ و تست کلید...</span>';
-        }
-
-        const testResult = await runWizardHealthCheck(provId, keyVal, urlVal);
-
-        if (testResult.ok) {
-          if (submitBtn) {
-            submitBtn.className = 'flex-1 py-2.5 rounded-xl bg-emerald-600 text-white font-bold text-xs flex items-center justify-center gap-1.5';
-            submitBtn.innerHTML = '✓ اتصال برقرار شد';
-          }
-          showWizardModelSelection(provId, keyVal, urlVal, testResult.latency, opt.models);
-        } else {
-          if (submitBtn) {
-            submitBtn.removeAttribute('disabled');
-            submitBtn.className = 'flex-1 py-2.5 rounded-xl bg-gradient-to-r from-purple-600 to-indigo-600 text-white font-bold text-xs flex items-center justify-center gap-2 cursor-pointer';
-            submitBtn.innerHTML = '<Zap class="w-3.5 h-3.5 text-cyan-300" /> <span>تلاش دوباره برای اتصال</span>';
-          }
-          if (errorBox) {
-            errorBox.classList.remove('hidden');
-            errorBox.innerHTML = `✕ خطا در اتصال (\${testResult.status || 'خطای شبکه'}): \${testResult.message || 'کلید نامعتبر است یا ارتباط مسدود است.'}`;
-          }
-        }
-      });
-    }, 400);
   }
 
   async function runWizardHealthCheck(prov, key, baseUrl) {
     const t0 = performance.now();
-    const conf = PROVIDER_CONFIGS[prov] || PROVIDER_CONFIGS.demo;
+    const conf = PROVIDER_CONFIGS[prov] || PROVIDER_CONFIGS.groq;
 
     try {
       let endpoint = conf.modelsEndpoint;
       if (conf.hasUrl) {
-        endpoint = `\${baseUrl.replace(/\\/+$/, '')}/models`;
+        endpoint = `${baseUrl.replace(/\/+$/, '')}/models`;
       } else if (prov === 'google') {
-        endpoint = `https://generativelanguage.googleapis.com/v1beta/models?key=\${key}`;
+        endpoint = `https://generativelanguage.googleapis.com/v1beta/models?key=${key}`;
       } else if (prov === 'anthropic') {
         endpoint = 'https://api.anthropic.com/v1/messages';
       }
@@ -3029,7 +2973,7 @@ const { character } = Astro.props;
             headers['anthropic-version'] = '2023-06-01';
             headers['anthropic-dangerous-direct-browser-access'] = 'true';
           } else {
-            headers['Authorization'] = `Bearer \${key}`;
+            headers['Authorization'] = `Bearer ${key}`;
           }
         }
         if (prov === 'openrouter') {
@@ -3061,142 +3005,318 @@ const { character } = Astro.props;
           status: resStatus, 
           latency, 
           message: resStatus === 401 || resStatus === 403 
-            ? 'کلید وارد شده نامعتبر یا منقضی است.' 
-            : `پاسخ سرور: HTTP \${resStatus}` 
+            ? 'کلید وارد شده نامعتبر است یا منقضی شده است.' 
+            : `پاسخ سرور: HTTP ${resStatus}` 
         };
       }
     } catch (e) {
-      return { ok: false, status: 0, message: 'عدم برقراری ارتباط با سرور یا خطای شبکه' };
+      return { ok: false, status: 0, message: 'عدم برقراری ارتباط با سرور یا مسدود بودن دسترسی' };
     }
   }
 
-  function showWizardModelSelection(provId, key, baseUrl, latency, defaultModels) {
-    if (!wizardChatBox) return;
+  function goToStep1() {
+    wizardCurrentStep = 1;
+    wizardChatView?.classList.remove('hidden');
+    wizardSettingsView?.classList.add('hidden');
+    if (wizardStepBadge) wizardStepBadge.textContent = 'مرحله ۱ از ۴: نام شما';
+    if (wizardChatBox) wizardChatBox.innerHTML = '';
 
-    const opt = WIZARD_OPTIONS.find(o => o.id === provId);
+    appendNovaBubble(`
+      <p class="font-bold text-white text-sm">سلام! به Aetheria خوش آمدید ✨</p>
+      <p>من <strong>Nova</strong> هستم و اینجام تا شما را در راه‌اندازی گام‌به‌گام اتصال هوش مصنوعی راهنمایی کنم.</p>
+      <p class="text-slate-300">ابتدا، می‌توانم بپرسم نام یا لقب شما چیست تا در گفتگوها شما را با آن صدا بزنم؟</p>
+    `);
 
-    const modelBubble = document.createElement('div');
-    modelBubble.className = 'flex items-start gap-3';
-    modelBubble.innerHTML = `
-      <div class="w-8 h-8 rounded-full bg-gradient-to-tr from-purple-600 to-cyan-400 p-0.5 shrink-0 mt-0.5 shadow-md shadow-purple-900/40">
-        <div class="w-full h-full rounded-full bg-[#0d1026] flex items-center justify-center text-cyan-300 text-xs font-bold">N</div>
+    if (wizardChatInput) {
+      wizardChatInput.type = 'text';
+      wizardChatInput.placeholder = 'نام یا لقبتان را بنویسید... (مثلاً: حسین)';
+      wizardChatInput.value = wizardUserName;
+      wizardChatInput.focus();
+    }
+    wizardPasteBtn?.classList.add('hidden');
+  }
+
+  function goToStep2() {
+    wizardCurrentStep = 2;
+    wizardChatView?.classList.remove('hidden');
+    wizardSettingsView?.classList.add('hidden');
+    if (wizardStepBadge) wizardStepBadge.textContent = 'مرحله ۲ از ۴: انتخاب ارائه‌دهنده';
+
+    appendNovaBubble(`
+      <p class="font-bold text-white">از آشنایی با شما خوشوقتم، <span class="text-purple-300">${wizardUserName}</span> عزیز! 🎉</p>
+      <p class="text-slate-300">برای شروع مکالمه با کاراکترها، باید یک ارائه‌دهنده معتبر هوش مصنوعی (AI Provider) را انتخاب و کلید آن را متصل کنید.</p>
+      <p class="font-semibold text-white pt-1">کدام سرویس را ترجیح می‌دهید؟</p>
+
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-2.5 pt-2" id="wiz-provider-cards">
+        ${WIZARD_PROVIDERS.map(p => `
+          <button 
+            type="button" 
+            data-wiz-prov="${p.id}" 
+            class="wiz-card-btn text-right p-3 rounded-xl bg-white/[0.03] hover:bg-purple-900/30 border border-white/[0.08] hover:border-purple-500/50 transition flex flex-col justify-between gap-2 group cursor-pointer"
+          >
+            <div class="flex items-center justify-between w-full">
+              <span class="text-xs font-bold text-white group-hover:text-purple-300 flex items-center gap-1.5">
+                <span>${p.icon}</span>
+                <span>${p.name}</span>
+              </span>
+              <span class="text-[9px] font-bold px-1.5 py-0.5 rounded-full border ${p.tagClass}">${p.tag}</span>
+            </div>
+            <p class="text-[11px] text-slate-400 leading-relaxed">${p.desc}</p>
+          </button>
+        `).join('')}
       </div>
-      <div class="flex-1 space-y-3">
-        <div class="p-4 rounded-2xl rounded-tl-sm bg-white/[0.04] border border-white/10 text-xs text-slate-200 leading-relaxed space-y-3">
-          <div class="flex items-center justify-between pb-2 border-b border-white/[0.08]">
-            <span class="text-emerald-400 font-bold flex items-center gap-1.5">
-              <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
-              ارتباط با سرور برقرار شد!
-            </span>
-            <span class="text-[10px] text-slate-400 font-mono">تاخیر: \${latency}ms</span>
-          </div>
 
-          <p class="font-semibold text-white">کدام مدل را می‌خواهید به عنوان مدل اصلی انتخاب کنید؟</p>
-
-          <div class="flex flex-col gap-2" id="wiz-model-chips">
-            \${defaultModels.map((m, idx) => \`
-              <button 
-                type="button" 
-                data-model-id="\${m.id}" 
-                class="wiz-model-chip-btn text-right px-3.5 py-2.5 rounded-xl bg-white/[0.04] hover:bg-purple-900/30 border border-white/10 hover:border-purple-500/50 text-xs transition flex items-center justify-between group cursor-pointer \${idx === 0 ? 'border-purple-500/50 bg-purple-950/20' : ''}"
-              >
-                <div class="flex items-center gap-2">
-                  <span class="w-2 h-2 rounded-full \${idx === 0 ? 'bg-cyan-400' : 'bg-slate-500'} group-hover:bg-cyan-400"></span>
-                  <span class="font-mono text-white group-hover:text-purple-300">\${m.label}</span>
-                </div>
-                \${idx === 0 ? '<span class="text-[10px] text-cyan-400 font-bold">پیشنهادی</span>' : ''}
-              </button>
-            \`).join('')}
-          </div>
-        </div>
+      <div class="pt-2 text-center">
+        <button type="button" id="wiz-switch-to-manual-link" class="text-[11px] text-purple-400 hover:text-purple-300 underline transition cursor-pointer">
+          یا دسترسی به سایر ۲۰+ ارائه‌دهنده در تنظیمات دستی →
+        </button>
       </div>
-    `;
+    `);
 
-    wizardChatBox.appendChild(modelBubble);
-    wizardChatBox.scrollTo({ top: wizardChatBox.scrollHeight, behavior: 'smooth' });
-
-    modelBubble.querySelectorAll('.wiz-model-chip-btn').forEach(btn => {
+    document.querySelectorAll('.wiz-card-btn').forEach(btn => {
       btn.addEventListener('click', () => {
-        const modelId = btn.getAttribute('data-model-id');
-        if (modelId) {
-          completeWizardStep(provId, modelId, key, baseUrl);
+        const provId = btn.getAttribute('data-wiz-prov');
+        const p = WIZARD_PROVIDERS.find(x => x.id === provId);
+        if (p) {
+          wizardSelectedProv = p;
+          appendUserBubble(`${p.icon} ارائه‌دهنده ${p.name} را انتخاب کردم.`);
+          setTimeout(goToStep3, 400);
         }
       });
     });
+
+    document.getElementById('wiz-switch-to-manual-link')?.addEventListener('click', () => {
+      switchEngineViewMode('manual');
+    });
+
+    if (wizardChatInput) {
+      wizardChatInput.value = '';
+      wizardChatInput.placeholder = 'یکی از کارت‌های ارائه‌دهنده بالا را لمس یا کلیک کنید...';
+    }
+    wizardPasteBtn?.classList.add('hidden');
   }
 
-  function completeWizardStep(provId, modelId, key, baseUrl) {
-    if (!wizardChatBox) return;
+  function goToStep3() {
+    wizardCurrentStep = 3;
+    if (wizardStepBadge) wizardStepBadge.textContent = 'مرحله ۳ از ۴: کلید API و انتخاب مدل';
+    const prov = wizardSelectedProv;
+    if (!prov) return;
 
-    const opt = WIZARD_OPTIONS.find(o => o.id === provId) || { name: provId };
-
-    const userBubble = document.createElement('div');
-    userBubble.className = 'flex justify-end';
-    userBubble.innerHTML = `
-      <div class="px-4 py-2 rounded-2xl rounded-tr-sm bg-gradient-to-r from-purple-600 to-indigo-600 text-white text-xs font-semibold shadow-md shadow-purple-950">
-        مدل \${modelId.split('/').pop()} را انتخاب کردم.
+    appendNovaBubble(`
+      <p class="font-bold text-white">انتخاب شما: <span class="text-purple-300">${prov.name}</span> ✨</p>
+      <div class="space-y-1.5 text-slate-300">
+        <p><strong>مراحل ساده برای دریافت کلید API:</strong></p>
+        <p>۱. روی لینک زیر کلیک کنید تا وارد پنل ساخت کلید شوید:</p>
+        <div class="py-1">
+          <a href="${prov.keyUrl}" target="_blank" rel="noopener noreferrer" class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-cyan-500/10 border border-cyan-500/30 text-cyan-300 hover:text-white text-xs font-semibold transition">
+            <span>🔗 ${prov.keyText}</span>
+            <span class="text-[10px]">↗</span>
+          </a>
+        </div>
+        <p>۲. وارد حساب خود شوید (یا ثبت‌نام کنید) و دکمه <strong>Create new key</strong> را بزنید.</p>
+        <p>۳. کلید را کپی کرده و در کادر پایین قرار دهید و دکمه <strong>ارسال</strong> را بزنید:</p>
       </div>
-    `;
-    wizardChatBox.appendChild(userBubble);
+    `);
 
-    setTimeout(() => {
-      const finalBubble = document.createElement('div');
-      finalBubble.className = 'flex items-start gap-3';
-      finalBubble.innerHTML = `
-        <div class="w-8 h-8 rounded-full bg-gradient-to-tr from-purple-600 to-cyan-400 p-0.5 shrink-0 mt-0.5 shadow-md shadow-purple-900/40">
-          <div class="w-full h-full rounded-full bg-[#0d1026] flex items-center justify-center text-cyan-300 text-xs font-bold">N</div>
-        </div>
-        <div class="flex-1 space-y-3">
-          <div class="p-4 rounded-2xl rounded-tl-sm bg-gradient-to-b from-purple-950/40 to-[#0c0f24] border border-purple-500/40 text-xs text-slate-200 leading-relaxed space-y-3 shadow-lg">
-            <div class="flex items-center gap-2 text-white font-bold text-sm">
-              <span class="text-xl">🎉</span>
-              <span>تبریک! راه‌اندازی با موفقیت کامل شد.</span>
-            </div>
-            <p>
-              موتور <strong>\${opt.name}</strong> با مدل <strong>\${modelId}</strong> تنظیم و در مرورگر شما ذخیره گردید.
-            </p>
-            <div class="p-3 rounded-xl bg-emerald-950/40 border border-emerald-500/30 text-emerald-300 space-y-1">
-              <p class="font-bold flex items-center gap-1.5">
-                <span>🔓</span>
-                <span>تنظیمات پیشرفته (دما، حافظه و توکن‌ها) آنلاک شد!</span>
-              </p>
-              <p class="text-[11px] text-slate-300">اکنون می‌توانید با اسلایدرهای زیر، میزان خلاقیت و لحن پاسخ‌های هوش مصنوعی را شخصی‌سازی کنید.</p>
-            </div>
-            <div class="pt-1 flex items-center gap-2">
-              <button type="button" id="wiz-btn-close-modal" class="flex-1 py-2.5 rounded-xl bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-500 hover:to-indigo-500 text-white font-bold text-xs transition shadow-md shadow-purple-950 cursor-pointer text-center">
-                شروع چت با کاراکتر
-              </button>
-            </div>
-          </div>
-        </div>
-      `;
-
-      wizardChatBox.appendChild(finalBubble);
-      wizardChatBox.scrollTo({ top: wizardChatBox.scrollHeight, behavior: 'smooth' });
-
-      finalBubble.querySelector('#wiz-btn-close-modal')?.addEventListener('click', () => {
-        byokTray?.classList.add('hidden');
-      });
-
-      localStorage.setItem('aetheria_text_provider', provId);
-      localStorage.setItem('aetheria_text_key', key);
-      localStorage.setItem('aetheria_text_model', modelId);
-      if (baseUrl) localStorage.setItem('aetheria_text_base_url', baseUrl);
-
-      if (textProviderSelect) textProviderSelect.value = provId;
-      if (textApiKey) textApiKey.value = key;
-      if (textModelSelect) textModelSelect.value = modelId;
-      if (textModelInput) textModelInput.value = modelId;
-      if (textBaseUrl && baseUrl) textBaseUrl.value = baseUrl;
-
-      syncProviderVisibility();
-      updateHeaderPill();
-      unlockHyperparameters(true);
-    }, 350);
+    if (wizardChatInput) {
+      wizardChatInput.type = 'text';
+      wizardChatInput.placeholder = `کلید اختصاصی ${prov.name} را وارد یا پیست کنید (${prov.keyPlaceholder})...`;
+      wizardChatInput.value = '';
+      wizardChatInput.focus();
+    }
+    wizardPasteBtn?.classList.remove('hidden');
   }
+
+  async function handleWizardChatSubmit() {
+    if (!wizardChatInput) return;
+    const text = wizardChatInput.value.trim();
+
+    if (wizardCurrentStep === 1) {
+      const name = text || 'کاربر عزیز';
+      wizardUserName = name;
+      localStorage.setItem('aetheria_user_name', wizardUserName);
+      appendUserBubble(wizardUserName);
+      wizardChatInput.value = '';
+      setTimeout(goToStep2, 400);
+      return;
+    }
+
+    if (wizardCurrentStep === 2) {
+      showNotification('لطفاً یکی از کارت‌های ارائه‌دهنده را از پیام بالا انتخاب کنید.');
+      return;
+    }
+
+    if (wizardCurrentStep === 3) {
+      if (!text) {
+        showNotification('⚠️ لطفاً ابتدا کلید API را در کادر بنویسید یا پیست کنید.');
+        wizardChatInput.focus();
+        return;
+      }
+
+      const key = text;
+      wizardApiKey = key;
+      wizardChatInput.value = '';
+
+      const maskedKey = key.length > 8 ? `${key.slice(0, 4)}••••••••${key.slice(-4)}` : '••••••••';
+      appendUserBubble(`کلید API ارسال شد: ${maskedKey}`);
+
+      const loadingBubble = appendNovaBubble(`
+        <div class="flex items-center gap-2 text-cyan-300 font-semibold" id="wiz-loader">
+          <span class="inline-block w-3.5 h-3.5 border-2 border-cyan-400 border-t-transparent rounded-full animate-spin"></span>
+          <span>در حال سنجش ارتباط با سرور و اعتبارسنجی کلید اختصاصی شما...</span>
+        </div>
+      `);
+
+      const result = await runWizardHealthCheck(wizardSelectedProv.id, key, '');
+      loadingBubble?.remove();
+
+      if (result.ok) {
+        wizardLatency = result.latency || 95;
+        appendNovaBubble(`
+          <div class="flex items-center justify-between pb-2 border-b border-white/[0.08]">
+            <span class="text-emerald-400 font-bold flex items-center gap-1.5">
+              <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
+              ✅ اتصال با موفقیت تایید شد!
+            </span>
+            <span class="text-[10px] text-slate-400 font-mono">تاخیر: ${wizardLatency}ms | سالم</span>
+          </div>
+          <p class="font-semibold text-white pt-1">اکنون کدام مدل را می‌خواهید به عنوان مدل اصلی انتخاب کنید؟</p>
+          <div class="flex flex-col gap-2 pt-2" id="wiz-model-picker-container">
+            ${wizardSelectedProv.models.map((m, idx) => `
+              <button 
+                type="button" 
+                data-model-id="${m.id}" 
+                class="wiz-model-pick-btn text-right px-3.5 py-2.5 rounded-xl bg-white/[0.04] hover:bg-purple-900/30 border border-white/10 hover:border-purple-500/50 text-xs transition flex items-center justify-between group cursor-pointer ${idx === 0 ? 'border-purple-500/50 bg-purple-950/20' : ''}"
+              >
+                <div class="flex items-center gap-2">
+                  <span class="w-2 h-2 rounded-full ${idx === 0 ? 'bg-cyan-400' : 'bg-slate-500'} group-hover:bg-cyan-400"></span>
+                  <span class="font-mono text-white group-hover:text-purple-300">${m.label}</span>
+                </div>
+                ${idx === 0 ? '<span class="text-[10px] text-cyan-400 font-bold">پیشنهادی</span>' : ''}
+              </button>
+            `).join('')}
+          </div>
+        `);
+
+        document.querySelectorAll('.wiz-model-pick-btn').forEach(btn => {
+          btn.addEventListener('click', () => {
+            const mId = btn.getAttribute('data-model-id');
+            const mObj = wizardSelectedProv.models.find(x => x.id === mId) || { label: mId };
+            wizardSelectedModel = mId;
+            appendUserBubble(`مدل ${mObj.label} را انتخاب کردم.`);
+
+            appendNovaBubble(`
+              <p class="font-bold text-emerald-300">🎉 راه‌اندازی با موفقیت انجام شد!</p>
+              <p class="text-slate-300">کلید شما به صورت محرمانه در حافظه مرورگرتان ذخیره گردید و ارتباط با مدل برقرار است.</p>
+              <p class="text-xs text-purple-300 font-semibold pt-1">حالا به صفحه تنظیمات نهایی می‌رویم تا رفتار و خلاقیت کاراکتر را شخصی‌سازی کنید...</p>
+            `);
+
+            setTimeout(goToStep4, 1100);
+          });
+        });
+
+      } else {
+        appendNovaBubble(`
+          <div class="p-3 rounded-xl bg-red-950/50 border border-red-500/40 text-red-200 space-y-1.5">
+            <div class="flex items-center gap-1.5 font-bold text-red-300">
+              <span>✕</span>
+              <span>خطا در اعتبارسنجی کلید API (${result.status || 'Network Error'})</span>
+            </div>
+            <p class="text-[11px] leading-relaxed text-red-200">
+              ${result.message || 'کلید وارد شده نامعتبر است یا توسط ارائه‌دهنده پذیرفته نشد.'}
+            </p>
+            <p class="text-[11px] text-slate-300 pt-1">
+              لطفاً مطمئن شوید کلید را بدون حروف اضافه کپی کرده‌اید و دوباره آن را در کادر زیر وارد کنید:
+            </p>
+          </div>
+        `);
+        if (wizardChatInput) {
+          wizardChatInput.placeholder = 'کلید صحیح را دوباره اینجا وارد یا پیست کنید...';
+          wizardChatInput.focus();
+        }
+      }
+    }
+  }
+
+  wizardChatSendBtn?.addEventListener('click', handleWizardChatSubmit);
+  wizardChatInput?.addEventListener('keydown', (e) => {
+    if (e.key === 'Enter') {
+      e.preventDefault();
+      handleWizardChatSubmit();
+    }
+  });
+
+  wizardPasteBtn?.addEventListener('click', async () => {
+    try {
+      const text = await navigator.clipboard.readText();
+      if (text && wizardChatInput) {
+        wizardChatInput.value = text.trim();
+        showNotification('کلید از کلیپ‌بورد در کادر قرار گرفت.');
+      }
+    } catch {
+      wizardChatInput?.focus();
+    }
+  });
+
+  function goToStep4() {
+    wizardCurrentStep = 4;
+    wizardChatView?.classList.add('hidden');
+    wizardSettingsView?.classList.remove('hidden');
+    if (wizardStepBadge) wizardStepBadge.textContent = 'مرحله ۴ از ۴: تنظیمات نهایی هوش مصنوعی';
+
+    if (wizSumProv) wizSumProv.textContent = wizardSelectedProv ? wizardSelectedProv.name : 'AI Engine';
+    if (wizSumModel) wizSumModel.textContent = `Model: ${wizardSelectedModel} • Latency: ~${wizardLatency || 110}ms`;
+
+    const currentTemp = localStorage.getItem('aetheria_text_temp') || '0.85';
+    const currentTokens = localStorage.getItem('aetheria_text_tokens') || '350';
+    const currentContext = localStorage.getItem('aetheria_text_context') || '16';
+    const currentRepPen = localStorage.getItem('aetheria_text_rep_pen') || '1.10';
+
+    if (wizSliderTemp) wizSliderTemp.value = currentTemp;
+    if (wizValTemp) wizValTemp.textContent = currentTemp;
+    if (wizSliderTokens) wizSliderTokens.value = currentTokens;
+    if (wizValTokens) wizValTokens.textContent = `${currentTokens} tok`;
+    if (wizSliderContext) wizSliderContext.value = currentContext;
+    if (wizValContext) wizValContext.textContent = `${currentContext} نوبت`;
+    if (wizSliderRepPen) wizSliderRepPen.value = currentRepPen;
+    if (wizValRepPen) wizValRepPen.textContent = currentRepPen;
+  }
+
+  wizBtnReconfigure?.addEventListener('click', () => {
+    goToStep2();
+  });
 
   btnWizardRestart?.addEventListener('click', () => {
-    renderWizardInitialState();
+    goToStep1();
+  });
+
+  wizBtnCompleteAll?.addEventListener('click', () => {
+    if (wizardSelectedProv) {
+      localStorage.setItem('aetheria_text_provider', wizardSelectedProv.id);
+    }
+    if (wizardApiKey) {
+      localStorage.setItem('aetheria_text_key', wizardApiKey);
+    }
+    if (wizardSelectedModel) {
+      localStorage.setItem('aetheria_text_model', wizardSelectedModel);
+    }
+    if (wizSliderTemp) localStorage.setItem('aetheria_text_temp', wizSliderTemp.value);
+    if (wizSliderTokens) localStorage.setItem('aetheria_text_tokens', wizSliderTokens.value);
+    if (wizSliderContext) localStorage.setItem('aetheria_text_context', wizSliderContext.value);
+    if (wizSliderRepPen) localStorage.setItem('aetheria_text_rep_pen', wizSliderRepPen.value);
+    if (wizToggleStreaming) localStorage.setItem('aetheria_text_streaming', wizToggleStreaming.checked.toString());
+
+    if (textProviderSelect && wizardSelectedProv) textProviderSelect.value = wizardSelectedProv.id;
+    if (textApiKey && wizardApiKey) textApiKey.value = wizardApiKey;
+    if (textModelSelect && wizardSelectedModel) textModelSelect.value = wizardSelectedModel;
+    if (textModelInput && wizardSelectedModel) textModelInput.value = wizardSelectedModel;
+
+    syncProviderVisibility();
+    updateHeaderPill();
+    unlockHyperparameters(true);
+
+    byokTray?.classList.add('hidden');
+    showNotification('🚀 تنظیمات ذخیره شد! آماده گفتگو با کاراکتر هستید.');
   });
 
   // Load and apply settings from localStorage
@@ -3255,13 +3375,20 @@ const { character } = Astro.props;
 
     // Check if engine is already configured / unlocked
     const savedKey = localStorage.getItem('aetheria_text_key');
+    const savedProv = localStorage.getItem('aetheria_text_provider');
+    const hasKey = savedKey && savedKey.trim().length > 0;
     const isUnlockedSaved = localStorage.getItem('aetheria_engine_unlocked') === 'true';
-    if (textProv === 'demo' || (savedKey && savedKey.length > 0) || textProv === 'custom-local' || isUnlockedSaved) {
+
+    if ((hasKey && isUnlockedSaved) || savedProv === 'custom-local') {
       unlockHyperparameters(false);
+      wizardSelectedProv = WIZARD_PROVIDERS.find(x => x.id === savedProv) || WIZARD_PROVIDERS[0];
+      wizardApiKey = savedKey || '';
+      wizardSelectedModel = localStorage.getItem('aetheria_text_model') || (wizardSelectedProv?.models[0]?.id || '');
+      goToStep4();
     } else {
       lockHyperparameters();
+      goToStep1();
     }
-    renderWizardInitialState();
   }
 
   function updateAllBadges() {
