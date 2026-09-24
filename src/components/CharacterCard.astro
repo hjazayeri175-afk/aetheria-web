@@ -32,27 +32,12 @@ const { character } = Astro.props;
     <div class="absolute inset-0 bg-gradient-to-t from-[#07080d] via-[#07080d]/60 to-transparent opacity-95 group-hover:opacity-90 transition-opacity"></div>
     <div class="absolute inset-0 bg-gradient-to-b from-[#07080d]/70 via-transparent to-transparent"></div>
 
-    <!-- Top Badge Row -->
-    <div class="absolute top-2.5 sm:top-3 left-2.5 sm:left-3 right-2.5 sm:right-3 flex items-center justify-between z-10">
-      <!-- Status Indicator -->
-      <div class="flex items-center gap-1.5 px-2 py-0.5 rounded-full bg-black/60 backdrop-blur-md border border-white/10 text-[10px] font-medium text-slate-200">
-        <span class={`w-1.5 h-1.5 rounded-full ${character.status === 'online' ? 'bg-emerald-400 shadow-sm shadow-emerald-400 animate-pulse' : 'bg-slate-400'}`}></span>
-        <span class="capitalize">{character.status}</span>
-      </div>
-
-      <!-- Badges -->
-      <div class="flex items-center gap-1">
-        {character.lorebook && character.lorebook.length > 0 && (
-          <span class="px-2 py-0.5 rounded-full bg-cyan-500/20 backdrop-blur-md border border-cyan-500/30 text-[10px] font-semibold text-cyan-300 shadow-sm" title="Features rich World Info & Lorebook">
-            📚 Lore
-          </span>
-        )}
-        {character.badge && (
-          <span class="px-2 py-0.5 rounded-full bg-purple-500/20 backdrop-blur-md border border-purple-500/30 text-[10px] font-semibold text-purple-200 shadow-sm">
-            {character.badge}
-          </span>
-        )}
-      </div>
+    <!-- Clean Top Corner: Only rating or subtle tag -->
+    <div class="absolute top-2.5 sm:top-3 right-2.5 sm:right-3 flex items-center gap-1 z-10">
+      <span class="px-2 py-0.5 rounded-full bg-black/60 backdrop-blur-md border border-white/10 text-[10px] font-semibold text-amber-300 shadow-sm flex items-center gap-1">
+        <span>★</span>
+        <span>{character.rating || '5.0'}</span>
+      </span>
     </div>
 
     <!-- Quick Floating Chat Button (Appears on Hover / Direct Tap) -->
@@ -63,7 +48,7 @@ const { character } = Astro.props;
         class="open-chat-btn inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-purple-600/90 hover:bg-purple-500 active:scale-95 text-white font-semibold text-xs backdrop-blur-md shadow-lg shadow-purple-900/50 transform translate-y-2 group-hover:translate-y-0 transition duration-300 cursor-pointer pointer-events-auto"
       >
         <MessageSquare class="w-3.5 h-3.5" />
-        <span>Chat Now</span>
+        <span>View Profile & Story</span>
       </button>
     </div>
 

@@ -136,7 +136,7 @@ const { character } = Astro.props;
           <!-- Sessions Dropdown Popover -->
           <div 
             id="sessions-dropdown" 
-            class="hidden absolute right-0 mt-2 w-72 sm:w-80 rounded-2xl bg-[#0c0f20]/95 border border-purple-500/30 shadow-2xl shadow-purple-950/80 p-3 z-50 backdrop-blur-2xl"
+            class="hidden fixed inset-x-3 top-16 sm:absolute sm:inset-auto sm:right-0 sm:top-full sm:mt-2 w-auto sm:w-80 max-w-[calc(100vw-1.5rem)] rounded-2xl bg-[#0c0f20]/98 border border-purple-500/30 shadow-2xl shadow-purple-950/80 p-3 z-50 backdrop-blur-2xl"
           >
             <div class="flex items-center justify-between pb-2 mb-2 border-b border-white/[0.08]">
               <div class="flex items-center gap-1.5">
@@ -1715,6 +1715,12 @@ const { character } = Astro.props;
           greeting: matched.greeting || activeChar.greeting,
           fallbackReplies: (matched.alternateGreetings && matched.alternateGreetings.length > 0) ? matched.alternateGreetings : activeChar.fallbackReplies,
           starterPrompts: (matched.starterPrompts && matched.starterPrompts.length > 0) ? matched.starterPrompts : activeChar.starterPrompts,
+          scenario: matched.scenario || activeChar.scenario || '',
+          systemPrompt: matched.systemPrompt || activeChar.systemPrompt || '',
+          speechStyle: matched.speechStyle || activeChar.speechStyle || '',
+          mesExample: matched.mesExample || activeChar.mesExample || '',
+          personality: matched.personality || activeChar.personality || '',
+          lorebook: matched.lorebook || activeChar.lorebook || []
         };
       }
     } catch {}
@@ -5432,9 +5438,15 @@ Requirements:
       const savedChar = localStorage.getItem(CHAR_LORE_KEY);
       if (savedChar) {
         charLoreEntries = JSON.parse(savedChar);
-      } else if (activeChar.lorebook && activeChar.lorebook.length > 0) {
-        charLoreEntries = JSON.parse(JSON.stringify(activeChar.lorebook));
-        localStorage.setItem(CHAR_LORE_KEY, JSON.stringify(charLoreEntries));
+      } else if (activeChar.lorebook) {
+        const rawL = activeChar.lorebook;
+        const entries = Array.isArray(rawL) ? rawL : (rawL.entries || []);
+        if (entries.length > 0) {
+          charLoreEntries = JSON.parse(JSON.stringify(entries));
+          localStorage.setItem(CHAR_LORE_KEY, JSON.stringify(charLoreEntries));
+        } else {
+          charLoreEntries = [];
+        }
       } else {
         charLoreEntries = [];
       }
