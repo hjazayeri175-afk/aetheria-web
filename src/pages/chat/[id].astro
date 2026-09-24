@@ -4667,6 +4667,17 @@ const { character } = Astro.props;
         conversation[0].swipes = curSwipes;
         if (hasNew) saveChat();
       }
+
+      // Self-heal: If greeting message has empty dialogue (e.g. only thought process tags), restore valid scenario
+      const c0 = conversation[0];
+      const pureDialogue = (c0.text || '').replace(/<details[\s\S]*?<\/details>/gi, '').trim();
+      if (!pureDialogue && c0.swipes && c0.swipes.length > 0) {
+        const validGreeting = c0.swipes.find(s => s && s.replace(/<details[\s\S]*?<\/details>/gi, '').trim().length > 0) || greetings[0];
+        c0.text = validGreeting;
+        const vIdx = c0.swipes.indexOf(validGreeting);
+        c0.swipeIndex = vIdx >= 0 ? vIdx : 0;
+        saveChat();
+      }
     }
 
     renderAllMessages();
@@ -5738,6 +5749,16 @@ const { character } = Astro.props;
           content: m.content
         }));
 
+        if (payloadMessages.length === 0) {
+          payloadMessages.push({
+            role: 'user',
+            content: `[Start the roleplay scenario as ${activeChar.name}. Greet the user in-character with a vivid, evocative opening description and dialogue.]`
+          });
+        }
+
+        const isThinkingEnabled = (localStorage.getItem('aetheria_text_thinking') === 'true');
+        const tokenBudget = isThinkingEnabled ? Math.max(maxTokens, 3500) : maxTokens;
+
         let payload;
         let headers = { 'Content-Type': 'application/json' };
 
@@ -5764,7 +5785,7 @@ const { character } = Astro.props;
             model: model,
             system: systemPrompt,
             messages: payloadMessages,
-            max_tokens: maxTokens,
+            max_tokens: tokenBudget,
             temperature: temp
           };
         } else {
@@ -5772,8 +5793,12 @@ const { character } = Astro.props;
             model: model,
             messages: [{ role: 'system', content: systemPrompt }, ...payloadMessages],
             temperature: temp,
-            max_tokens: maxTokens
+            max_tokens: tokenBudget,
+            max_completion_tokens: tokenBudget
           };
+          if (!isThinkingEnabled) {
+            payload.thinking = { type: 'disabled' };
+          }
         }
 
         let res;
@@ -5802,20 +5827,23 @@ const { character } = Astro.props;
             newReply = data.content?.[0]?.text || '';
           } else {
             const choice = data.choices?.[0];
-            const cText = choice?.message?.content 
+            const cText = (choice?.message?.content 
               || choice?.text 
               || (data.content && data.content[0] && data.content[0].text) 
               || data.response 
-              || '';
-            const rText = choice?.message?.reasoning_content 
+              || '').trim();
+            const rText = (choice?.message?.reasoning_content 
               || choice?.message?.reasoning 
               || choice?.message?.thought 
               || choice?.message?.thinking 
-              || '';
+              || '').trim();
             if (cText && rText) {
               newReply = `<details class="mb-3 rounded-lg border border-purple-500/20 bg-purple-950/20 px-3 py-2 text-xs text-purple-300 select-none"><summary class="cursor-pointer font-medium hover:text-purple-200">💭 Thought Process (${rText.length} chars)</summary><div class="mt-2 text-slate-300 font-mono text-[11px] leading-relaxed whitespace-pre-wrap">${rText}</div></details>\n\n${cText}`;
+            } else if (cText) {
+              newReply = cText;
             } else {
-              newReply = cText || rText;
+              // Only thought returned without dialogue -> do not treat as valid dialogue
+              newReply = '';
             }
           }
         }
@@ -5872,11 +5900,20 @@ const { character } = Astro.props;
 
     if (action === 'prev') {
       if ((msg.swipeIndex || 0) > 0) {
-        msg.swipeIndex--;
+        const cur = msg.swipes[msg.swipeIndex || 0] || '';
+        const pureCur = cur.replace(/<details[\s\S]*?<\/details>/gi, '').trim();
+        // If current swipe was an empty thought-only glitch, remove it from list
+        if (!pureCur && msg.swipes.length > 1) {
+          msg.swipes.splice(msg.swipeIndex, 1);
+        }
+        msg.swipeIndex = Math.max(0, (msg.swipeIndex || 0) - 1);
         msg.text = msg.swipes[msg.swipeIndex];
         saveChat();
         renderAllMessages();
         fetchDynamicSuggestions(msg.text);
+        if (msgIdx === 0) {
+          showNotification(`Switched to Scenario ${msg.swipeIndex + 1} of ${msg.swipes.length}`);
+        }
       }
     } else if (action === 'next') {
       const nextIdx = (msg.swipeIndex || 0) + 1;
@@ -6210,7 +6247,12 @@ const { character } = Astro.props;
     if (conversation.length > 0) {
       const lastIdx = conversation.length - 1;
       if (conversation[lastIdx].sender === 'character') {
-        generateNewSwipe(lastIdx);
+        if (lastIdx === 0 && conversation[0].swipes && conversation[0].swipes.length > 1) {
+          // Initial greeting has multiple pre-made scenarios from card author: cycle to next scenario!
+          handleSwipeNavigation(0, 'next');
+        } else {
+          generateNewSwipe(lastIdx);
+        }
       } else {
         handleSendMessage(conversation[lastIdx].text);
       }
