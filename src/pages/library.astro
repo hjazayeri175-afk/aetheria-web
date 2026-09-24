@@ -237,10 +237,10 @@ import {
   // Load All Storylines
     // Modern Glassmorphic Dialog Modal
   function showConfirmModal({
-    title = 'تأیید عملیات',
-    message = 'آیا از انجام این عملیات اطمینان دارید؟',
-    confirmText = 'تأیید',
-    cancelText = 'انصراف',
+    title = 'Confirm Action',
+    message = 'Are you sure you want to proceed?',
+    confirmText = 'Confirm',
+    cancelText = 'Cancel',
     type = 'default',
     icon = ''
   } = {}) {
@@ -253,8 +253,7 @@ import {
       backdrop.className = 'fixed inset-0 z-[10000] flex items-center justify-center p-4 bg-black/75 backdrop-blur-md transition-opacity duration-200 opacity-0';
       
       const modal = document.createElement('div');
-      modal.className = 'w-full max-w-sm rounded-3xl bg-[#0d1124]/95 border border-purple-500/30 p-5 sm:p-6 shadow-2xl shadow-purple-950/80 transform scale-95 transition-all duration-200 text-right';
-      modal.setAttribute('dir', 'rtl');
+      modal.className = 'w-full max-w-sm rounded-3xl bg-[#0d1124]/95 border border-purple-500/30 p-5 sm:p-6 shadow-2xl shadow-purple-950/80 transform scale-95 transition-all duration-200 text-left';
 
       const cancelBtnHtml = cancelText ? `
         <button id="modal-btn-cancel" type="button" class="px-4 py-2 rounded-xl text-xs font-medium text-slate-300 hover:text-white bg-white/5 hover:bg-white/10 border border-white/10 transition-all cursor-pointer">
@@ -318,11 +317,11 @@ import {
     });
   }
 
-  function showAlertModal(message, title = 'پیام سیستم', icon = 'ℹ️') {
+  function showAlertModal(message, title = 'System Notice', icon = 'ℹ️') {
     return showConfirmModal({
       title,
       message,
-      confirmText: 'متوجه شدم',
+      confirmText: 'Got It',
       cancelText: '',
       type: 'info',
       icon
@@ -553,10 +552,10 @@ import {
       // Delete single chat handler
       card.querySelector('.delete-single-chat-btn')?.addEventListener('click', async () => {
         const confirmed = await showConfirmModal({
-          title: 'حذف داستان',
-          message: `آیا مایلید شاخه "${item.branchTitle}" با کاراکتر ${char.name} حذف شود؟`,
-          confirmText: 'حذف داستان',
-          cancelText: 'انصراف',
+          title: 'Delete Storyline',
+          message: `Are you sure you want to delete the "${item.branchTitle}" storyline with ${char.name}?`,
+          confirmText: 'Delete Storyline',
+          cancelText: 'Cancel',
           icon: '🗑️',
           type: 'danger'
         });
@@ -647,15 +646,15 @@ import {
       try {
         const data = JSON.parse(e.target?.result);
         if (!data || !data.meta || data.meta.app !== 'Aetheria AI') {
-          await showAlertModal('فایل پشتیبان نامعتبر است. لطفاً فایل JSON استاندارد انتخاب کنید.', 'خطای فایل');
+          await showAlertModal('Invalid backup file format. Please select a valid Aetheria JSON backup.', 'File Error');
           return;
         }
 
         const confirmed = await showConfirmModal({
-          title: 'بازیابی نسخه پشتیبان',
-          message: 'آیا نسخه پشتیبان بازگردانی شود؟ داستان‌های هم‌نام به‌روزرسانی خواهند شد.',
-          confirmText: 'بازیابی اطلاعات',
-          cancelText: 'انصراف',
+          title: 'Restore Backup',
+          message: 'Restore backup? Existing storylines with identical identifiers will be updated.',
+          confirmText: 'Restore Backup',
+          cancelText: 'Cancel',
           icon: '📦',
           type: 'warning'
         });
@@ -681,11 +680,11 @@ import {
             localStorage.setItem('aetheria_user_persona', JSON.stringify(data.userPersona));
           }
 
-          await showAlertModal('نسخه پشتیبان با موفقیت بازیابی شد!', 'موفقیت', '✅');
+          await showAlertModal('Backup restored successfully! All data loaded.', 'Success', '✅');
           loadStorylines();
         }
       } catch (err) {
-        await showAlertModal('خطا در پردازش فایل: ' + err.message, 'خطا');
+        await showAlertModal('Failed to parse backup file: ' + err.message, 'File Error');
       }
     };
     reader.readAsText(file);

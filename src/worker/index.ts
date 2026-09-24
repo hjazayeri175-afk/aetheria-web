@@ -811,7 +811,7 @@ export default {
         }
 
         // Tier 3: In-character warm fallback
-        const safeFallback = '*نگاه گرم و مهربانش را به چشمانت می‌دوزد و با صدایی آرام دستت را لمس می‌کند.* "می‌فهمم عزیزم، گاهی همه‌چیز زیادی سنگین میشه. نگران نباش، من اینجام و با هم حلش می‌کنیم."';
+        const safeFallback = '*Offers a warm, reassuring smile and gently touches your hand.* "I understand. Sometimes things get overwhelming, but you are not alone. We will take it one step at a time."';
         if (stream) {
           const sseBody = `data: ${JSON.stringify({ choices: [{ delta: { content: safeFallback } }] })}\n\ndata: [DONE]\n\n`;
           return new Response(sseBody, {

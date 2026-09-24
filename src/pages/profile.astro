@@ -623,10 +623,10 @@ import {
 
     // Modern Glassmorphic Dialog Modal
   function showConfirmModal({
-    title = 'تأیید عملیات',
-    message = 'آیا از انجام این عملیات اطمینان دارید؟',
-    confirmText = 'تأیید',
-    cancelText = 'انصراف',
+    title = 'Confirm Action',
+    message = 'Are you sure you want to proceed?',
+    confirmText = 'Confirm',
+    cancelText = 'Cancel',
     type = 'default',
     icon = ''
   }: {
@@ -646,8 +646,7 @@ import {
       backdrop.className = 'fixed inset-0 z-[10000] flex items-center justify-center p-4 bg-black/75 backdrop-blur-md transition-opacity duration-200 opacity-0';
       
       const modal = document.createElement('div');
-      modal.className = 'w-full max-w-sm rounded-3xl bg-[#0d1124]/95 border border-purple-500/30 p-5 sm:p-6 shadow-2xl shadow-purple-950/80 transform scale-95 transition-all duration-200 text-right';
-      modal.setAttribute('dir', 'rtl');
+      modal.className = 'w-full max-w-sm rounded-3xl bg-[#0d1124]/95 border border-purple-500/30 p-5 sm:p-6 shadow-2xl shadow-purple-950/80 transform scale-95 transition-all duration-200 text-left';
 
       const cancelBtnHtml = cancelText ? `
         <button id="modal-btn-cancel" type="button" class="px-4 py-2 rounded-xl text-xs font-medium text-slate-300 hover:text-white bg-white/5 hover:bg-white/10 border border-white/10 transition-all cursor-pointer">
@@ -711,11 +710,11 @@ import {
     });
   }
 
-  function showAlertModal(message: string, title = 'پیام سیستم', icon = 'ℹ️') {
+  function showAlertModal(message: string, title = 'System Notice', icon = 'ℹ️') {
     return showConfirmModal({
       title,
       message,
-      confirmText: 'متوجه شدم',
+      confirmText: 'Got It',
       cancelText: '',
       type: 'info',
       icon
@@ -995,10 +994,10 @@ import {
   // Reset Form
   resetFormBtn?.addEventListener('click', async () => {
     const confirmed = await showConfirmModal({
-      title: 'بازنشانی پرسونا',
-      message: 'آیا مایلید این پرسونا به مقادیر پیش‌فرض ذخیره شده بازگردد؟',
-      confirmText: 'بازنشانی',
-      cancelText: 'انصراف',
+      title: 'Reset Persona',
+      message: 'Reset this persona form to saved profile defaults?',
+      confirmText: 'Reset Form',
+      cancelText: 'Cancel',
       icon: '🔄',
       type: 'warning'
     });
@@ -1069,10 +1068,10 @@ import {
   // Clear Local Cache
   clearCacheBtn?.addEventListener('click', async () => {
     const confirmed = await showConfirmModal({
-      title: 'پاکسازی کش محلی',
-      message: 'آیا از حذف تمام پرسوناها و کاراکترهای سفارشی مطمئن هستید؟ این عملیات بدون داشتن فایل پشتیبان قابل بازگشت نیست.',
-      confirmText: 'پاکسازی کامل',
-      cancelText: 'انصراف',
+      title: 'Clear Local Cache',
+      message: 'Are you sure you want to clear all local personas and custom characters? This action cannot be undone unless you have a backup.',
+      confirmText: 'Clear All Data',
+      cancelText: 'Cancel',
       icon: '🗑️',
       type: 'danger'
     });

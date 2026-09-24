@@ -915,7 +915,7 @@ const { character } = Astro.props;
                       <div class="flex items-center justify-between text-xs">
                         <div class="flex items-center gap-1.5">
                           <span class="text-sm">💭</span>
-                          <span class="text-slate-200 font-medium">حالت تفکر مدل (Thinking Mode)</span>
+                          <span class="text-slate-200 font-medium">Thinking Mode (Reasoning)</span>
                         </div>
                         <label class="relative inline-flex items-center cursor-pointer">
                           <input id="toggle-thinking" type="checkbox" class="sr-only peer" />
@@ -923,7 +923,7 @@ const { character } = Astro.props;
                         </label>
                       </div>
                       <p class="text-[10px] text-slate-400 leading-normal">
-                        برای رول‌پلی سریع و مستقیم خاموش بگذارید. در صورت روشن بودن، سقف توکن به طور خودکار به ۳۵۰۰+ افزایش می‌یابد تا تفکر مانع از تولید پاسخ نشود.
+                        Keep OFF for fast, uninterrupted roleplay dialogue. When enabled, token limit is auto-boosted to 3500+ so thinking does not cut off the character response.
                       </p>
                     </div>
 
@@ -2006,10 +2006,10 @@ const { character } = Astro.props;
 
   // Modern Glassmorphic Custom Dialog Modal (Replaces primitive browser confirm/alert)
   function showConfirmModal({
-    title = 'تأیید عملیات',
-    message = 'آیا از انجام این عملیات اطمینان دارید؟',
-    confirmText = 'تأیید',
-    cancelText = 'انصراف',
+    title = 'Confirm Action',
+    message = 'Are you sure you want to proceed?',
+    confirmText = 'Confirm',
+    cancelText = 'Cancel',
     type = 'default', // 'danger' | 'warning' | 'info' | 'default'
     icon = ''
   } = {}) {
@@ -2022,8 +2022,7 @@ const { character } = Astro.props;
       backdrop.className = 'fixed inset-0 z-[10000] flex items-center justify-center p-4 bg-black/75 backdrop-blur-md transition-opacity duration-200 opacity-0';
       
       const modal = document.createElement('div');
-      modal.className = 'w-full max-w-sm rounded-3xl bg-[#0d1124]/95 border border-purple-500/30 p-5 sm:p-6 shadow-2xl shadow-purple-950/80 transform scale-95 transition-all duration-200 text-right';
-      modal.setAttribute('dir', 'rtl');
+      modal.className = 'w-full max-w-sm rounded-3xl bg-[#0d1124]/95 border border-purple-500/30 p-5 sm:p-6 shadow-2xl shadow-purple-950/80 transform scale-95 transition-all duration-200 text-left';
 
       const cancelBtnHtml = cancelText ? `
         <button id="modal-btn-cancel" type="button" class="px-4 py-2 rounded-xl text-xs font-medium text-slate-300 hover:text-white bg-white/5 hover:bg-white/10 border border-white/10 transition-all cursor-pointer">
@@ -2090,11 +2089,11 @@ const { character } = Astro.props;
     });
   }
 
-  function showAlertModal(message, title = 'پیام سیستم', icon = 'ℹ️') {
+  function showAlertModal(message, title = 'System Notice', icon = 'ℹ️') {
     return showConfirmModal({
       title,
       message,
-      confirmText: 'متوجه شدم',
+      confirmText: 'Got It',
       cancelText: '',
       type: 'info',
       icon
@@ -2331,7 +2330,7 @@ const { character } = Astro.props;
     text = text.replace(/<think>([\s\S]*?)(?:<\/think>|$)/gi, (_, thought) => {
       const trimmed = thought.trim();
       if (!trimmed) return '';
-      return `<details class="mb-3 rounded-lg border border-purple-500/20 bg-purple-950/20 px-3 py-2 text-xs text-purple-300 select-none"><summary class="cursor-pointer font-medium hover:text-purple-200">💭 روند تفکر (${trimmed.length} کاراکتر)</summary><div class="mt-2 text-slate-300 font-mono text-[11px] leading-relaxed whitespace-pre-wrap">${trimmed}</div></details>\n\n`;
+      return `<details class="mb-3 rounded-lg border border-purple-500/20 bg-purple-950/20 px-3 py-2 text-xs text-purple-300 select-none"><summary class="cursor-pointer font-medium hover:text-purple-200">💭 Thought Process (${trimmed.length} chars)</summary><div class="mt-2 text-slate-300 font-mono text-[11px] leading-relaxed whitespace-pre-wrap">${trimmed}</div></details>\n\n`;
     });
 
     // Protect <details> reasoning blocks and HTML notice containers from escaping
@@ -4228,10 +4227,10 @@ const { character } = Astro.props;
   // Reset Defaults
   resetDefaultsBtn?.addEventListener('click', async () => {
     const confirmed = await showConfirmModal({
-      title: 'بازنشانی تنظیمات موتور',
-      message: 'آیا مایلید تمام تنظیمات هوش مصنوعی (مدل، توکن‌ها، تفکر، خلاقیت) به مقادیر پیش‌فرض بهینه بازگردند؟',
-      confirmText: 'بازنشانی پیش‌فرض',
-      cancelText: 'انصراف',
+      title: 'Reset Engine Settings',
+      message: 'Reset all AI engine settings (model, max tokens, reasoning, creativity) to optimal defaults?',
+      confirmText: 'Reset to Defaults',
+      cancelText: 'Cancel',
       icon: '⚙️',
       type: 'warning'
     });
@@ -4600,14 +4599,14 @@ const { character } = Astro.props;
 
   async function deleteSession(sessionId) {
     if (sessionId === 'session_default') {
-      await showAlertModal('شاخه اصلی داستان (Main Timeline) قابل حذف نیست.', 'توجه');
+      await showAlertModal('The Main Timeline cannot be deleted.', 'Notice');
       return;
     }
     const confirmed = await showConfirmModal({
-      title: 'حذف شاخه داستان',
-      message: 'آیا از حذف این شاخه و تمام پیام‌های داخل آن اطمینان دارید؟ این عملیات قابل بازگشت نیست.',
-      confirmText: 'حذف شاخه',
-      cancelText: 'انصراف',
+      title: 'Delete Story Branch',
+      message: 'Are you sure you want to delete this story branch and all its messages? This action cannot be undone.',
+      confirmText: 'Delete Branch',
+      cancelText: 'Cancel',
       icon: '🗑️',
       type: 'danger'
     });
@@ -5453,7 +5452,7 @@ const { character } = Astro.props;
                         if (contentText) {
                           let display = '';
                           if (reasoningText.trim()) {
-                            display = `<details class="mb-3 rounded-lg border border-purple-500/20 bg-purple-950/20 px-3 py-2 text-xs text-purple-300 select-none"><summary class="cursor-pointer font-medium hover:text-purple-200">💭 روند تفکر (${reasoningText.length} کاراکتر)</summary><div class="mt-2 text-slate-300 font-mono text-[11px] leading-relaxed whitespace-pre-wrap">${reasoningText}</div></details>\n\n${contentText}`;
+                            display = `<details class="mb-3 rounded-lg border border-purple-500/20 bg-purple-950/20 px-3 py-2 text-xs text-purple-300 select-none"><summary class="cursor-pointer font-medium hover:text-purple-200">💭 Thought Process (${reasoningText.length} chars)</summary><div class="mt-2 text-slate-300 font-mono text-[11px] leading-relaxed whitespace-pre-wrap">${reasoningText}</div></details>\n\n${contentText}`;
                           } else {
                             display = contentText;
                           }
@@ -5461,7 +5460,7 @@ const { character } = Astro.props;
                           charMsg.swipes[0] = display;
                           bubbleEl.innerHTML = formatMessageText(display);
                         } else if (reasoningText) {
-                          bubbleEl.innerHTML = `<div class="flex items-center gap-2 text-xs text-purple-400 italic mb-2 animate-pulse"><span>💭</span><span>در حال تفکر و پردازش نقش...</span></div><div class="text-xs text-slate-400 font-mono leading-relaxed line-clamp-4 whitespace-pre-wrap border-l-2 border-purple-500/40 pl-2">${reasoningText}</div>`;
+                          bubbleEl.innerHTML = `<div class="flex items-center gap-2 text-xs text-purple-400 italic mb-2 animate-pulse"><span>💭</span><span>Thinking & processing character persona...</span></div><div class="text-xs text-slate-400 font-mono leading-relaxed line-clamp-4 whitespace-pre-wrap border-l-2 border-purple-500/40 pl-2">${reasoningText}</div>`;
                         }
                         if (chatStream) chatStream.scrollTop = chatStream.scrollHeight;
                       }
@@ -5475,14 +5474,14 @@ const { character } = Astro.props;
 
             // Combine content and reasoning
             if (contentText && reasoningText.trim()) {
-              replyText = `<details class="mb-3 rounded-lg border border-purple-500/20 bg-purple-950/20 px-3 py-2 text-xs text-purple-300 select-none"><summary class="cursor-pointer font-medium hover:text-purple-200">💭 روند تفکر (${reasoningText.length} کاراکتر)</summary><div class="mt-2 text-slate-300 font-mono text-[11px] leading-relaxed whitespace-pre-wrap">${reasoningText}</div></details>\n\n${contentText}`;
+              replyText = `<details class="mb-3 rounded-lg border border-purple-500/20 bg-purple-950/20 px-3 py-2 text-xs text-purple-300 select-none"><summary class="cursor-pointer font-medium hover:text-purple-200">💭 Thought Process (${reasoningText.length} chars)</summary><div class="mt-2 text-slate-300 font-mono text-[11px] leading-relaxed whitespace-pre-wrap">${reasoningText}</div></details>\n\n${contentText}`;
             } else if (contentText) {
               replyText = contentText;
             } else if (reasoningText.trim()) {
               const notice = finishReason === 'length'
-                ? `مدل تمام سقف توکن (${effectiveMaxTokens}) را صرف فکر کردن کرد و به پایان رسید.`
-                : `مدل فرآیند تفکر را انجام داد اما دیالوگ کاراکتر را ننوشت.`;
-              replyText = `<details class="mb-3 rounded-lg border border-purple-500/20 bg-purple-950/20 px-3 py-2 text-xs text-purple-300 select-none" open><summary class="cursor-pointer font-medium hover:text-purple-200">💭 روند تفکر (${reasoningText.length} کاراکتر)</summary><div class="mt-2 text-slate-300 font-mono text-[11px] leading-relaxed whitespace-pre-wrap">${reasoningText}</div></details>\n\n<div class="p-3 rounded-xl bg-amber-500/10 border border-amber-500/30 text-amber-200 text-xs flex flex-col gap-2"><div>⚠️ <strong>توقف پس از تفکر:</strong> ${notice}</div><div class="flex flex-wrap items-center gap-2 mt-1"><button type="button" onclick="window.continueGeneration()" class="px-3 py-1.5 rounded-lg bg-purple-600 hover:bg-purple-500 text-white font-medium text-xs shadow transition-all cursor-pointer">✨ ادامه نوشتن دیالوگ (Continue)</button><button type="button" onclick="window.disableThinkingAndRetry()" class="px-3 py-1.5 rounded-lg bg-white/10 hover:bg-white/20 text-slate-200 text-xs transition-all cursor-pointer">⚡ پاسخ سریع با تفکر خاموش (پیشنهادی رول‌پلی)</button></div></div>`;
+                ? `The model reached the token limit (${effectiveMaxTokens}) during reasoning.`
+                : `The model completed reasoning but paused before generating spoken dialogue.`;
+              replyText = `<details class="mb-3 rounded-lg border border-purple-500/20 bg-purple-950/20 px-3 py-2 text-xs text-purple-300 select-none" open><summary class="cursor-pointer font-medium hover:text-purple-200">💭 Thought Process (${reasoningText.length} chars)</summary><div class="mt-2 text-slate-300 font-mono text-[11px] leading-relaxed whitespace-pre-wrap">${reasoningText}</div></details>\n\n<div class="p-3 rounded-xl bg-amber-500/10 border border-amber-500/30 text-amber-200 text-xs flex flex-col gap-2"><div>⚠️ <strong>Stream Paused:</strong> ${notice}</div><div class="flex flex-wrap items-center gap-2 mt-1"><button type="button" onclick="window.continueGeneration()" class="px-3 py-1.5 rounded-lg bg-purple-600 hover:bg-purple-500 text-white font-medium text-xs shadow transition-all cursor-pointer">✨ Continue Dialogue</button><button type="button" onclick="window.disableThinkingAndRetry()" class="px-3 py-1.5 rounded-lg bg-white/10 hover:bg-white/20 text-slate-200 text-xs transition-all cursor-pointer">⚡ Fast Reply (Disable Thinking)</button></div></div>`;
             }
 
             // Fallback JSON parser if provider returned non-SSE JSON response
@@ -5495,7 +5494,7 @@ const { character } = Astro.props;
                   const cText = choice?.message?.content || choice?.text || (json.content && json.content[0] && json.content[0].text) || json.response || '';
                   const rText = choice?.message?.reasoning_content || choice?.message?.reasoning || choice?.message?.thought || choice?.message?.thinking || '';
                   if (cText && rText) {
-                    replyText = `<details class="mb-3 rounded-lg border border-purple-500/20 bg-purple-950/20 px-3 py-2 text-xs text-purple-300 select-none"><summary class="cursor-pointer font-medium hover:text-purple-200">💭 روند تفکر</summary><div class="mt-2 text-slate-300 font-mono text-[11px] leading-relaxed whitespace-pre-wrap">${rText}</div></details>\n\n${cText}`;
+                    replyText = `<details class="mb-3 rounded-lg border border-purple-500/20 bg-purple-950/20 px-3 py-2 text-xs text-purple-300 select-none"><summary class="cursor-pointer font-medium hover:text-purple-200">💭 Thought Process</summary><div class="mt-2 text-slate-300 font-mono text-[11px] leading-relaxed whitespace-pre-wrap">${rText}</div></details>\n\n${cText}`;
                   } else {
                     replyText = cText || rText;
                   }
@@ -5518,7 +5517,7 @@ const { character } = Astro.props;
               }
               saveChat();
             } else {
-              charMsg.text = '*(مدل پاسخی ارسال نکرد - اتصال یا تنظیمات توکن را بررسی کنید)*';
+              charMsg.text = '*(No response generated - check API connection or token settings)*';
               charMsg.swipes[0] = charMsg.text;
               if (bubbleEl) {
                 bubbleEl.innerHTML = formatMessageText(charMsg.text);
@@ -5541,7 +5540,7 @@ const { character } = Astro.props;
               || '';
 
             if (cText && rText) {
-              replyText = `<details class="mb-3 rounded-lg border border-purple-500/20 bg-purple-950/20 px-3 py-2 text-xs text-purple-300 select-none"><summary class="cursor-pointer font-medium hover:text-purple-200">💭 روند تفکر</summary><div class="mt-2 text-slate-300 font-mono text-[11px] leading-relaxed whitespace-pre-wrap">${rText}</div></details>\n\n${cText}`;
+              replyText = `<details class="mb-3 rounded-lg border border-purple-500/20 bg-purple-950/20 px-3 py-2 text-xs text-purple-300 select-none"><summary class="cursor-pointer font-medium hover:text-purple-200">💭 Thought Process</summary><div class="mt-2 text-slate-300 font-mono text-[11px] leading-relaxed whitespace-pre-wrap">${rText}</div></details>\n\n${cText}`;
             } else {
               replyText = cText || rText;
             }
@@ -5550,7 +5549,7 @@ const { character } = Astro.props;
               if (data.error) {
                 throw new Error(data.error.message || JSON.stringify(data.error));
               }
-              replyText = '*(مدل پاسخی ارسال نکرد - اتصال یا تنظیمات توکن را بررسی کنید)*';
+              replyText = '*(No response generated - check API connection or token settings)*';
             }
             const charMsg = {
               sender: 'character',
@@ -5814,7 +5813,7 @@ const { character } = Astro.props;
               || choice?.message?.thinking 
               || '';
             if (cText && rText) {
-              newReply = `<details class="mb-3 rounded-lg border border-purple-500/20 bg-purple-950/20 px-3 py-2 text-xs text-purple-300 select-none"><summary class="cursor-pointer font-medium hover:text-purple-200">💭 روند تفکر (${rText.length} کاراکتر)</summary><div class="mt-2 text-slate-300 font-mono text-[11px] leading-relaxed whitespace-pre-wrap">${rText}</div></details>\n\n${cText}`;
+              newReply = `<details class="mb-3 rounded-lg border border-purple-500/20 bg-purple-950/20 px-3 py-2 text-xs text-purple-300 select-none"><summary class="cursor-pointer font-medium hover:text-purple-200">💭 Thought Process (${rText.length} chars)</summary><div class="mt-2 text-slate-300 font-mono text-[11px] leading-relaxed whitespace-pre-wrap">${rText}</div></details>\n\n${cText}`;
             } else {
               newReply = cText || rText;
             }
@@ -5963,10 +5962,10 @@ const { character } = Astro.props;
     if (!msg) return;
 
     const confirmed = await showConfirmModal({
-      title: 'بازگشت به این نوبت (Rewind)',
-      message: 'آیا مایلید گفت‌وگو به این مرحله بازگردد؟ پیام‌های بعدی حذف می‌شوند و متن پیام شما برای ویرایش مجدد در کادر ورودی قرار می‌گیرد.',
-      confirmText: '↩️ بازگشت و اصلاح',
-      cancelText: 'انصراف',
+      title: 'Rewind Conversation',
+      message: 'Rewind conversation to this turn? Subsequent messages will be removed and your previous prompt will be restored to the input box for editing.',
+      confirmText: '↩️ Rewind & Edit',
+      cancelText: 'Cancel',
       icon: '↩️',
       type: 'warning'
     });
@@ -6274,10 +6273,10 @@ const { character } = Astro.props;
     if (deleteBtn) {
       const idx = parseInt(deleteBtn.getAttribute('data-idx') || '0', 10);
       showConfirmModal({
-        title: 'حذف پیام',
-        message: 'آیا این پیام از تاریخچه مکالمه حذف شود؟',
-        confirmText: 'حذف پیام',
-        cancelText: 'انصراف',
+        title: 'Delete Message',
+        message: 'Are you sure you want to delete this message from the conversation history?',
+        confirmText: 'Delete Message',
+        cancelText: 'Cancel',
         icon: '🗑️',
         type: 'danger'
       }).then(confirmed => {
@@ -6488,10 +6487,10 @@ Requirements:
   // Clear chat
   clearChatBtn?.addEventListener('click', async () => {
     const confirmed = await showConfirmModal({
-      title: `شروع مجدد گفت‌وگو با ${activeChar.name}`,
-      message: `آیا مایلید تمام پیام‌های رد و بدل شده با ${activeChar.name} پاک شده و مکالمه از ابتدا آغاز شود؟`,
-      confirmText: 'شروع مجدد',
-      cancelText: 'انصراف',
+      title: `Reset Chat with ${activeChar.name}`,
+      message: `Are you sure you want to clear all conversation history with ${activeChar.name} and start fresh?`,
+      confirmText: 'Reset Conversation',
+      cancelText: 'Cancel',
       icon: '🔄',
       type: 'danger'
     });
@@ -6684,10 +6683,10 @@ Requirements:
 
       card.querySelector('.delete-entry-btn')?.addEventListener('click', async () => {
         const confirmed = await showConfirmModal({
-          title: 'حذف مدخل لوربوک',
-          message: `آیا مدخل "${entry.name}" از حافظه دنیای بازی حذف شود؟`,
-          confirmText: 'حذف مدخل',
-          cancelText: 'انصراف',
+          title: 'Delete Lore Entry',
+          message: `Delete lore entry "${entry.name}" from world memory?`,
+          confirmText: 'Delete Entry',
+          cancelText: 'Cancel',
           icon: '📖',
           type: 'danger'
         });
