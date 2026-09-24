@@ -703,39 +703,29 @@ const { character } = Astro.props;
                       <span class="text-[10px] text-purple-400 font-normal">24 Supported Engines</span>
                     </label>
                     <select id="text-provider-select" class="w-full px-3.5 py-2.5 rounded-xl bg-white/[0.05] border border-white/10 text-xs text-white outline-none focus:border-purple-500/60 font-semibold cursor-pointer">
-                      <optgroup label="Instant &amp; Free Cloud">
-                        <option value="demo">Free Cloud AI</option>
-                      </optgroup>
-                      <optgroup label="Frontier AI Labs">
-                        <option value="openrouter">OpenRouter</option>
-                        <option value="google">Google Gemini</option>
-                        <option value="deepseek">DeepSeek</option>
-                        <option value="openai">OpenAI</option>
-                        <option value="anthropic">Anthropic Claude</option>
-                        <option value="xai">xAI Grok</option>
-                        <option value="mistral">Mistral AI</option>
-                      </optgroup>
-                      <optgroup label="High-Speed Hardware Accelerators">
-                        <option value="groq" selected>Groq</option>
-                        <option value="cerebras">Cerebras</option>
-                        <option value="sambanova">SambaNova Systems</option>
-                        <option value="together">Together AI</option>
-                        <option value="fireworks">Fireworks AI</option>
-                        <option value="cohere">Cohere</option>
-                        <option value="perplexity">Perplexity AI</option>
-                      </optgroup>
-                      <optgroup label="Specialized &amp; Roleplay Clouds">
-                        <option value="novita">Novita AI</option>
-                        <option value="featherless">Featherless AI</option>
-                        <option value="siliconflow">SiliconFlow</option>
-                        <option value="huggingface">Hugging Face</option>
-                        <option value="cloudflare">Cloudflare Workers AI</option>
-                        <option value="ai21">AI21 Labs</option>
-                      </optgroup>
-                      <optgroup label="Self-Hosted &amp; Custom Gateways">
-                        <option value="custom-local">Custom Localhost</option>
-                        <option value="custom-proxy">Custom Reverse Proxy</option>
-                      </optgroup>
+                      <option value="demo">Free Cloud AI</option>
+                      <option value="groq" selected>Groq</option>
+                      <option value="google">Google Gemini</option>
+                      <option value="openai">OpenAI</option>
+                      <option value="anthropic">Anthropic Claude</option>
+                      <option value="openrouter">OpenRouter</option>
+                      <option value="deepseek">DeepSeek</option>
+                      <option value="xai">xAI Grok</option>
+                      <option value="mistral">Mistral AI</option>
+                      <option value="cerebras">Cerebras</option>
+                      <option value="sambanova">SambaNova Systems</option>
+                      <option value="together">Together AI</option>
+                      <option value="fireworks">Fireworks AI</option>
+                      <option value="cohere">Cohere</option>
+                      <option value="perplexity">Perplexity AI</option>
+                      <option value="novita">Novita AI</option>
+                      <option value="featherless">Featherless AI</option>
+                      <option value="siliconflow">SiliconFlow</option>
+                      <option value="huggingface">Hugging Face</option>
+                      <option value="cloudflare">Cloudflare Workers AI</option>
+                      <option value="ai21">AI21 Labs</option>
+                      <option value="custom-local">Custom Localhost</option>
+                      <option value="custom-proxy">Custom Reverse Proxy</option>
                     </select>
                   </div>
 
@@ -2024,61 +2014,37 @@ const { character } = Astro.props;
       curated: ['Free Cloud AI'],
       chatEndpoint: '/api/chat/demo'
     },
-    openrouter: {
-      name: 'OpenRouter',
-      label: 'OpenRouter',
+    groq: {
+      name: 'Groq',
+      label: 'Groq',
       hasKey: true,
       hasUrl: false,
-      defaultModel: '',
-      curated: [],
-      modelsEndpoint: 'https://openrouter.ai/api/v1/models',
-      chatEndpoint: 'https://openrouter.ai/api/v1/chat/completions',
-      keyPlaceholder: 'sk-or-v1-... (openrouter.ai/keys)',
-      keyLink: 'https://openrouter.ai/keys'
+      defaultModel: 'llama-3.3-70b-versatile',
+      curated: ['llama-3.3-70b-versatile', 'llama-3.1-8b-instant', 'mixtral-8x7b-32768'],
+      modelsEndpoint: 'https://api.groq.com/openai/v1/models',
+      chatEndpoint: 'https://api.groq.com/openai/v1/chat/completions',
+      keyPlaceholder: 'gsk_... (console.groq.com/keys)',
+      keyLink: 'https://console.groq.com/keys'
     },
     google: {
       name: 'Google Gemini',
       label: 'Gemini',
       hasKey: true,
       hasUrl: false,
-      defaultModel: '',
-      curated: [],
+      defaultModel: 'gemini-2.0-flash',
+      curated: ['gemini-2.0-flash', 'gemini-1.5-pro', 'gemini-1.5-flash'],
       modelsEndpoint: 'https://generativelanguage.googleapis.com/v1beta/models',
-      chatEndpoint: 'https://generativelanguage.googleapis.com/v1beta/chat/completions',
+      chatEndpoint: 'https://generativelanguage.googleapis.com/v1beta/openai/chat/completions',
       keyPlaceholder: 'AIzaSy... (aistudio.google.com)',
       keyLink: 'https://aistudio.google.com/app/apikey'
-    },
-    groq: {
-      name: 'Groq',
-      label: 'Groq',
-      hasKey: true,
-      hasUrl: false,
-      defaultModel: '',
-      curated: [],
-      modelsEndpoint: 'https://api.groq.com/openai/v1/models',
-      chatEndpoint: 'https://api.groq.com/openai/v1/chat/completions',
-      keyPlaceholder: 'gsk_... (console.groq.com/keys)',
-      keyLink: 'https://console.groq.com/keys'
-    },
-    deepseek: {
-      name: 'DeepSeek',
-      label: 'DeepSeek',
-      hasKey: true,
-      hasUrl: false,
-      defaultModel: '',
-      curated: [],
-      modelsEndpoint: 'https://api.deepseek.com/models',
-      chatEndpoint: 'https://api.deepseek.com/chat/completions',
-      keyPlaceholder: 'sk-... (platform.deepseek.com)',
-      keyLink: 'https://platform.deepseek.com/api_keys'
     },
     openai: {
       name: 'OpenAI',
       label: 'OpenAI',
       hasKey: true,
       hasUrl: false,
-      defaultModel: '',
-      curated: [],
+      defaultModel: 'gpt-4o-mini',
+      curated: ['gpt-4o-mini', 'gpt-4o', 'gpt-4-turbo'],
       modelsEndpoint: 'https://api.openai.com/v1/models',
       chatEndpoint: 'https://api.openai.com/v1/chat/completions',
       keyPlaceholder: 'sk-proj-... (platform.openai.com)',
@@ -2089,20 +2055,44 @@ const { character } = Astro.props;
       label: 'Claude',
       hasKey: true,
       hasUrl: false,
-      defaultModel: '',
-      curated: [],
+      defaultModel: 'claude-3-5-haiku-20241022',
+      curated: ['claude-3-5-haiku-20241022', 'claude-3-5-sonnet-20241022'],
       modelsEndpoint: 'https://api.anthropic.com/v1/models',
       chatEndpoint: 'https://api.anthropic.com/v1/messages',
       keyPlaceholder: 'sk-ant-... (console.anthropic.com)',
       keyLink: 'https://console.anthropic.com/settings/keys'
+    },
+    openrouter: {
+      name: 'OpenRouter',
+      label: 'OpenRouter',
+      hasKey: true,
+      hasUrl: false,
+      defaultModel: 'meta-llama/llama-3.3-70b-instruct:free',
+      curated: ['meta-llama/llama-3.3-70b-instruct:free', 'google/gemini-2.0-flash-exp:free', 'deepseek/deepseek-r1:free'],
+      modelsEndpoint: 'https://openrouter.ai/api/v1/models',
+      chatEndpoint: 'https://openrouter.ai/api/v1/chat/completions',
+      keyPlaceholder: 'sk-or-v1-... (openrouter.ai/keys)',
+      keyLink: 'https://openrouter.ai/keys'
+    },
+    deepseek: {
+      name: 'DeepSeek',
+      label: 'DeepSeek',
+      hasKey: true,
+      hasUrl: false,
+      defaultModel: 'deepseek-chat',
+      curated: ['deepseek-chat', 'deepseek-reasoner'],
+      modelsEndpoint: 'https://api.deepseek.com/models',
+      chatEndpoint: 'https://api.deepseek.com/chat/completions',
+      keyPlaceholder: 'sk-... (platform.deepseek.com)',
+      keyLink: 'https://platform.deepseek.com/api_keys'
     },
     xai: {
       name: 'xAI Grok',
       label: 'xAI',
       hasKey: true,
       hasUrl: false,
-      defaultModel: '',
-      curated: [],
+      defaultModel: 'grok-2-latest',
+      curated: ['grok-2-latest', 'grok-beta'],
       modelsEndpoint: 'https://api.x.ai/v1/models',
       chatEndpoint: 'https://api.x.ai/v1/chat/completions',
       keyPlaceholder: 'xai-... (console.x.ai)',
@@ -2113,8 +2103,8 @@ const { character } = Astro.props;
       label: 'Mistral',
       hasKey: true,
       hasUrl: false,
-      defaultModel: '',
-      curated: [],
+      defaultModel: 'mistral-small-latest',
+      curated: ['mistral-small-latest', 'mistral-large-latest'],
       modelsEndpoint: 'https://api.mistral.ai/v1/models',
       chatEndpoint: 'https://api.mistral.ai/v1/chat/completions',
       keyPlaceholder: 'sk-... (console.mistral.ai)',
@@ -2125,8 +2115,8 @@ const { character } = Astro.props;
       label: 'Cerebras',
       hasKey: true,
       hasUrl: false,
-      defaultModel: '',
-      curated: [],
+      defaultModel: 'llama3.1-8b',
+      curated: ['llama3.1-8b', 'llama3.1-70b'],
       modelsEndpoint: 'https://api.cerebras.ai/v1/models',
       chatEndpoint: 'https://api.cerebras.ai/v1/chat/completions',
       keyPlaceholder: 'csk-... (cloud.cerebras.ai)',
@@ -2137,8 +2127,8 @@ const { character } = Astro.props;
       label: 'SambaNova',
       hasKey: true,
       hasUrl: false,
-      defaultModel: '',
-      curated: [],
+      defaultModel: 'Meta-Llama-3.3-70B-Instruct',
+      curated: ['Meta-Llama-3.3-70B-Instruct'],
       modelsEndpoint: 'https://api.sambanova.ai/v1/models',
       chatEndpoint: 'https://api.sambanova.ai/v1/chat/completions',
       keyPlaceholder: 'sk-... (cloud.sambanova.ai)',
@@ -2149,8 +2139,8 @@ const { character } = Astro.props;
       label: 'Together',
       hasKey: true,
       hasUrl: false,
-      defaultModel: '',
-      curated: [],
+      defaultModel: 'meta-llama/Llama-3.3-70B-Instruct-Turbo',
+      curated: ['meta-llama/Llama-3.3-70B-Instruct-Turbo'],
       modelsEndpoint: 'https://api.together.xyz/v1/models',
       chatEndpoint: 'https://api.together.xyz/v1/chat/completions',
       keyPlaceholder: 'sk-... (api.together.ai)',
@@ -2161,8 +2151,8 @@ const { character } = Astro.props;
       label: 'Fireworks',
       hasKey: true,
       hasUrl: false,
-      defaultModel: '',
-      curated: [],
+      defaultModel: 'accounts/fireworks/models/llama-v3p3-70b-instruct',
+      curated: ['accounts/fireworks/models/llama-v3p3-70b-instruct'],
       modelsEndpoint: 'https://api.fireworks.ai/inference/v1/models',
       chatEndpoint: 'https://api.fireworks.ai/inference/v1/chat/completions',
       keyPlaceholder: 'fw_... (fireworks.ai)',
@@ -2173,8 +2163,8 @@ const { character } = Astro.props;
       label: 'Cohere',
       hasKey: true,
       hasUrl: false,
-      defaultModel: '',
-      curated: [],
+      defaultModel: 'command-r-plus',
+      curated: ['command-r-plus', 'command-r'],
       modelsEndpoint: 'https://api.cohere.com/v1/models',
       chatEndpoint: 'https://api.cohere.com/v1/chat',
       keyPlaceholder: 'sk-... (dashboard.cohere.com)',
@@ -2185,8 +2175,8 @@ const { character } = Astro.props;
       label: 'Perplexity',
       hasKey: true,
       hasUrl: false,
-      defaultModel: '',
-      curated: [],
+      defaultModel: 'sonar',
+      curated: ['sonar', 'sonar-pro'],
       modelsEndpoint: 'https://api.perplexity.ai/models',
       chatEndpoint: 'https://api.perplexity.ai/chat/completions',
       keyPlaceholder: 'pplx-... (perplexity.ai/settings/api)',
@@ -2197,8 +2187,8 @@ const { character } = Astro.props;
       label: 'Novita',
       hasKey: true,
       hasUrl: false,
-      defaultModel: '',
-      curated: [],
+      defaultModel: 'meta-llama/llama-3.3-70b-instruct',
+      curated: ['meta-llama/llama-3.3-70b-instruct'],
       modelsEndpoint: 'https://api.novita.ai/v3/openai/models',
       chatEndpoint: 'https://api.novita.ai/v3/openai/chat/completions',
       keyPlaceholder: 'sk-... (novita.ai)',
@@ -2209,8 +2199,8 @@ const { character } = Astro.props;
       label: 'Featherless',
       hasKey: true,
       hasUrl: false,
-      defaultModel: '',
-      curated: [],
+      defaultModel: 'meta-llama/Meta-Llama-3.1-8B-Instruct',
+      curated: ['meta-llama/Meta-Llama-3.1-8B-Instruct'],
       modelsEndpoint: 'https://api.featherless.ai/v1/models',
       chatEndpoint: 'https://api.featherless.ai/v1/chat/completions',
       keyPlaceholder: 'sk-... (featherless.ai)',
@@ -2221,8 +2211,8 @@ const { character } = Astro.props;
       label: 'SiliconFlow',
       hasKey: true,
       hasUrl: false,
-      defaultModel: '',
-      curated: [],
+      defaultModel: 'deepseek-ai/DeepSeek-V3',
+      curated: ['deepseek-ai/DeepSeek-V3'],
       modelsEndpoint: 'https://api.siliconflow.cn/v1/models',
       chatEndpoint: 'https://api.siliconflow.cn/v1/chat/completions',
       keyPlaceholder: 'sk-... (cloud.siliconflow.cn)',
@@ -2233,8 +2223,8 @@ const { character } = Astro.props;
       label: 'Hugging Face',
       hasKey: true,
       hasUrl: false,
-      defaultModel: '',
-      curated: [],
+      defaultModel: 'meta-llama/Llama-3.3-70B-Instruct',
+      curated: ['meta-llama/Llama-3.3-70B-Instruct'],
       modelsEndpoint: 'https://api-inference.huggingface.co/models',
       chatEndpoint: 'https://api-inference.huggingface.co/v1/chat/completions',
       keyPlaceholder: 'hf_... (huggingface.co/settings/tokens)',
@@ -2245,8 +2235,8 @@ const { character } = Astro.props;
       label: 'Cloudflare',
       hasKey: true,
       hasUrl: false,
-      defaultModel: '',
-      curated: [],
+      defaultModel: '@cf/meta/llama-3.3-70b-instruct-fp8-fast',
+      curated: ['@cf/meta/llama-3.3-70b-instruct-fp8-fast'],
       chatEndpoint: '/api/chat/cloudflare',
       keyPlaceholder: 'Account ID & Token (dash.cloudflare.com)',
       keyLink: 'https://dash.cloudflare.com/'
@@ -2256,8 +2246,8 @@ const { character } = Astro.props;
       label: 'AI21',
       hasKey: true,
       hasUrl: false,
-      defaultModel: '',
-      curated: [],
+      defaultModel: 'jamba-1.5-mini',
+      curated: ['jamba-1.5-mini', 'jamba-1.5-large'],
       modelsEndpoint: 'https://api.ai21.com/studio/v1/models',
       chatEndpoint: 'https://api.ai21.com/studio/v1/chat/completions',
       keyPlaceholder: 'sk-... (studio.ai21.com)',
@@ -2269,28 +2259,30 @@ const { character } = Astro.props;
       hasKey: false,
       isKeyOptional: true,
       hasUrl: true,
-      defaultUrl: 'http://127.0.0.1:11434/v1',
-      urlLabel: 'Local OpenAI-compatible Endpoint',
-      urlHint: 'Default Ollama: http://127.0.0.1:11434/v1 | LM Studio: http://127.0.0.1:1234/v1 | vLLM: http://localhost:8000/v1',
-      urlPlaceholder: 'http://127.0.0.1:11434/v1',
-      defaultModel: '',
-      curated: [],
-      chatEndpoint: 'http://127.0.0.1:11434/v1/chat/completions',
-      keyPlaceholder: 'Optional (leave blank for local Ollama/LM Studio)'
+      defaultUrl: 'http://localhost:11434/v1',
+      defaultModel: 'llama3.2',
+      curated: ['llama3.2', 'mistral', 'gemma2'],
+      modelsEndpoint: 'http://localhost:11434/v1/models',
+      chatEndpoint: 'http://localhost:11434/v1/chat/completions',
+      keyPlaceholder: 'Optional for Local Ollama / LM Studio',
+      urlLabel: 'Local Base URL',
+      urlPlaceholder: 'http://localhost:11434/v1 or http://localhost:1234/v1',
+      urlHint: 'Supports Ollama, LM Studio, vLLM, LocalAI, Jan, Text-Generation-WebUI.'
     },
     'custom-proxy': {
       name: 'Custom Reverse Proxy',
-      label: 'Proxy',
+      label: 'Custom',
       hasKey: true,
       hasUrl: true,
       defaultUrl: 'https://api.openai.com/v1',
-      urlLabel: 'Proxy Base URL',
-      urlHint: 'Any standard OpenAI-compatible reverse proxy endpoint',
-      urlPlaceholder: 'https://my-proxy.com/v1',
-      defaultModel: '',
-      curated: [],
-      chatEndpoint: 'https://api.openai.com/v1/chat/completions',
-      keyPlaceholder: 'sk-... (if required by proxy)'
+      defaultModel: 'gpt-4o',
+      curated: ['gpt-4o', 'gpt-4o-mini'],
+      modelsEndpoint: '',
+      chatEndpoint: '',
+      keyPlaceholder: 'Proxy or upstream API key...',
+      urlLabel: 'OpenAI-Compatible Base URL',
+      urlPlaceholder: 'https://your-custom-proxy.com/v1',
+      urlHint: 'Directs chat completions to any OpenAI-compatible base URL.'
     }
   };
 
@@ -3508,6 +3500,75 @@ const { character } = Astro.props;
     }
   });
 
+  // Top Engine Tab Switching (Text, Voice, Selfies, Video)
+  engineTabBtns.forEach(btn => {
+    btn.addEventListener('click', () => {
+      const tabTarget = btn.getAttribute('data-tab');
+      if (!tabTarget) return;
+
+      engineTabBtns.forEach(b => {
+        b.classList.remove('bg-purple-950/60', 'border-purple-500/50', 'text-white', 'shadow-md', 'shadow-purple-950/40');
+        b.classList.add('bg-white/[0.03]', 'border-white/[0.06]', 'text-slate-400');
+      });
+      btn.classList.remove('bg-white/[0.03]', 'border-white/[0.06]', 'text-slate-400');
+      btn.classList.add('bg-purple-950/60', 'border-purple-500/50', 'text-white', 'shadow-md', 'shadow-purple-950/40');
+
+      engineTabPanes.forEach(pane => {
+        pane.classList.toggle('hidden', pane.id !== tabTarget);
+      });
+    });
+  });
+
+  // Manual provider selection change
+  textProviderSelect?.addEventListener('change', () => {
+    syncProviderVisibility();
+  });
+
+  // Manual model select and input changes
+  textModelSelect?.addEventListener('change', () => {
+    if (textModelInput) textModelInput.value = textModelSelect.value;
+    localStorage.setItem('aetheria_text_model', textModelSelect.value);
+  });
+  textModelInput?.addEventListener('input', () => {
+    localStorage.setItem('aetheria_text_model', textModelInput.value.trim());
+  });
+
+  // Toggle model input mode (dropdown vs custom text)
+  toggleModelInputModeBtn?.addEventListener('click', () => {
+    const isHidden = textModelSelect?.classList.contains('hidden');
+    if (isHidden) {
+      textModelSelect?.classList.remove('hidden');
+      textModelInput?.classList.add('hidden');
+      if (textModelSelect && textModelInput && textModelInput.value) {
+        textModelSelect.value = textModelInput.value;
+      }
+    } else {
+      textModelSelect?.classList.add('hidden');
+      textModelInput?.classList.remove('hidden');
+      if (textModelSelect && textModelInput) {
+        textModelInput.value = textModelSelect.value;
+        textModelInput.focus();
+      }
+    }
+  });
+
+  // Fetch models & ping buttons in manual mode
+  fetchModelsBtn?.addEventListener('click', fetchModelsForProvider);
+  pingTextBtn?.addEventListener('click', pingTextConnection);
+
+  // Voice and Image provider changes
+  voiceProviderSelect?.addEventListener('change', () => {
+    const val = voiceProviderSelect.value;
+    if (voiceKeyContainer) voiceKeyContainer.classList.toggle('hidden', val === 'browser');
+    if (elevenVoiceContainer) elevenVoiceContainer.classList.toggle('hidden', val !== 'elevenlabs');
+    if (openaiVoiceContainer) openaiVoiceContainer.classList.toggle('hidden', val !== 'openai');
+  });
+
+  imageProviderSelect?.addEventListener('change', () => {
+    const val = imageProviderSelect.value;
+    if (imageKeyContainer) imageKeyContainer.classList.toggle('hidden', val === 'pollinations');
+  });
+
   // Modal Open/Close
   byokBtn?.addEventListener('click', () => {
     byokTray?.classList.remove('hidden');
@@ -4166,8 +4227,13 @@ Never speak, narrate, or decide thoughts or actions for {{user}}. Maintain high 
     }
 
     const provider = localStorage.getItem('aetheria_text_provider') || 'demo';
+    const conf = PROVIDER_CONFIGS[provider] || PROVIDER_CONFIGS.demo;
     const apiKey = localStorage.getItem('aetheria_text_key') || '';
-    const model = localStorage.getItem('aetheria_text_model') || 'llama-3.3-70b-versatile';
+    let savedModel = localStorage.getItem('aetheria_text_model') || '';
+    if (!savedModel || savedModel.includes('No API connected') || (savedModel === 'Free Cloud AI' && provider !== 'demo') || (savedModel === 'llama-3.3-70b-versatile' && provider !== 'groq')) {
+      savedModel = conf.defaultModel || 'gemini-2.0-flash';
+    }
+    const model = savedModel;
     const temp = parseFloat(localStorage.getItem('aetheria_text_temp') || '0.85');
     const maxTokens = parseInt(localStorage.getItem('aetheria_text_tokens') || '350', 10);
     const topP = parseFloat(localStorage.getItem('aetheria_text_top_p') || '0.95');
@@ -4178,7 +4244,6 @@ Never speak, narrate, or decide thoughts or actions for {{user}}. Maintain high 
     // Direct LLM Call with Streaming
     if ((apiKey || provider === 'custom-local') && provider !== 'demo') {
       try {
-        const conf = PROVIDER_CONFIGS[provider] || PROVIDER_CONFIGS.demo;
         let endpoint = conf.chatEndpoint;
         if (conf.hasUrl) {
           const base = localStorage.getItem('aetheria_text_base_url') || conf.defaultUrl || 'http://localhost:11434/v1';
@@ -4241,6 +4306,9 @@ Never speak, narrate, or decide thoughts or actions for {{user}}. Maintain high 
             headers,
             body: JSON.stringify(payload)
           });
+          if (!res.ok && res.status >= 500) {
+            throw new Error(`Upstream server error HTTP ${res.status}`);
+          }
         } catch (directErr) {
           // Automatic Edge Relay Fallback (Bypasses any browser CORS limits!)
           res = await fetch('/api/proxy/chat', {
@@ -4290,7 +4358,9 @@ Never speak, narrate, or decide thoughts or actions for {{user}}. Maintain high 
                   if (dataStr === '[DONE]') continue;
                   try {
                     const parsed = JSON.parse(dataStr);
-                    const token = parsed.choices?.[0]?.delta?.content || '';
+                    const token = parsed.choices?.[0]?.delta?.content 
+                      || (parsed.delta && parsed.delta.text) 
+                      || '';
                     if (token) {
                       replyText += token;
                       charMsg.text = replyText;
@@ -4307,21 +4377,57 @@ Never speak, narrate, or decide thoughts or actions for {{user}}. Maintain high 
             saveChat();
           } else {
             const data = await res.json();
-            replyText = data.choices?.[0]?.message?.content || '';
+            replyText = data.choices?.[0]?.message?.content 
+              || (data.content && data.content[0] && data.content[0].text) 
+              || '';
           }
         } else {
           console.warn('API returned non-OK status', res.status);
+          let errDetail = '';
+          try {
+            const errData = await res.json();
+            errDetail = errData.error?.message || errData.message || (typeof errData.error === 'string' ? errData.error : '');
+          } catch {}
+          if (!errDetail) errDetail = `Server returned HTTP ${res.status}`;
+          
+          if (typingIndicator) typingIndicator.classList.add('hidden');
+          const errorMsg = {
+            sender: 'character',
+            text: `⚠️ **API Error (${conf.name}):** ${errDetail}\n\n*Please verify your API key, model selection, or billing credits in Settings.*`,
+            timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+            swipes: [`⚠️ **API Error (${conf.name}):** ${errDetail}\n\n*Please verify your API key, model selection, or billing credits in Settings.*`],
+            swipeIndex: 0
+          };
+          conversation.push(errorMsg);
+          saveChat();
+          appendMessageToDOM(errorMsg, conversation.length - 1);
+          if (chatStream) chatStream.scrollTop = chatStream.scrollHeight;
+          return;
         }
       } catch (err) {
-        console.warn('API call failed, falling back to simulator', err);
+        console.warn('API call failed', err);
+        if (typingIndicator) typingIndicator.classList.add('hidden');
+        const errorMsg = {
+          sender: 'character',
+          text: `⚠️ **Connection Error (${conf.name}):** ${err.message || 'Network request failed'}\n\n*Check your network connection or API endpoint configuration in Settings.*`,
+          timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+          swipes: [`⚠️ **Connection Error (${conf.name}):** ${err.message || 'Network request failed'}`],
+          swipeIndex: 0
+        };
+        conversation.push(errorMsg);
+        saveChat();
+        appendMessageToDOM(errorMsg, conversation.length - 1);
+        if (chatStream) chatStream.scrollTop = chatStream.scrollHeight;
+        return;
       }
     }
 
-    // Fallback response generator if API was not configured, failed, or streaming wasn't used
+    // Fallback response generator if API was not configured (Free Cloud AI)
     if (!replyText) {
       if (typingIndicator) typingIndicator.classList.remove('hidden');
       try {
-        const pollHistory = recentHistory.map(m => ({
+        const sysPrompt = buildSystemPrompt(userText);
+        const pollHistory = conversation.slice(-8).map(m => ({
           role: m.sender === 'user' ? 'user' : 'assistant',
           content: m.text
         }));
@@ -4334,9 +4440,9 @@ Never speak, narrate, or decide thoughts or actions for {{user}}. Maintain high 
               ...pollHistory
             ],
             model: 'openai',
-            temperature: 0.85
+            temperature: temp || 0.85
           }),
-          signal: AbortSignal.timeout(8000)
+          signal: AbortSignal.timeout(12000)
         });
         if (pollRes.ok) {
           const pollText = await pollRes.text();
@@ -4345,16 +4451,15 @@ Never speak, narrate, or decide thoughts or actions for {{user}}. Maintain high 
           }
         }
       } catch (e) {
-        console.warn('Anonymous keyless fallback error:', e);
+        console.warn('Free Cloud fallback error:', e);
       }
 
       if (!replyText) {
-        await new Promise(r => setTimeout(r, 500));
+        await new Promise(r => setTimeout(r, 400));
         replyText = pickResponse(userText);
       }
 
       if (typingIndicator) typingIndicator.classList.add('hidden');
-
       const charMsg = {
         sender: 'character',
         text: replyText,
