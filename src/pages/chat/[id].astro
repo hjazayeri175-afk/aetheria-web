@@ -1873,6 +1873,16 @@ const { character } = Astro.props;
   }
 
   // Macro replacement helper for {{user}} and {{char}} (Tavern / Chub / SillyTavern standard)
+  function isPoisonedOrErrorMessage(text) {
+    if (!text || typeof text !== 'string') return true;
+    const t = text.trim();
+    if (t.startsWith('⚠️')) return true;
+    if (t.includes('The request was rejected') || t.includes('considered high risk')) return true;
+    if (t.includes('你好，我无法') || t.includes('无法给到相关内容') || t.includes('抱歉，我无法')) return true;
+    if (t.includes('I cannot fulfill this request') || t.includes('I am unable to fulfill this request')) return true;
+    return false;
+  }
+
   function formatMacroText(str) {
     if (!str || typeof str !== 'string') return '';
     const uName = (activeUserPersona && activeUserPersona.name) ? activeUserPersona.name : 'Traveler';
@@ -4976,7 +4986,7 @@ ${formatMacroText(charCustomPostHistory.trim())}
 `;
     }
 
-    return prompt;
+    return formatMacroText(prompt);
   }
 
   // Send message & AI Generation with Real-time SSE Token Streaming
@@ -5075,7 +5085,7 @@ ${formatMacroText(charCustomPostHistory.trim())}
         const contextLimit = parseInt(localStorage.getItem('aetheria_text_context') || '16', 10);
         const historySlice = conversation
           .slice(-contextLimit)
-          .filter(m => m.text && !m.text.startsWith('⚠️'))
+          .filter(m => m.text && !isPoisonedOrErrorMessage(m.text))
           .map(m => ({
             role: m.sender === 'user' ? 'user' : 'assistant',
             content: m.text
@@ -5492,10 +5502,12 @@ ${formatMacroText(charCustomPostHistory.trim())}
 
         const lastUserMsg = conversation.slice(0, msgIdx).reverse().find(m => m.sender === 'user');
         const systemPrompt = buildSystemPrompt(lastUserMsg ? lastUserMsg.text : '');
-        const historySlice = conversation.slice(0, msgIdx).map(m => ({
-          role: m.sender === 'user' ? 'user' : 'assistant',
-          content: m.text
-        }));
+        const historySlice = conversation.slice(0, msgIdx)
+          .filter(m => m.text && !isPoisonedOrErrorMessage(m.text))
+          .map(m => ({
+            role: m.sender === 'user' ? 'user' : 'assistant',
+            content: m.text
+          }));
 
         // Send clean swipe history
         const payloadMessages = historySlice.map(m => ({
@@ -5576,10 +5588,12 @@ ${formatMacroText(charCustomPostHistory.trim())}
       try {
         const lastUserMsg = conversation.slice(0, msgIdx).reverse().find(m => m.sender === 'user');
         const systemPrompt = buildSystemPrompt(lastUserMsg ? lastUserMsg.text : '');
-        const historySlice = conversation.slice(0, msgIdx).map(m => ({
-          role: m.sender === 'user' ? 'user' : 'assistant',
-          content: m.text
-        }));
+        const historySlice = conversation.slice(0, msgIdx)
+          .filter(m => m.text && !isPoisonedOrErrorMessage(m.text))
+          .map(m => ({
+            role: m.sender === 'user' ? 'user' : 'assistant',
+            content: m.text
+          }));
         const pollRes = await fetch('https://text.pollinations.ai/', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },

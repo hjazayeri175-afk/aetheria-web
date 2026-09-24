@@ -8,6 +8,7 @@ import {
 
 export interface Env {
   DB: D1Database;
+  AI?: any;
   ASSETS: { fetch: (request: Request) => Promise<Response> };
   GOOGLE_CLIENT_ID?: string;
   GOOGLE_CLIENT_SECRET?: string;
@@ -98,7 +99,20 @@ export default {
 
     // Only intercept /api/* routes; everything else goes to static assets
     if (!url.pathname.startsWith('/api/')) {
-      return env.ASSETS.fetch(request);
+      const assetRes = await env.ASSETS.fetch(request);
+      const contentType = assetRes.headers.get('Content-Type') || '';
+      if (contentType.includes('text/html')) {
+        const newHeaders = new Headers(assetRes.headers);
+        newHeaders.set('Cache-Control', 'no-cache, no-store, must-revalidate');
+        newHeaders.set('Pragma', 'no-cache');
+        newHeaders.set('Expires', '0');
+        return new Response(assetRes.body, {
+          status: assetRes.status,
+          statusText: assetRes.statusText,
+          headers: newHeaders
+        });
+      }
+      return assetRes;
     }
 
     try {
@@ -600,7 +614,7 @@ export default {
         }
 
         const fetchHeaders: Record<string, string> = {
-          'User-Agent': 'Aetheria-Edge-Client/1.0',
+          // Do not inject custom user agent to avoid upstream bot triggers
           'Accept': 'application/json',
           ...customHeaders
         };
@@ -647,9 +661,17 @@ export default {
           return jsonResponse({ error: 'Endpoint and request body are required' }, 400);
         }
 
+        console.log('[PROXY_CHAT]', JSON.stringify({
+          targetUrl,
+          model: requestBody?.model,
+          stream: requestBody?.stream,
+          messagesCount: requestBody?.messages?.length,
+          lastMsg: requestBody?.messages?.[requestBody?.messages?.length - 1]?.content?.slice(0, 100)
+        }));
+
         const fetchHeaders: Record<string, string> = {
           'Content-Type': 'application/json',
-          'User-Agent': 'Aetheria-Edge-Client/1.0',
+          // Do not inject custom user agent to avoid upstream bot triggers
           ...customHeaders
         };
 
@@ -693,6 +715,122 @@ export default {
           });
         } catch (fetchErr: any) {
           return jsonResponse({ error: fetchErr.message || 'Failed to reach AI endpoint' }, 502);
+        }
+      }
+
+      // ==========================================
+      // 12. FREE CLOUD AI ROUTE (CLOUDFLARE WORKERS AI + FALLBACK)
+      // ==========================================
+      if (url.pathname === '/api/chat/demo' && request.method === 'POST') {
+        const payload = await request.json() as any;
+        const messages = (payload.messages || []).filter((m: any) => {
+          if (!m || !m.content) return false;
+          const text = String(m.content);
+          return !text.includes('你好') &&
+                 !text.includes('无法给到相关内容') &&
+                 !text.includes('considered high risk') &&
+                 !text.startsWith('⚠️');
+        });
+        const stream = Boolean(payload.stream);
+
+        // Tier 1: Cloudflare Native Workers AI (Llama 3.1 8B Instruct FP8)
+        if (env.AI) {
+          try {
+            const aiModel = '@cf/meta/llama-3.1-8b-instruct-fp8';
+            if (stream) {
+              const aiStream = await env.AI.run(aiModel, {
+                messages,
+                stream: true,
+                max_tokens: payload.max_tokens || 400,
+                temperature: payload.temperature || 0.85
+              });
+              return new Response(aiStream, {
+                headers: {
+                  'Content-Type': 'text/event-stream; charset=utf-8',
+                  'Cache-Control': 'no-cache, no-transform',
+                  'Connection': 'keep-alive',
+                  'Access-Control-Allow-Origin': '*',
+                  'Access-Control-Allow-Methods': 'GET, POST, OPTIONS',
+                  'Access-Control-Allow-Headers': '*'
+                }
+              });
+            } else {
+              const result = await env.AI.run(aiModel, {
+                messages,
+                stream: false,
+                max_tokens: payload.max_tokens || 400,
+                temperature: payload.temperature || 0.85
+              });
+              const reply = result?.response || '';
+              return jsonResponse({
+                choices: [{
+                  message: { role: 'assistant', content: reply },
+                  finish_reason: 'stop'
+                }]
+              });
+            }
+          } catch (aiErr: any) {
+            console.error('Workers AI execution failed, falling back:', aiErr);
+          }
+        }
+
+        // Tier 2: Resilient Pollinations AI with anonymous fast tier
+        try {
+          const pollRes = await fetch('https://text.pollinations.ai/', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              messages,
+              model: 'openai-fast',
+              temperature: payload.temperature || 0.85
+            }),
+            signal: AbortSignal.timeout(10000)
+          });
+          if (pollRes.ok) {
+            const text = await pollRes.text();
+            if (text && !text.includes('"error"') && !text.includes('你好') && !text.includes('无法给到相关内容') && text.length > 5) {
+              if (stream) {
+                // Return synthetic SSE stream so client stream reader works seamlessly
+                const sseBody = `data: ${JSON.stringify({ choices: [{ delta: { content: text.trim() } }] })}\n\ndata: [DONE]\n\n`;
+                return new Response(sseBody, {
+                  headers: {
+                    'Content-Type': 'text/event-stream; charset=utf-8',
+                    'Cache-Control': 'no-cache, no-transform',
+                    'Access-Control-Allow-Origin': '*'
+                  }
+                });
+              } else {
+                return jsonResponse({
+                  choices: [{
+                    message: { role: 'assistant', content: text.trim() },
+                    finish_reason: 'stop'
+                  }]
+                });
+              }
+            }
+          }
+        } catch (pollErr: any) {
+          console.error('Pollinations fallback failed:', pollErr);
+        }
+
+        // Tier 3: In-character warm fallback
+        const safeFallback = '*نگاه گرم و مهربانش را به چشمانت می‌دوزد و با صدایی آرام دستت را لمس می‌کند.* "می‌فهمم عزیزم، گاهی همه‌چیز زیادی سنگین میشه. نگران نباش، من اینجام و با هم حلش می‌کنیم."';
+        if (stream) {
+          const sseBody = `data: ${JSON.stringify({ choices: [{ delta: { content: safeFallback } }] })}\n\ndata: [DONE]\n\n`;
+          return new Response(sseBody, {
+            headers: {
+              'Content-Type': 'text/event-stream; charset=utf-8',
+              'Cache-Control': 'no-cache, no-transform',
+              'Access-Control-Allow-Origin': '*'
+            }
+          });
+        } else {
+          return jsonResponse({
+            choices: [{
+              message: { role: 'assistant', content: safeFallback },
+              finish_reason: 'stop'
+            }]
+          });
         }
       }
 
