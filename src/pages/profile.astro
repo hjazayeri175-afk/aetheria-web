@@ -5,1518 +5,807 @@ import BottomNav from '../components/BottomNav.astro';
 import { 
   User, 
   Sparkles, 
-  ShieldCheck, 
   Save, 
-  Upload, 
-  Download, 
   Trash2, 
   Plus, 
-  RotateCcw, 
   Check, 
-  Copy, 
   Eye, 
-  EyeOff, 
-  MessageSquare, 
-  ArrowLeft, 
+  EyeOff,
   Camera,
-  ExternalLink,
-  Cloud,
-  CloudUpload,
-  CloudDownload,
-  ChevronRight,
-  Smartphone,
-  Laptop,
-  RefreshCw,
   Settings,
   Shield,
-  Lock,
-  Mail,
+  Download,
+  Upload,
   LogOut,
   LogIn,
-  AlertTriangle,
-  UserCheck
+  ChevronDown
 } from '@lucide/astro';
 ---
 
-<Layout title="User Masks & Account Studio — Aetheria AI">
+<Layout title="Profile & Personas | Aetheria">
   <Header />
 
-  <main class="flex-1 max-w-5xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-10 pb-28 sm:pb-12 space-y-8">
-    
-    <!-- Top Nav / Breadcrumbs -->
-    <div class="flex items-center justify-between">
-      <div class="flex items-center gap-3">
-        <a 
-          href="/" 
-          class="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-white/[0.04] hover:bg-white/[0.08] border border-white/[0.08] text-slate-300 hover:text-white text-xs font-medium transition"
-        >
-          <ArrowLeft class="w-3.5 h-3.5 text-purple-400" />
-          <span>Hub</span>
-        </a>
-        <span class="text-slate-600">/</span>
-        <span class="text-xs font-semibold text-purple-300">Identity & Account Studio</span>
-      </div>
-
-      <div class="flex items-center gap-2">
-        <a 
-          href="/library" 
-          class="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-white/[0.04] hover:bg-white/[0.08] border border-white/[0.08] text-slate-300 hover:text-white text-xs font-medium transition"
-        >
-          <MessageSquare class="w-3.5 h-3.5 text-cyan-400" />
-          <span class="hidden sm:inline">Library</span>
-        </a>
-      </div>
-    </div>
-
-    <!-- Top Two Main Navigation Tabs (Separating Masks from Official Account) -->
-    <div class="flex items-center gap-2 p-1.5 rounded-2xl bg-[#090b17] border border-white/[0.08] w-full max-w-md mx-auto shadow-xl">
-      <button 
-        id="tab-btn-masks" 
-        type="button" 
-        class="flex-1 flex items-center justify-center gap-2 py-2.5 px-4 rounded-xl text-xs sm:text-sm font-bold transition cursor-pointer bg-purple-600 text-white shadow-lg shadow-purple-900/40"
-      >
-        <span>🎭 Roleplay Masks</span>
-        <span id="masks-count-badge" class="px-1.5 py-0.5 rounded-md bg-white/20 text-[10px] font-mono">1</span>
-      </button>
-      <button 
-        id="tab-btn-account" 
-        type="button" 
-        class="flex-1 flex items-center justify-center gap-2 py-2.5 px-4 rounded-xl text-xs sm:text-sm font-bold transition cursor-pointer text-slate-400 hover:text-white hover:bg-white/[0.05]"
-      >
-        <span>⚙️ Account & Safety</span>
-      </button>
-    </div>
-
-    <!-- ======================================================== -->
-    <!-- TAB 1: ROLEPLAY MASKS & CHAT IDENTITIES                  -->
-    <!-- ======================================================== -->
-    <section id="tab-view-masks" class="space-y-6">
+  <main class="min-h-screen bg-[#060813] text-slate-100 pb-28 pt-4 sm:pt-8 px-4">
+    <div class="max-w-xl mx-auto">
       
-      <!-- Masks Header & Switcher Bar -->
-      <div class="p-5 sm:p-6 rounded-3xl bg-gradient-to-b from-purple-950/20 via-[#0a0d1a] to-[#070913] border border-white/[0.08] shadow-xl space-y-4">
-        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-          <div>
-            <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-purple-500/10 border border-purple-500/20 text-xs font-medium text-purple-300 mb-2">
-              <Sparkles class="w-3.5 h-3.5 text-purple-400" />
-              <span>Multi-Identity Persona System</span>
-            </div>
-            <h1 class="text-xl sm:text-2xl font-black text-white tracking-tight">
-              Roleplay Masks & Personas
-            </h1>
-            <p class="text-xs sm:text-sm text-slate-400 mt-1 max-w-2xl leading-relaxed">
-              Equip different masks for different stories. Whether you play as a 7-year-old child or a 99-year-old ancient scholar, your active mask strictly commands how characters perceive and treat you.
-            </p>
-          </div>
+      <!-- Top Navigation Tabs -->
+      <div class="flex items-center gap-1 p-1 rounded-2xl bg-white/[0.04] border border-white/[0.08] mb-8">
+        <button 
+          id="tab-btn-personas" 
+          type="button" 
+          class="flex-1 py-2.5 px-4 rounded-xl text-sm font-semibold transition cursor-pointer bg-purple-600 text-white shadow-lg shadow-purple-900/40"
+        >
+          Personas
+        </button>
+        <button 
+          id="tab-btn-settings" 
+          type="button" 
+          class="flex-1 py-2.5 px-4 rounded-xl text-sm font-semibold transition cursor-pointer text-slate-400 hover:text-white hover:bg-white/[0.04]"
+        >
+          Settings
+        </button>
+      </div>
 
-          <!-- New Mask CTA Button -->
+      <!-- ========================================== -->
+      <!-- TAB 1: PERSONAS (Clean, Simple, User-first) -->
+      <!-- ========================================== -->
+      <div id="tab-view-personas" class="space-y-6">
+        
+        <!-- Header & Action -->
+        <div class="flex items-center justify-between">
+          <div>
+            <h1 class="text-xl font-bold text-white tracking-tight">Personas</h1>
+            <p class="text-xs text-slate-400 mt-0.5">Customize how characters perceive you in chat</p>
+          </div>
           <button 
-            id="add-mask-btn"
             type="button" 
-            class="shrink-0 flex items-center gap-2 px-4 py-2.5 rounded-2xl bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-500 hover:to-indigo-500 text-white text-xs font-bold shadow-lg shadow-purple-900/30 transition cursor-pointer active:scale-95"
+            id="btn-new-persona"
+            class="px-3.5 py-1.5 rounded-xl bg-purple-600/20 hover:bg-purple-600/30 border border-purple-500/40 text-purple-300 hover:text-white text-xs font-semibold flex items-center gap-1.5 transition active:scale-95 cursor-pointer shadow-sm"
           >
-            <Plus class="w-4 h-4" />
-            <span>Create New Mask</span>
+            <Plus class="w-3.5 h-3.5" />
+            <span>New Persona</span>
           </button>
         </div>
 
-        <!-- Mask Selector Pills -->
-        <div class="pt-2 border-t border-white/[0.06] flex items-center gap-2 overflow-x-auto pb-1" id="mask-pills-container">
-          <!-- Rendered dynamically -->
+        <!-- Persona Switcher Pills -->
+        <div id="personas-pill-list" class="flex items-center gap-2 overflow-x-auto pb-1 no-scrollbar">
+          <!-- Populated by JS -->
         </div>
-      </div>
 
-      <!-- Active Mask Customization Form -->
-      <form id="mask-editor-form" class="space-y-6">
-        
-        <!-- Mask Card: Visual Avatar & Core Identity -->
-        <div class="p-6 rounded-3xl bg-[#080a14] border border-white/[0.08] shadow-xl space-y-6">
+        <!-- Persona Editor Card -->
+        <div class="rounded-3xl bg-white/[0.02] border border-white/[0.08] p-5 sm:p-7 space-y-6">
           
-          <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-white/[0.06] pb-4">
-            <div class="flex items-center gap-3">
-              <span id="mask-active-status-badge" class="px-2.5 py-1 rounded-full text-xs font-bold bg-emerald-500/10 border border-emerald-500/30 text-emerald-400 flex items-center gap-1.5">
-                <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
-                <span>Active Mask for Chats</span>
-              </span>
-              <span class="text-xs text-slate-500 font-mono" id="mask-id-label">ID: default</span>
+          <!-- Avatar + Basic Info Row -->
+          <div class="flex flex-col sm:flex-row items-center sm:items-start gap-5">
+            
+            <!-- Click-to-Change Avatar -->
+            <div class="flex flex-col items-center gap-2 shrink-0">
+              <div class="relative group cursor-pointer" id="avatar-click-zone" title="Click to change photo">
+                <div class="w-20 h-20 sm:w-24 sm:h-24 rounded-full overflow-hidden border-2 border-purple-500/40 bg-purple-950/30 flex items-center justify-center shadow-lg shadow-purple-950/50 transition group-hover:border-purple-400">
+                  <img 
+                    id="persona-avatar-img" 
+                    src="" 
+                    alt="Persona Avatar" 
+                    class="w-full h-full object-cover hidden" 
+                  />
+                  <div id="persona-avatar-placeholder" class="flex flex-col items-center justify-center text-purple-400">
+                    <User class="w-8 h-8 sm:w-10 sm:h-10 opacity-70" />
+                  </div>
+                </div>
+                <!-- Camera Badge Overlay -->
+                <div class="absolute inset-0 rounded-full bg-black/50 backdrop-blur-[2px] opacity-0 group-hover:opacity-100 flex flex-col items-center justify-center text-white text-[10px] font-medium transition duration-200">
+                  <Camera class="w-5 h-5 mb-0.5 text-purple-300" />
+                  <span>Change</span>
+                </div>
+              </div>
+
+              <!-- Hidden File Input -->
+              <input type="file" id="avatar-file-input" accept="image/png,image/jpeg,image/webp,image/gif" class="hidden" />
+
+              <!-- Remove Photo Link -->
+              <button 
+                type="button" 
+                id="btn-remove-avatar" 
+                class="hidden text-[11px] text-red-400/80 hover:text-red-300 transition cursor-pointer"
+              >
+                Remove photo
+              </button>
             </div>
 
-            <!-- Mask Control Actions -->
-            <div class="flex items-center gap-2">
+            <!-- Name, Age, Pronouns -->
+            <div class="flex-1 w-full space-y-3.5">
+              <div>
+                <label for="persona-name" class="block text-xs font-semibold text-slate-300 mb-1">
+                  Name
+                </label>
+                <input 
+                  type="text" 
+                  id="persona-name" 
+                  placeholder="e.g. Alex" 
+                  class="w-full px-3.5 py-2.5 rounded-xl bg-white/[0.04] border border-white/10 focus:border-purple-500/60 text-sm font-medium text-white placeholder:text-slate-600 outline-none transition"
+                />
+              </div>
+
+              <div class="grid grid-cols-2 gap-3">
+                <div>
+                  <label for="persona-age" class="block text-xs font-semibold text-slate-300 mb-1">
+                    Age
+                  </label>
+                  <input 
+                    type="text" 
+                    id="persona-age" 
+                    placeholder="e.g. 24, 7, 99" 
+                    class="w-full px-3.5 py-2 rounded-xl bg-white/[0.04] border border-white/10 focus:border-purple-500/60 text-sm font-medium text-white placeholder:text-slate-600 outline-none transition"
+                  />
+                </div>
+                <div>
+                  <label for="persona-pronouns" class="block text-xs font-semibold text-slate-300 mb-1">
+                    Pronouns
+                  </label>
+                  <input 
+                    type="text" 
+                    id="persona-pronouns" 
+                    placeholder="e.g. He/Him, She/Her" 
+                    class="w-full px-3.5 py-2 rounded-xl bg-white/[0.04] border border-white/10 focus:border-purple-500/60 text-sm font-medium text-white placeholder:text-slate-600 outline-none transition"
+                  />
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- About You / Description -->
+          <div>
+            <label for="persona-about" class="block text-xs font-semibold text-slate-300 mb-1">
+              About Persona
+            </label>
+            <textarea 
+              id="persona-about" 
+              rows="4" 
+              placeholder="Describe your appearance, personality, or background. Characters will perceive you this way..."
+              class="w-full px-3.5 py-2.5 rounded-xl bg-white/[0.04] border border-white/10 focus:border-purple-500/60 text-sm text-slate-200 placeholder:text-slate-600 outline-none transition resize-y leading-relaxed"
+            ></textarea>
+          </div>
+
+          <!-- Optional Advanced Instructions (Collapsible, unbloated) -->
+          <details class="group border border-white/5 rounded-2xl bg-white/[0.01] px-4 py-3 text-xs">
+            <summary class="cursor-pointer text-slate-400 hover:text-slate-200 font-medium flex items-center justify-between select-none">
+              <span>Additional instructions (optional)</span>
+              <ChevronDown class="w-3.5 h-3.5 transition-transform group-open:rotate-180 opacity-60" />
+            </summary>
+            <div class="pt-3">
+              <textarea 
+                id="persona-directives" 
+                rows="2" 
+                placeholder="Any specific roleplay formatting or preferences (optional)..."
+                class="w-full px-3 py-2 rounded-xl bg-white/[0.03] border border-white/10 focus:border-purple-500/50 text-xs text-slate-300 placeholder:text-slate-600 outline-none transition"
+              ></textarea>
+            </div>
+          </details>
+
+          <!-- Action Buttons -->
+          <div class="flex items-center justify-between pt-2 border-t border-white/[0.06]">
+            <div>
               <button 
                 type="button" 
-                id="activate-mask-btn"
-                class="hidden px-3 py-1.5 rounded-xl bg-purple-600/20 hover:bg-purple-600/30 border border-purple-500/40 text-purple-300 text-xs font-semibold transition cursor-pointer"
+                id="btn-delete-persona" 
+                class="text-xs text-red-400/80 hover:text-red-300 transition flex items-center gap-1 cursor-pointer py-1.5 px-2 rounded-lg hover:bg-red-500/10"
               >
-                Set as Active Mask
-              </button>
-              <button 
-                type="button" 
-                id="duplicate-mask-btn"
-                class="px-3 py-1.5 rounded-xl bg-white/[0.04] hover:bg-white/[0.08] border border-white/10 text-slate-300 hover:text-white text-xs font-semibold transition cursor-pointer"
-                title="Duplicate this mask"
-              >
-                <Copy class="w-3.5 h-3.5 inline mr-1" />
-                <span>Duplicate</span>
-              </button>
-              <button 
-                type="button" 
-                id="delete-mask-btn"
-                class="px-3 py-1.5 rounded-xl bg-rose-950/20 hover:bg-rose-950/40 border border-rose-500/30 text-rose-300 text-xs font-semibold transition cursor-pointer"
-                title="Delete this mask"
-              >
-                <Trash2 class="w-3.5 h-3.5 inline mr-1" />
+                <Trash2 class="w-3.5 h-3.5" />
                 <span>Delete</span>
               </button>
             </div>
-          </div>
 
-          <!-- Avatar & Primary Attributes Grid -->
-          <div class="flex flex-col md:flex-row gap-6 items-start">
-            
-            <!-- Standard Interactive Circular Avatar (Clean, 1-Click Upload) -->
-            <div class="flex flex-col items-center gap-3 shrink-0 mx-auto md:mx-0">
-              <input 
-                type="file" 
-                id="mask-avatar-file-input" 
-                accept="image/png, image/jpeg, image/webp, image/gif" 
-                class="hidden" 
-              />
-              
-              <!-- Direct Clickable Avatar Circle with Camera Overlay -->
-              <div 
-                id="mask-avatar-clickable"
-                class="group relative w-28 h-28 sm:w-32 sm:h-32 rounded-full overflow-hidden ring-4 ring-purple-500/30 hover:ring-purple-400 bg-[#0c0e17] flex items-center justify-center cursor-pointer transition-all duration-200 shadow-2xl shadow-purple-950/60"
-                title="Click to change mask avatar photo"
+            <div class="flex items-center gap-2">
+              <button 
+                type="button" 
+                id="btn-set-default" 
+                class="px-3 py-2 rounded-xl bg-white/[0.04] hover:bg-white/[0.08] border border-white/10 text-xs font-medium text-slate-300 hover:text-white transition cursor-pointer"
               >
-                <img 
-                  id="mask-avatar-img" 
-                  src="" 
-                  alt="Mask Avatar" 
-                  class="w-full h-full object-cover transition group-hover:scale-105 duration-300 hidden" 
-                />
-                
-                <div id="mask-avatar-placeholder" class="w-full h-full flex flex-col items-center justify-center text-purple-400/80 bg-gradient-to-tr from-purple-950/50 via-slate-900 to-indigo-950/40">
-                  <User class="w-12 h-12 stroke-[1.5]" />
-                  <span class="text-[10px] font-semibold text-purple-300/80 mt-1">Add Photo</span>
-                </div>
-
-                <!-- Hover Camera Badge Overlay -->
-                <div class="absolute inset-0 bg-black/55 backdrop-blur-[2px] opacity-0 group-hover:opacity-100 flex flex-col items-center justify-center text-white transition-opacity duration-200">
-                  <Camera class="w-6 h-6 text-purple-300 mb-1" />
-                  <span class="text-[11px] font-bold tracking-wide">Change</span>
-                </div>
-              </div>
-
-              <!-- Quick Avatar Controls (URL or Remove) -->
-              <div class="flex items-center gap-2 text-[11px]">
-                <button 
-                  type="button" 
-                  id="mask-avatar-url-toggle-btn"
-                  class="text-purple-400 hover:text-purple-300 transition underline underline-offset-2 cursor-pointer"
-                >
-                  Image Link
-                </button>
-                <span class="text-slate-600">•</span>
-                <button 
-                  type="button" 
-                  id="mask-avatar-remove-btn"
-                  class="text-rose-400 hover:text-rose-300 transition underline underline-offset-2 cursor-pointer"
-                >
-                  Remove
-                </button>
-              </div>
-
-              <!-- Collapsible Direct Image URL Input -->
-              <div id="mask-avatar-url-drawer" class="hidden w-64 space-y-1.5 pt-1">
-                <input 
-                  type="url" 
-                  id="mask-avatar-url-input" 
-                  placeholder="https://.../avatar.jpg" 
-                  class="w-full px-3 py-1.5 rounded-xl bg-white/[0.04] border border-white/10 text-xs text-white placeholder:text-slate-500 outline-none focus:border-purple-500/50"
-                />
-                <button 
-                  type="button" 
-                  id="mask-avatar-url-apply-btn"
-                  class="w-full py-1 rounded-xl bg-purple-600/30 hover:bg-purple-600/50 border border-purple-500/40 text-purple-200 text-xs font-semibold transition cursor-pointer"
-                >
-                  Apply Image Link
-                </button>
-              </div>
+                Set as Active
+              </button>
+              <button 
+                type="button" 
+                id="btn-save-persona" 
+                class="px-4 py-2 rounded-xl bg-purple-600 hover:bg-purple-500 text-white text-xs font-semibold transition active:scale-95 cursor-pointer shadow-md shadow-purple-900/40 flex items-center gap-1.5"
+              >
+                <Save class="w-3.5 h-3.5" />
+                <span>Save</span>
+              </button>
             </div>
-
-            <!-- Primary Identity Fields -->
-            <div class="flex-1 w-full space-y-4">
-              <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                
-                <!-- Mask / Character Name -->
-                <div>
-                  <label for="mask-name" class="block text-xs font-bold text-slate-300 uppercase tracking-wider mb-1.5">
-                    Mask Name / Identity <span class="text-purple-400">*</span>
-                  </label>
-                  <input 
-                    type="text" 
-                    id="mask-name" 
-                    required 
-                    placeholder="e.g. Alex, Lord Thorne, Evelyn..." 
-                    class="w-full px-4 py-2.5 rounded-xl bg-white/[0.04] border border-white/10 focus:border-purple-500/70 text-sm font-semibold text-white placeholder:text-slate-500 outline-none transition"
-                  />
-                  <p class="text-[11px] text-slate-500 mt-1">Replaces <code class="text-cyan-400 font-mono">{"{{user}}"}</code> in all dialogues and character memories.</p>
-                </div>
-
-                <!-- Age / Life Stage (Absolute Override Support) -->
-                <div>
-                  <label for="mask-age" class="block text-xs font-bold text-slate-300 uppercase tracking-wider mb-1.5 flex items-center justify-between">
-                    <span>Age / Life Stage</span>
-                    <span class="text-[10px] text-purple-400 font-normal">Strict Card Override</span>
-                  </label>
-                  <input 
-                    type="text" 
-                    id="mask-age" 
-                    placeholder="e.g. 7 years old, 24 years old, 99 years old, Ancient..." 
-                    class="w-full px-4 py-2.5 rounded-xl bg-white/[0.04] border border-white/10 focus:border-purple-500/70 text-sm font-semibold text-white placeholder:text-slate-500 outline-none transition"
-                  />
-                  <p class="text-[11px] text-slate-500 mt-1">Crucial for roleplays: dictates your physical maturity to the AI.</p>
-                </div>
-
-                <!-- Gender & Pronouns -->
-                <div>
-                  <label for="mask-gender" class="block text-xs font-bold text-slate-300 uppercase tracking-wider mb-1.5">
-                    Gender & Pronouns
-                  </label>
-                  <input 
-                    type="text" 
-                    id="mask-gender" 
-                    placeholder="e.g. Male (He/Him), Female (She/Her), Androgynous..." 
-                    class="w-full px-4 py-2.5 rounded-xl bg-white/[0.04] border border-white/10 focus:border-purple-500/70 text-sm text-white placeholder:text-slate-500 outline-none transition"
-                  />
-                </div>
-
-                <!-- Roleplay Title or Social Status -->
-                <div>
-                  <label for="mask-title" class="block text-xs font-bold text-slate-300 uppercase tracking-wider mb-1.5">
-                    Title / Occupation
-                  </label>
-                  <input 
-                    type="text" 
-                    id="mask-title" 
-                    placeholder="e.g. Student, Wandering Knight, Chief Detective, Wizard..." 
-                    class="w-full px-4 py-2.5 rounded-xl bg-white/[0.04] border border-white/10 focus:border-purple-500/70 text-sm text-white placeholder:text-slate-500 outline-none transition"
-                  />
-                </div>
-
-              </div>
-            </div>
-
           </div>
 
         </div>
 
-        <!-- Roleplay Characteristics & Description -->
-        <div class="p-6 rounded-3xl bg-[#080a14] border border-white/[0.08] shadow-xl space-y-5">
-          <div class="border-b border-white/[0.06] pb-3">
-            <h2 class="text-base font-bold text-white flex items-center gap-2">
-              <Eye class="w-4 h-4 text-purple-400" />
-              <span>Visual Appearance & Demeanor</span>
-            </h2>
-            <p class="text-xs text-slate-400 mt-0.5">
-              Characters react dynamically to how you look, your height, your clothing, and your mannerisms.
-            </p>
-          </div>
-
-          <div class="space-y-4">
-            <!-- Physical Appearance -->
-            <div>
-              <label for="mask-appearance" class="block text-xs font-bold text-slate-300 uppercase tracking-wider mb-1.5 flex items-center justify-between">
-                <span>Physical Appearance & Clothing</span>
-                <span id="tok-mask-appearance" class="text-[10px] font-mono text-purple-400">~0 tok</span>
-              </label>
-              <textarea 
-                id="mask-appearance" 
-                rows="3" 
-                placeholder="Describe your visual appearance, height, build, hair style/color, distinctive eyes, scars, and attire...&#10;&#10;Example:&#10;A frail 99-year-old elder with knee-length silver beard and piercing violet eyes. Wears an embroidered velvet trench coat and round brass spectacles." 
-                class="w-full px-4 py-3 rounded-2xl bg-white/[0.04] border border-white/10 focus:border-purple-500/70 text-xs sm:text-sm text-white placeholder:text-slate-500 outline-none leading-relaxed resize-y"
-              ></textarea>
-            </div>
-
-            <!-- Personality & Behavioral Demeanor -->
-            <div>
-              <label for="mask-personality" class="block text-xs font-bold text-slate-300 uppercase tracking-wider mb-1.5 flex items-center justify-between">
-                <span>Personality & Temperament</span>
-                <span id="tok-mask-personality" class="text-[10px] font-mono text-purple-400">~0 tok</span>
-              </label>
-              <textarea 
-                id="mask-personality" 
-                rows="3" 
-                placeholder="How your character acts, speaks, and responds emotionally...&#10;&#10;Example:&#10;Soft-spoken, grandfatherly and patient. Possesses immense ancient knowledge, but is humble and occasionally chuckles at small ironies." 
-                class="w-full px-4 py-3 rounded-2xl bg-white/[0.04] border border-white/10 focus:border-purple-500/70 text-xs sm:text-sm text-white placeholder:text-slate-500 outline-none leading-relaxed resize-y"
-              ></textarea>
-            </div>
-          </div>
-        </div>
-
-        <!-- Roleplay Lore, Backstory & System Directives -->
-        <div class="p-6 rounded-3xl bg-[#080a14] border border-white/[0.08] shadow-xl space-y-5">
-          <div class="border-b border-white/[0.06] pb-3">
-            <h2 class="text-base font-bold text-white flex items-center gap-2">
-              <ShieldCheck class="w-4 h-4 text-cyan-400" />
-              <span>Backstory Lore & Persona Guardrails</span>
-            </h2>
-            <p class="text-xs text-slate-400 mt-0.5">
-              Define your personal history and standing rules that every character must respect.
-            </p>
-          </div>
-
-          <div class="space-y-4">
-            <!-- Backstory / Lore -->
-            <div>
-              <label for="mask-lore" class="block text-xs font-bold text-slate-300 uppercase tracking-wider mb-1.5 flex items-center justify-between">
-                <span>Background Lore & History</span>
-                <span id="tok-mask-lore" class="text-[10px] font-mono text-cyan-400">~0 tok</span>
-              </label>
-              <textarea 
-                id="mask-lore" 
-                rows="3" 
-                placeholder="Your past experiences, skills, relationships, or origin story in roleplays...&#10;&#10;Example:&#10;Former head curator of the Royal Citadel Archives, who spent six decades cataloging forbidden artifacts before vanishing into the frontier." 
-                class="w-full px-4 py-3 rounded-2xl bg-white/[0.04] border border-white/10 focus:border-cyan-500/70 text-xs sm:text-sm text-white placeholder:text-slate-500 outline-none leading-relaxed resize-y"
-              ></textarea>
-            </div>
-
-            <!-- Global Directives / Formatting Rules -->
-            <div>
-              <label for="mask-directives" class="block text-xs font-bold text-slate-300 uppercase tracking-wider mb-1.5 flex items-center justify-between">
-                <span>Roleplay Rules & Immersion Guardrails</span>
-                <span id="tok-mask-directives" class="text-[10px] font-mono text-cyan-400">~0 tok</span>
-              </label>
-              <textarea 
-                id="mask-directives" 
-                rows="3" 
-                placeholder="Rules injected for all characters...&#10;&#10;Example:&#10;Never speak, narrate thoughts, or choose actions for &#123;&#123;user&#125;&#125;. Maintain atmospheric immersion. Format sensory actions in *asterisks* and spoken dialogue in quotes." 
-                class="w-full px-4 py-3 rounded-2xl bg-white/[0.04] border border-white/10 focus:border-cyan-500/70 text-xs sm:text-sm text-white placeholder:text-slate-500 outline-none leading-relaxed resize-y"
-              ></textarea>
-            </div>
-          </div>
-        </div>
-
-        <!-- Strict Card Override Callout Banner -->
-        <div class="p-4 rounded-2xl bg-purple-950/20 border border-purple-500/30 flex items-start gap-3">
-          <Shield class="w-5 h-5 text-purple-400 shrink-0 mt-0.5" />
-          <div class="text-xs leading-relaxed text-slate-300">
-            <strong class="text-purple-300 font-bold block mb-0.5">Absolute Identity Override Guarantee:</strong>
-            When this mask is active, its <strong class="text-white">Age</strong>, <strong class="text-white">Appearance</strong>, and <strong class="text-white">Traits</strong> are forcefully enforced in system prompts with strict priority over any conflicting character scenario or greeting. If a card assumes you are a child but your mask says 99 years old, the AI will strictly treat you as 99 years old.
-          </div>
-        </div>
-
-        <!-- Bottom Sticky Save Bar -->
-        <div class="sticky bottom-4 z-40 p-4 rounded-3xl bg-[#090b17]/95 backdrop-blur-2xl border border-white/10 shadow-2xl flex items-center justify-between gap-3">
-          <div class="flex items-center gap-2 text-xs text-slate-400">
-            <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
-            <span id="save-status-indicator">Changes ready to save</span>
-          </div>
-
-          <div class="flex items-center gap-2.5">
-            <button 
-              type="button" 
-              id="reset-mask-btn"
-              class="px-4 py-2.5 rounded-2xl bg-white/[0.05] hover:bg-white/[0.1] border border-white/10 text-xs font-semibold text-slate-300 hover:text-white transition cursor-pointer"
-            >
-              Reset Mask
-            </button>
-
-            <button 
-              type="submit" 
-              id="save-mask-btn"
-              class="px-6 py-2.5 rounded-2xl bg-gradient-to-r from-purple-600 via-indigo-600 to-purple-600 hover:from-purple-500 hover:to-indigo-500 text-xs sm:text-sm font-bold text-white shadow-lg shadow-purple-900/50 flex items-center justify-center gap-2 transition cursor-pointer active:scale-95"
-            >
-              <Save class="w-4 h-4" />
-              <span>Save & Apply Mask</span>
-            </button>
-          </div>
-        </div>
-
-      </form>
-
-    </section>
-
-    <!-- ======================================================== -->
-    <!-- TAB 2: ACCOUNT, SAFETY & DATA PREFERENCES                -->
-    <!-- ======================================================== -->
-    <section id="tab-view-account" class="space-y-6 hidden">
-      
-      <!-- Account Info & Cloud Status -->
-      <div class="p-6 rounded-3xl bg-[#080a14] border border-white/[0.08] shadow-xl space-y-6">
-        <div class="border-b border-white/[0.06] pb-3 flex items-center justify-between">
-          <div class="flex items-center gap-2">
-            <UserCheck class="w-5 h-5 text-purple-400" />
-            <h2 class="text-base sm:text-lg font-bold text-white">1. Official Platform Account</h2>
-          </div>
-          <span id="auth-status-pill" class="text-xs px-2.5 py-0.5 rounded-full bg-white/[0.06] border border-white/10 text-slate-300 font-mono">
-            Checking...
-          </span>
-        </div>
-
-        <!-- Auth State Card -->
-        <div id="auth-user-card" class="p-4 sm:p-5 rounded-2xl bg-white/[0.02] border border-white/[0.06] flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-          <div class="flex items-center gap-3.5">
-            <div class="w-12 h-12 rounded-2xl bg-gradient-to-tr from-purple-600 to-indigo-600 flex items-center justify-center text-white text-base font-bold shadow-md shadow-purple-950/50 overflow-hidden" id="account-avatar-wrapper">
-              <span id="account-avatar-letter">A</span>
-            </div>
-            <div>
-              <h3 id="account-display-name" class="text-sm font-bold text-white">Guest User</h3>
-              <p id="account-email" class="text-xs text-slate-400">Local Browser Session</p>
-            </div>
-          </div>
-
-          <div class="flex items-center gap-2" id="account-action-buttons">
-            <a 
-              href="/auth" 
-              id="account-login-link"
-              class="px-4 py-2 rounded-xl bg-purple-600 hover:bg-purple-500 text-white text-xs font-bold transition shadow-sm"
-            >
-              Sign In / Register
-            </a>
-            <button 
-              type="button" 
-              id="account-logout-btn"
-              class="hidden px-4 py-2 rounded-xl bg-rose-950/20 hover:bg-rose-950/40 border border-rose-500/30 text-rose-300 text-xs font-semibold transition cursor-pointer"
-            >
-              Log Out
-            </button>
-          </div>
-        </div>
       </div>
 
-      <!-- Content Safety & NSFW Filters -->
-      <div class="p-6 rounded-3xl bg-[#080a14] border border-white/[0.08] shadow-xl space-y-6">
-        <div class="border-b border-white/[0.06] pb-3 flex items-center justify-between">
-          <div class="flex items-center gap-2">
-            <Shield class="w-5 h-5 text-amber-400" />
-            <h2 class="text-base sm:text-lg font-bold text-white">2. Content Safety & NSFW Filter</h2>
-          </div>
-          <span class="text-xs text-slate-400">Applies across Discovery & Chats</span>
+      <!-- ========================================== -->
+      <!-- TAB 2: SETTINGS (Account, Content & Backup)-->
+      <!-- ========================================== -->
+      <div id="tab-view-settings" class="hidden space-y-6">
+        
+        <div>
+          <h1 class="text-xl font-bold text-white tracking-tight">Settings</h1>
+          <p class="text-xs text-slate-400 mt-0.5">Manage your account and preferences</p>
         </div>
 
-        <div class="grid grid-cols-1 sm:grid-cols-3 gap-3" id="nsfw-filter-selector">
+        <!-- Account Section -->
+        <div class="rounded-3xl bg-white/[0.02] border border-white/[0.08] p-5 sm:p-6 space-y-4">
+          <h2 class="text-xs font-bold text-slate-400 uppercase tracking-wider">Account</h2>
           
-          <!-- Option 1: Uncensored / Full -->
-          <button 
-            type="button" 
-            data-nsfw="full"
-            class="nsfw-opt-btn p-4 rounded-2xl border text-left transition cursor-pointer flex flex-col justify-between gap-3 bg-purple-600/10 border-purple-500/50 text-white"
-          >
-            <div class="flex items-center justify-between">
-              <span class="text-lg">🔞</span>
-              <span class="text-[10px] px-2 py-0.5 rounded-full bg-purple-500/20 text-purple-300 font-mono">Uncensored</span>
+          <div id="account-status-card" class="flex items-center justify-between p-3.5 rounded-2xl bg-white/[0.03] border border-white/5">
+            <div class="flex items-center gap-3">
+              <div id="account-avatar-pill" class="w-10 h-10 rounded-full bg-purple-600/30 border border-purple-500/40 flex items-center justify-center text-sm font-bold text-purple-200">
+                G
+              </div>
+              <div>
+                <p id="account-name-label" class="text-sm font-semibold text-white">Guest User</p>
+                <p id="account-email-label" class="text-xs text-slate-400">Local Browser Storage</p>
+              </div>
             </div>
-            <div>
-              <h4 class="text-xs font-bold text-white">Show Uncensored</h4>
-              <p class="text-[11px] text-slate-400 mt-0.5">Display all spicy and mature character cards and unrestricted themes.</p>
-            </div>
-          </button>
 
-          <!-- Option 2: Blur Sensitive -->
-          <button 
-            type="button" 
-            data-nsfw="blur"
-            class="nsfw-opt-btn p-4 rounded-2xl border text-left transition cursor-pointer flex flex-col justify-between gap-3 bg-white/[0.02] border-white/10 text-slate-400 hover:text-white hover:bg-white/[0.04]"
-          >
-            <div class="flex items-center justify-between">
-              <span class="text-lg">👁️</span>
-              <span class="text-[10px] px-2 py-0.5 rounded-full bg-slate-700/50 text-slate-300 font-mono">Blur</span>
+            <div id="account-action-container">
+              <a 
+                href="/auth" 
+                id="btn-auth-link"
+                class="px-3.5 py-1.5 rounded-xl bg-purple-600 hover:bg-purple-500 text-white text-xs font-semibold transition cursor-pointer flex items-center gap-1.5"
+              >
+                <LogIn class="w-3.5 h-3.5" />
+                <span>Sign In</span>
+              </a>
             </div>
-            <div>
-              <h4 class="text-xs font-bold text-white">Blur Sensitive</h4>
-              <p class="text-[11px] text-slate-400 mt-0.5">Cards are accessible, but sensitive artwork is blurred until clicked.</p>
-            </div>
-          </button>
-
-          <!-- Option 3: Safe Mode -->
-          <button 
-            type="button" 
-            data-nsfw="safe"
-            class="nsfw-opt-btn p-4 rounded-2xl border text-left transition cursor-pointer flex flex-col justify-between gap-3 bg-white/[0.02] border-white/10 text-slate-400 hover:text-white hover:bg-white/[0.04]"
-          >
-            <div class="flex items-center justify-between">
-              <span class="text-lg">🛡️</span>
-              <span class="text-[10px] px-2 py-0.5 rounded-full bg-slate-700/50 text-slate-300 font-mono">Safe Mode</span>
-            </div>
-            <div>
-              <h4 class="text-xs font-bold text-white">Strict Safe Mode</h4>
-              <p class="text-[11px] text-slate-400 mt-0.5">Hide mature and explicit content entirely from character feeds and searches.</p>
-            </div>
-          </button>
-
-        </div>
-      </div>
-
-      <!-- Storage Backup, Data Export & Multi-Device Sync -->
-      <div class="p-6 rounded-3xl bg-[#080a14] border border-white/[0.08] shadow-xl space-y-6">
-        <div class="border-b border-white/[0.06] pb-3 flex items-center justify-between">
-          <div class="flex items-center gap-2">
-            <Download class="w-5 h-5 text-indigo-400" />
-            <h2 class="text-base sm:text-lg font-bold text-white">3. Backup, Migration & Sync</h2>
           </div>
-          <span class="text-xs px-2.5 py-0.5 rounded-full bg-cyan-500/10 text-cyan-300 border border-cyan-500/20 font-mono">
-            Zero-Server E2E
-          </span>
         </div>
 
-        <!-- Quick P2P Device Transfer Code -->
-        <div class="p-4 sm:p-5 rounded-2xl bg-[#0c0f22] border border-cyan-500/30 space-y-4">
-          <div class="flex items-center justify-between">
-            <div class="flex items-center gap-2">
-              <Smartphone class="w-4 h-4 text-cyan-400" />
-              <span class="text-xs font-bold text-white">Instant Device-to-Device Transfer Code</span>
+        <!-- Content Preferences Section -->
+        <div class="rounded-3xl bg-white/[0.02] border border-white/[0.08] p-5 sm:p-6 space-y-4">
+          <h2 class="text-xs font-bold text-slate-400 uppercase tracking-wider">Content Preferences</h2>
+
+          <div>
+            <label class="block text-xs font-medium text-slate-300 mb-2">Mature Content (NSFW)</label>
+            <div class="grid grid-cols-3 gap-2">
+              <button 
+                type="button" 
+                class="nsfw-opt-btn py-2.5 px-2 rounded-xl border text-center transition cursor-pointer text-xs font-medium"
+                data-mode="show"
+              >
+                Unrestricted
+              </button>
+              <button 
+                type="button" 
+                class="nsfw-opt-btn py-2.5 px-2 rounded-xl border text-center transition cursor-pointer text-xs font-medium"
+                data-mode="blur"
+              >
+                Blur Images
+              </button>
+              <button 
+                type="button" 
+                class="nsfw-opt-btn py-2.5 px-2 rounded-xl border text-center transition cursor-pointer text-xs font-medium"
+                data-mode="hide"
+              >
+                Safe Mode
+              </button>
             </div>
-            <span class="text-[10px] text-slate-400 font-mono">Encrypted Token</span>
           </div>
+        </div>
 
-          <p class="text-[11px] text-slate-300">
-            Generate a compressed sync token to copy on your PC and paste on your mobile device, or vice-versa.
-          </p>
+        <!-- Data & Backup Section -->
+        <div class="rounded-3xl bg-white/[0.02] border border-white/[0.08] p-5 sm:p-6 space-y-4">
+          <h2 class="text-xs font-bold text-slate-400 uppercase tracking-wider">Data & Backup</h2>
 
-          <div class="space-y-2">
-            <div class="flex items-center gap-2">
-              <button 
-                type="button" 
-                id="generate-sync-token-btn"
-                class="flex items-center gap-1.5 px-4 py-2 rounded-xl bg-cyan-600 hover:bg-cyan-500 text-white text-xs font-bold transition shadow-sm cursor-pointer active:scale-95"
-              >
-                <CloudUpload class="w-3.5 h-3.5" />
-                <span>Generate Transfer Code 📲</span>
-              </button>
-
-              <button 
-                type="button" 
-                id="copy-sync-token-btn"
-                class="hidden flex items-center gap-1.5 px-3 py-2 rounded-xl bg-white/[0.06] hover:bg-white/[0.1] text-cyan-300 text-xs font-semibold transition cursor-pointer"
-              >
-                <Copy class="w-3.5 h-3.5" />
-                <span>Copy Code</span>
-              </button>
-            </div>
-
-            <textarea 
-              id="sync-token-box" 
-              rows="2" 
-              placeholder="Your generated sync token will appear here. Or paste a token from another device to import..."
-              class="w-full p-2.5 rounded-xl bg-black/50 border border-white/10 text-slate-300 text-[11px] font-mono outline-none focus:border-cyan-500/50 resize-y"
-            ></textarea>
-
+          <div class="flex items-center gap-3">
             <button 
               type="button" 
-              id="apply-sync-token-btn"
-              class="flex items-center gap-1.5 px-4 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-bold transition shadow-sm cursor-pointer active:scale-95"
+              id="btn-export-backup"
+              class="flex-1 py-2.5 px-3 rounded-xl bg-white/[0.04] hover:bg-white/[0.08] border border-white/10 text-xs font-medium text-slate-200 hover:text-white transition flex items-center justify-center gap-2 cursor-pointer"
             >
-              <CloudDownload class="w-3.5 h-3.5" />
-              <span>Apply & Merge Sync Code 🚀</span>
+              <Download class="w-3.5 h-3.5" />
+              <span>Export Backup</span>
+            </button>
+            <label 
+              class="flex-1 py-2.5 px-3 rounded-xl bg-white/[0.04] hover:bg-white/[0.08] border border-white/10 text-xs font-medium text-slate-200 hover:text-white transition flex items-center justify-center gap-2 cursor-pointer"
+            >
+              <Upload class="w-3.5 h-3.5" />
+              <span>Restore Backup</span>
+              <input type="file" id="backup-file-input" accept=".json" class="hidden" />
+            </label>
+          </div>
+
+          <div class="pt-2 border-t border-white/5 flex justify-end">
+            <button 
+              type="button" 
+              id="btn-clear-cache"
+              class="text-xs text-red-400/80 hover:text-red-300 transition py-1 px-2 rounded-lg hover:bg-red-500/10 cursor-pointer"
+            >
+              Clear Local Cache
             </button>
           </div>
         </div>
 
-        <!-- File-based Backup & Reset Grid -->
-        <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
-          <!-- Backup Export -->
-          <button 
-            type="button" 
-            id="export-backup-btn"
-            class="p-4 rounded-2xl bg-white/[0.03] hover:bg-white/[0.06] border border-white/10 text-left transition cursor-pointer flex flex-col justify-between gap-3 group"
-          >
-            <div class="flex items-center justify-between">
-              <Download class="w-5 h-5 text-cyan-400 group-hover:scale-110 transition" />
-              <span class="text-[10px] text-slate-500 font-mono">.json</span>
-            </div>
-            <div>
-              <h4 class="text-xs font-bold text-white">Export Full Backup</h4>
-              <p class="text-[11px] text-slate-400 mt-0.5">Download all masks, custom characters & chats</p>
-            </div>
-          </button>
-
-          <!-- Backup Import -->
-          <label 
-            class="p-4 rounded-2xl bg-white/[0.03] hover:bg-white/[0.06] border border-white/10 text-left transition cursor-pointer flex flex-col justify-between gap-3 group"
-          >
-            <div class="flex items-center justify-between">
-              <Upload class="w-5 h-5 text-purple-400 group-hover:scale-110 transition" />
-              <span class="text-[10px] text-slate-500 font-mono">Restore</span>
-            </div>
-            <div>
-              <h4 class="text-xs font-bold text-white">Import Backup File</h4>
-              <p class="text-[11px] text-slate-400 mt-0.5">Restore data from previous JSON file</p>
-            </div>
-            <input id="import-backup-file" type="file" accept=".json" class="hidden" />
-          </label>
-
-          <!-- Reset / Clear -->
-          <button 
-            type="button" 
-            id="clear-cache-btn"
-            class="p-4 rounded-2xl bg-rose-950/20 hover:bg-rose-950/40 border border-rose-500/20 text-left transition cursor-pointer flex flex-col justify-between gap-3 group"
-          >
-            <div class="flex items-center justify-between">
-              <Trash2 class="w-5 h-5 text-rose-400 group-hover:scale-110 transition" />
-              <span class="text-[10px] text-rose-400 font-mono">Reset</span>
-            </div>
-            <div>
-              <h4 class="text-xs font-bold text-rose-200">Clear Local Cache</h4>
-              <p class="text-[11px] text-rose-400/80 mt-0.5">Erase custom data from this device</p>
-            </div>
-          </button>
-        </div>
-
       </div>
 
-    </section>
-
-    <!-- Global Toast Notification -->
-    <div id="status-toast" class="fixed bottom-6 right-6 z-50 hidden p-3.5 rounded-2xl bg-emerald-950/90 border border-emerald-500/50 text-xs text-emerald-100 flex items-center gap-2.5 shadow-2xl backdrop-blur-xl">
-      <Check class="w-4 h-4 text-emerald-400 shrink-0" />
-      <span id="toast-text">Mask saved successfully!</span>
     </div>
-
   </main>
 
   <BottomNav />
+
+  <!-- Toast Notification Container -->
+  <div id="toast-container" class="fixed bottom-20 left-1/2 -translate-x-1/2 z-50 flex flex-col gap-2 pointer-events-none"></div>
+
+  <!-- Custom Confirmation Modal Container -->
+  <div id="modal-container" class="fixed inset-0 z-[10000] hidden items-center justify-center p-4 bg-black/75 backdrop-blur-md"></div>
 </Layout>
 
 <script>
-  // ================= STORAGE CONSTANTS =================
-  const STORAGE_KEY_PERSONAS = 'aetheria_saved_personas';
-  const STORAGE_KEY_ACTIVE = 'aetheria_user_persona';
-  const STORAGE_KEY_CUSTOM_CHARS = 'aetheria_custom_characters';
-  const STORAGE_KEY_NSFW = 'aetheria_nsfw_mode';
-
-  interface UserMask {
+  interface Persona {
     id: string;
     name: string;
-    age: string;
-    gender: string;
+    age?: string;
     pronouns?: string;
-    title?: string;
-    avatar: string;
-    appearance: string;
-    personality: string;
-    lore: string;
-    directives: string;
+    avatar?: string;
+    bio?: string;
+    directives?: string;
     isDefault?: boolean;
   }
 
-  // Pure clean default mask (NO fake pre-filled values!)
-  function createBlankMask(id = 'mask_' + Date.now(), name = ''): UserMask {
-    return {
-      id,
-      name,
-      age: '',
-      gender: '',
-      title: '',
-      avatar: '',
-      appearance: '',
-      personality: '',
-      lore: '',
-      directives: 'Never speak, narrate thoughts, or choose actions for {{user}}. Maintain atmospheric immersion. Format sensory actions in *asterisks* and spoken dialogue in quotes.'
-    };
-  }
+  const STORAGE_KEY_PERSONAS = 'aetheria_saved_personas';
+  const STORAGE_KEY_ACTIVE = 'aetheria_user_persona';
 
-  // DOM Elements
-  const tabBtnMasks = document.getElementById('tab-btn-masks');
-  const tabBtnAccount = document.getElementById('tab-btn-account');
-  const tabViewMasks = document.getElementById('tab-view-masks');
-  const tabViewAccount = document.getElementById('tab-view-account');
+  let personas: Persona[] = [];
+  let currentPersonaId = '';
 
-  const maskPillsContainer = document.getElementById('mask-pills-container');
-  const masksCountBadge = document.getElementById('masks-count-badge');
-  const addMaskBtn = document.getElementById('add-mask-btn');
+  // Helpers: Toast & Modal
+  function showToast(message: string, type: 'success' | 'info' | 'warning' = 'info') {
+    const container = document.getElementById('toast-container');
+    if (!container) return;
 
-  // Mask Form Elements
-  const maskForm = document.getElementById('mask-editor-form') as HTMLFormElement;
-  const maskIdLabel = document.getElementById('mask-id-label');
-  const maskActiveStatusBadge = document.getElementById('mask-active-status-badge');
-  const activateMaskBtn = document.getElementById('activate-mask-btn');
-  const duplicateMaskBtn = document.getElementById('duplicate-mask-btn');
-  const deleteMaskBtn = document.getElementById('delete-mask-btn');
+    const toast = document.createElement('div');
+    const colorClass = type === 'success' 
+      ? 'border-emerald-500/40 text-emerald-300 bg-emerald-950/80' 
+      : type === 'warning'
+      ? 'border-amber-500/40 text-amber-300 bg-amber-950/80'
+      : 'border-purple-500/40 text-purple-200 bg-[#0e1224]/90';
 
-  const maskAvatarClickable = document.getElementById('mask-avatar-clickable');
-  const maskAvatarFileInput = document.getElementById('mask-avatar-file-input') as HTMLInputElement;
-  const maskAvatarImg = document.getElementById('mask-avatar-img') as HTMLImageElement;
-  const maskAvatarPlaceholder = document.getElementById('mask-avatar-placeholder');
-  const maskAvatarUrlToggleBtn = document.getElementById('mask-avatar-url-toggle-btn');
-  const maskAvatarRemoveBtn = document.getElementById('mask-avatar-remove-btn');
-  const maskAvatarUrlDrawer = document.getElementById('mask-avatar-url-drawer');
-  const maskAvatarUrlInput = document.getElementById('mask-avatar-url-input') as HTMLInputElement;
-  const maskAvatarUrlApplyBtn = document.getElementById('mask-avatar-url-apply-btn');
+    toast.className = `px-4 py-2 rounded-2xl border ${colorClass} backdrop-blur-lg text-xs font-semibold shadow-xl transition-all duration-300 opacity-0 translate-y-2 pointer-events-auto`;
+    toast.textContent = message;
 
-  const nameInput = document.getElementById('mask-name') as HTMLInputElement;
-  const ageInput = document.getElementById('mask-age') as HTMLInputElement;
-  const genderInput = document.getElementById('mask-gender') as HTMLInputElement;
-  const titleInput = document.getElementById('mask-title') as HTMLInputElement;
+    container.appendChild(toast);
+    requestAnimationFrame(() => {
+      toast.classList.remove('opacity-0', 'translate-y-2');
+    });
 
-  const appearanceInput = document.getElementById('mask-appearance') as HTMLTextAreaElement;
-  const personalityInput = document.getElementById('mask-personality') as HTMLTextAreaElement;
-  const loreInput = document.getElementById('mask-lore') as HTMLTextAreaElement;
-  const directivesInput = document.getElementById('mask-directives') as HTMLTextAreaElement;
-
-  const tokAppearance = document.getElementById('tok-mask-appearance');
-  const tokPersonality = document.getElementById('tok-mask-personality');
-  const tokLore = document.getElementById('tok-mask-lore');
-  const tokDirectives = document.getElementById('tok-mask-directives');
-
-  const resetMaskBtn = document.getElementById('reset-mask-btn');
-  const toast = document.getElementById('status-toast') as HTMLElement;
-  const toastText = document.getElementById('toast-text') as HTMLElement;
-
-  // Account Tab Elements
-  const authStatusPill = document.getElementById('auth-status-pill');
-  const accountAvatarLetter = document.getElementById('account-avatar-letter');
-  const accountDisplayName = document.getElementById('account-display-name');
-  const accountEmail = document.getElementById('account-email');
-  const accountLoginLink = document.getElementById('account-login-link');
-  const accountLogoutBtn = document.getElementById('account-logout-btn');
-  const nsfwFilterBtns = document.querySelectorAll('.nsfw-opt-btn');
-
-  // Backup Elements
-  const exportBackupBtn = document.getElementById('export-backup-btn');
-  const importBackupFile = document.getElementById('import-backup-file') as HTMLInputElement;
-  const clearCacheBtn = document.getElementById('clear-cache-btn');
-  const generateSyncBtn = document.getElementById('generate-sync-token-btn');
-  const copySyncBtn = document.getElementById('copy-sync-token-btn');
-  const applySyncBtn = document.getElementById('apply-sync-token-btn');
-  const syncTokenBox = document.getElementById('sync-token-box') as HTMLTextAreaElement;
-
-  let masks: UserMask[] = [];
-  let currentEditingId = '';
-  let activeChatMaskId = '';
-  let currentAvatarData = '';
-
-  function showToast(msg: string) {
-    if (!toast || !toastText) return;
-    toastText.textContent = msg;
-    toast.classList.remove('hidden');
     setTimeout(() => {
-      toast.classList.add('hidden');
-    }, 3500);
+      toast.classList.add('opacity-0', 'translate-y-2');
+      setTimeout(() => toast.remove(), 300);
+    }, 2500);
   }
 
-  // Modern Glassmorphic Dialog Modal
-  function showConfirmModal({
-    title = 'Confirm Action',
-    message = 'Are you sure you want to proceed?',
-    confirmText = 'Confirm',
-    cancelText = 'Cancel',
-    type = 'default',
-    icon = ''
-  }: {
-    title?: string;
-    message?: string;
-    confirmText?: string;
-    cancelText?: string;
-    type?: string;
-    icon?: string;
-  } = {}): Promise<boolean> {
+  function showConfirm(title: string, message: string): Promise<boolean> {
     return new Promise((resolve) => {
-      const isDanger = type === 'danger';
-      const isWarning = type === 'warning';
-      const iconDisplay = icon || (isDanger ? '🗑️' : isWarning ? '⚠️' : '✨');
+      const container = document.getElementById('modal-container');
+      if (!container) {
+        resolve(false);
+        return;
+      }
 
-      const backdrop = document.createElement('div');
-      backdrop.className = 'fixed inset-0 z-[10000] flex items-center justify-center p-4 bg-black/75 backdrop-blur-md transition-opacity duration-200 opacity-0';
-      
-      const modal = document.createElement('div');
-      modal.className = 'w-full max-w-sm rounded-3xl bg-[#0d1124]/95 border border-purple-500/30 p-5 sm:p-6 shadow-2xl shadow-purple-950/80 transform scale-95 transition-all duration-200 text-left';
-
-      const cancelBtnHtml = cancelText ? `
-        <button id="modal-btn-cancel" type="button" class="px-4 py-2 rounded-xl text-xs font-medium text-slate-300 hover:text-white bg-white/5 hover:bg-white/10 border border-white/10 transition-all cursor-pointer">
-          ${cancelText}
-        </button>
-      ` : '';
-
-      const confirmBtnClass = isDanger
-        ? 'bg-rose-600 hover:bg-rose-500 text-white shadow-lg shadow-rose-900/40 border border-rose-500/40'
-        : 'bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-500 hover:to-indigo-500 text-white shadow-lg shadow-purple-900/40 border border-purple-500/40';
-
-      modal.innerHTML = `
-        <div class="flex items-start gap-3.5">
-          <div class="w-10 h-10 rounded-2xl flex items-center justify-center shrink-0 text-xl ${
-            isDanger ? 'bg-rose-500/15 border border-rose-500/30 text-rose-400' : isWarning ? 'bg-amber-500/15 border border-amber-500/30 text-amber-400' : 'bg-purple-500/15 border border-purple-500/30 text-purple-300'
-          }">
-            ${iconDisplay}
+      container.innerHTML = `
+        <div class="w-full max-w-sm rounded-3xl bg-[#0e1224]/95 border border-white/10 p-6 shadow-2xl text-left">
+          <h3 class="text-sm font-bold text-white mb-2">${title}</h3>
+          <p class="text-xs text-slate-300 leading-relaxed mb-5">${message}</p>
+          <div class="flex items-center justify-end gap-2">
+            <button id="modal-cancel-btn" type="button" class="px-3.5 py-1.5 rounded-xl bg-white/5 hover:bg-white/10 text-xs text-slate-300 transition cursor-pointer">
+              Cancel
+            </button>
+            <button id="modal-confirm-btn" type="button" class="px-4 py-1.5 rounded-xl bg-red-600 hover:bg-red-500 text-xs font-semibold text-white transition cursor-pointer">
+              Confirm
+            </button>
           </div>
-          <div class="flex-1 min-w-0">
-            <h3 class="text-sm font-bold text-white tracking-wide">${title}</h3>
-            <p class="mt-1.5 text-xs text-slate-300 leading-relaxed">${message}</p>
-          </div>
-        </div>
-        <div class="mt-6 flex items-center justify-end gap-2.5">
-          ${cancelBtnHtml}
-          <button id="modal-btn-confirm" type="button" class="px-4 py-2 rounded-xl text-xs font-semibold shadow-lg transition-all cursor-pointer ${confirmBtnClass}">
-            ${confirmText}
-          </button>
         </div>
       `;
 
-      backdrop.appendChild(modal);
-      document.body.appendChild(backdrop);
+      container.classList.remove('hidden');
+      container.classList.add('flex');
 
-      requestAnimationFrame(() => {
-        backdrop.classList.remove('opacity-0');
-        modal.classList.remove('scale-95');
-      });
-
-      const cleanup = (confirmed: boolean) => {
-        backdrop.classList.add('opacity-0');
-        modal.classList.add('scale-95');
-        setTimeout(() => backdrop.remove(), 200);
-        window.removeEventListener('keydown', onKeyDown);
-        resolve(confirmed);
+      const cleanup = (val: boolean) => {
+        container.classList.add('hidden');
+        container.classList.remove('flex');
+        container.innerHTML = '';
+        resolve(val);
       };
 
-      const confirmBtn = modal.querySelector('#modal-btn-confirm') as HTMLButtonElement | null;
-      const cancelBtn = modal.querySelector('#modal-btn-cancel') as HTMLButtonElement | null;
-      if (confirmBtn) confirmBtn.onclick = () => cleanup(true);
-      if (cancelBtn) cancelBtn.onclick = () => cleanup(false);
-      backdrop.onclick = (e) => {
-        if (e.target === backdrop) cleanup(false);
-      };
-
-      const onKeyDown = (e: KeyboardEvent) => {
-        if (e.key === 'Escape') cleanup(false);
-        else if (e.key === 'Enter') cleanup(true);
-      };
-      window.addEventListener('keydown', onKeyDown);
+      container.querySelector('#modal-cancel-btn')?.addEventListener('click', () => cleanup(false));
+      container.querySelector('#modal-confirm-btn')?.addEventListener('click', () => cleanup(true));
     });
   }
 
-  function countTokens(text: string): number {
-    return Math.ceil((text || '').trim().length / 4);
-  }
-
-  function updateTokenCounters() {
-    if (tokAppearance && appearanceInput) tokAppearance.textContent = `~${countTokens(appearanceInput.value)} tok`;
-    if (tokPersonality && personalityInput) tokPersonality.textContent = `~${countTokens(personalityInput.value)} tok`;
-    if (tokLore && loreInput) tokLore.textContent = `~${countTokens(loreInput.value)} tok`;
-    if (tokDirectives && directivesInput) tokDirectives.textContent = `~${countTokens(directivesInput.value)} tok`;
-  }
-
-  function updateAvatarDisplay(url: string) {
-    if (url && url.trim()) {
-      maskAvatarImg.src = url;
-      maskAvatarImg.classList.remove('hidden');
-      maskAvatarPlaceholder?.classList.add('hidden');
-    } else {
-      maskAvatarImg.src = '';
-      maskAvatarImg.classList.add('hidden');
-      maskAvatarPlaceholder?.classList.remove('hidden');
-    }
-  }
-
-  function processAvatarFile(file: File) {
-    if (!file || !file.type.startsWith('image/')) {
-      showToast('Please select an image file (PNG, JPG, WebP, GIF).');
-      return;
-    }
-    if (file.size > 8 * 1024 * 1024) {
-      showToast('File size is too large (Max 8MB).');
-      return;
-    }
-
-    const reader = new FileReader();
-    reader.onload = (e) => {
-      const img = new Image();
-      img.onload = () => {
-        const canvas = document.createElement('canvas');
-        const maxSize = 400;
-        let width = img.width;
-        let height = img.height;
-        if (width > height) {
-          if (width > maxSize) {
-            height = Math.round((height * maxSize) / width);
-            width = maxSize;
-          }
-        } else {
-          if (height > maxSize) {
-            width = Math.round((width * maxSize) / height);
-            height = maxSize;
-          }
-        }
-        canvas.width = width;
-        canvas.height = height;
-        const ctx = canvas.getContext('2d');
-        if (ctx) {
-          ctx.drawImage(img, 0, 0, width, height);
-          const compressedDataUrl = canvas.toDataURL('image/webp', 0.85);
-          currentAvatarData = compressedDataUrl;
-          if (maskAvatarUrlInput) maskAvatarUrlInput.value = '';
-          updateAvatarDisplay(compressedDataUrl);
-          showToast('Avatar photo updated! Click "Save & Apply Mask".');
-        }
-      };
-      img.src = e.target?.result as string;
-    };
-    reader.readAsDataURL(file);
-  }
-
-  // ================= SWITCH TABS =================
-  tabBtnMasks?.addEventListener('click', () => {
-    tabBtnMasks.className = 'flex-1 flex items-center justify-center gap-2 py-2.5 px-4 rounded-xl text-xs sm:text-sm font-bold transition cursor-pointer bg-purple-600 text-white shadow-lg shadow-purple-900/40';
-    tabBtnAccount.className = 'flex-1 flex items-center justify-center gap-2 py-2.5 px-4 rounded-xl text-xs sm:text-sm font-bold transition cursor-pointer text-slate-400 hover:text-white hover:bg-white/[0.05]';
-    tabViewMasks?.classList.remove('hidden');
-    tabViewAccount?.classList.add('hidden');
-  });
-
-  tabBtnAccount?.addEventListener('click', () => {
-    tabBtnAccount.className = 'flex-1 flex items-center justify-center gap-2 py-2.5 px-4 rounded-xl text-xs sm:text-sm font-bold transition cursor-pointer bg-purple-600 text-white shadow-lg shadow-purple-900/40';
-    tabBtnMasks.className = 'flex-1 flex items-center justify-center gap-2 py-2.5 px-4 rounded-xl text-xs sm:text-sm font-bold transition cursor-pointer text-slate-400 hover:text-white hover:bg-white/[0.05]';
-    tabViewAccount?.classList.remove('hidden');
-    tabViewMasks?.classList.add('hidden');
-    checkAuthStatus();
-  });
-
-  // ================= LOAD & MIGRATE MASKS =================
-  function loadMasksFromStorage() {
+  // Initial Load & Migration
+  function loadPersonas() {
     try {
-      const saved = localStorage.getItem(STORAGE_KEY_PERSONAS);
-      if (saved) {
-        const rawList = JSON.parse(saved);
-        masks = rawList.map((item: any) => ({
-          id: item.id || ('mask_' + Math.random().toString(36).slice(2, 9)),
-          name: item.name || '',
-          age: item.age || '',
-          gender: item.gender || item.pronouns || '',
-          title: item.title || '',
-          avatar: (item.avatar && !item.avatar.startsWith('/avatars/')) ? item.avatar : '',
-          appearance: item.appearance || '',
-          personality: item.personality || '',
-          lore: item.lore || item.bio || '',
-          directives: item.directives || item.globalNotes || ''
-        }));
-      }
-
-      // If empty, check active legacy persona
-      if (masks.length === 0) {
-        const single = localStorage.getItem(STORAGE_KEY_ACTIVE);
-        if (single) {
-          const item = JSON.parse(single);
-          masks = [{
-            id: item.id || 'mask_default',
-            name: item.name === 'Traveler' ? '' : (item.name || ''),
-            age: item.age || '',
-            gender: item.gender || (item.pronouns === 'They/Them' ? '' : (item.pronouns || '')),
-            title: item.title === 'Explorer of the Nexus' ? '' : (item.title || ''),
-            avatar: (item.avatar && !item.avatar.startsWith('/avatars/')) ? item.avatar : '',
-            appearance: item.appearance || '',
-            personality: item.personality || '',
-            lore: (item.bio && item.bio.includes('resilient traveler')) ? '' : (item.bio || ''),
-            directives: item.globalNotes || ''
-          }];
-        } else {
-          masks = [createBlankMask('mask_default', '')];
-        }
-      }
-
-      // Resolve active mask
-      const activeObj = localStorage.getItem(STORAGE_KEY_ACTIVE);
-      if (activeObj) {
-        const parsed = JSON.parse(activeObj);
-        activeChatMaskId = parsed.id || masks[0].id;
-      } else {
-        activeChatMaskId = masks[0].id;
-      }
-
-      currentEditingId = activeChatMaskId || masks[0].id;
-
-    } catch (e) {
-      masks = [createBlankMask('mask_default', '')];
-      activeChatMaskId = masks[0].id;
-      currentEditingId = masks[0].id;
-    }
-
-    renderMaskPills();
-    populateFormWithMask(currentEditingId);
-  }
-
-  function renderMaskPills() {
-    if (!maskPillsContainer) return;
-    maskPillsContainer.innerHTML = '';
-
-    if (masksCountBadge) masksCountBadge.textContent = String(masks.length);
-
-    masks.forEach((m, idx) => {
-      const isEditing = m.id === currentEditingId;
-      const isActive = m.id === activeChatMaskId;
-
-      const pill = document.createElement('button');
-      pill.type = 'button';
-      pill.className = `shrink-0 flex items-center gap-2 px-3.5 py-1.5 rounded-xl text-xs font-semibold transition cursor-pointer ${
-        isEditing 
-          ? 'bg-purple-600 text-white shadow-md shadow-purple-900/40 ring-1 ring-purple-400/50' 
-          : 'bg-white/[0.04] text-slate-400 hover:text-white hover:bg-white/[0.08]'
-      }`;
-
-      const avatarSnippet = m.avatar 
-        ? `<img src="${m.avatar}" class="w-4 h-4 rounded-full object-cover shrink-0" />`
-        : `<span class="w-2 h-2 rounded-full ${isActive ? 'bg-emerald-400 animate-pulse' : 'bg-slate-500'}"></span>`;
-
-      pill.innerHTML = `
-        ${avatarSnippet}
-        <span>${m.name || `Mask ${idx + 1}`}</span>
-        ${isActive ? '<span class="text-[9px] px-1 py-0.2 rounded bg-emerald-500/20 text-emerald-300 font-bold">Active</span>' : ''}
-      `;
-
-      pill.addEventListener('click', () => {
-        saveCurrentFormInMemory();
-        currentEditingId = m.id;
-        renderMaskPills();
-        populateFormWithMask(currentEditingId);
-      });
-
-      maskPillsContainer.appendChild(pill);
-    });
-  }
-
-  function populateFormWithMask(id: string) {
-    const mask = masks.find(m => m.id === id) || masks[0];
-    if (!mask) return;
-
-    if (maskIdLabel) maskIdLabel.textContent = `ID: ${mask.id.slice(0, 14)}`;
-
-    nameInput.value = mask.name || '';
-    ageInput.value = mask.age || '';
-    genderInput.value = mask.gender || '';
-    titleInput.value = mask.title || '';
-
-    currentAvatarData = mask.avatar || '';
-    if (maskAvatarUrlInput) maskAvatarUrlInput.value = mask.avatar && mask.avatar.startsWith('http') ? mask.avatar : '';
-    updateAvatarDisplay(currentAvatarData);
-
-    appearanceInput.value = mask.appearance || '';
-    personalityInput.value = mask.personality || '';
-    loreInput.value = mask.lore || '';
-    directivesInput.value = mask.directives || '';
-
-    updateTokenCounters();
-
-    // Active Status Badge & Activate Button
-    const isActive = mask.id === activeChatMaskId;
-    if (maskActiveStatusBadge) {
-      if (isActive) {
-        maskActiveStatusBadge.className = 'px-2.5 py-1 rounded-full text-xs font-bold bg-emerald-500/10 border border-emerald-500/30 text-emerald-400 flex items-center gap-1.5';
-        maskActiveStatusBadge.innerHTML = '<span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span><span>Active Mask for Chats</span>';
-      } else {
-        maskActiveStatusBadge.className = 'px-2.5 py-1 rounded-full text-xs font-medium bg-white/[0.04] border border-white/10 text-slate-400 flex items-center gap-1.5';
-        maskActiveStatusBadge.innerHTML = '<span class="w-2 h-2 rounded-full bg-slate-500"></span><span>Inactive Mask</span>';
-      }
-    }
-
-    if (activateMaskBtn) {
-      if (isActive) {
-        activateMaskBtn.classList.add('hidden');
-      } else {
-        activateMaskBtn.classList.remove('hidden');
-      }
-    }
-
-    if (deleteMaskBtn) {
-      if (masks.length <= 1) {
-        deleteMaskBtn.classList.add('opacity-40', 'pointer-events-none');
-      } else {
-        deleteMaskBtn.classList.remove('opacity-40', 'pointer-events-none');
-      }
-    }
-  }
-
-  function saveCurrentFormInMemory(): UserMask {
-    const updated: UserMask = {
-      id: currentEditingId,
-      name: nameInput.value.trim(),
-      age: ageInput.value.trim(),
-      gender: genderInput.value.trim(),
-      title: titleInput.value.trim(),
-      avatar: currentAvatarData || (maskAvatarUrlInput ? maskAvatarUrlInput.value.trim() : ''),
-      appearance: appearanceInput.value.trim(),
-      personality: personalityInput.value.trim(),
-      lore: loreInput.value.trim(),
-      directives: directivesInput.value.trim()
-    };
-
-    const idx = masks.findIndex(m => m.id === currentEditingId);
-    if (idx !== -1) {
-      masks[idx] = updated;
-    } else {
-      masks.push(updated);
-    }
-    return updated;
-  }
-
-  function saveAllMasksToStorage(notify = true) {
-    const current = saveCurrentFormInMemory();
-    localStorage.setItem(STORAGE_KEY_PERSONAS, JSON.stringify(masks));
-
-    // Ensure active persona is updated
-    const activeMask = masks.find(m => m.id === activeChatMaskId) || current;
-    localStorage.setItem(STORAGE_KEY_ACTIVE, JSON.stringify({
-      id: activeMask.id,
-      name: activeMask.name || 'User',
-      age: activeMask.age || '',
-      gender: activeMask.gender || '',
-      pronouns: activeMask.gender || '',
-      title: activeMask.title || '',
-      avatar: activeMask.avatar || '',
-      appearance: activeMask.appearance || '',
-      personality: activeMask.personality || '',
-      bio: activeMask.lore || '',
-      lore: activeMask.lore || '',
-      globalNotes: activeMask.directives || '',
-      directives: activeMask.directives || ''
-    }));
-
-    renderMaskPills();
-    populateFormWithMask(currentEditingId);
-
-    if (notify) {
-      showToast(`Mask "${current.name || 'Unnamed'}" saved & active!`);
-    }
-  }
-
-  // ================= AVATAR LISTENERS =================
-  maskAvatarClickable?.addEventListener('click', () => {
-    maskAvatarFileInput?.click();
-  });
-
-  maskAvatarFileInput?.addEventListener('change', (e) => {
-    const file = (e.target as HTMLInputElement).files?.[0];
-    if (file) processAvatarFile(file);
-  });
-
-  maskAvatarRemoveBtn?.addEventListener('click', () => {
-    currentAvatarData = '';
-    if (maskAvatarUrlInput) maskAvatarUrlInput.value = '';
-    updateAvatarDisplay('');
-    showToast('Avatar removed.');
-  });
-
-  maskAvatarUrlToggleBtn?.addEventListener('click', () => {
-    maskAvatarUrlDrawer?.classList.toggle('hidden');
-    if (!maskAvatarUrlDrawer?.classList.contains('hidden')) {
-      maskAvatarUrlInput?.focus();
-    }
-  });
-
-  maskAvatarUrlApplyBtn?.addEventListener('click', () => {
-    const url = maskAvatarUrlInput.value.trim();
-    if (url) {
-      currentAvatarData = url;
-      updateAvatarDisplay(url);
-      maskAvatarUrlDrawer?.classList.add('hidden');
-      showToast('Avatar image link applied!');
-    }
-  });
-
-  // Token counters update
-  [appearanceInput, personalityInput, loreInput, directivesInput].forEach(inp => {
-    inp?.addEventListener('input', updateTokenCounters);
-  });
-
-  // Form submit
-  maskForm?.addEventListener('submit', (e) => {
-    e.preventDefault();
-    saveAllMasksToStorage(true);
-  });
-
-  // Activate Mask
-  activateMaskBtn?.addEventListener('click', () => {
-    activeChatMaskId = currentEditingId;
-    saveAllMasksToStorage(false);
-    showToast('Set as active mask for all roleplay chats!');
-  });
-
-  // Add New Mask
-  addMaskBtn?.addEventListener('click', () => {
-    saveCurrentFormInMemory();
-    const newMask = createBlankMask();
-    masks.push(newMask);
-    currentEditingId = newMask.id;
-    activeChatMaskId = newMask.id; // automatically activate new mask
-    saveAllMasksToStorage(false);
-    renderMaskPills();
-    populateFormWithMask(newMask.id);
-    nameInput?.focus();
-    showToast('New mask created! Enter identity details.');
-  });
-
-  // Duplicate Mask
-  duplicateMaskBtn?.addEventListener('click', () => {
-    saveCurrentFormInMemory();
-    const current = masks.find(m => m.id === currentEditingId);
-    if (!current) return;
-
-    const dupMask: UserMask = {
-      ...current,
-      id: 'mask_' + Date.now(),
-      name: current.name ? `${current.name} (Copy)` : 'Copy of Mask'
-    };
-    masks.push(dupMask);
-    currentEditingId = dupMask.id;
-    saveAllMasksToStorage(false);
-    renderMaskPills();
-    populateFormWithMask(dupMask.id);
-    showToast('Mask duplicated successfully!');
-  });
-
-  // Delete Mask
-  deleteMaskBtn?.addEventListener('click', async () => {
-    if (masks.length <= 1) {
-      showToast('Cannot delete the last remaining mask.');
-      return;
-    }
-
-    const current = masks.find(m => m.id === currentEditingId);
-    const confirmed = await showConfirmModal({
-      title: 'Delete Mask',
-      message: `Permanently delete mask "${current?.name || 'Unnamed'}"? This action cannot be undone.`,
-      confirmText: 'Delete Mask',
-      cancelText: 'Cancel',
-      type: 'danger'
-    });
-
-    if (confirmed) {
-      masks = masks.filter(m => m.id !== currentEditingId);
-      currentEditingId = masks[0].id;
-      if (activeChatMaskId === current?.id) {
-        activeChatMaskId = masks[0].id;
-      }
-      saveAllMasksToStorage(false);
-      renderMaskPills();
-      populateFormWithMask(currentEditingId);
-      showToast('Mask deleted.');
-    }
-  });
-
-  // Reset Mask
-  resetMaskBtn?.addEventListener('click', async () => {
-    const confirmed = await showConfirmModal({
-      title: 'Reset Mask Fields',
-      message: 'Revert all fields of this mask to their saved values?',
-      confirmText: 'Reset Fields',
-      cancelText: 'Cancel',
-      type: 'warning'
-    });
-    if (confirmed) {
-      populateFormWithMask(currentEditingId);
-      showToast('Mask fields reset.');
-    }
-  });
-
-  // ================= ACCOUNT & SAFETY =================
-  async function checkAuthStatus() {
-    try {
-      const res = await fetch('/api/auth/me');
-      if (res.ok) {
-        const data = await res.json();
-        if (data.authenticated && data.user) {
-          if (authStatusPill) {
-            authStatusPill.textContent = 'Authenticated';
-            authStatusPill.className = 'text-xs px-2.5 py-0.5 rounded-full bg-emerald-500/10 border border-emerald-500/30 text-emerald-400 font-mono';
-          }
-          if (accountDisplayName) accountDisplayName.textContent = data.user.displayName || data.user.email.split('@')[0];
-          if (accountEmail) accountEmail.textContent = data.user.email;
-          if (accountAvatarLetter) accountAvatarLetter.textContent = (data.user.displayName || data.user.email || 'A').charAt(0).toUpperCase();
-          accountLoginLink?.classList.add('hidden');
-          accountLogoutBtn?.classList.remove('hidden');
-          return;
-        }
+      const raw = localStorage.getItem(STORAGE_KEY_PERSONAS);
+      if (raw) {
+        personas = JSON.parse(raw);
       }
     } catch {}
 
-    // Fallback Guest
-    if (authStatusPill) {
-      authStatusPill.textContent = 'Guest Mode';
-      authStatusPill.className = 'text-xs px-2.5 py-0.5 rounded-full bg-white/[0.06] border border-white/10 text-slate-300 font-mono';
+    if (!Array.isArray(personas) || personas.length === 0) {
+      // Migrate from old single persona if present
+      let initialName = '';
+      let initialBio = '';
+      let initialAvatar = '';
+      try {
+        const oldRaw = localStorage.getItem(STORAGE_KEY_ACTIVE);
+        if (oldRaw) {
+          const old = JSON.parse(oldRaw);
+          if (old.name && old.name !== 'Traveler') initialName = old.name;
+          initialBio = old.bio || old.description || '';
+          initialAvatar = old.avatar || '';
+        }
+      } catch {}
+
+      personas = [{
+        id: 'p_' + Date.now(),
+        name: initialName,
+        age: '',
+        pronouns: '',
+        avatar: initialAvatar,
+        bio: initialBio,
+        directives: '',
+        isDefault: true
+      }];
+      savePersonas();
     }
-    if (accountDisplayName) accountDisplayName.textContent = 'Guest Explorer';
-    if (accountEmail) accountEmail.textContent = 'Local Browser Session (Private)';
-    if (accountAvatarLetter) accountAvatarLetter.textContent = 'G';
-    accountLoginLink?.classList.remove('hidden');
-    accountLogoutBtn?.classList.add('hidden');
+
+    // Determine current persona
+    let activeId = '';
+    try {
+      const activeRaw = localStorage.getItem(STORAGE_KEY_ACTIVE);
+      if (activeRaw) {
+        const parsed = JSON.parse(activeRaw);
+        activeId = parsed.id;
+      }
+    } catch {}
+
+    const matched = personas.find(p => p.id === activeId);
+    currentPersonaId = matched ? matched.id : personas[0].id;
   }
 
-  accountLogoutBtn?.addEventListener('click', async () => {
-    const confirmed = await showConfirmModal({
-      title: 'Log Out',
-      message: 'Log out of your Aetheria account on this device?',
-      confirmText: 'Log Out',
-      cancelText: 'Cancel',
-      type: 'warning'
-    });
-    if (confirmed) {
-      try {
-        await fetch('/api/auth/logout', { method: 'POST' });
-      } catch {}
-      window.location.reload();
+  function savePersonas() {
+    localStorage.setItem(STORAGE_KEY_PERSONAS, JSON.stringify(personas));
+    // Keep active persona synced
+    const active = personas.find(p => p.id === currentPersonaId) || personas[0];
+    if (active) {
+      localStorage.setItem(STORAGE_KEY_ACTIVE, JSON.stringify(active));
     }
-  });
+  }
 
-  // NSFW Preference
-  function initNsfwPreference() {
-    const curNsfw = localStorage.getItem(STORAGE_KEY_NSFW) || 'full';
-    updateNsfwButtons(curNsfw);
+  // Render UI
+  function renderPillList() {
+    const list = document.getElementById('personas-pill-list');
+    if (!list) return;
 
-    nsfwFilterBtns.forEach(btn => {
+    list.innerHTML = personas.map(p => {
+      const isSelected = p.id === currentPersonaId;
+      const displayName = p.name.trim() || 'Untitled';
+      return `
+        <button 
+          type="button" 
+          class="persona-pill px-3 py-1.5 rounded-xl border text-xs font-semibold flex items-center gap-2 shrink-0 transition cursor-pointer ${
+            isSelected 
+              ? 'bg-purple-600/30 border-purple-500/60 text-white shadow-sm' 
+              : 'bg-white/[0.03] border-white/5 text-slate-400 hover:text-slate-200 hover:bg-white/[0.06]'
+          }"
+          data-id="${p.id}"
+        >
+          ${p.avatar ? `<img src="${p.avatar}" class="w-4 h-4 rounded-full object-cover" />` : '<span class="w-4 h-4 rounded-full bg-purple-500/20 text-[9px] flex items-center justify-center text-purple-300">●</span>'}
+          <span>${displayName}</span>
+          ${p.isDefault ? '<span class="text-[9px] px-1 py-0.2 rounded bg-purple-500/30 text-purple-300">Active</span>' : ''}
+        </button>
+      `;
+    }).join('');
+
+    list.querySelectorAll('.persona-pill').forEach(btn => {
       btn.addEventListener('click', () => {
-        const val = btn.getAttribute('data-nsfw') || 'full';
-        localStorage.setItem(STORAGE_KEY_NSFW, val);
-        updateNsfwButtons(val);
-        showToast(`Content filter updated to: ${val.toUpperCase()}`);
+        const id = btn.getAttribute('data-id');
+        if (id) {
+          currentPersonaId = id;
+          renderPillList();
+          fillForm();
+        }
       });
     });
   }
 
-  function updateNsfwButtons(val: string) {
-    nsfwFilterBtns.forEach(btn => {
-      const bVal = btn.getAttribute('data-nsfw');
-      if (bVal === val) {
-        btn.className = 'nsfw-opt-btn p-4 rounded-2xl border text-left transition cursor-pointer flex flex-col justify-between gap-3 bg-purple-600/15 border-purple-500/60 text-white shadow-lg shadow-purple-950/40 ring-1 ring-purple-400/40';
+  function fillForm() {
+    const p = personas.find(x => x.id === currentPersonaId) || personas[0];
+    if (!p) return;
+
+    const nameInput = document.getElementById('persona-name') as HTMLInputElement;
+    const ageInput = document.getElementById('persona-age') as HTMLInputElement;
+    const pronounsInput = document.getElementById('persona-pronouns') as HTMLInputElement;
+    const aboutInput = document.getElementById('persona-about') as HTMLTextAreaElement;
+    const directivesInput = document.getElementById('persona-directives') as HTMLTextAreaElement;
+    const avatarImg = document.getElementById('persona-avatar-img') as HTMLImageElement;
+    const avatarPlaceholder = document.getElementById('persona-avatar-placeholder');
+    const removeBtn = document.getElementById('btn-remove-avatar');
+    const defaultBtn = document.getElementById('btn-set-default');
+    const deleteBtn = document.getElementById('btn-delete-persona');
+
+    if (nameInput) nameInput.value = p.name || '';
+    if (ageInput) ageInput.value = p.age || '';
+    if (pronounsInput) pronounsInput.value = p.pronouns || '';
+    if (aboutInput) aboutInput.value = p.bio || '';
+    if (directivesInput) directivesInput.value = p.directives || '';
+
+    if (avatarImg && avatarPlaceholder && removeBtn) {
+      if (p.avatar) {
+        avatarImg.src = p.avatar;
+        avatarImg.classList.remove('hidden');
+        avatarPlaceholder.classList.add('hidden');
+        removeBtn.classList.remove('hidden');
       } else {
-        btn.className = 'nsfw-opt-btn p-4 rounded-2xl border text-left transition cursor-pointer flex flex-col justify-between gap-3 bg-white/[0.02] border-white/10 text-slate-400 hover:text-white hover:bg-white/[0.04]';
+        avatarImg.src = '';
+        avatarImg.classList.add('hidden');
+        avatarPlaceholder.classList.remove('hidden');
+        removeBtn.classList.add('hidden');
       }
-    });
+    }
+
+    if (defaultBtn) {
+      if (p.isDefault) {
+        defaultBtn.textContent = 'Active in Chat';
+        defaultBtn.classList.add('text-purple-300', 'border-purple-500/30');
+      } else {
+        defaultBtn.textContent = 'Set as Active';
+        defaultBtn.classList.remove('text-purple-300', 'border-purple-500/30');
+      }
+    }
+
+    if (deleteBtn) {
+      deleteBtn.style.display = (personas.length > 1) ? 'flex' : 'none';
+    }
   }
 
-  // ================= BACKUP & SYNC =================
-  exportBackupBtn?.addEventListener('click', () => {
-    saveCurrentFormInMemory();
-    const backupData = {
-      timestamp: new Date().toISOString(),
-      version: '2.0',
-      activeMaskId: activeChatMaskId,
-      masks: masks,
-      customCharacters: JSON.parse(localStorage.getItem(STORAGE_KEY_CUSTOM_CHARS) || '[]'),
-      nsfwMode: localStorage.getItem(STORAGE_KEY_NSFW) || 'full'
-    };
+  // Setup Event Handlers
+  document.addEventListener('DOMContentLoaded', () => {
+    loadPersonas();
+    renderPillList();
+    fillForm();
 
-    const blob = new Blob([JSON.stringify(backupData, null, 2)], { type: 'application/json' });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = `aetheria_backup_${new Date().toISOString().slice(0, 10)}.json`;
-    a.click();
-    URL.revokeObjectURL(url);
-    showToast('Aetheria complete backup exported successfully!');
-  });
+    // Tab Switcher
+    const tabPersonas = document.getElementById('tab-btn-personas');
+    const tabSettings = document.getElementById('tab-btn-settings');
+    const viewPersonas = document.getElementById('tab-view-personas');
+    const viewSettings = document.getElementById('tab-view-settings');
 
-  importBackupFile?.addEventListener('change', (e) => {
-    const file = (e.target as HTMLInputElement).files?.[0];
-    if (!file) return;
-
-    const reader = new FileReader();
-    reader.onload = (event) => {
-      try {
-        const data = JSON.parse(event.target?.result as string);
-        if (data.masks && Array.isArray(data.masks)) {
-          masks = data.masks;
-          localStorage.setItem(STORAGE_KEY_PERSONAS, JSON.stringify(masks));
-        } else if (data.personas && Array.isArray(data.personas)) {
-          masks = data.personas;
-          localStorage.setItem(STORAGE_KEY_PERSONAS, JSON.stringify(masks));
-        }
-        if (data.activeMaskId) {
-          activeChatMaskId = data.activeMaskId;
-        } else if (masks.length > 0) {
-          activeChatMaskId = masks[0].id;
-        }
-        if (data.customCharacters && Array.isArray(data.customCharacters)) {
-          localStorage.setItem(STORAGE_KEY_CUSTOM_CHARS, JSON.stringify(data.customCharacters));
-        }
-        if (data.nsfwMode) {
-          localStorage.setItem(STORAGE_KEY_NSFW, data.nsfwMode);
-          updateNsfwButtons(data.nsfwMode);
-        }
-        saveAllMasksToStorage(false);
-        renderMaskPills();
-        populateFormWithMask(activeChatMaskId);
-        showToast('Backup restored successfully! All data loaded.');
-      } catch (err) {
-        showToast('Invalid JSON backup file format.');
-      }
-    };
-    reader.readAsText(file);
-  });
-
-  clearCacheBtn?.addEventListener('click', async () => {
-    const confirmed = await showConfirmModal({
-      title: 'Clear Local Storage',
-      message: 'Clear all local masks, custom characters, and preferences from this device? Make sure you have exported a backup first.',
-      confirmText: 'Clear Everything',
-      cancelText: 'Cancel',
-      type: 'danger'
+    tabPersonas?.addEventListener('click', () => {
+      tabPersonas.className = 'flex-1 py-2.5 px-4 rounded-xl text-sm font-semibold transition cursor-pointer bg-purple-600 text-white shadow-lg shadow-purple-900/40';
+      tabSettings!.className = 'flex-1 py-2.5 px-4 rounded-xl text-sm font-semibold transition cursor-pointer text-slate-400 hover:text-white hover:bg-white/[0.04]';
+      viewPersonas?.classList.remove('hidden');
+      viewSettings?.classList.add('hidden');
     });
-    if (confirmed) {
-      localStorage.removeItem(STORAGE_KEY_PERSONAS);
-      localStorage.removeItem(STORAGE_KEY_ACTIVE);
-      localStorage.removeItem(STORAGE_KEY_CUSTOM_CHARS);
-      masks = [createBlankMask()];
-      activeChatMaskId = masks[0].id;
-      currentEditingId = masks[0].id;
-      saveAllMasksToStorage(false);
-      renderMaskPills();
-      populateFormWithMask(currentEditingId);
-      showToast('Cache cleared. Fresh blank mask initialized.');
-    }
-  });
 
-  // Transfer Token
-  generateSyncBtn?.addEventListener('click', () => {
-    saveCurrentFormInMemory();
-    const payload = {
-      v: '2',
-      masks,
-      activeMaskId: activeChatMaskId,
-      customChars: JSON.parse(localStorage.getItem(STORAGE_KEY_CUSTOM_CHARS) || '[]')
-    };
-    try {
-      const json = JSON.stringify(payload);
-      const b64 = btoa(unescape(encodeURIComponent(json)));
-      if (syncTokenBox) syncTokenBox.value = b64;
-      copySyncBtn?.classList.remove('hidden');
-      showToast('Transfer code generated! Ready to copy.');
-    } catch (err: any) {
-      showToast('Failed to generate token: ' + err.message);
-    }
-  });
+    tabSettings?.addEventListener('click', () => {
+      tabSettings.className = 'flex-1 py-2.5 px-4 rounded-xl text-sm font-semibold transition cursor-pointer bg-purple-600 text-white shadow-lg shadow-purple-900/40';
+      tabPersonas!.className = 'flex-1 py-2.5 px-4 rounded-xl text-sm font-semibold transition cursor-pointer text-slate-400 hover:text-white hover:bg-white/[0.04]';
+      viewSettings?.classList.remove('hidden');
+      viewPersonas?.classList.add('hidden');
+    });
 
-  copySyncBtn?.addEventListener('click', () => {
-    if (syncTokenBox && syncTokenBox.value) {
-      navigator.clipboard.writeText(syncTokenBox.value);
-      showToast('Transfer code copied to clipboard!');
-    }
-  });
+    // Avatar Click Zone
+    const avatarZone = document.getElementById('avatar-click-zone');
+    const fileInput = document.getElementById('avatar-file-input') as HTMLInputElement;
 
-  applySyncBtn?.addEventListener('click', async () => {
-    const raw = syncTokenBox?.value.trim();
-    if (!raw) {
-      showToast('Please paste a transfer code first.');
-      return;
-    }
-    try {
-      const json = decodeURIComponent(escape(atob(raw)));
-      const data = JSON.parse(json);
-      if (data.masks && Array.isArray(data.masks)) {
-        masks = data.masks;
-        localStorage.setItem(STORAGE_KEY_PERSONAS, JSON.stringify(masks));
+    avatarZone?.addEventListener('click', () => {
+      fileInput?.click();
+    });
+
+    fileInput?.addEventListener('change', () => {
+      const file = fileInput.files?.[0];
+      if (!file) return;
+
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        const dataUrl = e.target?.result as string;
+        const p = personas.find(x => x.id === currentPersonaId);
+        if (p) {
+          p.avatar = dataUrl;
+          savePersonas();
+          fillForm();
+          renderPillList();
+          showToast('Photo updated', 'success');
+        }
+      };
+      reader.readAsDataURL(file);
+    });
+
+    // Remove Photo
+    document.getElementById('btn-remove-avatar')?.addEventListener('click', (e) => {
+      e.stopPropagation();
+      const p = personas.find(x => x.id === currentPersonaId);
+      if (p) {
+        p.avatar = '';
+        savePersonas();
+        fillForm();
+        renderPillList();
+        showToast('Photo removed');
       }
-      if (data.activeMaskId) {
-        activeChatMaskId = data.activeMaskId;
-      }
-      if (data.customChars && Array.isArray(data.customChars)) {
-        localStorage.setItem(STORAGE_KEY_CUSTOM_CHARS, JSON.stringify(data.customChars));
-      }
-      saveAllMasksToStorage(false);
-      renderMaskPills();
-      populateFormWithMask(activeChatMaskId || masks[0].id);
-      showToast('Transfer code applied & merged successfully!');
-    } catch (err: any) {
-      showToast('Invalid transfer code: ' + err.message);
-    }
-  });
+    });
 
-  // Initial Boot
-  loadMasksFromStorage();
-  initNsfwPreference();
+    // New Persona
+    document.getElementById('btn-new-persona')?.addEventListener('click', () => {
+      const newP: Persona = {
+        id: 'p_' + Date.now(),
+        name: '',
+        age: '',
+        pronouns: '',
+        avatar: '',
+        bio: '',
+        directives: '',
+        isDefault: false
+      };
+      personas.push(newP);
+      currentPersonaId = newP.id;
+      savePersonas();
+      renderPillList();
+      fillForm();
+      showToast('New persona created');
+    });
+
+    // Save Persona
+    document.getElementById('btn-save-persona')?.addEventListener('click', () => {
+      const p = personas.find(x => x.id === currentPersonaId);
+      if (!p) return;
+
+      const nameInput = document.getElementById('persona-name') as HTMLInputElement;
+      const ageInput = document.getElementById('persona-age') as HTMLInputElement;
+      const pronounsInput = document.getElementById('persona-pronouns') as HTMLInputElement;
+      const aboutInput = document.getElementById('persona-about') as HTMLTextAreaElement;
+      const directivesInput = document.getElementById('persona-directives') as HTMLTextAreaElement;
+
+      p.name = nameInput?.value.trim() || '';
+      p.age = ageInput?.value.trim() || '';
+      p.pronouns = pronounsInput?.value.trim() || '';
+      p.bio = aboutInput?.value.trim() || '';
+      p.directives = directivesInput?.value.trim() || '';
+
+      savePersonas();
+      renderPillList();
+      showToast('Persona saved', 'success');
+    });
+
+    // Set Default / Active
+    document.getElementById('btn-set-default')?.addEventListener('click', () => {
+      personas.forEach(x => { x.isDefault = (x.id === currentPersonaId); });
+      savePersonas();
+      renderPillList();
+      fillForm();
+      showToast('Set as active chat persona', 'success');
+    });
+
+    // Delete Persona
+    document.getElementById('btn-delete-persona')?.addEventListener('click', async () => {
+      if (personas.length <= 1) return;
+      const p = personas.find(x => x.id === currentPersonaId);
+      const ok = await showConfirm('Delete Persona', `Delete "${p?.name || 'this persona'}"?`);
+      if (!ok) return;
+
+      personas = personas.filter(x => x.id !== currentPersonaId);
+      if (!personas.some(x => x.isDefault)) {
+        personas[0].isDefault = true;
+      }
+      currentPersonaId = personas[0].id;
+      savePersonas();
+      renderPillList();
+      fillForm();
+      showToast('Persona deleted');
+    });
+
+    // NSFW Mode Options
+    const nsfwButtons = document.querySelectorAll('.nsfw-opt-btn');
+    const currentNsfw = localStorage.getItem('aetheria_nsfw_mode') || 'show';
+
+    function updateNsfwButtons(mode: string) {
+      nsfwButtons.forEach(btn => {
+        const bMode = btn.getAttribute('data-mode');
+        if (bMode === mode) {
+          btn.className = 'nsfw-opt-btn py-2.5 px-2 rounded-xl border border-purple-500/60 bg-purple-600/20 text-white font-semibold text-center transition cursor-pointer text-xs';
+        } else {
+          btn.className = 'nsfw-opt-btn py-2.5 px-2 rounded-xl border border-white/5 bg-white/[0.02] text-slate-400 hover:text-white font-medium text-center transition cursor-pointer text-xs';
+        }
+      });
+    }
+
+    updateNsfwButtons(currentNsfw);
+
+    nsfwButtons.forEach(btn => {
+      btn.addEventListener('click', () => {
+        const mode = btn.getAttribute('data-mode') || 'show';
+        localStorage.setItem('aetheria_nsfw_mode', mode);
+        updateNsfwButtons(mode);
+        showToast('Preference saved', 'success');
+      });
+    });
+
+    // Check Auth State
+    fetch('/api/auth/me')
+      .then(res => res.json())
+      .then((data: any) => {
+        if (data.authenticated && data.user) {
+          const nameLabel = document.getElementById('account-name-label');
+          const emailLabel = document.getElementById('account-email-label');
+          const avatarPill = document.getElementById('account-avatar-pill');
+          const actionBox = document.getElementById('account-action-container');
+
+          if (nameLabel) nameLabel.textContent = data.user.name || 'User';
+          if (emailLabel) emailLabel.textContent = data.user.email || '';
+          if (avatarPill) avatarPill.textContent = (data.user.name || 'U').charAt(0).toUpperCase();
+
+          if (actionBox) {
+            actionBox.innerHTML = `
+              <button id="btn-logout" type="button" class="px-3.5 py-1.5 rounded-xl bg-white/5 hover:bg-white/10 text-xs font-semibold text-slate-300 hover:text-white transition cursor-pointer">
+                Sign Out
+              </button>
+            `;
+            document.getElementById('btn-logout')?.addEventListener('click', async () => {
+              await fetch('/api/auth/logout', { method: 'POST' });
+              window.location.reload();
+            });
+          }
+        }
+      })
+      .catch(() => {});
+
+    // Export Backup
+    document.getElementById('btn-export-backup')?.addEventListener('click', () => {
+      const backupData: Record<string, any> = {};
+      for (let i = 0; i < localStorage.length; i++) {
+        const key = localStorage.key(i);
+        if (key && key.startsWith('aetheria_')) {
+          backupData[key] = localStorage.getItem(key);
+        }
+      }
+      const blob = new Blob([JSON.stringify(backupData, null, 2)], { type: 'application/json' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `aetheria_backup_${new Date().toISOString().slice(0,10)}.json`;
+      a.click();
+      URL.revokeObjectURL(url);
+      showToast('Backup downloaded', 'success');
+    });
+
+    // Restore Backup
+    document.getElementById('backup-file-input')?.addEventListener('change', (e: any) => {
+      const file = e.target?.files?.[0];
+      if (!file) return;
+
+      const reader = new FileReader();
+      reader.onload = (event) => {
+        try {
+          const data = JSON.parse(event.target?.result as string);
+          Object.keys(data).forEach(k => {
+            if (k.startsWith('aetheria_')) {
+              localStorage.setItem(k, data[k]);
+            }
+          });
+          showToast('Backup restored successfully!', 'success');
+          setTimeout(() => window.location.reload(), 800);
+        } catch {
+          showToast('Invalid backup file', 'warning');
+        }
+      };
+      reader.readAsText(file);
+    });
+
+    // Clear Cache
+    document.getElementById('btn-clear-cache')?.addEventListener('click', async () => {
+      const ok = await showConfirm('Clear Local Cache', 'Reset local data? Characters and personas saved only locally will be cleared.');
+      if (!ok) return;
+
+      Object.keys(localStorage).forEach(k => {
+        if (k.startsWith('aetheria_')) localStorage.removeItem(k);
+      });
+      window.location.reload();
+    });
+
+  });
 </script>
