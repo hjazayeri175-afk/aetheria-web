@@ -1971,7 +1971,7 @@ const { character } = Astro.props;
   const videoDurationSelect = document.getElementById('video-duration-select');
   const videoResSelect = document.getElementById('video-res-select');
 
-  // Format action text (*italic*), quotes ("dialogue"), bold, code, and paragraphs (Cinematic Markdown)
+  // Format action text (*italic*), bold, code, and paragraphs (Cinematic Markdown)
   function formatMessageText(text) {
     if (!text) return '';
     // 1. Basic entity escaping
@@ -1980,20 +1980,25 @@ const { character } = Astro.props;
       .replace(/</g, '&lt;')
       .replace(/>/g, '&gt;');
 
-    // 2. Triple asterisks ***bold italic***
+    // 2. Protect inline code `code`
+    const codeBlocks = [];
+    s = s.replace(/`([^`]+)`/g, (_, code) => {
+      const idx = codeBlocks.length;
+      codeBlocks.push(`<code class="px-1.5 py-0.5 rounded bg-white/10 text-cyan-300 font-mono text-[11px]">${code}</code>`);
+      return `__CODE_BLOCK_${idx}__`;
+    });
+
+    // 3. Triple asterisks ***bold italic***
     s = s.replace(/\*\*\*([^*]+)\*\*\*/g, '<strong class="font-bold text-purple-200"><em class="italic text-purple-300 font-serif">$1</em></strong>');
 
-    // 3. Double asterisks **bold**
+    // 4. Double asterisks **bold**
     s = s.replace(/\*\*([^*]+)\*\*/g, '<strong class="font-bold text-white">$1</strong>');
 
-    // 4. Single asterisks *action / sensory narration / thoughts*
+    // 5. Single asterisks *action / sensory narration / thoughts*
     s = s.replace(/\*([^*]+)\*/g, '<em class="text-purple-300/90 italic font-serif leading-relaxed">$1</em>');
 
-    // 5. Spoken dialogue in quotes: "dialogue" or “dialogue”
-    s = s.replace(/(["“][^"”]+["”])/g, '<span class="text-slate-50 font-medium tracking-normal drop-shadow-sm">$1</span>');
-
-    // 6. Inline code `code`
-    s = s.replace(/`([^`]+)`/g, '<code class="px-1.5 py-0.5 rounded bg-white/10 text-cyan-300 font-mono text-[11px]">$1</code>');
+    // 6. Restore inline code
+    s = s.replace(/__CODE_BLOCK_(\d+)__/g, (_, idx) => codeBlocks[idx] || '');
 
     // 7. Multi-line paragraphs: double newlines become separate paragraphs
     const paragraphs = s.split(/\n{2,}/);
