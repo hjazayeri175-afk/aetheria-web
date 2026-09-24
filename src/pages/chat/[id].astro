@@ -700,39 +700,39 @@ const { character } = Astro.props;
                       <span>AI Model Provider</span>
                       <span class="text-[10px] text-purple-400 font-normal">24 Supported Engines</span>
                     </label>
-                    <select id="text-provider-select" class="w-full px-3.5 py-2.5 rounded-xl bg-white/[0.05] border border-white/10 text-xs text-white outline-none focus:border-purple-500/60">
-                      <optgroup label="⚡ Instant &amp; Free Cloud">
-                        <option value="demo">Free Cloud AI (Instant &amp; Keyless — Default)</option>
+                    <select id="text-provider-select" class="w-full px-3.5 py-2.5 rounded-xl bg-white/[0.05] border border-white/10 text-xs text-white outline-none focus:border-purple-500/60 font-semibold cursor-pointer">
+                      <optgroup label="Instant &amp; Free Cloud">
+                        <option value="demo">Free Cloud AI</option>
                       </optgroup>
-                      <optgroup label="👑 Frontier AI Labs (Official APIs)">
-                        <option value="openrouter">OpenRouter (300+ AI Models &amp; RP)</option>
-                        <option value="google">Google Gemini (Gemini 2.0 Flash &amp; 1.5 Pro)</option>
-                        <option value="deepseek">DeepSeek Direct (DeepSeek V3 &amp; R1)</option>
-                        <option value="openai">OpenAI Direct (GPT-4o, GPT-4o-mini, o1)</option>
-                        <option value="anthropic">Anthropic Claude (Claude 3.5 Sonnet &amp; Haiku)</option>
-                        <option value="xai">xAI Grok (Grok-2, Grok-Beta)</option>
-                        <option value="mistral">Mistral AI (Mistral Large, Codestral)</option>
+                      <optgroup label="Frontier AI Labs">
+                        <option value="openrouter">OpenRouter</option>
+                        <option value="google">Google Gemini</option>
+                        <option value="deepseek">DeepSeek</option>
+                        <option value="openai">OpenAI</option>
+                        <option value="anthropic">Anthropic Claude</option>
+                        <option value="xai">xAI Grok</option>
+                        <option value="mistral">Mistral AI</option>
                       </optgroup>
-                      <optgroup label="🚀 High-Speed Hardware Accelerators">
-                        <option value="groq">Groq (Ultra-Fast Llama 3.3 70B &amp; 8B — 300+ t/s)</option>
-                        <option value="cerebras">Cerebras (World's Fastest Inference — Llama 3.3 70B)</option>
-                        <option value="sambanova">SambaNova Systems (Llama 3.3 70B, Qwen 2.5 72B)</option>
-                        <option value="together">Together AI (Llama 3.3, Qwen 2.5, DeepSeek)</option>
-                        <option value="fireworks">Fireworks AI (Fast Function Calling &amp; RP)</option>
-                        <option value="cohere">Cohere (Command R+, Command R)</option>
-                        <option value="perplexity">Perplexity AI (Sonar, Sonar Pro Online)</option>
+                      <optgroup label="High-Speed Hardware Accelerators">
+                        <option value="groq" selected>Groq</option>
+                        <option value="cerebras">Cerebras</option>
+                        <option value="sambanova">SambaNova Systems</option>
+                        <option value="together">Together AI</option>
+                        <option value="fireworks">Fireworks AI</option>
+                        <option value="cohere">Cohere</option>
+                        <option value="perplexity">Perplexity AI</option>
                       </optgroup>
-                      <optgroup label="🎭 Uncensored &amp; Roleplay Clouds">
-                        <option value="novita">Novita AI (Specialized Uncensored RP)</option>
-                        <option value="featherless">Featherless AI (1,000+ Open-Source RP Models)</option>
-                        <option value="siliconflow">SiliconFlow (Qwen 2.5 72B, DeepSeek V3)</option>
-                        <option value="huggingface">Hugging Face Router (Inference API)</option>
-                        <option value="cloudflare">Cloudflare Workers AI (Serverless Edge)</option>
-                        <option value="ai21">AI21 Labs (Jamba 1.5 Large / Mini)</option>
+                      <optgroup label="Specialized &amp; Roleplay Clouds">
+                        <option value="novita">Novita AI</option>
+                        <option value="featherless">Featherless AI</option>
+                        <option value="siliconflow">SiliconFlow</option>
+                        <option value="huggingface">Hugging Face</option>
+                        <option value="cloudflare">Cloudflare Workers AI</option>
+                        <option value="ai21">AI21 Labs</option>
                       </optgroup>
-                      <optgroup label="💻 Self-Hosted &amp; Custom Gateways">
-                        <option value="custom-local">Custom Localhost (Ollama, LM Studio, vLLM, KoboldCpp)</option>
-                        <option value="custom-proxy">Custom Reverse Proxy (OpenAI-compatible Gateway)</option>
+                      <optgroup label="Self-Hosted &amp; Custom Gateways">
+                        <option value="custom-local">Custom Localhost</option>
+                        <option value="custom-proxy">Custom Reverse Proxy</option>
                       </optgroup>
                     </select>
                   </div>
@@ -806,24 +806,24 @@ const { character } = Astro.props;
                   </div>
 
                   <!-- Model Select Dropdown (Default) -->
-                  <select id="text-model-select" class="w-full px-3.5 py-2.5 rounded-xl bg-white/[0.05] border border-white/10 text-xs text-white outline-none focus:border-purple-500/60 font-mono">
-                    <option value="llama-3.3-70b-versatile">llama-3.3-70b-versatile (Recommended)</option>
+                  <select id="text-model-select" class="w-full px-3.5 py-2.5 rounded-xl bg-white/[0.05] border border-white/10 text-xs text-white outline-none focus:border-purple-500/60 font-mono" disabled>
+                    <option value="" disabled selected>No API connected — Enter API key &amp; fetch models</option>
                   </select>
 
                   <!-- Manual Model Input (Hidden by default, toggled via button) -->
                   <input 
                     id="text-model-input" 
                     type="text" 
-                    value="llama-3.3-70b-versatile"
+                    value=""
                     class="hidden w-full px-3.5 py-2.5 rounded-xl bg-white/[0.05] border border-white/10 text-xs text-white outline-none focus:border-purple-500/60 font-mono"
                     placeholder="Type custom model ID (e.g. meta-llama/llama-3.3-70b-instruct)"
                   />
 
                   <!-- Dynamic Quick Model Presets -->
                   <div class="flex flex-wrap items-center gap-1.5 pt-0.5">
-                    <span class="text-[10px] text-slate-500">Top Picks:</span>
+                    <span class="text-[10px] text-slate-500">Synced Models:</span>
                     <div id="dynamic-presets-container" class="flex flex-wrap gap-1.5">
-                      <!-- Populated dynamically via JS -->
+                      <span class="text-[10px] text-slate-500 italic">No models loaded. Connect API key to sync.</span>
                     </div>
                   </div>
                 </div>
@@ -2014,174 +2014,117 @@ const { character } = Astro.props;
   // ==========================================
   const PROVIDER_CONFIGS = {
     demo: {
-      name: 'Free Cloud AI (Instant & Keyless)',
-      label: 'Free Cloud AI',
+      name: 'Free Cloud AI',
+      label: 'Free AI',
       hasKey: false,
       hasUrl: false,
       defaultModel: 'Free Cloud AI',
-      curated: ['Free Cloud AI (Instant & Keyless)'],
-      urlHint: '',
-      keyPlaceholder: '',
-      keyLink: ''
+      curated: ['Free Cloud AI'],
+      chatEndpoint: '/api/chat/demo'
     },
     openrouter: {
-      name: 'OpenRouter (300+ AI Models & RP)',
+      name: 'OpenRouter',
       label: 'OpenRouter',
       hasKey: true,
       hasUrl: false,
-      defaultModel: 'anthropic/claude-3.5-sonnet',
-      curated: [
-        'anthropic/claude-3.5-sonnet',
-        'deepseek/deepseek-chat',
-        'meta-llama/llama-3.3-70b-instruct',
-        'gryphe/mythomax-l2-13b',
-        'mistralai/mistral-large-2411',
-        'sao10k/l3-euryale-70b',
-        'nousresearch/hermes-3-llama-3.1-405b'
-      ],
+      defaultModel: '',
+      curated: [],
       modelsEndpoint: 'https://openrouter.ai/api/v1/models',
       chatEndpoint: 'https://openrouter.ai/api/v1/chat/completions',
       keyPlaceholder: 'sk-or-v1-... (openrouter.ai/keys)',
       keyLink: 'https://openrouter.ai/keys'
     },
     google: {
-      name: 'Google Gemini (Official Direct)',
-      label: 'Google Gemini',
+      name: 'Google Gemini',
+      label: 'Gemini',
       hasKey: true,
       hasUrl: false,
-      defaultModel: 'gemini-2.0-flash',
-      curated: [
-        'gemini-2.0-flash',
-        'gemini-1.5-flash',
-        'gemini-1.5-pro',
-        'gemini-2.0-flash-thinking-exp'
-      ],
+      defaultModel: '',
+      curated: [],
       modelsEndpoint: 'https://generativelanguage.googleapis.com/v1beta/models',
-      chatEndpoint: 'https://generativelanguage.googleapis.com/v1beta/openai/chat/completions',
-      keyPlaceholder: 'AIzaSy... (Get free key from aistudio.google.com)',
+      chatEndpoint: 'https://generativelanguage.googleapis.com/v1beta/chat/completions',
+      keyPlaceholder: 'AIzaSy... (aistudio.google.com)',
       keyLink: 'https://aistudio.google.com/app/apikey'
     },
     groq: {
-      name: 'Groq (Ultra-Fast 300+ tok/s)',
+      name: 'Groq',
       label: 'Groq',
       hasKey: true,
       hasUrl: false,
-      defaultModel: 'llama-3.3-70b-versatile',
-      curated: [
-        'llama-3.3-70b-versatile',
-        'llama-3.1-8b-instant',
-        'mixtral-8x7b-32768',
-        'gemma2-9b-it'
-      ],
+      defaultModel: '',
+      curated: [],
       modelsEndpoint: 'https://api.groq.com/openai/v1/models',
       chatEndpoint: 'https://api.groq.com/openai/v1/chat/completions',
-      keyPlaceholder: 'gsk_... (console.groq.com)',
+      keyPlaceholder: 'gsk_... (console.groq.com/keys)',
       keyLink: 'https://console.groq.com/keys'
     },
     deepseek: {
-      name: 'DeepSeek Direct',
+      name: 'DeepSeek',
       label: 'DeepSeek',
       hasKey: true,
       hasUrl: false,
-      defaultModel: 'deepseek-chat',
-      curated: ['deepseek-chat', 'deepseek-reasoner'],
+      defaultModel: '',
+      curated: [],
       modelsEndpoint: 'https://api.deepseek.com/models',
       chatEndpoint: 'https://api.deepseek.com/chat/completions',
       keyPlaceholder: 'sk-... (platform.deepseek.com)',
       keyLink: 'https://platform.deepseek.com/api_keys'
     },
     openai: {
-      name: 'OpenAI Direct',
+      name: 'OpenAI',
       label: 'OpenAI',
       hasKey: true,
       hasUrl: false,
-      defaultModel: 'gpt-4o',
-      curated: ['gpt-4o', 'gpt-4o-mini', 'o1-mini', 'o3-mini', 'gpt-4-turbo'],
+      defaultModel: '',
+      curated: [],
       modelsEndpoint: 'https://api.openai.com/v1/models',
       chatEndpoint: 'https://api.openai.com/v1/chat/completions',
       keyPlaceholder: 'sk-proj-... (platform.openai.com)',
       keyLink: 'https://platform.openai.com/api-keys'
     },
     anthropic: {
-      name: 'Anthropic Claude Direct',
-      label: 'Anthropic',
+      name: 'Anthropic Claude',
+      label: 'Claude',
       hasKey: true,
       hasUrl: false,
-      defaultModel: 'claude-3-5-sonnet-20241022',
-      curated: [
-        'claude-3-5-sonnet-20241022',
-        'claude-3-5-haiku-20241022',
-        'claude-3-opus-20240229'
-      ],
+      defaultModel: '',
+      curated: [],
+      modelsEndpoint: 'https://api.anthropic.com/v1/models',
       chatEndpoint: 'https://api.anthropic.com/v1/messages',
       keyPlaceholder: 'sk-ant-... (console.anthropic.com)',
       keyLink: 'https://console.anthropic.com/settings/keys'
     },
     xai: {
-      name: 'xAI Grok Direct',
+      name: 'xAI Grok',
       label: 'xAI',
       hasKey: true,
       hasUrl: false,
-      defaultModel: 'grok-2-1212',
-      curated: ['grok-2-1212', 'grok-2-vision-1212', 'grok-beta'],
+      defaultModel: '',
+      curated: [],
       modelsEndpoint: 'https://api.x.ai/v1/models',
       chatEndpoint: 'https://api.x.ai/v1/chat/completions',
       keyPlaceholder: 'xai-... (console.x.ai)',
       keyLink: 'https://console.x.ai/'
     },
     mistral: {
-      name: 'Mistral AI Direct',
-      label: 'Mistral AI',
+      name: 'Mistral AI',
+      label: 'Mistral',
       hasKey: true,
       hasUrl: false,
-      defaultModel: 'mistral-large-latest',
-      curated: ['mistral-large-latest', 'mistral-small-latest', 'open-mistral-nemo', 'codestral-latest'],
+      defaultModel: '',
+      curated: [],
       modelsEndpoint: 'https://api.mistral.ai/v1/models',
       chatEndpoint: 'https://api.mistral.ai/v1/chat/completions',
       keyPlaceholder: 'sk-... (console.mistral.ai)',
-      keyLink: 'https://console.mistral.ai/api-keys/'
-    },
-    together: {
-      name: 'Together AI',
-      label: 'Together AI',
-      hasKey: true,
-      hasUrl: false,
-      defaultModel: 'meta-llama/Meta-Llama-3.1-70B-Instruct-Turbo',
-      curated: [
-        'meta-llama/Meta-Llama-3.1-70B-Instruct-Turbo',
-        'meta-llama/Llama-3.3-70B-Instruct-Turbo',
-        'deepseek-ai/DeepSeek-V3',
-        'mistralai/Mixtral-8x22B-Instruct-v0.1',
-        'Qwen/Qwen2.5-72B-Instruct-Turbo'
-      ],
-      modelsEndpoint: 'https://api.together.xyz/v1/models',
-      chatEndpoint: 'https://api.together.xyz/v1/chat/completions',
-      keyPlaceholder: 'API Key (api.together.xyz)',
-      keyLink: 'https://api.together.xyz/settings/api-keys'
-    },
-    fireworks: {
-      name: 'Fireworks AI',
-      label: 'Fireworks AI',
-      hasKey: true,
-      hasUrl: false,
-      defaultModel: 'accounts/fireworks/models/llama-v3p3-70b-instruct',
-      curated: [
-        'accounts/fireworks/models/llama-v3p3-70b-instruct',
-        'accounts/fireworks/models/qwen2p5-72b-instruct',
-        'accounts/fireworks/models/mixtral-8x22b-instruct'
-      ],
-      modelsEndpoint: 'https://api.fireworks.ai/inference/v1/models',
-      chatEndpoint: 'https://api.fireworks.ai/inference/v1/chat/completions',
-      keyPlaceholder: 'fw_... (fireworks.ai)',
-      keyLink: 'https://fireworks.ai/api-keys'
+      keyLink: 'https://console.mistral.ai/'
     },
     cerebras: {
-      name: 'Cerebras Ultra-Fast',
+      name: 'Cerebras',
       label: 'Cerebras',
       hasKey: true,
       hasUrl: false,
-      defaultModel: 'llama-3.3-70b',
-      curated: ['llama-3.3-70b', 'llama3.1-8b'],
+      defaultModel: '',
+      curated: [],
       modelsEndpoint: 'https://api.cerebras.ai/v1/models',
       chatEndpoint: 'https://api.cerebras.ai/v1/chat/completions',
       keyPlaceholder: 'csk-... (cloud.cerebras.ai)',
@@ -2192,161 +2135,185 @@ const { character } = Astro.props;
       label: 'SambaNova',
       hasKey: true,
       hasUrl: false,
-      defaultModel: 'Meta-Llama-3.3-70B-Instruct',
-      curated: ['Meta-Llama-3.3-70B-Instruct', 'Qwen2.5-72B-Instruct', 'Meta-Llama-3.1-8B-Instruct'],
+      defaultModel: '',
+      curated: [],
       modelsEndpoint: 'https://api.sambanova.ai/v1/models',
       chatEndpoint: 'https://api.sambanova.ai/v1/chat/completions',
-      keyPlaceholder: 'API Key (cloud.sambanova.ai)',
+      keyPlaceholder: 'sk-... (cloud.sambanova.ai)',
       keyLink: 'https://cloud.sambanova.ai/'
     },
+    together: {
+      name: 'Together AI',
+      label: 'Together',
+      hasKey: true,
+      hasUrl: false,
+      defaultModel: '',
+      curated: [],
+      modelsEndpoint: 'https://api.together.xyz/v1/models',
+      chatEndpoint: 'https://api.together.xyz/v1/chat/completions',
+      keyPlaceholder: 'sk-... (api.together.ai)',
+      keyLink: 'https://api.together.ai/settings/api-keys'
+    },
+    fireworks: {
+      name: 'Fireworks AI',
+      label: 'Fireworks',
+      hasKey: true,
+      hasUrl: false,
+      defaultModel: '',
+      curated: [],
+      modelsEndpoint: 'https://api.fireworks.ai/inference/v1/models',
+      chatEndpoint: 'https://api.fireworks.ai/inference/v1/chat/completions',
+      keyPlaceholder: 'fw_... (fireworks.ai)',
+      keyLink: 'https://fireworks.ai/account/api-keys'
+    },
     cohere: {
-      name: 'Cohere Direct',
+      name: 'Cohere',
       label: 'Cohere',
       hasKey: true,
       hasUrl: false,
-      defaultModel: 'command-r-plus',
-      curated: ['command-r-plus', 'command-r', 'command-light'],
+      defaultModel: '',
+      curated: [],
       modelsEndpoint: 'https://api.cohere.com/v1/models',
-      chatEndpoint: 'https://api.cohere.com/v2/chat',
-      keyPlaceholder: 'API Key (dashboard.cohere.com)',
+      chatEndpoint: 'https://api.cohere.com/v1/chat',
+      keyPlaceholder: 'sk-... (dashboard.cohere.com)',
       keyLink: 'https://dashboard.cohere.com/api-keys'
     },
     perplexity: {
-      name: 'Perplexity AI Online',
+      name: 'Perplexity AI',
       label: 'Perplexity',
       hasKey: true,
       hasUrl: false,
-      defaultModel: 'sonar',
-      curated: ['sonar', 'sonar-pro', 'sonar-reasoning'],
+      defaultModel: '',
+      curated: [],
       modelsEndpoint: 'https://api.perplexity.ai/models',
       chatEndpoint: 'https://api.perplexity.ai/chat/completions',
       keyPlaceholder: 'pplx-... (perplexity.ai/settings/api)',
       keyLink: 'https://www.perplexity.ai/settings/api'
     },
     novita: {
-      name: 'Novita AI (Uncensored RP)',
-      label: 'Novita AI',
+      name: 'Novita AI',
+      label: 'Novita',
       hasKey: true,
       hasUrl: false,
-      defaultModel: 'gryphe/mythomax-l2-13b',
-      curated: [
-        'gryphe/mythomax-l2-13b',
-        'nousresearch/hermes-3-llama-3.1-70b',
-        'meta-llama/llama-3.1-70b-instruct'
-      ],
+      defaultModel: '',
+      curated: [],
       modelsEndpoint: 'https://api.novita.ai/v3/openai/models',
       chatEndpoint: 'https://api.novita.ai/v3/openai/chat/completions',
-      keyPlaceholder: 'API Key (novita.ai)',
+      keyPlaceholder: 'sk-... (novita.ai)',
       keyLink: 'https://novita.ai/settings/key-management'
     },
     featherless: {
-      name: 'Featherless AI (1000+ RP Models)',
+      name: 'Featherless AI',
       label: 'Featherless',
       hasKey: true,
       hasUrl: false,
-      defaultModel: 'NousResearch/Hermes-3-Llama-3.1-8B',
-      curated: [
-        'NousResearch/Hermes-3-Llama-3.1-8B',
-        'mistralai/Mistral-Nemo-Instruct-2407',
-        'meta-llama/Meta-Llama-3.1-8B-Instruct'
-      ],
+      defaultModel: '',
+      curated: [],
       modelsEndpoint: 'https://api.featherless.ai/v1/models',
       chatEndpoint: 'https://api.featherless.ai/v1/chat/completions',
-      keyPlaceholder: 'API Key (featherless.ai)',
+      keyPlaceholder: 'sk-... (featherless.ai)',
       keyLink: 'https://featherless.ai/'
     },
     siliconflow: {
-      name: 'SiliconFlow (Asia-Fast)',
+      name: 'SiliconFlow',
       label: 'SiliconFlow',
       hasKey: true,
       hasUrl: false,
-      defaultModel: 'deepseek-ai/DeepSeek-V3',
-      curated: [
-        'deepseek-ai/DeepSeek-V3',
-        'Qwen/Qwen2.5-72B-Instruct',
-        'meta-llama/Meta-Llama-3.1-70B-Instruct'
-      ],
+      defaultModel: '',
+      curated: [],
       modelsEndpoint: 'https://api.siliconflow.cn/v1/models',
       chatEndpoint: 'https://api.siliconflow.cn/v1/chat/completions',
       keyPlaceholder: 'sk-... (cloud.siliconflow.cn)',
       keyLink: 'https://cloud.siliconflow.cn/account/ak'
     },
     huggingface: {
-      name: 'Hugging Face Router',
-      label: 'HuggingFace',
+      name: 'Hugging Face',
+      label: 'Hugging Face',
       hasKey: true,
       hasUrl: false,
-      defaultModel: 'meta-llama/Llama-3.3-70B-Instruct',
-      curated: [
-        'meta-llama/Llama-3.3-70B-Instruct',
-        'mistralai/Mistral-7B-Instruct-v0.3',
-        'Qwen/Qwen2.5-72B-Instruct'
-      ],
-      chatEndpoint: 'https://router.huggingface.co/novita/v1/chat/completions',
+      defaultModel: '',
+      curated: [],
+      modelsEndpoint: 'https://api-inference.huggingface.co/models',
+      chatEndpoint: 'https://api-inference.huggingface.co/v1/chat/completions',
       keyPlaceholder: 'hf_... (huggingface.co/settings/tokens)',
       keyLink: 'https://huggingface.co/settings/tokens'
     },
     cloudflare: {
       name: 'Cloudflare Workers AI',
-      label: 'Workers AI',
+      label: 'Cloudflare',
       hasKey: true,
       hasUrl: false,
-      defaultModel: '@cf/meta/llama-3.3-70b-instruct-fp8-fast',
-      curated: [
-        '@cf/meta/llama-3.3-70b-instruct-fp8-fast',
-        '@cf/deepseek-ai/deepseek-r1-distill-qwen-32b',
-        '@cf/meta/llama-3.1-8b-instruct'
-      ],
-      keyPlaceholder: 'CF API Token with Workers AI Read',
-      keyLink: 'https://dash.cloudflare.com/profile/api-tokens'
+      defaultModel: '',
+      curated: [],
+      chatEndpoint: '/api/chat/cloudflare',
+      keyPlaceholder: 'Account ID & Token (dash.cloudflare.com)',
+      keyLink: 'https://dash.cloudflare.com/'
     },
     ai21: {
       name: 'AI21 Labs',
       label: 'AI21',
       hasKey: true,
       hasUrl: false,
-      defaultModel: 'jamba-1.5-large',
-      curated: ['jamba-1.5-large', 'jamba-1.5-mini'],
+      defaultModel: '',
+      curated: [],
       modelsEndpoint: 'https://api.ai21.com/studio/v1/models',
       chatEndpoint: 'https://api.ai21.com/studio/v1/chat/completions',
-      keyPlaceholder: 'API Key (studio.ai21.com)',
-      keyLink: 'https://studio.ai21.com/'
+      keyPlaceholder: 'sk-... (studio.ai21.com)',
+      keyLink: 'https://studio.ai21.com/account/api-key'
     },
     'custom-local': {
-      name: 'Custom Localhost (Ollama, LMStudio, vLLM)',
+      name: 'Custom Localhost',
       label: 'Localhost',
-      hasKey: true,
+      hasKey: false,
       isKeyOptional: true,
       hasUrl: true,
-      urlLabel: 'Localhost Base URL',
-      defaultUrl: 'http://localhost:11434/v1',
-      urlPlaceholder: 'http://localhost:11434/v1',
-      urlHint: 'Ollama: http://localhost:11434/v1 • LM Studio: http://localhost:1234/v1 • vLLM: http://localhost:8000/v1',
-      defaultModel: 'llama3.3:latest',
-      curated: ['llama3.3:latest', 'qwen2.5:72b', 'mistral:latest', 'dolphin-llama3:latest'],
-      keyPlaceholder: 'Optional for Localhost (Leave empty if not set)'
+      defaultUrl: 'http://127.0.0.1:11434/v1',
+      urlLabel: 'Local OpenAI-compatible Endpoint',
+      urlHint: 'Default Ollama: http://127.0.0.1:11434/v1 | LM Studio: http://127.0.0.1:1234/v1 | vLLM: http://localhost:8000/v1',
+      urlPlaceholder: 'http://127.0.0.1:11434/v1',
+      defaultModel: '',
+      curated: [],
+      chatEndpoint: 'http://127.0.0.1:11434/v1/chat/completions',
+      keyPlaceholder: 'Optional (leave blank for local Ollama/LM Studio)'
     },
     'custom-proxy': {
-      name: 'Custom Reverse Proxy (OpenAI Gateway)',
-      label: 'Custom Proxy',
+      name: 'Custom Reverse Proxy',
+      label: 'Proxy',
       hasKey: true,
-      isKeyOptional: false,
       hasUrl: true,
-      urlLabel: 'Proxy Endpoint URL (Base URL)',
-      defaultUrl: 'https://api.pawan.krd/v1',
-      urlPlaceholder: 'https://api.pawan.krd/v1 or https://my-proxy.com/v1',
-      urlHint: 'Base URL of any OpenAI-compatible reverse proxy or edge gateway.',
-      defaultModel: 'gpt-4o',
-      curated: ['gpt-4o', 'claude-3-5-sonnet', 'deepseek-chat', 'default'],
-      keyPlaceholder: 'Proxy Bearer Token / Password'
+      defaultUrl: 'https://api.openai.com/v1',
+      urlLabel: 'Proxy Base URL',
+      urlHint: 'Any standard OpenAI-compatible reverse proxy endpoint',
+      urlPlaceholder: 'https://my-proxy.com/v1',
+      defaultModel: '',
+      curated: [],
+      chatEndpoint: 'https://api.openai.com/v1/chat/completions',
+      keyPlaceholder: 'sk-... (if required by proxy)'
     }
   };
+
+  // Helper: Set empty state for model dropdown when not connected
+  function setEmptyModelDropdown() {
+    if (!textModelSelect) return;
+    textModelSelect.innerHTML = '<option value="" disabled selected>No API connected — Enter API key &amp; fetch models</option>';
+    textModelSelect.disabled = true;
+    if (textModelInput) textModelInput.value = '';
+    if (modelCountBadge) modelCountBadge.textContent = 'Not connected';
+    if (dynamicPresetsContainer) {
+      dynamicPresetsContainer.innerHTML = '<span class="text-[10px] text-slate-500 italic">No models loaded. Connect API key to sync.</span>';
+    }
+  }
 
   // Populate dynamic model select dropdown
   function populateModelDropdown(models, selected) {
     if (!textModelSelect) return;
+    const unique = Array.from(new Set(models || [])).filter(Boolean);
+    if (unique.length === 0) {
+      setEmptyModelDropdown();
+      return;
+    }
+    textModelSelect.disabled = false;
     textModelSelect.innerHTML = '';
-    const unique = Array.from(new Set(models));
     unique.forEach(m => {
       const opt = document.createElement('option');
       opt.value = m;
@@ -2357,7 +2324,7 @@ const { character } = Astro.props;
     if (selected && !unique.includes(selected)) {
       const opt = document.createElement('option');
       opt.value = selected;
-      opt.textContent = `${selected} (Custom)`;
+      opt.textContent = selected;
       opt.selected = true;
       textModelSelect.prepend(opt);
     }
@@ -2365,7 +2332,7 @@ const { character } = Astro.props;
       textModelInput.value = textModelSelect.value;
     }
     if (modelCountBadge) {
-      modelCountBadge.textContent = `${unique.length} Models`;
+      modelCountBadge.textContent = `${unique.length} Models Synced`;
     }
   }
 
@@ -2373,13 +2340,19 @@ const { character } = Astro.props;
   function updateDynamicPresets(models) {
     if (!dynamicPresetsContainer) return;
     dynamicPresetsContainer.innerHTML = '';
-    const slice = models.slice(0, 5);
+    const valid = (models || []).filter(Boolean);
+    if (valid.length === 0) {
+      dynamicPresetsContainer.innerHTML = '<span class="text-[10px] text-slate-500 italic">No models loaded. Connect API key to sync.</span>';
+      return;
+    }
+    const slice = valid.slice(0, 6);
     slice.forEach(m => {
       const btn = document.createElement('button');
       btn.type = 'button';
       btn.className = 'quick-model-pill text-[10px] px-2 py-0.5 rounded-lg bg-white/[0.04] hover:bg-purple-950 text-slate-300 hover:text-purple-300 border border-white/10 transition cursor-pointer';
       const shortName = m.split('/').pop() || m;
       btn.textContent = shortName;
+      btn.title = m;
       btn.setAttribute('data-model', m);
       btn.addEventListener('click', () => {
         if (textModelSelect) {
@@ -2393,6 +2366,7 @@ const { character } = Astro.props;
           }
         }
         if (textModelInput) textModelInput.value = m;
+        localStorage.setItem('aetheria_text_model', m);
         updateHeaderPill();
       });
       dynamicPresetsContainer.appendChild(btn);
@@ -2405,11 +2379,11 @@ const { character } = Astro.props;
     if (data.models && Array.isArray(data.models)) {
       return data.models
         .filter(m => !m.supportedGenerationMethods || m.supportedGenerationMethods.includes('generateContent'))
-        .map(m => m.name.replace(/^models\//, ''))
+        .map(m => (m.name || '').replace(/^models\//, ''))
         .filter(Boolean);
     }
     if (data.data && Array.isArray(data.data)) {
-      return data.data.map(m => m.id).filter(Boolean);
+      return data.data.map(m => m.id || m.name).filter(Boolean);
     }
     if (Array.isArray(data)) {
       return data.map(m => (typeof m === 'string' ? m : (m.id || m.name))).filter(Boolean);
@@ -2417,26 +2391,30 @@ const { character } = Astro.props;
     return [];
   }
 
-  // Live model fetcher with automatic CORS Edge fallback
-  async function fetchModelsForProvider() {
+  // Fetch live model list from provider endpoint (Zero guessing, API-driven)
+  async function fetchModelsForProvider(e) {
+    e?.preventDefault?.();
     const prov = textProviderSelect?.value || 'groq';
     const conf = PROVIDER_CONFIGS[prov] || PROVIDER_CONFIGS.demo;
-    const key = textApiKey?.value.trim() || '';
+    const key = textApiKey?.value.trim() || localStorage.getItem('aetheria_text_key') || '';
     const baseUrl = textBaseUrl?.value.trim() || conf.defaultUrl || '';
 
     if (prov === 'demo') {
-      showNotification('Free Cloud AI has built-in instant routing (No API key needed)');
+      populateModelDropdown(['Free Cloud AI'], 'Free Cloud AI');
+      updateDynamicPresets(['Free Cloud AI']);
+      showNotification('✓ Using Free Cloud AI (Instant)');
       return;
     }
 
     if (conf.hasKey && !conf.isKeyOptional && !key) {
-      showNotification(`⚠️ Please enter your ${conf.label} API key first!`);
+      showNotification('⚠️ Please enter an API key first before fetching models.');
       textApiKey?.focus();
       return;
     }
 
     if (fetchModelsIcon) fetchModelsIcon.classList.add('animate-spin');
     if (fetchModelsText) fetchModelsText.textContent = 'Fetching...';
+    if (fetchModelsBtn) fetchModelsBtn.disabled = true;
 
     try {
       let endpoint = conf.modelsEndpoint;
@@ -2444,18 +2422,14 @@ const { character } = Astro.props;
         endpoint = `${baseUrl.replace(/\/+$/, '')}/models`;
       } else if (prov === 'google') {
         endpoint = `https://generativelanguage.googleapis.com/v1beta/models?key=${key}`;
+      } else if (prov === 'anthropic') {
+        endpoint = 'https://api.anthropic.com/v1/models';
       }
 
-      if (!endpoint) {
-        showNotification(`Using curated models for ${conf.label}`);
-        populateModelDropdown(conf.curated, textModelSelect?.value || conf.defaultModel);
-        return;
-      }
+      let responseData = null;
+      let isSuccess = false;
 
-      let models = [];
-      let success = false;
-
-      // Try direct browser fetch first
+      // 1. Direct browser fetch attempt
       try {
         const headers = {};
         if (key && prov !== 'google') {
@@ -2474,63 +2448,66 @@ const { character } = Astro.props;
 
         const res = await fetch(endpoint, { method: 'GET', headers });
         if (res.ok) {
-          const data = await res.json();
-          models = extractModelIds(data, prov);
-          if (models.length > 0) success = true;
+          responseData = await res.json();
+          isSuccess = true;
         }
       } catch (directErr) {
-        // Direct fetch failed (likely CORS), fall through to Edge relay
-      }
-
-      // If direct fetch didn't succeed, use CORS-free Edge Worker proxy
-      if (!success) {
-        const proxyRes = await fetch('/api/proxy/fetch-models', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            endpoint,
-            apiKey: key,
-            headers: prov === 'openrouter' ? { 'HTTP-Referer': 'https://aetheria.ai', 'X-Title': 'Aetheria AI' } : {}
-          })
-        });
-
-        if (proxyRes.ok) {
-          const proxyData = await proxyRes.json();
-          const target = proxyData.data || proxyData;
-          models = extractModelIds(target, prov);
-          if (models.length > 0) success = true;
+        // 2. Direct fetch failed (likely CORS), use serverless proxy
+        try {
+          const proxyRes = await fetch('/api/proxy/fetch-models', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              endpoint,
+              apiKey: key,
+              headers: prov === 'openrouter' ? { 'HTTP-Referer': 'https://aetheria.ai', 'X-Title': 'Aetheria AI' } : {}
+            })
+          });
+          if (proxyRes.ok) {
+            const pJson = await proxyRes.json();
+            responseData = pJson.data || pJson;
+            isSuccess = true;
+          }
+        } catch (proxyErr) {
+          console.error('Proxy fetch failed:', proxyErr);
         }
       }
 
-      if (success && models.length > 0) {
-        populateModelDropdown(models, models[0]);
-        updateDynamicPresets(models);
-        showNotification(`✓ Successfully loaded ${models.length} models from ${conf.label}!`);
+      if (isSuccess && responseData) {
+        const models = extractModelIds(responseData, prov);
+        if (models && models.length > 0) {
+          localStorage.setItem('aetheria_synced_models_' + prov, JSON.stringify(models));
+          populateModelDropdown(models, models[0]);
+          updateDynamicPresets(models);
+          localStorage.setItem('aetheria_text_model', models[0]);
+          updateHeaderPill();
+          showNotification(`✓ Successfully loaded ${models.length} live models from ${conf.name} API!`);
+        } else {
+          setEmptyModelDropdown();
+          showNotification(`⚠️ Connected to ${conf.name}, but no models were returned by the API.`);
+        }
       } else {
-        showNotification(`Could not fetch live models. Loaded ${conf.curated.length} verified presets.`);
-        populateModelDropdown(conf.curated, conf.defaultModel);
+        setEmptyModelDropdown();
+        showNotification(`⚠️ Could not connect or authenticate with ${conf.name}. Please check your API key.`);
       }
     } catch (err) {
-      showNotification(`Failed to fetch models: ${err.message || 'Network error'}`);
+      setEmptyModelDropdown();
+      showNotification('⚠️ Connection error while fetching models from API.');
     } finally {
       if (fetchModelsIcon) fetchModelsIcon.classList.remove('animate-spin');
       if (fetchModelsText) fetchModelsText.textContent = 'Fetch Models';
+      if (fetchModelsBtn) fetchModelsBtn.disabled = false;
     }
   }
 
-  // Health Check & Latency Ping
+  // Health-check / ping connection
   async function pingTextConnection() {
     if (!pingStatusMsg) return;
-    pingStatusMsg.classList.remove('hidden');
-    pingStatusMsg.className = 'text-xs px-3.5 py-2.5 rounded-xl border bg-purple-950/40 border-purple-500/30 text-purple-300 flex items-center gap-2';
-    pingStatusMsg.innerHTML = '<span class="w-2 h-2 rounded-full bg-cyan-400 animate-ping"></span><span>Measuring connection latency &amp; authenticating with provider...</span>';
-
     const t0 = performance.now();
-    const prov = textProviderSelect?.value || 'demo';
+    const prov = textProviderSelect?.value || 'groq';
     const conf = PROVIDER_CONFIGS[prov] || PROVIDER_CONFIGS.demo;
-    const key = textApiKey?.value.trim() || '';
+    const key = textApiKey?.value.trim() || localStorage.getItem('aetheria_text_key') || '';
     const baseUrl = textBaseUrl?.value.trim() || conf.defaultUrl || '';
-    const currentModel = textModelSelect?.value || textModelInput?.value || conf.defaultModel;
 
     if (prov === 'demo') {
       await new Promise(r => setTimeout(r, 85));
@@ -2544,7 +2521,7 @@ const { character } = Astro.props;
 
     if (conf.hasKey && !conf.isKeyOptional && !key) {
       pingStatusMsg.className = 'text-xs px-3.5 py-2.5 rounded-xl border bg-amber-950/40 border-amber-500/30 text-amber-300';
-      pingStatusMsg.innerHTML = `⚠️ Please enter your ${conf.label} API Key before testing connection.`;
+      pingStatusMsg.innerHTML = `⚠️ Please enter your ${conf.name} API Key before testing connection.`;
       if (pingLatencyText) pingLatencyText.textContent = 'API Key Required';
       if (pingIndicatorDot) pingIndicatorDot.className = 'w-2.5 h-2.5 rounded-full bg-amber-400 shrink-0';
       return;
@@ -2557,7 +2534,7 @@ const { character } = Astro.props;
       } else if (prov === 'google') {
         endpoint = `https://generativelanguage.googleapis.com/v1beta/models?key=${key}`;
       } else if (prov === 'anthropic') {
-        endpoint = 'https://api.anthropic.com/v1/messages';
+        endpoint = 'https://api.anthropic.com/v1/models';
       }
 
       let resStatus = null;
@@ -2598,35 +2575,25 @@ const { character } = Astro.props;
 
       if (resStatus >= 200 && resStatus < 300) {
         pingStatusMsg.className = 'text-xs px-3.5 py-2.5 rounded-xl border bg-emerald-950/40 border-emerald-500/30 text-emerald-300';
-        pingStatusMsg.innerHTML = `✓ Connection Healthy! • Provider: ${conf.label} • Latency: ${latency}ms • Model: ${currentModel} • Status: 200 OK`;
+        pingStatusMsg.innerHTML = `✓ Connection Healthy! • Provider: ${conf.name} • Latency: ${latency}ms • Status: 200 OK`;
         if (pingLatencyText) pingLatencyText.textContent = `Online • Latency: ${latency}ms`;
         if (pingIndicatorDot) pingIndicatorDot.className = 'w-2.5 h-2.5 rounded-full bg-emerald-400 shrink-0';
         unlockHyperparameters(true);
-      } else if (resStatus === 401 || resStatus === 403) {
-        pingStatusMsg.className = 'text-xs px-3.5 py-2.5 rounded-xl border bg-red-950/40 border-red-500/30 text-red-300';
-        pingStatusMsg.innerHTML = `✕ Authentication Failed (HTTP ${resStatus}): The API key provided is invalid, expired, or missing permissions for ${conf.label}.`;
-        if (pingLatencyText) pingLatencyText.textContent = `Auth Error (${resStatus})`;
-        if (pingIndicatorDot) pingIndicatorDot.className = 'w-2.5 h-2.5 rounded-full bg-red-500 shrink-0';
-      } else if (resStatus === 404) {
-        pingStatusMsg.className = 'text-xs px-3.5 py-2.5 rounded-xl border bg-amber-950/40 border-amber-500/30 text-amber-300';
-        pingStatusMsg.innerHTML = `⚠️ Endpoint or Model Not Found (HTTP 404): Connected to ${conf.label}, but verify your Base URL or model name.`;
-        if (pingLatencyText) pingLatencyText.textContent = `Warning (404)`;
-        if (pingIndicatorDot) pingIndicatorDot.className = 'w-2.5 h-2.5 rounded-full bg-amber-400 shrink-0';
-      } else if (resStatus === 429) {
-        pingStatusMsg.className = 'text-xs px-3.5 py-2.5 rounded-xl border bg-red-950/40 border-red-500/30 text-red-300';
-        pingStatusMsg.innerHTML = `✕ Quota / Rate Limit Exceeded (HTTP 429): Your ${conf.label} account has run out of credits or hit usage limits.`;
-        if (pingLatencyText) pingLatencyText.textContent = `Rate Limited (429)`;
-        if (pingIndicatorDot) pingIndicatorDot.className = 'w-2.5 h-2.5 rounded-full bg-red-500 shrink-0';
+
+        // Auto sync models if not already cached
+        const cached = localStorage.getItem('aetheria_synced_models_' + prov);
+        if (!cached || textModelSelect?.disabled) {
+          fetchModelsForProvider();
+        }
       } else {
-        pingStatusMsg.className = 'text-xs px-3.5 py-2.5 rounded-xl border bg-amber-950/40 border-amber-500/30 text-amber-300';
-        pingStatusMsg.innerHTML = `⚠️ HTTP ${resStatus}: Connected to server. Edge Relay will handle during chat.`;
-        if (pingLatencyText) pingLatencyText.textContent = `HTTP ${resStatus}`;
+        pingStatusMsg.className = 'text-xs px-3.5 py-2.5 rounded-xl border bg-rose-950/40 border-rose-500/30 text-rose-300';
+        pingStatusMsg.innerHTML = `✕ Connection Failed (HTTP ${resStatus || 'Network Error'}) • Check API key or endpoint`;
+        if (pingLatencyText) pingLatencyText.textContent = `Offline • HTTP ${resStatus || 'ERR'}`;
+        if (pingIndicatorDot) pingIndicatorDot.className = 'w-2.5 h-2.5 rounded-full bg-rose-500 shrink-0';
       }
-    } catch (err) {
-      const dt = Math.round(performance.now() - t0);
-      pingStatusMsg.className = 'text-xs px-3.5 py-2.5 rounded-xl border bg-amber-950/40 border-amber-500/30 text-amber-300';
-      pingStatusMsg.innerHTML = `⚠️ Direct network check timed out (${dt}ms). Automatic Edge Relay will route your chat seamlessly during conversation.`;
-      if (pingLatencyText) pingLatencyText.textContent = `Edge Fallback Ready`;
+    } catch (e) {
+      pingStatusMsg.className = 'text-xs px-3.5 py-2.5 rounded-xl border bg-rose-950/40 border-rose-500/30 text-rose-300';
+      pingStatusMsg.innerHTML = `✕ Connection Error • Unable to reach API`;
     }
   }
 
@@ -2679,10 +2646,31 @@ const { character } = Astro.props;
       }
     }
 
-    // Model options
-    const savedModel = localStorage.getItem('aetheria_text_model') || conf.defaultModel;
-    populateModelDropdown(conf.curated, savedModel);
-    updateDynamicPresets(conf.curated);
+    // Model options: strictly check synced API models or empty state (Zero guessing)
+    if (prov === 'demo') {
+      populateModelDropdown(['Free Cloud AI'], 'Free Cloud AI');
+      updateDynamicPresets(['Free Cloud AI']);
+      if (modelCountBadge) modelCountBadge.textContent = 'Free Cloud Tier';
+    } else {
+      const cachedModelsRaw = localStorage.getItem('aetheria_synced_models_' + prov);
+      if (cachedModelsRaw) {
+        try {
+          const cachedModels = JSON.parse(cachedModelsRaw);
+          if (Array.isArray(cachedModels) && cachedModels.length > 0) {
+            const savedModel = localStorage.getItem('aetheria_text_model') || cachedModels[0];
+            populateModelDropdown(cachedModels, savedModel);
+            updateDynamicPresets(cachedModels);
+          } else {
+            setEmptyModelDropdown();
+          }
+        } catch (e) {
+          setEmptyModelDropdown();
+        }
+      } else {
+        // NOT connected yet -> keep completely EMPTY!
+        setEmptyModelDropdown();
+      }
+    }
 
     // Health Check widget update
     if (pingProviderName) {
@@ -2843,78 +2831,58 @@ const { character } = Astro.props;
       tag: 'Recommended • Free',
       tagClass: 'bg-emerald-500/20 text-emerald-300 border-emerald-500/40',
       icon: '💎',
-      desc: 'Fastest free model with top multilingual comprehension and generous rate limits. No credit card required.',
+      desc: 'Official high-speed Google API with generous free tiers and multilingual support.',
       keyUrl: 'https://aistudio.google.com/app/apikey',
       keyText: 'Get Free Key from Google AI Studio',
-      keyPlaceholder: 'AIzaSy...',
-      models: [
-        { id: 'gemini-2.0-flash', label: 'Gemini 2.0 Flash (Recommended & Fast)' },
-        { id: 'gemini-1.5-pro', label: 'Gemini 1.5 Pro (Deep Reasoning)' },
-        { id: 'gemini-2.0-flash-exp', label: 'Gemini 2.0 Flash Exp' }
-      ]
+      keyPlaceholder: 'AIzaSy...'
     },
     {
       id: 'anthropic',
       name: 'Anthropic Claude',
-      tag: 'Flagship Roleplay',
+      tag: 'Narrative & Prose',
       tagClass: 'bg-amber-500/20 text-amber-300 border-amber-500/40',
       icon: '👑',
-      desc: 'Industry-leading prose, emotional storytelling depth, and natural character immersion (Claude 3.5 Sonnet).',
+      desc: 'Industry-leading prose, emotional storytelling depth, and character immersion.',
       keyUrl: 'https://console.anthropic.com/settings/keys',
       keyText: 'Create Key in Anthropic Console',
-      keyPlaceholder: 'sk-ant-api03-...',
-      models: [
-        { id: 'claude-3-5-sonnet-20241022', label: 'Claude 3.5 Sonnet (State-of-the-Art)' },
-        { id: 'claude-3-5-haiku-20241022', label: 'Claude 3.5 Haiku (Ultra-Fast)' }
-      ]
+      keyPlaceholder: 'sk-ant-...'
     },
     {
       id: 'openai',
-      name: 'OpenAI Direct',
-      tag: 'Flagship Intelligence',
+      name: 'OpenAI',
+      tag: 'High Intelligence',
       tagClass: 'bg-blue-500/20 text-blue-300 border-blue-500/40',
       icon: '🧠',
-      desc: 'World-renowned GPT-4o & GPT-4o-mini models with sharp reasoning, strong lore memory, and fast speed.',
+      desc: 'Official OpenAI API platform offering sharp reasoning, world lore memory, and fast responses.',
       keyUrl: 'https://platform.openai.com/api-keys',
       keyText: 'Get Keys from OpenAI Platform',
-      keyPlaceholder: 'sk-proj-...',
-      models: [
-        { id: 'gpt-4o', label: 'GPT-4o (Flagship Model)' },
-        { id: 'gpt-4o-mini', label: 'GPT-4o Mini (Fast & Efficient)' }
-      ]
+      keyPlaceholder: 'sk-proj-...'
     },
     {
       id: 'openrouter',
       name: 'OpenRouter',
-      tag: '300+ Models • Uncensored RP',
+      tag: 'Multi-Model Gateway',
       tagClass: 'bg-purple-500/20 text-purple-300 border-purple-500/40',
       icon: '🌐',
-      desc: 'Unified gateway to 300+ open-source, community, and uncensored models specialized for immersive roleplay.',
+      desc: 'Unified gateway connecting to hundreds of open-source and specialized AI models.',
       keyUrl: 'https://openrouter.ai/keys',
       keyText: 'Generate Key on OpenRouter.ai',
-      keyPlaceholder: 'sk-or-v1-...',
-      models: [
-        { id: 'anthropic/claude-3.5-sonnet', label: 'Claude 3.5 Sonnet' },
-        { id: 'meta-llama/llama-3.3-70b-instruct', label: 'Llama 3.3 70B Instruct' },
-        { id: 'gryphe/mythomax-l2-13b', label: 'MythoMax 13B (Classic RP)' }
-      ]
+      keyPlaceholder: 'sk-or-v1-...'
     },
     {
       id: 'groq',
-      name: 'Groq LPU',
-      tag: 'Lightning 300+ Tok/s',
+      name: 'Groq',
+      tag: 'Ultra-Low Latency',
       tagClass: 'bg-cyan-500/20 text-cyan-300 border-cyan-500/40',
       icon: '🚀',
       desc: 'Instant zero-latency inference running on Groq specialized LPU silicon with generous free tiers.',
       keyUrl: 'https://console.groq.com/keys',
       keyText: 'Create Free Key in Groq Console',
-      keyPlaceholder: 'gsk_...',
-      models: [
-        { id: 'llama-3.3-70b-versatile', label: 'Llama 3.3 70B Versatile' },
-        { id: 'mixtral-8x7b-32768', label: 'Mixtral 8x7B' }
-      ]
+      keyPlaceholder: 'gsk_...'
     }
   ];
+
+  let wizardLiveModels = [];
 
   function appendNovaBubble(htmlContent) {
     if (!wizardChatBox) return null;
@@ -2959,11 +2927,12 @@ const { character } = Astro.props;
       } else if (prov === 'google') {
         endpoint = `https://generativelanguage.googleapis.com/v1beta/models?key=${key}`;
       } else if (prov === 'anthropic') {
-        endpoint = 'https://api.anthropic.com/v1/messages';
+        endpoint = 'https://api.anthropic.com/v1/models';
       }
 
       let resStatus = null;
       let latency = 0;
+      let responseData = null;
 
       try {
         const headers = {};
@@ -2983,6 +2952,9 @@ const { character } = Astro.props;
         const res = await fetch(endpoint, { method: 'GET', headers });
         latency = Math.round(performance.now() - t0);
         resStatus = res.status;
+        if (res.ok) {
+          responseData = await res.json();
+        }
       } catch (err) {
         const proxyRes = await fetch('/api/proxy/fetch-models', {
           method: 'POST',
@@ -2995,10 +2967,15 @@ const { character } = Astro.props;
         });
         latency = Math.round(performance.now() - t0);
         resStatus = proxyRes.status;
+        if (proxyRes.ok) {
+          const pJson = await proxyRes.json();
+          responseData = pJson.data || pJson;
+        }
       }
 
       if (resStatus >= 200 && resStatus < 300) {
-        return { ok: true, latency: latency || 110, status: resStatus };
+        const models = extractModelIds(responseData, prov);
+        return { ok: true, latency: latency || 110, status: resStatus, models };
       } else {
         return { 
           ok: false, 
@@ -3041,122 +3018,105 @@ const { character } = Astro.props;
     wizardChatView?.classList.remove('hidden');
     wizardSettingsView?.classList.add('hidden');
     if (wizardStepBadge) wizardStepBadge.textContent = 'Step 2 of 4: Select AI Provider';
+    if (wizardChatInput) {
+      wizardChatInput.value = '';
+      wizardChatInput.placeholder = 'Select a provider above to continue...';
+    }
+    wizardPasteBtn?.classList.add('hidden');
 
     appendNovaBubble(`
-      <p class="font-bold text-white">Nice to meet you, <span class="text-purple-300">${wizardUserName}</span>! 🎉</p>
-      <p class="text-slate-300">To enable character chat, choose an AI provider below to connect your personal API key.</p>
-      <p class="font-semibold text-white pt-1">Which provider would you like to connect?</p>
-
-      <div class="grid grid-cols-1 sm:grid-cols-2 gap-2.5 pt-2" id="wiz-provider-cards">
+      <p class="font-bold text-white text-sm">Choose Your AI Provider 🚀</p>
+      <p class="text-slate-300">
+        Select where you want to route your character chats. We support official APIs and specialized inference engines:
+      </p>
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-2.5 pt-2" id="wiz-prov-container">
         ${WIZARD_PROVIDERS.map(p => `
           <button 
             type="button" 
-            data-wiz-prov="${p.id}" 
-            class="wiz-card-btn text-left p-3 sm:p-3.5 rounded-xl bg-white/[0.03] hover:bg-purple-900/30 border border-white/[0.08] hover:border-purple-500/50 transition flex flex-col justify-between gap-2 group cursor-pointer w-full"
+            data-prov-id="${p.id}"
+            class="wiz-card-btn w-full text-left p-3 sm:p-3.5 rounded-2xl bg-white/[0.03] hover:bg-purple-950/40 border border-white/10 hover:border-purple-500/60 transition group flex flex-col justify-between gap-2.5 cursor-pointer relative overflow-hidden"
           >
-            <div class="flex items-center justify-between gap-1.5 w-full min-w-0">
-              <span class="text-xs font-bold text-white group-hover:text-purple-300 flex items-center gap-1.5 truncate">
-                <span class="shrink-0">${p.icon}</span>
-                <span class="truncate">${p.name}</span>
-              </span>
-              <span class="text-[9px] font-bold px-1.5 py-0.5 rounded-full border shrink-0 ${p.tagClass}">${p.tag}</span>
+            <div class="flex items-start justify-between gap-2 w-full">
+              <div class="flex items-center gap-2 min-w-0">
+                <span class="text-xl shrink-0">${p.icon}</span>
+                <span class="font-bold text-xs sm:text-sm text-white group-hover:text-purple-300 truncate">${p.name}</span>
+              </div>
+              <span class="text-[9px] font-semibold px-2 py-0.5 rounded-full border shrink-0 ${p.tagClass}">${p.tag}</span>
             </div>
-            <p class="text-[11px] text-slate-400 leading-relaxed text-left line-clamp-2 sm:line-clamp-none">${p.desc}</p>
+            <p class="text-[11px] text-slate-400 group-hover:text-slate-300 leading-relaxed">${p.desc}</p>
           </button>
         `).join('')}
       </div>
-
-      <div class="pt-2 text-center">
-        <button type="button" id="wiz-switch-to-manual-link" class="text-[11px] text-purple-400 hover:text-purple-300 underline transition cursor-pointer">
-          Or configure from 20+ other providers in Manual Mode →
-        </button>
-      </div>
     `);
 
-    document.querySelectorAll('.wiz-card-btn').forEach(btn => {
-      btn.addEventListener('click', () => {
-        const provId = btn.getAttribute('data-wiz-prov');
+    const provBtns = wizardChatHistory?.querySelectorAll('.wiz-card-btn');
+    provBtns?.forEach(btn => {
+      btn.addEventListener('click', (e) => {
+        const provId = (e.currentTarget as HTMLElement).getAttribute('data-prov-id');
         const p = WIZARD_PROVIDERS.find(x => x.id === provId);
         if (p) {
           wizardSelectedProv = p;
-          appendUserBubble(`${p.icon} Selected ${p.name}`);
+          appendUserBubble(`Selected provider: ${p.name}`);
           setTimeout(goToStep3, 400);
         }
       });
     });
-
-    document.getElementById('wiz-switch-to-manual-link')?.addEventListener('click', () => {
-      switchEngineViewMode('manual');
-    });
-
-    if (wizardChatInput) {
-      wizardChatInput.value = '';
-      wizardChatInput.placeholder = 'Tap one of the provider cards above to proceed...';
-    }
-    wizardPasteBtn?.classList.add('hidden');
   }
 
   function goToStep3() {
     wizardCurrentStep = 3;
-    if (wizardStepBadge) wizardStepBadge.textContent = 'Step 3 of 4: API Key & Model Selection';
-    const prov = wizardSelectedProv;
-    if (!prov) return;
-
-    appendNovaBubble(`
-      <p class="font-bold text-white">Selected Provider: <span class="text-purple-300">${prov.name}</span> ✨</p>
-      <div class="space-y-1.5 text-slate-300">
-        <p><strong>Quick steps to get your API key:</strong></p>
-        <p>1. Open the provider developer console:</p>
-        <div class="py-1">
-          <a href="${prov.keyUrl}" target="_blank" rel="noopener noreferrer" class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-cyan-500/10 border border-cyan-500/30 text-cyan-300 hover:text-white text-xs font-semibold transition">
-            <span>🔗 ${prov.keyText}</span>
-            <span class="text-[10px]">↗</span>
-          </a>
-        </div>
-        <p>2. Sign in and generate a secret API key.</p>
-        <p>3. Copy the key, paste it into the input below, and click <strong>Send</strong>:</p>
-      </div>
-    `);
-
+    if (wizardStepBadge) wizardStepBadge.textContent = 'Step 3 of 4: Connect API Key';
     if (wizardChatInput) {
-      wizardChatInput.type = 'text';
-      wizardChatInput.placeholder = `Paste your ${prov.name} API key (${prov.keyPlaceholder})...`;
       wizardChatInput.value = '';
+      wizardChatInput.placeholder = `Paste your ${wizardSelectedProv.name} API key...`;
+      wizardChatInput.type = 'password';
       wizardChatInput.focus();
     }
     wizardPasteBtn?.classList.remove('hidden');
+
+    appendNovaBubble(`
+      <p class="font-bold text-white text-sm">Connect ${wizardSelectedProv.name} API Key 🔑</p>
+      <p class="text-slate-300">
+        To start chatting, connect your API key. It is stored <strong>locally in your browser</strong> and never sent to our servers.
+      </p>
+      <div class="p-3 rounded-xl bg-purple-950/20 border border-purple-500/20 flex flex-col gap-2 my-1 text-xs">
+        <div class="flex items-center justify-between gap-2 flex-wrap">
+          <span class="text-slate-300 font-medium">Need an API key?</span>
+          <a href="${wizardSelectedProv.keyUrl}" target="_blank" rel="noopener noreferrer" class="text-cyan-400 hover:text-cyan-300 underline font-semibold flex items-center gap-1">
+            <span>${wizardSelectedProv.keyText}</span>
+            <span>↗</span>
+          </a>
+        </div>
+      </div>
+      <p class="text-xs text-slate-400">
+        Paste your key into the chat input below and press <strong>Send</strong>. I will verify connectivity and retrieve the live model list directly from ${wizardSelectedProv.name}.
+      </p>
+    `);
   }
 
   async function handleWizardChatSubmit() {
     if (!wizardChatInput) return;
-    const text = wizardChatInput.value.trim();
+    const rawText = wizardChatInput.value.trim();
+    if (!rawText) return;
 
     if (wizardCurrentStep === 1) {
-      const name = text || 'Guest';
-      wizardUserName = name;
-      localStorage.setItem('aetheria_user_name', wizardUserName);
+      wizardUserName = rawText;
+      localStorage.setItem('aetheria_user_display_name', wizardUserName);
       appendUserBubble(wizardUserName);
       wizardChatInput.value = '';
-      setTimeout(goToStep2, 400);
-      return;
-    }
+      
+      appendNovaBubble(`
+        <p class="font-bold text-white">Nice to meet you, ${wizardUserName}! ✨</p>
+        <p class="text-slate-300">Your persona name is saved. Next, let\'s choose which AI engine will drive your conversations.</p>
+      `);
 
-    if (wizardCurrentStep === 2) {
-      showNotification('Please select one of the provider cards from the message above.');
+      setTimeout(goToStep2, 600);
       return;
     }
 
     if (wizardCurrentStep === 3) {
-      if (!text) {
-        showNotification('⚠️ Please enter or paste your API key in the input box.');
-        wizardChatInput.focus();
-        return;
-      }
-
-      const key = text;
+      const key = rawText;
       wizardApiKey = key;
-      wizardChatInput.value = '';
-
       const maskedKey = key.length > 8 ? `${key.slice(0, 4)}••••••••${key.slice(-4)}` : '••••••••';
       appendUserBubble(`Submitted API Key: ${maskedKey}`);
 
@@ -3170,52 +3130,101 @@ const { character } = Astro.props;
       const result = await runWizardHealthCheck(wizardSelectedProv.id, key, '');
       loadingBubble?.remove();
 
-      if (result.ok) {
+      if (result.ok && result.models && result.models.length > 0) {
         wizardLatency = result.latency || 95;
+        const liveModels = result.models;
+        wizardLiveModels = liveModels;
+
+        // Cache live models in localStorage for this provider
+        localStorage.setItem('aetheria_synced_models_' + wizardSelectedProv.id, JSON.stringify(liveModels));
+
+        // Sync to manual tab dropdown & inputs
+        if (textProviderSelect) textProviderSelect.value = wizardSelectedProv.id;
+        if (textApiKey) textApiKey.value = key;
+        populateModelDropdown(liveModels, liveModels[0]);
+        updateDynamicPresets(liveModels);
+        unlockHyperparameters(true);
+
         appendNovaBubble(`
           <div class="flex items-center justify-between pb-2 border-b border-white/[0.08] gap-2 flex-wrap">
             <span class="text-emerald-400 font-bold flex items-center gap-1.5">
               <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse shrink-0"></span>
-              Connection Verified Successfully!
+              Connection &amp; API Models Synced!
             </span>
-            <span class="text-[10px] text-slate-400 font-mono">Latency: ${wizardLatency}ms • Healthy</span>
+            <span class="text-[10px] text-slate-400 font-mono">Latency: ${wizardLatency}ms • ${liveModels.length} Models from API</span>
           </div>
-          <p class="font-semibold text-white pt-1">Select your primary conversation model:</p>
-          <div class="flex flex-col gap-2 pt-2" id="wiz-model-picker-container">
-            ${wizardSelectedProv.models.map((m, idx) => `
+          <p class="font-semibold text-white pt-1">Select an active model retrieved directly from ${wizardSelectedProv.name}:</p>
+          ${liveModels.length > 6 ? `
+            <input 
+              type="text" 
+              id="wiz-model-search-filter" 
+              placeholder="Filter ${liveModels.length} models from API..." 
+              class="w-full px-3 py-1.5 rounded-lg bg-black/40 border border-white/10 text-xs text-white placeholder-slate-500 outline-none focus:border-purple-500/60 font-mono mt-1 mb-1"
+            />
+          ` : ''}
+          <div class="flex flex-col gap-1.5 pt-1 max-h-56 overflow-y-auto pr-1" id="wiz-model-picker-container">
+            ${liveModels.slice(0, 40).map((mId, idx) => `
               <button 
                 type="button" 
-                data-model-id="${m.id}" 
+                data-model-id="${mId}" 
                 class="wiz-model-pick-btn w-full text-left px-3 sm:px-3.5 py-2.5 rounded-xl bg-white/[0.04] hover:bg-purple-900/30 border border-white/10 hover:border-purple-500/50 text-xs transition flex items-center justify-between gap-2 group cursor-pointer ${idx === 0 ? 'border-purple-500/50 bg-purple-950/20' : ''}"
               >
                 <div class="flex items-center gap-2 min-w-0">
                   <span class="w-2 h-2 rounded-full ${idx === 0 ? 'bg-cyan-400' : 'bg-slate-500'} shrink-0 group-hover:bg-cyan-400"></span>
-                  <span class="font-mono text-white group-hover:text-purple-300 truncate">${m.label}</span>
+                  <span class="font-mono text-white group-hover:text-purple-300 truncate">${mId}</span>
                 </div>
-                ${idx === 0 ? '<span class="text-[9px] text-cyan-300 font-bold px-1.5 py-0.5 rounded bg-cyan-950/60 border border-cyan-500/30 shrink-0">Recommended</span>' : ''}
+                ${idx === 0 ? '<span class="text-[9px] text-cyan-300 font-bold px-1.5 py-0.5 rounded bg-cyan-950/60 border border-cyan-500/30 shrink-0">Default</span>' : ''}
               </button>
             `).join('')}
           </div>
         `);
 
-        document.querySelectorAll('.wiz-model-pick-btn').forEach(btn => {
-          btn.addEventListener('click', () => {
-            const mId = btn.getAttribute('data-model-id');
-            const mObj = wizardSelectedProv.models.find(x => x.id === mId) || { label: mId };
-            wizardSelectedModel = mId;
-            appendUserBubble(`Selected model: ${mObj.label}`);
+        const bindModelClicks = () => {
+          document.querySelectorAll('.wiz-model-pick-btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+              const mId = btn.getAttribute('data-model-id') || '';
+              wizardSelectedModel = mId;
+              if (textModelSelect) textModelSelect.value = mId;
+              if (textModelInput) textModelInput.value = mId;
+              localStorage.setItem('aetheria_text_model', mId);
+              appendUserBubble(`Selected model: ${mId}`);
 
-            appendNovaBubble(`
-              <p class="font-bold text-emerald-300">🎉 API Connection Verified!</p>
-              <p class="text-slate-300">Your key is safely stored in local browser storage. Direct connection established.</p>
-              <p class="text-xs text-purple-300 font-semibold pt-1">Proceeding to final settings to fine-tune character creativity and memory...</p>
-            `);
+              appendNovaBubble(`
+                <p class="font-bold text-emerald-300">✓ Model Confirmed: ${mId}</p>
+                <p class="text-slate-300">Your configuration is verified and securely stored in your browser.</p>
+                <p class="text-xs text-purple-300 font-semibold pt-1">Proceeding to fine-tune character creativity and memory...</p>
+              `);
 
-            setTimeout(goToStep4, 1000);
+              setTimeout(goToStep4, 800);
+            });
           });
-        });
+        };
+        bindModelClicks();
 
+        const searchInput = document.getElementById('wiz-model-search-filter') as HTMLInputElement | null;
+        if (searchInput) {
+          searchInput.addEventListener('input', () => {
+            const query = searchInput.value.toLowerCase().trim();
+            const container = document.getElementById('wiz-model-picker-container');
+            if (!container) return;
+            const filtered = liveModels.filter(m => m.toLowerCase().includes(query)).slice(0, 40);
+            container.innerHTML = filtered.map((mId, idx) => `
+              <button 
+                type="button" 
+                data-model-id="${mId}" 
+                class="wiz-model-pick-btn w-full text-left px-3 sm:px-3.5 py-2.5 rounded-xl bg-white/[0.04] hover:bg-purple-900/30 border border-white/10 hover:border-purple-500/50 text-xs transition flex items-center justify-between gap-2 group cursor-pointer ${idx === 0 ? 'border-purple-500/50 bg-purple-950/20' : ''}"
+              >
+                <div class="flex items-center gap-2 min-w-0">
+                  <span class="w-2 h-2 rounded-full ${idx === 0 ? 'bg-cyan-400' : 'bg-slate-500'} shrink-0 group-hover:bg-cyan-400"></span>
+                  <span class="font-mono text-white group-hover:text-purple-300 truncate">${mId}</span>
+                </div>
+              </button>
+            `).join('');
+            bindModelClicks();
+          });
+        }
       } else {
+        setEmptyModelDropdown();
         appendNovaBubble(`
           <div class="p-3 rounded-xl bg-red-950/50 border border-red-500/40 text-red-200 space-y-1.5">
             <div class="flex items-center gap-1.5 font-bold text-red-300">
@@ -3226,7 +3235,7 @@ const { character } = Astro.props;
               ${result.message || 'The provided key was rejected by the provider.'}
             </p>
             <p class="text-[11px] text-slate-300 pt-1">
-              Please verify that you copied the complete key without surrounding whitespace, and paste it again below:
+              Please verify your key from <a href="${wizardSelectedProv.keyUrl}" target="_blank" class="text-cyan-400 underline font-semibold">${wizardSelectedProv.keyText}</a> and paste it again below:
             </p>
           </div>
         `);
@@ -3256,296 +3265,6 @@ const { character } = Astro.props;
     } catch {
       wizardChatInput?.focus();
     }
-  });
-
-  function goToStep4() {
-    wizardCurrentStep = 4;
-    wizardChatView?.classList.add('hidden');
-    wizardSettingsView?.classList.remove('hidden');
-    if (wizardStepBadge) wizardStepBadge.textContent = 'Step 4 of 4: Hyperparameter Tuning';
-
-    if (wizSumProv) wizSumProv.textContent = wizardSelectedProv ? wizardSelectedProv.name : 'AI Engine';
-    if (wizSumModel) wizSumModel.textContent = `Model: ${wizardSelectedModel} • Latency: ~${wizardLatency || 110}ms`;
-
-    const currentTemp = localStorage.getItem('aetheria_text_temp') || '0.85';
-    const currentTokens = localStorage.getItem('aetheria_text_tokens') || '350';
-    const currentContext = localStorage.getItem('aetheria_text_context') || '16';
-    const currentRepPen = localStorage.getItem('aetheria_text_rep_pen') || '1.10';
-
-    if (wizSliderTemp) wizSliderTemp.value = currentTemp;
-    if (wizValTemp) wizValTemp.textContent = currentTemp;
-    if (wizSliderTokens) wizSliderTokens.value = currentTokens;
-    if (wizValTokens) wizValTokens.textContent = `${currentTokens} tok`;
-    if (wizSliderContext) wizSliderContext.value = currentContext;
-    if (wizValContext) wizValContext.textContent = `${currentContext} turns`;
-    if (wizSliderRepPen) wizSliderRepPen.value = currentRepPen;
-    if (wizValRepPen) wizValRepPen.textContent = currentRepPen;
-  }
-
-  wizBtnReconfigure?.addEventListener('click', () => {
-    goToStep2();
-  });
-
-  btnWizardRestart?.addEventListener('click', () => {
-    goToStep1();
-  });
-
-  wizBtnCompleteAll?.addEventListener('click', () => {
-    if (wizardSelectedProv) {
-      localStorage.setItem('aetheria_text_provider', wizardSelectedProv.id);
-    }
-    if (wizardApiKey) {
-      localStorage.setItem('aetheria_text_key', wizardApiKey);
-    }
-    if (wizardSelectedModel) {
-      localStorage.setItem('aetheria_text_model', wizardSelectedModel);
-    }
-    if (wizSliderTemp) localStorage.setItem('aetheria_text_temp', wizSliderTemp.value);
-    if (wizSliderTokens) localStorage.setItem('aetheria_text_tokens', wizSliderTokens.value);
-    if (wizSliderContext) localStorage.setItem('aetheria_text_context', wizSliderContext.value);
-    if (wizSliderRepPen) localStorage.setItem('aetheria_text_rep_pen', wizSliderRepPen.value);
-    if (wizToggleStreaming) localStorage.setItem('aetheria_text_streaming', wizToggleStreaming.checked.toString());
-
-    if (textProviderSelect && wizardSelectedProv) textProviderSelect.value = wizardSelectedProv.id;
-    if (textApiKey && wizardApiKey) textApiKey.value = wizardApiKey;
-    if (textModelSelect && wizardSelectedModel) textModelSelect.value = wizardSelectedModel;
-    if (textModelInput && wizardSelectedModel) textModelInput.value = wizardSelectedModel;
-
-    syncProviderVisibility();
-    updateHeaderPill();
-    unlockHyperparameters(true);
-
-    byokTray?.classList.add('hidden');
-    showNotification('🚀 Settings saved! You are ready to chat with characters.');
-  });
-
-  // Load and apply settings from localStorage
-  function loadEngineSettings() {
-    // 1. Text settings
-    const textProv = localStorage.getItem('aetheria_text_provider') || 'groq';
-    if (textProviderSelect) textProviderSelect.value = textProv;
-    if (textApiKey) textApiKey.value = localStorage.getItem('aetheria_text_key') || '';
-    if (textBaseUrl) textBaseUrl.value = localStorage.getItem('aetheria_text_base_url') || '';
-    
-    // Sliders
-    if (sliderTemp) sliderTemp.value = localStorage.getItem('aetheria_text_temp') || '0.85';
-    if (sliderTokens) sliderTokens.value = localStorage.getItem('aetheria_text_tokens') || '350';
-    if (sliderTopP) sliderTopP.value = localStorage.getItem('aetheria_text_top_p') || '0.95';
-    if (sliderRepPen) sliderRepPen.value = localStorage.getItem('aetheria_text_rep_pen') || '1.10';
-    if (sliderFreqPen) sliderFreqPen.value = localStorage.getItem('aetheria_text_freq_pen') || '0.00';
-    if (sliderPresPen) sliderPresPen.value = localStorage.getItem('aetheria_text_pres_pen') || '0.00';
-    if (sliderContext) sliderContext.value = localStorage.getItem('aetheria_text_context') || '16';
-    if (toggleStreaming) toggleStreaming.checked = localStorage.getItem('aetheria_text_streaming') !== 'false';
-
-    // 2. Voice settings
-    const voiceProv = localStorage.getItem('aetheria_voice_provider') || 'browser';
-    if (voiceProviderSelect) voiceProviderSelect.value = voiceProv;
-    if (voiceApiKey) voiceApiKey.value = localStorage.getItem('aetheria_voice_key') || '';
-    if (voiceIdInput) voiceIdInput.value = localStorage.getItem('aetheria_voice_id') || '21m00Tcm4TlvDq8ikWAM';
-    if (openaiVoiceSelect) openaiVoiceSelect.value = localStorage.getItem('aetheria_voice_openai') || 'nova';
-    if (sliderStability) sliderStability.value = localStorage.getItem('aetheria_voice_stability') || '0.50';
-    if (sliderClarity) sliderClarity.value = localStorage.getItem('aetheria_voice_clarity') || '0.75';
-    if (sliderVoiceRate) sliderVoiceRate.value = localStorage.getItem('aetheria_voice_rate') || '1.0';
-    if (sliderVoicePitch) sliderVoicePitch.value = localStorage.getItem('aetheria_voice_pitch') || '1.0';
-    if (toggleFilterNarration) toggleFilterNarration.checked = localStorage.getItem('aetheria_voice_filter') !== 'false';
-    if (toggleAutoplayVoice) toggleAutoplayVoice.checked = localStorage.getItem('aetheria_voice_autoplay') === 'true';
-
-    // 3. Image settings
-    const imageProv = localStorage.getItem('aetheria_image_provider') || 'pollinations';
-    if (imageProviderSelect) imageProviderSelect.value = imageProv;
-    if (imageApiKey) imageApiKey.value = localStorage.getItem('aetheria_image_key') || '';
-    if (imageAspectSelect) imageAspectSelect.value = localStorage.getItem('aetheria_image_aspect') || '1:1';
-    if (imageStepsInput) imageStepsInput.value = localStorage.getItem('aetheria_image_steps') || '20';
-    if (imageCfgInput) imageCfgInput.value = localStorage.getItem('aetheria_image_cfg') || '3.5';
-    if (toggleImageAnchor) toggleImageAnchor.checked = localStorage.getItem('aetheria_image_anchor') !== 'false';
-    if (imageNegativePrompt) imageNegativePrompt.value = localStorage.getItem('aetheria_image_negative') || 'blurry, distorted, low quality, bad anatomy, deformed limbs, extra fingers, watermark';
-
-    // 4. Video settings
-    const videoProv = localStorage.getItem('aetheria_video_provider') || 'fal-kling';
-    if (videoProviderSelect) videoProviderSelect.value = videoProv;
-    if (videoApiKey) videoApiKey.value = localStorage.getItem('aetheria_video_key') || '';
-    if (sliderMotion) sliderMotion.value = localStorage.getItem('aetheria_video_motion') || '50';
-    if (videoCameraSelect) videoCameraSelect.value = localStorage.getItem('aetheria_video_camera') || 'subtle';
-    if (videoDurationSelect) videoDurationSelect.value = localStorage.getItem('aetheria_video_duration') || '5s';
-    if (videoResSelect) videoResSelect.value = localStorage.getItem('aetheria_video_res') || '720p-24fps';
-
-    updateAllBadges();
-    syncProviderVisibility();
-    updateHeaderPill();
-
-    // Check if engine is already configured / unlocked
-    const savedKey = localStorage.getItem('aetheria_text_key');
-    const savedProv = localStorage.getItem('aetheria_text_provider');
-    const hasKey = savedKey && savedKey.trim().length > 0;
-    const isUnlockedSaved = localStorage.getItem('aetheria_engine_unlocked') === 'true';
-
-    if ((hasKey && isUnlockedSaved) || savedProv === 'custom-local') {
-      unlockHyperparameters(false);
-      wizardSelectedProv = WIZARD_PROVIDERS.find(x => x.id === savedProv) || WIZARD_PROVIDERS[0];
-      wizardApiKey = savedKey || '';
-      wizardSelectedModel = localStorage.getItem('aetheria_text_model') || (wizardSelectedProv?.models[0]?.id || '');
-      goToStep4();
-    } else {
-      lockHyperparameters();
-      goToStep1();
-    }
-  }
-
-  function updateAllBadges() {
-    if (badgeTemp && sliderTemp) badgeTemp.textContent = parseFloat(sliderTemp.value).toFixed(2);
-    if (badgeTokens && sliderTokens) badgeTokens.textContent = `${sliderTokens.value} tok`;
-    if (badgeTopP && sliderTopP) badgeTopP.textContent = parseFloat(sliderTopP.value).toFixed(2);
-    if (badgeRepPen && sliderRepPen) badgeRepPen.textContent = parseFloat(sliderRepPen.value).toFixed(2);
-    if (badgeFreqPen && sliderFreqPen) badgeFreqPen.textContent = parseFloat(sliderFreqPen.value).toFixed(2);
-    if (badgePresPen && sliderPresPen) badgePresPen.textContent = parseFloat(sliderPresPen.value).toFixed(2);
-    if (badgeContext && sliderContext) badgeContext.textContent = `${sliderContext.value} Turns`;
-
-    if (badgeStability && sliderStability) badgeStability.textContent = parseFloat(sliderStability.value).toFixed(2);
-    if (badgeClarity && sliderClarity) badgeClarity.textContent = parseFloat(sliderClarity.value).toFixed(2);
-    if (badgeVoiceRate && sliderVoiceRate) badgeVoiceRate.textContent = `${parseFloat(sliderVoiceRate.value).toFixed(1)}x`;
-    if (badgeVoicePitch && sliderVoicePitch) badgeVoicePitch.textContent = parseFloat(sliderVoicePitch.value).toFixed(2);
-
-    if (badgeMotion && sliderMotion) badgeMotion.textContent = sliderMotion.value;
-  }
-
-  function updateHeaderPill() {
-    if (!engineLabel) return;
-    const textProv = textProviderSelect?.value || localStorage.getItem('aetheria_text_provider') || 'groq';
-    const conf = PROVIDER_CONFIGS[textProv] || PROVIDER_CONFIGS.demo;
-    const model = textModelSelect?.value || textModelInput?.value || localStorage.getItem('aetheria_text_model') || conf.defaultModel;
-    const shortModel = model.split('/').pop() || model;
-    
-    if (textProv === 'demo') {
-      engineLabel.textContent = 'Settings';
-    } else {
-      engineLabel.textContent = `AI: ${conf.label.toUpperCase()}`;
-    }
-  }
-
-  function saveAllSettings() {
-    // 1. Text
-    const chosenModel = textModelInput?.value.trim() || textModelSelect?.value || 'llama-3.3-70b-versatile';
-    if (textProviderSelect) localStorage.setItem('aetheria_text_provider', textProviderSelect.value);
-    if (textApiKey) localStorage.setItem('aetheria_text_key', textApiKey.value.trim());
-    if (textBaseUrl) localStorage.setItem('aetheria_text_base_url', textBaseUrl.value.trim());
-    localStorage.setItem('aetheria_text_model', chosenModel);
-    if (sliderTemp) localStorage.setItem('aetheria_text_temp', sliderTemp.value);
-    if (sliderTokens) localStorage.setItem('aetheria_text_tokens', sliderTokens.value);
-    if (sliderTopP) localStorage.setItem('aetheria_text_top_p', sliderTopP.value);
-    if (sliderRepPen) localStorage.setItem('aetheria_text_rep_pen', sliderRepPen.value);
-    if (sliderFreqPen) localStorage.setItem('aetheria_text_freq_pen', sliderFreqPen.value);
-    if (sliderPresPen) localStorage.setItem('aetheria_text_pres_pen', sliderPresPen.value);
-    if (sliderContext) localStorage.setItem('aetheria_text_context', sliderContext.value);
-    if (toggleStreaming) localStorage.setItem('aetheria_text_streaming', toggleStreaming.checked ? 'true' : 'false');
-
-    // 2. Voice
-    if (voiceProviderSelect) localStorage.setItem('aetheria_voice_provider', voiceProviderSelect.value);
-    if (voiceApiKey) localStorage.setItem('aetheria_voice_key', voiceApiKey.value.trim());
-    if (voiceIdInput) localStorage.setItem('aetheria_voice_id', voiceIdInput.value.trim());
-    if (openaiVoiceSelect) localStorage.setItem('aetheria_voice_openai', openaiVoiceSelect.value);
-    if (sliderStability) localStorage.setItem('aetheria_voice_stability', sliderStability.value);
-    if (sliderClarity) localStorage.setItem('aetheria_voice_clarity', sliderClarity.value);
-    if (sliderVoiceRate) localStorage.setItem('aetheria_voice_rate', sliderVoiceRate.value);
-    if (sliderVoicePitch) localStorage.setItem('aetheria_voice_pitch', sliderVoicePitch.value);
-    if (toggleFilterNarration) localStorage.setItem('aetheria_voice_filter', toggleFilterNarration.checked ? 'true' : 'false');
-    if (toggleAutoplayVoice) localStorage.setItem('aetheria_voice_autoplay', toggleAutoplayVoice.checked ? 'true' : 'false');
-
-    // 3. Image
-    if (imageProviderSelect) localStorage.setItem('aetheria_image_provider', imageProviderSelect.value);
-    if (imageApiKey) localStorage.setItem('aetheria_image_key', imageApiKey.value.trim());
-    if (imageAspectSelect) localStorage.setItem('aetheria_image_aspect', imageAspectSelect.value);
-    if (imageStepsInput) localStorage.setItem('aetheria_image_steps', imageStepsInput.value);
-    if (imageCfgInput) localStorage.setItem('aetheria_image_cfg', imageCfgInput.value);
-    if (toggleImageAnchor) localStorage.setItem('aetheria_image_anchor', toggleImageAnchor.checked ? 'true' : 'false');
-    if (imageNegativePrompt) localStorage.setItem('aetheria_image_negative', imageNegativePrompt.value.trim());
-
-    // 4. Video
-    if (videoProviderSelect) localStorage.setItem('aetheria_video_provider', videoProviderSelect.value);
-    if (videoApiKey) localStorage.setItem('aetheria_video_key', videoApiKey.value.trim());
-    if (sliderMotion) localStorage.setItem('aetheria_video_motion', sliderMotion.value);
-    if (videoCameraSelect) localStorage.setItem('aetheria_video_camera', videoCameraSelect.value);
-    if (videoDurationSelect) localStorage.setItem('aetheria_video_duration', videoDurationSelect.value);
-    if (videoResSelect) localStorage.setItem('aetheria_video_res', videoResSelect.value);
-
-    updateHeaderPill();
-    byokTray?.classList.add('hidden');
-    showNotification('Multi-Modal Engine settings saved successfully!');
-  }
-
-  function showNotification(msg) {
-    const toast = document.createElement('div');
-    toast.className = 'fixed bottom-20 left-1/2 -translate-x-1/2 z-50 px-4 py-2.5 rounded-2xl bg-[#12162b] border border-purple-500/50 text-white text-xs font-semibold shadow-2xl shadow-purple-950 flex items-center gap-2 animate-in fade-in slide-in-from-bottom-3 duration-200';
-    toast.innerHTML = `<span class="w-2 h-2 rounded-full bg-emerald-400"></span><span>${msg}</span>`;
-    document.body.appendChild(toast);
-    setTimeout(() => {
-      toast.classList.add('opacity-0', 'transition', 'duration-300');
-      setTimeout(() => toast.remove(), 300);
-    }, 2500);
-  }
-
-  // Sliders real-time listeners
-  [
-    sliderTemp, sliderTokens, sliderTopP, sliderRepPen, sliderFreqPen, sliderPresPen, sliderContext,
-    sliderStability, sliderClarity, sliderVoiceRate, sliderVoicePitch, sliderMotion
-  ].forEach(slider => {
-    slider?.addEventListener('input', updateAllBadges);
-  });
-
-  // Providers change listeners
-  textProviderSelect?.addEventListener('change', () => {
-    syncProviderVisibility();
-    updateHeaderPill();
-  });
-
-  // Toggle between Dropdown and Manual Text Input
-  toggleModelInputModeBtn?.addEventListener('click', () => {
-    if (!textModelInput || !textModelSelect) return;
-    const isInputHidden = textModelInput.classList.contains('hidden');
-    if (isInputHidden) {
-      textModelInput.classList.remove('hidden');
-      textModelSelect.classList.add('hidden');
-      textModelInput.value = textModelSelect.value;
-      textModelInput.focus();
-    } else {
-      textModelInput.classList.add('hidden');
-      textModelSelect.classList.remove('hidden');
-      if (textModelInput.value) {
-        populateModelDropdown([textModelInput.value, ...(PROVIDER_CONFIGS[textProviderSelect?.value || 'groq']?.curated || [])], textModelInput.value);
-      }
-    }
-  });
-
-  textModelSelect?.addEventListener('change', () => {
-    if (textModelInput) textModelInput.value = textModelSelect.value;
-    updateHeaderPill();
-  });
-
-  textModelInput?.addEventListener('input', updateHeaderPill);
-
-  fetchModelsBtn?.addEventListener('click', fetchModelsForProvider);
-  pingTextBtn?.addEventListener('click', pingTextConnection);
-
-  voiceProviderSelect?.addEventListener('change', syncProviderVisibility);
-  imageProviderSelect?.addEventListener('change', syncProviderVisibility);
-
-  // Tab switching
-  const activeTabClasses = ['bg-purple-950/60', 'border-purple-500/50', 'text-white', 'shadow-md', 'shadow-purple-950/40'];
-  const inactiveTabClasses = ['bg-white/[0.03]', 'border-white/[0.06]', 'text-slate-400'];
-
-  engineTabBtns.forEach(btn => {
-    btn.addEventListener('click', () => {
-      const targetId = btn.getAttribute('data-tab');
-      engineTabBtns.forEach(b => {
-        b.classList.remove(...activeTabClasses);
-        b.classList.add(...inactiveTabClasses);
-      });
-      btn.classList.remove(...inactiveTabClasses);
-      btn.classList.add(...activeTabClasses);
-
-      engineTabPanes.forEach(pane => {
-        pane.classList.toggle('hidden', pane.id !== targetId);
-      });
-    });
   });
 
   // Quick Voice Pills
