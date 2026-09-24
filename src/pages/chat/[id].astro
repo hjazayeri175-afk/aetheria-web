@@ -71,7 +71,7 @@ const { character } = Astro.props;
   <div class="h-[100dvh] max-h-[100dvh] w-full max-w-[100vw] flex flex-col bg-[#070913] text-slate-100 overflow-hidden font-sans">
     
     <!-- Top Navigation Header -->
-    <header class="h-14 sm:h-16 border-b border-white/[0.08] bg-[#090b17]/95 backdrop-blur-xl px-2 sm:px-6 flex items-center justify-between z-30 shrink-0 w-full max-w-full overflow-hidden">
+    <header class="h-14 sm:h-16 border-b border-white/[0.08] bg-[#090b17]/95 backdrop-blur-xl px-2 sm:px-6 flex items-center justify-between z-30 shrink-0 w-full max-w-full overflow-visible">
       <div class="flex items-center gap-1.5 sm:gap-4 min-w-0">
         <!-- Back to Hub -->
         <a 
@@ -105,10 +105,7 @@ const { character } = Astro.props;
           <div class="min-w-0">
             <div class="flex items-center gap-1">
               <h1 id="chat-header-name" class="text-xs sm:text-sm font-bold text-white tracking-wide truncate max-w-[85px] xs:max-w-[130px] sm:max-w-none">{character.name}</h1>
-              <span class="inline-flex items-center gap-0.5 px-1 py-0.2 rounded text-[8px] sm:text-[9px] font-semibold bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 shrink-0">
-                <ShieldCheck class="w-2.5 h-2.5" />
-                <span>SFW</span>
-              </span>
+
 
               <!-- Cloud Sync Indicator (Anti-Clear Cache) -->
               <span id="chat-cloud-sync-badge" class="hidden items-center gap-1 px-1.5 py-0.2 rounded text-[8px] sm:text-[9px] font-semibold bg-cyan-500/10 text-cyan-400 border border-cyan-500/20 shrink-0" title="Connected to Cloud Edge Storage">
@@ -2632,25 +2629,25 @@ const { character } = Astro.props;
     if (textApiKey) {
       textApiKey.placeholder = conf.keyPlaceholder || 'sk-...';
     }
-    if (apiKeyLink && conf.keyLink) {
-      apiKeyLink.href = conf.keyLink;
-      apiKeyLink.classList.remove('hidden');
-    } else if (apiKeyLink) {
-      apiKeyLink.classList.add('hidden');
+    if (getKeyLink && conf.keyLink) {
+      getKeyLink.href = conf.keyLink;
+      getKeyLink.classList.remove('hidden');
+    } else if (getKeyLink) {
+      getKeyLink.classList.add('hidden');
     }
 
     // Custom Base URL container
-    if (baseUrlContainer) {
-      baseUrlContainer.classList.toggle('hidden', !conf.hasUrl);
+    if (customBaseUrlContainer) {
+      customBaseUrlContainer.classList.toggle('hidden', !conf.hasUrl);
     }
-    if (baseUrlLabel) {
-      baseUrlLabel.textContent = conf.urlLabel || 'Base API URL';
+    if (customBaseUrlLabel) {
+      customBaseUrlLabel.textContent = conf.urlLabel || 'Base API URL';
     }
     if (textBaseUrl) {
       textBaseUrl.placeholder = conf.urlPlaceholder || 'https://api.example.com/v1';
     }
-    if (baseUrlHint) {
-      baseUrlHint.textContent = conf.urlHint || '';
+    if (customBaseUrlHint) {
+      customBaseUrlHint.textContent = conf.urlHint || '';
     }
 
     // Model selection sync (Zero hardcoded fallback)
@@ -3605,6 +3602,58 @@ const { character } = Astro.props;
   });
   closeByok?.addEventListener('click', () => byokTray?.classList.add('hidden'));
   cancelByok?.addEventListener('click', () => byokTray?.classList.add('hidden'));
+  // Save all engine settings to localStorage
+  function saveAllSettings() {
+    if (textProviderSelect) localStorage.setItem('aetheria_text_provider', textProviderSelect.value);
+    if (textApiKey) localStorage.setItem('aetheria_text_key', textApiKey.value.trim());
+    if (textBaseUrl) localStorage.setItem('aetheria_text_base_url', textBaseUrl.value.trim());
+
+    const model = (isCustomModelInput && textModelInput) ? textModelInput.value.trim() : (textModelSelect ? textModelSelect.value : '');
+    if (model) localStorage.setItem('aetheria_text_model', model);
+
+    if (sliderTemp) localStorage.setItem('aetheria_text_temp', sliderTemp.value);
+    if (sliderTokens) localStorage.setItem('aetheria_text_tokens', sliderTokens.value);
+    if (sliderTopP) localStorage.setItem('aetheria_text_top_p', sliderTopP.value);
+    if (sliderRepPen) localStorage.setItem('aetheria_text_rep_pen', sliderRepPen.value);
+    if (sliderFreqPen) localStorage.setItem('aetheria_text_freq_pen', sliderFreqPen.value);
+    if (sliderPresPen) localStorage.setItem('aetheria_text_pres_pen', sliderPresPen.value);
+    if (sliderContext) localStorage.setItem('aetheria_text_context', sliderContext.value);
+    if (toggleStreaming) localStorage.setItem('aetheria_text_streaming', toggleStreaming.checked ? 'true' : 'false');
+
+    if (voiceProviderSelect) localStorage.setItem('aetheria_voice_provider', voiceProviderSelect.value);
+    if (voiceApiKey) localStorage.setItem('aetheria_voice_key', voiceApiKey.value.trim());
+    if (voiceIdInput) localStorage.setItem('aetheria_voice_id', voiceIdInput.value.trim());
+    if (openaiVoiceSelect) localStorage.setItem('aetheria_openai_voice', openaiVoiceSelect.value);
+    if (sliderStability) localStorage.setItem('aetheria_voice_stability', sliderStability.value);
+    if (sliderClarity) localStorage.setItem('aetheria_voice_clarity', sliderClarity.value);
+    if (sliderVoiceRate) localStorage.setItem('aetheria_voice_rate', sliderVoiceRate.value);
+    if (sliderVoicePitch) localStorage.setItem('aetheria_voice_pitch', sliderVoicePitch.value);
+    if (toggleFilterNarration) localStorage.setItem('aetheria_voice_filter_narration', toggleFilterNarration.checked ? 'true' : 'false');
+    if (toggleAutoplayVoice) localStorage.setItem('aetheria_voice_autoplay', toggleAutoplayVoice.checked ? 'true' : 'false');
+
+    if (imageProviderSelect) localStorage.setItem('aetheria_image_provider', imageProviderSelect.value);
+    if (imageApiKey) localStorage.setItem('aetheria_image_key', imageApiKey.value.trim());
+    if (imageAspectSelect) localStorage.setItem('aetheria_image_aspect', imageAspectSelect.value);
+    if (imageStepsInput) localStorage.setItem('aetheria_image_steps', imageStepsInput.value);
+    if (imageCfgInput) localStorage.setItem('aetheria_image_cfg', imageCfgInput.value);
+    if (toggleImageAnchor) localStorage.setItem('aetheria_image_anchor', toggleImageAnchor.checked ? 'true' : 'false');
+    if (imageNegativePrompt) localStorage.setItem('aetheria_image_negative', imageNegativePrompt.value.trim());
+
+    if (videoProviderSelect) localStorage.setItem('aetheria_video_provider', videoProviderSelect.value);
+    if (videoApiKey) localStorage.setItem('aetheria_video_key', videoApiKey.value.trim());
+    if (videoModelSelect) localStorage.setItem('aetheria_video_model', videoModelSelect.value);
+    if (videoRatioSelect) localStorage.setItem('aetheria_video_ratio', videoRatioSelect.value);
+    if (videoDurationSelect) localStorage.setItem('aetheria_video_duration', videoDurationSelect.value);
+
+    if (engineLabel) {
+      const pName = PROVIDER_CONFIGS[textProviderSelect?.value || 'demo']?.name || 'Engine';
+      engineLabel.textContent = pName;
+    }
+
+    byokTray?.classList.add('hidden');
+    showNotification('AI Engine settings saved successfully');
+  }
+
   saveEngineBtn?.addEventListener('click', saveAllSettings);
 
   // Close modal on backdrop click
@@ -5353,6 +5402,7 @@ Requirements:
 
   sessionsBtn?.addEventListener('click', (e) => {
     e.stopPropagation();
+    renderSessionsDropdown();
     sessionsDropdown?.classList.toggle('hidden');
   });
 
