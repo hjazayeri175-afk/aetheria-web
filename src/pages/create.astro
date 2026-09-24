@@ -191,7 +191,7 @@ const PRESET_AVATARS = [
               <span class="step-num w-5 h-5 rounded-full bg-purple-600 text-white flex items-center justify-center text-xs font-bold">1</span>
               <span class="text-xs font-bold">Identity & Card</span>
             </div>
-            <p class="text-[10px] text-slate-400 line-clamp-1">Name, portrait, archetype, SFW</p>
+            <p class="text-[10px] text-slate-400 line-clamp-1">Name, portrait, archetype, genre</p>
           </button>
 
           <button 
@@ -329,7 +329,7 @@ const PRESET_AVATARS = [
                     <input 
                       id="char-tags" 
                       type="text" 
-                      placeholder="e.g. SFW, Companion, Cyberpunk, Scribe" 
+                      placeholder="e.g. Fantasy, Sci-Fi, Companion, Cyberpunk" 
                       class="w-full px-4 py-3 rounded-2xl bg-white/[0.04] border border-white/10 placeholder:text-slate-500 text-sm text-white outline-none transition"
                       value=""
                     />
@@ -406,17 +406,17 @@ const PRESET_AVATARS = [
                   <p class="text-[11px] text-slate-500 mt-1">Helps the AI describe physical actions, gestures, eye contact, and clothing interaction.</p>
                 </div>
 
-                <!-- SFW Standard Badge -->
-                <div class="p-4 rounded-2xl bg-emerald-950/20 border border-emerald-500/20 flex items-start gap-3">
+                <!-- Persona Certification Badge -->
+                <div class="p-4 rounded-2xl bg-purple-950/20 border border-purple-500/20 flex items-start gap-3">
                   <input 
                     id="char-sfw-cert" 
                     type="checkbox" 
                     checked 
-                    class="mt-1 rounded text-emerald-500 focus:ring-emerald-500 bg-white/10 border-white/20 w-4 h-4"
+                    class="mt-1 rounded text-purple-500 focus:ring-purple-500 bg-white/10 border-white/20 w-4 h-4"
                   />
                   <label for="char-sfw-cert" class="text-xs text-slate-300 cursor-pointer">
-                    <strong class="text-emerald-300 block mb-0.5">SFW Standard Certification</strong>
-                    I certify this persona portrays an adult (18+) and adheres to wholesome storytelling, mystery, and companion standards.
+                    <strong class="text-purple-300 block mb-0.5">Creative Persona Certification</strong>
+                    I certify this persona is designed for interactive storytelling and roleplay simulation.
                   </label>
                 </div>
 
@@ -658,7 +658,7 @@ const PRESET_AVATARS = [
                 <div>
                   <div class="flex items-center justify-between mb-2">
                     <label for="char-system-prompt" class="text-xs sm:text-sm font-semibold text-slate-200">
-                      System Instructions & Guardrails
+                      System Prompt & Roleplay Directives
                     </label>
                     <span id="tok-system-prompt" class="text-[11px] font-mono text-slate-500">~0 tok</span>
                   </div>
@@ -666,7 +666,7 @@ const PRESET_AVATARS = [
                     id="char-system-prompt" 
                     rows="5" 
                     class="w-full px-4 py-3 rounded-2xl bg-white/[0.04] border border-white/10 text-sm sm:text-base text-white placeholder:text-slate-500 outline-none leading-relaxed resize-y min-h-[130px]"
-                    placeholder="Core behavioral instructions and guardrails for the AI model.&#10;&#10;Example:&#10;Portray &#123;&#123;char&#125;&#125; with atmospheric fidelity and psychological depth. Never narrate or decide actions for &#123;&#123;user&#125;&#125;. Maintain immersion and adhere to wholesome SFW standards."
+                    placeholder="Core behavioral directives for the AI model.&#10;&#10;Example:&#10;Portray &#123;&#123;char&#125;&#125; with atmospheric fidelity, realistic emotional depth, and consistent personality. Use *asterisks* for actions and quotes for dialogue. Never speak or act on behalf of &#123;&#123;user&#125;&#125;."
                   ></textarea>
                 </div>
 
@@ -759,7 +759,7 @@ const PRESET_AVATARS = [
                   </p>
                   <div id="preview-tags" class="flex flex-wrap gap-1 pt-1">
                     <span class="px-1.5 py-0.5 rounded bg-white/[0.08] text-[9px] text-slate-300">#Companion</span>
-                    <span class="px-1.5 py-0.5 rounded bg-white/[0.08] text-[9px] text-slate-300">#SFW</span>
+                    <span class="px-1.5 py-0.5 rounded bg-white/[0.08] text-[9px] text-slate-300">#RPG</span>
                   </div>
                 </div>
               </div>
@@ -1388,7 +1388,7 @@ const PRESET_AVATARS = [
       if (tags.length > 0) {
         previewTags.innerHTML = tags.slice(0, 3).map(t => `<span class="px-1.5 py-0.5 rounded bg-white/[0.08] text-[9px] text-slate-300">#${t}</span>`).join('');
       } else {
-        previewTags.innerHTML = `<span class="px-1.5 py-0.5 rounded bg-white/[0.08] text-[9px] text-slate-400">#Companion</span><span class="px-1.5 py-0.5 rounded bg-white/[0.08] text-[9px] text-slate-400">#SFW</span>`;
+        previewTags.innerHTML = `<span class="px-1.5 py-0.5 rounded bg-white/[0.08] text-[9px] text-slate-400">#Companion</span><span class="px-1.5 py-0.5 rounded bg-white/[0.08] text-[9px] text-slate-400">#RPG</span>`;
       }
     }
 
@@ -1407,7 +1407,7 @@ const PRESET_AVATARS = [
         scenario: scenarioInput?.value || '',
         first_mes: greetingInput?.value || '',
         mes_example: mesExampleInput?.value || '',
-        creator_notes: 'Created via Aetheria AI Character Studio. Strict SFW standard.',
+        creator_notes: 'Created via Aetheria AI Character Studio.',
         system_prompt: sysPromptInput?.value || 'Portray the character with atmospheric consistency.',
         post_history_instructions: '',
         alternate_greetings: altGreetingInput?.value.split('<START>').map(s => s.trim()).filter(Boolean) || [],
