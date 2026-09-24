@@ -3052,7 +3052,7 @@ const { character } = Astro.props;
     const provBtns = wizardChatHistory?.querySelectorAll('.wiz-card-btn');
     provBtns?.forEach(btn => {
       btn.addEventListener('click', (e) => {
-        const provId = (e.currentTarget as HTMLElement).getAttribute('data-prov-id');
+        const provId = (e.currentTarget)?.getAttribute('data-prov-id');
         const p = WIZARD_PROVIDERS.find(x => x.id === provId);
         if (p) {
           wizardSelectedProv = p;
@@ -3201,7 +3201,7 @@ const { character } = Astro.props;
         };
         bindModelClicks();
 
-        const searchInput = document.getElementById('wiz-model-search-filter') as HTMLInputElement | null;
+        const searchInput = document.getElementById('wiz-model-search-filter');
         if (searchInput) {
           searchInput.addEventListener('input', () => {
             const query = searchInput.value.toLowerCase().trim();
