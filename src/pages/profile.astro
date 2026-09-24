@@ -219,24 +219,14 @@ import {
             </div>
 
             <div class="flex items-center gap-2.5">
-              <!-- Equipped Status Badge (Non-clickable) -->
+              <!-- Active Status Badge -->
               <div 
                 id="persona-status-badge" 
                 class="px-3 py-1.5 rounded-xl bg-purple-500/15 border border-purple-500/30 text-purple-300 text-xs font-semibold flex items-center gap-1.5 select-none"
               >
                 <Check class="w-3.5 h-3.5 text-purple-400" />
-                <span id="persona-status-badge-text">Equipped</span>
+                <span id="persona-status-badge-text">Active for Chat</span>
               </div>
-
-              <!-- Equip Action Button (Shown only when viewing non-active persona) -->
-              <button 
-                type="button" 
-                id="btn-set-default" 
-                class="hidden px-3.5 py-1.5 rounded-xl bg-white/[0.06] hover:bg-purple-600/30 border border-white/10 hover:border-purple-500/40 text-xs font-semibold text-slate-200 hover:text-white transition active:scale-95 cursor-pointer flex items-center gap-1.5"
-              >
-                <Check class="w-3.5 h-3.5 text-purple-400" />
-                <span>Equip for Chat</span>
-              </button>
 
               <button 
                 type="button" 
@@ -489,24 +479,20 @@ import {
       savePersonas();
     }
 
-    // Determine current persona
-    let activeId = '';
-    try {
-      const activeRaw = localStorage.getItem(STORAGE_KEY_ACTIVE);
-      if (activeRaw) {
-        const parsed = JSON.parse(activeRaw);
-        activeId = parsed.id;
-      }
-    } catch {}
+    // Ensure at least one default persona exists
+    if (!personas.some(p => p.isDefault)) {
+      personas[0].isDefault = true;
+    }
 
-    const matched = personas.find(p => p.id === activeId);
-    currentPersonaId = matched ? matched.id : personas[0].id;
+    // Determine current persona from default
+    const activePersona = personas.find(p => p.isDefault) || personas[0];
+    currentPersonaId = activePersona.id;
   }
 
   function savePersonas() {
     localStorage.setItem(STORAGE_KEY_PERSONAS, JSON.stringify(personas));
     // Keep active persona synced
-    const active = personas.find(p => p.id === currentPersonaId) || personas[0];
+    const active = personas.find(p => p.isDefault) || personas.find(p => p.id === currentPersonaId) || personas[0];
     if (active) {
       localStorage.setItem(STORAGE_KEY_ACTIVE, JSON.stringify(active));
     }
@@ -540,7 +526,7 @@ import {
             ${p.avatar ? `<img src="${p.avatar}" class="w-full h-full object-cover" />` : `<span class="text-xs font-bold text-purple-300">${(displayName.charAt(0) || 'U').toUpperCase()}</span>`}
           </div>
           <div class="min-w-0 pr-1">
-            <p class="text-xs font-bold truncate max-w-[90px] sm:max-w-[120px] leading-tight">${displayName}</p>
+            <p class="persona-pill-name text-xs font-bold truncate max-w-[90px] sm:max-w-[120px] leading-tight">${displayName}</p>
             <p class="text-[10px] text-slate-500 truncate leading-tight mt-0.5">${ageText}</p>
           </div>
           ${p.isDefault ? '<span class="ml-1 text-[9px] px-1.5 py-0.5 rounded-full bg-purple-500/30 text-purple-200 font-semibold border border-purple-400/20 shrink-0">Active</span>' : ''}
@@ -567,8 +553,15 @@ import {
         const id = btn.getAttribute('data-id');
         if (id) {
           currentPersonaId = id;
+          // Instantly activate the selected persona!
+          personas.forEach(x => {
+            x.isDefault = (x.id === currentPersonaId);
+          });
+          savePersonas();
           renderPillList();
           fillForm();
+          const p = personas.find(x => x.id === currentPersonaId);
+          showToast(`Active persona: ${p?.name || 'Persona'}`, 'success');
         }
       });
     });
@@ -617,22 +610,13 @@ import {
     const statusBadge = document.getElementById('persona-status-badge');
     const statusBadgeText = document.getElementById('persona-status-badge-text');
 
-    if (p.isDefault) {
-      defaultBtn?.classList.add('hidden');
-      if (statusBadge && statusBadgeText) {
-        statusBadge.classList.remove('hidden');
-        if (isGlobalEnabled) {
-          statusBadge.className = 'px-3 py-1.5 rounded-xl bg-purple-500/15 border border-purple-500/30 text-purple-300 text-xs font-semibold flex items-center gap-1.5 select-none';
-          statusBadgeText.textContent = 'Equipped';
-        } else {
-          statusBadge.className = 'px-3 py-1.5 rounded-xl bg-white/5 border border-white/10 text-slate-500 text-xs font-medium flex items-center gap-1.5 select-none';
-          statusBadgeText.textContent = 'Paused (Chats Off)';
-        }
-      }
-    } else {
-      statusBadge?.classList.add('hidden');
-      if (defaultBtn) {
-        defaultBtn.classList.remove('hidden');
+    if (statusBadge && statusBadgeText) {
+      if (isGlobalEnabled) {
+        statusBadge.className = 'px-3 py-1.5 rounded-xl bg-purple-500/15 border border-purple-500/30 text-purple-300 text-xs font-semibold flex items-center gap-1.5 select-none';
+        statusBadgeText.textContent = 'Active for Chat';
+      } else {
+        statusBadge.className = 'px-3 py-1.5 rounded-xl bg-white/5 border border-white/10 text-slate-500 text-xs font-medium flex items-center gap-1.5 select-none';
+        statusBadgeText.textContent = 'Paused (Chats Off)';
       }
     }
 
@@ -741,8 +725,23 @@ import {
       }
     });
 
+    // Live update card title as user types
+    const nameInput = document.getElementById('persona-name') as HTMLInputElement;
+    nameInput?.addEventListener('input', () => {
+      const p = personas.find(x => x.id === currentPersonaId);
+      if (p) {
+        p.name = nameInput.value;
+        const pillText = document.querySelector(`.persona-pill[data-id="${p.id}"] .persona-pill-name`);
+        if (pillText) {
+          pillText.textContent = nameInput.value.trim() || 'Untitled';
+        }
+      }
+    });
+
     // New Persona
     document.getElementById('btn-new-persona')?.addEventListener('click', () => {
+      // Deactivate others
+      personas.forEach(x => { x.isDefault = false; });
       const newP: Persona = {
         id: 'p_' + Date.now(),
         name: '',
@@ -751,14 +750,16 @@ import {
         avatar: '',
         bio: '',
         directives: '',
-        isDefault: false
+        isDefault: true // Immediately active!
       };
       personas.push(newP);
       currentPersonaId = newP.id;
       savePersonas();
       renderPillList();
       fillForm();
-      showToast('New persona created');
+      const nInput = document.getElementById('persona-name') as HTMLInputElement;
+      nInput?.focus();
+      showToast('New persona created & active', 'success');
     });
 
     // Save Persona
@@ -766,30 +767,25 @@ import {
       const p = personas.find(x => x.id === currentPersonaId);
       if (!p) return;
 
-      const nameInput = document.getElementById('persona-name') as HTMLInputElement;
+      const nameInp = document.getElementById('persona-name') as HTMLInputElement;
       const ageInput = document.getElementById('persona-age') as HTMLInputElement;
       const pronounsInput = document.getElementById('persona-pronouns') as HTMLInputElement;
       const aboutInput = document.getElementById('persona-about') as HTMLTextAreaElement;
       const directivesInput = document.getElementById('persona-directives') as HTMLTextAreaElement;
 
-      p.name = nameInput?.value.trim() || '';
+      p.name = nameInp?.value.trim() || '';
       p.age = ageInput?.value.trim() || '';
       p.pronouns = pronounsInput?.value.trim() || '';
       p.bio = aboutInput?.value.trim() || '';
       p.directives = directivesInput?.value.trim() || '';
 
-      savePersonas();
-      renderPillList();
-      showToast('Persona saved', 'success');
-    });
-
-    // Set Default / Active
-    document.getElementById('btn-set-default')?.addEventListener('click', () => {
+      // Ensure active
       personas.forEach(x => { x.isDefault = (x.id === currentPersonaId); });
+
       savePersonas();
       renderPillList();
       fillForm();
-      showToast('Equipped persona for chat', 'success');
+      showToast('Persona saved', 'success');
     });
 
     // Delete Persona
