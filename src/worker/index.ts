@@ -100,19 +100,15 @@ export default {
     // Only intercept /api/* routes; everything else goes to static assets
     if (!url.pathname.startsWith('/api/')) {
       const assetRes = await env.ASSETS.fetch(request);
-      const contentType = assetRes.headers.get('Content-Type') || '';
-      if (contentType.includes('text/html')) {
-        const newHeaders = new Headers(assetRes.headers);
-        newHeaders.set('Cache-Control', 'no-cache, no-store, must-revalidate');
-        newHeaders.set('Pragma', 'no-cache');
-        newHeaders.set('Expires', '0');
-        return new Response(assetRes.body, {
-          status: assetRes.status,
-          statusText: assetRes.statusText,
-          headers: newHeaders
-        });
-      }
-      return assetRes;
+      const newHeaders = new Headers(assetRes.headers);
+      newHeaders.set('Cache-Control', 'no-cache, no-store, must-revalidate');
+      newHeaders.set('Pragma', 'no-cache');
+      newHeaders.set('Expires', '0');
+      return new Response(assetRes.body, {
+        status: assetRes.status,
+        statusText: assetRes.statusText,
+        headers: newHeaders
+      });
     }
 
     try {
