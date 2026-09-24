@@ -697,33 +697,73 @@ const { character } = Astro.props;
                   <div>
                     <label class="block text-xs font-semibold text-slate-300 mb-1.5 flex items-center justify-between">
                       <span>AI Model Provider</span>
-                      <span class="text-[10px] text-purple-400 font-normal">24 Supported Engines</span>
+                      <span class="text-[10px] text-purple-400 font-normal">Quick 1-Tap Select</span>
                     </label>
-                    <select id="text-provider-select" class="w-full px-3.5 py-2.5 rounded-xl bg-white/[0.05] border border-white/10 text-xs text-white outline-none focus:border-purple-500/60 font-semibold cursor-pointer">
-                      <option value="demo">Free Cloud AI</option>
-                      <option value="groq" selected>Groq</option>
-                      <option value="google">Google Gemini</option>
-                      <option value="openai">OpenAI</option>
-                      <option value="anthropic">Anthropic Claude</option>
-                      <option value="openrouter">OpenRouter</option>
-                      <option value="deepseek">DeepSeek</option>
-                      <option value="xai">xAI Grok</option>
-                      <option value="mistral">Mistral AI</option>
-                      <option value="cerebras">Cerebras</option>
-                      <option value="sambanova">SambaNova Systems</option>
-                      <option value="together">Together AI</option>
-                      <option value="fireworks">Fireworks AI</option>
-                      <option value="cohere">Cohere</option>
-                      <option value="perplexity">Perplexity AI</option>
-                      <option value="novita">Novita AI</option>
-                      <option value="featherless">Featherless AI</option>
-                      <option value="siliconflow">SiliconFlow</option>
-                      <option value="huggingface">Hugging Face</option>
-                      <option value="cloudflare">Cloudflare Workers AI</option>
-                      <option value="ai21">AI21 Labs</option>
-                      <option value="custom-proxy">⚡ Custom / OpenAI-Compatible (Any Provider)</option>
-                      <option value="custom-local">💻 Localhost (Ollama / LM Studio / vLLM)</option>
-                    </select>
+
+                    <!-- Quick Provider Chips -->
+                    <div class="flex flex-wrap gap-1.5 mb-2.5" id="quick-provider-chips">
+                      <button type="button" data-provider="google" class="quick-prov-chip px-2.5 py-1.5 rounded-xl text-[11px] font-semibold bg-white/[0.04] hover:bg-purple-600/20 border border-white/10 hover:border-purple-500/40 text-slate-300 hover:text-white transition flex items-center gap-1.5 cursor-pointer">
+                        <span>✨</span>
+                        <span>Gemini</span>
+                      </button>
+                      <button type="button" data-provider="openrouter" class="quick-prov-chip px-2.5 py-1.5 rounded-xl text-[11px] font-semibold bg-white/[0.04] hover:bg-purple-600/20 border border-white/10 hover:border-purple-500/40 text-slate-300 hover:text-white transition flex items-center gap-1.5 cursor-pointer">
+                        <span>🌐</span>
+                        <span>OpenRouter</span>
+                      </button>
+                      <button type="button" data-provider="groq" class="quick-prov-chip px-2.5 py-1.5 rounded-xl text-[11px] font-semibold bg-white/[0.04] hover:bg-purple-600/20 border border-white/10 hover:border-purple-500/40 text-slate-300 hover:text-white transition flex items-center gap-1.5 cursor-pointer">
+                        <span>⚡</span>
+                        <span>Groq</span>
+                      </button>
+                      <button type="button" data-provider="openai" class="quick-prov-chip px-2.5 py-1.5 rounded-xl text-[11px] font-semibold bg-white/[0.04] hover:bg-purple-600/20 border border-white/10 hover:border-purple-500/40 text-slate-300 hover:text-white transition flex items-center gap-1.5 cursor-pointer">
+                        <span>🟢</span>
+                        <span>OpenAI</span>
+                      </button>
+                      <button type="button" data-provider="deepseek" class="quick-prov-chip px-2.5 py-1.5 rounded-xl text-[11px] font-semibold bg-white/[0.04] hover:bg-purple-600/20 border border-white/10 hover:border-purple-500/40 text-slate-300 hover:text-white transition flex items-center gap-1.5 cursor-pointer">
+                        <span>🐳</span>
+                        <span>DeepSeek</span>
+                      </button>
+                      <button type="button" data-provider="custom-proxy" class="quick-prov-chip px-2.5 py-1.5 rounded-xl text-[11px] font-semibold bg-white/[0.04] hover:bg-purple-600/20 border border-white/10 hover:border-purple-500/40 text-slate-300 hover:text-white transition flex items-center gap-1.5 cursor-pointer">
+                        <span>⚙️</span>
+                        <span>Custom/Local</span>
+                      </button>
+                    </div>
+
+                    <div class="relative">
+                      <select id="text-provider-select" class="w-full px-3.5 py-2.5 rounded-xl bg-[#0c1026] border border-white/15 text-xs text-white outline-none focus:border-purple-500/60 font-semibold cursor-pointer appearance-none pr-9">
+                        <optgroup label="⭐ Popular & Recommended" class="bg-[#0c1026] text-purple-300 font-bold">
+                          <option value="google">✨ Google Gemini (Free API)</option>
+                          <option value="openrouter">🌐 OpenRouter (All Models)</option>
+                          <option value="groq" selected>⚡ Groq (Ultra-Fast)</option>
+                          <option value="deepseek">🐳 DeepSeek AI</option>
+                          <option value="openai">🟢 OpenAI (ChatGPT)</option>
+                          <option value="anthropic">🟣 Anthropic Claude</option>
+                        </optgroup>
+                        <optgroup label="⚙️ Custom & Localhost" class="bg-[#0c1026] text-cyan-300 font-bold">
+                          <option value="custom-proxy">⚡ Custom / OpenAI-Compatible (Any Provider)</option>
+                          <option value="custom-local">💻 Localhost (Ollama / LM Studio / vLLM)</option>
+                        </optgroup>
+                        <optgroup label="☁️ Other Cloud Engines" class="bg-[#0c1026] text-slate-400 font-bold">
+                          <option value="demo">Free Cloud AI (Keyless)</option>
+                          <option value="mistral">Mistral AI</option>
+                          <option value="xai">xAI Grok</option>
+                          <option value="together">Together AI</option>
+                          <option value="fireworks">Fireworks AI</option>
+                          <option value="cohere">Cohere</option>
+                          <option value="perplexity">Perplexity AI</option>
+                          <option value="novita">Novita AI</option>
+                          <option value="featherless">Featherless AI</option>
+                          <option value="siliconflow">SiliconFlow</option>
+                          <option value="huggingface">Hugging Face</option>
+                          <option value="cloudflare">Cloudflare Workers AI</option>
+                          <option value="cerebras">Cerebras</option>
+                          <option value="sambanova">SambaNova Systems</option>
+                          <option value="ai21">AI21 Labs</option>
+                        </optgroup>
+                      </select>
+                      <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-3 text-slate-400">
+                        <ChevronDown class="w-4 h-4" />
+                      </div>
+                    </div>
                   </div>
 
                   <!-- API Key Container -->
@@ -846,39 +886,15 @@ const { character } = Astro.props;
                     </div>
                   </div>
                 </div>
-                <!-- End of Manual Pane -->
-              </div>
 
-                <!-- Sliders Grid (Hyperparameters) with Lock Mechanism -->
-                <div id="hyperparams-card" class="relative p-4 sm:p-5 rounded-2xl bg-white/[0.02] border border-white/[0.06] space-y-4 overflow-hidden">
-                  <!-- Lock Overlay -->
-                  <div id="hyperparams-lock-overlay" class="absolute inset-0 bg-[#0c0f24]/90 backdrop-blur-md rounded-2xl flex flex-col items-center justify-center p-5 text-center z-20 border border-purple-500/30 transition-all duration-300">
-                    <div class="w-11 h-11 rounded-2xl bg-purple-950/80 border border-purple-500/40 flex items-center justify-center text-amber-400 mb-2.5 shadow-lg shadow-purple-950/80 animate-pulse">
-                      <Lock class="w-5 h-5" />
-                    </div>
-                    <h5 class="text-xs sm:text-sm font-bold text-white mb-1">Advanced Hyperparameters Locked</h5>
-                    <p class="text-[11px] sm:text-xs text-slate-300 max-w-sm mb-3.5 leading-relaxed">
-                      To adjust temperature, creativity, and memory window, connect and verify your AI model using the Smart Setup above.
-                    </p>
-                    <div class="flex flex-wrap items-center justify-center gap-2">
-                      <button type="button" id="btn-lock-goto-wizard" class="px-3.5 py-1.5 sm:px-4 sm:py-2 rounded-xl bg-purple-600 hover:bg-purple-500 text-white text-xs font-bold transition flex items-center gap-1.5 shadow-md shadow-purple-900 cursor-pointer">
-                        <Sparkles class="w-3.5 h-3.5 text-cyan-300" />
-                        <span>Launch Smart Setup</span>
-                      </button>
-                      <button type="button" id="btn-force-unlock" class="px-3 py-1.5 sm:px-3.5 sm:py-2 rounded-xl bg-white/[0.05] hover:bg-white/[0.1] text-slate-400 hover:text-white text-xs font-medium transition cursor-pointer">
-                        Manual Bypass
-                      </button>
-                    </div>
-                  </div>
-
-                <div class="flex items-center justify-between text-xs font-bold text-slate-300 uppercase tracking-wider">
+                <!-- Sliders Grid (Hyperparameters) - Inside Manual Pane, always fully unlocked -->
+                <div id="hyperparams-card" class="p-4 sm:p-5 rounded-2xl bg-white/[0.02] border border-white/[0.06] space-y-4">
+                  <div class="flex items-center justify-between text-xs font-bold text-slate-300 uppercase tracking-wider">
                     <div class="flex items-center gap-2">
+                      <SlidersHorizontal class="w-4 h-4 text-purple-400" />
                       <span>Hyperparameter Tuning</span>
-                      <span id="hyperparams-lock-badge" class="text-[10px] font-bold px-2 py-0.5 rounded-full bg-slate-800 text-slate-400 border border-slate-700 flex items-center gap-1">
-                        <Lock class="w-3 h-3 text-amber-400" /> Locked
-                      </span>
                     </div>
-                    <span class="text-[10px] text-purple-400 font-normal lowercase">real-time probability sampling</span>
+                    <span class="text-[10px] text-purple-400 font-normal lowercase">sampling & memory</span>
                   </div>
 
                   <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
@@ -984,7 +1000,9 @@ const { character } = Astro.props;
                     </div>
                   </div>
                 </div>
+                <!-- End of Manual Pane -->
               </div>
+            </div>
 
               <!-- ================= 2. TAB: VOICE ENGINE ================= -->
               <div id="tab-voice" class="engine-tab-pane hidden space-y-5">
@@ -3320,6 +3338,7 @@ const { character } = Astro.props;
     // 1. Text provider & Key
     const textProv = localStorage.getItem('aetheria_text_provider') || 'demo';
     if (textProviderSelect) textProviderSelect.value = textProv;
+    updateQuickProvChips(textProv);
 
     const textKey = localStorage.getItem('aetheria_text_key') || '';
     if (textApiKey) textApiKey.value = textKey;
@@ -3486,12 +3505,7 @@ const { character } = Astro.props;
   const wizValRepPen = document.getElementById('wiz-val-rep-pen');
   const wizToggleStreaming = document.getElementById('wiz-toggle-streaming');
 
-  const hyperparamsLockOverlay = document.getElementById('hyperparams-lock-overlay');
-  const hyperparamsLockBadge = document.getElementById('hyperparams-lock-badge');
-  const btnLockGotoWizard = document.getElementById('btn-lock-goto-wizard');
-  const btnForceUnlock = document.getElementById('btn-force-unlock');
-
-  let isEngineUnlocked = false;
+  let isEngineUnlocked = true;
   let wizardCurrentStep = 1; // 1: Name, 2: Provider, 3: Key, 4: Settings
   let wizardUserName = localStorage.getItem('aetheria_user_display_name') || (activeUserPersona && activeUserPersona.name) || '';
   let wizardSelectedProv = null;
@@ -3546,43 +3560,42 @@ const { character } = Astro.props;
 
   btnToggleWizard?.addEventListener('click', () => switchEngineViewMode('wizard'));
   btnToggleManual?.addEventListener('click', () => switchEngineViewMode('manual'));
-  btnLockGotoWizard?.addEventListener('click', () => {
-    switchEngineViewMode('wizard');
-    wizardPane?.scrollIntoView({ behavior: 'smooth' });
+
+  function updateQuickProvChips(selectedProv) {
+    const activeProv = selectedProv || (textProviderSelect ? textProviderSelect.value : '');
+    document.querySelectorAll('.quick-prov-chip').forEach(btn => {
+      const p = btn.getAttribute('data-provider');
+      const isMatch = (p === activeProv) || (p === 'custom-proxy' && (activeProv === 'custom-proxy' || activeProv === 'custom-local'));
+      if (isMatch) {
+        btn.className = 'quick-prov-chip px-2.5 py-1.5 rounded-xl text-[11px] font-semibold bg-purple-600/30 border border-purple-500/60 text-purple-200 transition flex items-center gap-1.5 shadow-sm shadow-purple-900/40 cursor-pointer';
+      } else {
+        btn.className = 'quick-prov-chip px-2.5 py-1.5 rounded-xl text-[11px] font-semibold bg-white/[0.04] hover:bg-white/[0.08] border border-white/10 hover:border-purple-500/30 text-slate-300 hover:text-white transition flex items-center gap-1.5 cursor-pointer';
+      }
+    });
+  }
+
+  document.querySelectorAll('.quick-prov-chip').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const prov = btn.getAttribute('data-provider');
+      if (textProviderSelect && prov) {
+        textProviderSelect.value = prov;
+        textProviderSelect.dispatchEvent(new Event('change'));
+        updateQuickProvChips(prov);
+      }
+    });
   });
 
-  function unlockHyperparameters(showNotify = false) {
+  textProviderSelect?.addEventListener('change', () => {
+    updateQuickProvChips(textProviderSelect.value);
+  });
+
+  function unlockHyperparameters() {
     isEngineUnlocked = true;
-    localStorage.setItem('aetheria_engine_unlocked', 'true');
-    if (hyperparamsLockOverlay) {
-      hyperparamsLockOverlay.classList.add('opacity-0', 'pointer-events-none');
-      setTimeout(() => hyperparamsLockOverlay.classList.add('hidden'), 300);
-    }
-    if (hyperparamsLockBadge) {
-      hyperparamsLockBadge.className = 'text-[10px] font-bold px-2 py-0.5 rounded-full bg-emerald-500/15 text-emerald-400 border border-emerald-500/30 flex items-center gap-1';
-      hyperparamsLockBadge.innerHTML = '<span class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span> Unlocked';
-    }
-    if (showNotify) {
-      showNotification('🔓 Advanced AI hyperparameters unlocked!');
-    }
   }
 
   function lockHyperparameters() {
-    isEngineUnlocked = false;
-    localStorage.removeItem('aetheria_engine_unlocked');
-    if (hyperparamsLockOverlay) {
-      hyperparamsLockOverlay.classList.remove('hidden');
-      setTimeout(() => hyperparamsLockOverlay.classList.remove('opacity-0', 'pointer-events-none'), 10);
-    }
-    if (hyperparamsLockBadge) {
-      hyperparamsLockBadge.className = 'text-[10px] font-bold px-2 py-0.5 rounded-full bg-slate-800 text-slate-400 border border-slate-700 flex items-center gap-1';
-      hyperparamsLockBadge.innerHTML = '🔒 Locked';
-    }
+    isEngineUnlocked = true;
   }
-
-  btnForceUnlock?.addEventListener('click', () => {
-    unlockHyperparameters(true);
-  });
 
   const WIZARD_PROVIDERS = [
     {
