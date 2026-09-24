@@ -15,22 +15,30 @@ import {
   Check, 
   Copy, 
   Eye, 
-  Sliders, 
+  EyeOff, 
   MessageSquare, 
   ArrowLeft, 
+  Camera,
   ExternalLink,
-  Bot,
   Cloud,
   CloudUpload,
   CloudDownload,
   ChevronRight,
   Smartphone,
   Laptop,
-  RefreshCw
+  RefreshCw,
+  Settings,
+  Shield,
+  Lock,
+  Mail,
+  LogOut,
+  LogIn,
+  AlertTriangle,
+  UserCheck
 } from '@lucide/astro';
 ---
 
-<Layout title="User Persona & Identity Studio — Aetheria AI">
+<Layout title="User Masks & Account Studio — Aetheria AI">
   <Header />
 
   <main class="flex-1 max-w-5xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-10 pb-28 sm:pb-12 space-y-8">
@@ -46,388 +54,520 @@ import {
           <span>Hub</span>
         </a>
         <span class="text-slate-600">/</span>
-        <span class="text-xs font-semibold text-purple-300">User Identity & Persona</span>
+        <span class="text-xs font-semibold text-purple-300">Identity & Account Studio</span>
       </div>
 
       <div class="flex items-center gap-2">
         <a 
-          href="/create" 
-          class="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-purple-600/20 hover:bg-purple-600/30 border border-purple-500/30 text-purple-300 hover:text-purple-200 text-xs font-medium transition"
+          href="/library" 
+          class="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-white/[0.04] hover:bg-white/[0.08] border border-white/[0.08] text-slate-300 hover:text-white text-xs font-medium transition"
         >
-          <Plus class="w-3.5 h-3.5" />
-          <span class="hidden sm:inline">Create Character</span>
+          <MessageSquare class="w-3.5 h-3.5 text-cyan-400" />
+          <span class="hidden sm:inline">Library</span>
         </a>
       </div>
     </div>
 
-    <!-- Hero Header -->
-    <div class="relative overflow-hidden rounded-3xl border border-white/[0.08] bg-gradient-to-b from-purple-950/20 via-[#0a0d1a] to-[#070913] p-6 sm:p-8">
-      <div class="absolute -right-20 -top-20 w-80 h-80 bg-purple-600/10 rounded-full blur-3xl pointer-events-none"></div>
-      <div class="relative z-10 flex flex-col md:flex-row md:items-center justify-between gap-6">
-        <div>
-          <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-purple-500/10 border border-purple-500/20 text-xs font-medium text-purple-300 mb-3">
-            <User class="w-3.5 h-3.5 text-purple-400" />
-            <span>Tavern V2 & Janitor Compatible Persona Engine</span>
-          </div>
-          <h1 class="text-2xl sm:text-3xl font-extrabold text-white tracking-tight">
-            User Persona & Identity
-          </h1>
-          <p class="text-xs sm:text-sm text-slate-400 mt-2 max-w-2xl leading-relaxed">
-            Configure how characters perceive and address you. Your persona name seamlessly substitutes the 
-            <code class="px-1.5 py-0.5 rounded bg-white/10 text-cyan-300 font-mono text-xs">{"{{user}}"}</code> 
-            macro across all roleplay dialogues, system prompts, and memory contexts.
-          </p>
-        </div>
-
-        <!-- Quick Storage Status -->
-        <div class="bg-black/40 border border-white/10 rounded-2xl p-4 shrink-0 min-w-[200px] text-xs space-y-2">
-          <div class="flex items-center justify-between text-slate-400">
-            <span>Storage Mode:</span>
-            <span class="text-emerald-400 font-semibold flex items-center gap-1">
-              <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span>
-              Local & Private
-            </span>
-          </div>
-          <div class="flex items-center justify-between text-slate-400">
-            <span>Custom Personas:</span>
-            <span id="persona-count-badge" class="text-white font-mono font-bold">1</span>
-          </div>
-          <div class="flex items-center justify-between text-slate-400">
-            <span>Custom Characters:</span>
-            <span id="char-count-badge" class="text-white font-mono font-bold">0</span>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <!-- Multi-Persona Switcher Tabs -->
-    <div class="p-4 rounded-2xl bg-[#090b17] border border-white/[0.08] flex items-center justify-between gap-3 overflow-x-auto">
-      <div class="flex items-center gap-2" id="persona-tabs-container">
-        <!-- Rendered dynamically -->
-      </div>
+    <!-- Top Two Main Navigation Tabs (Separating Masks from Official Account) -->
+    <div class="flex items-center gap-2 p-1.5 rounded-2xl bg-[#090b17] border border-white/[0.08] w-full max-w-md mx-auto shadow-xl">
       <button 
-        id="add-persona-btn"
+        id="tab-btn-masks" 
         type="button" 
-        class="shrink-0 flex items-center gap-1.5 px-3 py-2 rounded-xl bg-white/[0.04] hover:bg-white/[0.08] border border-white/10 text-xs font-semibold text-slate-300 hover:text-white transition cursor-pointer"
+        class="flex-1 flex items-center justify-center gap-2 py-2.5 px-4 rounded-xl text-xs sm:text-sm font-bold transition cursor-pointer bg-purple-600 text-white shadow-lg shadow-purple-900/40"
       >
-        <Plus class="w-3.5 h-3.5 text-purple-400" />
-        <span>New Persona</span>
+        <span>🎭 Roleplay Masks</span>
+        <span id="masks-count-badge" class="px-1.5 py-0.5 rounded-md bg-white/20 text-[10px] font-mono">1</span>
+      </button>
+      <button 
+        id="tab-btn-account" 
+        type="button" 
+        class="flex-1 flex items-center justify-center gap-2 py-2.5 px-4 rounded-xl text-xs sm:text-sm font-bold transition cursor-pointer text-slate-400 hover:text-white hover:bg-white/[0.05]"
+      >
+        <span>⚙️ Account & Safety</span>
       </button>
     </div>
 
-    <!-- Main Persona Form -->
-    <form id="persona-form" class="space-y-6">
+    <!-- ======================================================== -->
+    <!-- TAB 1: ROLEPLAY MASKS & CHAT IDENTITIES                  -->
+    <!-- ======================================================== -->
+    <section id="tab-view-masks" class="space-y-6">
       
-      <!-- Section 1: Appearance & Avatar -->
-      <div class="p-6 rounded-3xl bg-[#080a14] border border-white/[0.08] shadow-xl space-y-6">
-        <div class="border-b border-white/[0.06] pb-3 flex items-center justify-between">
-          <h2 class="text-base sm:text-lg font-bold text-white flex items-center gap-2">
-            <Eye class="w-5 h-5 text-purple-400" />
-            <span>1. Visual Avatar & Profile Picture</span>
-          </h2>
-          <span class="text-xs text-slate-400">Shown in chat dialogue bubbles</span>
+      <!-- Masks Header & Switcher Bar -->
+      <div class="p-5 sm:p-6 rounded-3xl bg-gradient-to-b from-purple-950/20 via-[#0a0d1a] to-[#070913] border border-white/[0.08] shadow-xl space-y-4">
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+          <div>
+            <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-purple-500/10 border border-purple-500/20 text-xs font-medium text-purple-300 mb-2">
+              <Sparkles class="w-3.5 h-3.5 text-purple-400" />
+              <span>Multi-Identity Persona System</span>
+            </div>
+            <h1 class="text-xl sm:text-2xl font-black text-white tracking-tight">
+              Roleplay Masks & Personas
+            </h1>
+            <p class="text-xs sm:text-sm text-slate-400 mt-1 max-w-2xl leading-relaxed">
+              Equip different masks for different stories. Whether you play as a 7-year-old child or a 99-year-old ancient scholar, your active mask strictly commands how characters perceive and treat you.
+            </p>
+          </div>
+
+          <!-- New Mask CTA Button -->
+          <button 
+            id="add-mask-btn"
+            type="button" 
+            class="shrink-0 flex items-center gap-2 px-4 py-2.5 rounded-2xl bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-500 hover:to-indigo-500 text-white text-xs font-bold shadow-lg shadow-purple-900/30 transition cursor-pointer active:scale-95"
+          >
+            <Plus class="w-4 h-4" />
+            <span>Create New Mask</span>
+          </button>
         </div>
 
-        <div class="grid grid-cols-1 md:grid-cols-12 gap-6 items-center">
-          <!-- Active Avatar Display -->
-          <div class="md:col-span-4 flex flex-col items-center justify-center p-6 rounded-2xl bg-[#0c0e17] border border-purple-500/30 space-y-3">
-            <div class="relative w-28 h-28 rounded-full overflow-hidden ring-4 ring-purple-500/40 shadow-xl shadow-purple-950/50 bg-[#070913] flex items-center justify-center">
-              <img 
-                id="persona-avatar-preview" 
-                src="" 
-                alt="Active Persona" 
-                class="w-full h-full object-cover transition duration-200 hidden" 
+        <!-- Mask Selector Pills -->
+        <div class="pt-2 border-t border-white/[0.06] flex items-center gap-2 overflow-x-auto pb-1" id="mask-pills-container">
+          <!-- Rendered dynamically -->
+        </div>
+      </div>
+
+      <!-- Active Mask Customization Form -->
+      <form id="mask-editor-form" class="space-y-6">
+        
+        <!-- Mask Card: Visual Avatar & Core Identity -->
+        <div class="p-6 rounded-3xl bg-[#080a14] border border-white/[0.08] shadow-xl space-y-6">
+          
+          <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-white/[0.06] pb-4">
+            <div class="flex items-center gap-3">
+              <span id="mask-active-status-badge" class="px-2.5 py-1 rounded-full text-xs font-bold bg-emerald-500/10 border border-emerald-500/30 text-emerald-400 flex items-center gap-1.5">
+                <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
+                <span>Active Mask for Chats</span>
+              </span>
+              <span class="text-xs text-slate-500 font-mono" id="mask-id-label">ID: default</span>
+            </div>
+
+            <!-- Mask Control Actions -->
+            <div class="flex items-center gap-2">
+              <button 
+                type="button" 
+                id="activate-mask-btn"
+                class="hidden px-3 py-1.5 rounded-xl bg-purple-600/20 hover:bg-purple-600/30 border border-purple-500/40 text-purple-300 text-xs font-semibold transition cursor-pointer"
+              >
+                Set as Active Mask
+              </button>
+              <button 
+                type="button" 
+                id="duplicate-mask-btn"
+                class="px-3 py-1.5 rounded-xl bg-white/[0.04] hover:bg-white/[0.08] border border-white/10 text-slate-300 hover:text-white text-xs font-semibold transition cursor-pointer"
+                title="Duplicate this mask"
+              >
+                <Copy class="w-3.5 h-3.5 inline mr-1" />
+                <span>Duplicate</span>
+              </button>
+              <button 
+                type="button" 
+                id="delete-mask-btn"
+                class="px-3 py-1.5 rounded-xl bg-rose-950/20 hover:bg-rose-950/40 border border-rose-500/30 text-rose-300 text-xs font-semibold transition cursor-pointer"
+                title="Delete this mask"
+              >
+                <Trash2 class="w-3.5 h-3.5 inline mr-1" />
+                <span>Delete</span>
+              </button>
+            </div>
+          </div>
+
+          <!-- Avatar & Primary Attributes Grid -->
+          <div class="flex flex-col md:flex-row gap-6 items-start">
+            
+            <!-- Standard Interactive Circular Avatar (Clean, 1-Click Upload) -->
+            <div class="flex flex-col items-center gap-3 shrink-0 mx-auto md:mx-0">
+              <input 
+                type="file" 
+                id="mask-avatar-file-input" 
+                accept="image/png, image/jpeg, image/webp, image/gif" 
+                class="hidden" 
               />
-              <div id="persona-avatar-placeholder" class="w-full h-full flex flex-col items-center justify-center text-purple-400 bg-gradient-to-tr from-purple-950/60 to-slate-900">
-                <User class="w-12 h-12 stroke-[1.5]" />
-              </div>
-            </div>
-            <div class="text-center">
-              <h3 id="preview-persona-name" class="text-sm font-bold text-white">Traveler</h3>
-              <p id="preview-persona-pronouns" class="text-xs text-purple-400">They/Them</p>
-            </div>
-          </div>
-
-          <!-- Direct Image Upload Dropzone -->
-          <div class="md:col-span-8 space-y-4">
-            <!-- Hidden file input -->
-            <input 
-              type="file" 
-              id="persona-avatar-file-input" 
-              accept="image/png, image/jpeg, image/webp, image/gif" 
-              class="hidden" 
-            />
-
-            <!-- Drag & Drop Zone -->
-            <div 
-              id="persona-avatar-dropzone" 
-              class="p-6 rounded-2xl border-2 border-dashed border-white/15 hover:border-purple-500/60 bg-white/[0.02] hover:bg-purple-950/10 transition-all flex flex-col items-center justify-center text-center gap-3 cursor-pointer group"
-            >
-              <div class="w-12 h-12 rounded-2xl bg-purple-500/10 border border-purple-500/20 group-hover:scale-110 group-hover:border-purple-500/40 flex items-center justify-center text-purple-400 transition">
-                <Upload class="w-6 h-6" />
-              </div>
-              <div class="space-y-1">
-                <p class="text-sm font-semibold text-white group-hover:text-purple-300 transition">
-                  Click to upload avatar or drag & drop image
-                </p>
-                <p class="text-xs text-slate-400">
-                  Supports PNG, JPG, WebP, GIF (Max 5MB) — Saved locally in browser storage
-                </p>
-              </div>
-            </div>
-
-            <!-- Action Controls -->
-            <div class="flex flex-wrap items-center justify-between gap-3 pt-1">
-              <div class="flex items-center gap-2">
-                <button 
-                  type="button" 
-                  id="persona-avatar-browse-btn" 
-                  class="px-4 py-2 rounded-xl bg-purple-600/20 hover:bg-purple-600/30 border border-purple-500/30 text-purple-300 hover:text-purple-200 text-xs font-semibold flex items-center gap-2 transition cursor-pointer"
-                >
-                  <Upload class="w-3.5 h-3.5" />
-                  <span>Choose Image File</span>
-                </button>
-                <button 
-                  type="button" 
-                  id="persona-avatar-remove-btn" 
-                  class="px-3.5 py-2 rounded-xl bg-white/[0.04] hover:bg-red-500/20 border border-white/10 hover:border-red-500/30 text-slate-400 hover:text-red-300 text-xs font-semibold flex items-center gap-1.5 transition cursor-pointer"
-                  title="Remove avatar and restore default silhouette"
-                >
-                  <Trash2 class="w-3.5 h-3.5" />
-                  <span>Remove Photo</span>
-                </button>
-              </div>
-
-              <!-- Collapsible for optional direct web image URL (clean, no raw link shown by default) -->
-              <details class="text-xs text-slate-400 group/url">
-                <summary class="cursor-pointer hover:text-purple-300 transition list-none flex items-center gap-1">
-                  <span>Or use external image URL</span>
-                  <ChevronRight class="w-3 h-3 group-open/url:rotate-90 transition-transform" />
-                </summary>
-                <div class="mt-2 flex items-center gap-2">
-                  <input 
-                    id="persona-avatar-url" 
-                    type="url" 
-                    placeholder="https://example.com/avatar.jpg" 
-                    class="w-64 px-3 py-1.5 rounded-lg bg-white/[0.04] border border-white/10 text-xs text-white placeholder:text-slate-500 outline-none focus:border-purple-500/70"
-                  />
-                  <button 
-                    type="button" 
-                    id="persona-avatar-url-apply-btn" 
-                    class="px-2.5 py-1.5 rounded-lg bg-white/[0.08] hover:bg-white/[0.15] text-xs text-slate-200 transition cursor-pointer"
-                  >
-                    Apply
-                  </button>
+              
+              <!-- Direct Clickable Avatar Circle with Camera Overlay -->
+              <div 
+                id="mask-avatar-clickable"
+                class="group relative w-28 h-28 sm:w-32 sm:h-32 rounded-full overflow-hidden ring-4 ring-purple-500/30 hover:ring-purple-400 bg-[#0c0e17] flex items-center justify-center cursor-pointer transition-all duration-200 shadow-2xl shadow-purple-950/60"
+                title="Click to change mask avatar photo"
+              >
+                <img 
+                  id="mask-avatar-img" 
+                  src="" 
+                  alt="Mask Avatar" 
+                  class="w-full h-full object-cover transition group-hover:scale-105 duration-300 hidden" 
+                />
+                
+                <div id="mask-avatar-placeholder" class="w-full h-full flex flex-col items-center justify-center text-purple-400/80 bg-gradient-to-tr from-purple-950/50 via-slate-900 to-indigo-950/40">
+                  <User class="w-12 h-12 stroke-[1.5]" />
+                  <span class="text-[10px] font-semibold text-purple-300/80 mt-1">Add Photo</span>
                 </div>
-              </details>
+
+                <!-- Hover Camera Badge Overlay -->
+                <div class="absolute inset-0 bg-black/55 backdrop-blur-[2px] opacity-0 group-hover:opacity-100 flex flex-col items-center justify-center text-white transition-opacity duration-200">
+                  <Camera class="w-6 h-6 text-purple-300 mb-1" />
+                  <span class="text-[11px] font-bold tracking-wide">Change</span>
+                </div>
+              </div>
+
+              <!-- Quick Avatar Controls (URL or Remove) -->
+              <div class="flex items-center gap-2 text-[11px]">
+                <button 
+                  type="button" 
+                  id="mask-avatar-url-toggle-btn"
+                  class="text-purple-400 hover:text-purple-300 transition underline underline-offset-2 cursor-pointer"
+                >
+                  Image Link
+                </button>
+                <span class="text-slate-600">•</span>
+                <button 
+                  type="button" 
+                  id="mask-avatar-remove-btn"
+                  class="text-rose-400 hover:text-rose-300 transition underline underline-offset-2 cursor-pointer"
+                >
+                  Remove
+                </button>
+              </div>
+
+              <!-- Collapsible Direct Image URL Input -->
+              <div id="mask-avatar-url-drawer" class="hidden w-64 space-y-1.5 pt-1">
+                <input 
+                  type="url" 
+                  id="mask-avatar-url-input" 
+                  placeholder="https://.../avatar.jpg" 
+                  class="w-full px-3 py-1.5 rounded-xl bg-white/[0.04] border border-white/10 text-xs text-white placeholder:text-slate-500 outline-none focus:border-purple-500/50"
+                />
+                <button 
+                  type="button" 
+                  id="mask-avatar-url-apply-btn"
+                  class="w-full py-1 rounded-xl bg-purple-600/30 hover:bg-purple-600/50 border border-purple-500/40 text-purple-200 text-xs font-semibold transition cursor-pointer"
+                >
+                  Apply Image Link
+                </button>
+              </div>
             </div>
+
+            <!-- Primary Identity Fields -->
+            <div class="flex-1 w-full space-y-4">
+              <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                
+                <!-- Mask / Character Name -->
+                <div>
+                  <label for="mask-name" class="block text-xs font-bold text-slate-300 uppercase tracking-wider mb-1.5">
+                    Mask Name / Identity <span class="text-purple-400">*</span>
+                  </label>
+                  <input 
+                    type="text" 
+                    id="mask-name" 
+                    required 
+                    placeholder="e.g. Alex, Lord Thorne, Evelyn..." 
+                    class="w-full px-4 py-2.5 rounded-xl bg-white/[0.04] border border-white/10 focus:border-purple-500/70 text-sm font-semibold text-white placeholder:text-slate-500 outline-none transition"
+                  />
+                  <p class="text-[11px] text-slate-500 mt-1">Replaces <code class="text-cyan-400 font-mono">{"{{user}}"}</code> in all dialogues and character memories.</p>
+                </div>
+
+                <!-- Age / Life Stage (Absolute Override Support) -->
+                <div>
+                  <label for="mask-age" class="block text-xs font-bold text-slate-300 uppercase tracking-wider mb-1.5 flex items-center justify-between">
+                    <span>Age / Life Stage</span>
+                    <span class="text-[10px] text-purple-400 font-normal">Strict Card Override</span>
+                  </label>
+                  <input 
+                    type="text" 
+                    id="mask-age" 
+                    placeholder="e.g. 7 years old, 24 years old, 99 years old, Ancient..." 
+                    class="w-full px-4 py-2.5 rounded-xl bg-white/[0.04] border border-white/10 focus:border-purple-500/70 text-sm font-semibold text-white placeholder:text-slate-500 outline-none transition"
+                  />
+                  <p class="text-[11px] text-slate-500 mt-1">Crucial for roleplays: dictates your physical maturity to the AI.</p>
+                </div>
+
+                <!-- Gender & Pronouns -->
+                <div>
+                  <label for="mask-gender" class="block text-xs font-bold text-slate-300 uppercase tracking-wider mb-1.5">
+                    Gender & Pronouns
+                  </label>
+                  <input 
+                    type="text" 
+                    id="mask-gender" 
+                    placeholder="e.g. Male (He/Him), Female (She/Her), Androgynous..." 
+                    class="w-full px-4 py-2.5 rounded-xl bg-white/[0.04] border border-white/10 focus:border-purple-500/70 text-sm text-white placeholder:text-slate-500 outline-none transition"
+                  />
+                </div>
+
+                <!-- Roleplay Title or Social Status -->
+                <div>
+                  <label for="mask-title" class="block text-xs font-bold text-slate-300 uppercase tracking-wider mb-1.5">
+                    Title / Occupation
+                  </label>
+                  <input 
+                    type="text" 
+                    id="mask-title" 
+                    placeholder="e.g. Student, Wandering Knight, Chief Detective, Wizard..." 
+                    class="w-full px-4 py-2.5 rounded-xl bg-white/[0.04] border border-white/10 focus:border-purple-500/70 text-sm text-white placeholder:text-slate-500 outline-none transition"
+                  />
+                </div>
+
+              </div>
+            </div>
+
           </div>
-        </div>
-      </div>
 
-      <!-- Section 2: Identity & Pronouns -->
-      <div class="p-6 rounded-3xl bg-[#080a14] border border-white/[0.08] shadow-xl space-y-6">
-        <div class="border-b border-white/[0.06] pb-3">
-          <h2 class="text-base sm:text-lg font-bold text-white flex items-center gap-2">
-            <User class="w-5 h-5 text-cyan-400" />
-            <span>2. Identity & Macro Replacement</span>
-          </h2>
-          <p class="text-xs text-slate-400 mt-1">
-            Replaces <code class="text-cyan-300">{"{{user}}"}</code> in all greetings, starters, and dialogues.
-          </p>
         </div>
 
-        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-          <!-- Display Name -->
-          <div>
-            <label for="persona-name" class="block text-xs sm:text-sm font-semibold text-slate-200 mb-1.5">
-              Display Name <span class="text-cyan-400 font-mono">({"{{user}}"})</span> <span class="text-rose-400">*</span>
-            </label>
-            <input 
-              id="persona-name" 
-              type="text" 
-              placeholder="e.g. Jason, Ren, Alex, Traveler" 
-              class="w-full px-4 py-3 rounded-2xl bg-white/[0.04] border border-white/10 focus:border-cyan-500/70 text-sm text-white placeholder:text-slate-500 outline-none"
-              value="Traveler" 
-              required
-            />
-          </div>
-
-          <!-- Pronouns -->
-          <div>
-            <label for="persona-pronouns" class="block text-xs sm:text-sm font-semibold text-slate-200 mb-1.5">
-              Pronouns
-            </label>
-            <input 
-              id="persona-pronouns" 
-              type="text" 
-              placeholder="e.g. He/Him, She/Her, They/Them" 
-              class="w-full px-4 py-3 rounded-2xl bg-white/[0.04] border border-white/10 focus:border-cyan-500/70 text-sm text-white placeholder:text-slate-500 outline-none"
-              value="They/Them" 
-            />
-          </div>
-        </div>
-
-        <!-- Role Archetype / Title -->
-        <div>
-          <label for="persona-title" class="block text-xs sm:text-sm font-semibold text-slate-200 mb-1.5">
-            Archetype / Title
-          </label>
-          <input 
-            id="persona-title" 
-            type="text" 
-            placeholder="e.g. Rogue Netrunner, Arcane Scholar, Wandering Detective" 
-            class="w-full px-4 py-3 rounded-2xl bg-white/[0.04] border border-white/10 focus:border-cyan-500/70 text-sm text-white placeholder:text-slate-500 outline-none"
-            value="Explorer of the Nexus" 
-          />
-        </div>
-      </div>
-
-      <!-- Section 3: Persona Description & Appearance -->
-      <div class="p-6 rounded-3xl bg-[#080a14] border border-white/[0.08] shadow-xl space-y-6">
-        <div class="border-b border-white/[0.06] pb-3 flex items-center justify-between">
-          <div>
-            <h2 class="text-base sm:text-lg font-bold text-white flex items-center gap-2">
-              <Sliders class="w-5 h-5 text-emerald-400" />
-              <span>3. Persona Description & Sensory Traits</span>
+        <!-- Roleplay Characteristics & Description -->
+        <div class="p-6 rounded-3xl bg-[#080a14] border border-white/[0.08] shadow-xl space-y-5">
+          <div class="border-b border-white/[0.06] pb-3">
+            <h2 class="text-base font-bold text-white flex items-center gap-2">
+              <Eye class="w-4 h-4 text-purple-400" />
+              <span>Visual Appearance & Demeanor</span>
             </h2>
-            <p class="text-xs text-slate-400 mt-1">
-              Passed to the LLM system prompt so characters know your appearance, traits, and background.
+            <p class="text-xs text-slate-400 mt-0.5">
+              Characters react dynamically to how you look, your height, your clothing, and your mannerisms.
             </p>
           </div>
-          <span id="tok-persona-desc" class="text-xs font-mono text-emerald-400 bg-emerald-950/40 px-2.5 py-1 rounded-full border border-emerald-500/30">
-            ~0 tok
-          </span>
+
+          <div class="space-y-4">
+            <!-- Physical Appearance -->
+            <div>
+              <label for="mask-appearance" class="block text-xs font-bold text-slate-300 uppercase tracking-wider mb-1.5 flex items-center justify-between">
+                <span>Physical Appearance & Clothing</span>
+                <span id="tok-mask-appearance" class="text-[10px] font-mono text-purple-400">~0 tok</span>
+              </label>
+              <textarea 
+                id="mask-appearance" 
+                rows="3" 
+                placeholder="Describe your visual appearance, height, build, hair style/color, distinctive eyes, scars, and attire...&#10;&#10;Example:&#10;A frail 99-year-old elder with knee-length silver beard and piercing violet eyes. Wears an embroidered velvet trench coat and round brass spectacles." 
+                class="w-full px-4 py-3 rounded-2xl bg-white/[0.04] border border-white/10 focus:border-purple-500/70 text-xs sm:text-sm text-white placeholder:text-slate-500 outline-none leading-relaxed resize-y"
+              ></textarea>
+            </div>
+
+            <!-- Personality & Behavioral Demeanor -->
+            <div>
+              <label for="mask-personality" class="block text-xs font-bold text-slate-300 uppercase tracking-wider mb-1.5 flex items-center justify-between">
+                <span>Personality & Temperament</span>
+                <span id="tok-mask-personality" class="text-[10px] font-mono text-purple-400">~0 tok</span>
+              </label>
+              <textarea 
+                id="mask-personality" 
+                rows="3" 
+                placeholder="How your character acts, speaks, and responds emotionally...&#10;&#10;Example:&#10;Soft-spoken, grandfatherly and patient. Possesses immense ancient knowledge, but is humble and occasionally chuckles at small ironies." 
+                class="w-full px-4 py-3 rounded-2xl bg-white/[0.04] border border-white/10 focus:border-purple-500/70 text-xs sm:text-sm text-white placeholder:text-slate-500 outline-none leading-relaxed resize-y"
+              ></textarea>
+            </div>
+          </div>
         </div>
 
-        <!-- Persona Description Textarea -->
-        <div>
-          <textarea 
-            id="persona-desc" 
-            rows="6" 
-            class="w-full px-4 py-3.5 rounded-2xl bg-white/[0.04] border border-white/10 focus:border-emerald-500/70 text-sm sm:text-base text-white placeholder:text-slate-500 outline-none leading-relaxed resize-y min-h-[140px]"
-            placeholder="Describe your persona's physical appearance, clothing, demeanor, background, or equipment.&#10;&#10;Example:&#10;Tall build with dark hair and a cybernetic optical scanner over the left eye. Wears a weathered longcoat lined with thermal shielding. Speaks with calm deliberation and prefers subtle diplomacy before drawing weapons."
-          ></textarea>
-          <p class="text-[11px] text-slate-500 mt-1.5">
-            This context allows the AI to react to what you wear, your species, or your physical stature naturally.
-          </p>
-        </div>
-      </div>
-
-      <!-- Section 4: Global AI Guardrails & Directives -->
-      <div class="p-6 rounded-3xl bg-[#080a14] border border-white/[0.08] shadow-xl space-y-6">
-        <div class="border-b border-white/[0.06] pb-3 flex items-center justify-between">
-          <div>
-            <h2 class="text-base sm:text-lg font-bold text-white flex items-center gap-2">
-              <ShieldCheck class="w-5 h-5 text-amber-400" />
-              <span>4. Global Guardrails & Instructions</span>
+        <!-- Roleplay Lore, Backstory & System Directives -->
+        <div class="p-6 rounded-3xl bg-[#080a14] border border-white/[0.08] shadow-xl space-y-5">
+          <div class="border-b border-white/[0.06] pb-3">
+            <h2 class="text-base font-bold text-white flex items-center gap-2">
+              <ShieldCheck class="w-4 h-4 text-cyan-400" />
+              <span>Backstory Lore & Persona Guardrails</span>
             </h2>
-            <p class="text-xs text-slate-400 mt-1">
-              Instructions injected into the system prompt for <strong>every character</strong> you chat with.
+            <p class="text-xs text-slate-400 mt-0.5">
+              Define your personal history and standing rules that every character must respect.
             </p>
           </div>
-          <span id="tok-persona-notes" class="text-xs font-mono text-amber-400 bg-amber-950/40 px-2.5 py-1 rounded-full border border-amber-500/30">
-            ~0 tok
-          </span>
-        </div>
 
-        <!-- Global Instructions Textarea -->
-        <div>
-          <textarea 
-            id="persona-notes" 
-            rows="4" 
-            class="w-full px-4 py-3.5 rounded-2xl bg-white/[0.04] border border-white/10 focus:border-amber-500/70 text-sm sm:text-base text-white placeholder:text-slate-500 outline-none leading-relaxed resize-y min-h-[110px]"
-            placeholder="Global behavior preferences across all characters.&#10;&#10;Example:&#10;Never narrate, speak, or assume actions for &#123;&#123;user&#125;&#125;. Maintain atmospheric immersion. Format sensory actions in *asterisks* and spoken dialogue in quotation marks."
-          ></textarea>
-        </div>
-      </div>
-
-      <!-- Section 5: Data Backup, Import & Vault -->
-      <div class="p-6 rounded-3xl bg-[#080a14] border border-white/[0.08] shadow-xl space-y-5">
-        <div class="border-b border-white/[0.06] pb-3">
-          <h2 class="text-base sm:text-lg font-bold text-white flex items-center gap-2">
-            <Download class="w-5 h-5 text-indigo-400" />
-            <span>5. Storage, Backup & Data Migration</span>
-          </h2>
-          <p class="text-xs text-slate-400 mt-1">
-            All your personas, custom characters, and chat settings reside in your browser's private storage.
-          </p>
-        </div>
-
-        <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
-          <!-- Backup Export -->
-          <button 
-            type="button" 
-            id="export-backup-btn"
-            class="p-4 rounded-2xl bg-white/[0.03] hover:bg-white/[0.06] border border-white/10 text-left transition cursor-pointer flex flex-col justify-between gap-3 group"
-          >
-            <div class="flex items-center justify-between">
-              <Download class="w-5 h-5 text-cyan-400 group-hover:scale-110 transition" />
-              <span class="text-[10px] text-slate-500 font-mono">.json</span>
-            </div>
+          <div class="space-y-4">
+            <!-- Backstory / Lore -->
             <div>
-              <h4 class="text-xs font-bold text-white">Export Full Backup</h4>
-              <p class="text-[11px] text-slate-400 mt-0.5">Download all personas & custom characters</p>
+              <label for="mask-lore" class="block text-xs font-bold text-slate-300 uppercase tracking-wider mb-1.5 flex items-center justify-between">
+                <span>Background Lore & History</span>
+                <span id="tok-mask-lore" class="text-[10px] font-mono text-cyan-400">~0 tok</span>
+              </label>
+              <textarea 
+                id="mask-lore" 
+                rows="3" 
+                placeholder="Your past experiences, skills, relationships, or origin story in roleplays...&#10;&#10;Example:&#10;Former head curator of the Royal Citadel Archives, who spent six decades cataloging forbidden artifacts before vanishing into the frontier." 
+                class="w-full px-4 py-3 rounded-2xl bg-white/[0.04] border border-white/10 focus:border-cyan-500/70 text-xs sm:text-sm text-white placeholder:text-slate-500 outline-none leading-relaxed resize-y"
+              ></textarea>
             </div>
-          </button>
 
-          <!-- Backup Import -->
-          <label 
-            class="p-4 rounded-2xl bg-white/[0.03] hover:bg-white/[0.06] border border-white/10 text-left transition cursor-pointer flex flex-col justify-between gap-3 group"
-          >
-            <div class="flex items-center justify-between">
-              <Upload class="w-5 h-5 text-purple-400 group-hover:scale-110 transition" />
-              <span class="text-[10px] text-slate-500 font-mono">Restore</span>
-            </div>
+            <!-- Global Directives / Formatting Rules -->
             <div>
-              <h4 class="text-xs font-bold text-white">Import Backup File</h4>
-              <p class="text-[11px] text-slate-400 mt-0.5">Restore data from previous JSON file</p>
+              <label for="mask-directives" class="block text-xs font-bold text-slate-300 uppercase tracking-wider mb-1.5 flex items-center justify-between">
+                <span>Roleplay Rules & Immersion Guardrails</span>
+                <span id="tok-mask-directives" class="text-[10px] font-mono text-cyan-400">~0 tok</span>
+              </label>
+              <textarea 
+                id="mask-directives" 
+                rows="3" 
+                placeholder="Rules injected for all characters...&#10;&#10;Example:&#10;Never speak, narrate thoughts, or choose actions for &#123;&#123;user&#125;&#125;. Maintain atmospheric immersion. Format sensory actions in *asterisks* and spoken dialogue in quotes." 
+                class="w-full px-4 py-3 rounded-2xl bg-white/[0.04] border border-white/10 focus:border-cyan-500/70 text-xs sm:text-sm text-white placeholder:text-slate-500 outline-none leading-relaxed resize-y"
+              ></textarea>
             </div>
-            <input id="import-backup-file" type="file" accept=".json" class="hidden" />
-          </label>
-
-          <!-- Reset / Clear -->
-          <button 
-            type="button" 
-            id="clear-cache-btn"
-            class="p-4 rounded-2xl bg-rose-950/20 hover:bg-rose-950/40 border border-rose-500/20 text-left transition cursor-pointer flex flex-col justify-between gap-3 group"
-          >
-            <div class="flex items-center justify-between">
-              <Trash2 class="w-5 h-5 text-rose-400 group-hover:scale-110 transition" />
-              <span class="text-[10px] text-rose-400 font-mono">Reset</span>
-            </div>
-            <div>
-              <h4 class="text-xs font-bold text-rose-200">Clear Local Cache</h4>
-              <p class="text-[11px] text-rose-400/80 mt-0.5">Erase custom data from this device</p>
-            </div>
-          </button>
+          </div>
         </div>
-      </div>
 
-      <!-- Section 5: Multi-Device Sync & Cloud Vault Hub (Part 5) -->
-      <div class="p-6 rounded-3xl bg-[#080a14] border border-cyan-500/20 shadow-xl space-y-6">
+        <!-- Strict Card Override Callout Banner -->
+        <div class="p-4 rounded-2xl bg-purple-950/20 border border-purple-500/30 flex items-start gap-3">
+          <Shield class="w-5 h-5 text-purple-400 shrink-0 mt-0.5" />
+          <div class="text-xs leading-relaxed text-slate-300">
+            <strong class="text-purple-300 font-bold block mb-0.5">Absolute Identity Override Guarantee:</strong>
+            When this mask is active, its <strong class="text-white">Age</strong>, <strong class="text-white">Appearance</strong>, and <strong class="text-white">Traits</strong> are forcefully enforced in system prompts with strict priority over any conflicting character scenario or greeting. If a card assumes you are a child but your mask says 99 years old, the AI will strictly treat you as 99 years old.
+          </div>
+        </div>
+
+        <!-- Bottom Sticky Save Bar -->
+        <div class="sticky bottom-4 z-40 p-4 rounded-3xl bg-[#090b17]/95 backdrop-blur-2xl border border-white/10 shadow-2xl flex items-center justify-between gap-3">
+          <div class="flex items-center gap-2 text-xs text-slate-400">
+            <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
+            <span id="save-status-indicator">Changes ready to save</span>
+          </div>
+
+          <div class="flex items-center gap-2.5">
+            <button 
+              type="button" 
+              id="reset-mask-btn"
+              class="px-4 py-2.5 rounded-2xl bg-white/[0.05] hover:bg-white/[0.1] border border-white/10 text-xs font-semibold text-slate-300 hover:text-white transition cursor-pointer"
+            >
+              Reset Mask
+            </button>
+
+            <button 
+              type="submit" 
+              id="save-mask-btn"
+              class="px-6 py-2.5 rounded-2xl bg-gradient-to-r from-purple-600 via-indigo-600 to-purple-600 hover:from-purple-500 hover:to-indigo-500 text-xs sm:text-sm font-bold text-white shadow-lg shadow-purple-900/50 flex items-center justify-center gap-2 transition cursor-pointer active:scale-95"
+            >
+              <Save class="w-4 h-4" />
+              <span>Save & Apply Mask</span>
+            </button>
+          </div>
+        </div>
+
+      </form>
+
+    </section>
+
+    <!-- ======================================================== -->
+    <!-- TAB 2: ACCOUNT, SAFETY & DATA PREFERENCES                -->
+    <!-- ======================================================== -->
+    <section id="tab-view-account" class="space-y-6 hidden">
+      
+      <!-- Account Info & Cloud Status -->
+      <div class="p-6 rounded-3xl bg-[#080a14] border border-white/[0.08] shadow-xl space-y-6">
         <div class="border-b border-white/[0.06] pb-3 flex items-center justify-between">
           <div class="flex items-center gap-2">
-            <Cloud class="w-5 h-5 text-cyan-400" />
-            <h3 class="text-base sm:text-lg font-bold text-white">5. Multi-Device Sync & Cloud Vault</h3>
+            <UserCheck class="w-5 h-5 text-purple-400" />
+            <h2 class="text-base sm:text-lg font-bold text-white">1. Official Platform Account</h2>
+          </div>
+          <span id="auth-status-pill" class="text-xs px-2.5 py-0.5 rounded-full bg-white/[0.06] border border-white/10 text-slate-300 font-mono">
+            Checking...
+          </span>
+        </div>
+
+        <!-- Auth State Card -->
+        <div id="auth-user-card" class="p-4 sm:p-5 rounded-2xl bg-white/[0.02] border border-white/[0.06] flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+          <div class="flex items-center gap-3.5">
+            <div class="w-12 h-12 rounded-2xl bg-gradient-to-tr from-purple-600 to-indigo-600 flex items-center justify-center text-white text-base font-bold shadow-md shadow-purple-950/50 overflow-hidden" id="account-avatar-wrapper">
+              <span id="account-avatar-letter">A</span>
+            </div>
+            <div>
+              <h3 id="account-display-name" class="text-sm font-bold text-white">Guest User</h3>
+              <p id="account-email" class="text-xs text-slate-400">Local Browser Session</p>
+            </div>
+          </div>
+
+          <div class="flex items-center gap-2" id="account-action-buttons">
+            <a 
+              href="/auth" 
+              id="account-login-link"
+              class="px-4 py-2 rounded-xl bg-purple-600 hover:bg-purple-500 text-white text-xs font-bold transition shadow-sm"
+            >
+              Sign In / Register
+            </a>
+            <button 
+              type="button" 
+              id="account-logout-btn"
+              class="hidden px-4 py-2 rounded-xl bg-rose-950/20 hover:bg-rose-950/40 border border-rose-500/30 text-rose-300 text-xs font-semibold transition cursor-pointer"
+            >
+              Log Out
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Content Safety & NSFW Filters -->
+      <div class="p-6 rounded-3xl bg-[#080a14] border border-white/[0.08] shadow-xl space-y-6">
+        <div class="border-b border-white/[0.06] pb-3 flex items-center justify-between">
+          <div class="flex items-center gap-2">
+            <Shield class="w-5 h-5 text-amber-400" />
+            <h2 class="text-base sm:text-lg font-bold text-white">2. Content Safety & NSFW Filter</h2>
+          </div>
+          <span class="text-xs text-slate-400">Applies across Discovery & Chats</span>
+        </div>
+
+        <div class="grid grid-cols-1 sm:grid-cols-3 gap-3" id="nsfw-filter-selector">
+          
+          <!-- Option 1: Uncensored / Full -->
+          <button 
+            type="button" 
+            data-nsfw="full"
+            class="nsfw-opt-btn p-4 rounded-2xl border text-left transition cursor-pointer flex flex-col justify-between gap-3 bg-purple-600/10 border-purple-500/50 text-white"
+          >
+            <div class="flex items-center justify-between">
+              <span class="text-lg">🔞</span>
+              <span class="text-[10px] px-2 py-0.5 rounded-full bg-purple-500/20 text-purple-300 font-mono">Uncensored</span>
+            </div>
+            <div>
+              <h4 class="text-xs font-bold text-white">Show Uncensored</h4>
+              <p class="text-[11px] text-slate-400 mt-0.5">Display all spicy and mature character cards and unrestricted themes.</p>
+            </div>
+          </button>
+
+          <!-- Option 2: Blur Sensitive -->
+          <button 
+            type="button" 
+            data-nsfw="blur"
+            class="nsfw-opt-btn p-4 rounded-2xl border text-left transition cursor-pointer flex flex-col justify-between gap-3 bg-white/[0.02] border-white/10 text-slate-400 hover:text-white hover:bg-white/[0.04]"
+          >
+            <div class="flex items-center justify-between">
+              <span class="text-lg">👁️</span>
+              <span class="text-[10px] px-2 py-0.5 rounded-full bg-slate-700/50 text-slate-300 font-mono">Blur</span>
+            </div>
+            <div>
+              <h4 class="text-xs font-bold text-white">Blur Sensitive</h4>
+              <p class="text-[11px] text-slate-400 mt-0.5">Cards are accessible, but sensitive artwork is blurred until clicked.</p>
+            </div>
+          </button>
+
+          <!-- Option 3: Safe Mode -->
+          <button 
+            type="button" 
+            data-nsfw="safe"
+            class="nsfw-opt-btn p-4 rounded-2xl border text-left transition cursor-pointer flex flex-col justify-between gap-3 bg-white/[0.02] border-white/10 text-slate-400 hover:text-white hover:bg-white/[0.04]"
+          >
+            <div class="flex items-center justify-between">
+              <span class="text-lg">🛡️</span>
+              <span class="text-[10px] px-2 py-0.5 rounded-full bg-slate-700/50 text-slate-300 font-mono">Safe Mode</span>
+            </div>
+            <div>
+              <h4 class="text-xs font-bold text-white">Strict Safe Mode</h4>
+              <p class="text-[11px] text-slate-400 mt-0.5">Hide mature and explicit content entirely from character feeds and searches.</p>
+            </div>
+          </button>
+
+        </div>
+      </div>
+
+      <!-- Storage Backup, Data Export & Multi-Device Sync -->
+      <div class="p-6 rounded-3xl bg-[#080a14] border border-white/[0.08] shadow-xl space-y-6">
+        <div class="border-b border-white/[0.06] pb-3 flex items-center justify-between">
+          <div class="flex items-center gap-2">
+            <Download class="w-5 h-5 text-indigo-400" />
+            <h2 class="text-base sm:text-lg font-bold text-white">3. Backup, Migration & Sync</h2>
           </div>
           <span class="text-xs px-2.5 py-0.5 rounded-full bg-cyan-500/10 text-cyan-300 border border-cyan-500/20 font-mono">
             Zero-Server E2E
           </span>
         </div>
 
-        <p class="text-xs text-slate-400 leading-relaxed max-w-3xl">
-          Instantly transfer all your data (User Personas, Custom Characters, Saved Settings, and Stories) between your Mobile phone and Desktop without sending any private data to external servers.
-        </p>
-
-        <!-- Method 1: Instant Device-to-Device Transfer Code -->
+        <!-- Quick P2P Device Transfer Code -->
         <div class="p-4 sm:p-5 rounded-2xl bg-[#0c0f22] border border-cyan-500/30 space-y-4">
           <div class="flex items-center justify-between">
             <div class="flex items-center gap-2">
               <Smartphone class="w-4 h-4 text-cyan-400" />
-              <span class="text-xs font-bold text-white">Quick Device Transfer Code</span>
+              <span class="text-xs font-bold text-white">Instant Device-to-Device Transfer Code</span>
             </div>
-            <span class="text-[10px] text-slate-400 font-mono">Instant P2P Sync</span>
+            <span class="text-[10px] text-slate-400 font-mono">Encrypted Token</span>
           </div>
 
           <p class="text-[11px] text-slate-300">
@@ -473,73 +613,64 @@ import {
           </div>
         </div>
 
-        <!-- Method 2: Encrypted Single-File Vault -->
-        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+        <!-- File-based Backup & Reset Grid -->
+        <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
+          <!-- Backup Export -->
           <button 
             type="button" 
-            id="export-full-vault-btn"
-            class="p-4 rounded-2xl bg-white/[0.03] hover:bg-white/[0.06] border border-cyan-500/20 text-left transition cursor-pointer flex flex-col justify-between gap-3 group"
+            id="export-backup-btn"
+            class="p-4 rounded-2xl bg-white/[0.03] hover:bg-white/[0.06] border border-white/10 text-left transition cursor-pointer flex flex-col justify-between gap-3 group"
           >
             <div class="flex items-center justify-between">
               <Download class="w-5 h-5 text-cyan-400 group-hover:scale-110 transition" />
-              <span class="text-[10px] text-cyan-400 font-mono">.aetheria-vault</span>
+              <span class="text-[10px] text-slate-500 font-mono">.json</span>
             </div>
             <div>
-              <h4 class="text-xs font-bold text-white">Export Full Encrypted Vault</h4>
-              <p class="text-[11px] text-slate-400 mt-0.5">Complete bundle of all chats, branches, personas & lore</p>
+              <h4 class="text-xs font-bold text-white">Export Full Backup</h4>
+              <p class="text-[11px] text-slate-400 mt-0.5">Download all masks, custom characters & chats</p>
             </div>
           </button>
 
+          <!-- Backup Import -->
           <label 
-            class="p-4 rounded-2xl bg-white/[0.03] hover:bg-white/[0.06] border border-cyan-500/20 text-left transition cursor-pointer flex flex-col justify-between gap-3 group"
+            class="p-4 rounded-2xl bg-white/[0.03] hover:bg-white/[0.06] border border-white/10 text-left transition cursor-pointer flex flex-col justify-between gap-3 group"
           >
             <div class="flex items-center justify-between">
-              <Upload class="w-5 h-5 text-cyan-400 group-hover:scale-110 transition" />
-              <span class="text-[10px] text-cyan-400 font-mono">Restore</span>
+              <Upload class="w-5 h-5 text-purple-400 group-hover:scale-110 transition" />
+              <span class="text-[10px] text-slate-500 font-mono">Restore</span>
             </div>
             <div>
-              <h4 class="text-xs font-bold text-white">Import Encrypted Vault</h4>
-              <p class="text-[11px] text-slate-400 mt-0.5">Restore or merge complete workspace on new device</p>
+              <h4 class="text-xs font-bold text-white">Import Backup File</h4>
+              <p class="text-[11px] text-slate-400 mt-0.5">Restore data from previous JSON file</p>
             </div>
-            <input id="import-full-vault-input" type="file" accept=".json,.aetheria-vault" class="hidden" />
+            <input id="import-backup-file" type="file" accept=".json" class="hidden" />
           </label>
-        </div>
 
-      </div>
-
-      <!-- Bottom Sticky Save Bar -->
-      <div class="sticky bottom-4 z-40 p-4 rounded-3xl bg-[#090b17]/95 backdrop-blur-2xl border border-white/10 shadow-2xl flex items-center justify-between gap-3">
-        <div class="hidden sm:flex items-center gap-2 text-xs text-slate-400">
-          <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
-          <span>Ready to synchronize with active session</span>
-        </div>
-
-        <div class="flex items-center gap-2.5 w-full sm:w-auto justify-end">
+          <!-- Reset / Clear -->
           <button 
             type="button" 
-            id="reset-form-btn"
-            class="px-4 py-3 rounded-2xl bg-white/[0.05] hover:bg-white/[0.1] border border-white/10 text-xs font-semibold text-slate-300 hover:text-white transition cursor-pointer"
+            id="clear-cache-btn"
+            class="p-4 rounded-2xl bg-rose-950/20 hover:bg-rose-950/40 border border-rose-500/20 text-left transition cursor-pointer flex flex-col justify-between gap-3 group"
           >
-            Reset Fields
-          </button>
-
-          <button 
-            type="submit" 
-            id="save-persona-btn"
-            class="flex-1 sm:flex-initial px-7 py-3 rounded-2xl bg-gradient-to-r from-emerald-600 via-teal-600 to-emerald-600 hover:from-emerald-500 hover:to-teal-500 text-xs sm:text-sm font-bold text-white shadow-lg shadow-emerald-950/50 flex items-center justify-center gap-2 transition cursor-pointer active:scale-95"
-          >
-            <Save class="w-4 h-4" />
-            <span>Save Persona</span>
+            <div class="flex items-center justify-between">
+              <Trash2 class="w-5 h-5 text-rose-400 group-hover:scale-110 transition" />
+              <span class="text-[10px] text-rose-400 font-mono">Reset</span>
+            </div>
+            <div>
+              <h4 class="text-xs font-bold text-rose-200">Clear Local Cache</h4>
+              <p class="text-[11px] text-rose-400/80 mt-0.5">Erase custom data from this device</p>
+            </div>
           </button>
         </div>
+
       </div>
 
-    </form>
+    </section>
 
-    <!-- Toast Notification -->
+    <!-- Global Toast Notification -->
     <div id="status-toast" class="fixed bottom-6 right-6 z-50 hidden p-3.5 rounded-2xl bg-emerald-950/90 border border-emerald-500/50 text-xs text-emerald-100 flex items-center gap-2.5 shadow-2xl backdrop-blur-xl">
       <Check class="w-4 h-4 text-emerald-400 shrink-0" />
-      <span id="toast-text">Persona saved successfully!</span>
+      <span id="toast-text">Mask saved successfully!</span>
     </div>
 
   </main>
@@ -552,65 +683,108 @@ import {
   const STORAGE_KEY_PERSONAS = 'aetheria_saved_personas';
   const STORAGE_KEY_ACTIVE = 'aetheria_user_persona';
   const STORAGE_KEY_CUSTOM_CHARS = 'aetheria_custom_characters';
+  const STORAGE_KEY_NSFW = 'aetheria_nsfw_mode';
 
-  interface UserPersona {
+  interface UserMask {
     id: string;
     name: string;
-    pronouns: string;
-    title: string;
+    age: string;
+    gender: string;
+    pronouns?: string;
+    title?: string;
     avatar: string;
-    bio: string;
-    globalNotes: string;
+    appearance: string;
+    personality: string;
+    lore: string;
+    directives: string;
+    isDefault?: boolean;
   }
 
-  const DEFAULT_PERSONA: UserPersona = {
-    id: 'default',
-    name: 'Traveler',
-    pronouns: 'They/Them',
-    title: 'Explorer of the Nexus',
-    avatar: '',
-    bio: 'A resilient traveler walking the neon-drenched frontiers of the Aetheria nexus. Observant, curious, and quick to adapt to unpredictable environments.',
-    globalNotes: 'Never speak, narrate, or assume actions for {{user}}. Maintain atmospheric immersion. Format sensory actions in *asterisks* and spoken dialogue in quotes.'
-  };
+  // Pure clean default mask (NO fake pre-filled values!)
+  function createBlankMask(id = 'mask_' + Date.now(), name = ''): UserMask {
+    return {
+      id,
+      name,
+      age: '',
+      gender: '',
+      title: '',
+      avatar: '',
+      appearance: '',
+      personality: '',
+      lore: '',
+      directives: 'Never speak, narrate thoughts, or choose actions for {{user}}. Maintain atmospheric immersion. Format sensory actions in *asterisks* and spoken dialogue in quotes.'
+    };
+  }
 
-  // Form DOM elements
-  const form = document.getElementById('persona-form') as HTMLFormElement;
-  const nameInput = document.getElementById('persona-name') as HTMLInputElement;
-  const pronounsInput = document.getElementById('persona-pronouns') as HTMLInputElement;
-  const titleInput = document.getElementById('persona-title') as HTMLInputElement;
-  const avatarInput = document.getElementById('persona-avatar-url') as HTMLInputElement;
-  const descInput = document.getElementById('persona-desc') as HTMLTextAreaElement;
-  const notesInput = document.getElementById('persona-notes') as HTMLTextAreaElement;
+  // DOM Elements
+  const tabBtnMasks = document.getElementById('tab-btn-masks');
+  const tabBtnAccount = document.getElementById('tab-btn-account');
+  const tabViewMasks = document.getElementById('tab-view-masks');
+  const tabViewAccount = document.getElementById('tab-view-account');
 
-  const avatarPreview = document.getElementById('persona-avatar-preview') as HTMLImageElement;
-  const avatarPlaceholder = document.getElementById('persona-avatar-placeholder');
-  const avatarFileInput = document.getElementById('persona-avatar-file-input') as HTMLInputElement;
-  const avatarDropzone = document.getElementById('persona-avatar-dropzone');
-  const avatarBrowseBtn = document.getElementById('persona-avatar-browse-btn');
-  const avatarRemoveBtn = document.getElementById('persona-avatar-remove-btn');
-  const avatarUrlApplyBtn = document.getElementById('persona-avatar-url-apply-btn');
-  const previewName = document.getElementById('preview-persona-name') as HTMLElement;
-  const previewPronouns = document.getElementById('preview-persona-pronouns') as HTMLElement;
+  const maskPillsContainer = document.getElementById('mask-pills-container');
+  const masksCountBadge = document.getElementById('masks-count-badge');
+  const addMaskBtn = document.getElementById('add-mask-btn');
 
-  let currentAvatarData = '';
+  // Mask Form Elements
+  const maskForm = document.getElementById('mask-editor-form') as HTMLFormElement;
+  const maskIdLabel = document.getElementById('mask-id-label');
+  const maskActiveStatusBadge = document.getElementById('mask-active-status-badge');
+  const activateMaskBtn = document.getElementById('activate-mask-btn');
+  const duplicateMaskBtn = document.getElementById('duplicate-mask-btn');
+  const deleteMaskBtn = document.getElementById('delete-mask-btn');
 
-  const tokDesc = document.getElementById('tok-persona-desc') as HTMLElement;
-  const tokNotes = document.getElementById('tok-persona-notes') as HTMLElement;
+  const maskAvatarClickable = document.getElementById('mask-avatar-clickable');
+  const maskAvatarFileInput = document.getElementById('mask-avatar-file-input') as HTMLInputElement;
+  const maskAvatarImg = document.getElementById('mask-avatar-img') as HTMLImageElement;
+  const maskAvatarPlaceholder = document.getElementById('mask-avatar-placeholder');
+  const maskAvatarUrlToggleBtn = document.getElementById('mask-avatar-url-toggle-btn');
+  const maskAvatarRemoveBtn = document.getElementById('mask-avatar-remove-btn');
+  const maskAvatarUrlDrawer = document.getElementById('mask-avatar-url-drawer');
+  const maskAvatarUrlInput = document.getElementById('mask-avatar-url-input') as HTMLInputElement;
+  const maskAvatarUrlApplyBtn = document.getElementById('mask-avatar-url-apply-btn');
 
-  const personaTabsContainer = document.getElementById('persona-tabs-container') as HTMLElement;
-  const addPersonaBtn = document.getElementById('add-persona-btn');
-  const exportBackupBtn = document.getElementById('export-backup-btn');
-  const importBackupFile = document.getElementById('import-backup-file') as HTMLInputElement;
-  const clearCacheBtn = document.getElementById('clear-cache-btn');
-  const resetFormBtn = document.getElementById('reset-form-btn');
+  const nameInput = document.getElementById('mask-name') as HTMLInputElement;
+  const ageInput = document.getElementById('mask-age') as HTMLInputElement;
+  const genderInput = document.getElementById('mask-gender') as HTMLInputElement;
+  const titleInput = document.getElementById('mask-title') as HTMLInputElement;
+
+  const appearanceInput = document.getElementById('mask-appearance') as HTMLTextAreaElement;
+  const personalityInput = document.getElementById('mask-personality') as HTMLTextAreaElement;
+  const loreInput = document.getElementById('mask-lore') as HTMLTextAreaElement;
+  const directivesInput = document.getElementById('mask-directives') as HTMLTextAreaElement;
+
+  const tokAppearance = document.getElementById('tok-mask-appearance');
+  const tokPersonality = document.getElementById('tok-mask-personality');
+  const tokLore = document.getElementById('tok-mask-lore');
+  const tokDirectives = document.getElementById('tok-mask-directives');
+
+  const resetMaskBtn = document.getElementById('reset-mask-btn');
   const toast = document.getElementById('status-toast') as HTMLElement;
   const toastText = document.getElementById('toast-text') as HTMLElement;
 
-  const personaCountBadge = document.getElementById('persona-count-badge') as HTMLElement;
-  const charCountBadge = document.getElementById('char-count-badge') as HTMLElement;
+  // Account Tab Elements
+  const authStatusPill = document.getElementById('auth-status-pill');
+  const accountAvatarLetter = document.getElementById('account-avatar-letter');
+  const accountDisplayName = document.getElementById('account-display-name');
+  const accountEmail = document.getElementById('account-email');
+  const accountLoginLink = document.getElementById('account-login-link');
+  const accountLogoutBtn = document.getElementById('account-logout-btn');
+  const nsfwFilterBtns = document.querySelectorAll('.nsfw-opt-btn');
 
-  let personas: UserPersona[] = [];
-  let activeId = 'default';
+  // Backup Elements
+  const exportBackupBtn = document.getElementById('export-backup-btn');
+  const importBackupFile = document.getElementById('import-backup-file') as HTMLInputElement;
+  const clearCacheBtn = document.getElementById('clear-cache-btn');
+  const generateSyncBtn = document.getElementById('generate-sync-token-btn');
+  const copySyncBtn = document.getElementById('copy-sync-token-btn');
+  const applySyncBtn = document.getElementById('apply-sync-token-btn');
+  const syncTokenBox = document.getElementById('sync-token-box') as HTMLTextAreaElement;
+
+  let masks: UserMask[] = [];
+  let currentEditingId = '';
+  let activeChatMaskId = '';
+  let currentAvatarData = '';
 
   function showToast(msg: string) {
     if (!toast || !toastText) return;
@@ -621,7 +795,7 @@ import {
     }, 3500);
   }
 
-    // Modern Glassmorphic Dialog Modal
+  // Modern Glassmorphic Dialog Modal
   function showConfirmModal({
     title = 'Confirm Action',
     message = 'Are you sure you want to proceed?',
@@ -710,41 +884,32 @@ import {
     });
   }
 
-  function showAlertModal(message: string, title = 'System Notice', icon = 'ℹ️') {
-    return showConfirmModal({
-      title,
-      message,
-      confirmText: 'Got It',
-      cancelText: '',
-      type: 'info',
-      icon
-    });
-  }
-
   function countTokens(text: string): number {
-    return Math.ceil(text.trim().length / 4);
+    return Math.ceil((text || '').trim().length / 4);
   }
 
   function updateTokenCounters() {
-    if (tokDesc) tokDesc.textContent = `~${countTokens(descInput.value)} tok`;
-    if (tokNotes) tokNotes.textContent = `~${countTokens(notesInput.value)} tok`;
+    if (tokAppearance && appearanceInput) tokAppearance.textContent = `~${countTokens(appearanceInput.value)} tok`;
+    if (tokPersonality && personalityInput) tokPersonality.textContent = `~${countTokens(personalityInput.value)} tok`;
+    if (tokLore && loreInput) tokLore.textContent = `~${countTokens(loreInput.value)} tok`;
+    if (tokDirectives && directivesInput) tokDirectives.textContent = `~${countTokens(directivesInput.value)} tok`;
   }
 
   function updateAvatarDisplay(url: string) {
     if (url && url.trim()) {
-      avatarPreview.src = url;
-      avatarPreview.classList.remove('hidden');
-      avatarPlaceholder?.classList.add('hidden');
+      maskAvatarImg.src = url;
+      maskAvatarImg.classList.remove('hidden');
+      maskAvatarPlaceholder?.classList.add('hidden');
     } else {
-      avatarPreview.src = '';
-      avatarPreview.classList.add('hidden');
-      avatarPlaceholder?.classList.remove('hidden');
+      maskAvatarImg.src = '';
+      maskAvatarImg.classList.add('hidden');
+      maskAvatarPlaceholder?.classList.remove('hidden');
     }
   }
 
   function processAvatarFile(file: File) {
     if (!file || !file.type.startsWith('image/')) {
-      showToast('Please select a valid image file (PNG, JPG, WebP, GIF).');
+      showToast('Please select an image file (PNG, JPG, WebP, GIF).');
       return;
     }
     if (file.size > 8 * 1024 * 1024) {
@@ -778,9 +943,9 @@ import {
           ctx.drawImage(img, 0, 0, width, height);
           const compressedDataUrl = canvas.toDataURL('image/webp', 0.85);
           currentAvatarData = compressedDataUrl;
-          if (avatarInput) avatarInput.value = '';
+          if (maskAvatarUrlInput) maskAvatarUrlInput.value = '';
           updateAvatarDisplay(compressedDataUrl);
-          showToast('Avatar image loaded! Click "Save Persona" to apply.');
+          showToast('Avatar photo updated! Click "Save & Apply Mask".');
         }
       };
       img.src = e.target?.result as string;
@@ -788,240 +953,442 @@ import {
     reader.readAsDataURL(file);
   }
 
-  function updatePreview() {
-    if (previewName) previewName.textContent = nameInput.value.trim() || 'Traveler';
-    if (previewPronouns) previewPronouns.textContent = pronounsInput.value.trim() || 'They/Them';
-  }
+  // ================= SWITCH TABS =================
+  tabBtnMasks?.addEventListener('click', () => {
+    tabBtnMasks.className = 'flex-1 flex items-center justify-center gap-2 py-2.5 px-4 rounded-xl text-xs sm:text-sm font-bold transition cursor-pointer bg-purple-600 text-white shadow-lg shadow-purple-900/40';
+    tabBtnAccount.className = 'flex-1 flex items-center justify-center gap-2 py-2.5 px-4 rounded-xl text-xs sm:text-sm font-bold transition cursor-pointer text-slate-400 hover:text-white hover:bg-white/[0.05]';
+    tabViewMasks?.classList.remove('hidden');
+    tabViewAccount?.classList.add('hidden');
+  });
 
-  function loadPersonasFromStorage() {
+  tabBtnAccount?.addEventListener('click', () => {
+    tabBtnAccount.className = 'flex-1 flex items-center justify-center gap-2 py-2.5 px-4 rounded-xl text-xs sm:text-sm font-bold transition cursor-pointer bg-purple-600 text-white shadow-lg shadow-purple-900/40';
+    tabBtnMasks.className = 'flex-1 flex items-center justify-center gap-2 py-2.5 px-4 rounded-xl text-xs sm:text-sm font-bold transition cursor-pointer text-slate-400 hover:text-white hover:bg-white/[0.05]';
+    tabViewAccount?.classList.remove('hidden');
+    tabViewMasks?.classList.add('hidden');
+    checkAuthStatus();
+  });
+
+  // ================= LOAD & MIGRATE MASKS =================
+  function loadMasksFromStorage() {
     try {
       const saved = localStorage.getItem(STORAGE_KEY_PERSONAS);
       if (saved) {
-        personas = JSON.parse(saved);
-        personas.forEach(p => {
-          if (p.avatar && p.avatar.startsWith('/avatars/')) p.avatar = '';
-        });
-      } else {
-        // Fallback to active single persona if exists
+        const rawList = JSON.parse(saved);
+        masks = rawList.map((item: any) => ({
+          id: item.id || ('mask_' + Math.random().toString(36).slice(2, 9)),
+          name: item.name || '',
+          age: item.age || '',
+          gender: item.gender || item.pronouns || '',
+          title: item.title || '',
+          avatar: (item.avatar && !item.avatar.startsWith('/avatars/')) ? item.avatar : '',
+          appearance: item.appearance || '',
+          personality: item.personality || '',
+          lore: item.lore || item.bio || '',
+          directives: item.directives || item.globalNotes || ''
+        }));
+      }
+
+      // If empty, check active legacy persona
+      if (masks.length === 0) {
         const single = localStorage.getItem(STORAGE_KEY_ACTIVE);
         if (single) {
-          const parsed = JSON.parse(single);
-          if (parsed.avatar && parsed.avatar.startsWith('/avatars/')) parsed.avatar = '';
-          personas = [{ ...DEFAULT_PERSONA, ...parsed, id: 'default' }];
+          const item = JSON.parse(single);
+          masks = [{
+            id: item.id || 'mask_default',
+            name: item.name === 'Traveler' ? '' : (item.name || ''),
+            age: item.age || '',
+            gender: item.gender || (item.pronouns === 'They/Them' ? '' : (item.pronouns || '')),
+            title: item.title === 'Explorer of the Nexus' ? '' : (item.title || ''),
+            avatar: (item.avatar && !item.avatar.startsWith('/avatars/')) ? item.avatar : '',
+            appearance: item.appearance || '',
+            personality: item.personality || '',
+            lore: (item.bio && item.bio.includes('resilient traveler')) ? '' : (item.bio || ''),
+            directives: item.globalNotes || ''
+          }];
         } else {
-          personas = [{ ...DEFAULT_PERSONA }];
+          masks = [createBlankMask('mask_default', '')];
         }
       }
 
-      const active = localStorage.getItem(STORAGE_KEY_ACTIVE);
-      if (active) {
-        const parsed = JSON.parse(active);
-        activeId = parsed.id || personas[0]?.id || 'default';
+      // Resolve active mask
+      const activeObj = localStorage.getItem(STORAGE_KEY_ACTIVE);
+      if (activeObj) {
+        const parsed = JSON.parse(activeObj);
+        activeChatMaskId = parsed.id || masks[0].id;
       } else {
-        activeId = personas[0]?.id || 'default';
+        activeChatMaskId = masks[0].id;
       }
-    } catch {
-      personas = [{ ...DEFAULT_PERSONA }];
-      activeId = 'default';
+
+      currentEditingId = activeChatMaskId || masks[0].id;
+
+    } catch (e) {
+      masks = [createBlankMask('mask_default', '')];
+      activeChatMaskId = masks[0].id;
+      currentEditingId = masks[0].id;
     }
 
-    renderTabs();
-    populateFormWithActive();
-    updateBadges();
+    renderMaskPills();
+    populateFormWithMask(currentEditingId);
   }
 
-  function updateBadges() {
-    if (personaCountBadge) personaCountBadge.textContent = String(personas.length);
-    if (charCountBadge) {
-      try {
-        const customChars = JSON.parse(localStorage.getItem(STORAGE_KEY_CUSTOM_CHARS) || '[]');
-        charCountBadge.textContent = String(customChars.length);
-      } catch {
-        charCountBadge.textContent = '0';
-      }
-    }
-  }
+  function renderMaskPills() {
+    if (!maskPillsContainer) return;
+    maskPillsContainer.innerHTML = '';
 
-  function renderTabs() {
-    if (!personaTabsContainer) return;
-    personaTabsContainer.innerHTML = '';
+    if (masksCountBadge) masksCountBadge.textContent = String(masks.length);
 
-    personas.forEach(p => {
-      const isActive = p.id === activeId;
-      const btn = document.createElement('button');
-      btn.type = 'button';
-      btn.className = `flex items-center gap-2 px-3.5 py-1.5 rounded-xl text-xs font-semibold transition cursor-pointer ${
-        isActive 
+    masks.forEach((m, idx) => {
+      const isEditing = m.id === currentEditingId;
+      const isActive = m.id === activeChatMaskId;
+
+      const pill = document.createElement('button');
+      pill.type = 'button';
+      pill.className = `shrink-0 flex items-center gap-2 px-3.5 py-1.5 rounded-xl text-xs font-semibold transition cursor-pointer ${
+        isEditing 
           ? 'bg-purple-600 text-white shadow-md shadow-purple-900/40 ring-1 ring-purple-400/50' 
           : 'bg-white/[0.04] text-slate-400 hover:text-white hover:bg-white/[0.08]'
       }`;
-      btn.innerHTML = `
-        <span class="w-1.5 h-1.5 rounded-full ${isActive ? 'bg-cyan-300 animate-pulse' : 'bg-slate-500'}"></span>
-        <span>${p.name || 'Unnamed'}</span>
+
+      const avatarSnippet = m.avatar 
+        ? `<img src="${m.avatar}" class="w-4 h-4 rounded-full object-cover shrink-0" />`
+        : `<span class="w-2 h-2 rounded-full ${isActive ? 'bg-emerald-400 animate-pulse' : 'bg-slate-500'}"></span>`;
+
+      pill.innerHTML = `
+        ${avatarSnippet}
+        <span>${m.name || `Mask ${idx + 1}`}</span>
+        ${isActive ? '<span class="text-[9px] px-1 py-0.2 rounded bg-emerald-500/20 text-emerald-300 font-bold">Active</span>' : ''}
       `;
-      btn.addEventListener('click', () => {
-        saveCurrentFormToActiveInMemory();
-        activeId = p.id;
-        renderTabs();
-        populateFormWithActive();
+
+      pill.addEventListener('click', () => {
+        saveCurrentFormInMemory();
+        currentEditingId = m.id;
+        renderMaskPills();
+        populateFormWithMask(currentEditingId);
       });
-      personaTabsContainer.appendChild(btn);
+
+      maskPillsContainer.appendChild(pill);
     });
   }
 
-  function populateFormWithActive() {
-    const active = personas.find(p => p.id === activeId) || personas[0] || DEFAULT_PERSONA;
-    nameInput.value = active.name || '';
-    pronounsInput.value = active.pronouns || '';
-    titleInput.value = active.title || '';
+  function populateFormWithMask(id: string) {
+    const mask = masks.find(m => m.id === id) || masks[0];
+    if (!mask) return;
 
-    // Purge legacy preset avatar paths if found
-    let av = active.avatar || '';
-    if (av.startsWith('/avatars/')) {
-      av = '';
-    }
-    currentAvatarData = av;
-    avatarInput.value = av.startsWith('http') ? av : '';
+    if (maskIdLabel) maskIdLabel.textContent = `ID: ${mask.id.slice(0, 14)}`;
+
+    nameInput.value = mask.name || '';
+    ageInput.value = mask.age || '';
+    genderInput.value = mask.gender || '';
+    titleInput.value = mask.title || '';
+
+    currentAvatarData = mask.avatar || '';
+    if (maskAvatarUrlInput) maskAvatarUrlInput.value = mask.avatar && mask.avatar.startsWith('http') ? mask.avatar : '';
     updateAvatarDisplay(currentAvatarData);
 
-    descInput.value = active.bio || '';
-    notesInput.value = active.globalNotes || '';
+    appearanceInput.value = mask.appearance || '';
+    personalityInput.value = mask.personality || '';
+    loreInput.value = mask.lore || '';
+    directivesInput.value = mask.directives || '';
 
-    updatePreview();
     updateTokenCounters();
+
+    // Active Status Badge & Activate Button
+    const isActive = mask.id === activeChatMaskId;
+    if (maskActiveStatusBadge) {
+      if (isActive) {
+        maskActiveStatusBadge.className = 'px-2.5 py-1 rounded-full text-xs font-bold bg-emerald-500/10 border border-emerald-500/30 text-emerald-400 flex items-center gap-1.5';
+        maskActiveStatusBadge.innerHTML = '<span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span><span>Active Mask for Chats</span>';
+      } else {
+        maskActiveStatusBadge.className = 'px-2.5 py-1 rounded-full text-xs font-medium bg-white/[0.04] border border-white/10 text-slate-400 flex items-center gap-1.5';
+        maskActiveStatusBadge.innerHTML = '<span class="w-2 h-2 rounded-full bg-slate-500"></span><span>Inactive Mask</span>';
+      }
+    }
+
+    if (activateMaskBtn) {
+      if (isActive) {
+        activateMaskBtn.classList.add('hidden');
+      } else {
+        activateMaskBtn.classList.remove('hidden');
+      }
+    }
+
+    if (deleteMaskBtn) {
+      if (masks.length <= 1) {
+        deleteMaskBtn.classList.add('opacity-40', 'pointer-events-none');
+      } else {
+        deleteMaskBtn.classList.remove('opacity-40', 'pointer-events-none');
+      }
+    }
   }
 
-  function saveCurrentFormToActiveInMemory() {
-    const current: UserPersona = {
-      id: activeId,
-      name: nameInput.value.trim() || 'Traveler',
-      pronouns: pronounsInput.value.trim() || 'They/Them',
-      title: titleInput.value.trim() || 'Explorer',
-      avatar: currentAvatarData || avatarInput.value.trim() || '',
-      bio: descInput.value.trim(),
-      globalNotes: notesInput.value.trim()
+  function saveCurrentFormInMemory(): UserMask {
+    const updated: UserMask = {
+      id: currentEditingId,
+      name: nameInput.value.trim(),
+      age: ageInput.value.trim(),
+      gender: genderInput.value.trim(),
+      title: titleInput.value.trim(),
+      avatar: currentAvatarData || (maskAvatarUrlInput ? maskAvatarUrlInput.value.trim() : ''),
+      appearance: appearanceInput.value.trim(),
+      personality: personalityInput.value.trim(),
+      lore: loreInput.value.trim(),
+      directives: directivesInput.value.trim()
     };
 
-    const idx = personas.findIndex(p => p.id === activeId);
+    const idx = masks.findIndex(m => m.id === currentEditingId);
     if (idx !== -1) {
-      personas[idx] = current;
+      masks[idx] = updated;
     } else {
-      personas.push(current);
+      masks.push(updated);
     }
-    return current;
+    return updated;
   }
 
-  function saveAllToStorage() {
-    const active = saveCurrentFormToActiveInMemory();
-    localStorage.setItem(STORAGE_KEY_PERSONAS, JSON.stringify(personas));
-    localStorage.setItem(STORAGE_KEY_ACTIVE, JSON.stringify(active));
-    renderTabs();
-    updateBadges();
-    showToast(`Persona "${active.name}" saved! Activated for all chats.`);
+  function saveAllMasksToStorage(notify = true) {
+    const current = saveCurrentFormInMemory();
+    localStorage.setItem(STORAGE_KEY_PERSONAS, JSON.stringify(masks));
+
+    // Ensure active persona is updated
+    const activeMask = masks.find(m => m.id === activeChatMaskId) || current;
+    localStorage.setItem(STORAGE_KEY_ACTIVE, JSON.stringify({
+      id: activeMask.id,
+      name: activeMask.name || 'User',
+      age: activeMask.age || '',
+      gender: activeMask.gender || '',
+      pronouns: activeMask.gender || '',
+      title: activeMask.title || '',
+      avatar: activeMask.avatar || '',
+      appearance: activeMask.appearance || '',
+      personality: activeMask.personality || '',
+      bio: activeMask.lore || '',
+      lore: activeMask.lore || '',
+      globalNotes: activeMask.directives || '',
+      directives: activeMask.directives || ''
+    }));
+
+    renderMaskPills();
+    populateFormWithMask(currentEditingId);
+
+    if (notify) {
+      showToast(`Mask "${current.name || 'Unnamed'}" saved & active!`);
+    }
   }
 
-  // File upload and avatar listeners
-  avatarBrowseBtn?.addEventListener('click', () => avatarFileInput?.click());
-  avatarDropzone?.addEventListener('click', (e) => {
-    if ((e.target as HTMLElement).closest('button')) return;
-    avatarFileInput?.click();
+  // ================= AVATAR LISTENERS =================
+  maskAvatarClickable?.addEventListener('click', () => {
+    maskAvatarFileInput?.click();
   });
-  avatarFileInput?.addEventListener('change', (e) => {
+
+  maskAvatarFileInput?.addEventListener('change', (e) => {
     const file = (e.target as HTMLInputElement).files?.[0];
     if (file) processAvatarFile(file);
   });
 
-  avatarDropzone?.addEventListener('dragover', (e) => {
-    e.preventDefault();
-    avatarDropzone.classList.add('border-purple-500', 'bg-purple-950/20');
-  });
-  avatarDropzone?.addEventListener('dragleave', () => {
-    avatarDropzone.classList.remove('border-purple-500', 'bg-purple-950/20');
-  });
-  avatarDropzone?.addEventListener('drop', (e) => {
-    e.preventDefault();
-    avatarDropzone.classList.remove('border-purple-500', 'bg-purple-950/20');
-    const file = e.dataTransfer?.files?.[0];
-    if (file) processAvatarFile(file);
-  });
-
-  avatarRemoveBtn?.addEventListener('click', () => {
+  maskAvatarRemoveBtn?.addEventListener('click', () => {
     currentAvatarData = '';
-    if (avatarInput) avatarInput.value = '';
+    if (maskAvatarUrlInput) maskAvatarUrlInput.value = '';
     updateAvatarDisplay('');
-    showToast('Avatar removed. Restored default silhouette.');
+    showToast('Avatar removed.');
   });
 
-  avatarUrlApplyBtn?.addEventListener('click', () => {
-    const url = avatarInput.value.trim();
+  maskAvatarUrlToggleBtn?.addEventListener('click', () => {
+    maskAvatarUrlDrawer?.classList.toggle('hidden');
+    if (!maskAvatarUrlDrawer?.classList.contains('hidden')) {
+      maskAvatarUrlInput?.focus();
+    }
+  });
+
+  maskAvatarUrlApplyBtn?.addEventListener('click', () => {
+    const url = maskAvatarUrlInput.value.trim();
     if (url) {
       currentAvatarData = url;
       updateAvatarDisplay(url);
-      showToast('Custom avatar URL applied! Click "Save Persona".');
+      maskAvatarUrlDrawer?.classList.add('hidden');
+      showToast('Avatar image link applied!');
     }
   });
 
-  // Inputs live change
-  [nameInput, pronounsInput, titleInput, avatarInput].forEach(inp => {
-    inp?.addEventListener('input', updatePreview);
+  // Token counters update
+  [appearanceInput, personalityInput, loreInput, directivesInput].forEach(inp => {
+    inp?.addEventListener('input', updateTokenCounters);
   });
-  descInput?.addEventListener('input', updateTokenCounters);
-  notesInput?.addEventListener('input', updateTokenCounters);
 
   // Form submit
-  form?.addEventListener('submit', (e) => {
+  maskForm?.addEventListener('submit', (e) => {
     e.preventDefault();
-    saveAllToStorage();
+    saveAllMasksToStorage(true);
   });
 
-  // Add new persona
-  addPersonaBtn?.addEventListener('click', () => {
-    saveCurrentFormToActiveInMemory();
-    const newId = 'persona_' + Date.now();
-    const newPersona: UserPersona = {
-      ...DEFAULT_PERSONA,
-      id: newId,
-      name: `Persona ${personas.length + 1}`,
-      title: 'New Roleplay Persona'
+  // Activate Mask
+  activateMaskBtn?.addEventListener('click', () => {
+    activeChatMaskId = currentEditingId;
+    saveAllMasksToStorage(false);
+    showToast('Set as active mask for all roleplay chats!');
+  });
+
+  // Add New Mask
+  addMaskBtn?.addEventListener('click', () => {
+    saveCurrentFormInMemory();
+    const newMask = createBlankMask();
+    masks.push(newMask);
+    currentEditingId = newMask.id;
+    activeChatMaskId = newMask.id; // automatically activate new mask
+    saveAllMasksToStorage(false);
+    renderMaskPills();
+    populateFormWithMask(newMask.id);
+    nameInput?.focus();
+    showToast('New mask created! Enter identity details.');
+  });
+
+  // Duplicate Mask
+  duplicateMaskBtn?.addEventListener('click', () => {
+    saveCurrentFormInMemory();
+    const current = masks.find(m => m.id === currentEditingId);
+    if (!current) return;
+
+    const dupMask: UserMask = {
+      ...current,
+      id: 'mask_' + Date.now(),
+      name: current.name ? `${current.name} (Copy)` : 'Copy of Mask'
     };
-    personas.push(newPersona);
-    activeId = newId;
-    renderTabs();
-    populateFormWithActive();
-    showToast('New persona profile created. Customize and save!');
+    masks.push(dupMask);
+    currentEditingId = dupMask.id;
+    saveAllMasksToStorage(false);
+    renderMaskPills();
+    populateFormWithMask(dupMask.id);
+    showToast('Mask duplicated successfully!');
   });
 
-  // Reset Form
-  resetFormBtn?.addEventListener('click', async () => {
+  // Delete Mask
+  deleteMaskBtn?.addEventListener('click', async () => {
+    if (masks.length <= 1) {
+      showToast('Cannot delete the last remaining mask.');
+      return;
+    }
+
+    const current = masks.find(m => m.id === currentEditingId);
     const confirmed = await showConfirmModal({
-      title: 'Reset Persona',
-      message: 'Reset this persona form to saved profile defaults?',
-      confirmText: 'Reset Form',
+      title: 'Delete Mask',
+      message: `Permanently delete mask "${current?.name || 'Unnamed'}"? This action cannot be undone.`,
+      confirmText: 'Delete Mask',
       cancelText: 'Cancel',
-      icon: '🔄',
+      type: 'danger'
+    });
+
+    if (confirmed) {
+      masks = masks.filter(m => m.id !== currentEditingId);
+      currentEditingId = masks[0].id;
+      if (activeChatMaskId === current?.id) {
+        activeChatMaskId = masks[0].id;
+      }
+      saveAllMasksToStorage(false);
+      renderMaskPills();
+      populateFormWithMask(currentEditingId);
+      showToast('Mask deleted.');
+    }
+  });
+
+  // Reset Mask
+  resetMaskBtn?.addEventListener('click', async () => {
+    const confirmed = await showConfirmModal({
+      title: 'Reset Mask Fields',
+      message: 'Revert all fields of this mask to their saved values?',
+      confirmText: 'Reset Fields',
+      cancelText: 'Cancel',
       type: 'warning'
     });
     if (confirmed) {
-      populateFormWithActive();
-      showToast('Form reset to saved profile.');
+      populateFormWithMask(currentEditingId);
+      showToast('Mask fields reset.');
     }
   });
 
-  // Export Full Backup
+  // ================= ACCOUNT & SAFETY =================
+  async function checkAuthStatus() {
+    try {
+      const res = await fetch('/api/auth/me');
+      if (res.ok) {
+        const data = await res.json();
+        if (data.authenticated && data.user) {
+          if (authStatusPill) {
+            authStatusPill.textContent = 'Authenticated';
+            authStatusPill.className = 'text-xs px-2.5 py-0.5 rounded-full bg-emerald-500/10 border border-emerald-500/30 text-emerald-400 font-mono';
+          }
+          if (accountDisplayName) accountDisplayName.textContent = data.user.displayName || data.user.email.split('@')[0];
+          if (accountEmail) accountEmail.textContent = data.user.email;
+          if (accountAvatarLetter) accountAvatarLetter.textContent = (data.user.displayName || data.user.email || 'A').charAt(0).toUpperCase();
+          accountLoginLink?.classList.add('hidden');
+          accountLogoutBtn?.classList.remove('hidden');
+          return;
+        }
+      }
+    } catch {}
+
+    // Fallback Guest
+    if (authStatusPill) {
+      authStatusPill.textContent = 'Guest Mode';
+      authStatusPill.className = 'text-xs px-2.5 py-0.5 rounded-full bg-white/[0.06] border border-white/10 text-slate-300 font-mono';
+    }
+    if (accountDisplayName) accountDisplayName.textContent = 'Guest Explorer';
+    if (accountEmail) accountEmail.textContent = 'Local Browser Session (Private)';
+    if (accountAvatarLetter) accountAvatarLetter.textContent = 'G';
+    accountLoginLink?.classList.remove('hidden');
+    accountLogoutBtn?.classList.add('hidden');
+  }
+
+  accountLogoutBtn?.addEventListener('click', async () => {
+    const confirmed = await showConfirmModal({
+      title: 'Log Out',
+      message: 'Log out of your Aetheria account on this device?',
+      confirmText: 'Log Out',
+      cancelText: 'Cancel',
+      type: 'warning'
+    });
+    if (confirmed) {
+      try {
+        await fetch('/api/auth/logout', { method: 'POST' });
+      } catch {}
+      window.location.reload();
+    }
+  });
+
+  // NSFW Preference
+  function initNsfwPreference() {
+    const curNsfw = localStorage.getItem(STORAGE_KEY_NSFW) || 'full';
+    updateNsfwButtons(curNsfw);
+
+    nsfwFilterBtns.forEach(btn => {
+      btn.addEventListener('click', () => {
+        const val = btn.getAttribute('data-nsfw') || 'full';
+        localStorage.setItem(STORAGE_KEY_NSFW, val);
+        updateNsfwButtons(val);
+        showToast(`Content filter updated to: ${val.toUpperCase()}`);
+      });
+    });
+  }
+
+  function updateNsfwButtons(val: string) {
+    nsfwFilterBtns.forEach(btn => {
+      const bVal = btn.getAttribute('data-nsfw');
+      if (bVal === val) {
+        btn.className = 'nsfw-opt-btn p-4 rounded-2xl border text-left transition cursor-pointer flex flex-col justify-between gap-3 bg-purple-600/15 border-purple-500/60 text-white shadow-lg shadow-purple-950/40 ring-1 ring-purple-400/40';
+      } else {
+        btn.className = 'nsfw-opt-btn p-4 rounded-2xl border text-left transition cursor-pointer flex flex-col justify-between gap-3 bg-white/[0.02] border-white/10 text-slate-400 hover:text-white hover:bg-white/[0.04]';
+      }
+    });
+  }
+
+  // ================= BACKUP & SYNC =================
   exportBackupBtn?.addEventListener('click', () => {
-    saveCurrentFormToActiveInMemory();
+    saveCurrentFormInMemory();
     const backupData = {
       timestamp: new Date().toISOString(),
-      version: '1.0',
-      activePersona: personas.find(p => p.id === activeId) || personas[0],
-      personas: personas,
+      version: '2.0',
+      activeMaskId: activeChatMaskId,
+      masks: masks,
       customCharacters: JSON.parse(localStorage.getItem(STORAGE_KEY_CUSTOM_CHARS) || '[]'),
-      apiSettings: {
-        provider: localStorage.getItem('aetheria_text_provider'),
-        model: localStorage.getItem('aetheria_text_model'),
-        temp: localStorage.getItem('aetheria_text_temp'),
-        tokens: localStorage.getItem('aetheria_text_tokens')
-      }
+      nsfwMode: localStorage.getItem(STORAGE_KEY_NSFW) || 'full'
     };
 
     const blob = new Blob([JSON.stringify(backupData, null, 2)], { type: 'application/json' });
@@ -1034,7 +1401,6 @@ import {
     showToast('Aetheria complete backup exported successfully!');
   });
 
-  // Import Backup File
   importBackupFile?.addEventListener('change', (e) => {
     const file = (e.target as HTMLInputElement).files?.[0];
     if (!file) return;
@@ -1043,20 +1409,28 @@ import {
     reader.onload = (event) => {
       try {
         const data = JSON.parse(event.target?.result as string);
-        if (data.personas && Array.isArray(data.personas)) {
-          personas = data.personas;
-          localStorage.setItem(STORAGE_KEY_PERSONAS, JSON.stringify(personas));
+        if (data.masks && Array.isArray(data.masks)) {
+          masks = data.masks;
+          localStorage.setItem(STORAGE_KEY_PERSONAS, JSON.stringify(masks));
+        } else if (data.personas && Array.isArray(data.personas)) {
+          masks = data.personas;
+          localStorage.setItem(STORAGE_KEY_PERSONAS, JSON.stringify(masks));
         }
-        if (data.activePersona) {
-          activeId = data.activePersona.id || personas[0]?.id || 'default';
-          localStorage.setItem(STORAGE_KEY_ACTIVE, JSON.stringify(data.activePersona));
+        if (data.activeMaskId) {
+          activeChatMaskId = data.activeMaskId;
+        } else if (masks.length > 0) {
+          activeChatMaskId = masks[0].id;
         }
         if (data.customCharacters && Array.isArray(data.customCharacters)) {
           localStorage.setItem(STORAGE_KEY_CUSTOM_CHARS, JSON.stringify(data.customCharacters));
         }
-        renderTabs();
-        populateFormWithActive();
-        updateBadges();
+        if (data.nsfwMode) {
+          localStorage.setItem(STORAGE_KEY_NSFW, data.nsfwMode);
+          updateNsfwButtons(data.nsfwMode);
+        }
+        saveAllMasksToStorage(false);
+        renderMaskPills();
+        populateFormWithMask(activeChatMaskId);
         showToast('Backup restored successfully! All data loaded.');
       } catch (err) {
         showToast('Invalid JSON backup file format.');
@@ -1065,159 +1439,84 @@ import {
     reader.readAsText(file);
   });
 
-  // Clear Local Cache
   clearCacheBtn?.addEventListener('click', async () => {
     const confirmed = await showConfirmModal({
-      title: 'Clear Local Cache',
-      message: 'Are you sure you want to clear all local personas and custom characters? This action cannot be undone unless you have a backup.',
-      confirmText: 'Clear All Data',
+      title: 'Clear Local Storage',
+      message: 'Clear all local masks, custom characters, and preferences from this device? Make sure you have exported a backup first.',
+      confirmText: 'Clear Everything',
       cancelText: 'Cancel',
-      icon: '🗑️',
       type: 'danger'
     });
     if (confirmed) {
       localStorage.removeItem(STORAGE_KEY_PERSONAS);
       localStorage.removeItem(STORAGE_KEY_ACTIVE);
       localStorage.removeItem(STORAGE_KEY_CUSTOM_CHARS);
-      personas = [{ ...DEFAULT_PERSONA }];
-      activeId = 'default';
-      renderTabs();
-      populateFormWithActive();
-      updateBadges();
-      showToast('Local cache cleared. Restored factory state.');
+      masks = [createBlankMask()];
+      activeChatMaskId = masks[0].id;
+      currentEditingId = masks[0].id;
+      saveAllMasksToStorage(false);
+      renderMaskPills();
+      populateFormWithMask(currentEditingId);
+      showToast('Cache cleared. Fresh blank mask initialized.');
     }
   });
 
-  // ==========================================
-  // PART 5: MULTI-DEVICE SYNC & CLOUD VAULT
-  // ==========================================
-  const generateSyncBtn = document.getElementById('generate-sync-token-btn');
-  const copySyncBtn = document.getElementById('copy-sync-token-btn');
-  const applySyncBtn = document.getElementById('apply-sync-token-btn');
-  const syncTokenBox = document.getElementById('sync-token-box') as HTMLTextAreaElement | null;
-  const exportFullVaultBtn = document.getElementById('export-full-vault-btn');
-  const importFullVaultInput = document.getElementById('import-full-vault-input') as HTMLInputElement | null;
-
-  function gatherFullVaultPayload() {
-    const payload: Record<string, any> = {
-      version: '1.0.0',
-      exportedAt: new Date().toISOString(),
-      keys: {}
-    };
-
-    for (let i = 0; i < localStorage.length; i++) {
-      const key = localStorage.key(i);
-      if (key && key.startsWith('aetheria_')) {
-        try {
-          payload.keys[key] = JSON.parse(localStorage.getItem(key) || 'null');
-        } catch {
-          payload.keys[key] = localStorage.getItem(key);
-        }
-      }
-    }
-    return payload;
-  }
-
-  function applyFullVaultPayload(payload: any) {
-    if (!payload || !payload.keys || typeof payload.keys !== 'object') {
-      throw new Error('Invalid vault payload format.');
-    }
-
-    let importedCount = 0;
-    Object.keys(payload.keys).forEach(k => {
-      const val = payload.keys[k];
-      if (val !== undefined && val !== null) {
-        if (typeof val === 'object') {
-          localStorage.setItem(k, JSON.stringify(val));
-        } else {
-          localStorage.setItem(k, String(val));
-        }
-        importedCount++;
-      }
-    });
-
-    loadPersonasFromStorage();
-    return importedCount;
-  }
-
-  // Generate Transfer Code
+  // Transfer Token
   generateSyncBtn?.addEventListener('click', () => {
+    saveCurrentFormInMemory();
+    const payload = {
+      v: '2',
+      masks,
+      activeMaskId: activeChatMaskId,
+      customChars: JSON.parse(localStorage.getItem(STORAGE_KEY_CUSTOM_CHARS) || '[]')
+    };
     try {
-      const payload = gatherFullVaultPayload();
-      const rawStr = JSON.stringify(payload);
-      const encoded = btoa(encodeURIComponent(rawStr).replace(/%([0-9A-F]{2})/g, (_, p1) => String.fromCharCode(parseInt(p1, 16))));
-      
-      if (syncTokenBox) {
-        syncTokenBox.value = encoded;
-      }
+      const json = JSON.stringify(payload);
+      const b64 = btoa(unescape(encodeURIComponent(json)));
+      if (syncTokenBox) syncTokenBox.value = b64;
       copySyncBtn?.classList.remove('hidden');
       showToast('Transfer code generated! Ready to copy.');
     } catch (err: any) {
-      showToast('Failed to generate code: ' + err.message);
+      showToast('Failed to generate token: ' + err.message);
     }
   });
 
-  // Copy Transfer Code
   copySyncBtn?.addEventListener('click', () => {
     if (syncTokenBox && syncTokenBox.value) {
-      navigator.clipboard.writeText(syncTokenBox.value).then(() => {
-        showToast('Transfer code copied to clipboard!');
-      });
+      navigator.clipboard.writeText(syncTokenBox.value);
+      showToast('Transfer code copied to clipboard!');
     }
   });
 
-  // Apply Transfer Code
-  applySyncBtn?.addEventListener('click', () => {
-    const code = syncTokenBox?.value.trim();
-    if (!code) {
-      showToast('Please paste a transfer code into the box first.');
+  applySyncBtn?.addEventListener('click', async () => {
+    const raw = syncTokenBox?.value.trim();
+    if (!raw) {
+      showToast('Please paste a transfer code first.');
       return;
     }
-
     try {
-      const decodedStr = decodeURIComponent(Array.prototype.map.call(atob(code), (c: string) => {
-        return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
-      }).join(''));
-
-      const payload = JSON.parse(decodedStr);
-      const count = applyFullVaultPayload(payload);
-      showToast(`Successfully synchronized ${count} workspace keys!`);
+      const json = decodeURIComponent(escape(atob(raw)));
+      const data = JSON.parse(json);
+      if (data.masks && Array.isArray(data.masks)) {
+        masks = data.masks;
+        localStorage.setItem(STORAGE_KEY_PERSONAS, JSON.stringify(masks));
+      }
+      if (data.activeMaskId) {
+        activeChatMaskId = data.activeMaskId;
+      }
+      if (data.customChars && Array.isArray(data.customChars)) {
+        localStorage.setItem(STORAGE_KEY_CUSTOM_CHARS, JSON.stringify(data.customChars));
+      }
+      saveAllMasksToStorage(false);
+      renderMaskPills();
+      populateFormWithMask(activeChatMaskId || masks[0].id);
+      showToast('Transfer code applied & merged successfully!');
     } catch (err: any) {
-      showToast('Failed to apply sync token: ' + err.message);
+      showToast('Invalid transfer code: ' + err.message);
     }
   });
 
-  // Export Full Vault File
-  exportFullVaultBtn?.addEventListener('click', () => {
-    const payload = gatherFullVaultPayload();
-    const blob = new Blob([JSON.stringify(payload, null, 2)], { type: 'application/json' });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = `aetheria_vault_${new Date().toISOString().slice(0, 10)}.aetheria-vault`;
-    a.click();
-    URL.revokeObjectURL(url);
-    showToast('Encrypted vault exported successfully!');
-  });
-
-  // Import Full Vault File
-  importFullVaultInput?.addEventListener('change', (e) => {
-    const file = (e.target as HTMLInputElement).files?.[0];
-    if (!file) return;
-
-    const reader = new FileReader();
-    reader.onload = (event) => {
-      try {
-        const payload = JSON.parse(event.target?.result as string);
-        const count = applyFullVaultPayload(payload);
-        showToast(`Workspace restored! Merged ${count} data records.`);
-      } catch (err: any) {
-        showToast('Failed to import vault: ' + err.message);
-      }
-    };
-    reader.readAsText(file);
-  });
-
-  // Initial load
-  loadPersonasFromStorage();
+  // Initial Boot
+  loadMasksFromStorage();
+  initNsfwPreference();
 </script>

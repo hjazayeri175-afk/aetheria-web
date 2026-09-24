@@ -1676,6 +1676,17 @@ const { character } = Astro.props;
               <RotateCcw class="w-3 h-3 text-amber-400" />
               <span class="inline">Rewind</span>
             </button>
+
+            <!-- 5. Active Mask Switcher -->
+            <button 
+              type="button" 
+              id="chat-action-mask-btn"
+              class="px-2.5 py-1.5 rounded-xl bg-purple-950/40 hover:bg-purple-900/50 border border-purple-500/30 text-purple-300 hover:text-white text-[11px] sm:text-xs font-medium flex items-center gap-1.5 transition active:scale-95 cursor-pointer shrink-0"
+              title="Equipped Persona Mask: Click to switch roleplay identity"
+            >
+              <User class="w-3 h-3 text-purple-400" />
+              <span id="chat-active-mask-label" class="inline max-w-[80px] sm:max-w-[120px] truncate">Mask: You</span>
+            </button>
           </div>
         </div>
 
@@ -1836,19 +1847,26 @@ const { character } = Astro.props;
   // Client-side state & logic
   let activeChar = { ...character };
   let activeUserPersona = {
-    name: 'Traveler',
-    pronouns: 'They/Them',
-    title: 'Explorer',
+    name: 'You',
+    age: '',
+    gender: '',
+    pronouns: '',
+    title: '',
     avatar: '',
+    appearance: '',
+    personality: '',
     bio: '',
+    lore: '',
     globalNotes: 'Never speak, narrate, or assume actions for {{user}}. Maintain atmospheric immersion.'
   };
 
-  // 1. Resolve User Persona from localStorage
+  // 1. Resolve User Persona / Mask from localStorage
   try {
     const rawPersona = localStorage.getItem('aetheria_user_persona');
     if (rawPersona) {
-      activeUserPersona = { ...activeUserPersona, ...JSON.parse(rawPersona) };
+      const parsed = JSON.parse(rawPersona);
+      activeUserPersona = { ...activeUserPersona, ...parsed };
+      if (activeUserPersona.name === 'Traveler') activeUserPersona.name = 'You';
     }
   } catch {}
 
@@ -5103,11 +5121,25 @@ const { character } = Astro.props;
       prompt += `<START>\n${activeChar.mesExample}\n\n`;
     }
 
-    // User Persona
-    prompt += `[User: {{user}}]\nName: ${activeUserPersona.name || 'User'}\n`;
-    if (activeUserPersona.bio) prompt += `${activeUserPersona.bio}\n`;
-    if (activeUserPersona.globalNotes) prompt += `${activeUserPersona.globalNotes}\n`;
-    prompt += '\n';
+    // User Persona / Active Mask (Strict Override Enforcement)
+    const uName = (activeUserPersona.name && activeUserPersona.name.trim()) ? activeUserPersona.name.trim() : 'User';
+    prompt += `[USER IDENTITY & ACTIVE ROLEPLAY MASK: {{user}}]\n`;
+    prompt += `Name: ${uName}\n`;
+    if (activeUserPersona.age) prompt += `Age / Life Stage: ${activeUserPersona.age}\n`;
+    if (activeUserPersona.gender || activeUserPersona.pronouns) prompt += `Gender & Pronouns: ${activeUserPersona.gender || activeUserPersona.pronouns}\n`;
+    if (activeUserPersona.title) prompt += `Occupation / Role: ${activeUserPersona.title}\n`;
+    if (activeUserPersona.appearance) prompt += `Physical Appearance: ${activeUserPersona.appearance}\n`;
+    if (activeUserPersona.personality) prompt += `Personality & Demeanor: ${activeUserPersona.personality}\n`;
+    const userLore = activeUserPersona.lore || activeUserPersona.bio || '';
+    if (userLore) prompt += `Backstory Lore: ${userLore}\n`;
+    const userRules = activeUserPersona.directives || activeUserPersona.globalNotes || '';
+    if (userRules) prompt += `Roleplay Preferences: ${userRules}\n`;
+
+    // Strict Override Directive
+    prompt += `\n[CRITICAL USER IDENTITY OVERRIDE RULES]\n`;
+    prompt += `1. The above profile for {{user}} (${uName}) is absolute and authoritative.\n`;
+    prompt += `2. If any character greeting, card description, or scenario suggests or assumes a different age, appearance, gender, or backstory for {{user}}, you MUST completely ignore and override that assumption in favor of {{user}}'s explicit profile above.\n`;
+    prompt += `3. You must perceive, interact with, and address {{user}} strictly in accordance with their designated age (${activeUserPersona.age || 'unspecified'}), appearance, and personality at all times.\n\n`;
 
     if (afterCharContent) {
       prompt += `${afterCharContent}\n\n`;
@@ -6240,6 +6272,116 @@ const { character } = Astro.props;
   const videoBtn = document.getElementById('chat-action-video-btn');
   const regenBtn = document.getElementById('chat-action-regenerate-btn');
   const rewindBtn = document.getElementById('chat-action-rewind-btn');
+  const maskBtn = document.getElementById('chat-action-mask-btn');
+  const chatMaskLabel = document.getElementById('chat-active-mask-label');
+
+  function updateChatMaskLabel() {
+    if (chatMaskLabel) {
+      chatMaskLabel.textContent = `Mask: ${activeUserPersona.name || 'You'}`;
+    }
+  }
+  updateChatMaskLabel();
+
+  // Quick In-Chat Mask Switcher Modal
+  maskBtn?.addEventListener('click', () => {
+    let savedMasks = [];
+    try {
+      savedMasks = JSON.parse(localStorage.getItem('aetheria_saved_personas') || '[]');
+    } catch {}
+
+    if (savedMasks.length === 0) {
+      savedMasks = [activeUserPersona];
+    }
+
+    const backdrop = document.createElement('div');
+    backdrop.className = 'fixed inset-0 z-[10000] flex items-center justify-center p-4 bg-black/75 backdrop-blur-md transition-opacity duration-200 opacity-0';
+    
+    const modal = document.createElement('div');
+    modal.className = 'w-full max-w-sm rounded-3xl bg-[#0d1124]/95 border border-purple-500/30 p-5 shadow-2xl shadow-purple-950/80 transform scale-95 transition-all duration-200 text-left';
+
+    let masksListHtml = savedMasks.map((m) => {
+      const isCur = m.id === activeUserPersona.id || (m.name && m.name === activeUserPersona.name);
+      return `
+        <button type="button" class="w-full p-2.5 rounded-xl border text-left transition flex items-center justify-between gap-3 cursor-pointer mask-pick-btn ${
+          isCur ? 'bg-purple-600/20 border-purple-500/60 text-white' : 'bg-white/[0.03] border-white/10 text-slate-300 hover:text-white hover:bg-white/[0.06]'
+        }" data-mask-id="${m.id || ''}">
+          <div class="flex items-center gap-2.5 min-w-0">
+            ${m.avatar ? `<img src="${m.avatar}" class="w-6 h-6 rounded-full object-cover shrink-0" />` : '<span class="w-6 h-6 rounded-full bg-purple-500/20 flex items-center justify-center text-[10px] text-purple-300 shrink-0">🎭</span>'}
+            <div class="min-w-0">
+              <p class="text-xs font-bold truncate">${m.name || 'Unnamed Mask'}</p>
+              <p class="text-[10px] text-slate-400 truncate">${m.age ? `${m.age} • ` : ''}${m.gender || 'Any'}</p>
+            </div>
+          </div>
+          ${isCur ? '<span class="text-[10px] px-1.5 py-0.5 rounded bg-purple-500/30 text-purple-200 font-bold shrink-0">Active</span>' : ''}
+        </button>
+      `;
+    }).join('');
+
+    modal.innerHTML = `
+      <div class="flex items-center justify-between border-b border-white/[0.08] pb-3 mb-3">
+        <div class="flex items-center gap-2">
+          <span class="text-base">🎭</span>
+          <h3 class="text-xs font-bold text-white uppercase tracking-wider">Switch Roleplay Mask</h3>
+        </div>
+        <a href="/profile" class="text-[10px] text-purple-400 hover:text-purple-300 underline underline-offset-2">Manage All</a>
+      </div>
+      <div class="space-y-2 max-h-60 overflow-y-auto pr-1">
+        ${masksListHtml}
+      </div>
+      <div class="mt-4 flex items-center justify-end">
+        <button id="close-mask-modal-btn" type="button" class="px-3.5 py-1.5 rounded-xl bg-white/5 hover:bg-white/10 border border-white/10 text-xs text-slate-300 hover:text-white transition cursor-pointer">
+          Done
+        </button>
+      </div>
+    `;
+
+    backdrop.appendChild(modal);
+    document.body.appendChild(backdrop);
+
+    requestAnimationFrame(() => {
+      backdrop.classList.remove('opacity-0');
+      modal.classList.remove('scale-95');
+    });
+
+    const cleanup = () => {
+      backdrop.classList.add('opacity-0');
+      modal.classList.add('scale-95');
+      setTimeout(() => backdrop.remove(), 200);
+    };
+
+    modal.querySelector('#close-mask-modal-btn')?.addEventListener('click', cleanup);
+    backdrop.addEventListener('click', (e) => {
+      if (e.target === backdrop) cleanup();
+    });
+
+    modal.querySelectorAll('.mask-pick-btn').forEach((btn) => {
+      btn.addEventListener('click', () => {
+        const id = btn.getAttribute('data-mask-id');
+        const chosen = savedMasks.find((x) => x.id === id);
+        if (chosen) {
+          activeUserPersona = {
+            id: chosen.id,
+            name: chosen.name || 'User',
+            age: chosen.age || '',
+            gender: chosen.gender || chosen.pronouns || '',
+            pronouns: chosen.gender || chosen.pronouns || '',
+            title: chosen.title || '',
+            avatar: chosen.avatar || '',
+            appearance: chosen.appearance || '',
+            personality: chosen.personality || '',
+            bio: chosen.lore || chosen.bio || '',
+            lore: chosen.lore || chosen.bio || '',
+            globalNotes: chosen.directives || chosen.globalNotes || '',
+            directives: chosen.directives || chosen.globalNotes || ''
+          };
+          localStorage.setItem('aetheria_user_persona', JSON.stringify(activeUserPersona));
+          updateChatMaskLabel();
+          showNotification(`Equipped Mask: ${activeUserPersona.name}`);
+          cleanup();
+        }
+      });
+    });
+  });
 
   selfieBtn?.addEventListener('click', handleGenerateSelfie);
   videoBtn?.addEventListener('click', handleGenerateVideo);
