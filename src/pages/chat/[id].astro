@@ -721,8 +721,8 @@ const { character } = Astro.props;
                       <option value="huggingface">Hugging Face</option>
                       <option value="cloudflare">Cloudflare Workers AI</option>
                       <option value="ai21">AI21 Labs</option>
-                      <option value="custom-local">Custom Localhost</option>
-                      <option value="custom-proxy">Custom Reverse Proxy</option>
+                      <option value="custom-proxy">⚡ Custom / OpenAI-Compatible (Any Provider)</option>
+                      <option value="custom-local">💻 Localhost (Ollama / LM Studio / vLLM)</option>
                     </select>
                   </div>
 
@@ -2453,17 +2453,17 @@ const { character } = Astro.props;
       urlHint: 'Supports Ollama, LM Studio, vLLM, LocalAI, Jan, Text-Generation-WebUI.'
     },
     'custom-proxy': {
-      name: 'Custom Reverse Proxy',
+      name: 'Custom OpenAI-Compatible API',
       label: 'Custom',
       hasKey: true,
       hasUrl: true,
       defaultUrl: 'https://api.openai.com/v1',
       modelsEndpoint: '',
       chatEndpoint: '',
-      keyPlaceholder: 'Proxy or upstream API key...',
+      keyPlaceholder: 'API key for custom provider or proxy...',
       urlLabel: 'OpenAI-Compatible Base URL',
-      urlPlaceholder: 'https://your-custom-proxy.com/v1',
-      urlHint: 'Directs chat completions to any OpenAI-compatible base URL.'
+      urlPlaceholder: 'https://api.your-provider.com/v1',
+      urlHint: 'Directs chat completions & models to any OpenAI-compatible base URL (DeepInfra, vLLM, OneAPI, etc).'
     }
   };
 
