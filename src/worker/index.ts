@@ -679,10 +679,13 @@ export default {
             body: JSON.stringify(requestBody)
           });
 
+          const upstreamContentType = apiRes.headers.get('Content-Type') || (requestBody?.stream ? 'text/event-stream; charset=utf-8' : 'application/json');
           return new Response(apiRes.body, {
             status: apiRes.status,
             headers: {
-              'Content-Type': apiRes.headers.get('Content-Type') || 'application/json',
+              'Content-Type': upstreamContentType,
+              'Cache-Control': 'no-cache, no-transform',
+              'Connection': 'keep-alive',
               'Access-Control-Allow-Origin': '*',
               'Access-Control-Allow-Methods': 'GET, POST, OPTIONS',
               'Access-Control-Allow-Headers': '*'

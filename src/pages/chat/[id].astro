@@ -4995,13 +4995,20 @@ Never speak, narrate, or decide thoughts or actions for {{user}}. Maintain high 
 
     let replyText = '';
 
-    // Direct LLM Call with Streaming
+    // Direct LLM Call with Real-time Streaming & Resilient Fallbacks
     if ((apiKey || provider === 'custom-local') && provider !== 'demo') {
       try {
         let endpoint = conf.chatEndpoint;
         if (conf.hasUrl) {
-          const base = localStorage.getItem('aetheria_text_base_url') || conf.defaultUrl || 'http://localhost:11434/v1';
-          endpoint = base.replace(/\/+$/, '') + '/chat/completions';
+          const rawBase = (localStorage.getItem('aetheria_text_base_url') || conf.defaultUrl || 'http://localhost:11434/v1').trim();
+          let base = rawBase.replace(/\/+$/, '');
+          if (base.endsWith('/chat/completions')) {
+            endpoint = base;
+          } else if (base.endsWith('/v1')) {
+            endpoint = base + '/chat/completions';
+          } else {
+            endpoint = base + '/chat/completions';
+          }
         } else if (provider === 'google') {
           endpoint = 'https://generativelanguage.googleapis.com/v1beta/openai/chat/completions';
         } else if (!endpoint) {
@@ -5059,22 +5066,19 @@ Never speak, narrate, or decide thoughts or actions for {{user}}. Maintain high 
           };
         }
 
+        const isLocalhost = endpoint.includes('localhost') || endpoint.includes('127.0.0.1') || endpoint.includes('192.168.') || endpoint.includes('10.');
         let res;
-        // Always try Edge Relay first to eliminate CORS, adblock, and webview header issues
-        try {
-          res = await fetch('/api/proxy/chat', {
+
+        if (isLocalhost) {
+          // Direct browser request for local/LAN models (Cloudflare cannot reach user localhost)
+          res = await fetch(endpoint, {
             method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({
-              endpoint,
-              apiKey,
-              body: payload,
-              headers: provider === 'openrouter' ? { 'HTTP-Referer': 'https://aetheria.ai', 'X-Title': 'Aetheria AI' } : {}
-            })
+            headers,
+            body: JSON.stringify(payload)
           });
-          // Auto-retry once on 429 upstream rate limit after 2.5s backoff
-          if (res.status === 429) {
-            await new Promise(r => setTimeout(r, 2500));
+        } else {
+          // Route public providers through Cloudflare Edge Relay to prevent CORS & header blocking
+          try {
             res = await fetch('/api/proxy/chat', {
               method: 'POST',
               headers: { 'Content-Type': 'application/json' },
@@ -5085,21 +5089,35 @@ Never speak, narrate, or decide thoughts or actions for {{user}}. Maintain high 
                 headers: provider === 'openrouter' ? { 'HTTP-Referer': 'https://aetheria.ai', 'X-Title': 'Aetheria AI' } : {}
               })
             });
+            // Auto-retry once on 429 upstream rate limit after 2.5s backoff
+            if (res.status === 429) {
+              await new Promise(r => setTimeout(r, 2500));
+              res = await fetch('/api/proxy/chat', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                  endpoint,
+                  apiKey,
+                  body: payload,
+                  headers: provider === 'openrouter' ? { 'HTTP-Referer': 'https://aetheria.ai', 'X-Title': 'Aetheria AI' } : {}
+                })
+              });
+            }
+          } catch (edgeRelayErr) {
+            // Direct browser fallback if edge proxy is unreachable
+            res = await fetch(endpoint, {
+              method: 'POST',
+              headers,
+              body: JSON.stringify(payload)
+            });
           }
-        } catch (edgeRelayErr) {
-          // Fallback to direct fetch if edge relay network unreachable
-          res = await fetch(endpoint, {
-            method: 'POST',
-            headers,
-            body: JSON.stringify(payload)
-          });
         }
 
         if (res.ok) {
           if (typingIndicator) typingIndicator.classList.add('hidden');
 
+          // Check if response is streamable
           if (enableStreaming && res.body) {
-            // Token Streaming Execution
             const charMsg = {
               sender: 'character',
               text: '',
@@ -5115,43 +5133,118 @@ Never speak, narrate, or decide thoughts or actions for {{user}}. Maintain high 
             const reader = res.body.getReader();
             const decoder = new TextDecoder('utf-8');
             let buffer = '';
+            let rawAccumulated = '';
 
-            while (true) {
-              const { done, value } = await reader.read();
-              if (done) break;
-              buffer += decoder.decode(value, { stream: true });
-              const lines = buffer.split('\n');
-              buffer = lines.pop() || '';
+            try {
+              while (true) {
+                const { done, value } = await reader.read();
+                if (done) break;
+                const chunk = decoder.decode(value, { stream: true });
+                rawAccumulated += chunk;
+                buffer += chunk;
+                const lines = buffer.split('\n');
+                buffer = lines.pop() || '';
 
-              for (const line of lines) {
-                const trimmed = line.trim();
-                if (trimmed.startsWith('data: ')) {
-                  const dataStr = trimmed.slice(6);
-                  if (dataStr === '[DONE]') continue;
-                  try {
-                    const parsed = JSON.parse(dataStr);
-                    const token = parsed.choices?.[0]?.delta?.content 
-                      || (parsed.delta && parsed.delta.text) 
-                      || '';
-                    if (token) {
-                      replyText += token;
-                      charMsg.text = replyText;
-                      charMsg.swipes[0] = replyText;
-                      if (bubbleEl) {
-                        bubbleEl.innerHTML = formatMessageText(replyText);
+                for (const line of lines) {
+                  const trimmed = line.trim();
+                  if (trimmed.startsWith('data: ')) {
+                    const dataStr = trimmed.slice(6);
+                    if (dataStr === '[DONE]') continue;
+                    try {
+                      const parsed = JSON.parse(dataStr);
+                      // Extract token from standard and reasoning schemas
+                      let token = '';
+                      if (parsed.choices?.[0]) {
+                        const c = parsed.choices[0];
+                        token = c.delta?.content || c.delta?.text || c.text || c.message?.content || '';
+                      } else if (parsed.delta) {
+                        token = parsed.delta.content || parsed.delta.text || '';
+                      } else if (parsed.response) {
+                        token = parsed.response;
+                      } else if (parsed.content) {
+                        token = parsed.content;
                       }
-                      if (chatStream) chatStream.scrollTop = chatStream.scrollHeight;
-                    }
-                  } catch (e) {}
+
+                      if (token) {
+                        replyText += token;
+                        charMsg.text = replyText;
+                        charMsg.swipes[0] = replyText;
+                        if (bubbleEl) {
+                          bubbleEl.innerHTML = formatMessageText(replyText);
+                        }
+                        if (chatStream) chatStream.scrollTop = chatStream.scrollHeight;
+                      }
+                    } catch (e) {}
+                  }
+                }
+              }
+            } catch (streamErr) {
+              console.warn('Stream read error:', streamErr);
+            }
+
+            // Fallback JSON parser if provider returned non-SSE JSON response
+            if (!replyText.trim()) {
+              const fullText = (rawAccumulated + buffer).trim();
+              if (fullText.startsWith('{') || fullText.startsWith('[')) {
+                try {
+                  const json = JSON.parse(fullText);
+                  if (json.choices?.[0]?.message?.content) {
+                    replyText = json.choices[0].message.content;
+                  } else if (json.choices?.[0]?.text) {
+                    replyText = json.choices[0].text;
+                  } else if (json.response) {
+                    replyText = json.response;
+                  } else if (json.error) {
+                    throw new Error(json.error.message || json.error.code || JSON.stringify(json.error));
+                  }
+                } catch (jsonErr) {
+                  if (jsonErr.message && !jsonErr.message.includes('JSON')) {
+                    throw jsonErr;
+                  }
                 }
               }
             }
-            saveChat();
+
+            if (replyText.trim()) {
+              charMsg.text = replyText;
+              charMsg.swipes[0] = replyText;
+              if (bubbleEl) {
+                bubbleEl.innerHTML = formatMessageText(replyText);
+              }
+              saveChat();
+            } else {
+              // Provider returned 200 OK but produced zero text tokens.
+              // Remove the ghost empty bubble from the DOM!
+              conversation.splice(msgIdx, 1);
+              const elToRemove = document.getElementById(`msg-${msgIdx}`);
+              elToRemove?.remove();
+
+              throw new Error(`API connected successfully (HTTP 200) but produced no text tokens. Model '${model}' may be out of quota, overloaded, or blocked by content moderation.`);
+            }
           } else {
+            // Standard non-streaming JSON mode
             const data = await res.json();
             replyText = data.choices?.[0]?.message?.content 
+              || data.choices?.[0]?.text 
               || (data.content && data.content[0] && data.content[0].text) 
+              || data.response 
               || '';
+            if (!replyText.trim()) {
+              if (data.error) {
+                throw new Error(data.error.message || JSON.stringify(data.error));
+              }
+              throw new Error(`Model returned an empty response. Verify model status on provider.`);
+            }
+            const charMsg = {
+              sender: 'character',
+              text: replyText,
+              timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+              swipes: [replyText],
+              swipeIndex: 0
+            };
+            conversation.push(charMsg);
+            saveChat();
+            appendMessageToDOM(charMsg, conversation.length - 1);
           }
         } else {
           console.warn('API returned non-OK status', res.status);
@@ -5205,8 +5298,8 @@ Never speak, narrate, or decide thoughts or actions for {{user}}. Maintain high 
       }
     }
 
-    // Fallback response generator if API was not configured (Free Cloud AI)
-    if (!replyText) {
+    // Fallback response generator ONLY if provider is explicitly 'demo'
+    if (!replyText && provider === 'demo') {
       if (typingIndicator) typingIndicator.classList.remove('hidden');
       try {
         const sysPrompt = buildSystemPrompt(userText);
