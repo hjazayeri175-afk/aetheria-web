@@ -905,9 +905,26 @@ const { character } = Astro.props;
                       <input id="slider-tokens" type="range" min="128" max="4096" step="64" value="2048" class="w-full accent-purple-500 cursor-pointer" />
                       <div class="flex justify-between text-[10px] text-slate-500">
                         <span>Short (150)</span>
-                        <span>Standard (350)</span>
-                        <span>Novella (1024+)</span>
+                        <span>Standard (1024)</span>
+                        <span>Novella (2048+)</span>
                       </div>
+                    </div>
+
+                    <!-- Thinking Mode (Reasoning) -->
+                    <div class="space-y-1.5 p-3 rounded-xl bg-purple-950/20 border border-purple-500/20">
+                      <div class="flex items-center justify-between text-xs">
+                        <div class="flex items-center gap-1.5">
+                          <span class="text-sm">💭</span>
+                          <span class="text-slate-200 font-medium">حالت تفکر مدل (Thinking Mode)</span>
+                        </div>
+                        <label class="relative inline-flex items-center cursor-pointer">
+                          <input id="toggle-thinking" type="checkbox" class="sr-only peer" />
+                          <div class="w-9 h-5 bg-slate-700 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-purple-600"></div>
+                        </label>
+                      </div>
+                      <p class="text-[10px] text-slate-400 leading-normal">
+                        برای رول‌پلی سریع و مستقیم خاموش بگذارید. در صورت روشن بودن، سقف توکن به طور خودکار به ۳۵۰۰+ افزایش می‌یابد تا تفکر مانع از تولید پاسخ نشود.
+                      </p>
                     </div>
 
                     <!-- Top-P -->
@@ -2162,6 +2179,7 @@ const { character } = Astro.props;
   const sliderContext = document.getElementById('slider-context');
   const badgeContext = document.getElementById('badge-context');
   const toggleStreaming = document.getElementById('toggle-streaming');
+  const toggleThinking = document.getElementById('toggle-thinking');
 
   // Voice Inputs
   const voiceProviderSelect = document.getElementById('voice-provider-select');
@@ -2216,9 +2234,9 @@ const { character } = Astro.props;
       return `<details class="mb-3 rounded-lg border border-purple-500/20 bg-purple-950/20 px-3 py-2 text-xs text-purple-300 select-none"><summary class="cursor-pointer font-medium hover:text-purple-200">💭 روند تفکر (${trimmed.length} کاراکتر)</summary><div class="mt-2 text-slate-300 font-mono text-[11px] leading-relaxed whitespace-pre-wrap">${trimmed}</div></details>\n\n`;
     });
 
-    // Protect <details> reasoning blocks from HTML escaping
+    // Protect <details> reasoning blocks and HTML notice containers from escaping
     const htmlBlocks = [];
-    let s = text.replace(/<details[\s\S]*?<\/details>/gi, (match) => {
+    let s = text.replace(/<(?:details|div)[\s\S]*?<\/(?:details|div)>/gi, (match) => {
       const idx = htmlBlocks.length;
       htmlBlocks.push(match);
       return `__HTML_BLOCK_${idx}__`;
@@ -3206,7 +3224,9 @@ const { character } = Astro.props;
     if (repPen && repPenSlider) { repPenSlider.value = repPen; if (repPenVal) repPenVal.textContent = repPen; }
 
     const streaming = localStorage.getItem('aetheria_text_streaming');
-    if (streaming && streamingToggle) streamingToggle.checked = streaming !== 'false';
+    if (streaming && toggleStreaming) toggleStreaming.checked = streaming !== 'false';
+    const thinkingVal = localStorage.getItem('aetheria_text_thinking');
+    if (toggleThinking) toggleThinking.checked = thinkingVal === 'true'; // default off for snappy roleplay
 
     // 3. Voice settings
     const voiceProv = localStorage.getItem('aetheria_voice_provider') || 'browser';
@@ -4277,6 +4297,7 @@ const { character } = Astro.props;
       if (sliderPresPen) localStorage.setItem('aetheria_text_pres_pen', sliderPresPen.value);
       if (sliderContext) localStorage.setItem('aetheria_text_context', sliderContext.value);
       if (toggleStreaming) localStorage.setItem('aetheria_text_streaming', toggleStreaming.checked ? 'true' : 'false');
+      if (toggleThinking) localStorage.setItem('aetheria_text_thinking', toggleThinking.checked ? 'true' : 'false');
 
       if (voiceProviderSelect) localStorage.setItem('aetheria_voice_provider', voiceProviderSelect.value);
       if (voiceApiKey) localStorage.setItem('aetheria_voice_key', voiceApiKey.value.trim());
@@ -4983,6 +5004,45 @@ const { character } = Astro.props;
   }
 
   // Send message & AI Generation with Real-time SSE Token Streaming
+  
+  // Recovery actions for when a model exhausts tokens on thinking
+  window.continueGeneration = async function() {
+    const lastMsg = conversation[conversation.length - 1];
+    if (lastMsg && lastMsg.sender === 'character') {
+      conversation.pop();
+      const lastEl = document.querySelector('#chat-stream > div:last-child');
+      if (lastEl) lastEl.remove();
+      saveChat();
+      // Prompt character to write the response now
+      handleSendMessage('Please write ' + (activeChar.name || '{{char}}') + '\'s reply now without further internal thinking.');
+    }
+  };
+
+  window.disableThinkingAndRetry = async function() {
+    localStorage.setItem('aetheria_text_thinking', 'false');
+    const toggleThinkingEl = document.getElementById('toggle-thinking');
+    if (toggleThinkingEl) toggleThinkingEl.checked = false;
+
+    // Pop the unfinished character message
+    const lastMsg = conversation[conversation.length - 1];
+    if (lastMsg && lastMsg.sender === 'character') {
+      conversation.pop();
+      const lastEl = document.querySelector('#chat-stream > div:last-child');
+      if (lastEl) lastEl.remove();
+      saveChat();
+    }
+    // Re-send the last user message
+    const lastUserMsg = conversation.slice().reverse().find(m => m.sender === 'user');
+    if (lastUserMsg) {
+      const userText = lastUserMsg.text;
+      conversation.pop(); // pop user message too since handleSendMessage appends it
+      const lastUserEl = document.querySelector('#chat-stream > div:last-child');
+      if (lastUserEl) lastUserEl.remove();
+      saveChat();
+      handleSendMessage(userText);
+    }
+  };
+
   async function handleSendMessage(userText) {
     if (!userText.trim()) return;
 
@@ -5111,12 +5171,20 @@ const { character } = Astro.props;
           headers['X-Title'] = 'Aetheria AI';
         }
 
+        const enableThinking = localStorage.getItem('aetheria_text_thinking') === 'true';
+        let effectiveMaxTokens = maxTokens;
+        const isReasoningModel = /deepseek|r1|reasoning|qwq|flash/i.test(model);
+        if (enableThinking || isReasoningModel) {
+          // Generous token budget so internal thinking never starves the character response
+          effectiveMaxTokens = Math.max(maxTokens, 3500);
+        }
+
         if (provider === 'anthropic') {
           payload = {
             model: model,
             system: systemPrompt,
             messages: payloadMessages,
-            max_tokens: maxTokens,
+            max_tokens: effectiveMaxTokens,
             temperature: temp,
             stream: enableStreaming
           };
@@ -5125,10 +5193,22 @@ const { character } = Astro.props;
             model: model,
             messages: [{ role: 'system', content: systemPrompt }, ...payloadMessages],
             temperature: temp,
-            max_tokens: maxTokens,
+            max_tokens: effectiveMaxTokens,
             top_p: topP,
             stream: enableStreaming
           };
+
+          if (isReasoningModel) {
+            if (!enableThinking) {
+              // Explicitly disable thinking for snappy character roleplay
+              payload.thinking = { type: 'disabled' };
+              payload.reasoning_effort = 'low';
+              payload.chat_template_kwargs = { thinking: false };
+            } else {
+              payload.thinking = { type: 'enabled' };
+              payload.reasoning_effort = 'low';
+            }
+          }
         }
 
         let res;
@@ -5139,6 +5219,18 @@ const { character } = Astro.props;
             headers,
             body: JSON.stringify(payload)
           });
+          // If 400 Bad Request and payload contained thinking parameters, retry once cleanly without them
+          if (res.status === 400 && (payload.thinking || payload.chat_template_kwargs)) {
+            const cleanPayload = { ...payload };
+            delete cleanPayload.thinking;
+            delete cleanPayload.reasoning_effort;
+            delete cleanPayload.chat_template_kwargs;
+            res = await fetch(endpoint, {
+              method: 'POST',
+              headers,
+              body: JSON.stringify(cleanPayload)
+            });
+          }
         } catch (directErr) {
           console.warn('Direct browser fetch blocked or failed, attempting Edge Relay fallback:', directErr);
           // Fallback to Edge Proxy ONLY if direct browser request fails due to CORS or local network restrictions
@@ -5190,6 +5282,7 @@ const { character } = Astro.props;
             let rawAccumulated = '';
             let contentText = '';
             let reasoningText = '';
+            let finishReason = '';
 
             try {
               while (true) {
@@ -5209,6 +5302,7 @@ const { character } = Astro.props;
                     try {
                       const parsed = JSON.parse(dataStr);
                       const c = parsed.choices?.[0];
+                      if (c?.finish_reason) finishReason = c.finish_reason;
 
                       // 1. Content token
                       const contentToken = c?.delta?.content 
@@ -5266,8 +5360,13 @@ const { character } = Astro.props;
             // Combine content and reasoning
             if (contentText && reasoningText.trim()) {
               replyText = `<details class="mb-3 rounded-lg border border-purple-500/20 bg-purple-950/20 px-3 py-2 text-xs text-purple-300 select-none"><summary class="cursor-pointer font-medium hover:text-purple-200">💭 روند تفکر (${reasoningText.length} کاراکتر)</summary><div class="mt-2 text-slate-300 font-mono text-[11px] leading-relaxed whitespace-pre-wrap">${reasoningText}</div></details>\n\n${contentText}`;
-            } else {
-              replyText = contentText || reasoningText;
+            } else if (contentText) {
+              replyText = contentText;
+            } else if (reasoningText.trim()) {
+              const notice = finishReason === 'length'
+                ? `مدل تمام سقف توکن (${effectiveMaxTokens}) را صرف فکر کردن کرد و به پایان رسید.`
+                : `مدل فرآیند تفکر را انجام داد اما دیالوگ کاراکتر را ننوشت.`;
+              replyText = `<details class="mb-3 rounded-lg border border-purple-500/20 bg-purple-950/20 px-3 py-2 text-xs text-purple-300 select-none" open><summary class="cursor-pointer font-medium hover:text-purple-200">💭 روند تفکر (${reasoningText.length} کاراکتر)</summary><div class="mt-2 text-slate-300 font-mono text-[11px] leading-relaxed whitespace-pre-wrap">${reasoningText}</div></details>\n\n<div class="p-3 rounded-xl bg-amber-500/10 border border-amber-500/30 text-amber-200 text-xs flex flex-col gap-2"><div>⚠️ <strong>توقف پس از تفکر:</strong> ${notice}</div><div class="flex flex-wrap items-center gap-2 mt-1"><button type="button" onclick="window.continueGeneration()" class="px-3 py-1.5 rounded-lg bg-purple-600 hover:bg-purple-500 text-white font-medium text-xs shadow transition-all cursor-pointer">✨ ادامه نوشتن دیالوگ (Continue)</button><button type="button" onclick="window.disableThinkingAndRetry()" class="px-3 py-1.5 rounded-lg bg-white/10 hover:bg-white/20 text-slate-200 text-xs transition-all cursor-pointer">⚡ پاسخ سریع با تفکر خاموش (پیشنهادی رول‌پلی)</button></div></div>`;
             }
 
             // Fallback JSON parser if provider returned non-SSE JSON response
