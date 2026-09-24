@@ -671,7 +671,8 @@ export default {
 
         const fetchHeaders: Record<string, string> = {
           'Content-Type': 'application/json',
-          // Do not inject custom user agent to avoid upstream bot triggers
+          'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.0.0 Safari/537.36',
+          'Accept': 'application/json, text/event-stream, */*',
           ...customHeaders
         };
 

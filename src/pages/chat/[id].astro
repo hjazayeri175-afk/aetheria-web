@@ -4912,81 +4912,56 @@ const { character } = Astro.props;
     }
   }
 
-  // Build System Prompt with Dynamic Lorebook Injection & Pure Tavern/Chub Roleplay Framing
+  // Build System Prompt with Dynamic Lorebook Injection - 100% Pure SillyTavern / Chub Spec
   function buildSystemPrompt(userText = '') {
     const { beforeCharContent, afterCharContent, triggeredNames } = scanAndInjectLorebook(userText, conversation);
     updateSidebarLoreTriggers(triggeredNames);
 
     let prompt = '';
 
-    // Clean, natural roleplay scenario framing (compatible across all LLM providers)
-    prompt += `Write {{char}}'s next reply in a fictional roleplay between {{char}} and {{user}}.
-Embody {{char}}'s personality, thoughts, emotions, and speech style.
-
-`;
+    // Standard Main Prompt (Pure narrative framing without rigid corporate rules)
+    prompt += `Write {{char}}'s next reply in this fictional roleplay with {{user}}.\n\n`;
 
     if (beforeCharContent) {
-      prompt += `[World Information]
-${beforeCharContent}
-
-`;
+      prompt += `${beforeCharContent}\n\n`;
     }
 
-    // Character Persona & Attributes
-    prompt += `[Character: {{char}}]
-${activeChar.title ? `Title: ${activeChar.title}\n` : ''}${activeChar.description ? `Description:\n${formatMacroText(activeChar.description)}\n` : ''}${activeChar.personality ? `Personality:\n${formatMacroText(activeChar.personality)}\n` : ''}${activeChar.scenario ? `Scenario:\n${formatMacroText(activeChar.scenario)}\n` : ''}${activeChar.speechStyle ? `Speech Style:\n${formatMacroText(activeChar.speechStyle)}\n` : ''}${activeChar.systemPrompt ? `Directives:\n${formatMacroText(activeChar.systemPrompt)}\n` : ''}
-`;
+    // Character Card Attributes (pure Tavern format)
+    if (activeChar.description) prompt += `[Character: {{char}}]\n${activeChar.description}\n\n`;
+    if (activeChar.personality) prompt += `[Personality: {{char}}]\n${activeChar.personality}\n\n`;
+    if (activeChar.scenario) prompt += `[Scenario]\n${activeChar.scenario}\n\n`;
+    if (activeChar.speechStyle) prompt += `[Speech Style: {{char}}]\n${activeChar.speechStyle}\n\n`;
+    if (activeChar.systemPrompt) prompt += `${activeChar.systemPrompt}\n\n`;
 
     // Dialogue Examples
     if (activeChar.mesExample) {
-      prompt += `[Example Dialogue]
-${formatMacroText(activeChar.mesExample)}
-
-`;
+      prompt += `<START>\n${activeChar.mesExample}\n\n`;
     }
 
     // User Persona
-    prompt += `[User: {{user}}]
-Name: ${activeUserPersona.name || 'Traveler'}
-${activeUserPersona.bio ? `Description: ${formatMacroText(activeUserPersona.bio)}\n` : ''}${activeUserPersona.globalNotes ? `Notes: ${formatMacroText(activeUserPersona.globalNotes)}\n` : ''}
-`;
-
-    // Guidelines
-    prompt += `[Roleplay Guidelines]
-- Stay in character as {{char}}.
-- Use *asterisks* for actions, physical movements, and expressions.
-- Use "quotes" for spoken dialogue.
-- Never speak, act, or decide on behalf of {{user}}.
-- Match the language used by {{user}}. If {{user}} writes in Persian, respond naturally in Persian (فارسی روان و صمیمی).
-`;
+    prompt += `[User: {{user}}]\nName: ${activeUserPersona.name || 'User'}\n`;
+    if (activeUserPersona.bio) prompt += `${activeUserPersona.bio}\n`;
+    if (activeUserPersona.globalNotes) prompt += `${activeUserPersona.globalNotes}\n`;
+    prompt += '\n';
 
     if (afterCharContent) {
-      prompt += `
-[Contextual Lore]
-${afterCharContent}
-`;
+      prompt += `${afterCharContent}\n\n`;
     }
 
     // Pinned Memory / Author's Note Injection
     const pinnedNoteKey = 'aetheria_pinned_note_' + (activeChar.id || character.id || 'default');
     const pinnedNote = localStorage.getItem(pinnedNoteKey) || '';
     if (pinnedNote.trim()) {
-      prompt += `
-[Author's Note]
-${formatMacroText(pinnedNote.trim())}
-`;
+      prompt += `[Author's Note: ${pinnedNote.trim()}]\n\n`;
     }
 
     // Custom post history instructions from character card if present
     const charCustomPostHistory = activeChar.postHistoryInstructions || activeChar.post_history_instructions || '';
     if (charCustomPostHistory.trim()) {
-      prompt += `
-[Character Directives]
-${formatMacroText(charCustomPostHistory.trim())}
-`;
+      prompt += `${charCustomPostHistory.trim()}\n\n`;
     }
 
-    return formatMacroText(prompt);
+    return formatMacroText(prompt).trim();
   }
 
   // Send message & AI Generation with Real-time SSE Token Streaming
@@ -5138,19 +5113,29 @@ ${formatMacroText(charCustomPostHistory.trim())}
           };
         }
 
-        const isLocalhost = endpoint.includes('localhost') || endpoint.includes('127.0.0.1') || endpoint.includes('192.168.') || endpoint.includes('10.');
         let res;
-
-        if (isLocalhost) {
-          // Direct browser request for local/LAN models (Cloudflare cannot reach user localhost)
+        try {
+          // Direct browser request first (100% transparent client like SillyTavern — user's own IP & network)
           res = await fetch(endpoint, {
             method: 'POST',
             headers,
             body: JSON.stringify(payload)
           });
-        } else {
-          // Route public providers through Cloudflare Edge Relay to prevent CORS & header blocking
-          try {
+        } catch (directErr) {
+          console.warn('Direct browser fetch blocked or failed, attempting Edge Relay fallback:', directErr);
+          // Fallback to Edge Proxy ONLY if direct browser request fails due to CORS or local network restrictions
+          res = await fetch('/api/proxy/chat', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              endpoint,
+              apiKey,
+              body: payload,
+              headers: provider === 'openrouter' ? { 'HTTP-Referer': 'https://aetheria.ai', 'X-Title': 'Aetheria AI' } : {}
+            })
+          });
+          if (res.status === 429) {
+            await new Promise(r => setTimeout(r, 2500));
             res = await fetch('/api/proxy/chat', {
               method: 'POST',
               headers: { 'Content-Type': 'application/json' },
@@ -5160,27 +5145,6 @@ ${formatMacroText(charCustomPostHistory.trim())}
                 body: payload,
                 headers: provider === 'openrouter' ? { 'HTTP-Referer': 'https://aetheria.ai', 'X-Title': 'Aetheria AI' } : {}
               })
-            });
-            // Auto-retry once on 429 upstream rate limit after 2.5s backoff
-            if (res.status === 429) {
-              await new Promise(r => setTimeout(r, 2500));
-              res = await fetch('/api/proxy/chat', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({
-                  endpoint,
-                  apiKey,
-                  body: payload,
-                  headers: provider === 'openrouter' ? { 'HTTP-Referer': 'https://aetheria.ai', 'X-Title': 'Aetheria AI' } : {}
-                })
-              });
-            }
-          } catch (edgeRelayErr) {
-            // Direct browser fallback if edge proxy is unreachable
-            res = await fetch(endpoint, {
-              method: 'POST',
-              headers,
-              body: JSON.stringify(payload)
             });
           }
         }
@@ -5225,11 +5189,6 @@ ${formatMacroText(charCustomPostHistory.trim())}
                     try {
                       const parsed = JSON.parse(dataStr);
 
-                      // Detect mid-stream provider safety filter cutoffs
-                      if (parsed.choices?.[0]?.finish_reason === 'content_filter' || parsed.error?.type === 'content_filter') {
-                        showNotification('⚠️ Model Safety Notice: Content flagged by upstream AI provider filter.');
-                      }
-
                       // Extract token from standard and reasoning schemas
                       let token = '';
                       if (parsed.choices?.[0]) {
@@ -5241,19 +5200,6 @@ ${formatMacroText(charCustomPostHistory.trim())}
                         token = parsed.response;
                       } else if (parsed.content) {
                         token = parsed.content;
-                      }
-
-                      // Strip raw server error payloads if emitted inside delta by upstream proxies
-                      if (token) {
-                        if (token.includes('The request was rejected because it was considered high risk') ||
-                            token.includes('considered high risk') ||
-                            token.includes('The request was rejected')) {
-                          token = token
-                            .replace(/The request was rejected because it was considered high risk/gi, '')
-                            .replace(/The request was rejected/gi, '')
-                            .replace(/considered high risk/gi, '');
-                          showNotification('⚠️ Model Safety Notice: Sensitive content filtered by upstream AI provider.');
-                        }
                       }
 
                       if (token) {
@@ -5304,13 +5250,13 @@ ${formatMacroText(charCustomPostHistory.trim())}
               }
               saveChat();
             } else {
-              // Provider returned 200 OK but produced zero text tokens.
-              // Remove the ghost empty bubble from the DOM!
-              conversation.splice(msgIdx, 1);
-              const elToRemove = document.getElementById(`msg-${msgIdx}`);
-              elToRemove?.remove();
-
-              throw new Error(`API connected successfully (HTTP 200) but produced no text tokens. Model '${model}' may be out of quota, overloaded, or blocked by content moderation.`);
+              // Provider returned 200 OK but produced zero text tokens
+              charMsg.text = '*(No response received from model)*';
+              charMsg.swipes[0] = charMsg.text;
+              if (bubbleEl) {
+                bubbleEl.innerHTML = formatMessageText(charMsg.text);
+              }
+              saveChat();
             }
           } else {
             // Standard non-streaming JSON mode
@@ -5394,28 +5340,26 @@ ${formatMacroText(charCustomPostHistory.trim())}
       if (typingIndicator) typingIndicator.classList.remove('hidden');
       try {
         const sysPrompt = buildSystemPrompt(userText);
-        const pollHistory = conversation.slice(-8).map(m => ({
-          role: m.sender === 'user' ? 'user' : 'assistant',
-          content: m.text
-        }));
-        const pollRes = await fetch('https://text.pollinations.ai/', {
+        const demoHistory = conversation.slice(-8)
+          .filter(m => m.text && !isPoisonedOrErrorMessage(m.text))
+          .map(m => ({
+            role: m.sender === 'user' ? 'user' : 'assistant',
+            content: m.text
+          }));
+        const demoRes = await fetch('/api/chat/demo', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
             messages: [
               { role: 'system', content: sysPrompt },
-              ...pollHistory
-            ],
-            model: 'openai',
-            temperature: temp || 0.85
+              ...demoHistory
+            ]
           }),
-          signal: AbortSignal.timeout(12000)
+          signal: AbortSignal.timeout(15000)
         });
-        if (pollRes.ok) {
-          const pollText = await pollRes.text();
-          if (pollText && !pollText.includes('"error"') && pollText.length > 5) {
-            replyText = pollText.trim();
-          }
+        if (demoRes.ok) {
+          const demoData = await demoRes.json();
+          replyText = (demoData.response || demoData.choices?.[0]?.message?.content || '').trim();
         }
       } catch (e) {
         console.warn('Free Cloud fallback error:', e);
@@ -5594,21 +5538,17 @@ ${formatMacroText(charCustomPostHistory.trim())}
             role: m.sender === 'user' ? 'user' : 'assistant',
             content: m.text
           }));
-        const pollRes = await fetch('https://text.pollinations.ai/', {
+        const demoRes = await fetch('/api/chat/demo', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
-            messages: [{ role: 'system', content: systemPrompt }, ...historySlice],
-            model: 'openai',
-            temperature: 0.9
+            messages: [{ role: 'system', content: systemPrompt }, ...historySlice]
           }),
-          signal: AbortSignal.timeout(8000)
+          signal: AbortSignal.timeout(12000)
         });
-        if (pollRes.ok) {
-          const pollText = await pollRes.text();
-          if (pollText && !pollText.includes('"error"') && pollText.length > 5) {
-            newReply = pollText.trim();
-          }
+        if (demoRes.ok) {
+          const demoData = await demoRes.json();
+          newReply = (demoData.response || demoData.choices?.[0]?.message?.content || '').trim();
         }
       } catch (e) {}
     }
@@ -6142,16 +6082,14 @@ Requirements:
 
       const userPrompt = `Character: ${activeChar.name}\nLast words:\n"${cleanText}"`;
 
-      const res = await fetch('https://text.pollinations.ai/', {
+      const res = await fetch('/api/chat/demo', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           messages: [
             { role: 'system', content: systemPrompt },
             { role: 'user', content: userPrompt }
-          ],
-          model: 'openai',
-          seed: Math.floor(Math.random() * 100000)
+          ]
         }),
         signal: AbortSignal.timeout(7000)
       });
