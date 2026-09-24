@@ -133,4 +133,17 @@ const categories = [
       }));
     });
   });
+
+  // Handle URL category parameter on direct landing (e.g. /?cat=trending)
+  const urlCat = new URLSearchParams(window.location.search).get('cat');
+  if (urlCat) {
+    const targetPill = document.querySelector<HTMLButtonElement>(`[data-cat-btn="${urlCat}"]`);
+    if (targetPill) {
+      setTimeout(() => {
+        targetPill.click();
+        const grid = document.querySelector('#characters-grid');
+        if (grid) grid.scrollIntoView({ behavior: 'smooth' });
+      }, 100);
+    }
+  }
 </script>
