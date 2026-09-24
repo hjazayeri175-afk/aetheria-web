@@ -1186,7 +1186,7 @@ const PRESET_AVATARS = [
           <input 
             type="text" 
             class="entry-keys-input w-full px-3 py-2 rounded-xl bg-black/40 border border-white/10 text-xs sm:text-sm text-white placeholder:text-slate-500 outline-none" 
-            value="${entry.keys.replace(/"/g, '&quot;')}" 
+            value="${(Array.isArray(entry.keys) ? entry.keys.join(', ') : (entry.keys || '')).replace(/"/g, '&quot;')}" 
             placeholder="e.g. neo-kyoto, sector 4, syndicate, cipher" 
           />
         </div>
@@ -1839,7 +1839,10 @@ const PRESET_AVATARS = [
       lorebook: {
         name: loreBookName.value.trim(),
         description: loreBookDesc.value.trim(),
-        entries: loreEntries
+        entries: loreEntries.map((en, idx) => ({
+          ...en,
+          keys: Array.isArray(en.keys) ? en.keys : (typeof en.keys === 'string' ? en.keys.split(',').map((k: string) => k.trim()).filter(Boolean) : [])
+        }))
       },
       rating: '5.0',
       chatsCount: '1',

@@ -6293,7 +6293,9 @@ Requirements:
           : 'bg-white/[0.02] border-white/[0.06] opacity-60'
       }`;
 
-      const keysList = (entry.keys || []).map(k => `<span class="px-2 py-0.5 rounded-md bg-cyan-500/10 border border-cyan-500/20 text-cyan-300 text-[10px] font-mono">${k}</span>`).join(' ');
+      const rawKeys = entry.keys || entry.key || [];
+      const normKeys = Array.isArray(rawKeys) ? rawKeys : (typeof rawKeys === 'string' ? rawKeys.split(',') : []);
+      const keysList = normKeys.map(k => `<span class="px-2 py-0.5 rounded-md bg-cyan-500/10 border border-cyan-500/20 text-cyan-300 text-[10px] font-mono">${String(k).trim()}</span>`).join(' ');
 
       card.innerHTML = `
         <div class="flex items-start justify-between gap-3">
@@ -6366,8 +6368,13 @@ Requirements:
     }
 
     document.getElementById('lore-input-name').value = entry ? entry.name : '';
-    document.getElementById('lore-input-keys').value = entry ? (entry.keys || []).join(', ') : '';
-    document.getElementById('lore-input-second-keys').value = entry ? (entry.secondary_keys || []).join(', ') : '';
+    const rawK = entry ? (entry.keys || entry.key || []) : [];
+    const kArr = Array.isArray(rawK) ? rawK : (typeof rawK === 'string' ? rawK.split(',') : []);
+    document.getElementById('lore-input-keys').value = kArr.map(k => String(k).trim()).join(', ');
+
+    const rawSec = entry ? (entry.secondary_keys || entry.secondary_key || []) : [];
+    const secArr = Array.isArray(rawSec) ? rawSec : (typeof rawSec === 'string' ? rawSec.split(',') : []);
+    document.getElementById('lore-input-second-keys').value = secArr.map(k => String(k).trim()).join(', ');
     document.getElementById('lore-input-content').value = entry ? entry.content : '';
     document.getElementById('lore-input-position').value = entry ? (entry.position || 'after_char') : 'after_char';
     document.getElementById('lore-input-order').value = entry ? String(entry.insertion_order || 100) : '100';
@@ -6452,14 +6459,27 @@ Requirements:
     sorted.forEach(entry => {
       if (entry.enabled === false) return;
 
+      // Robust normalization of trigger keys across all card formats (string, array, Tavern key/keys)
+      const rawPrimary = entry.keys || entry.key || [];
+      const primaryKeys = (Array.isArray(rawPrimary) 
+        ? rawPrimary 
+        : (typeof rawPrimary === 'string' ? rawPrimary.split(',') : [])
+      ).map(k => String(k).toLowerCase().trim()).filter(Boolean);
+
+      const rawSecondary = entry.secondary_keys || entry.secondary_key || [];
+      const secondaryKeys = (Array.isArray(rawSecondary) 
+        ? rawSecondary 
+        : (typeof rawSecondary === 'string' ? rawSecondary.split(',') : [])
+      ).map(k => String(k).toLowerCase().trim()).filter(Boolean);
+
       let isHit = false;
       if (entry.constant) {
         isHit = true;
-      } else if (entry.keys && entry.keys.length > 0) {
-        const matchesPrimary = entry.keys.some((k) => fullScanText.includes(k.toLowerCase().trim()));
+      } else if (primaryKeys.length > 0) {
+        const matchesPrimary = primaryKeys.some((k) => fullScanText.includes(k));
         if (matchesPrimary) {
-          if (entry.secondary_keys && entry.secondary_keys.length > 0) {
-            const matchesSecondary = entry.secondary_keys.some((k) => fullScanText.includes(k.toLowerCase().trim()));
+          if (secondaryKeys.length > 0) {
+            const matchesSecondary = secondaryKeys.some((k) => fullScanText.includes(k));
             if (matchesSecondary) isHit = true;
           } else {
             isHit = true;
@@ -6468,7 +6488,7 @@ Requirements:
       }
 
       if (isHit) {
-        triggered.push(entry.name || entry.keys?.[0] || 'Lore Entry');
+        triggered.push(entry.name || primaryKeys[0] || 'Lore Entry');
         if (entry.position === 'before_char') {
           activeBefore.push(entry.content);
         } else {
