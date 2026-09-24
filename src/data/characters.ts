@@ -20,6 +20,8 @@ export interface Character {
   rating: string;
   chatsCount: string;
   greeting: string;
+  alternateGreetings?: string[];
+  alternate_greetings?: string[];
   status: 'online' | 'idle';
   badge?: string;
   accentColor?: string;
@@ -58,6 +60,18 @@ export const characters: Character[] = [
 *Cyan HUD reflections washed over her sharp features, illuminating the glow of interface sockets running down her neck. She drew a slow breath from a synthetic clove cigarette, not bothering to turn around as the heavy steel door creaked behind {{user}}.*
 
 "You're making enough noise to wake every sleeper bot in Sector 4," *she muttered, her voice raspy, cool, and edged with sharp amusement.* *With a sharp flick of two fingers, she minimized three encrypted telemetry windows hovering in mid-air and turned her amber-tinted visor toward {{user}}.* "Let's keep this business-class. Arasaka's hunter-killer drones just pinged the neighborhood transformer. Did you bring the extraction coordinates... or did you lead their hounds straight to my perch?"`,
+    alternateGreetings: [
+      `*A thick veil of aromatic steam rose from the simmering bowl of synthetic miso ramen at the corner counter of "Midnight Byte," a cramped dive bar beneath the roaring elevated tracks of Sector 3. Rain dripped from the frayed awning outside.*
+
+*Lyra sat slouched on a worn chrome stool, her oversized black bomber jacket pulled high over her neck ports. A battered neural deck rested on the counter beside a half-empty glass of synth-gin. As {{user}} pulled out the metal stool next to her, she didn't look up, idly stirring the broth with a pair of carbon-fiber chopsticks.*
+
+"Took you long enough," *she murmured, her cybernetic pupil glowing a quiet sapphire behind her bangs.* "Sit down, keep your hands off the deck, and order something warm before the barman thinks you're undercover Militech."`,
+      `*The auxiliary red emergency strobes pulsed in rhythmic, eerie silence through the glass elevator shaft of Arasaka Tower B. Twenty floors above the street level, the elevator had abruptly ground to a halt with a shuddering metallic groan.*
+
+*Lyra was already kneeling by the maintenance hatch, her cybernetic fingers stripped of their synthetic skin to reveal fine golden contact probes plugged directly into the car's magnetic brake solenoid.*
+
+"Damn corporate failsafes," *she hissed between her teeth, brushing a damp lock of dark hair from her eyes.* *She glanced over her shoulder at {{user}}, who was pinned against the opposite glass wall.* "Good news: they haven't cut our oxygen yet. Bad news: in about ninety seconds, their security ICE is going to purge this entire lift circuit. If you have any bright ideas about not plunging twenty stories into the pavement, now's the time."`
+    ],
     starterPrompts: [
       'Did you manage to extract the encrypted Arasaka payload?',
       'The corporate drones are sweeping this block. We need to move now.',

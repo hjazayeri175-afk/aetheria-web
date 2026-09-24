@@ -1856,6 +1856,9 @@ const { character } = Astro.props;
           ...matched,
           avatarUrl: matched.avatarUrl || activeChar.avatarUrl,
           greeting: matched.greeting || activeChar.greeting,
+          alternateGreetings: (matched.alternateGreetings && matched.alternateGreetings.length > 0) 
+            ? matched.alternateGreetings 
+            : (matched.alternate_greetings || activeChar.alternateGreetings || []),
           fallbackReplies: (matched.alternateGreetings && matched.alternateGreetings.length > 0) ? matched.alternateGreetings : activeChar.fallbackReplies,
           starterPrompts: (matched.starterPrompts && matched.starterPrompts.length > 0) ? matched.starterPrompts : activeChar.starterPrompts,
           scenario: matched.scenario || activeChar.scenario || '',
@@ -1875,6 +1878,29 @@ const { character } = Astro.props;
     return str
       .replace(/\{\{user\}\}/gi, activeUserPersona.name || 'Traveler')
       .replace(/\{\{char\}\}/gi, activeChar.name || 'Character');
+  }
+
+  // Retrieve all unique scenario greetings (first_mes + alternate_greetings)
+  function getCharacterGreetings() {
+    const rawList = [
+      activeChar.greeting,
+      ...(activeChar.alternateGreetings || []),
+      ...(activeChar.alternate_greetings || []),
+      ...(character?.alternateGreetings || []),
+      ...(character?.alternate_greetings || [])
+    ].filter(Boolean);
+
+    const unique = [];
+    const seen = new Set();
+    rawList.forEach(g => {
+      const trimmed = g.trim();
+      if (trimmed && !seen.has(trimmed)) {
+        seen.add(trimmed);
+        unique.push(formatMacroText(trimmed));
+      }
+    });
+
+    return unique.length > 0 ? unique : [formatMacroText(activeChar.greeting || 'Greetings, traveler.')];
   }
 
   // Update DOM elements for custom character if resolved
@@ -4377,12 +4403,13 @@ const { character } = Astro.props;
     chatSessions.push(newSes);
     saveSessionsIndex();
 
-    const initialGreeting = formatMacroText(activeChar.greeting);
+    const greetings = getCharacterGreetings();
+    const initialGreeting = greetings[0];
     const initialConv = [{
       sender: 'character',
       text: initialGreeting,
       timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
-      swipes: [initialGreeting],
+      swipes: greetings,
       swipeIndex: 0
     }];
     localStorage.setItem(getSessionStorageKey(newId), JSON.stringify(initialConv));
@@ -4428,16 +4455,30 @@ const { character } = Astro.props;
       conversation = [];
     }
 
+    const greetings = getCharacterGreetings();
     if (conversation.length === 0) {
-      const initialGreeting = formatMacroText(activeChar.greeting);
+      const initialGreeting = greetings[0];
       conversation.push({
         sender: 'character',
         text: initialGreeting,
         timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
-        swipes: [initialGreeting],
+        swipes: greetings,
         swipeIndex: 0
       });
       saveChat();
+    } else if (conversation.length > 0 && conversation[0].sender === 'character') {
+      if (greetings.length > 1) {
+        const curSwipes = conversation[0].swipes || [conversation[0].text];
+        let hasNew = false;
+        greetings.forEach(g => {
+          if (!curSwipes.includes(g)) {
+            curSwipes.push(g);
+            hasNew = true;
+          }
+        });
+        conversation[0].swipes = curSwipes;
+        if (hasNew) saveChat();
+      }
     }
 
     renderAllMessages();
@@ -4597,17 +4638,39 @@ const { character } = Astro.props;
       if (msg.swipes && msg.swipes.length > 0) {
         const currentSwipe = (msg.swipeIndex || 0) + 1;
         const totalSwipes = msg.swipes.length;
-        swipesHtml = `
-          <div class="flex items-center gap-1 px-2 py-0.5 rounded-lg bg-white/[0.04] border border-white/[0.08] text-[10px] text-slate-400">
-            <button class="msg-swipe-btn hover:text-white disabled:opacity-30 disabled:pointer-events-none transition cursor-pointer p-0.5" data-action="prev" data-idx="${idx}" ${currentSwipe <= 1 ? 'disabled' : ''} title="Previous reply variation">
-              ‹
-            </button>
-            <span class="font-mono text-purple-300 px-1">${currentSwipe}/${totalSwipes}</span>
-            <button class="msg-swipe-btn hover:text-white transition cursor-pointer p-0.5" data-action="next" data-idx="${idx}" title="${currentSwipe >= totalSwipes && isLast ? 'Generate fresh new variation (+)' : 'Next variation'}">
-              ${currentSwipe >= totalSwipes && isLast ? '+' : '›'}
-            </button>
-          </div>
-        `;
+        const isGreeting = idx === 0;
+
+        if (isGreeting && totalSwipes > 1) {
+          swipesHtml = `
+            <div class="flex items-center gap-1.5 px-2.5 py-1 rounded-xl bg-purple-950/50 border border-purple-500/40 text-[11px] text-purple-200 shadow-sm shadow-purple-950/50">
+              <span class="flex items-center gap-1 font-semibold text-purple-300">
+                <span>🎭</span>
+                <span>Scenario</span>
+              </span>
+              <div class="flex items-center gap-0.5 ml-1">
+                <button class="msg-swipe-btn hover:text-white disabled:opacity-30 disabled:pointer-events-none transition cursor-pointer p-0.5 text-xs font-bold" data-action="prev" data-idx="${idx}" ${currentSwipe <= 1 ? 'disabled' : ''} title="Previous starting scenario">
+                  ‹
+                </button>
+                <span class="font-mono text-white px-1 font-bold">${currentSwipe} / ${totalSwipes}</span>
+                <button class="msg-swipe-btn hover:text-white transition cursor-pointer p-0.5 text-xs font-bold" data-action="next" data-idx="${idx}" title="Next starting scenario">
+                  ›
+                </button>
+              </div>
+            </div>
+          `;
+        } else if (totalSwipes > 1 || isLast) {
+          swipesHtml = `
+            <div class="flex items-center gap-1 px-2 py-0.5 rounded-lg bg-white/[0.04] border border-white/[0.08] text-[10px] text-slate-400">
+              <button class="msg-swipe-btn hover:text-white disabled:opacity-30 disabled:pointer-events-none transition cursor-pointer p-0.5" data-action="prev" data-idx="${idx}" ${currentSwipe <= 1 ? 'disabled' : ''} title="Previous reply variation">
+                ‹
+              </button>
+              <span class="font-mono text-purple-300 px-1">${currentSwipe}/${totalSwipes}</span>
+              <button class="msg-swipe-btn hover:text-white transition cursor-pointer p-0.5" data-action="next" data-idx="${idx}" title="${currentSwipe >= totalSwipes && isLast ? 'Generate fresh new variation (+)' : 'Next variation'}">
+                ${currentSwipe >= totalSwipes && isLast ? '+' : '›'}
+              </button>
+            </div>
+          `;
+        }
       }
 
       // Media rendering
@@ -5379,6 +5442,14 @@ Never speak, narrate, or decide thoughts or actions for {{user}}. Maintain high 
         saveChat();
         renderAllMessages();
         fetchDynamicSuggestions(msg.text);
+      } else if (msgIdx === 0 && msg.swipes.length > 1) {
+        // Loop back to Scenario 1 when swiping past the last scenario on initial greeting
+        msg.swipeIndex = 0;
+        msg.text = msg.swipes[0];
+        saveChat();
+        renderAllMessages();
+        fetchDynamicSuggestions(msg.text);
+        showNotification('Cycled to Scenario 1');
       } else if (msgIdx === conversation.length - 1) {
         generateNewSwipe(msgIdx);
       }
@@ -5957,12 +6028,13 @@ Requirements:
   // Clear chat
   clearChatBtn?.addEventListener('click', () => {
     if (confirm(`Reset conversation history with ${activeChar.name}?`)) {
-      const initialGreeting = formatMacroText(activeChar.greeting);
+      const greetings = getCharacterGreetings();
+      const initialGreeting = greetings[0];
       conversation = [{
         sender: 'character',
         text: initialGreeting,
         timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
-        swipes: [initialGreeting],
+        swipes: greetings,
         swipeIndex: 0
       }];
       saveChat();
