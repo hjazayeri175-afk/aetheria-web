@@ -339,7 +339,7 @@ const { character } = Astro.props;
           <textarea 
             id="pinned-note-input"
             rows="3"
-            placeholder="e.g. {{char}} and {{user}} escaped Sector 4 together. They share a fragile trust and are currently hiding from patrols..."
+            placeholder="Key facts, current scenario status, or shared lore..."
             class="w-full px-2.5 py-2 rounded-xl bg-black/40 border border-white/10 text-xs text-slate-200 placeholder-slate-500 focus:outline-none focus:border-amber-400/50 resize-none font-sans leading-relaxed"
           ></textarea>
           <div class="flex items-center justify-between pt-1">
@@ -887,7 +887,7 @@ const { character } = Astro.props;
                     type="text" 
                     value=""
                     class="hidden w-full px-3.5 py-2.5 rounded-xl bg-white/[0.05] border border-white/10 text-xs text-white outline-none focus:border-purple-500/60 font-mono"
-                    placeholder="Type custom model ID (e.g. meta-llama/llama-3.3-70b-instruct)"
+                    placeholder="Enter custom model identifier"
                   />
 
                   <!-- Dynamic Quick Model Presets -->
@@ -1060,7 +1060,7 @@ const { character } = Astro.props;
                       id="voice-id-input" 
                       type="text" 
                       value="21m00Tcm4TlvDq8ikWAM"
-                      placeholder="e.g. 21m00Tcm4TlvDq8ikWAM or EXAVITQu4vr4xnSDxMaL"
+                      placeholder="Voice identifier"
                       class="w-full px-3.5 py-2.5 rounded-xl bg-white/[0.05] border border-white/10 text-xs text-white outline-none focus:border-emerald-500/60 font-mono"
                     />
                     <div class="flex flex-wrap gap-1.5 pt-1.5">
@@ -1454,7 +1454,7 @@ const { character } = Astro.props;
                     <input 
                       id="lore-input-name" 
                       type="text" 
-                      placeholder="e.g. Neo-Kyoto Black Market, Sunforge Vow"
+                      placeholder="Entry title"
                       class="w-full px-3 py-2 rounded-xl bg-white/[0.05] border border-white/10 text-xs text-white placeholder:text-slate-500 outline-none focus:border-cyan-500/50"
                     />
                   </div>
@@ -1464,7 +1464,7 @@ const { character } = Astro.props;
                     <input 
                       id="lore-input-keys" 
                       type="text" 
-                      placeholder="e.g. black market, cyberdeck, megacorp"
+                      placeholder="Keywords separated by commas"
                       class="w-full px-3 py-2 rounded-xl bg-white/[0.05] border border-white/10 text-xs text-white placeholder:text-slate-500 outline-none focus:border-cyan-500/50"
                     />
                   </div>
@@ -1799,7 +1799,7 @@ const { character } = Astro.props;
           <input 
             id="model-search-input" 
             type="text" 
-            placeholder="Search 450+ models... (e.g. deepseek, claude, llama, free, 70b)" 
+            placeholder="Search models..." 
             class="w-full pl-10 pr-9 py-2.5 rounded-xl bg-white/[0.06] border border-white/10 text-xs sm:text-sm text-white placeholder-slate-500 outline-none focus:border-purple-500/80 focus:ring-1 focus:ring-purple-500/50 transition font-sans"
           />
           <button 
@@ -1906,7 +1906,7 @@ const { character } = Astro.props;
           <input 
             id="provider-modal-search" 
             type="text" 
-            placeholder="Search 20+ providers (e.g. Gemini, Groq, Ollama...)" 
+            placeholder="Search providers..." 
             class="w-full pl-10 pr-4 py-2.5 rounded-xl bg-white/[0.06] border border-white/10 text-xs sm:text-sm text-white placeholder-slate-500 outline-none focus:border-purple-500/80 transition"
           />
         </div>
@@ -3627,31 +3627,31 @@ const { character } = Astro.props;
   // LUXURY CUSTOM PROVIDER MODAL SYSTEM
   // ==========================================
   const ALL_PROVIDERS = [
-    { id: 'google', name: 'Google Gemini', desc: 'Free API key from Google AI Studio', badge: 'Free Tier', icon: '✨', category: 'Popular & Recommended' },
-    { id: 'openrouter', name: 'OpenRouter', desc: '400+ models with one unified API key', badge: 'All Models', icon: '🌐', category: 'Popular & Recommended' },
-    { id: 'groq', name: 'Groq', desc: 'Ultra-low latency LPU fast inference', badge: 'Fastest', icon: '⚡', category: 'Popular & Recommended' },
-    { id: 'deepseek', name: 'DeepSeek', desc: 'SOTA reasoning & conversational models', badge: 'Smart & Cheap', icon: '🐳', category: 'Popular & Recommended' },
-    { id: 'openai', name: 'OpenAI', desc: 'GPT-4o, GPT-4o-mini & Reasoning o1', badge: 'Standard', icon: '🟢', category: 'Popular & Recommended' },
-    { id: 'anthropic', name: 'Anthropic Claude', desc: 'Claude 3.5 Sonnet & Haiku top roleplay', badge: 'Best Roleplay', icon: '🟣', category: 'Popular & Recommended' },
+    { id: 'google', name: 'Google Gemini', desc: 'High rate limits, large context, and generous free tier', badge: 'Free Tier', icon: '✨', category: 'Popular & Recommended' },
+    { id: 'openrouter', name: 'OpenRouter', desc: 'Unified gateway to hundreds of open and proprietary LLMs', badge: 'All Models', icon: '🌐', category: 'Popular & Recommended' },
+    { id: 'groq', name: 'Groq', desc: 'Ultra-low latency LPU hardware for instant streaming responses', badge: 'Fastest', icon: '⚡', category: 'Popular & Recommended' },
+    { id: 'deepseek', name: 'DeepSeek', desc: 'Advanced reasoning and conversational intelligence at low cost', badge: 'Cost-Efficient', icon: '🐳', category: 'Popular & Recommended' },
+    { id: 'openai', name: 'OpenAI', desc: 'High consistency, structured logic, and reliable conversational depth', badge: 'Standard', icon: '🟢', category: 'Popular & Recommended' },
+    { id: 'anthropic', name: 'Anthropic Claude', desc: 'Rich literary nuance, emotional intelligence, and complex roleplay', badge: 'Top Roleplay', icon: '🟣', category: 'Popular & Recommended' },
 
-    { id: 'custom-proxy', name: 'Custom OpenAI-Compatible', desc: 'Reverse proxies, 9router, or custom servers', badge: 'Custom URL', icon: '⚡', category: 'Custom & Localhost' },
-    { id: 'custom-local', name: 'Localhost (Ollama / vLLM / LM Studio)', desc: '100% offline & private on your own PC', badge: 'Offline Private', icon: '💻', category: 'Custom & Localhost' },
+    { id: 'custom-proxy', name: 'Custom OpenAI-Compatible', desc: 'Connect any self-hosted LLM, reverse proxy, or API endpoint', badge: 'Custom URL', icon: '⚡', category: 'Custom & Localhost' },
+    { id: 'custom-local', name: 'Localhost (Ollama / vLLM / LM Studio)', desc: '100% offline, private, and zero-cost inference on your local GPU', badge: 'Offline Private', icon: '💻', category: 'Custom & Localhost' },
 
-    { id: 'mistral', name: 'Mistral AI', desc: 'Mistral Large, Pixtral & Codestral', badge: 'Cloud', icon: '🇫🇷', category: 'Other Cloud Engines' },
-    { id: 'xai', name: 'xAI Grok', desc: 'Grok 2 & Grok Vision models', badge: 'Cloud', icon: '🚀', category: 'Other Cloud Engines' },
-    { id: 'together', name: 'Together AI', desc: 'Open-weights models at scale', badge: 'Cloud', icon: '🤝', category: 'Other Cloud Engines' },
-    { id: 'fireworks', name: 'Fireworks AI', desc: 'Blazing-fast open-weight inference', badge: 'Cloud', icon: '🎆', category: 'Other Cloud Engines' },
-    { id: 'cohere', name: 'Cohere', desc: 'Command R & Command R+ models', badge: 'Cloud', icon: '🧠', category: 'Other Cloud Engines' },
-    { id: 'perplexity', name: 'Perplexity AI', desc: 'Sonar models with web citation', badge: 'Cloud', icon: '🔍', category: 'Other Cloud Engines' },
-    { id: 'novita', name: 'Novita AI', desc: 'Serverless Llama & uncensored models', badge: 'Cloud', icon: '⚡', category: 'Other Cloud Engines' },
-    { id: 'featherless', name: 'Featherless AI', desc: 'Massive uncensored open-weights library', badge: 'Uncensored', icon: '🪶', category: 'Other Cloud Engines' },
-    { id: 'siliconflow', name: 'SiliconFlow', desc: 'DeepSeek, Qwen & GLM high-speed API', badge: 'Cloud', icon: '🌊', category: 'Other Cloud Engines' },
-    { id: 'huggingface', name: 'Hugging Face', desc: 'Inference Endpoints & Serverless', badge: 'Cloud', icon: '🤗', category: 'Other Cloud Engines' },
-    { id: 'cloudflare', name: 'Cloudflare Workers AI', desc: 'Global edge inference network', badge: 'Cloud', icon: '☁️', category: 'Other Cloud Engines' },
-    { id: 'cerebras', name: 'Cerebras', desc: 'Wafer-scale ultra-speed engine', badge: 'Fastest', icon: '🏎️', category: 'Other Cloud Engines' },
-    { id: 'sambanova', name: 'SambaNova Systems', desc: 'High-speed Enterprise AI inference', badge: 'Cloud', icon: '⚡', category: 'Other Cloud Engines' },
-    { id: 'ai21', name: 'AI21 Labs', desc: 'Jamba 1.5 Mini & Large models', badge: 'Cloud', icon: '📐', category: 'Other Cloud Engines' },
-    { id: 'demo', name: 'Free Cloud AI (Keyless)', desc: 'Zero setup required demo engine', badge: 'Demo', icon: '🎁', category: 'Other Cloud Engines' }
+    { id: 'mistral', name: 'Mistral AI', desc: 'Leading European multilingual models with open weights', badge: 'Open Weights', icon: '🇫🇷', category: 'Other Cloud Engines' },
+    { id: 'xai', name: 'xAI Grok', desc: 'Direct, witty conversational style with broad real-world knowledge', badge: 'Conversational', icon: '🚀', category: 'Other Cloud Engines' },
+    { id: 'together', name: 'Together AI', desc: 'High-throughput cloud hosting for open-source AI models', badge: 'Cloud Scale', icon: '🤝', category: 'Other Cloud Engines' },
+    { id: 'fireworks', name: 'Fireworks AI', desc: 'Optimized inference engine with compound serving speed', badge: 'Low Latency', icon: '🎆', category: 'Other Cloud Engines' },
+    { id: 'cohere', name: 'Cohere', desc: 'Enterprise-grade conversational intelligence and search grounding', badge: 'Enterprise', icon: '🧠', category: 'Other Cloud Engines' },
+    { id: 'perplexity', name: 'Perplexity AI', desc: 'Real-time web browsing and search-augmented conversational responses', badge: 'Live Web', icon: '🔍', category: 'Other Cloud Engines' },
+    { id: 'novita', name: 'Novita AI', desc: 'Serverless GPU infrastructure with flexible open-weight hosting', badge: 'Serverless', icon: '⚡', category: 'Other Cloud Engines' },
+    { id: 'featherless', name: 'Featherless AI', desc: 'Dedicated serverless library optimized for creative roleplay', badge: 'Uncensored', icon: '🪶', category: 'Other Cloud Engines' },
+    { id: 'siliconflow', name: 'SiliconFlow', desc: 'High-speed global API infrastructure for top open models', badge: 'High Speed', icon: '🌊', category: 'Other Cloud Engines' },
+    { id: 'huggingface', name: 'Hugging Face', desc: 'Direct serverless access to open-source model repositories', badge: 'Community', icon: '🤗', category: 'Other Cloud Engines' },
+    { id: 'cloudflare', name: 'Cloudflare Workers AI', desc: 'Distributed edge inference running close to your location', badge: 'Edge Network', icon: '☁️', category: 'Other Cloud Engines' },
+    { id: 'cerebras', name: 'Cerebras', desc: 'Wafer-scale silicon delivering extreme token generation rates', badge: 'Extreme Speed', icon: '🏎️', category: 'Other Cloud Engines' },
+    { id: 'sambanova', name: 'SambaNova Systems', desc: 'Reconfigurable dataflow architecture for high enterprise throughput', badge: 'Enterprise', icon: '⚡', category: 'Other Cloud Engines' },
+    { id: 'ai21', name: 'AI21 Labs', desc: 'Hybrid SSM-transformer architectures for long-form context', badge: 'Hybrid LLM', icon: '📐', category: 'Other Cloud Engines' },
+    { id: 'demo', name: 'Free Cloud AI (Keyless)', desc: 'Instant pre-configured demo mode with no API key required', badge: 'Demo', icon: '🎁', category: 'Other Cloud Engines' }
   ];
 
   const providerSelectModal = document.getElementById('provider-select-modal');
