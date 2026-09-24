@@ -31,151 +31,76 @@ import {
 
   <main class="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-10 pb-28 sm:pb-16 space-y-8">
     
-    <!-- Top Nav / Breadcrumbs -->
-    <div class="flex items-center justify-between">
-      <div class="flex items-center gap-3">
-        <a 
-          href="/" 
-          class="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-white/[0.04] hover:bg-white/[0.08] border border-white/[0.08] text-slate-300 hover:text-white text-xs font-medium transition active:scale-95"
-        >
-          <ArrowLeft class="w-3.5 h-3.5 text-purple-400" />
-          <span>Back to Hub</span>
-        </a>
-        <div class="h-4 w-[1px] bg-white/10"></div>
-        <span class="text-xs font-semibold text-purple-300 flex items-center gap-1.5">
-          <MessageSquare class="w-3.5 h-3.5" />
-          <span>Storyline Archives</span>
-        </span>
-      </div>
-
-      <div class="flex items-center gap-2">
-        <a 
-          href="/create" 
-          class="flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl bg-purple-600/30 hover:bg-purple-600/50 border border-purple-500/40 text-purple-200 hover:text-white text-xs font-bold transition shadow-sm"
-        >
-          <Plus class="w-3.5 h-3.5 stroke-[2.5]" />
-          <span>New Character Studio</span>
-        </a>
-      </div>
-    </div>
-
-    <!-- Hero Header & Stats Strip -->
-    <div class="relative overflow-hidden rounded-3xl bg-gradient-to-b from-[#0e1227] via-[#090b16] to-[#07080f] border border-purple-500/20 p-6 sm:p-8 shadow-2xl">
-      <div class="absolute top-0 right-0 -mt-10 -mr-10 w-96 h-96 bg-purple-600/10 rounded-full blur-3xl pointer-events-none"></div>
-      <div class="absolute bottom-0 left-1/3 -mb-10 w-80 h-80 bg-indigo-600/10 rounded-full blur-3xl pointer-events-none"></div>
-
-      <div class="relative z-10 space-y-6">
-        <div class="max-w-3xl space-y-2">
-          <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-purple-500/10 border border-purple-500/20 text-xs font-semibold text-purple-300">
-            <Sparkles class="w-3.5 h-3.5 text-purple-400" />
-            <span>Persistent Client-Side Memory</span>
-          </div>
-          <h1 class="text-2xl sm:text-4xl font-extrabold text-white tracking-tight">
-            Conversations & Storyline Library
-          </h1>
-          <p class="text-sm sm:text-base text-slate-400 leading-relaxed">
-            Manage your multi-turn chat sessions, branching storylines, and generated visual moments. Everything is saved locally in your browser for zero latency and complete privacy.
-          </p>
+    <!-- Clean, Consumer-Grade Header -->
+    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+      <div>
+        <div class="flex items-center gap-2.5">
+          <h1 class="text-2xl sm:text-3xl font-extrabold text-white tracking-tight">Chats</h1>
+          <span id="stat-total-chats" class="text-xs px-2.5 py-0.5 rounded-full bg-purple-500/15 border border-purple-500/30 text-purple-300 font-semibold font-mono">0</span>
         </div>
-
-        <!-- 4 Live Stats Metrics -->
-        <div class="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4 pt-2">
-          <div class="p-4 rounded-2xl bg-white/[0.03] border border-white/[0.08] backdrop-blur-md">
-            <span class="text-[11px] font-medium text-slate-400 block mb-1">Active Storylines</span>
-            <div class="flex items-baseline gap-2">
-              <span id="stat-total-chats" class="text-2xl sm:text-3xl font-extrabold text-white font-mono">0</span>
-              <span class="text-xs text-purple-400 font-medium">Threads</span>
-            </div>
-          </div>
-
-          <div class="p-4 rounded-2xl bg-white/[0.03] border border-white/[0.08] backdrop-blur-md">
-            <span class="text-[11px] font-medium text-slate-400 block mb-1">Exchanged Messages</span>
-            <div class="flex items-baseline gap-2">
-              <span id="stat-total-messages" class="text-2xl sm:text-3xl font-extrabold text-emerald-400 font-mono">0</span>
-              <span class="text-xs text-slate-400">Total</span>
-            </div>
-          </div>
-
-          <div class="p-4 rounded-2xl bg-white/[0.03] border border-white/[0.08] backdrop-blur-md">
-            <span class="text-[11px] font-medium text-slate-400 block mb-1">Characters Contacted</span>
-            <div class="flex items-baseline gap-2">
-              <span id="stat-total-chars" class="text-2xl sm:text-3xl font-extrabold text-cyan-400 font-mono">0</span>
-              <span class="text-xs text-slate-400">Profiles</span>
-            </div>
-          </div>
-
-          <div class="p-4 rounded-2xl bg-white/[0.03] border border-white/[0.08] backdrop-blur-md">
-            <span class="text-[11px] font-medium text-slate-400 block mb-1">Memory Footprint</span>
-            <div class="flex items-baseline gap-2">
-              <span id="stat-storage-size" class="text-2xl sm:text-3xl font-extrabold text-indigo-300 font-mono">0</span>
-              <span class="text-xs text-slate-400">KB</span>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <!-- Filter & Controls Toolbar -->
-    <div class="flex flex-col md:flex-row items-stretch md:items-center justify-between gap-4 p-4 rounded-2xl bg-[#0a0d1d] border border-white/[0.08]">
-      
-      <!-- Search Input -->
-      <div class="relative flex-1 max-w-md">
-        <Search class="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
-        <input 
-          id="library-search-input"
-          type="text" 
-          placeholder="Search storylines, character names, or text..." 
-          class="w-full pl-10 pr-4 py-2 rounded-xl bg-white/[0.04] border border-white/[0.08] focus:border-purple-500/60 text-xs sm:text-sm text-slate-200 placeholder:text-slate-500 outline-none transition"
-        />
+        <p class="text-xs text-slate-400 mt-1">Your conversations and active roleplay storylines</p>
       </div>
 
-      <!-- Filter Pills -->
-      <div class="flex flex-wrap items-center gap-1.5 overflow-x-auto no-scrollbar">
-        <button type="button" class="lib-filter-pill px-3 py-1.5 rounded-xl text-xs font-semibold bg-purple-600 text-white transition cursor-pointer" data-filter="all">
-          All Chats
-        </button>
-        <button type="button" class="lib-filter-pill px-3 py-1.5 rounded-xl text-xs font-semibold bg-white/[0.04] hover:bg-white/[0.08] text-slate-300 transition cursor-pointer" data-filter="custom">
-          Custom Characters
-        </button>
-        <button type="button" class="lib-filter-pill px-3 py-1.5 rounded-xl text-xs font-semibold bg-white/[0.04] hover:bg-white/[0.08] text-slate-300 transition cursor-pointer" data-filter="official">
-          Official Roster
-        </button>
-        <button type="button" class="lib-filter-pill px-3 py-1.5 rounded-xl text-xs font-semibold bg-white/[0.04] hover:bg-white/[0.08] text-slate-300 transition cursor-pointer" data-filter="media">
-          With Media (📷/🎬)
-        </button>
-      </div>
-
-      <!-- Global Backup & Restore Actions -->
-      <div class="flex items-center gap-2 shrink-0">
-        <a 
-          href="/create"
-          class="flex items-center gap-1.5 px-3 py-2 rounded-xl bg-purple-600/20 hover:bg-purple-600/30 border border-purple-500/30 text-purple-300 hover:text-white text-xs font-semibold transition cursor-pointer"
-          title="Import Tavern PNG card or create custom character"
-        >
-          <Sparkles class="w-3.5 h-3.5 text-purple-400" />
-          <span class="hidden sm:inline">Import Card / Create</span>
-          <span class="sm:hidden">Import</span>
-        </a>
-
+      <!-- Quick Action Buttons -->
+      <div class="flex items-center gap-2 self-start sm:self-auto">
         <button 
           id="backup-all-btn"
           type="button" 
           class="flex items-center gap-1.5 px-3 py-2 rounded-xl bg-white/[0.04] hover:bg-white/[0.08] border border-white/[0.08] text-slate-300 hover:text-white text-xs font-medium transition cursor-pointer"
-          title="Backup all chat histories and personas to a single JSON file"
+          title="Backup all chat histories to a JSON file"
         >
-          <Download class="w-3.5 h-3.5 text-cyan-400" />
-          <span class="hidden sm:inline">Backup All (.JSON)</span>
+          <Download class="w-3.5 h-3.5 text-purple-400" />
+          <span class="hidden sm:inline">Backup Data</span>
           <span class="sm:hidden">Backup</span>
         </button>
 
         <label 
           class="flex items-center gap-1.5 px-3 py-2 rounded-xl bg-white/[0.04] hover:bg-white/[0.08] border border-white/[0.08] text-slate-300 hover:text-white text-xs font-medium transition cursor-pointer"
-          title="Restore chat histories and personas from a JSON backup file"
+          title="Restore chat histories from a JSON backup file"
         >
-          <Upload class="w-3.5 h-3.5 text-purple-400" />
+          <Upload class="w-3.5 h-3.5 text-cyan-400" />
           <span class="hidden sm:inline">Restore</span>
+          <span class="sm:hidden">Restore</span>
           <input id="restore-input" type="file" accept=".json" class="hidden" />
         </label>
+
+        <a 
+          href="/" 
+          class="flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-500 hover:to-indigo-500 text-white text-xs font-bold transition shadow-lg shadow-purple-900/30 active:scale-95"
+        >
+          <Plus class="w-3.5 h-3.5 stroke-[2.5]" />
+          <span>New Chat</span>
+        </a>
+      </div>
+    </div>
+
+    <!-- Search & Filter Controls -->
+    <div class="space-y-3">
+      <!-- Search Input -->
+      <div class="relative">
+        <Search class="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
+        <input 
+          id="library-search-input"
+          type="text" 
+          placeholder="Search chats, character names, or messages..." 
+          class="w-full pl-10 pr-4 py-2.5 rounded-2xl bg-[#0c0f22] border border-white/[0.08] focus:border-purple-500/60 text-xs sm:text-sm text-slate-200 placeholder:text-slate-500 outline-none transition shadow-sm"
+        />
+      </div>
+
+      <!-- Filter Pills -->
+      <div class="flex items-center gap-2 overflow-x-auto no-scrollbar pb-1">
+        <button type="button" class="lib-filter-pill px-3.5 py-1.5 rounded-full text-xs font-semibold bg-purple-600/20 text-purple-200 border border-purple-500/40 shadow-sm transition cursor-pointer" data-filter="all">
+          All Chats
+        </button>
+        <button type="button" class="lib-filter-pill px-3.5 py-1.5 rounded-full text-xs font-medium bg-white/[0.03] hover:bg-white/[0.06] text-slate-400 hover:text-slate-200 border border-white/[0.06] transition cursor-pointer" data-filter="custom">
+          Custom Heroes
+        </button>
+        <button type="button" class="lib-filter-pill px-3.5 py-1.5 rounded-full text-xs font-medium bg-white/[0.03] hover:bg-white/[0.06] text-slate-400 hover:text-slate-200 border border-white/[0.06] transition cursor-pointer" data-filter="official">
+          Official Champions
+        </button>
+        <button type="button" class="lib-filter-pill px-3.5 py-1.5 rounded-full text-xs font-medium bg-white/[0.03] hover:bg-white/[0.06] text-slate-400 hover:text-slate-200 border border-white/[0.06] transition cursor-pointer" data-filter="media">
+          With Media 📷
+        </button>
       </div>
     </div>
 
@@ -694,9 +619,9 @@ import {
   filterPills.forEach(pill => {
     pill.addEventListener('click', () => {
       filterPills.forEach(p => {
-        p.className = 'lib-filter-pill px-3 py-1.5 rounded-xl text-xs font-semibold bg-white/[0.04] hover:bg-white/[0.08] text-slate-300 transition cursor-pointer';
+        p.className = 'lib-filter-pill px-3.5 py-1.5 rounded-full text-xs font-medium bg-white/[0.03] hover:bg-white/[0.06] text-slate-400 hover:text-slate-200 border border-white/[0.06] transition cursor-pointer';
       });
-      pill.className = 'lib-filter-pill px-3 py-1.5 rounded-xl text-xs font-semibold bg-purple-600 text-white transition cursor-pointer';
+      pill.className = 'lib-filter-pill px-3.5 py-1.5 rounded-full text-xs font-semibold bg-purple-600/20 text-purple-200 border border-purple-500/40 shadow-sm transition cursor-pointer';
       activeFilter = pill.getAttribute('data-filter') || 'all';
       renderGrid();
     });
