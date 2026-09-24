@@ -5072,6 +5072,20 @@ Never speak, narrate, or decide thoughts or actions for {{user}}. Maintain high 
               headers: provider === 'openrouter' ? { 'HTTP-Referer': 'https://aetheria.ai', 'X-Title': 'Aetheria AI' } : {}
             })
           });
+          // Auto-retry once on 429 upstream rate limit after 2.5s backoff
+          if (res.status === 429) {
+            await new Promise(r => setTimeout(r, 2500));
+            res = await fetch('/api/proxy/chat', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({
+                endpoint,
+                apiKey,
+                body: payload,
+                headers: provider === 'openrouter' ? { 'HTTP-Referer': 'https://aetheria.ai', 'X-Title': 'Aetheria AI' } : {}
+              })
+            });
+          }
         } catch (edgeRelayErr) {
           // Fallback to direct fetch if edge relay network unreachable
           res = await fetch(endpoint, {
@@ -5156,6 +5170,8 @@ Never speak, narrate, or decide thoughts or actions for {{user}}. Maintain high 
             guidance = `\n\n💡 **Solution (Insufficient Credits):**\nThe model \`${model}\` is a paid model requiring account balance on ${conf.name}.\n👉 You can switch to a **FREE model** right now: Open Settings (⚙️) → Tap Model → Click **"🎁 Free (:free)"** and select a free model (e.g. \`meta-llama/llama-3.3-70b-instruct:free\`).\n👉 Or add credits on [openrouter.ai/credits](https://openrouter.ai/credits).`;
           } else if (res.status === 401 || lowerErr.includes('auth') || lowerErr.includes('user not found') || lowerErr.includes('api key')) {
             guidance = `\n\n💡 **Solution (Invalid Key):**\nPlease open Engine Settings (⚙️), paste your valid API key from ${conf.name} (starting with sk-or-v1-...), and click **"Save Engine Settings"**.`;
+          } else if (res.status === 429 || lowerErr.includes('rate limit') || lowerErr.includes('provider returned error') || lowerErr.includes('too many requests')) {
+            guidance = `\n\n💡 **Solution (Rate Limit / Overloaded Upstream Server):**\n1. **Switch to another free model:** The free server for \`${model}\` is currently congested. Open Settings (⚙️) → Tap Model → Choose \`google/gemini-2.0-flash-exp:free\` or \`qwen/qwen-2.5-72b-instruct:free\` (they have much higher capacity).\n2. **Free tier limit:** OpenRouter caps free accounts at 50 messages/day. You can switch to **Groq** (free, instant 300 t/s) or **Google Gemini** in Settings.\n3. **OpenRouter Setting:** Make sure "Allow training on inputs" is enabled in your OpenRouter Account Settings (required for free models).`;
           }
 
           const errorMsg = {
