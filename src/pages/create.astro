@@ -1661,7 +1661,7 @@ const PRESET_AVATARS = [
           const json = JSON.parse(e.target?.result as string);
           populateFromCardData(json);
         } catch (err) {
-          alert('Could not parse JSON character card file.');
+          showToast('Could not parse JSON character card file.');
         }
       };
       reader.readAsText(file);
@@ -1723,7 +1723,7 @@ const PRESET_AVATARS = [
   async function fetchRemoteCard() {
     const rawInput = remoteUrlInput?.value.trim();
     if (!rawInput) {
-      alert('Please enter a Chub URL, character identifier, or direct card URL.');
+      showToast('Please enter a Chub URL, character identifier, or direct card URL.');
       return;
     }
 

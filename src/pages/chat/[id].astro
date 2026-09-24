@@ -2004,6 +2004,106 @@ const { character } = Astro.props;
     }, 3500);
   }
 
+  // Modern Glassmorphic Custom Dialog Modal (Replaces primitive browser confirm/alert)
+  function showConfirmModal({
+    title = 'تأیید عملیات',
+    message = 'آیا از انجام این عملیات اطمینان دارید؟',
+    confirmText = 'تأیید',
+    cancelText = 'انصراف',
+    type = 'default', // 'danger' | 'warning' | 'info' | 'default'
+    icon = ''
+  } = {}) {
+    return new Promise((resolve) => {
+      const isDanger = type === 'danger';
+      const isWarning = type === 'warning';
+      const iconDisplay = icon || (isDanger ? '🗑️' : isWarning ? '⚠️' : '✨');
+
+      const backdrop = document.createElement('div');
+      backdrop.className = 'fixed inset-0 z-[10000] flex items-center justify-center p-4 bg-black/75 backdrop-blur-md transition-opacity duration-200 opacity-0';
+      
+      const modal = document.createElement('div');
+      modal.className = 'w-full max-w-sm rounded-3xl bg-[#0d1124]/95 border border-purple-500/30 p-5 sm:p-6 shadow-2xl shadow-purple-950/80 transform scale-95 transition-all duration-200 text-right';
+      modal.setAttribute('dir', 'rtl');
+
+      const cancelBtnHtml = cancelText ? `
+        <button id="modal-btn-cancel" type="button" class="px-4 py-2 rounded-xl text-xs font-medium text-slate-300 hover:text-white bg-white/5 hover:bg-white/10 border border-white/10 transition-all cursor-pointer">
+          ${cancelText}
+        </button>
+      ` : '';
+
+      const confirmBtnClass = isDanger
+        ? 'bg-rose-600 hover:bg-rose-500 text-white shadow-lg shadow-rose-900/40 border border-rose-500/40'
+        : 'bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-500 hover:to-indigo-500 text-white shadow-lg shadow-purple-900/40 border border-purple-500/40';
+
+      modal.innerHTML = `
+        <div class="flex items-start gap-3.5">
+          <div class="w-10 h-10 rounded-2xl flex items-center justify-center shrink-0 text-xl ${
+            isDanger ? 'bg-rose-500/15 border border-rose-500/30 text-rose-400' : isWarning ? 'bg-amber-500/15 border border-amber-500/30 text-amber-400' : 'bg-purple-500/15 border border-purple-500/30 text-purple-300'
+          }">
+            ${iconDisplay}
+          </div>
+          <div class="flex-1 min-w-0">
+            <h3 class="text-sm font-bold text-white tracking-wide">${title}</h3>
+            <p class="mt-1.5 text-xs text-slate-300 leading-relaxed">${message}</p>
+          </div>
+        </div>
+        <div class="mt-6 flex items-center justify-end gap-2.5">
+          ${cancelBtnHtml}
+          <button id="modal-btn-confirm" type="button" class="px-4 py-2 rounded-xl text-xs font-semibold shadow-lg transition-all cursor-pointer ${confirmBtnClass}">
+            ${confirmText}
+          </button>
+        </div>
+      `;
+
+      backdrop.appendChild(modal);
+      document.body.appendChild(backdrop);
+
+      requestAnimationFrame(() => {
+        backdrop.classList.remove('opacity-0');
+        modal.classList.remove('scale-95');
+      });
+
+      const cleanup = (confirmed) => {
+        backdrop.classList.add('opacity-0');
+        modal.classList.add('scale-95');
+        setTimeout(() => backdrop.remove(), 200);
+        window.removeEventListener('keydown', onKeyDown);
+        resolve(confirmed);
+      };
+
+      const confirmBtn = modal.querySelector('#modal-btn-confirm');
+      const cancelBtn = modal.querySelector('#modal-btn-cancel');
+      if (confirmBtn) confirmBtn.onclick = () => cleanup(true);
+      if (cancelBtn) cancelBtn.onclick = () => cleanup(false);
+      backdrop.onclick = (e) => {
+        if (e.target === backdrop) cleanup(false);
+      };
+
+      const onKeyDown = (e) => {
+        if (e.key === 'Escape') {
+          cleanup(false);
+        } else if (e.key === 'Enter') {
+          cleanup(true);
+        }
+      };
+      window.addEventListener('keydown', onKeyDown);
+    });
+  }
+
+  function showAlertModal(message, title = 'پیام سیستم', icon = 'ℹ️') {
+    return showConfirmModal({
+      title,
+      message,
+      confirmText: 'متوجه شدم',
+      cancelText: '',
+      type: 'info',
+      icon
+    });
+  }
+
+  // Intercept any fallback window.alert to use sleek toast
+  window.alert = (msg) => showNotification(String(msg), 'info');
+
   function updateHeaderPill() {
     const el = document.getElementById('chat-engine-label');
     if (el) {
@@ -4126,8 +4226,16 @@ const { character } = Astro.props;
   });
 
   // Reset Defaults
-  resetDefaultsBtn?.addEventListener('click', () => {
-    if (confirm('Reset all 4 engine settings to optimal roleplay defaults?')) {
+  resetDefaultsBtn?.addEventListener('click', async () => {
+    const confirmed = await showConfirmModal({
+      title: 'بازنشانی تنظیمات موتور',
+      message: 'آیا مایلید تمام تنظیمات هوش مصنوعی (مدل، توکن‌ها، تفکر، خلاقیت) به مقادیر پیش‌فرض بهینه بازگردند؟',
+      confirmText: 'بازنشانی پیش‌فرض',
+      cancelText: 'انصراف',
+      icon: '⚙️',
+      type: 'warning'
+    });
+    if (confirmed) {
       localStorage.removeItem('aetheria_text_provider');
       localStorage.removeItem('aetheria_text_key');
       localStorage.removeItem('aetheria_text_base_url');
@@ -4490,12 +4598,20 @@ const { character } = Astro.props;
     switchSession(newId);
   }
 
-  function deleteSession(sessionId) {
+  async function deleteSession(sessionId) {
     if (sessionId === 'session_default') {
-      alert('Cannot delete the Main Timeline.');
+      await showAlertModal('شاخه اصلی داستان (Main Timeline) قابل حذف نیست.', 'توجه');
       return;
     }
-    if (!confirm('Delete this story branch and all its messages? This cannot be undone.')) return;
+    const confirmed = await showConfirmModal({
+      title: 'حذف شاخه داستان',
+      message: 'آیا از حذف این شاخه و تمام پیام‌های داخل آن اطمینان دارید؟ این عملیات قابل بازگشت نیست.',
+      confirmText: 'حذف شاخه',
+      cancelText: 'انصراف',
+      icon: '🗑️',
+      type: 'danger'
+    });
+    if (!confirmed) return;
 
     localStorage.removeItem(getSessionStorageKey(sessionId));
     chatSessions = chatSessions.filter(s => s.id !== sessionId);
@@ -5842,11 +5958,19 @@ const { character } = Astro.props;
   }
 
   // Rewind Turn Function
-  function rewindTurn(idx) {
+  async function rewindTurn(idx) {
     const msg = conversation[idx];
     if (!msg) return;
 
-    if (!confirm('Rewind conversation to this turn? Subsequent messages will be removed.')) return;
+    const confirmed = await showConfirmModal({
+      title: 'بازگشت به این نوبت (Rewind)',
+      message: 'آیا مایلید گفت‌وگو به این مرحله بازگردد؟ پیام‌های بعدی حذف می‌شوند و متن پیام شما برای ویرایش مجدد در کادر ورودی قرار می‌گیرد.',
+      confirmText: '↩️ بازگشت و اصلاح',
+      cancelText: 'انصراف',
+      icon: '↩️',
+      type: 'warning'
+    });
+    if (!confirmed) return;
 
     let restoredPrompt = '';
     if (msg.sender === 'user') {
@@ -6149,12 +6273,21 @@ const { character } = Astro.props;
     const deleteBtn = target.closest('.msg-delete-btn');
     if (deleteBtn) {
       const idx = parseInt(deleteBtn.getAttribute('data-idx') || '0', 10);
-      if (confirm('Delete this message?')) {
-        conversation.splice(idx, 1);
-        saveChat();
-        renderAllMessages();
-        showNotification('Message deleted.');
-      }
+      showConfirmModal({
+        title: 'حذف پیام',
+        message: 'آیا این پیام از تاریخچه مکالمه حذف شود؟',
+        confirmText: 'حذف پیام',
+        cancelText: 'انصراف',
+        icon: '🗑️',
+        type: 'danger'
+      }).then(confirmed => {
+        if (confirmed) {
+          conversation.splice(idx, 1);
+          saveChat();
+          renderAllMessages();
+          showNotification('Message deleted.');
+        }
+      });
       return;
     }
 
@@ -6353,8 +6486,16 @@ Requirements:
   });
 
   // Clear chat
-  clearChatBtn?.addEventListener('click', () => {
-    if (confirm(`Reset conversation history with ${activeChar.name}?`)) {
+  clearChatBtn?.addEventListener('click', async () => {
+    const confirmed = await showConfirmModal({
+      title: `شروع مجدد گفت‌وگو با ${activeChar.name}`,
+      message: `آیا مایلید تمام پیام‌های رد و بدل شده با ${activeChar.name} پاک شده و مکالمه از ابتدا آغاز شود؟`,
+      confirmText: 'شروع مجدد',
+      cancelText: 'انصراف',
+      icon: '🔄',
+      type: 'danger'
+    });
+    if (confirmed) {
       const greetings = getCharacterGreetings();
       const initialGreeting = greetings[0];
       conversation = [{
@@ -6541,13 +6682,23 @@ Requirements:
         openLoreForm(entry);
       });
 
-      card.querySelector('.delete-entry-btn')?.addEventListener('click', () => {
-        if (confirm(`Delete lore entry "${entry.name}"?`)) {
+      card.querySelector('.delete-entry-btn')?.addEventListener('click', async () => {
+        const confirmed = await showConfirmModal({
+          title: 'حذف مدخل لوربوک',
+          message: `آیا مدخل "${entry.name}" از حافظه دنیای بازی حذف شود؟`,
+          confirmText: 'حذف مدخل',
+          cancelText: 'انصراف',
+          icon: '📖',
+          type: 'danger'
+        });
+        if (confirmed) {
           const arr = getActiveScopeEntries();
           const targetIdx = arr.findIndex(e => e.id === entry.id);
           if (targetIdx !== -1) {
             arr.splice(targetIdx, 1);
             saveCurrentScopeEntries();
+            renderLoreEntries();
+            showNotification('Lore entry deleted.');
           }
         }
       });
@@ -6598,7 +6749,7 @@ Requirements:
     const constant = document.getElementById('lore-input-constant').checked;
 
     if (!content) {
-      alert('Please enter lore content.');
+      showNotification('Please enter lore content.', 'error');
       return;
     }
 
@@ -6760,7 +6911,7 @@ Requirements:
         }
 
         if (importedEntries.length === 0) {
-          alert('No valid lorebook entries found in this JSON file.');
+          showNotification('No valid lorebook entries found in this JSON file.', 'error');
           return;
         }
 
@@ -6785,7 +6936,7 @@ Requirements:
         saveCurrentScopeEntries();
         showNotification(`Successfully imported ${normalized.length} lore entries!`);
       } catch (err) {
-        alert('Invalid JSON file: ' + err.message);
+        showNotification('Invalid JSON file: ' + err.message, 'error');
       }
     };
     reader.readAsText(file);
