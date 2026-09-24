@@ -554,10 +554,10 @@ const { character } = Astro.props;
                           <span class="w-2.5 h-2.5 rounded-full bg-emerald-400 shrink-0 animate-pulse"></span>
                           <div class="min-w-0">
                             <div class="text-xs font-bold text-white flex items-center gap-1.5 flex-wrap">
-                              <span id="wiz-sum-prov">Google Gemini</span>
+                              <span id="wiz-sum-prov">Connected Provider</span>
                               <span class="text-[9px] px-1.5 py-0.5 rounded-full bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 font-medium whitespace-nowrap">Verified ✓</span>
                             </div>
-                            <div class="text-[10px] text-slate-400 font-mono truncate" id="wiz-sum-model">Model: gemini-2.0-flash • Latency: ~110ms</div>
+                            <div class="text-[10px] text-slate-400 font-mono truncate" id="wiz-sum-model">Dynamic Live Model • Latency: --ms</div>
                           </div>
                         </div>
                         <button 
@@ -2010,8 +2010,6 @@ const { character } = Astro.props;
       label: 'Free AI',
       hasKey: false,
       hasUrl: false,
-      defaultModel: 'Free Cloud AI',
-      curated: ['Free Cloud AI'],
       chatEndpoint: '/api/chat/demo'
     },
     groq: {
@@ -2019,8 +2017,6 @@ const { character } = Astro.props;
       label: 'Groq',
       hasKey: true,
       hasUrl: false,
-      defaultModel: 'llama-3.3-70b-versatile',
-      curated: ['llama-3.3-70b-versatile', 'llama-3.1-8b-instant', 'mixtral-8x7b-32768'],
       modelsEndpoint: 'https://api.groq.com/openai/v1/models',
       chatEndpoint: 'https://api.groq.com/openai/v1/chat/completions',
       keyPlaceholder: 'gsk_... (console.groq.com/keys)',
@@ -2031,8 +2027,6 @@ const { character } = Astro.props;
       label: 'Gemini',
       hasKey: true,
       hasUrl: false,
-      defaultModel: 'gemini-2.0-flash',
-      curated: ['gemini-2.0-flash', 'gemini-1.5-pro', 'gemini-1.5-flash'],
       modelsEndpoint: 'https://generativelanguage.googleapis.com/v1beta/models',
       chatEndpoint: 'https://generativelanguage.googleapis.com/v1beta/openai/chat/completions',
       keyPlaceholder: 'AIzaSy... (aistudio.google.com)',
@@ -2043,8 +2037,6 @@ const { character } = Astro.props;
       label: 'OpenAI',
       hasKey: true,
       hasUrl: false,
-      defaultModel: 'gpt-4o-mini',
-      curated: ['gpt-4o-mini', 'gpt-4o', 'gpt-4-turbo'],
       modelsEndpoint: 'https://api.openai.com/v1/models',
       chatEndpoint: 'https://api.openai.com/v1/chat/completions',
       keyPlaceholder: 'sk-proj-... (platform.openai.com)',
@@ -2055,8 +2047,6 @@ const { character } = Astro.props;
       label: 'Claude',
       hasKey: true,
       hasUrl: false,
-      defaultModel: 'claude-3-5-haiku-20241022',
-      curated: ['claude-3-5-haiku-20241022', 'claude-3-5-sonnet-20241022'],
       modelsEndpoint: 'https://api.anthropic.com/v1/models',
       chatEndpoint: 'https://api.anthropic.com/v1/messages',
       keyPlaceholder: 'sk-ant-... (console.anthropic.com)',
@@ -2067,8 +2057,6 @@ const { character } = Astro.props;
       label: 'OpenRouter',
       hasKey: true,
       hasUrl: false,
-      defaultModel: 'meta-llama/llama-3.3-70b-instruct:free',
-      curated: ['meta-llama/llama-3.3-70b-instruct:free', 'google/gemini-2.0-flash-exp:free', 'deepseek/deepseek-r1:free'],
       modelsEndpoint: 'https://openrouter.ai/api/v1/models',
       chatEndpoint: 'https://openrouter.ai/api/v1/chat/completions',
       keyPlaceholder: 'sk-or-v1-... (openrouter.ai/keys)',
@@ -2079,8 +2067,6 @@ const { character } = Astro.props;
       label: 'DeepSeek',
       hasKey: true,
       hasUrl: false,
-      defaultModel: 'deepseek-chat',
-      curated: ['deepseek-chat', 'deepseek-reasoner'],
       modelsEndpoint: 'https://api.deepseek.com/models',
       chatEndpoint: 'https://api.deepseek.com/chat/completions',
       keyPlaceholder: 'sk-... (platform.deepseek.com)',
@@ -2091,8 +2077,6 @@ const { character } = Astro.props;
       label: 'xAI',
       hasKey: true,
       hasUrl: false,
-      defaultModel: 'grok-2-latest',
-      curated: ['grok-2-latest', 'grok-beta'],
       modelsEndpoint: 'https://api.x.ai/v1/models',
       chatEndpoint: 'https://api.x.ai/v1/chat/completions',
       keyPlaceholder: 'xai-... (console.x.ai)',
@@ -2103,8 +2087,6 @@ const { character } = Astro.props;
       label: 'Mistral',
       hasKey: true,
       hasUrl: false,
-      defaultModel: 'mistral-small-latest',
-      curated: ['mistral-small-latest', 'mistral-large-latest'],
       modelsEndpoint: 'https://api.mistral.ai/v1/models',
       chatEndpoint: 'https://api.mistral.ai/v1/chat/completions',
       keyPlaceholder: 'sk-... (console.mistral.ai)',
@@ -2115,8 +2097,6 @@ const { character } = Astro.props;
       label: 'Cerebras',
       hasKey: true,
       hasUrl: false,
-      defaultModel: 'llama3.1-8b',
-      curated: ['llama3.1-8b', 'llama3.1-70b'],
       modelsEndpoint: 'https://api.cerebras.ai/v1/models',
       chatEndpoint: 'https://api.cerebras.ai/v1/chat/completions',
       keyPlaceholder: 'csk-... (cloud.cerebras.ai)',
@@ -2127,8 +2107,6 @@ const { character } = Astro.props;
       label: 'SambaNova',
       hasKey: true,
       hasUrl: false,
-      defaultModel: 'Meta-Llama-3.3-70B-Instruct',
-      curated: ['Meta-Llama-3.3-70B-Instruct'],
       modelsEndpoint: 'https://api.sambanova.ai/v1/models',
       chatEndpoint: 'https://api.sambanova.ai/v1/chat/completions',
       keyPlaceholder: 'sk-... (cloud.sambanova.ai)',
@@ -2139,8 +2117,6 @@ const { character } = Astro.props;
       label: 'Together',
       hasKey: true,
       hasUrl: false,
-      defaultModel: 'meta-llama/Llama-3.3-70B-Instruct-Turbo',
-      curated: ['meta-llama/Llama-3.3-70B-Instruct-Turbo'],
       modelsEndpoint: 'https://api.together.xyz/v1/models',
       chatEndpoint: 'https://api.together.xyz/v1/chat/completions',
       keyPlaceholder: 'sk-... (api.together.ai)',
@@ -2151,8 +2127,6 @@ const { character } = Astro.props;
       label: 'Fireworks',
       hasKey: true,
       hasUrl: false,
-      defaultModel: 'accounts/fireworks/models/llama-v3p3-70b-instruct',
-      curated: ['accounts/fireworks/models/llama-v3p3-70b-instruct'],
       modelsEndpoint: 'https://api.fireworks.ai/inference/v1/models',
       chatEndpoint: 'https://api.fireworks.ai/inference/v1/chat/completions',
       keyPlaceholder: 'fw_... (fireworks.ai)',
@@ -2163,8 +2137,6 @@ const { character } = Astro.props;
       label: 'Cohere',
       hasKey: true,
       hasUrl: false,
-      defaultModel: 'command-r-plus',
-      curated: ['command-r-plus', 'command-r'],
       modelsEndpoint: 'https://api.cohere.com/v1/models',
       chatEndpoint: 'https://api.cohere.com/v1/chat',
       keyPlaceholder: 'sk-... (dashboard.cohere.com)',
@@ -2175,8 +2147,6 @@ const { character } = Astro.props;
       label: 'Perplexity',
       hasKey: true,
       hasUrl: false,
-      defaultModel: 'sonar',
-      curated: ['sonar', 'sonar-pro'],
       modelsEndpoint: 'https://api.perplexity.ai/models',
       chatEndpoint: 'https://api.perplexity.ai/chat/completions',
       keyPlaceholder: 'pplx-... (perplexity.ai/settings/api)',
@@ -2187,8 +2157,6 @@ const { character } = Astro.props;
       label: 'Novita',
       hasKey: true,
       hasUrl: false,
-      defaultModel: 'meta-llama/llama-3.3-70b-instruct',
-      curated: ['meta-llama/llama-3.3-70b-instruct'],
       modelsEndpoint: 'https://api.novita.ai/v3/openai/models',
       chatEndpoint: 'https://api.novita.ai/v3/openai/chat/completions',
       keyPlaceholder: 'sk-... (novita.ai)',
@@ -2199,8 +2167,6 @@ const { character } = Astro.props;
       label: 'Featherless',
       hasKey: true,
       hasUrl: false,
-      defaultModel: 'meta-llama/Meta-Llama-3.1-8B-Instruct',
-      curated: ['meta-llama/Meta-Llama-3.1-8B-Instruct'],
       modelsEndpoint: 'https://api.featherless.ai/v1/models',
       chatEndpoint: 'https://api.featherless.ai/v1/chat/completions',
       keyPlaceholder: 'sk-... (featherless.ai)',
@@ -2211,8 +2177,6 @@ const { character } = Astro.props;
       label: 'SiliconFlow',
       hasKey: true,
       hasUrl: false,
-      defaultModel: 'deepseek-ai/DeepSeek-V3',
-      curated: ['deepseek-ai/DeepSeek-V3'],
       modelsEndpoint: 'https://api.siliconflow.cn/v1/models',
       chatEndpoint: 'https://api.siliconflow.cn/v1/chat/completions',
       keyPlaceholder: 'sk-... (cloud.siliconflow.cn)',
@@ -2223,8 +2187,6 @@ const { character } = Astro.props;
       label: 'Hugging Face',
       hasKey: true,
       hasUrl: false,
-      defaultModel: 'meta-llama/Llama-3.3-70B-Instruct',
-      curated: ['meta-llama/Llama-3.3-70B-Instruct'],
       modelsEndpoint: 'https://api-inference.huggingface.co/models',
       chatEndpoint: 'https://api-inference.huggingface.co/v1/chat/completions',
       keyPlaceholder: 'hf_... (huggingface.co/settings/tokens)',
@@ -2235,8 +2197,6 @@ const { character } = Astro.props;
       label: 'Cloudflare',
       hasKey: true,
       hasUrl: false,
-      defaultModel: '@cf/meta/llama-3.3-70b-instruct-fp8-fast',
-      curated: ['@cf/meta/llama-3.3-70b-instruct-fp8-fast'],
       chatEndpoint: '/api/chat/cloudflare',
       keyPlaceholder: 'Account ID & Token (dash.cloudflare.com)',
       keyLink: 'https://dash.cloudflare.com/'
@@ -2246,8 +2206,6 @@ const { character } = Astro.props;
       label: 'AI21',
       hasKey: true,
       hasUrl: false,
-      defaultModel: 'jamba-1.5-mini',
-      curated: ['jamba-1.5-mini', 'jamba-1.5-large'],
       modelsEndpoint: 'https://api.ai21.com/studio/v1/models',
       chatEndpoint: 'https://api.ai21.com/studio/v1/chat/completions',
       keyPlaceholder: 'sk-... (studio.ai21.com)',
@@ -2260,8 +2218,6 @@ const { character } = Astro.props;
       isKeyOptional: true,
       hasUrl: true,
       defaultUrl: 'http://localhost:11434/v1',
-      defaultModel: 'llama3.2',
-      curated: ['llama3.2', 'mistral', 'gemma2'],
       modelsEndpoint: 'http://localhost:11434/v1/models',
       chatEndpoint: 'http://localhost:11434/v1/chat/completions',
       keyPlaceholder: 'Optional for Local Ollama / LM Studio',
@@ -2275,8 +2231,6 @@ const { character } = Astro.props;
       hasKey: true,
       hasUrl: true,
       defaultUrl: 'https://api.openai.com/v1',
-      defaultModel: 'gpt-4o',
-      curated: ['gpt-4o', 'gpt-4o-mini'],
       modelsEndpoint: '',
       chatEndpoint: '',
       keyPlaceholder: 'Proxy or upstream API key...',
@@ -2367,49 +2321,66 @@ const { character } = Astro.props;
     });
   }
 
-  // Extract model IDs from diverse provider responses
+  // Extract model IDs from diverse provider responses (Zero hardcoding, live API only)
   function extractModelIds(data, provider) {
     if (!data) return [];
+    let list = [];
     if (data.models && Array.isArray(data.models)) {
-      return data.models
+      list = data.models
         .filter(m => !m.supportedGenerationMethods || m.supportedGenerationMethods.includes('generateContent'))
         .map(m => (m.name || '').replace(/^models\//, ''))
         .filter(Boolean);
+    } else if (data.data && Array.isArray(data.data)) {
+      list = data.data.map(m => m.id || m.name).filter(Boolean);
+    } else if (Array.isArray(data)) {
+      list = data.map(m => (typeof m === 'string' ? m : (m.id || m.name))).filter(Boolean);
     }
-    if (data.data && Array.isArray(data.data)) {
-      return data.data.map(m => m.id || m.name).filter(Boolean);
-    }
-    if (Array.isArray(data)) {
-      return data.map(m => (typeof m === 'string' ? m : (m.id || m.name))).filter(Boolean);
-    }
-    return [];
+
+    // Filter out non-chat / auxiliary models (embeddings, tts, whisper, audio, moderation, dall-e, imagen)
+    list = list.filter(id => {
+      const lower = id.toLowerCase();
+      return !lower.includes('embed') && 
+             !lower.includes('whisper') && 
+             !lower.includes('tts') && 
+             !lower.includes('moderation') && 
+             !lower.includes('dall-e') && 
+             !lower.includes('imagen') &&
+             !lower.includes('aqa');
+    });
+
+    // Natural sort descending so newest versions (e.g. 3.8, 3.7, 2.5) appear at top
+    list.sort((a, b) => b.localeCompare(a, undefined, { numeric: true, sensitivity: 'base' }));
+    return list;
   }
 
   // Fetch live model list from provider endpoint (Zero guessing, API-driven)
-  async function fetchModelsForProvider(e) {
-    e?.preventDefault?.();
-    const prov = textProviderSelect?.value || 'groq';
+  async function fetchModelsForProvider(provArg, keyArg, baseUrlArg) {
+    const isEvent = provArg && typeof provArg === 'object' && provArg.preventDefault;
+    if (isEvent) provArg.preventDefault();
+    const prov = (typeof provArg === 'string' ? provArg : (textProviderSelect?.value || 'groq'));
     const conf = PROVIDER_CONFIGS[prov] || PROVIDER_CONFIGS.demo;
-    const key = textApiKey?.value.trim() || localStorage.getItem('aetheria_text_key') || '';
-    const baseUrl = textBaseUrl?.value.trim() || conf.defaultUrl || '';
+    const key = (typeof keyArg === 'string' ? keyArg : (textApiKey?.value.trim() || localStorage.getItem('aetheria_text_key') || ''));
+    const baseUrl = (typeof baseUrlArg === 'string' ? baseUrlArg : (textBaseUrl?.value.trim() || conf.defaultUrl || ''));
 
     if (prov === 'demo') {
       populateModelDropdown(['Free Cloud AI'], 'Free Cloud AI');
       updateDynamicPresets(['Free Cloud AI']);
+      localStorage.setItem('aetheria_text_model', 'Free Cloud AI');
       showNotification('✓ Using Free Cloud AI (Instant)');
-      return;
+      return ['Free Cloud AI'];
     }
 
     if (conf.hasKey && !conf.isKeyOptional && !key) {
       showNotification('⚠️ Please enter an API key first before fetching models.');
       textApiKey?.focus();
-      return;
+      return [];
     }
 
     if (fetchModelsIcon) fetchModelsIcon.classList.add('animate-spin');
     if (fetchModelsText) fetchModelsText.textContent = 'Fetching...';
     if (fetchModelsBtn) fetchModelsBtn.disabled = true;
 
+    let models = [];
     try {
       let endpoint = conf.modelsEndpoint;
       if (conf.hasUrl) {
@@ -2434,6 +2405,8 @@ const { character } = Astro.props;
           } else {
             headers['Authorization'] = `Bearer ${key}`;
           }
+        } else if (key && prov === 'google') {
+          headers['x-goog-api-key'] = key;
         }
         if (prov === 'openrouter') {
           headers['HTTP-Referer'] = 'https://aetheria.ai';
@@ -2446,7 +2419,11 @@ const { character } = Astro.props;
           isSuccess = true;
         }
       } catch (directErr) {
-        // 2. Direct fetch failed (likely CORS), use serverless proxy
+        // Direct fetch failed (CORS or network), fallback to edge proxy
+      }
+
+      // 2. Serverless proxy fallback
+      if (!isSuccess) {
         try {
           const proxyRes = await fetch('/api/proxy/fetch-models', {
             method: 'POST',
@@ -2463,12 +2440,12 @@ const { character } = Astro.props;
             isSuccess = true;
           }
         } catch (proxyErr) {
-          console.error('Proxy fetch failed:', proxyErr);
+          console.error('Edge proxy fetch failed:', proxyErr);
         }
       }
 
       if (isSuccess && responseData) {
-        const models = extractModelIds(responseData, prov);
+        models = extractModelIds(responseData, prov);
         if (models && models.length > 0) {
           localStorage.setItem('aetheria_synced_models_' + prov, JSON.stringify(models));
           populateModelDropdown(models, models[0]);
@@ -2478,11 +2455,11 @@ const { character } = Astro.props;
           showNotification(`✓ Successfully loaded ${models.length} live models from ${conf.name} API!`);
         } else {
           setEmptyModelDropdown();
-          showNotification(`⚠️ Connected to ${conf.name}, but no models were returned by the API.`);
+          showNotification(`⚠️ Connected to ${conf.name}, but no text generation models were returned.`);
         }
       } else {
         setEmptyModelDropdown();
-        showNotification(`⚠️ Could not connect or authenticate with ${conf.name}. Please check your API key.`);
+        showNotification(`⚠️ Could not authenticate with ${conf.name}. Please check your API key.`);
       }
     } catch (err) {
       setEmptyModelDropdown();
@@ -2492,6 +2469,7 @@ const { character } = Astro.props;
       if (fetchModelsText) fetchModelsText.textContent = 'Fetch Models';
       if (fetchModelsBtn) fetchModelsBtn.disabled = false;
     }
+    return models;
   }
 
   // Health-check / ping connection
@@ -2515,11 +2493,12 @@ const { character } = Astro.props;
 
     if (conf.hasKey && !conf.isKeyOptional && !key) {
       pingStatusMsg.className = 'text-xs px-3.5 py-2.5 rounded-xl border bg-amber-950/40 border-amber-500/30 text-amber-300';
-      pingStatusMsg.innerHTML = `⚠️ Please enter your ${conf.name} API Key before testing connection.`;
-      if (pingLatencyText) pingLatencyText.textContent = 'API Key Required';
-      if (pingIndicatorDot) pingIndicatorDot.className = 'w-2.5 h-2.5 rounded-full bg-amber-400 shrink-0';
+      pingStatusMsg.textContent = '⚠️ Please enter an API key to test latency.';
       return;
     }
+
+    pingStatusMsg.className = 'text-xs px-3.5 py-2.5 rounded-xl border bg-slate-900/60 border-slate-700/60 text-slate-300 flex items-center gap-2';
+    pingStatusMsg.innerHTML = '<svg class="w-3.5 h-3.5 animate-spin" viewBox="0 0 24 24" fill="none" stroke="currentColor"><circle cx="12" cy="12" r="10" stroke-width="3" stroke-dasharray="32" stroke-linecap="round"/></svg> Testing latency to ' + conf.name + '...';
 
     try {
       let endpoint = conf.modelsEndpoint;
@@ -2531,8 +2510,8 @@ const { character } = Astro.props;
         endpoint = 'https://api.anthropic.com/v1/models';
       }
 
-      let resStatus = null;
-      let latency = 0;
+      let resOk = false;
+      let resStatus = 0;
 
       try {
         const headers = {};
@@ -2544,39 +2523,33 @@ const { character } = Astro.props;
           } else {
             headers['Authorization'] = `Bearer ${key}`;
           }
-        }
-        if (prov === 'openrouter') {
-          headers['HTTP-Referer'] = 'https://aetheria.ai';
-          headers['X-Title'] = 'Aetheria AI';
+        } else if (key && prov === 'google') {
+          headers['x-goog-api-key'] = key;
         }
 
         const res = await fetch(endpoint, { method: 'GET', headers });
-        latency = Math.round(performance.now() - t0);
+        resOk = res.ok;
         resStatus = res.status;
-      } catch (directErr) {
-        const proxyRes = await fetch('/api/proxy/fetch-models', {
+      } catch (err) {
+        // Fallback to proxy
+        const pRes = await fetch('/api/proxy/fetch-models', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            endpoint,
-            apiKey: key,
-            headers: prov === 'openrouter' ? { 'HTTP-Referer': 'https://aetheria.ai', 'X-Title': 'Aetheria AI' } : {}
-          })
+          body: JSON.stringify({ endpoint, apiKey: key })
         });
-        latency = Math.round(performance.now() - t0);
-        resStatus = proxyRes.status;
+        resOk = pRes.ok;
+        resStatus = pRes.status;
       }
 
-      if (resStatus >= 200 && resStatus < 300) {
+      const dt = Math.round(performance.now() - t0);
+      if (resOk) {
         pingStatusMsg.className = 'text-xs px-3.5 py-2.5 rounded-xl border bg-emerald-950/40 border-emerald-500/30 text-emerald-300';
-        pingStatusMsg.innerHTML = `✓ Connection Healthy! • Provider: ${conf.name} • Latency: ${latency}ms • Status: 200 OK`;
-        if (pingLatencyText) pingLatencyText.textContent = `Online • Latency: ${latency}ms`;
+        pingStatusMsg.innerHTML = `✓ Connection Successful • Latency: ${dt}ms • ${conf.name} API Online`;
+        if (pingLatencyText) pingLatencyText.textContent = `Online • Latency: ${dt}ms`;
         if (pingIndicatorDot) pingIndicatorDot.className = 'w-2.5 h-2.5 rounded-full bg-emerald-400 shrink-0';
-        unlockHyperparameters(true);
 
-        // Auto sync models if not already cached
-        const cached = localStorage.getItem('aetheria_synced_models_' + prov);
-        if (!cached || textModelSelect?.disabled) {
+        // Auto-fetch models if empty
+        if (!localStorage.getItem('aetheria_synced_models_' + prov)) {
           fetchModelsForProvider();
         }
       } else {
@@ -2589,6 +2562,54 @@ const { character } = Astro.props;
       pingStatusMsg.className = 'text-xs px-3.5 py-2.5 rounded-xl border bg-rose-950/40 border-rose-500/30 text-rose-300';
       pingStatusMsg.innerHTML = `✕ Connection Error • Unable to reach API`;
     }
+  }
+
+  // Load all engine settings from localStorage
+  function loadEngineSettings() {
+    // 1. Text provider & Key
+    const textProv = localStorage.getItem('aetheria_text_provider') || 'demo';
+    if (textProviderSelect) textProviderSelect.value = textProv;
+
+    const textKey = localStorage.getItem('aetheria_text_key') || '';
+    if (textApiKey) textApiKey.value = textKey;
+
+    const baseUrl = localStorage.getItem('aetheria_text_base_url') || '';
+    if (textBaseUrl) textBaseUrl.value = baseUrl;
+
+    // 2. Hyperparameters
+    const temp = localStorage.getItem('aetheria_text_temp');
+    if (temp && tempSlider) { tempSlider.value = temp; if (tempVal) tempVal.textContent = temp; }
+
+    const tokens = localStorage.getItem('aetheria_text_tokens');
+    if (tokens && tokensSlider) { tokensSlider.value = tokens; if (tokensVal) tokensVal.textContent = tokens; }
+
+    const topP = localStorage.getItem('aetheria_text_top_p');
+    if (topP && topPSlider) { topPSlider.value = topP; if (topPVal) topPVal.textContent = topP; }
+
+    const repPen = localStorage.getItem('aetheria_text_rep_pen');
+    if (repPen && repPenSlider) { repPenSlider.value = repPen; if (repPenVal) repPenVal.textContent = repPen; }
+
+    const streaming = localStorage.getItem('aetheria_text_streaming');
+    if (streaming && streamingToggle) streamingToggle.checked = streaming !== 'false';
+
+    // 3. Voice settings
+    const voiceProv = localStorage.getItem('aetheria_voice_provider') || 'browser';
+    if (voiceProviderSelect) voiceProviderSelect.value = voiceProv;
+    const voiceKey = localStorage.getItem('aetheria_voice_key') || '';
+    if (voiceApiKey) voiceApiKey.value = voiceKey;
+
+    // 4. Image settings
+    const imgProv = localStorage.getItem('aetheria_image_provider') || 'pollinations';
+    if (imageProviderSelect) imageProviderSelect.value = imgProv;
+    const imgKey = localStorage.getItem('aetheria_image_key') || '';
+    if (imageApiKey) imageApiKey.value = imgKey;
+
+    // 5. Video settings
+    const vidProv = localStorage.getItem('aetheria_video_provider') || 'kling';
+    if (videoProviderSelect) videoProviderSelect.value = vidProv;
+
+    // 6. Sync UI and populate models
+    syncProviderVisibility();
   }
 
   // Adapt submenus & input fields dynamically based on selected provider
@@ -2606,54 +2627,46 @@ const { character } = Astro.props;
       apiKeyContainer.classList.toggle('hidden', !conf.hasKey);
     }
     if (apiKeyLabel) {
-      apiKeyLabel.textContent = conf.isKeyOptional 
-        ? 'API Key (Optional for Local)' 
-        : (prov === 'google' ? 'Google Gemini API Key' : 'API Key');
+      apiKeyLabel.textContent = conf.isKeyOptional ? `${conf.name} API Key (Optional)` : `${conf.name} API Key`;
     }
     if (textApiKey) {
-      textApiKey.placeholder = conf.keyPlaceholder || 'Enter API Key...';
+      textApiKey.placeholder = conf.keyPlaceholder || 'sk-...';
     }
-    if (getKeyLink) {
-      if (conf.keyLink) {
-        getKeyLink.classList.remove('hidden');
-        getKeyLink.href = conf.keyLink;
-        getKeyLink.textContent = prov === 'google' ? 'Get Free Key' : 'Get API Key';
-      } else {
-        getKeyLink.classList.add('hidden');
-      }
+    if (apiKeyLink && conf.keyLink) {
+      apiKeyLink.href = conf.keyLink;
+      apiKeyLink.classList.remove('hidden');
+    } else if (apiKeyLink) {
+      apiKeyLink.classList.add('hidden');
     }
 
     // Custom Base URL container
-    if (customBaseUrlContainer) {
-      customBaseUrlContainer.classList.toggle('hidden', !conf.hasUrl);
+    if (baseUrlContainer) {
+      baseUrlContainer.classList.toggle('hidden', !conf.hasUrl);
     }
-    if (customBaseUrlLabel && conf.urlLabel) {
-      customBaseUrlLabel.textContent = conf.urlLabel;
+    if (baseUrlLabel) {
+      baseUrlLabel.textContent = conf.urlLabel || 'Base API URL';
     }
-    if (customBaseUrlHint && conf.urlHint) {
-      customBaseUrlHint.textContent = conf.urlHint;
+    if (textBaseUrl) {
+      textBaseUrl.placeholder = conf.urlPlaceholder || 'https://api.example.com/v1';
     }
-    if (textBaseUrl && conf.urlPlaceholder) {
-      textBaseUrl.placeholder = conf.urlPlaceholder;
-      if (!textBaseUrl.value && conf.defaultUrl) {
-        textBaseUrl.value = conf.defaultUrl;
-      }
+    if (baseUrlHint) {
+      baseUrlHint.textContent = conf.urlHint || '';
     }
 
-    // Model options: strictly check synced API models or empty state (Zero guessing)
+    // Model selection sync (Zero hardcoded fallback)
     if (prov === 'demo') {
       populateModelDropdown(['Free Cloud AI'], 'Free Cloud AI');
-      updateDynamicPresets(['Free Cloud AI']);
-      if (modelCountBadge) modelCountBadge.textContent = 'Free Cloud Tier';
+      localStorage.setItem('aetheria_text_model', 'Free Cloud AI');
     } else {
       const cachedModelsRaw = localStorage.getItem('aetheria_synced_models_' + prov);
       if (cachedModelsRaw) {
         try {
           const cachedModels = JSON.parse(cachedModelsRaw);
           if (Array.isArray(cachedModels) && cachedModels.length > 0) {
-            const savedModel = localStorage.getItem('aetheria_text_model') || cachedModels[0];
-            populateModelDropdown(cachedModels, savedModel);
-            updateDynamicPresets(cachedModels);
+            const savedModel = localStorage.getItem('aetheria_text_model');
+            const selectedModel = (savedModel && cachedModels.includes(savedModel)) ? savedModel : cachedModels[0];
+            populateModelDropdown(cachedModels, selectedModel);
+            localStorage.setItem('aetheria_text_model', selectedModel);
           } else {
             setEmptyModelDropdown();
           }
@@ -3519,8 +3532,22 @@ const { character } = Astro.props;
     });
   });
 
+  // Manual API Key input changes
+  textApiKey?.addEventListener('input', () => {
+    const key = textApiKey.value.trim();
+    localStorage.setItem('aetheria_text_key', key);
+    const prov = textProviderSelect?.value || 'demo';
+    if (key.length >= 10 && prov !== 'demo') {
+      const cached = localStorage.getItem('aetheria_synced_models_' + prov);
+      if (!cached) {
+        fetchModelsForProvider();
+      }
+    }
+  });
+
   // Manual provider selection change
   textProviderSelect?.addEventListener('change', () => {
+    localStorage.setItem('aetheria_text_provider', textProviderSelect.value);
     syncProviderVisibility();
   });
 
@@ -4230,8 +4257,40 @@ Never speak, narrate, or decide thoughts or actions for {{user}}. Maintain high 
     const conf = PROVIDER_CONFIGS[provider] || PROVIDER_CONFIGS.demo;
     const apiKey = localStorage.getItem('aetheria_text_key') || '';
     let savedModel = localStorage.getItem('aetheria_text_model') || '';
-    if (!savedModel || savedModel.includes('No API connected') || (savedModel === 'Free Cloud AI' && provider !== 'demo') || (savedModel === 'llama-3.3-70b-versatile' && provider !== 'groq')) {
-      savedModel = conf.defaultModel || 'gemini-2.0-flash';
+
+    // Enforce 100% dynamic models - NEVER fall back to hardcoded legacy models
+    if (provider !== 'demo') {
+      if (!savedModel || savedModel.includes('No API connected') || savedModel === 'Free Cloud AI') {
+        const cachedRaw = localStorage.getItem('aetheria_synced_models_' + provider);
+        let cachedList = [];
+        try { cachedList = JSON.parse(cachedRaw || '[]'); } catch (e) {}
+        if (Array.isArray(cachedList) && cachedList.length > 0) {
+          savedModel = cachedList[0];
+          localStorage.setItem('aetheria_text_model', savedModel);
+        } else if (apiKey) {
+          try {
+            const fetched = await fetchModelsForProvider(provider, apiKey);
+            if (Array.isArray(fetched) && fetched.length > 0) {
+              savedModel = fetched[0];
+              localStorage.setItem('aetheria_text_model', savedModel);
+            }
+          } catch (e) {}
+        }
+      }
+
+      if (!savedModel || savedModel.includes('No API connected') || savedModel === 'Free Cloud AI') {
+        if (typingIndicator) typingIndicator.classList.add('hidden');
+        const errAlert = {
+          sender: 'character',
+          text: `⚠️ **No Active Model Selected for ${conf.name}**\nPlease open Engine Settings (⚙️), enter your API key, and click **"Fetch Models"** to sync the active 2026 models directly from your provider account.`,
+          timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+          swipes: [''],
+          swipeIndex: 0
+        };
+        conversation.push(errAlert);
+        appendMessageToDOM(errAlert, conversation.length - 1);
+        return;
+      }
     }
     const model = savedModel;
     const temp = parseFloat(localStorage.getItem('aetheria_text_temp') || '0.85');
@@ -4269,6 +4328,9 @@ Never speak, narrate, or decide thoughts or actions for {{user}}. Maintain high 
             headers['x-api-key'] = apiKey;
             headers['anthropic-version'] = '2023-06-01';
             headers['anthropic-dangerous-direct-browser-access'] = 'true';
+          } else if (provider === 'google') {
+            headers['x-goog-api-key'] = apiKey;
+            headers['Authorization'] = `Bearer ${apiKey}`;
           } else {
             headers['Authorization'] = `Bearer ${apiKey}`;
           }
@@ -4502,7 +4564,19 @@ Never speak, narrate, or decide thoughts or actions for {{user}}. Maintain high 
 
     const provider = localStorage.getItem('aetheria_text_provider') || 'demo';
     const apiKey = localStorage.getItem('aetheria_text_key') || '';
-    const model = localStorage.getItem('aetheria_text_model') || 'llama-3.3-70b-versatile';
+    let model = localStorage.getItem('aetheria_text_model') || '';
+    if (!model && provider !== 'demo') {
+      const cached = localStorage.getItem('aetheria_synced_models_' + provider);
+      try {
+        const list = JSON.parse(cached || '[]');
+        if (list.length > 0) model = list[0];
+      } catch (e) {}
+    }
+    if (!model && provider !== 'demo') {
+      if (typingIndicator) typingIndicator.classList.add('hidden');
+      showNotification('⚠️ Please select an active model in Settings first.');
+      return;
+    }
     const temp = Math.min(1.2, parseFloat(localStorage.getItem('aetheria_text_temp') || '0.85') + 0.15); // higher temperature for variety
     const maxTokens = parseInt(localStorage.getItem('aetheria_text_tokens') || '350', 10);
 
@@ -4536,6 +4610,9 @@ Never speak, narrate, or decide thoughts or actions for {{user}}. Maintain high 
             headers['x-api-key'] = apiKey;
             headers['anthropic-version'] = '2023-06-01';
             headers['anthropic-dangerous-direct-browser-access'] = 'true';
+          } else if (provider === 'google') {
+            headers['x-goog-api-key'] = apiKey;
+            headers['Authorization'] = `Bearer ${apiKey}`;
           } else {
             headers['Authorization'] = `Bearer ${apiKey}`;
           }

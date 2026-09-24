@@ -609,13 +609,23 @@ export default {
           if (targetUrl.includes('anthropic.com')) {
             fetchHeaders['x-api-key'] = apiKey;
             fetchHeaders['anthropic-version'] = '2023-06-01';
+          } else if (targetUrl.includes('googleapis.com')) {
+            fetchHeaders['x-goog-api-key'] = apiKey;
+            if (targetUrl.includes('/openai/')) {
+              fetchHeaders['Authorization'] = `Bearer ${apiKey}`;
+            }
           } else {
             fetchHeaders['Authorization'] = `Bearer ${apiKey}`;
           }
         }
 
+        let finalUrl = targetUrl;
+        if (apiKey && targetUrl.includes('googleapis.com') && !targetUrl.includes('key=')) {
+          finalUrl += (targetUrl.includes('?') ? '&' : '?') + `key=${encodeURIComponent(apiKey)}`;
+        }
+
         try {
-          const apiRes = await fetch(targetUrl, {
+          const apiRes = await fetch(finalUrl, {
             method: 'GET',
             headers: fetchHeaders
           });
@@ -647,13 +657,23 @@ export default {
           if (targetUrl.includes('anthropic.com')) {
             fetchHeaders['x-api-key'] = apiKey;
             fetchHeaders['anthropic-version'] = '2023-06-01';
+          } else if (targetUrl.includes('googleapis.com')) {
+            fetchHeaders['x-goog-api-key'] = apiKey;
+            if (targetUrl.includes('/openai/')) {
+              fetchHeaders['Authorization'] = `Bearer ${apiKey}`;
+            }
           } else {
             fetchHeaders['Authorization'] = `Bearer ${apiKey}`;
           }
         }
 
+        let finalUrl = targetUrl;
+        if (apiKey && targetUrl.includes('googleapis.com') && !targetUrl.includes('key=')) {
+          finalUrl += (targetUrl.includes('?') ? '&' : '?') + `key=${encodeURIComponent(apiKey)}`;
+        }
+
         try {
-          const apiRes = await fetch(targetUrl, {
+          const apiRes = await fetch(finalUrl, {
             method: 'POST',
             headers: fetchHeaders,
             body: JSON.stringify(requestBody)
