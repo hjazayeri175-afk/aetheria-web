@@ -1764,6 +1764,56 @@ const { character } = Astro.props;
   let ttsEnabled = true;
 
   // Multi-session & Branching state
+  // ==========================================
+  // CORE UTILITIES & GLOBAL NOTIFICATIONS
+  // ==========================================
+  function escapeHtml(str) {
+    if (!str) return '';
+    return String(str)
+      .replace(/&/g, '&amp;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;')
+      .replace(/"/g, '&quot;')
+      .replace(/'/g, '&#039;');
+  }
+
+  function showNotification(msg, type = 'info') {
+    let container = document.getElementById('aetheria-toast-container');
+    if (!container) {
+      container = document.createElement('div');
+      container.id = 'aetheria-toast-container';
+      container.className = 'fixed bottom-5 right-5 z-[9999] flex flex-col gap-2 max-w-sm pointer-events-none';
+      document.body.appendChild(container);
+    }
+    const toast = document.createElement('div');
+    const isErr = type === 'error' || msg.includes('⚠️') || msg.includes('error') || msg.includes('Failed');
+    toast.className = `px-4 py-2.5 rounded-2xl text-xs font-medium backdrop-blur-md shadow-2xl transition-all duration-300 pointer-events-auto transform translate-y-4 opacity-0 border ${
+      isErr 
+        ? 'bg-rose-950/85 text-rose-200 border-rose-500/40 shadow-rose-950/50' 
+        : 'bg-[#0f132a]/90 text-purple-200 border-purple-500/30 shadow-purple-950/50'
+    }`;
+    toast.textContent = msg;
+    container.appendChild(toast);
+    requestAnimationFrame(() => {
+      toast.classList.remove('translate-y-4', 'opacity-0');
+    });
+    setTimeout(() => {
+      toast.classList.add('opacity-0', 'translate-y-2');
+      setTimeout(() => toast.remove(), 300);
+    }, 3500);
+  }
+
+  function updateHeaderPill() {
+    const el = document.getElementById('chat-engine-label');
+    if (el) {
+      const provSelect = document.getElementById('text-provider-select');
+      const prov = (provSelect ? provSelect.value : '') || localStorage.getItem('aetheria_text_provider') || 'demo';
+      const m = localStorage.getItem('aetheria_text_model') || '';
+      const pName = (typeof PROVIDER_CONFIGS !== 'undefined' && PROVIDER_CONFIGS[prov]?.name) || prov;
+      el.textContent = m ? `${pName} • ${m.split('/').pop() || m}` : pName;
+    }
+  }
+
   const SESSIONS_INDEX_KEY = `aetheria_chat_sessions_${activeChar.id}`;
   let currentSessionId = 'session_default';
   let chatSessions = [];
@@ -2358,6 +2408,31 @@ const { character } = Astro.props;
 
     // Natural sort descending so newest versions (e.g. 3.8, 3.7, 2.5) appear at top
     list.sort((a, b) => b.localeCompare(a, undefined, { numeric: true, sensitivity: 'base' }));
+
+    // For OpenRouter: prioritize top-tier roleplay models
+    if (provider === 'openrouter') {
+      const topPicks = [
+        'deepseek/deepseek-chat',
+        'deepseek/deepseek-r1',
+        'anthropic/claude-3.5-sonnet',
+        'anthropic/claude-3.7-sonnet',
+        'meta-llama/llama-3.3-70b-instruct',
+        'google/gemini-2.0-flash-001',
+        'google/gemini-flash-1.5',
+        'neversleep/llama-3-lumimaid-70b',
+        'nousresearch/hermes-3-llama-3.1-405b',
+        'mistralai/mistral-large-2407'
+      ];
+      const featured = [];
+      const others = [];
+      list.forEach(id => {
+        const found = topPicks.find(p => id.toLowerCase() === p.toLowerCase() || id.toLowerCase().startsWith(p.toLowerCase()));
+        if (found) featured.push(id);
+        else others.push(id);
+      });
+      list = [...new Set([...featured, ...others])];
+    }
+
     return list;
   }
 
@@ -2556,10 +2631,8 @@ const { character } = Astro.props;
         if (pingLatencyText) pingLatencyText.textContent = `Online • Latency: ${dt}ms`;
         if (pingIndicatorDot) pingIndicatorDot.className = 'w-2.5 h-2.5 rounded-full bg-emerald-400 shrink-0';
 
-        // Auto-fetch models if empty
-        if (!localStorage.getItem('aetheria_synced_models_' + prov)) {
-          fetchModelsForProvider();
-        }
+        // Always sync and populate live models on successful test connection
+        await fetchModelsForProvider(prov, key, baseUrl);
       } else {
         pingStatusMsg.className = 'text-xs px-3.5 py-2.5 rounded-xl border bg-rose-950/40 border-rose-500/30 text-rose-300';
         pingStatusMsg.innerHTML = `✕ Connection Failed (HTTP ${resStatus || 'Network Error'}) • Check API key or endpoint`;
@@ -3589,6 +3662,12 @@ const { character } = Astro.props;
 
   // Fetch models & ping buttons in manual mode
   fetchModelsBtn?.addEventListener('click', fetchModelsForProvider);
+  textApiKey?.addEventListener('change', () => {
+    const val = textApiKey.value.trim();
+    if (val.length > 8) {
+      fetchModelsForProvider(textProviderSelect?.value, val);
+    }
+  });
   pingTextBtn?.addEventListener('click', pingTextConnection);
 
   // Voice and Image provider changes
@@ -3619,8 +3698,29 @@ const { character } = Astro.props;
     if (textApiKey) localStorage.setItem('aetheria_text_key', textApiKey.value.trim());
     if (textBaseUrl) localStorage.setItem('aetheria_text_base_url', textBaseUrl.value.trim());
 
-    const model = (isCustomModelInput && textModelInput) ? textModelInput.value.trim() : (textModelSelect ? textModelSelect.value : '');
-    if (model) localStorage.setItem('aetheria_text_model', model);
+    let model = (isCustomModelInput && textModelInput) ? textModelInput.value.trim() : (textModelSelect ? textModelSelect.value : '');
+    if ((!model || model.includes('No API connected')) && (textProviderSelect?.value || 'demo') !== 'demo') {
+      const cached = localStorage.getItem('aetheria_synced_models_' + (textProviderSelect?.value || 'demo'));
+      try {
+        const list = JSON.parse(cached || '[]');
+        if (list.length > 0) model = list[0];
+      } catch (e) {}
+      if (!model) {
+        const p = textProviderSelect?.value || '';
+        if (p === 'openrouter') model = 'deepseek/deepseek-chat';
+        else if (p === 'groq') model = 'llama-3.3-70b-versatile';
+        else if (p === 'google') model = 'gemini-2.0-flash';
+        else if (p === 'anthropic') model = 'claude-3-5-sonnet-20241022';
+        else if (p === 'openai') model = 'gpt-4o';
+      }
+    }
+    if (model) {
+      localStorage.setItem('aetheria_text_model', model);
+      if (textModelSelect && textModelSelect.disabled) {
+        populateModelDropdown([model], model);
+      }
+    }
+    updateHeaderPill();
 
     if (sliderTemp) localStorage.setItem('aetheria_text_temp', sliderTemp.value);
     if (sliderTokens) localStorage.setItem('aetheria_text_tokens', sliderTokens.value);
