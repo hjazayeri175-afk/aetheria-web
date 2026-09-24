@@ -4149,73 +4149,88 @@ const { character } = Astro.props;
   });
   closeByok?.addEventListener('click', () => byokTray?.classList.add('hidden'));
   cancelByok?.addEventListener('click', () => byokTray?.classList.add('hidden'));
-  // Save all engine settings to localStorage
+  // Save all engine settings to localStorage (Bulletproof with fallback)
   function saveAllSettings() {
-    if (textProviderSelect) localStorage.setItem('aetheria_text_provider', textProviderSelect.value);
-    if (textApiKey) localStorage.setItem('aetheria_text_key', textApiKey.value.trim());
-    if (textBaseUrl) localStorage.setItem('aetheria_text_base_url', textBaseUrl.value.trim());
+    try {
+      const prov = textProviderSelect?.value || 'openrouter';
+      const key = (textApiKey?.value || '').trim();
+      const baseUrl = (textBaseUrl?.value || '').trim();
 
-    let model = (isCustomModelInput && textModelInput) ? textModelInput.value.trim() : (textModelSelect ? textModelSelect.value : '');
-    if ((!model || model.includes('No API connected')) && (textProviderSelect?.value || 'demo') !== 'demo') {
-      const cached = localStorage.getItem('aetheria_synced_models_' + (textProviderSelect?.value || 'demo'));
-      try {
-        const list = JSON.parse(cached || '[]');
-        if (list.length > 0) model = list[0];
-      } catch (e) {}
-      if (!model) {
-        const p = textProviderSelect?.value || '';
-        if (p === 'openrouter') model = 'deepseek/deepseek-chat';
-        else if (p === 'groq') model = 'llama-3.3-70b-versatile';
-        else if (p === 'google') model = 'gemini-2.0-flash';
-        else if (p === 'anthropic') model = 'claude-3-5-sonnet-20241022';
-        else if (p === 'openai') model = 'gpt-4o';
+      if (textProviderSelect) localStorage.setItem('aetheria_text_provider', prov);
+      if (textApiKey) localStorage.setItem('aetheria_text_key', key);
+      if (textBaseUrl) localStorage.setItem('aetheria_text_base_url', baseUrl);
+
+      const isCustomInput = Boolean(textModelInput && !textModelInput.classList.contains('hidden'));
+      let model = isCustomInput ? textModelInput.value.trim() : (textModelSelect ? textModelSelect.value : '');
+      if (!model || model.includes('No API connected')) {
+        model = localStorage.getItem('aetheria_text_model') || '';
       }
-    }
-    if (model) {
-      localStorage.setItem('aetheria_text_model', model);
-      if (textModelSelect && textModelSelect.disabled) {
-        populateModelDropdown([model], model);
+
+      if ((!model || model.includes('No API connected')) && prov !== 'demo') {
+        const cached = localStorage.getItem('aetheria_synced_models_' + prov);
+        try {
+          const list = JSON.parse(cached || '[]');
+          if (list.length > 0) model = list[0];
+        } catch (e) {}
+        if (!model) {
+          if (prov === 'openrouter') model = 'deepseek/deepseek-chat';
+          else if (prov === 'groq') model = 'llama-3.3-70b-versatile';
+          else if (prov === 'google') model = 'gemini-2.0-flash';
+          else if (prov === 'anthropic') model = 'claude-3-5-sonnet-20241022';
+          else if (prov === 'openai') model = 'gpt-4o';
+        }
       }
-    }
-    updateHeaderPill();
 
-    if (sliderTemp) localStorage.setItem('aetheria_text_temp', sliderTemp.value);
-    if (sliderTokens) localStorage.setItem('aetheria_text_tokens', sliderTokens.value);
-    if (sliderTopP) localStorage.setItem('aetheria_text_top_p', sliderTopP.value);
-    if (sliderRepPen) localStorage.setItem('aetheria_text_rep_pen', sliderRepPen.value);
-    if (sliderFreqPen) localStorage.setItem('aetheria_text_freq_pen', sliderFreqPen.value);
-    if (sliderPresPen) localStorage.setItem('aetheria_text_pres_pen', sliderPresPen.value);
-    if (sliderContext) localStorage.setItem('aetheria_text_context', sliderContext.value);
-    if (toggleStreaming) localStorage.setItem('aetheria_text_streaming', toggleStreaming.checked ? 'true' : 'false');
+      if (model) {
+        localStorage.setItem('aetheria_text_model', model);
+        updateCustomModelTrigger(model);
+        if (textModelSelect) {
+          textModelSelect.disabled = false;
+          textModelSelect.value = model;
+        }
+      }
+      updateHeaderPill();
 
-    if (voiceProviderSelect) localStorage.setItem('aetheria_voice_provider', voiceProviderSelect.value);
-    if (voiceApiKey) localStorage.setItem('aetheria_voice_key', voiceApiKey.value.trim());
-    if (voiceIdInput) localStorage.setItem('aetheria_voice_id', voiceIdInput.value.trim());
-    if (openaiVoiceSelect) localStorage.setItem('aetheria_openai_voice', openaiVoiceSelect.value);
-    if (sliderStability) localStorage.setItem('aetheria_voice_stability', sliderStability.value);
-    if (sliderClarity) localStorage.setItem('aetheria_voice_clarity', sliderClarity.value);
-    if (sliderVoiceRate) localStorage.setItem('aetheria_voice_rate', sliderVoiceRate.value);
-    if (sliderVoicePitch) localStorage.setItem('aetheria_voice_pitch', sliderVoicePitch.value);
-    if (toggleFilterNarration) localStorage.setItem('aetheria_voice_filter_narration', toggleFilterNarration.checked ? 'true' : 'false');
-    if (toggleAutoplayVoice) localStorage.setItem('aetheria_voice_autoplay', toggleAutoplayVoice.checked ? 'true' : 'false');
+      if (sliderTemp) localStorage.setItem('aetheria_text_temp', sliderTemp.value);
+      if (sliderTokens) localStorage.setItem('aetheria_text_tokens', sliderTokens.value);
+      if (sliderTopP) localStorage.setItem('aetheria_text_top_p', sliderTopP.value);
+      if (sliderRepPen) localStorage.setItem('aetheria_text_rep_pen', sliderRepPen.value);
+      if (sliderFreqPen) localStorage.setItem('aetheria_text_freq_pen', sliderFreqPen.value);
+      if (sliderPresPen) localStorage.setItem('aetheria_text_pres_pen', sliderPresPen.value);
+      if (sliderContext) localStorage.setItem('aetheria_text_context', sliderContext.value);
+      if (toggleStreaming) localStorage.setItem('aetheria_text_streaming', toggleStreaming.checked ? 'true' : 'false');
 
-    if (imageProviderSelect) localStorage.setItem('aetheria_image_provider', imageProviderSelect.value);
-    if (imageApiKey) localStorage.setItem('aetheria_image_key', imageApiKey.value.trim());
-    if (imageAspectSelect) localStorage.setItem('aetheria_image_aspect', imageAspectSelect.value);
-    if (imageStepsInput) localStorage.setItem('aetheria_image_steps', imageStepsInput.value);
-    if (imageCfgInput) localStorage.setItem('aetheria_image_cfg', imageCfgInput.value);
-    if (toggleImageAnchor) localStorage.setItem('aetheria_image_anchor', toggleImageAnchor.checked ? 'true' : 'false');
-    if (imageNegativePrompt) localStorage.setItem('aetheria_image_negative', imageNegativePrompt.value.trim());
+      if (voiceProviderSelect) localStorage.setItem('aetheria_voice_provider', voiceProviderSelect.value);
+      if (voiceApiKey) localStorage.setItem('aetheria_voice_key', voiceApiKey.value.trim());
+      if (voiceIdInput) localStorage.setItem('aetheria_voice_id', voiceIdInput.value.trim());
+      if (openaiVoiceSelect) localStorage.setItem('aetheria_openai_voice', openaiVoiceSelect.value);
+      if (sliderStability) localStorage.setItem('aetheria_voice_stability', sliderStability.value);
+      if (sliderClarity) localStorage.setItem('aetheria_voice_clarity', sliderClarity.value);
+      if (sliderVoiceRate) localStorage.setItem('aetheria_voice_rate', sliderVoiceRate.value);
+      if (sliderVoicePitch) localStorage.setItem('aetheria_voice_pitch', sliderVoicePitch.value);
+      if (toggleFilterNarration) localStorage.setItem('aetheria_voice_filter_narration', toggleFilterNarration.checked ? 'true' : 'false');
+      if (toggleAutoplayVoice) localStorage.setItem('aetheria_voice_autoplay', toggleAutoplayVoice.checked ? 'true' : 'false');
 
-    if (videoProviderSelect) localStorage.setItem('aetheria_video_provider', videoProviderSelect.value);
-    if (videoApiKey) localStorage.setItem('aetheria_video_key', videoApiKey.value.trim());
-    if (videoModelSelect) localStorage.setItem('aetheria_video_model', videoModelSelect.value);
-    if (videoRatioSelect) localStorage.setItem('aetheria_video_ratio', videoRatioSelect.value);
-    if (videoDurationSelect) localStorage.setItem('aetheria_video_duration', videoDurationSelect.value);
+      if (imageProviderSelect) localStorage.setItem('aetheria_image_provider', imageProviderSelect.value);
+      if (imageApiKey) localStorage.setItem('aetheria_image_key', imageApiKey.value.trim());
+      if (imageAspectSelect) localStorage.setItem('aetheria_image_aspect', imageAspectSelect.value);
+      if (imageStepsInput) localStorage.setItem('aetheria_image_steps', imageStepsInput.value);
+      if (imageCfgInput) localStorage.setItem('aetheria_image_cfg', imageCfgInput.value);
+      if (toggleImageAnchor) localStorage.setItem('aetheria_image_anchor', toggleImageAnchor.checked ? 'true' : 'false');
+      if (imageNegativePrompt) localStorage.setItem('aetheria_image_negative', imageNegativePrompt.value.trim());
 
-    if (engineLabel) {
-      const pName = PROVIDER_CONFIGS[textProviderSelect?.value || 'demo']?.name || 'Engine';
-      engineLabel.textContent = pName;
+      if (videoProviderSelect) localStorage.setItem('aetheria_video_provider', videoProviderSelect.value);
+      if (videoApiKey) localStorage.setItem('aetheria_video_key', videoApiKey.value.trim());
+      if (videoModelSelect) localStorage.setItem('aetheria_video_model', videoModelSelect.value);
+      if (videoRatioSelect) localStorage.setItem('aetheria_video_ratio', videoRatioSelect.value);
+      if (videoDurationSelect) localStorage.setItem('aetheria_video_duration', videoDurationSelect.value);
+
+      if (engineLabel) {
+        const pName = PROVIDER_CONFIGS[prov]?.name || 'Engine';
+        engineLabel.textContent = pName;
+      }
+    } catch (saveErr) {
+      console.error('Error saving settings:', saveErr);
     }
 
     byokTray?.classList.add('hidden');
@@ -4932,10 +4947,13 @@ Never speak, narrate, or decide thoughts or actions for {{user}}. Maintain high 
 
         const systemPrompt = buildSystemPrompt(userText);
         const contextLimit = parseInt(localStorage.getItem('aetheria_text_context') || '16', 10);
-        const historySlice = conversation.slice(-contextLimit).map(m => ({
-          role: m.sender === 'user' ? 'user' : 'assistant',
-          content: m.text
-        }));
+        const historySlice = conversation
+          .slice(-contextLimit)
+          .filter(m => m.text && !m.text.startsWith('⚠️'))
+          .map(m => ({
+            role: m.sender === 'user' ? 'user' : 'assistant',
+            content: m.text
+          }));
 
         let payload;
         let headers = { 'Content-Type': 'application/json' };
@@ -4979,17 +4997,8 @@ Never speak, narrate, or decide thoughts or actions for {{user}}. Maintain high 
         }
 
         let res;
+        // Always try Edge Relay first to eliminate CORS, adblock, and webview header issues
         try {
-          res = await fetch(endpoint, {
-            method: 'POST',
-            headers,
-            body: JSON.stringify(payload)
-          });
-          if (!res.ok && res.status >= 500) {
-            throw new Error(`Upstream server error HTTP ${res.status}`);
-          }
-        } catch (directErr) {
-          // Automatic Edge Relay Fallback (Bypasses any browser CORS limits!)
           res = await fetch('/api/proxy/chat', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
@@ -4999,6 +5008,13 @@ Never speak, narrate, or decide thoughts or actions for {{user}}. Maintain high 
               body: payload,
               headers: provider === 'openrouter' ? { 'HTTP-Referer': 'https://aetheria.ai', 'X-Title': 'Aetheria AI' } : {}
             })
+          });
+        } catch (edgeRelayErr) {
+          // Fallback to direct fetch if edge relay network unreachable
+          res = await fetch(endpoint, {
+            method: 'POST',
+            headers,
+            body: JSON.stringify(payload)
           });
         }
 
@@ -5070,11 +5086,20 @@ Never speak, narrate, or decide thoughts or actions for {{user}}. Maintain high 
           if (!errDetail) errDetail = `Server returned HTTP ${res.status}`;
           
           if (typingIndicator) typingIndicator.classList.add('hidden');
+
+          let guidance = '';
+          const lowerErr = errDetail.toLowerCase();
+          if (res.status === 402 || lowerErr.includes('credit') || lowerErr.includes('payment') || lowerErr.includes('balance')) {
+            guidance = `\n\n💡 **Solution (Insufficient Credits):**\nThe model \`${model}\` is a paid model requiring account balance on ${conf.name}.\n👉 You can switch to a **FREE model** right now: Open Settings (⚙️) → Tap Model → Click **"🎁 Free (:free)"** and select a free model (e.g. \`meta-llama/llama-3.3-70b-instruct:free\`).\n👉 Or add credits on [openrouter.ai/credits](https://openrouter.ai/credits).`;
+          } else if (res.status === 401 || lowerErr.includes('auth') || lowerErr.includes('user not found') || lowerErr.includes('api key')) {
+            guidance = `\n\n💡 **Solution (Invalid Key):**\nPlease open Engine Settings (⚙️), paste your valid API key from ${conf.name} (starting with sk-or-v1-...), and click **"Save Engine Settings"**.`;
+          }
+
           const errorMsg = {
             sender: 'character',
-            text: `⚠️ **API Error (${conf.name}):** ${errDetail}\n\n*Please verify your API key, model selection, or billing credits in Settings.*`,
+            text: `⚠️ **API Error (${conf.name} - HTTP ${res.status}):** ${errDetail}${guidance}`,
             timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
-            swipes: [`⚠️ **API Error (${conf.name}):** ${errDetail}\n\n*Please verify your API key, model selection, or billing credits in Settings.*`],
+            swipes: [`⚠️ **API Error (${conf.name} - HTTP ${res.status}):** ${errDetail}${guidance}`],
             swipeIndex: 0
           };
           conversation.push(errorMsg);
