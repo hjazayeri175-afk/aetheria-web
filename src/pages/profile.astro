@@ -67,9 +67,32 @@ import {
           </button>
         </div>
 
-        <!-- Persona Switcher Pills -->
-        <div id="personas-pill-list" class="flex items-center gap-2 overflow-x-auto pb-1 no-scrollbar">
-          <!-- Populated by JS -->
+        <!-- Master Enable / Disable Toggle -->
+        <div class="flex items-center justify-between p-4 rounded-2xl bg-white/[0.02] border border-white/[0.08] transition">
+          <div class="flex items-center gap-3">
+            <div id="persona-toggle-icon" class="w-9 h-9 rounded-xl bg-purple-600/20 border border-purple-500/30 flex items-center justify-center text-purple-300 transition">
+              <User class="w-4 h-4" />
+            </div>
+            <div>
+              <p class="text-xs font-semibold text-white">Enable Persona in Chats</p>
+              <p id="persona-toggle-status" class="text-[11px] text-slate-400 transition">Active in chats • Characters will use your persona</p>
+            </div>
+          </div>
+          <label class="relative inline-flex items-center cursor-pointer">
+            <input type="checkbox" id="persona-master-toggle" class="sr-only peer" checked>
+            <div class="w-11 h-6 bg-white/10 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-purple-600"></div>
+          </label>
+        </div>
+
+        <!-- Modern Persona Carousel Bar -->
+        <div class="space-y-2">
+          <div class="flex items-center justify-between text-xs text-slate-400 px-1">
+            <span>Your Personas</span>
+            <span id="personas-count-label" class="text-[11px] text-purple-400 font-medium">1 persona</span>
+          </div>
+          <div id="personas-pill-list" class="flex items-center gap-2.5 overflow-x-auto pb-2 pt-0.5 no-scrollbar scroll-smooth">
+            <!-- Populated by JS -->
+          </div>
         </div>
 
         <!-- Persona Editor Card -->
@@ -477,30 +500,55 @@ import {
     }
   }
 
-  // Render UI
+  // Render Carousel List
   function renderPillList() {
     const list = document.getElementById('personas-pill-list');
+    const countLabel = document.getElementById('personas-count-label');
     if (!list) return;
 
-    list.innerHTML = personas.map(p => {
+    if (countLabel) {
+      countLabel.textContent = `${personas.length} ${personas.length === 1 ? 'persona' : 'personas'}`;
+    }
+
+    const itemsHtml = personas.map(p => {
       const isSelected = p.id === currentPersonaId;
       const displayName = p.name.trim() || 'Untitled';
+      const ageText = p.age ? `${p.age}` : (p.pronouns ? `${p.pronouns}` : 'No details');
       return `
         <button 
           type="button" 
-          class="persona-pill px-3 py-1.5 rounded-xl border text-xs font-semibold flex items-center gap-2 shrink-0 transition cursor-pointer ${
+          class="persona-pill group relative flex items-center gap-3 py-2 px-3.5 rounded-2xl border text-left shrink-0 transition-all duration-200 cursor-pointer ${
             isSelected 
-              ? 'bg-purple-600/30 border-purple-500/60 text-white shadow-sm' 
-              : 'bg-white/[0.03] border-white/5 text-slate-400 hover:text-slate-200 hover:bg-white/[0.06]'
+              ? 'bg-purple-600/20 border-purple-500/60 text-white shadow-lg shadow-purple-950/40 ring-1 ring-purple-500/40' 
+              : 'bg-white/[0.03] border-white/5 text-slate-400 hover:text-slate-200 hover:bg-white/[0.06] hover:border-white/10'
           }"
           data-id="${p.id}"
         >
-          ${p.avatar ? `<img src="${p.avatar}" class="w-4 h-4 rounded-full object-cover" />` : '<span class="w-4 h-4 rounded-full bg-purple-500/20 text-[9px] flex items-center justify-center text-purple-300">●</span>'}
-          <span>${displayName}</span>
-          ${p.isDefault ? '<span class="text-[9px] px-1 py-0.2 rounded bg-purple-500/30 text-purple-300">Active</span>' : ''}
+          <div class="relative w-8 h-8 rounded-full overflow-hidden bg-purple-950/40 border ${isSelected ? 'border-purple-400' : 'border-white/10'} shrink-0 flex items-center justify-center">
+            ${p.avatar ? `<img src="${p.avatar}" class="w-full h-full object-cover" />` : `<span class="text-xs font-bold text-purple-300">${(displayName.charAt(0) || 'U').toUpperCase()}</span>`}
+          </div>
+          <div class="min-w-0 pr-1">
+            <p class="text-xs font-bold truncate max-w-[90px] sm:max-w-[120px] leading-tight">${displayName}</p>
+            <p class="text-[10px] text-slate-500 truncate leading-tight mt-0.5">${ageText}</p>
+          </div>
+          ${p.isDefault ? '<span class="ml-1 text-[9px] px-1.5 py-0.5 rounded-full bg-purple-500/30 text-purple-200 font-semibold border border-purple-400/20 shrink-0">Active</span>' : ''}
         </button>
       `;
     }).join('');
+
+    const addBtnHtml = `
+      <button 
+        type="button" 
+        id="btn-add-persona-carousel"
+        class="flex items-center gap-2 py-2 px-3.5 rounded-2xl border border-dashed border-white/15 bg-white/[0.01] hover:bg-white/[0.05] text-slate-400 hover:text-purple-300 text-xs font-semibold shrink-0 transition cursor-pointer"
+        title="Create new persona"
+      >
+        <span class="w-6 h-6 rounded-full bg-white/5 flex items-center justify-center text-slate-300 font-bold text-xs">+</span>
+        <span>Add</span>
+      </button>
+    `;
+
+    list.innerHTML = itemsHtml + addBtnHtml;
 
     list.querySelectorAll('.persona-pill').forEach(btn => {
       btn.addEventListener('click', () => {
@@ -511,6 +559,10 @@ import {
           fillForm();
         }
       });
+    });
+
+    document.getElementById('btn-add-persona-carousel')?.addEventListener('click', () => {
+      document.getElementById('btn-new-persona')?.click();
     });
   }
 
@@ -569,6 +621,39 @@ import {
     loadPersonas();
     renderPillList();
     fillForm();
+
+    // Master Persona Enable/Disable Toggle
+    const masterToggle = document.getElementById('persona-master-toggle') as HTMLInputElement;
+    const toggleStatus = document.getElementById('persona-toggle-status');
+    const toggleIcon = document.getElementById('persona-toggle-icon');
+
+    function updateToggleUI(enabled: boolean) {
+      if (toggleStatus) {
+        toggleStatus.textContent = enabled 
+          ? 'Active in chats • Characters will use your persona' 
+          : 'Disabled • Characters interact using their default scenario';
+      }
+      if (toggleIcon) {
+        if (enabled) {
+          toggleIcon.className = 'w-9 h-9 rounded-xl bg-purple-600/20 border border-purple-500/30 flex items-center justify-center text-purple-300 transition';
+        } else {
+          toggleIcon.className = 'w-9 h-9 rounded-xl bg-white/5 border border-white/10 flex items-center justify-center text-slate-500 transition';
+        }
+      }
+    }
+
+    const isInitiallyEnabled = (localStorage.getItem('aetheria_persona_enabled') !== 'false');
+    if (masterToggle) {
+      masterToggle.checked = isInitiallyEnabled;
+      updateToggleUI(isInitiallyEnabled);
+
+      masterToggle.addEventListener('change', () => {
+        const isEnabled = masterToggle.checked;
+        localStorage.setItem('aetheria_persona_enabled', isEnabled ? 'true' : 'false');
+        updateToggleUI(isEnabled);
+        showToast(isEnabled ? 'Personas enabled in chats' : 'Personas disabled. Using scenario default', isEnabled ? 'success' : 'info');
+      });
+    }
 
     // Tab Switcher
     const tabPersonas = document.getElementById('tab-btn-personas');

@@ -5121,25 +5121,32 @@ const { character } = Astro.props;
       prompt += `<START>\n${activeChar.mesExample}\n\n`;
     }
 
-    // User Persona / Active Mask (Strict Override Enforcement)
-    const uName = (activeUserPersona.name && activeUserPersona.name.trim()) ? activeUserPersona.name.trim() : 'User';
-    prompt += `[USER IDENTITY & ACTIVE ROLEPLAY MASK: {{user}}]\n`;
-    prompt += `Name: ${uName}\n`;
-    if (activeUserPersona.age) prompt += `Age / Life Stage: ${activeUserPersona.age}\n`;
-    if (activeUserPersona.gender || activeUserPersona.pronouns) prompt += `Gender & Pronouns: ${activeUserPersona.gender || activeUserPersona.pronouns}\n`;
-    if (activeUserPersona.title) prompt += `Occupation / Role: ${activeUserPersona.title}\n`;
-    if (activeUserPersona.appearance) prompt += `Physical Appearance: ${activeUserPersona.appearance}\n`;
-    if (activeUserPersona.personality) prompt += `Personality & Demeanor: ${activeUserPersona.personality}\n`;
-    const userLore = activeUserPersona.lore || activeUserPersona.bio || '';
-    if (userLore) prompt += `Backstory Lore: ${userLore}\n`;
-    const userRules = activeUserPersona.directives || activeUserPersona.globalNotes || '';
-    if (userRules) prompt += `Roleplay Preferences: ${userRules}\n`;
+    // User Persona / Active Mask (Strict Override Enforcement if enabled)
+    const isPersonaEnabled = (localStorage.getItem('aetheria_persona_enabled') !== 'false') 
+      && activeUserPersona 
+      && activeUserPersona.id !== 'none'
+      && !activeUserPersona.disabled;
 
-    // Strict Override Directive
-    prompt += `\n[CRITICAL USER IDENTITY OVERRIDE RULES]\n`;
-    prompt += `1. The above profile for {{user}} (${uName}) is absolute and authoritative.\n`;
-    prompt += `2. If any character greeting, card description, or scenario suggests or assumes a different age, appearance, gender, or backstory for {{user}}, you MUST completely ignore and override that assumption in favor of {{user}}'s explicit profile above.\n`;
-    prompt += `3. You must perceive, interact with, and address {{user}} strictly in accordance with their designated age (${activeUserPersona.age || 'unspecified'}), appearance, and personality at all times.\n\n`;
+    if (isPersonaEnabled) {
+      const uName = (activeUserPersona.name && activeUserPersona.name.trim()) ? activeUserPersona.name.trim() : 'User';
+      prompt += `[USER IDENTITY & ACTIVE ROLEPLAY MASK: {{user}}]\n`;
+      prompt += `Name: ${uName}\n`;
+      if (activeUserPersona.age) prompt += `Age / Life Stage: ${activeUserPersona.age}\n`;
+      if (activeUserPersona.gender || activeUserPersona.pronouns) prompt += `Gender & Pronouns: ${activeUserPersona.gender || activeUserPersona.pronouns}\n`;
+      if (activeUserPersona.title) prompt += `Occupation / Role: ${activeUserPersona.title}\n`;
+      if (activeUserPersona.appearance) prompt += `Physical Appearance: ${activeUserPersona.appearance}\n`;
+      if (activeUserPersona.personality) prompt += `Personality & Demeanor: ${activeUserPersona.personality}\n`;
+      const userLore = activeUserPersona.lore || activeUserPersona.bio || '';
+      if (userLore) prompt += `Backstory Lore: ${userLore}\n`;
+      const userRules = activeUserPersona.directives || activeUserPersona.globalNotes || '';
+      if (userRules) prompt += `Roleplay Preferences: ${userRules}\n`;
+
+      // Strict Override Directive
+      prompt += `\n[CRITICAL USER IDENTITY OVERRIDE RULES]\n`;
+      prompt += `1. The above profile for {{user}} (${uName}) is absolute and authoritative.\n`;
+      prompt += `2. If any character greeting, card description, or scenario suggests or assumes a different age, appearance, gender, or backstory for {{user}}, you MUST completely ignore and override that assumption in favor of {{user}}'s explicit profile above.\n`;
+      prompt += `3. You must perceive, interact with, and address {{user}} strictly in accordance with their designated age (${activeUserPersona.age || 'unspecified'}), appearance, and personality at all times.\n\n`;
+    }
 
     if (afterCharContent) {
       prompt += `${afterCharContent}\n\n`;
@@ -6277,7 +6284,20 @@ const { character } = Astro.props;
 
   function updateChatMaskLabel() {
     if (chatMaskLabel) {
-      chatMaskLabel.textContent = `Persona: ${activeUserPersona.name || 'You'}`;
+      const isEnabled = (localStorage.getItem('aetheria_persona_enabled') !== 'false')
+        && activeUserPersona 
+        && activeUserPersona.id !== 'none'
+        && !activeUserPersona.disabled;
+
+      if (!isEnabled) {
+        chatMaskLabel.textContent = 'Persona: Off';
+        maskBtn?.classList.remove('bg-purple-950/40', 'border-purple-500/30', 'text-purple-300');
+        maskBtn?.classList.add('bg-white/[0.03]', 'border-white/10', 'text-slate-400');
+      } else {
+        chatMaskLabel.textContent = `Persona: ${activeUserPersona.name || 'You'}`;
+        maskBtn?.classList.add('bg-purple-950/40', 'border-purple-500/30', 'text-purple-300');
+        maskBtn?.classList.remove('bg-white/[0.03]', 'border-white/10', 'text-slate-400');
+      }
     }
   }
   updateChatMaskLabel();
@@ -6293,6 +6313,8 @@ const { character } = Astro.props;
       savedMasks = [activeUserPersona];
     }
 
+    const isPersonaGloballyEnabled = (localStorage.getItem('aetheria_persona_enabled') !== 'false');
+
     const backdrop = document.createElement('div');
     backdrop.className = 'fixed inset-0 z-[10000] flex items-center justify-center p-4 bg-black/75 backdrop-blur-md transition-opacity duration-200 opacity-0';
     
@@ -6300,10 +6322,10 @@ const { character } = Astro.props;
     modal.className = 'w-full max-w-sm rounded-3xl bg-[#0d1124]/95 border border-purple-500/30 p-5 shadow-2xl shadow-purple-950/80 transform scale-95 transition-all duration-200 text-left';
 
     let masksListHtml = savedMasks.map((m) => {
-      const isCur = m.id === activeUserPersona.id || (m.name && m.name === activeUserPersona.name);
+      const isCur = isPersonaGloballyEnabled && (m.id === activeUserPersona.id || (m.name && m.name === activeUserPersona.name));
       return `
         <button type="button" class="w-full p-2.5 rounded-xl border text-left transition flex items-center justify-between gap-3 cursor-pointer mask-pick-btn ${
-          isCur ? 'bg-purple-600/20 border-purple-500/60 text-white' : 'bg-white/[0.03] border-white/10 text-slate-300 hover:text-white hover:bg-white/[0.06]'
+          isCur ? 'bg-purple-600/20 border-purple-500/60 text-white shadow-sm' : 'bg-white/[0.03] border-white/10 text-slate-300 hover:text-white hover:bg-white/[0.06]'
         }" data-mask-id="${m.id || ''}">
           <div class="flex items-center gap-2.5 min-w-0">
             ${m.avatar ? `<img src="${m.avatar}" class="w-6 h-6 rounded-full object-cover shrink-0" />` : '<span class="w-6 h-6 rounded-full bg-purple-500/20 flex items-center justify-center text-[10px] text-purple-300 shrink-0">●</span>'}
@@ -6319,12 +6341,32 @@ const { character } = Astro.props;
 
     modal.innerHTML = `
       <div class="flex items-center justify-between border-b border-white/[0.08] pb-3 mb-3">
-        <h3 class="text-xs font-bold text-white uppercase tracking-wider">Switch Persona</h3>
+        <div>
+          <h3 class="text-xs font-bold text-white uppercase tracking-wider">Chat Persona</h3>
+          <p class="text-[10px] text-slate-400 mt-0.5">Choose your identity for this chat</p>
+        </div>
         <a href="/profile" class="text-[10px] text-purple-400 hover:text-purple-300 underline underline-offset-2">Manage</a>
       </div>
-      <div class="space-y-2 max-h-60 overflow-y-auto pr-1">
+
+      <div class="space-y-2 max-h-64 overflow-y-auto pr-1">
+        <!-- Option: Disable Persona / Card Default -->
+        <button type="button" class="w-full p-2.5 rounded-xl border text-left transition flex items-center justify-between gap-3 cursor-pointer mask-pick-btn ${
+          !isPersonaGloballyEnabled ? 'bg-purple-600/20 border-purple-500/60 text-white shadow-sm' : 'bg-white/[0.02] border-white/5 text-slate-400 hover:text-white hover:bg-white/[0.05]'
+        }" data-mask-id="none">
+          <div class="flex items-center gap-2.5 min-w-0">
+            <span class="w-6 h-6 rounded-full bg-white/5 border border-white/10 flex items-center justify-center text-[11px] text-slate-300 shrink-0">🚫</span>
+            <div class="min-w-0">
+              <p class="text-xs font-bold truncate">Default Scenario Role (Off)</p>
+              <p class="text-[10px] text-slate-500 truncate">Chat with zero persona overrides</p>
+            </div>
+          </div>
+          ${!isPersonaGloballyEnabled ? '<span class="text-[10px] px-1.5 py-0.5 rounded bg-purple-500/30 text-purple-200 font-bold shrink-0">Active</span>' : ''}
+        </button>
+
+        <!-- User Personas -->
         ${masksListHtml}
       </div>
+
       <div class="mt-4 flex items-center justify-end">
         <button id="close-mask-modal-btn" type="button" class="px-3.5 py-1.5 rounded-xl bg-white/5 hover:bg-white/10 border border-white/10 text-xs text-slate-300 hover:text-white transition cursor-pointer">
           Done
@@ -6354,8 +6396,17 @@ const { character } = Astro.props;
     modal.querySelectorAll('.mask-pick-btn').forEach((btn) => {
       btn.addEventListener('click', () => {
         const id = btn.getAttribute('data-mask-id');
+        if (id === 'none') {
+          localStorage.setItem('aetheria_persona_enabled', 'false');
+          updateChatMaskLabel();
+          showNotification('Persona disabled. Playing as scenario default role.');
+          cleanup();
+          return;
+        }
+
         const chosen = savedMasks.find((x) => x.id === id);
         if (chosen) {
+          localStorage.setItem('aetheria_persona_enabled', 'true');
           activeUserPersona = {
             id: chosen.id,
             name: chosen.name || 'User',
