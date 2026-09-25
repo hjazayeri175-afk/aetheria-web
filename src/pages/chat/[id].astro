@@ -5864,6 +5864,9 @@ const { character } = Astro.props;
             <button class="msg-copy-btn w-7 h-7 sm:w-8 sm:h-8 rounded-lg flex items-center justify-center text-slate-400 hover:text-slate-200 hover:bg-white/[0.08] active:scale-95 transition cursor-pointer" data-text="${encodeURIComponent(msg.text)}" title="Copy text">
               ${TOOLBAR_ICONS.copy}
             </button>
+            <button class="msg-edit-btn w-7 h-7 sm:w-8 sm:h-8 rounded-lg flex items-center justify-center text-slate-400 hover:text-slate-200 hover:bg-white/[0.08] active:scale-95 transition cursor-pointer" data-idx="${idx}" title="Edit message">
+              ${TOOLBAR_ICONS.edit}
+            </button>
             <button class="msg-more-btn w-7 h-7 sm:w-8 sm:h-8 rounded-lg flex items-center justify-center text-slate-400 hover:text-slate-200 hover:bg-white/[0.08] active:scale-95 transition cursor-pointer" data-idx="${idx}" data-is-user="true" title="More options">
               ${TOOLBAR_ICONS.dots}
             </button>
@@ -7185,57 +7188,139 @@ const { character } = Astro.props;
   }
 
   // Inline Message Editing
+  let activeEditingIndex = null;
+
   function enableEditMessage(idx) {
     const msg = conversation[idx];
     if (!msg) return;
 
+    if (activeEditingIndex !== null && activeEditingIndex !== idx) {
+      renderAllMessages();
+    }
+    activeEditingIndex = idx;
+
     const bubble = document.getElementById(`msg-bubble-${idx}`);
     if (!bubble) return;
+
+    const isUserMsg = msg.sender === 'user';
+    const messageRow = bubble.closest('#chat-msg-row-' + idx) || bubble.closest('.group\\/msg') || bubble.parentElement;
+    const actionFooter = messageRow?.querySelector('.msg-copy-btn')?.parentElement;
+    if (actionFooter) actionFooter.classList.add('hidden');
+
+    const bubbleWrapper = bubble.parentElement;
+    if (bubbleWrapper && isUserMsg) {
+      bubbleWrapper.classList.remove('max-w-lg');
+      bubbleWrapper.classList.add('max-w-2xl');
+    }
+
+    // Transform bubble into sleek Gemini / ChatGPT dark surface
+    bubble.className = "w-full rounded-2xl bg-[#1e1f24] border border-white/[0.12] shadow-2xl overflow-hidden transition-all duration-200 text-left";
 
     const safeText = (msg.text || '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
 
     bubble.innerHTML = `
-      <div class="space-y-2 w-full animate-in fade-in duration-200">
-        <textarea id="edit-textarea-${idx}" rows="4" class="w-full p-3 rounded-xl bg-[#080a18] border border-purple-500/60 text-white text-xs sm:text-sm focus:outline-none focus:ring-2 focus:ring-purple-400 resize-y leading-relaxed font-sans">${safeText}</textarea>
-        <div class="flex items-center justify-between text-[11px] text-slate-400">
-          <span>Press <kbd class="px-1.5 py-0.5 rounded bg-white/10 text-slate-300 font-mono text-[10px]">Ctrl+Enter</kbd> to save, <kbd class="px-1.5 py-0.5 rounded bg-white/10 text-slate-300 font-mono text-[10px]">Esc</kbd> to cancel</span>
-          <div class="flex items-center gap-2">
-            <button id="cancel-edit-${idx}" type="button" class="px-3 py-1.5 rounded-xl bg-white/[0.06] hover:bg-white/[0.1] text-xs text-slate-300 transition cursor-pointer">Cancel</button>
-            <button id="save-edit-${idx}" type="button" class="px-4 py-1.5 rounded-xl bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-500 text-xs font-bold text-white transition shadow-sm cursor-pointer">Save Changes</button>
-          </div>
+      <div class="p-3 sm:p-4">
+        <textarea 
+          id="edit-textarea-${idx}" 
+          dir="auto" 
+          class="w-full bg-transparent border-0 text-slate-100 text-xs sm:text-sm focus:outline-none focus:ring-0 resize-none leading-relaxed font-sans placeholder:text-slate-500 overflow-y-auto block" 
+          placeholder="${isUserMsg ? 'Edit your message...' : 'Edit response...'}"
+        >${safeText}</textarea>
+      </div>
+      <div class="px-3.5 py-2.5 sm:px-4 sm:py-3 flex items-center justify-between border-t border-white/[0.08] bg-black/25">
+        <div class="text-[11px] text-slate-400 select-none flex items-center gap-1.5 font-normal">
+          ${isUserMsg ? `
+            <span class="inline-block w-1.5 h-1.5 rounded-full bg-purple-400 animate-pulse"></span>
+            <span class="hidden sm:inline">Updating will regenerate response</span>
+            <span class="sm:hidden">Regenerates</span>
+          ` : `
+            <span class="inline-block w-1.5 h-1.5 rounded-full bg-slate-400"></span>
+            <span>Editing response</span>
+          `}
+        </div>
+        <div class="flex items-center gap-2">
+          <button 
+            id="cancel-edit-${idx}" 
+            type="button" 
+            class="px-4 py-1.5 rounded-full text-xs font-medium text-slate-400 hover:text-white hover:bg-white/[0.08] active:scale-95 transition cursor-pointer select-none"
+          >
+            Cancel
+          </button>
+          <button 
+            id="save-edit-${idx}" 
+            type="button" 
+            class="px-4 py-1.5 rounded-full text-xs font-semibold ${isUserMsg ? 'bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-500 hover:to-indigo-500 text-white shadow-md shadow-purple-950/40' : 'bg-white/10 hover:bg-white/20 text-slate-100'} active:scale-95 transition cursor-pointer select-none flex items-center gap-1.5"
+          >
+            <span>${isUserMsg ? 'Update & Send' : 'Save'}</span>
+            ${isUserMsg ? `
+              <svg class="w-3.5 h-3.5 text-white" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M5 12h14"/>
+                <path d="m12 5 7 7-7 7"/>
+              </svg>
+            ` : ''}
+          </button>
         </div>
       </div>
     `;
 
     const textarea = document.getElementById(`edit-textarea-${idx}`);
     if (textarea) {
-      textarea.focus();
-      textarea.setSelectionRange(textarea.value.length, textarea.value.length);
+      const adjustHeight = () => {
+        textarea.style.height = 'auto';
+        textarea.style.height = `${Math.max(56, Math.min(textarea.scrollHeight, 260))}px`;
+      };
+      requestAnimationFrame(() => {
+        adjustHeight();
+        textarea.focus();
+        textarea.setSelectionRange(textarea.value.length, textarea.value.length);
+      });
+      textarea.addEventListener('input', adjustHeight);
+
       textarea.addEventListener('keydown', (e) => {
         if ((e.ctrlKey || e.metaKey) && e.key === 'Enter') {
           e.preventDefault();
           document.getElementById(`save-edit-${idx}`)?.click();
         } else if (e.key === 'Escape') {
           e.preventDefault();
-          renderAllMessages();
+          document.getElementById(`cancel-edit-${idx}`)?.click();
         }
       });
     }
 
     document.getElementById(`cancel-edit-${idx}`)?.addEventListener('click', () => {
+      activeEditingIndex = null;
       renderAllMessages();
     });
 
     document.getElementById(`save-edit-${idx}`)?.addEventListener('click', () => {
-      if (textarea && textarea.value.trim()) {
-        const val = textarea.value.trim();
+      if (!textarea) return;
+      const val = textarea.value.trim();
+      if (!val) return;
+
+      activeEditingIndex = null;
+
+      if (isUserMsg) {
+        if (val === msg.text) {
+          renderAllMessages();
+          return;
+        }
+
+        // ChatGPT & Google Gemini standard:
+        // 1. Truncate conversation from this user message forward
+        conversation = conversation.slice(0, idx);
+        saveChat();
+        renderAllMessages();
+
+        // 2. Dispatch updated prompt to handleSendMessage for a fresh streamed response!
+        handleSendMessage(val);
+      } else {
         msg.text = val;
         if (msg.swipes && msg.swipeIndex !== undefined) {
           msg.swipes[msg.swipeIndex] = val;
         }
         saveChat();
         renderAllMessages();
-        showNotification('Message updated.');
+        showNotification('Response updated.');
       }
     });
   }
