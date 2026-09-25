@@ -1248,342 +1248,432 @@ const { character } = Astro.props;
                   </button>
                 </div>
 
-                <!-- PANE 1: TTS SPEECH OUTPUT -->
+                <!-- Hidden inputs for system compatibility -->
+                <input type="hidden" id="voice-provider-select" value="browser" />
+                <input type="hidden" id="stt-provider-select" value="groq" />
+                <input type="hidden" id="openai-voice-select" value="nova" />
+                <input type="hidden" id="openai-tts-model-select" value="tts-1" />
+                <input type="hidden" id="stt-model-select" value="whisper-large-v3-turbo" />
+                <input type="hidden" id="stt-lang-select" value="auto" />
+
+                <!-- ================= PANE 1: TTS SPEECH OUTPUT ================= -->
                 <div id="voice-tts-pane" class="space-y-4">
-                  <!-- Header & Status -->
-                  <div class="p-3 rounded-2xl bg-white/[0.03] border border-white/[0.08] flex items-center justify-between gap-2">
-                    <div class="flex items-center gap-2.5 min-w-0">
-                      <div class="w-8 h-8 rounded-xl bg-purple-500/20 border border-purple-500/30 flex items-center justify-center text-purple-300 shrink-0">
-                        <Volume2 class="w-4 h-4 text-purple-400" />
+                  <!-- Active Engine Card (Consumer-Friendly Hero) -->
+                  <div class="p-3.5 sm:p-4 rounded-2xl bg-gradient-to-r from-purple-950/40 via-purple-900/20 to-indigo-950/40 border border-purple-500/30 flex items-center justify-between gap-3 shadow-lg shadow-purple-950/40">
+                    <div class="flex items-center gap-3 min-w-0">
+                      <div id="tts-active-icon-box" class="w-11 h-11 rounded-2xl bg-purple-500/20 border border-purple-500/30 flex items-center justify-center text-purple-300 shrink-0 shadow-inner">
+                        <Volume2 class="w-5 h-5 text-purple-400" />
                       </div>
                       <div class="min-w-0">
-                        <div class="flex items-center gap-2">
-                          <h4 class="text-xs sm:text-sm font-bold text-white truncate">Speech Output (TTS)</h4>
-                          <span id="tts-status-badge" class="px-2 py-0.5 rounded-full text-[10px] font-mono bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 font-semibold shrink-0">
-                            Active
+                        <div class="flex items-center gap-2 flex-wrap mb-0.5">
+                          <h4 id="tts-active-engine-name" class="text-sm font-bold text-white truncate">Built-in Device Voice</h4>
+                          <span id="tts-connection-badge" class="px-2 py-0.5 rounded-full text-[10px] font-mono font-semibold bg-emerald-500/20 text-emerald-300 border border-emerald-500/30">
+                            100% Free • Ready
                           </span>
                         </div>
-                        <p class="text-[11px] text-slate-400 truncate">Synthesizes character dialogue with expressive audio</p>
+                        <p id="tts-active-engine-desc" class="text-[11px] text-slate-400 truncate">Local browser speech synthesis • Zero API keys needed</p>
                       </div>
                     </div>
                     <button 
                       type="button" 
-                      id="test-voice-btn" 
-                      class="px-3 py-1.5 rounded-xl bg-purple-600/20 hover:bg-purple-600/30 text-purple-300 hover:text-purple-200 border border-purple-500/30 text-xs font-semibold flex items-center gap-1.5 transition cursor-pointer shrink-0 active:scale-95"
+                      id="open-tts-catalog-btn" 
+                      class="px-3 py-2 rounded-xl bg-purple-600 hover:bg-purple-500 text-white border border-purple-400/30 text-xs font-semibold flex items-center gap-1.5 transition cursor-pointer shrink-0 active:scale-95 shadow-md shadow-purple-900/40"
                     >
-                      <Play class="w-3.5 h-3.5 text-purple-400" />
-                      <span>Test Voice</span>
+                      <SlidersHorizontal class="w-3.5 h-3.5" />
+                      <span>Switch Engine</span>
                     </button>
                   </div>
 
-                  <!-- TTS Engine Selector (Custom Popover - No Native OS Dialog) -->
-                  <div class="relative w-full">
-                    <label class="block text-xs font-semibold text-slate-300 mb-1.5">TTS Engine / Provider</label>
-                    <select id="voice-provider-select" class="hidden">
-                      <option value="browser">Built-in Device Voice (100% Free)</option>
-                      <option value="elevenlabs">ElevenLabs (Ultra-Realistic Emotional Voice)</option>
-                      <option value="openai">OpenAI Audio (Clear & Expressive)</option>
-                      <option value="custom">Custom Audio Endpoint (Kokoro, XTTS)</option>
-                    </select>
-
-                    <button
-                      type="button"
-                      id="custom-tts-trigger"
-                      class="w-full px-3.5 py-2.5 rounded-xl bg-black/60 hover:bg-black/80 border border-purple-500/30 hover:border-purple-500/50 flex items-center justify-between text-xs text-white transition cursor-pointer text-left group"
-                      aria-haspopup="listbox"
-                      aria-expanded="false"
-                    >
-                      <div class="flex items-center gap-2.5 min-w-0 pr-2">
-                        <span class="w-2 h-2 rounded-full bg-emerald-400 shrink-0" id="custom-tts-status-dot"></span>
-                        <div class="min-w-0 flex flex-col">
-                          <span id="custom-tts-trigger-label" class="font-bold text-slate-100 truncate">Built-in Device Voice</span>
-                          <span id="custom-tts-trigger-sub" class="text-[10px] text-slate-400 truncate">100% Free • Local Browser Speech</span>
+                  <!-- Connection & Key Card (Progressive Disclosure) -->
+                  <div id="tts-connection-card" class="hidden p-3.5 sm:p-4 rounded-2xl bg-amber-950/20 border border-amber-500/30 space-y-3">
+                    <div class="flex items-start justify-between gap-2">
+                      <div class="flex items-center gap-2">
+                        <div class="w-7 h-7 rounded-xl bg-amber-500/20 border border-amber-500/30 flex items-center justify-center text-amber-300 shrink-0">
+                          <KeyRound class="w-3.5 h-3.5" />
+                        </div>
+                        <div>
+                          <h5 id="tts-connect-title" class="text-xs font-bold text-white">Connect ElevenLabs API Key</h5>
+                          <p id="tts-connect-desc" class="text-[10px] text-slate-400">API Key required to synthesize expressive speech.</p>
                         </div>
                       </div>
-                      <ChevronDown class="w-4 h-4 text-slate-400 group-hover:text-purple-300 transition-transform duration-200 shrink-0" id="custom-tts-chevron" />
+                      <span class="px-2 py-0.5 rounded-full text-[9px] font-mono font-bold bg-amber-500/20 text-amber-300 border border-amber-500/30">
+                        KEY REQUIRED
+                      </span>
+                    </div>
+
+                    <!-- Quick Reuse Button -->
+                    <button 
+                      type="button" 
+                      id="tts-quick-reuse-key-btn" 
+                      class="hidden w-full py-2 px-3 rounded-xl bg-purple-600/20 hover:bg-purple-600/30 border border-purple-500/40 text-purple-300 text-xs font-semibold flex items-center justify-center gap-2 transition cursor-pointer active:scale-95"
+                    >
+                      <Sparkles class="w-3.5 h-3.5 text-purple-400" />
+                      <span id="tts-quick-reuse-label">Connect with saved OpenAI Key</span>
                     </button>
 
-                    <!-- Custom Dropdown Menu -->
-                    <div 
-                      id="custom-tts-menu" 
-                      class="hidden absolute left-0 right-0 top-full mt-1.5 z-50 bg-[#0c0f24]/95 backdrop-blur-xl border border-purple-500/30 rounded-2xl p-1.5 shadow-2xl shadow-purple-950/80 space-y-1"
-                      role="listbox"
-                    >
-                      <!-- Options rendered in JS -->
-                    </div>
-                  </div>
-
-                  <!-- TTS API Key & URL -->
-                  <div id="voice-key-container" class="hidden space-y-2">
-                    <div class="flex items-center justify-between">
-                      <label class="block text-xs font-semibold text-slate-300">TTS API Key</label>
-                      <button type="button" id="copy-text-key-to-tts-btn" class="text-[10px] text-purple-400 hover:text-purple-300 font-semibold cursor-pointer underline hidden">
-                        Paste OpenAI Key from Text Tab
-                      </button>
-                    </div>
                     <div class="relative">
                       <input 
                         id="voice-api-key" 
                         type="password" 
-                        placeholder="ElevenLabs or OpenAI key..." 
-                        class="w-full px-3.5 py-2.5 rounded-xl bg-white/[0.05] border border-white/10 text-xs text-white placeholder:text-slate-500 outline-none focus:border-purple-500/60 font-mono pr-12"
+                        placeholder="Enter API Key (sk-... or ElevenLabs key)" 
+                        class="w-full px-3.5 py-2.5 rounded-xl bg-black/60 border border-white/10 text-xs text-white placeholder:text-slate-500 outline-none focus:border-purple-500/60 font-mono pr-16"
                       />
                       <button type="button" id="toggle-voice-key-visibility-btn" class="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-white text-xs cursor-pointer p-1">
                         Show
                       </button>
                     </div>
-                  </div>
 
-                  <div id="voice-custom-url-container" class="hidden space-y-1.5">
-                    <label class="block text-xs font-semibold text-slate-300">Custom Audio Endpoint URL</label>
-                    <input 
-                      id="voice-custom-url" 
-                      type="url" 
-                      placeholder="http://localhost:8880/v1/audio/speech" 
-                      class="w-full px-3.5 py-2.5 rounded-xl bg-white/[0.05] border border-white/10 text-xs text-white placeholder:text-slate-500 outline-none focus:border-purple-500/60 font-mono"
-                    />
-                  </div>
+                    <div id="voice-custom-url-container" class="hidden space-y-1">
+                      <label class="block text-[11px] font-semibold text-slate-300">Custom Audio Endpoint URL</label>
+                      <input 
+                        id="voice-custom-url" 
+                        type="url" 
+                        placeholder="http://localhost:8880/v1/audio/speech" 
+                        class="w-full px-3.5 py-2 rounded-xl bg-black/60 border border-white/10 text-xs text-white placeholder:text-slate-500 outline-none focus:border-purple-500/60 font-mono"
+                      />
+                    </div>
 
-                  <!-- ElevenLabs Voice Preset -->
-                  <div id="eleven-voice-container" class="hidden space-y-2">
-                    <label class="block text-xs font-semibold text-slate-300">ElevenLabs Voice ID / Preset</label>
-                    <input 
-                      id="voice-id-input" 
-                      type="text" 
-                      value="21m00Tcm4TlvDq8ikWAM"
-                      placeholder="Voice identifier"
-                      class="w-full px-3.5 py-2.5 rounded-xl bg-white/[0.05] border border-white/10 text-xs text-white outline-none focus:border-purple-500/60 font-mono"
-                    />
-                    <div class="flex flex-wrap gap-1.5 pt-1">
-                      <button type="button" class="quick-voice-pill text-[10px] px-2.5 py-1 rounded-lg bg-white/[0.04] text-slate-300 hover:text-purple-300 border border-white/10 transition cursor-pointer" data-voice="21m00Tcm4TlvDq8ikWAM">Rachel (Calm)</button>
-                      <button type="button" class="quick-voice-pill text-[10px] px-2.5 py-1 rounded-lg bg-white/[0.04] text-slate-300 hover:text-purple-300 border border-white/10 transition cursor-pointer" data-voice="pNInz6obpgDQGcFmaJgB">Adam (Deep Male)</button>
-                      <button type="button" class="quick-voice-pill text-[10px] px-2.5 py-1 rounded-lg bg-white/[0.04] text-slate-300 hover:text-purple-300 border border-white/10 transition cursor-pointer" data-voice="EXAVITQu4vr4xnSDxMaL">Bella (Expressive)</button>
-                      <button type="button" class="quick-voice-pill text-[10px] px-2.5 py-1 rounded-lg bg-white/[0.04] text-slate-300 hover:text-purple-300 border border-white/10 transition cursor-pointer" data-voice="ErXwobaYiN019PkySvjV">Antoni (Storyteller)</button>
-                      <button type="button" class="quick-voice-pill text-[10px] px-2.5 py-1 rounded-lg bg-white/[0.04] text-slate-300 hover:text-purple-300 border border-white/10 transition cursor-pointer" data-voice="MF3mGyEYCl7XYWbV9V6O">Elli (Gentle)</button>
-                      <button type="button" class="quick-voice-pill text-[10px] px-2.5 py-1 rounded-lg bg-white/[0.04] text-slate-300 hover:text-purple-300 border border-white/10 transition cursor-pointer" data-voice="TxGEqnHWrfWFTfGW9XjX">Josh (Warm Male)</button>
+                    <div class="flex items-center justify-end gap-2 pt-1">
+                      <button 
+                        type="button" 
+                        id="tts-connect-confirm-btn" 
+                        class="px-4 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-semibold flex items-center gap-1.5 transition cursor-pointer active:scale-95 shadow-md shadow-emerald-950"
+                      >
+                        <Check class="w-3.5 h-3.5" />
+                        <span>Connect & Activate</span>
+                      </button>
                     </div>
                   </div>
 
-                  <!-- OpenAI Audio Voice Selector -->
-                  <div id="openai-voice-container" class="hidden space-y-3">
-                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                      <div>
-                        <label class="block text-xs font-semibold text-slate-300 mb-1.5">OpenAI Voice Archetype</label>
-                        <select id="openai-voice-select" class="w-full px-3 py-2 rounded-xl bg-black/60 border border-purple-500/30 text-xs text-white outline-none cursor-pointer">
-                          <option value="nova">Nova (Warm & Energetic Female)</option>
-                          <option value="shimmer">Shimmer (Clear & Expressive Female)</option>
-                          <option value="onyx">Onyx (Deep Authoritative Male)</option>
-                          <option value="alloy">Alloy (Versatile & Balanced)</option>
-                          <option value="echo">Echo (Soft & Resonant Male)</option>
-                          <option value="fable">Fable (British Cadence)</option>
-                        </select>
+                  <!-- TTS Controls (Unlocked when connected or free) -->
+                  <div id="tts-controls-unlocked" class="space-y-4">
+                    
+                    <!-- ElevenLabs Voice Presets (Visual Avatar Cards) -->
+                    <div id="eleven-voice-container" class="hidden space-y-2.5">
+                      <label class="block text-xs font-semibold text-slate-300">Select Character Voice Preset</label>
+                      <div class="grid grid-cols-2 sm:grid-cols-3 gap-2">
+                        <button type="button" class="eleven-voice-card p-2.5 rounded-xl border text-left transition cursor-pointer bg-white/[0.03] hover:bg-white/[0.06] border-white/10" data-voice="21m00Tcm4TlvDq8ikWAM">
+                          <div class="font-bold text-xs text-white">Rachel</div>
+                          <div class="text-[10px] text-purple-400 font-medium">Calm & Soothing ♀</div>
+                        </button>
+                        <button type="button" class="eleven-voice-card p-2.5 rounded-xl border text-left transition cursor-pointer bg-white/[0.03] hover:bg-white/[0.06] border-white/10" data-voice="pNInz6obpgDQGcFmaJgB">
+                          <div class="font-bold text-xs text-white">Adam</div>
+                          <div class="text-[10px] text-purple-400 font-medium">Deep & Cinematic ♂</div>
+                        </button>
+                        <button type="button" class="eleven-voice-card p-2.5 rounded-xl border text-left transition cursor-pointer bg-white/[0.03] hover:bg-white/[0.06] border-white/10" data-voice="EXAVITQu4vr4xnSDxMaL">
+                          <div class="font-bold text-xs text-white">Bella</div>
+                          <div class="text-[10px] text-purple-400 font-medium">Expressive & Playful ♀</div>
+                        </button>
+                        <button type="button" class="eleven-voice-card p-2.5 rounded-xl border text-left transition cursor-pointer bg-white/[0.03] hover:bg-white/[0.06] border-white/10" data-voice="ErXwobaYiN019PkySvjV">
+                          <div class="font-bold text-xs text-white">Antoni</div>
+                          <div class="text-[10px] text-purple-400 font-medium">Storyteller ♂</div>
+                        </button>
+                        <button type="button" class="eleven-voice-card p-2.5 rounded-xl border text-left transition cursor-pointer bg-white/[0.03] hover:bg-white/[0.06] border-white/10" data-voice="MF3mGyEYCl7XYWbV9V6O">
+                          <div class="font-bold text-xs text-white">Elli</div>
+                          <div class="text-[10px] text-purple-400 font-medium">Gentle & Intimate ♀</div>
+                        </button>
+                        <button type="button" class="eleven-voice-card p-2.5 rounded-xl border text-left transition cursor-pointer bg-white/[0.03] hover:bg-white/[0.06] border-white/10" data-voice="TxGEqnHWrfWFTfGW9XjX">
+                          <div class="font-bold text-xs text-white">Josh</div>
+                          <div class="text-[10px] text-purple-400 font-medium">Warm & Confident ♂</div>
+                        </button>
                       </div>
+                      <input id="voice-id-input" type="text" value="21m00Tcm4TlvDq8ikWAM" class="w-full px-3 py-1.5 rounded-xl bg-white/[0.03] border border-white/10 text-xs text-slate-400 font-mono" placeholder="Or enter custom Voice ID" />
+                    </div>
+
+                    <!-- OpenAI Audio Voice Archetypes (Visual Cards - NO SELECT DROPDOWN) -->
+                    <div id="openai-voice-container" class="hidden space-y-3">
                       <div>
-                        <label class="block text-xs font-semibold text-slate-300 mb-1.5">TTS Model</label>
-                        <select id="openai-tts-model-select" class="w-full px-3 py-2 rounded-xl bg-black/60 border border-purple-500/30 text-xs text-white outline-none cursor-pointer">
-                          <option value="tts-1">tts-1 (Fast & Low Latency)</option>
-                          <option value="tts-1-hd">tts-1-hd (Ultra High Definition)</option>
-                        </select>
+                        <label class="block text-xs font-semibold text-slate-300 mb-2">OpenAI Voice Archetype</label>
+                        <div class="grid grid-cols-2 sm:grid-cols-3 gap-2">
+                          <button type="button" class="openai-voice-card p-2.5 rounded-xl border text-left transition cursor-pointer bg-white/[0.03] hover:bg-white/[0.06] border-white/10" data-arch="nova">
+                            <div class="font-bold text-xs text-white">Nova</div>
+                            <div class="text-[10px] text-purple-400">Warm & Energetic ♀</div>
+                          </button>
+                          <button type="button" class="openai-voice-card p-2.5 rounded-xl border text-left transition cursor-pointer bg-white/[0.03] hover:bg-white/[0.06] border-white/10" data-arch="shimmer">
+                            <div class="font-bold text-xs text-white">Shimmer</div>
+                            <div class="text-[10px] text-purple-400">Clear & Expressive ♀</div>
+                          </button>
+                          <button type="button" class="openai-voice-card p-2.5 rounded-xl border text-left transition cursor-pointer bg-white/[0.03] hover:bg-white/[0.06] border-white/10" data-arch="onyx">
+                            <div class="font-bold text-xs text-white">Onyx</div>
+                            <div class="text-[10px] text-purple-400">Deep & Resonant ♂</div>
+                          </button>
+                          <button type="button" class="openai-voice-card p-2.5 rounded-xl border text-left transition cursor-pointer bg-white/[0.03] hover:bg-white/[0.06] border-white/10" data-arch="alloy">
+                            <div class="font-bold text-xs text-white">Alloy</div>
+                            <div class="text-[10px] text-purple-400">Versatile & Balanced</div>
+                          </button>
+                          <button type="button" class="openai-voice-card p-2.5 rounded-xl border text-left transition cursor-pointer bg-white/[0.03] hover:bg-white/[0.06] border-white/10" data-arch="echo">
+                            <div class="font-bold text-xs text-white">Echo</div>
+                            <div class="text-[10px] text-purple-400">Soft & Smooth ♂</div>
+                          </button>
+                          <button type="button" class="openai-voice-card p-2.5 rounded-xl border text-left transition cursor-pointer bg-white/[0.03] hover:bg-white/[0.06] border-white/10" data-arch="fable">
+                            <div class="font-bold text-xs text-white">Fable</div>
+                            <div class="text-[10px] text-purple-400">British Accent</div>
+                          </button>
+                        </div>
+                      </div>
+
+                      <!-- TTS Model Segmented Pill Toggle -->
+                      <div>
+                        <label class="block text-xs font-semibold text-slate-300 mb-1.5">Audio Quality Model</label>
+                        <div class="flex items-center gap-2 p-1 rounded-xl bg-black/40 border border-white/10">
+                          <button type="button" data-tts-model="tts-1" class="openai-model-toggle-btn flex-1 py-1.5 px-3 rounded-lg text-xs font-semibold transition cursor-pointer bg-purple-600 text-white shadow-sm">
+                            tts-1 (Fast & Low Latency)
+                          </button>
+                          <button type="button" data-tts-model="tts-1-hd" class="openai-model-toggle-btn flex-1 py-1.5 px-3 rounded-lg text-xs font-semibold transition cursor-pointer text-slate-400 hover:text-white">
+                            tts-1-hd (Ultra High Definition)
+                          </button>
+                        </div>
                       </div>
                     </div>
-                  </div>
 
-                  <!-- Voice Sliders Card -->
-                  <div class="p-3.5 sm:p-4 rounded-2xl bg-white/[0.02] border border-white/[0.06] space-y-4">
-                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                      <!-- Stability (ElevenLabs) -->
-                      <div id="eleven-stability-box" class="space-y-1.5 hidden" dir="ltr">
-                        <div class="flex items-center justify-between text-xs">
-                          <label for="badge-stability" class="text-slate-300 font-medium cursor-pointer">Stability</label>
-                          <input id="badge-stability" dir="ltr" lang="en" type="text" inputmode="decimal" autocomplete="off" spellcheck="false" value="0.50" class="w-16 px-1.5 py-0.5 rounded-lg bg-purple-950/80 border border-purple-500/40 text-purple-300 font-mono font-bold text-xs text-center outline-none force-ltr-numeric" />
-                        </div>
-                        <input id="slider-stability" dir="ltr" type="range" min="0.0" max="1.0" step="0.05" value="0.50" class="w-full accent-purple-500 cursor-pointer" />
-                      </div>
-
-                      <!-- Clarity (ElevenLabs) -->
-                      <div id="eleven-clarity-box" class="space-y-1.5 hidden" dir="ltr">
-                        <div class="flex items-center justify-between text-xs">
-                          <label for="badge-clarity" class="text-slate-300 font-medium cursor-pointer">Clarity Boost</label>
-                          <input id="badge-clarity" dir="ltr" lang="en" type="text" inputmode="decimal" autocomplete="off" spellcheck="false" value="0.75" class="w-16 px-1.5 py-0.5 rounded-lg bg-purple-950/80 border border-purple-500/40 text-purple-300 font-mono font-bold text-xs text-center outline-none force-ltr-numeric" />
-                        </div>
-                        <input id="slider-clarity" dir="ltr" type="range" min="0.0" max="1.0" step="0.05" value="0.75" class="w-full accent-purple-500 cursor-pointer" />
-                      </div>
-
-                      <!-- Speed Rate -->
-                      <div class="space-y-1.5" dir="ltr">
-                        <div class="flex items-center justify-between text-xs">
-                          <label for="badge-voice-rate" class="text-slate-300 font-medium cursor-pointer">Speech Rate</label>
-                          <div class="flex items-center gap-0.5" dir="ltr">
-                            <input id="badge-voice-rate" dir="ltr" lang="en" type="text" inputmode="decimal" autocomplete="off" spellcheck="false" value="1.0" class="w-14 px-1.5 py-0.5 rounded-lg bg-purple-950/80 border border-purple-500/40 text-purple-300 font-mono font-bold text-xs text-center outline-none force-ltr-numeric" />
-                            <span class="text-[10px] text-purple-400 font-mono font-semibold">x</span>
+                    <!-- Voice Sliders Card -->
+                    <div class="p-3.5 sm:p-4 rounded-2xl bg-white/[0.02] border border-white/[0.06] space-y-4">
+                      <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                        <!-- Stability (ElevenLabs) -->
+                        <div id="eleven-stability-box" class="space-y-1.5 hidden" dir="ltr">
+                          <div class="flex items-center justify-between text-xs">
+                            <label for="badge-stability" class="text-slate-300 font-medium cursor-pointer">Stability</label>
+                            <input id="badge-stability" dir="ltr" lang="en" type="text" inputmode="decimal" autocomplete="off" spellcheck="false" value="0.50" class="w-16 px-1.5 py-0.5 rounded-lg bg-purple-950/80 border border-purple-500/40 text-purple-300 font-mono font-bold text-xs text-center outline-none force-ltr-numeric" />
                           </div>
+                          <input id="slider-stability" dir="ltr" type="range" min="0.0" max="1.0" step="0.05" value="0.50" class="w-full accent-purple-500 cursor-pointer" />
                         </div>
-                        <input id="slider-voice-rate" dir="ltr" type="range" min="0.5" max="2.0" step="0.1" value="1.0" class="w-full accent-purple-500 cursor-pointer" />
+
+                        <!-- Clarity (ElevenLabs) -->
+                        <div id="eleven-clarity-box" class="space-y-1.5 hidden" dir="ltr">
+                          <div class="flex items-center justify-between text-xs">
+                            <label for="badge-clarity" class="text-slate-300 font-medium cursor-pointer">Clarity Boost</label>
+                            <input id="badge-clarity" dir="ltr" lang="en" type="text" inputmode="decimal" autocomplete="off" spellcheck="false" value="0.75" class="w-16 px-1.5 py-0.5 rounded-lg bg-purple-950/80 border border-purple-500/40 text-purple-300 font-mono font-bold text-xs text-center outline-none force-ltr-numeric" />
+                          </div>
+                          <input id="slider-clarity" dir="ltr" type="range" min="0.0" max="1.0" step="0.05" value="0.75" class="w-full accent-purple-500 cursor-pointer" />
+                        </div>
+
+                        <!-- Speed Rate -->
+                        <div class="space-y-1.5" dir="ltr">
+                          <div class="flex items-center justify-between text-xs">
+                            <label for="badge-voice-rate" class="text-slate-300 font-medium cursor-pointer">Speech Rate</label>
+                            <div class="flex items-center gap-0.5" dir="ltr">
+                              <input id="badge-voice-rate" dir="ltr" lang="en" type="text" inputmode="decimal" autocomplete="off" spellcheck="false" value="1.0" class="w-14 px-1.5 py-0.5 rounded-lg bg-purple-950/80 border border-purple-500/40 text-purple-300 font-mono font-bold text-xs text-center outline-none force-ltr-numeric" />
+                              <span class="text-[10px] text-purple-400 font-mono font-semibold">x</span>
+                            </div>
+                          </div>
+                          <input id="slider-voice-rate" dir="ltr" type="range" min="0.5" max="2.0" step="0.1" value="1.0" class="w-full accent-purple-500 cursor-pointer" />
+                        </div>
+
+                        <!-- Pitch -->
+                        <div class="space-y-1.5" dir="ltr">
+                          <div class="flex items-center justify-between text-xs">
+                            <label for="badge-voice-pitch" class="text-slate-300 font-medium cursor-pointer">Tone Pitch</label>
+                            <input id="badge-voice-pitch" dir="ltr" lang="en" type="text" inputmode="decimal" autocomplete="off" spellcheck="false" value="1.0" class="w-16 px-1.5 py-0.5 rounded-lg bg-purple-950/80 border border-purple-500/40 text-purple-300 font-mono font-bold text-xs text-center outline-none force-ltr-numeric" />
+                          </div>
+                          <input id="slider-voice-pitch" dir="ltr" type="range" min="0.5" max="1.5" step="0.05" value="1.0" class="w-full accent-purple-500 cursor-pointer" />
+                        </div>
                       </div>
 
-                      <!-- Pitch -->
-                      <div class="space-y-1.5" dir="ltr">
-                        <div class="flex items-center justify-between text-xs">
-                          <label for="badge-voice-pitch" class="text-slate-300 font-medium cursor-pointer">Tone Pitch</label>
-                          <input id="badge-voice-pitch" dir="ltr" lang="en" type="text" inputmode="decimal" autocomplete="off" spellcheck="false" value="1.0" class="w-16 px-1.5 py-0.5 rounded-lg bg-purple-950/80 border border-purple-500/40 text-purple-300 font-mono font-bold text-xs text-center outline-none force-ltr-numeric" />
-                        </div>
-                        <input id="slider-voice-pitch" dir="ltr" type="range" min="0.5" max="1.5" step="0.05" value="1.0" class="w-full accent-purple-500 cursor-pointer" />
+                      <!-- Roleplay Audio Toggles -->
+                      <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-2">
+                        <label class="flex items-center justify-between p-3 rounded-xl bg-white/[0.03] border border-white/10 cursor-pointer">
+                          <div>
+                            <span class="text-xs font-semibold text-slate-200 block">Filter Narration (*actions*)</span>
+                            <span class="text-[10px] text-slate-400">Only speaks spoken dialogue; skips *actions*</span>
+                          </div>
+                          <input id="toggle-filter-narration" type="checkbox" checked class="w-4 h-4 accent-purple-500 cursor-pointer" />
+                        </label>
+
+                        <label class="flex items-center justify-between p-3 rounded-xl bg-white/[0.03] border border-white/10 cursor-pointer">
+                          <div>
+                            <span class="text-xs font-semibold text-slate-200 block">Auto-Play Character Voice</span>
+                            <span class="text-[10px] text-slate-400">Speaks replies automatically on arrival</span>
+                          </div>
+                          <input id="toggle-autoplay-voice" type="checkbox" class="w-4 h-4 accent-purple-500 cursor-pointer" />
+                        </label>
                       </div>
                     </div>
 
-                    <!-- Roleplay Audio Toggles -->
-                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-2">
-                      <label class="flex items-center justify-between p-3 rounded-xl bg-white/[0.03] border border-white/10 cursor-pointer">
-                        <div>
-                          <span class="text-xs font-semibold text-slate-200 block">Filter Narration (*actions*)</span>
-                          <span class="text-[10px] text-slate-400">Only speaks spoken dialogue; skips *actions*</span>
-                        </div>
-                        <input id="toggle-filter-narration" type="checkbox" checked class="w-4 h-4 accent-purple-500 cursor-pointer" />
-                      </label>
-
-                      <label class="flex items-center justify-between p-3 rounded-xl bg-white/[0.03] border border-white/10 cursor-pointer">
-                        <div>
-                          <span class="text-xs font-semibold text-slate-200 block">Auto-Play Character Voice</span>
-                          <span class="text-[10px] text-slate-400">Speaks replies automatically on arrival</span>
-                        </div>
-                        <input id="toggle-autoplay-voice" type="checkbox" class="w-4 h-4 accent-purple-500 cursor-pointer" />
-                      </label>
+                    <!-- Test Voice Card -->
+                    <div class="p-3 rounded-2xl bg-purple-950/20 border border-purple-500/30 flex items-center justify-between gap-3">
+                      <div>
+                        <div class="text-xs font-bold text-white">Live Voice Preview</div>
+                        <div class="text-[11px] text-slate-400">Listen to a sample greeting from {character.name}</div>
+                      </div>
+                      <button 
+                        type="button" 
+                        id="test-voice-btn" 
+                        class="px-4 py-2 rounded-xl bg-purple-600 hover:bg-purple-500 text-white text-xs font-semibold flex items-center gap-1.5 transition cursor-pointer active:scale-95 shadow-md shadow-purple-900/50"
+                      >
+                        <Play class="w-3.5 h-3.5" />
+                        <span>Test Voice</span>
+                      </button>
                     </div>
+
                   </div>
                 </div>
 
-                <!-- PANE 2: STT VOICE RECOGNITION (SPEECH-TO-TEXT) -->
+                <!-- ================= PANE 2: STT SPEECH INPUT ================= -->
                 <div id="voice-stt-pane" class="space-y-4 hidden">
-                  <!-- Header & Status -->
-                  <div class="p-3 rounded-2xl bg-white/[0.03] border border-white/[0.08] flex items-center justify-between gap-2">
-                    <div class="flex items-center gap-2.5 min-w-0">
-                      <div class="w-8 h-8 rounded-xl bg-rose-500/20 border border-rose-500/30 flex items-center justify-center text-rose-300 shrink-0">
-                        <Mic class="w-4 h-4 text-rose-400" />
+                  <!-- Active STT Engine Card -->
+                  <div class="p-3.5 sm:p-4 rounded-2xl bg-gradient-to-r from-rose-950/40 via-purple-950/20 to-indigo-950/40 border border-rose-500/30 flex items-center justify-between gap-3 shadow-lg shadow-rose-950/40">
+                    <div class="flex items-center gap-3 min-w-0">
+                      <div id="stt-active-icon-box" class="w-11 h-11 rounded-2xl bg-rose-500/20 border border-rose-500/30 flex items-center justify-center text-rose-300 shrink-0 shadow-inner">
+                        <Mic class="w-5 h-5 text-rose-400" />
                       </div>
                       <div class="min-w-0">
-                        <div class="flex items-center gap-2">
-                          <h4 class="text-xs sm:text-sm font-bold text-white truncate">Voice Input (STT)</h4>
-                          <span id="stt-status-badge" class="px-2 py-0.5 rounded-full text-[10px] font-mono bg-amber-500/20 text-amber-300 border border-amber-500/30 font-semibold shrink-0">
-                            Key Required
+                        <div class="flex items-center gap-2 flex-wrap mb-0.5">
+                          <h4 id="stt-active-engine-name" class="text-sm font-bold text-white truncate">Groq Whisper</h4>
+                          <span id="stt-connection-badge" class="px-2 py-0.5 rounded-full text-[10px] font-mono font-semibold bg-amber-500/20 text-amber-300 border border-amber-500/30">
+                            Disconnected • Key Required
                           </span>
                         </div>
-                        <p class="text-[11px] text-slate-400 truncate">Hold send button or tap mic to speak into chat</p>
+                        <p id="stt-active-engine-desc" class="text-[11px] text-slate-400 truncate">Ultra-Fast LPU Hardware • whisper-large-v3-turbo</p>
                       </div>
                     </div>
                     <button 
                       type="button" 
-                      id="test-stt-btn" 
-                      class="px-3 py-1.5 rounded-xl bg-rose-600/20 hover:bg-rose-600/30 text-rose-300 hover:text-rose-200 border border-rose-500/30 text-xs font-semibold flex items-center gap-1.5 transition cursor-pointer shrink-0 active:scale-95"
+                      id="open-stt-catalog-btn" 
+                      class="px-3 py-2 rounded-xl bg-rose-600 hover:bg-rose-500 text-white border border-rose-400/30 text-xs font-semibold flex items-center gap-1.5 transition cursor-pointer shrink-0 active:scale-95 shadow-md shadow-rose-900/40"
                     >
-                      <Mic class="w-3.5 h-3.5 text-rose-400" />
-                      <span id="test-stt-btn-label">Test Mic (3s)</span>
+                      <SlidersHorizontal class="w-3.5 h-3.5" />
+                      <span>Switch Engine</span>
                     </button>
                   </div>
 
-                  <!-- STT Engine Selector (Custom Popover - No Native OS Dialog) -->
-                  <div class="relative w-full">
-                    <label class="block text-xs font-semibold text-slate-300 mb-1.5">STT Transcription Engine</label>
-                    <select id="stt-provider-select" class="hidden">
-                      <option value="groq">Groq Whisper (Ultra-Fast LPU Hardware)</option>
-                      <option value="openai">OpenAI Whisper (High Multilingual Accuracy)</option>
-                      <option value="custom">Custom Whisper Endpoint (Self-Hosted / Local)</option>
-                      <option value="browser">Browser Built-in Web Speech (100% Free)</option>
-                    </select>
-
-                    <button
-                      type="button"
-                      id="custom-stt-trigger"
-                      class="w-full px-3.5 py-2.5 rounded-xl bg-black/60 hover:bg-black/80 border border-purple-500/30 hover:border-purple-500/50 flex items-center justify-between text-xs text-white transition cursor-pointer text-left group"
-                      aria-haspopup="listbox"
-                      aria-expanded="false"
-                    >
-                      <div class="flex items-center gap-2.5 min-w-0 pr-2">
-                        <span class="w-2 h-2 rounded-full bg-amber-400 shrink-0" id="custom-stt-status-dot"></span>
-                        <div class="min-w-0 flex flex-col">
-                          <span id="custom-stt-trigger-label" class="font-bold text-slate-100 truncate">Groq Whisper</span>
-                          <span id="custom-stt-trigger-sub" class="text-[10px] text-slate-400 truncate">Fastest • Free LPU Tier</span>
+                  <!-- STT Connection & Key Card -->
+                  <div id="stt-connection-card" class="p-3.5 sm:p-4 rounded-2xl bg-amber-950/20 border border-amber-500/30 space-y-3">
+                    <div class="flex items-start justify-between gap-2">
+                      <div class="flex items-center gap-2">
+                        <div class="w-7 h-7 rounded-xl bg-amber-500/20 border border-amber-500/30 flex items-center justify-center text-amber-300 shrink-0">
+                          <KeyRound class="w-3.5 h-3.5" />
+                        </div>
+                        <div>
+                          <h5 id="stt-connect-title" class="text-xs font-bold text-white">Connect Groq Whisper API Key</h5>
+                          <p id="stt-connect-desc" class="text-[10px] text-slate-400">Enter your Groq key (console.groq.com) to activate voice input.</p>
                         </div>
                       </div>
-                      <ChevronDown class="w-4 h-4 text-slate-400 group-hover:text-purple-300 transition-transform duration-200 shrink-0" id="custom-stt-chevron" />
+                      <span class="px-2 py-0.5 rounded-full text-[9px] font-mono font-bold bg-amber-500/20 text-amber-300 border border-amber-500/30">
+                        KEY REQUIRED
+                      </span>
+                    </div>
+
+                    <!-- Quick Reuse Button -->
+                    <button 
+                      type="button" 
+                      id="stt-quick-reuse-key-btn" 
+                      class="hidden w-full py-2 px-3 rounded-xl bg-rose-600/20 hover:bg-rose-600/30 border border-rose-500/40 text-rose-300 text-xs font-semibold flex items-center justify-center gap-2 transition cursor-pointer active:scale-95"
+                    >
+                      <Sparkles class="w-3.5 h-3.5 text-rose-400" />
+                      <span id="stt-quick-reuse-label">Connect with saved Groq Key from Text Engine</span>
                     </button>
 
-                    <!-- Custom Dropdown Menu -->
-                    <div 
-                      id="custom-stt-menu" 
-                      class="hidden absolute left-0 right-0 top-full mt-1.5 z-50 bg-[#0c0f24]/95 backdrop-blur-xl border border-purple-500/30 rounded-2xl p-1.5 shadow-2xl shadow-purple-950/80 space-y-1"
-                      role="listbox"
-                    >
-                      <!-- Options rendered in JS -->
-                    </div>
-                  </div>
-
-                  <!-- STT API Key & Paste Helpers -->
-                  <div id="stt-key-container" class="space-y-2">
-                    <div class="flex items-center justify-between">
-                      <label class="block text-xs font-semibold text-slate-300">STT API Key</label>
-                      <button type="button" id="copy-text-key-to-stt-btn" class="text-[10px] text-rose-400 hover:text-rose-300 font-semibold cursor-pointer underline">
-                        Copy API Key from Text Tab
-                      </button>
-                    </div>
                     <div class="relative">
                       <input 
                         id="stt-api-key" 
                         type="password" 
-                        placeholder="gsk_... (Groq) or sk-... (OpenAI)" 
-                        class="w-full px-3.5 py-2.5 rounded-xl bg-white/[0.05] border border-white/10 text-xs text-white placeholder:text-slate-500 outline-none focus:border-rose-500/60 font-mono pr-12"
+                        placeholder="gsk_... or sk-..." 
+                        class="w-full px-3.5 py-2.5 rounded-xl bg-black/60 border border-white/10 text-xs text-white placeholder:text-slate-500 outline-none focus:border-rose-500/60 font-mono pr-16"
                       />
                       <button type="button" id="toggle-stt-key-visibility-btn" class="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-white text-xs cursor-pointer p-1">
                         Show
                       </button>
                     </div>
-                  </div>
 
-                  <div id="stt-custom-url-container" class="hidden space-y-1.5">
-                    <label class="block text-xs font-semibold text-slate-300">Custom Whisper Endpoint URL</label>
-                    <input 
-                      id="stt-custom-url" 
-                      type="url" 
-                      placeholder="http://localhost:8000/v1/audio/transcriptions" 
-                      class="w-full px-3.5 py-2.5 rounded-xl bg-white/[0.05] border border-white/10 text-xs text-white placeholder:text-slate-500 outline-none focus:border-rose-500/60 font-mono"
-                    />
-                  </div>
-
-                  <!-- STT Model & Language Selection -->
-                  <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                    <div id="stt-model-container">
-                      <label class="block text-xs font-semibold text-slate-300 mb-1.5">Whisper Model</label>
-                      <select id="stt-model-select" class="w-full px-3 py-2 rounded-xl bg-black/60 border border-purple-500/30 text-xs text-white outline-none cursor-pointer">
-                        <option value="whisper-large-v3-turbo">whisper-large-v3-turbo (Ultra-Fast)</option>
-                        <option value="whisper-large-v3">whisper-large-v3 (Maximum Accuracy)</option>
-                        <option value="whisper-1">whisper-1 (OpenAI Default)</option>
-                      </select>
+                    <div id="stt-custom-url-container" class="hidden space-y-1">
+                      <label class="block text-[11px] font-semibold text-slate-300">Custom Whisper Endpoint URL</label>
+                      <input 
+                        id="stt-custom-url" 
+                        type="url" 
+                        placeholder="http://localhost:8000/v1/audio/transcriptions" 
+                        class="w-full px-3.5 py-2 rounded-xl bg-black/60 border border-white/10 text-xs text-white placeholder:text-slate-500 outline-none focus:border-rose-500/60 font-mono"
+                      />
                     </div>
 
-                    <div>
-                      <label class="block text-xs font-semibold text-slate-300 mb-1.5">Spoken Language</label>
-                      <select id="stt-lang-select" class="w-full px-3 py-2 rounded-xl bg-black/60 border border-purple-500/30 text-xs text-white outline-none cursor-pointer">
-                        <option value="auto">Auto-Detect Language</option>
-                        <option value="fa">Persian (فارسی - fa)</option>
-                        <option value="en">English (en)</option>
-                      </select>
+                    <div class="flex items-center justify-end gap-2 pt-1">
+                      <button 
+                        type="button" 
+                        id="stt-connect-confirm-btn" 
+                        class="px-4 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-semibold flex items-center gap-1.5 transition cursor-pointer active:scale-95 shadow-md shadow-emerald-950"
+                      >
+                        <Check class="w-3.5 h-3.5" />
+                        <span>Connect & Activate</span>
+                      </button>
                     </div>
                   </div>
 
-                  <!-- Live STT Test Feedback Area -->
-                  <div id="stt-test-output-box" class="hidden p-3 rounded-xl bg-rose-950/20 border border-rose-500/30 space-y-1">
-                    <div class="text-[10px] uppercase font-bold tracking-wider text-rose-400">Microphone Test Result:</div>
-                    <div id="stt-test-output-text" class="text-xs text-white font-medium italic">"..."</div>
-                  </div>
+                  <!-- STT Controls (Unlocked when connected or free) -->
+                  <div id="stt-controls-unlocked" class="space-y-4">
+                    
+                    <!-- Whisper Model Selection (Interactive Cards - NO SELECT DROPDOWN) -->
+                    <div id="stt-models-box" class="space-y-2">
+                      <label class="block text-xs font-semibold text-slate-300">Transcription Model</label>
+                      <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                        <button type="button" class="stt-model-card p-3 rounded-xl border text-left transition cursor-pointer bg-white/[0.03] hover:bg-white/[0.06] border-white/10" data-stt-model="whisper-large-v3-turbo">
+                          <div class="flex items-center justify-between mb-1">
+                            <span class="font-bold text-xs text-white">whisper-large-v3-turbo</span>
+                            <span class="px-1.5 py-0.5 rounded text-[9px] font-bold bg-amber-500/20 text-amber-300 border border-amber-500/30">FASTEST</span>
+                          </div>
+                          <p class="text-[10px] text-slate-400">Ultra-low latency streaming transcription on Groq LPU</p>
+                        </button>
 
-                  <!-- Push to Talk Instructions Banner -->
-                  <div class="p-3 rounded-2xl bg-white/[0.02] border border-white/[0.06] flex items-center gap-3">
-                    <div class="w-8 h-8 rounded-xl bg-purple-500/10 border border-purple-500/20 flex items-center justify-center text-purple-400 shrink-0">
-                      <Zap class="w-4 h-4" />
+                        <button type="button" class="stt-model-card p-3 rounded-xl border text-left transition cursor-pointer bg-white/[0.03] hover:bg-white/[0.06] border-white/10" data-stt-model="whisper-large-v3">
+                          <div class="flex items-center justify-between mb-1">
+                            <span class="font-bold text-xs text-white">whisper-large-v3</span>
+                            <span class="px-1.5 py-0.5 rounded text-[9px] font-bold bg-purple-500/20 text-purple-300 border border-purple-500/30">MAX ACCURACY</span>
+                          </div>
+                          <p class="text-[10px] text-slate-400">Full precision multilingual weights for intricate accents</p>
+                        </button>
+                      </div>
                     </div>
-                    <div class="text-xs text-slate-300">
-                      <span class="font-semibold text-white">Push-to-Talk Enabled:</span>
-                      In chat, <span class="text-purple-300 font-semibold">hold down the Send button</span> to record voice. Release to send directly, or slide away to cancel.
+
+                    <!-- Spoken Language Selection (Touch-Friendly Chips - NO SELECT DROPDOWN) -->
+                    <div class="space-y-2">
+                      <label class="block text-xs font-semibold text-slate-300">Spoken Language</label>
+                      <div class="flex items-center gap-2 flex-wrap">
+                        <button type="button" data-lang="auto" class="stt-lang-chip px-3.5 py-2 rounded-xl text-xs font-semibold transition cursor-pointer bg-rose-600 text-white shadow-sm flex items-center gap-1.5">
+                          <span>🌐</span>
+                          <span>Auto-Detect Language</span>
+                        </button>
+                        <button type="button" data-lang="fa" class="stt-lang-chip px-3.5 py-2 rounded-xl text-xs font-semibold transition cursor-pointer bg-white/[0.04] hover:bg-white/[0.08] text-slate-300 hover:text-white border border-white/10 flex items-center gap-1.5">
+                          <span>🇮🇷</span>
+                          <span>Persian (فارسی - fa)</span>
+                        </button>
+                        <button type="button" data-lang="en" class="stt-lang-chip px-3.5 py-2 rounded-xl text-xs font-semibold transition cursor-pointer bg-white/[0.04] hover:bg-white/[0.08] text-slate-300 hover:text-white border border-white/10 flex items-center gap-1.5">
+                          <span>🇺🇸</span>
+                          <span>English (en)</span>
+                        </button>
+                      </div>
                     </div>
+
+                    <!-- Live Microphone Test Widget -->
+                    <div class="p-3.5 rounded-2xl bg-rose-950/20 border border-rose-500/30 space-y-2.5">
+                      <div class="flex items-center justify-between">
+                        <div>
+                          <div class="text-xs font-bold text-white">Live Microphone Test</div>
+                          <div class="text-[11px] text-slate-400">Speak into your mic to test transcription accuracy</div>
+                        </div>
+                        <button 
+                          type="button" 
+                          id="test-stt-btn" 
+                          class="px-3.5 py-2 rounded-xl bg-rose-600 hover:bg-rose-500 text-white text-xs font-semibold flex items-center gap-1.5 transition cursor-pointer active:scale-95 shadow-md shadow-rose-950"
+                        >
+                          <Mic class="w-3.5 h-3.5" />
+                          <span id="test-stt-btn-label">Test Mic (3s)</span>
+                        </button>
+                      </div>
+
+                      <div id="stt-test-output-box" class="hidden p-3 rounded-xl bg-black/40 border border-rose-500/30 text-xs text-white font-medium italic">
+                        "..."
+                      </div>
+                    </div>
+
+                    <!-- Push-to-Talk Feature Explanation -->
+                    <div class="p-3 rounded-2xl bg-white/[0.02] border border-white/[0.06] flex items-center gap-3">
+                      <div class="w-8 h-8 rounded-xl bg-rose-500/10 border border-rose-500/20 flex items-center justify-center text-rose-400 shrink-0">
+                        <Zap class="w-4 h-4" />
+                      </div>
+                      <div class="text-xs text-slate-300">
+                        <span class="font-semibold text-white">Push-to-Talk Enabled:</span>
+                        In chat, <span class="text-rose-300 font-semibold">hold down the Send button</span> to record voice. Release to send directly, or slide away to cancel.
+                      </div>
+                    </div>
+
                   </div>
                 </div>
 
@@ -2341,6 +2431,97 @@ const { character } = Astro.props;
       </section>
     </div>
   </div>
+  <!-- ======================================================== -->
+  <!-- 2026 ELITE VOICE ENGINE CATALOG MODAL (z-[78])           -->
+  <!-- ======================================================== -->
+  <div 
+    id="voice-engine-modal" 
+    class="fixed inset-0 z-[78] hidden items-end sm:items-center justify-center bg-black/80 backdrop-blur-md p-0 sm:p-4 transition-all duration-300"
+  >
+    <div 
+      class="relative w-full max-w-xl bg-[#090c1f] border-t sm:border border-purple-500/30 rounded-t-3xl sm:rounded-3xl shadow-2xl shadow-purple-950/90 flex flex-col max-h-[90vh] sm:max-h-[85vh] overflow-hidden"
+    >
+      <!-- Mobile Pull Bar -->
+      <div class="sm:hidden pt-3 pb-1 flex justify-center shrink-0">
+        <div class="w-10 h-1 rounded-full bg-white/20"></div>
+      </div>
+
+      <!-- Modal Header -->
+      <div class="px-4 py-3.5 sm:px-6 sm:py-4 border-b border-white/[0.08] flex items-center justify-between shrink-0 bg-white/[0.01]">
+        <div class="flex items-center gap-3">
+          <div id="voice-modal-header-icon" class="w-9 h-9 rounded-2xl bg-purple-500/15 border border-purple-500/25 flex items-center justify-center text-purple-300 shadow-inner">
+            <Volume2 class="w-4 h-4 text-purple-400" />
+          </div>
+          <div>
+            <div class="flex items-center gap-2">
+              <h3 id="voice-modal-title" class="text-sm sm:text-base font-bold text-white tracking-wide">Select Voice Engine</h3>
+              <span id="voice-modal-count-badge" class="px-2 py-0.5 rounded-full text-[10px] font-mono bg-purple-500/15 text-purple-300 border border-purple-500/25">
+                11 Engines
+              </span>
+            </div>
+            <p id="voice-modal-subtitle" class="text-[11px] text-slate-400 hidden sm:block">Choose cloud neural synthesis or self-hosted audio</p>
+          </div>
+        </div>
+        <button 
+          type="button" 
+          id="close-voice-engine-modal-btn" 
+          class="w-8 h-8 rounded-full bg-white/[0.06] hover:bg-white/[0.12] text-slate-400 hover:text-white flex items-center justify-center transition cursor-pointer active:scale-95"
+          title="Close"
+        >
+          <X class="w-4 h-4" />
+        </button>
+      </div>
+
+      <!-- Search & Category Filter Bar -->
+      <div class="p-3 sm:px-6 sm:py-3.5 border-b border-white/[0.06] bg-black/20 shrink-0 space-y-2.5">
+        <!-- Google-style Search Input -->
+        <div class="relative">
+          <Search class="w-4 h-4 absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none" />
+          <input 
+            id="voice-modal-search" 
+            type="text" 
+            placeholder="Search audio engines (e.g. ElevenLabs, OpenAI, Groq, Kokoro)..." 
+            class="w-full pl-10 pr-9 py-2 rounded-xl bg-white/[0.04] hover:bg-white/[0.06] focus:bg-white/[0.08] border border-white/[0.1] focus:border-purple-500/60 text-xs sm:text-sm text-white placeholder-slate-500 outline-none transition font-sans"
+          />
+          <button 
+            type="button" 
+            id="clear-voice-modal-search" 
+            class="hidden absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-white text-xs p-1"
+            title="Clear search"
+          >
+            <X class="w-3.5 h-3.5" />
+          </button>
+        </div>
+
+        <!-- Quick Filter Category Chips (Scrollbar Hidden) -->
+        <div id="voice-modal-category-chips" class="flex items-center gap-1.5 overflow-x-auto no-scrollbar py-0.5 text-xs">
+          <!-- Rendered dynamically -->
+        </div>
+      </div>
+
+      <!-- Engine Cards List (Scrollable Area) -->
+      <div id="voice-modal-items" class="flex-1 overflow-y-auto p-3 sm:p-5 space-y-4 custom-scrollbar min-h-[280px]">
+        <!-- Rendered dynamically in JS -->
+      </div>
+
+      <!-- Modal Footer Action Bar -->
+      <div class="p-3 sm:px-6 sm:py-3.5 border-t border-white/[0.08] bg-black/40 flex items-center justify-between text-xs text-slate-400 shrink-0">
+        <div class="flex items-center gap-2 min-w-0 pr-2">
+          <span class="w-2 h-2 rounded-full bg-emerald-400 shrink-0"></span>
+          <span id="voice-modal-active-footer-text" class="font-semibold text-slate-200 truncate">Current: Built-in Device Voice</span>
+        </div>
+        <button 
+          type="button" 
+          id="quick-select-free-voice-btn" 
+          class="px-3 py-1.5 rounded-xl bg-purple-600/20 hover:bg-purple-600/30 text-purple-300 hover:text-purple-200 border border-purple-500/30 transition flex items-center gap-1.5 cursor-pointer text-xs font-semibold shrink-0 active:scale-95"
+        >
+          <Sparkles class="w-3.5 h-3.5" />
+          <span>Select 100% Free Local</span>
+        </button>
+      </div>
+    </div>
+  </div>
+
   <!-- ======================================================== -->
   <!-- 2026 ELITE MODEL SEARCH & DISCOVERY MODAL (z-[70])          -->
   <!-- ======================================================== -->
@@ -3603,22 +3784,45 @@ const { character } = Astro.props;
   const toggleStreaming = document.getElementById('toggle-streaming');
   const toggleThinking = document.getElementById('toggle-thinking');
 
-  // Voice Inputs (TTS Output)
+  // Voice Inputs (TTS Output & STT Input)
   const voiceSubtabTtsBtn = document.getElementById('voice-subtab-tts-btn');
   const voiceSubtabSttBtn = document.getElementById('voice-subtab-stt-btn');
   const voiceTtsPane = document.getElementById('voice-tts-pane');
   const voiceSttPane = document.getElementById('voice-stt-pane');
-  const ttsStatusBadge = document.getElementById('tts-status-badge');
   const voiceProviderSelect = document.getElementById('voice-provider-select');
-  const customTtsTrigger = document.getElementById('custom-tts-trigger');
-  const customTtsTriggerLabel = document.getElementById('custom-tts-trigger-label');
-  const customTtsTriggerSub = document.getElementById('custom-tts-trigger-sub');
-  const customTtsStatusDot = document.getElementById('custom-tts-status-dot');
-  const customTtsChevron = document.getElementById('custom-tts-chevron');
-  const customTtsMenu = document.getElementById('custom-tts-menu');
+  const sttProviderSelect = document.getElementById('stt-provider-select');
+  const openaiVoiceSelect = document.getElementById('openai-voice-select');
+  const openaiTtsModelSelect = document.getElementById('openai-tts-model-select');
+  const sttModelSelect = document.getElementById('stt-model-select');
+  const sttLangSelect = document.getElementById('stt-lang-select');
+
+  const openTtsCatalogBtn = document.getElementById('open-tts-catalog-btn');
+  const openSttCatalogBtn = document.getElementById('open-stt-catalog-btn');
+  const ttsActiveEngineName = document.getElementById('tts-active-engine-name');
+  const ttsActiveEngineDesc = document.getElementById('tts-active-engine-desc');
+  const ttsActiveIconBox = document.getElementById('tts-active-icon-box');
+  const ttsConnectionBadge = document.getElementById('tts-connection-badge');
+  const ttsConnectionCard = document.getElementById('tts-connection-card');
+  const ttsConnectTitle = document.getElementById('tts-connect-title');
+  const ttsConnectDesc = document.getElementById('tts-connect-desc');
+  const ttsQuickReuseKeyBtn = document.getElementById('tts-quick-reuse-key-btn');
+  const ttsQuickReuseLabel = document.getElementById('tts-quick-reuse-label');
+  const ttsConnectConfirmBtn = document.getElementById('tts-connect-confirm-btn');
+  const ttsControlsUnlocked = document.getElementById('tts-controls-unlocked');
+
+  const sttActiveEngineName = document.getElementById('stt-active-engine-name');
+  const sttActiveEngineDesc = document.getElementById('stt-active-engine-desc');
+  const sttActiveIconBox = document.getElementById('stt-active-icon-box');
+  const sttConnectionBadge = document.getElementById('stt-connection-badge');
+  const sttConnectionCard = document.getElementById('stt-connection-card');
+  const sttConnectTitle = document.getElementById('stt-connect-title');
+  const sttConnectDesc = document.getElementById('stt-connect-desc');
+  const sttQuickReuseKeyBtn = document.getElementById('stt-quick-reuse-key-btn');
+  const sttQuickReuseLabel = document.getElementById('stt-quick-reuse-label');
+  const sttConnectConfirmBtn = document.getElementById('stt-connect-confirm-btn');
+  const sttControlsUnlocked = document.getElementById('stt-controls-unlocked');
+
   const voiceApiKey = document.getElementById('voice-api-key');
-  const voiceKeyContainer = document.getElementById('voice-key-container');
-  const copyTextKeyToTtsBtn = document.getElementById('copy-text-key-to-tts-btn');
   const toggleVoiceKeyVisibilityBtn = document.getElementById('toggle-voice-key-visibility-btn');
   const voiceCustomUrlContainer = document.getElementById('voice-custom-url-container');
   const voiceCustomUrl = document.getElementById('voice-custom-url');
@@ -3627,8 +3831,6 @@ const { character } = Astro.props;
   const elevenStabilityBox = document.getElementById('eleven-stability-box');
   const elevenClarityBox = document.getElementById('eleven-clarity-box');
   const openaiVoiceContainer = document.getElementById('openai-voice-container');
-  const openaiVoiceSelect = document.getElementById('openai-voice-select');
-  const openaiTtsModelSelect = document.getElementById('openai-tts-model-select');
   const sliderStability = document.getElementById('slider-stability');
   const badgeStability = document.getElementById('badge-stability');
   const sliderClarity = document.getElementById('slider-clarity');
@@ -3641,32 +3843,31 @@ const { character } = Astro.props;
   const toggleAutoplayVoice = document.getElementById('toggle-autoplay-voice');
   const testVoiceBtn = document.getElementById('test-voice-btn');
 
-  // Voice Inputs (STT Recognition)
-  const sttStatusBadge = document.getElementById('stt-status-badge');
-  const sttProviderSelect = document.getElementById('stt-provider-select');
-  const customSttTrigger = document.getElementById('custom-stt-trigger');
-  const customSttTriggerLabel = document.getElementById('custom-stt-trigger-label');
-  const customSttTriggerSub = document.getElementById('custom-stt-trigger-sub');
-  const customSttStatusDot = document.getElementById('custom-stt-status-dot');
-  const customSttChevron = document.getElementById('custom-stt-chevron');
-  const customSttMenu = document.getElementById('custom-stt-menu');
-  const sttKeyContainer = document.getElementById('stt-key-container');
   const sttApiKey = document.getElementById('stt-api-key');
-  const copyTextKeyToSttBtn = document.getElementById('copy-text-key-to-stt-btn');
   const toggleSttKeyVisibilityBtn = document.getElementById('toggle-stt-key-visibility-btn');
   const sttCustomUrlContainer = document.getElementById('stt-custom-url-container');
   const sttCustomUrl = document.getElementById('stt-custom-url');
-  const sttModelContainer = document.getElementById('stt-model-container');
-  const sttModelSelect = document.getElementById('stt-model-select');
-  const sttLangSelect = document.getElementById('stt-lang-select');
   const testSttBtn = document.getElementById('test-stt-btn');
   const testSttBtnLabel = document.getElementById('test-stt-btn-label');
   const sttTestOutputBox = document.getElementById('stt-test-output-box');
-  const sttTestOutputText = document.getElementById('stt-test-output-text');
   const voiceRecordingOverlay = document.getElementById('voice-recording-overlay');
   const voiceRecordingTimer = document.getElementById('voice-recording-timer');
   const voiceRecordingHint = document.getElementById('voice-recording-hint');
   const cancelVoiceRecordingBtn = document.getElementById('cancel-voice-recording-btn');
+
+  // Voice Engine Catalog Modal
+  const voiceEngineModal = document.getElementById('voice-engine-modal');
+  const closeVoiceEngineModalBtn = document.getElementById('close-voice-engine-modal-btn');
+  const voiceModalTitle = document.getElementById('voice-modal-title');
+  const voiceModalSubtitle = document.getElementById('voice-modal-subtitle');
+  const voiceModalCountBadge = document.getElementById('voice-modal-count-badge');
+  const voiceModalHeaderIcon = document.getElementById('voice-modal-header-icon');
+  const voiceModalSearch = document.getElementById('voice-modal-search');
+  const clearVoiceModalSearch = document.getElementById('clear-voice-modal-search');
+  const voiceModalCategoryChips = document.getElementById('voice-modal-category-chips');
+  const voiceModalItems = document.getElementById('voice-modal-items');
+  const voiceModalActiveFooterText = document.getElementById('voice-modal-active-footer-text');
+  const quickSelectFreeVoiceBtn = document.getElementById('quick-select-free-voice-btn');
 
   // Image Inputs
   const imageProviderSelect = document.getElementById('image-provider-select');
@@ -5538,7 +5739,6 @@ const { character } = Astro.props;
     // 3. Voice settings (TTS Output & STT Input)
     const voiceProv = localStorage.getItem('aetheria_voice_provider') || 'browser';
     if (voiceProviderSelect) voiceProviderSelect.value = voiceProv;
-    updateCustomTtsDisplay(voiceProv);
 
     const voiceKey = localStorage.getItem('aetheria_voice_key') || '';
     if (voiceApiKey) voiceApiKey.value = voiceKey;
@@ -5583,7 +5783,6 @@ const { character } = Astro.props;
     // STT Settings
     const sttProv = localStorage.getItem('aetheria_stt_provider') || 'groq';
     if (sttProviderSelect) sttProviderSelect.value = sttProv;
-    updateCustomSttDisplay(sttProv);
 
     const sttKey = localStorage.getItem('aetheria_stt_key') || '';
     if (sttApiKey) sttApiKey.value = sttKey;
@@ -7085,267 +7284,748 @@ const { character } = Astro.props;
   pingTextBtn?.addEventListener('click', pingTextConnection);
 
   // ==========================================
-  // 2026 DUAL-ENGINE VOICE SYSTEMS (TTS & STT)
+  // 2026 ELITE VOICE SYSTEMS & CATALOG (TTS & STT)
   // ==========================================
-  const TTS_PROVIDERS = [
-    { id: 'browser', name: 'Built-in Device Voice', sub: '100% Free • Local Browser Speech' },
-    { id: 'elevenlabs', name: 'ElevenLabs', sub: 'Ultra-Realistic Emotional Voice Cloning' },
-    { id: 'openai', name: 'OpenAI Audio', sub: 'Clear & Expressive Dialogue (tts-1 / tts-1-hd)' },
-    { id: 'custom', name: 'Custom Audio Endpoint', sub: 'Self-hosted (Kokoro, XTTS, vLLM)' }
+  const TTS_CATALOG = [
+    {
+      id: 'browser',
+      name: 'Built-in Device Voice',
+      desc: '100% free offline speech synthesis powered by your browser/device hardware',
+      badge: '100% Free',
+      badgeClass: 'bg-emerald-500/20 text-emerald-300 border-emerald-500/30',
+      category: 'Local & Free',
+      needsKey: false
+    },
+    {
+      id: 'elevenlabs',
+      name: 'ElevenLabs',
+      desc: 'Industry-leading emotional voice cloning, nuanced breathing, and realistic character cadence',
+      badge: 'Top Roleplay',
+      badgeClass: 'bg-purple-500/20 text-purple-300 border-purple-500/30',
+      category: 'Ultra-Realistic',
+      needsKey: true,
+      keyHint: 'ElevenLabs API Key'
+    },
+    {
+      id: 'openai',
+      name: 'OpenAI Audio (TTS)',
+      desc: 'Crystal-clear expressive speech with natural inflections and studio-grade consistency',
+      badge: 'Studio Quality',
+      badgeClass: 'bg-emerald-500/20 text-emerald-300 border-emerald-500/30',
+      category: 'Popular',
+      needsKey: true,
+      keyHint: 'OpenAI sk-... Key'
+    },
+    {
+      id: 'google',
+      name: 'Google Gemini & Cloud Voice',
+      desc: 'High-quality neural speech synthesis across dozens of languages with generous free tier',
+      badge: 'Generous Tier',
+      badgeClass: 'bg-blue-500/20 text-blue-300 border-blue-500/30',
+      category: 'Popular',
+      needsKey: true,
+      keyHint: 'Google Cloud/AI Key'
+    },
+    {
+      id: 'deepgram',
+      name: 'Deepgram Aura',
+      desc: 'Sub-250ms ultra-low latency conversational text-to-speech designed for real-time agents',
+      badge: 'Fastest',
+      badgeClass: 'bg-amber-500/20 text-amber-300 border-amber-500/30',
+      category: 'Fastest',
+      needsKey: true,
+      keyHint: 'Deepgram API Key'
+    },
+    {
+      id: 'playht',
+      name: 'PlayHT / Cartesia Sonic',
+      desc: 'Real-time ultra-responsive voice streaming with rich emotional depth and voice cloning',
+      badge: 'Streaming',
+      badgeClass: 'bg-purple-500/20 text-purple-300 border-purple-500/30',
+      category: 'Fastest',
+      needsKey: true,
+      keyHint: 'Cartesia/PlayHT Key'
+    },
+    {
+      id: 'fishaudio',
+      name: 'Fish Audio (Fish Speech)',
+      desc: 'State-of-the-art open-weight architecture optimized for anime, gaming, and stylized characters',
+      badge: 'Character Voice',
+      badgeClass: 'bg-pink-500/20 text-pink-300 border-pink-500/30',
+      category: 'Ultra-Realistic',
+      needsKey: true,
+      keyHint: 'Fish Audio Key'
+    },
+    {
+      id: 'kokoro',
+      name: 'Kokoro TTS (Open-Source)',
+      desc: 'Ultra-lightweight 82M parameter open-source model delivering astonishing audio clarity',
+      badge: 'Open Source',
+      badgeClass: 'bg-cyan-500/20 text-cyan-300 border-cyan-500/30',
+      category: 'Local & Free',
+      needsKey: false
+    },
+    {
+      id: 'xtts',
+      name: 'Coqui XTTS (Localhost)',
+      desc: 'Zero-shot voice cloning running locally on your workstation GPU with zero subscription costs',
+      badge: 'Offline GPU',
+      badgeClass: 'bg-cyan-500/20 text-cyan-300 border-cyan-500/30',
+      category: 'Local & Free',
+      needsKey: false
+    },
+    {
+      id: 'openrouter',
+      name: 'OpenRouter Speech Gateway',
+      desc: 'Unified API gateway to multiple open-weight and commercial speech synthesis models',
+      badge: 'Multi-Model',
+      badgeClass: 'bg-purple-500/20 text-purple-300 border-purple-500/30',
+      category: 'Popular',
+      needsKey: true,
+      keyHint: 'OpenRouter API Key'
+    },
+    {
+      id: 'custom',
+      name: 'Custom OpenAI-Compatible Audio',
+      desc: 'Connect any self-hosted or remote speech synthesis API matching the /v1/audio/speech format',
+      badge: 'Custom URL',
+      badgeClass: 'bg-purple-500/20 text-purple-300 border-purple-500/30',
+      category: 'Local & Free',
+      needsKey: false
+    }
   ];
 
-  const STT_PROVIDERS = [
-    { id: 'groq', name: 'Groq Whisper', sub: 'Ultra-Fast LPU Hardware (Generous Free Tier)' },
-    { id: 'openai', name: 'OpenAI Whisper', sub: 'Industry Standard whisper-1 (High Accuracy)' },
-    { id: 'custom', name: 'Custom Whisper Endpoint', sub: 'Self-hosted / Localhost (/v1/audio/transcriptions)' },
-    { id: 'browser', name: 'Browser Built-in (Web Speech)', sub: '100% Free Local Speech Recognition' }
+  const STT_CATALOG = [
+    {
+      id: 'groq',
+      name: 'Groq Whisper',
+      desc: 'Ultra-fast speech transcription on Groq LPU hardware with near-instant response and free tier',
+      badge: 'Fastest LPU',
+      badgeClass: 'bg-amber-500/20 text-amber-300 border-amber-500/30',
+      category: 'Fastest',
+      needsKey: true,
+      keyHint: 'Groq gsk_... Key'
+    },
+    {
+      id: 'openai',
+      name: 'OpenAI Whisper',
+      desc: 'Industry standard whisper-1 model with world-class multilingual accuracy and punctuation',
+      badge: 'Industry Standard',
+      badgeClass: 'bg-emerald-500/20 text-emerald-300 border-emerald-500/30',
+      category: 'Popular',
+      needsKey: true,
+      keyHint: 'OpenAI sk-... Key'
+    },
+    {
+      id: 'deepgram-stt',
+      name: 'Deepgram Nova-2',
+      desc: 'Leading conversational speech recognition with 300ms turnaround and superior noise rejection',
+      badge: 'High Accuracy',
+      badgeClass: 'bg-rose-500/20 text-rose-300 border-rose-500/30',
+      category: 'Fastest',
+      needsKey: true,
+      keyHint: 'Deepgram API Key'
+    },
+    {
+      id: 'assemblyai',
+      name: 'AssemblyAI Conformer',
+      desc: 'State-of-the-art speech intelligence and multi-speaker transcription accuracy',
+      badge: 'Enterprise',
+      badgeClass: 'bg-purple-500/20 text-purple-300 border-purple-500/30',
+      category: 'Popular',
+      needsKey: true,
+      keyHint: 'AssemblyAI Key'
+    },
+    {
+      id: 'google-stt',
+      name: 'Google Cloud Speech',
+      desc: 'Accurate multilingual speech-to-text with native support for Persian, English, and 120+ languages',
+      badge: 'Multilingual',
+      badgeClass: 'bg-blue-500/20 text-blue-300 border-blue-500/30',
+      category: 'Popular',
+      needsKey: true,
+      keyHint: 'Google Cloud Key'
+    },
+    {
+      id: 'faster-whisper',
+      name: 'Faster-Whisper / Localhost',
+      desc: '100% offline, fully private Whisper transcription running locally via CUDA/ROCm on your GPU',
+      badge: 'Offline GPU',
+      badgeClass: 'bg-cyan-500/20 text-cyan-300 border-cyan-500/30',
+      category: 'Local & Free',
+      needsKey: false
+    },
+    {
+      id: 'browser-stt',
+      name: 'Browser Built-in (Web Speech API)',
+      desc: 'Free client-side speech recognition built into Chrome and modern browsers, zero keys needed',
+      badge: '100% Free',
+      badgeClass: 'bg-emerald-500/20 text-emerald-300 border-emerald-500/30',
+      category: 'Local & Free',
+      needsKey: false
+    },
+    {
+      id: 'custom-stt',
+      name: 'Custom Whisper Endpoint',
+      desc: 'Connect any self-hosted Whisper.cpp or OpenAI-compatible /v1/audio/transcriptions endpoint',
+      badge: 'Custom URL',
+      badgeClass: 'bg-purple-500/20 text-purple-300 border-purple-500/30',
+      category: 'Local & Free',
+      needsKey: false
+    }
   ];
+
+  function getVoiceEngineIconSvg(id) {
+    switch (id) {
+      case 'browser':
+      case 'browser-stt':
+        return `<svg class="w-5 h-5 text-emerald-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M11 5.882V19.24a1.76 1.76 0 01-3.417.592l-2.147-6.15M18 10a3 3 0 00-3-3m0 0a3 3 0 00-3 3m3-3v12m6-9a6 6 0 00-6-6"/></svg>`;
+      case 'elevenlabs':
+        return `<svg class="w-5 h-5 text-purple-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M9 19V5l12-2v14M9 19a3 3 0 11-6 0 3 3 0 016 0zm12-2a3 3 0 11-6 0 3 3 0 016 0z"/></svg>`;
+      case 'openai':
+        return `<svg class="w-5 h-5 text-emerald-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path stroke-linecap="round" stroke-linejoin="round" d="M12 2a10 10 0 0110 10c0 5.523-4.477 10-10 10S2 17.523 2 12A10 10 0 0112 2zm0 4a6 6 0 100 12 6 6 0 000-12z"/></svg>`;
+      case 'google':
+      case 'google-stt':
+        return `<svg class="w-5 h-5" viewBox="0 0 24 24" fill="none"><path d="M12 2L14.5 9.5L22 12L14.5 14.5L12 22L9.5 14.5L2 12L9.5 9.5L12 2Z" fill="url(#p-gemini-grad)"/><defs><linearGradient id="p-gemini-grad" x1="2" y1="2" x2="22" y2="22" gradientUnits="userSpaceOnUse"><stop stop-color="#4285F4"/><stop offset="0.5" stop-color="#9B72CB"/><stop offset="1" stop-color="#D96570"/></linearGradient></defs></svg>`;
+      case 'groq':
+        return `<svg class="w-5 h-5 text-amber-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg>`;
+      case 'deepgram':
+      case 'deepgram-stt':
+        return `<svg class="w-5 h-5 text-rose-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="5"/><circle cx="12" cy="12" r="1"/></svg>`;
+      case 'playht':
+        return `<svg class="w-5 h-5 text-indigo-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z"/><circle cx="12" cy="12" r="9"/></svg>`;
+      case 'fishaudio':
+        return `<svg class="w-5 h-5 text-pink-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M12 21a9 9 0 01-9-9c0-4.97 4.03-9 9-9 4.97 0 9 4.03 9 9-4.97 0-9 4.03-9 9z"/><path d="M16 8h.01"/></svg>`;
+      case 'kokoro':
+      case 'xtts':
+      case 'faster-whisper':
+        return `<svg class="w-5 h-5 text-cyan-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="3" width="20" height="14" rx="2"/><path d="M8 21h8m-4-4v4"/></svg>`;
+      case 'assemblyai':
+        return `<svg class="w-5 h-5 text-purple-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M4 6h16M4 12h16M4 18h16M10 6v12"/></svg>`;
+      default:
+        return `<svg class="w-5 h-5 text-purple-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M19 11a7 7 0 01-7 7m0 0a7 7 0 01-7-7m7 7v4m0 0H8m4 0h4m-4-8a3 3 0 003-3V5a3 3 0 10-6 0v6a3 3 0 003 3z"/></svg>`;
+    }
+  }
 
   // Voice Sub-tab navigation
   voiceSubtabTtsBtn?.addEventListener('click', () => {
-    voiceSubtabTtsBtn.className = 'flex-1 py-2 px-3 rounded-xl bg-purple-600 text-white text-xs font-semibold flex items-center justify-center gap-2 transition cursor-pointer shadow-sm shadow-purple-900/40';
-    voiceSubtabSttBtn.className = 'flex-1 py-2 px-3 rounded-xl text-slate-300 hover:text-white hover:bg-white/[0.04] text-xs font-semibold flex items-center justify-center gap-2 transition cursor-pointer';
+    voiceSubtabTtsBtn.className = 'flex-1 py-2 px-3 rounded-xl bg-purple-600 text-white text-xs font-semibold flex items-center justify-center gap-2 transition cursor-pointer shadow-sm shadow-purple-900/40 active:scale-95';
+    voiceSubtabSttBtn.className = 'flex-1 py-2 px-3 rounded-xl text-slate-300 hover:text-white hover:bg-white/[0.04] text-xs font-semibold flex items-center justify-center gap-2 transition cursor-pointer active:scale-95';
     voiceTtsPane?.classList.remove('hidden');
     voiceSttPane?.classList.add('hidden');
   });
 
   voiceSubtabSttBtn?.addEventListener('click', () => {
-    voiceSubtabSttBtn.className = 'flex-1 py-2 px-3 rounded-xl bg-rose-600 text-white text-xs font-semibold flex items-center justify-center gap-2 transition cursor-pointer shadow-sm shadow-rose-900/40';
-    voiceSubtabTtsBtn.className = 'flex-1 py-2 px-3 rounded-xl text-slate-300 hover:text-white hover:bg-white/[0.04] text-xs font-semibold flex items-center justify-center gap-2 transition cursor-pointer';
+    voiceSubtabSttBtn.className = 'flex-1 py-2 px-3 rounded-xl bg-rose-600 text-white text-xs font-semibold flex items-center justify-center gap-2 transition cursor-pointer shadow-sm shadow-rose-900/40 active:scale-95';
+    voiceSubtabTtsBtn.className = 'flex-1 py-2 px-3 rounded-xl text-slate-300 hover:text-white hover:bg-white/[0.04] text-xs font-semibold flex items-center justify-center gap-2 transition cursor-pointer active:scale-95';
     voiceSttPane?.classList.remove('hidden');
     voiceTtsPane?.classList.add('hidden');
   });
 
-  // Custom Dropdowns for TTS and STT (NO NATIVE OS DIALOGS)
-  function renderCustomTtsMenu() {
-    if (!customTtsMenu) return;
-    const current = voiceProviderSelect?.value || 'browser';
-    customTtsMenu.innerHTML = TTS_PROVIDERS.map(p => `
-      <button 
-        type="button" 
-        data-tts-id="${p.id}"
-        class="custom-tts-item w-full px-3 py-2 rounded-xl text-left flex items-center justify-between transition cursor-pointer text-xs group ${
-          p.id === current ? 'bg-purple-600/25 text-white border border-purple-500/40' : 'text-slate-300 hover:bg-white/[0.05] hover:text-white'
-        }"
-      >
-        <div class="flex items-center gap-2 min-w-0 pr-2">
-          <span class="w-2 h-2 rounded-full ${p.id === current ? 'bg-emerald-400' : 'bg-purple-400'} shrink-0"></span>
-          <div class="min-w-0 flex flex-col">
-            <span class="font-semibold text-white truncate">${p.name}</span>
-            <span class="text-[10px] text-slate-400 truncate">${p.sub}</span>
-          </div>
-        </div>
-        ${p.id === current ? '<span class="text-purple-400 text-xs font-bold ml-1">✓</span>' : ''}
-      </button>
-    `).join('');
+  // ==========================================
+  // VOICE ENGINE CATALOG MODAL (Bottom Sheet)
+  // ==========================================
+  let voiceCatalogMode = 'tts'; // 'tts' or 'stt'
+  let currentVoiceCatalogFilter = 'all';
 
-    customTtsMenu.querySelectorAll('.custom-tts-item').forEach(btn => {
+  function openVoiceEngineModal(mode = 'tts') {
+    voiceCatalogMode = mode;
+    currentVoiceCatalogFilter = 'all';
+    if (!voiceEngineModal) return;
+
+    if (voiceModalTitle) {
+      voiceModalTitle.textContent = mode === 'tts' ? 'Select Speech Output Engine (TTS)' : 'Select Voice Recognition Engine (STT)';
+    }
+    if (voiceModalSubtitle) {
+      voiceModalSubtitle.textContent = mode === 'tts' ? 'Choose neural cloud synthesis or local hardware voice' : 'Choose speech-to-text models for chat input';
+    }
+    if (voiceModalSearch) {
+      voiceModalSearch.value = '';
+      voiceModalSearch.placeholder = mode === 'tts' ? 'Search TTS engines (e.g. ElevenLabs, OpenAI, Kokoro)...' : 'Search STT engines (e.g. Groq Whisper, Deepgram)...';
+    }
+
+    renderVoiceModalCategories();
+    renderVoiceCatalogItems();
+
+    voiceEngineModal.classList.remove('hidden');
+    voiceEngineModal.classList.add('flex');
+    document.body.style.overflow = 'hidden';
+  }
+
+  function closeVoiceEngineModal() {
+    if (!voiceEngineModal) return;
+    voiceEngineModal.classList.add('hidden');
+    voiceEngineModal.classList.remove('flex');
+    document.body.style.overflow = '';
+  }
+
+  closeVoiceEngineModalBtn?.addEventListener('click', closeVoiceEngineModal);
+  voiceEngineModal?.addEventListener('click', (e) => {
+    if (e.target === voiceEngineModal) closeVoiceEngineModal();
+  });
+
+  openTtsCatalogBtn?.addEventListener('click', () => openVoiceEngineModal('tts'));
+  openSttCatalogBtn?.addEventListener('click', () => openVoiceEngineModal('stt'));
+
+  function renderVoiceModalCategories() {
+    if (!voiceModalCategoryChips) return;
+    const categories = voiceCatalogMode === 'tts' 
+      ? ['All', 'Popular', 'Ultra-Realistic', 'Fastest', 'Local & Free']
+      : ['All', 'Popular', 'Fastest', 'Local & Free'];
+
+    voiceModalCategoryChips.innerHTML = categories.map(cat => {
+      const filterKey = cat.toLowerCase();
+      const isActive = currentVoiceCatalogFilter === filterKey || (cat === 'All' && currentVoiceCatalogFilter === 'all');
+      return `
+        <button
+          type="button"
+          data-voice-filter="${filterKey}"
+          class="voice-cat-chip px-3 py-1 rounded-full text-xs font-semibold shrink-0 transition cursor-pointer ${
+            isActive
+              ? (voiceCatalogMode === 'tts' ? 'bg-purple-600 text-white shadow-sm shadow-purple-900/50' : 'bg-rose-600 text-white shadow-sm shadow-rose-900/50')
+              : 'bg-white/[0.05] hover:bg-white/[0.1] text-slate-300'
+          }"
+        >
+          ${cat}
+        </button>
+      `;
+    }).join('');
+
+    voiceModalCategoryChips.querySelectorAll('.voice-cat-chip').forEach(btn => {
       btn.addEventListener('click', () => {
-        const id = btn.getAttribute('data-tts-id');
-        if (voiceProviderSelect && id) {
-          voiceProviderSelect.value = id;
-          voiceProviderSelect.dispatchEvent(new Event('change'));
-        }
-        closeCustomTtsMenu();
+        currentVoiceCatalogFilter = btn.getAttribute('data-voice-filter') || 'all';
+        renderVoiceModalCategories();
+        renderVoiceCatalogItems(voiceModalSearch?.value || '');
       });
     });
   }
 
-  function updateCustomTtsDisplay(id) {
-    const p = TTS_PROVIDERS.find(x => x.id === id) || TTS_PROVIDERS[0];
-    if (customTtsTriggerLabel) customTtsTriggerLabel.textContent = p.name;
-    if (customTtsTriggerSub) customTtsTriggerSub.textContent = p.sub;
-    renderCustomTtsMenu();
-  }
+  function renderVoiceCatalogItems(query = '') {
+    if (!voiceModalItems) return;
+    const q = query.trim().toLowerCase();
+    const list = voiceCatalogMode === 'tts' ? TTS_CATALOG : STT_CATALOG;
+    const currentActiveId = voiceCatalogMode === 'tts'
+      ? (voiceProviderSelect?.value || 'browser')
+      : (sttProviderSelect?.value || 'groq');
 
-  function openCustomTtsMenu() {
-    customTtsMenu?.classList.remove('hidden');
-    customTtsChevron?.classList.add('rotate-180');
-  }
+    const filtered = list.filter(item => {
+      // Category match
+      if (currentVoiceCatalogFilter === 'popular' && item.category !== 'Popular') return false;
+      if (currentVoiceCatalogFilter === 'ultra-realistic' && item.category !== 'Ultra-Realistic') return false;
+      if (currentVoiceCatalogFilter === 'fastest' && item.category !== 'Fastest') return false;
+      if (currentVoiceCatalogFilter === 'local & free' && item.category !== 'Local & Free') return false;
 
-  function closeCustomTtsMenu() {
-    customTtsMenu?.classList.add('hidden');
-    customTtsChevron?.classList.remove('rotate-180');
-  }
+      // Query match
+      if (!q) return true;
+      return item.name.toLowerCase().includes(q) ||
+             item.desc.toLowerCase().includes(q) ||
+             item.id.toLowerCase().includes(q) ||
+             item.badge.toLowerCase().includes(q);
+    });
 
-  customTtsTrigger?.addEventListener('click', (e) => {
-    e.stopPropagation();
-    if (customTtsMenu?.classList.contains('hidden')) openCustomTtsMenu();
-    else closeCustomTtsMenu();
-  });
+    if (voiceModalCountBadge) {
+      voiceModalCountBadge.textContent = `${filtered.length} of ${list.length} Engines`;
+    }
 
-  // STT Custom Menu
-  function renderCustomSttMenu() {
-    if (!customSttMenu) return;
-    const current = sttProviderSelect?.value || 'groq';
-    customSttMenu.innerHTML = STT_PROVIDERS.map(p => `
-      <button 
-        type="button" 
-        data-stt-id="${p.id}"
-        class="custom-stt-item w-full px-3 py-2 rounded-xl text-left flex items-center justify-between transition cursor-pointer text-xs group ${
-          p.id === current ? 'bg-rose-600/25 text-white border border-rose-500/40' : 'text-slate-300 hover:bg-white/[0.05] hover:text-white'
-        }"
-      >
-        <div class="flex items-center gap-2 min-w-0 pr-2">
-          <span class="w-2 h-2 rounded-full ${p.id === current ? 'bg-emerald-400' : 'bg-rose-400'} shrink-0"></span>
-          <div class="min-w-0 flex flex-col">
-            <span class="font-semibold text-white truncate">${p.name}</span>
-            <span class="text-[10px] text-slate-400 truncate">${p.sub}</span>
+    if (voiceModalActiveFooterText) {
+      const activeObj = list.find(x => x.id === currentActiveId) || list[0];
+      voiceModalActiveFooterText.textContent = `Current: ${activeObj.name}`;
+    }
+
+    if (filtered.length === 0) {
+      voiceModalItems.innerHTML = `
+        <div class="py-12 text-center text-slate-400 flex flex-col items-center justify-center">
+          <div class="w-12 h-12 rounded-2xl bg-purple-500/10 border border-purple-500/20 text-purple-400 flex items-center justify-center mb-3 shadow-inner">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-5.197-5.197m0 0A7.5 7.5 0 105.196 5.196a7.5 7.5 0 0010.607 10.607z"/></svg>
           </div>
+          <div class="text-sm font-semibold text-white mb-1">No Voice Engines Found</div>
+          <div class="text-xs text-slate-400 max-w-xs mb-4">No engines match your search. Try another query or switch categories.</div>
+          <button type="button" id="clear-voice-empty-btn" class="px-3.5 py-1.5 rounded-xl bg-purple-600 hover:bg-purple-500 text-white text-xs font-semibold transition cursor-pointer">
+            Reset Filter
+          </button>
         </div>
-        ${p.id === current ? '<span class="text-rose-400 text-xs font-bold ml-1">✓</span>' : ''}
-      </button>
-    `).join('');
+      `;
+      document.getElementById('clear-voice-empty-btn')?.addEventListener('click', () => {
+        if (voiceModalSearch) voiceModalSearch.value = '';
+        currentVoiceCatalogFilter = 'all';
+        renderVoiceModalCategories();
+        renderVoiceCatalogItems();
+      });
+      return;
+    }
 
-    customSttMenu.querySelectorAll('.custom-stt-item').forEach(btn => {
+    voiceModalItems.innerHTML = filtered.map(item => {
+      const isSelected = item.id === currentActiveId;
+      return `
+        <button
+          type="button"
+          data-engine-id="${item.id}"
+          class="voice-engine-card w-full p-3.5 sm:p-4 rounded-2xl border text-left transition-all flex items-start justify-between gap-3 cursor-pointer group ${
+            isSelected
+              ? (voiceCatalogMode === 'tts' 
+                  ? 'bg-purple-950/40 border-purple-500/60 shadow-lg shadow-purple-950/50' 
+                  : 'bg-rose-950/40 border-rose-500/60 shadow-lg shadow-rose-950/50')
+              : 'bg-white/[0.02] hover:bg-white/[0.06] border-white/[0.06] hover:border-purple-500/30'
+          }"
+        >
+          <div class="flex items-start gap-3 min-w-0 flex-1">
+            <div class="w-10 h-10 rounded-xl ${
+              isSelected 
+                ? (voiceCatalogMode === 'tts' ? 'bg-purple-500/30 border-purple-400/40' : 'bg-rose-500/30 border-rose-400/40')
+                : 'bg-white/[0.04] border-white/10 group-hover:border-purple-500/30'
+            } border flex items-center justify-center shrink-0 transition-transform group-hover:scale-105 shadow-sm">
+              ${getVoiceEngineIconSvg(item.id)}
+            </div>
+
+            <div class="min-w-0 flex-1">
+              <div class="flex items-center gap-2 flex-wrap mb-1">
+                <span class="font-bold text-xs sm:text-sm ${
+                  isSelected ? 'text-white' : 'text-slate-100 group-hover:text-purple-200'
+                } truncate">${item.name}</span>
+                <span class="text-[9px] px-2 py-0.5 rounded-full font-semibold border ${item.badgeClass}">${item.badge}</span>
+                ${isSelected ? '<span class="text-[9px] px-1.5 py-0.2 rounded bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 font-bold uppercase font-mono">ACTIVE</span>' : ''}
+              </div>
+              <p class="text-[11px] sm:text-xs text-slate-400 leading-relaxed line-clamp-2">${item.desc}</p>
+            </div>
+          </div>
+
+          <div class="shrink-0 pt-0.5">
+            ${isSelected
+              ? `<div class="w-6 h-6 rounded-full ${voiceCatalogMode === 'tts' ? 'bg-purple-600' : 'bg-rose-600'} text-white flex items-center justify-center text-xs font-bold shadow-md">✓</div>`
+              : `<div class="w-6 h-6 rounded-full bg-white/[0.02] border border-white/10 group-hover:border-purple-400/40 flex items-center justify-center text-slate-500 group-hover:text-purple-300 text-xs transition">→</div>`
+            }
+          </div>
+        </button>
+      `;
+    }).join('');
+
+    voiceModalItems.querySelectorAll('.voice-engine-card').forEach(btn => {
       btn.addEventListener('click', () => {
-        const id = btn.getAttribute('data-stt-id');
-        if (sttProviderSelect && id) {
-          sttProviderSelect.value = id;
-          sttProviderSelect.dispatchEvent(new Event('change'));
+        const id = btn.getAttribute('data-engine-id');
+        if (!id) return;
+
+        if (voiceCatalogMode === 'tts') {
+          if (voiceProviderSelect) voiceProviderSelect.value = id;
+          localStorage.setItem('aetheria_voice_provider', id);
+        } else {
+          if (sttProviderSelect) sttProviderSelect.value = id;
+          localStorage.setItem('aetheria_stt_provider', id);
         }
-        closeCustomSttMenu();
+
+        syncVoiceUiPanels();
+        updateMicButtonState();
+        closeVoiceEngineModal();
+        showNotification(`✓ Switched to ${id.toUpperCase()}`);
       });
     });
   }
 
-  function updateCustomSttDisplay(id) {
-    const p = STT_PROVIDERS.find(x => x.id === id) || STT_PROVIDERS[0];
-    if (customSttTriggerLabel) customSttTriggerLabel.textContent = p.name;
-    if (customSttTriggerSub) customSttTriggerSub.textContent = p.sub;
-    renderCustomSttMenu();
-  }
-
-  function openCustomSttMenu() {
-    customSttMenu?.classList.remove('hidden');
-    customSttChevron?.classList.add('rotate-180');
-  }
-
-  function closeCustomSttMenu() {
-    customSttMenu?.classList.add('hidden');
-    customSttChevron?.classList.remove('rotate-180');
-  }
-
-  customSttTrigger?.addEventListener('click', (e) => {
-    e.stopPropagation();
-    if (customSttMenu?.classList.contains('hidden')) openCustomSttMenu();
-    else closeCustomSttMenu();
+  voiceModalSearch?.addEventListener('input', () => {
+    const q = voiceModalSearch.value;
+    if (clearVoiceModalSearch) {
+      clearVoiceModalSearch.classList.toggle('hidden', q.length === 0);
+    }
+    renderVoiceCatalogItems(q);
   });
 
-  // Close menus on outside click
-  document.addEventListener('click', (e) => {
-    if (customTtsMenu && !customTtsMenu.contains(e.target) && !customTtsTrigger?.contains(e.target)) {
-      closeCustomTtsMenu();
+  clearVoiceModalSearch?.addEventListener('click', () => {
+    if (voiceModalSearch) {
+      voiceModalSearch.value = '';
+      clearVoiceModalSearch.classList.add('hidden');
+      voiceModalSearch.focus();
     }
-    if (customSttMenu && !customSttMenu.contains(e.target) && !customSttTrigger?.contains(e.target)) {
-      closeCustomSttMenu();
-    }
+    renderVoiceCatalogItems('');
   });
 
-  // UI Panels synchronization
-  function syncVoiceUiPanels() {
-    const ttsVal = voiceProviderSelect?.value || 'browser';
-    updateCustomTtsDisplay(ttsVal);
-
-    if (voiceKeyContainer) voiceKeyContainer.classList.toggle('hidden', ttsVal === 'browser');
-    if (voiceCustomUrlContainer) voiceCustomUrlContainer.classList.toggle('hidden', ttsVal !== 'custom');
-    if (elevenVoiceContainer) elevenVoiceContainer.classList.toggle('hidden', ttsVal !== 'elevenlabs');
-    if (elevenStabilityBox) elevenStabilityBox.classList.toggle('hidden', ttsVal !== 'elevenlabs');
-    if (elevenClarityBox) elevenClarityBox.classList.toggle('hidden', ttsVal !== 'elevenlabs');
-    if (openaiVoiceContainer) openaiVoiceContainer.classList.toggle('hidden', ttsVal !== 'openai');
-
-    // Quick copy OpenAI key to TTS
-    const openaiKey = localStorage.getItem('aetheria_key_openai') || '';
-    if (copyTextKeyToTtsBtn) {
-      copyTextKeyToTtsBtn.classList.toggle('hidden', !openaiKey || ttsVal !== 'openai');
+  quickSelectFreeVoiceBtn?.addEventListener('click', () => {
+    if (voiceCatalogMode === 'tts') {
+      if (voiceProviderSelect) voiceProviderSelect.value = 'browser';
+      localStorage.setItem('aetheria_voice_provider', 'browser');
+    } else {
+      if (sttProviderSelect) sttProviderSelect.value = 'browser-stt';
+      localStorage.setItem('aetheria_stt_provider', 'browser-stt');
     }
-
-    // TTS Status
-    const ttsKey = voiceApiKey?.value.trim() || localStorage.getItem('aetheria_voice_key') || '';
-    if (ttsStatusBadge) {
-      if (ttsVal === 'browser') {
-        ttsStatusBadge.className = 'px-2 py-0.5 rounded-full text-[10px] font-mono bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 font-semibold shrink-0';
-        ttsStatusBadge.textContent = 'Free • Ready';
-        if (customTtsStatusDot) customTtsStatusDot.className = 'w-2 h-2 rounded-full bg-emerald-400 shrink-0';
-      } else if (!ttsKey) {
-        ttsStatusBadge.className = 'px-2 py-0.5 rounded-full text-[10px] font-mono bg-amber-500/20 text-amber-300 border border-amber-500/30 font-semibold shrink-0';
-        ttsStatusBadge.textContent = 'Key Required';
-        if (customTtsStatusDot) customTtsStatusDot.className = 'w-2 h-2 rounded-full bg-amber-400 shrink-0';
-      } else {
-        ttsStatusBadge.className = 'px-2 py-0.5 rounded-full text-[10px] font-mono bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 font-semibold shrink-0';
-        ttsStatusBadge.textContent = 'Configured';
-        if (customTtsStatusDot) customTtsStatusDot.className = 'w-2 h-2 rounded-full bg-emerald-400 shrink-0';
-      }
-    }
-
-    // STT Panels
-    const sttVal = sttProviderSelect?.value || 'groq';
-    updateCustomSttDisplay(sttVal);
-
-    if (sttKeyContainer) sttKeyContainer.classList.toggle('hidden', sttVal === 'browser');
-    if (sttCustomUrlContainer) sttCustomUrlContainer.classList.toggle('hidden', sttVal !== 'custom');
-    if (sttModelContainer) sttModelContainer.classList.toggle('hidden', sttVal === 'browser');
-
-    // Quick copy button for STT
-    const groqKey = localStorage.getItem('aetheria_key_groq') || '';
-    if (copyTextKeyToSttBtn) {
-      if (sttVal === 'groq' && groqKey) {
-        copyTextKeyToSttBtn.classList.remove('hidden');
-        copyTextKeyToSttBtn.textContent = 'Paste Groq Key from Text Tab';
-      } else if (sttVal === 'openai' && openaiKey) {
-        copyTextKeyToSttBtn.classList.remove('hidden');
-        copyTextKeyToSttBtn.textContent = 'Paste OpenAI Key from Text Tab';
-      } else {
-        copyTextKeyToSttBtn.classList.add('hidden');
-      }
-    }
-
-    // STT Status
-    const isReady = isSttReady();
-    if (sttStatusBadge) {
-      if (sttVal === 'browser') {
-        sttStatusBadge.className = 'px-2 py-0.5 rounded-full text-[10px] font-mono bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 font-semibold shrink-0';
-        sttStatusBadge.textContent = 'Browser Free';
-        if (customSttStatusDot) customSttStatusDot.className = 'w-2 h-2 rounded-full bg-emerald-400 shrink-0';
-      } else if (!isReady) {
-        sttStatusBadge.className = 'px-2 py-0.5 rounded-full text-[10px] font-mono bg-amber-500/20 text-amber-300 border border-amber-500/30 font-semibold shrink-0';
-        sttStatusBadge.textContent = 'Key Required';
-        if (customSttStatusDot) customSttStatusDot.className = 'w-2 h-2 rounded-full bg-amber-400 shrink-0';
-      } else {
-        sttStatusBadge.className = 'px-2 py-0.5 rounded-full text-[10px] font-mono bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 font-semibold shrink-0';
-        sttStatusBadge.textContent = 'STT Ready';
-        if (customSttStatusDot) customSttStatusDot.className = 'w-2 h-2 rounded-full bg-emerald-400 shrink-0';
-      }
-    }
-  }
-
-  voiceProviderSelect?.addEventListener('change', syncVoiceUiPanels);
-  sttProviderSelect?.addEventListener('change', syncVoiceUiPanels);
-  voiceApiKey?.addEventListener('input', syncVoiceUiPanels);
-  sttApiKey?.addEventListener('input', () => {
     syncVoiceUiPanels();
     updateMicButtonState();
+    closeVoiceEngineModal();
+    showNotification('✓ Switched to 100% Free Local Speech');
   });
 
-  copyTextKeyToTtsBtn?.addEventListener('click', () => {
-    const k = localStorage.getItem('aetheria_key_openai') || '';
-    if (k && voiceApiKey) {
-      voiceApiKey.value = k;
-      localStorage.setItem('aetheria_voice_key', k);
+  // ==========================================
+  // PROGRESSIVE DISCLOSURE UI CONTROLLER
+  // ==========================================
+  function syncVoiceUiPanels() {
+    // 1. TTS Progressive Disclosure
+    const ttsId = voiceProviderSelect?.value || localStorage.getItem('aetheria_voice_provider') || 'browser';
+    const ttsObj = TTS_CATALOG.find(x => x.id === ttsId) || TTS_CATALOG[0];
+    const savedTtsKey = (voiceApiKey?.value || localStorage.getItem('aetheria_voice_key') || '').trim();
+    const isTtsConnected = (!ttsObj.needsKey) || Boolean(savedTtsKey);
+
+    if (ttsActiveEngineName) ttsActiveEngineName.textContent = ttsObj.name;
+    if (ttsActiveEngineDesc) ttsActiveEngineDesc.textContent = ttsObj.desc;
+    if (ttsActiveIconBox) ttsActiveIconBox.innerHTML = getVoiceEngineIconSvg(ttsObj.id);
+
+    if (ttsConnectionBadge) {
+      if (!ttsObj.needsKey) {
+        ttsConnectionBadge.className = 'px-2 py-0.5 rounded-full text-[10px] font-mono font-semibold bg-emerald-500/20 text-emerald-300 border border-emerald-500/30';
+        ttsConnectionBadge.textContent = '100% Free • Ready';
+      } else if (!isTtsConnected) {
+        ttsConnectionBadge.className = 'px-2 py-0.5 rounded-full text-[10px] font-mono font-semibold bg-amber-500/20 text-amber-300 border border-amber-500/30';
+        ttsConnectionBadge.textContent = 'Disconnected • Key Required';
+      } else {
+        ttsConnectionBadge.className = 'px-2 py-0.5 rounded-full text-[10px] font-mono font-semibold bg-emerald-500/20 text-emerald-300 border border-emerald-500/30';
+        ttsConnectionBadge.textContent = 'Connected & Active';
+      }
+    }
+
+    // Connection Card visibility
+    if (ttsConnectionCard) {
+      if (ttsObj.needsKey && !isTtsConnected) {
+        ttsConnectionCard.classList.remove('hidden');
+        if (ttsConnectTitle) ttsConnectTitle.textContent = `Connect ${ttsObj.name} API Key`;
+        if (ttsConnectDesc) ttsConnectDesc.textContent = `API Key required to activate ${ttsObj.name}. Stored securely on your device.`;
+
+        // Check if OpenAI key exists in text tab
+        const openaiTextKey = localStorage.getItem('aetheria_key_openai') || '';
+        if (ttsQuickReuseKeyBtn) {
+          if (ttsId === 'openai' && openaiTextKey) {
+            ttsQuickReuseKeyBtn.classList.remove('hidden');
+            if (ttsQuickReuseLabel) ttsQuickReuseLabel.textContent = '⚡ Connect using saved OpenAI Key from Text Engine';
+          } else {
+            ttsQuickReuseKeyBtn.classList.add('hidden');
+          }
+        }
+      } else {
+        ttsConnectionCard.classList.add('hidden');
+      }
+    }
+
+    if (voiceCustomUrlContainer) {
+      voiceCustomUrlContainer.classList.toggle('hidden', ttsId !== 'custom');
+    }
+
+    // ElevenLabs specific options
+    if (elevenVoiceContainer) elevenVoiceContainer.classList.toggle('hidden', ttsId !== 'elevenlabs');
+    if (elevenStabilityBox) elevenStabilityBox.classList.toggle('hidden', ttsId !== 'elevenlabs');
+    if (elevenClarityBox) elevenClarityBox.classList.toggle('hidden', ttsId !== 'elevenlabs');
+
+    // OpenAI specific options
+    if (openaiVoiceContainer) openaiVoiceContainer.classList.toggle('hidden', ttsId !== 'openai');
+
+    // Sync ElevenLabs Voice Presets active state
+    const currentVoiceId = voiceIdInput?.value || localStorage.getItem('aetheria_voice_id') || '21m00Tcm4TlvDq8ikWAM';
+    document.querySelectorAll('.eleven-voice-card').forEach(card => {
+      const v = card.getAttribute('data-voice');
+      if (v === currentVoiceId) {
+        card.className = 'eleven-voice-card p-2.5 rounded-xl border text-left transition cursor-pointer bg-purple-950/60 border-purple-500/80 shadow-md shadow-purple-950/60';
+      } else {
+        card.className = 'eleven-voice-card p-2.5 rounded-xl border text-left transition cursor-pointer bg-white/[0.03] hover:bg-white/[0.06] border-white/10';
+      }
+    });
+
+    // Sync OpenAI Voice Archetype active state
+    const currentOpenaiArch = openaiVoiceSelect?.value || localStorage.getItem('aetheria_openai_voice') || 'nova';
+    document.querySelectorAll('.openai-voice-card').forEach(card => {
+      const arch = card.getAttribute('data-arch');
+      if (arch === currentOpenaiArch) {
+        card.className = 'openai-voice-card p-2.5 rounded-xl border text-left transition cursor-pointer bg-purple-950/60 border-purple-500/80 shadow-md shadow-purple-950/60';
+      } else {
+        card.className = 'openai-voice-card p-2.5 rounded-xl border text-left transition cursor-pointer bg-white/[0.03] hover:bg-white/[0.06] border-white/10';
+      }
+    });
+
+    // Sync OpenAI TTS Model toggle
+    const currentOpenaiModel = openaiTtsModelSelect?.value || localStorage.getItem('aetheria_openai_tts_model') || 'tts-1';
+    document.querySelectorAll('.openai-model-toggle-btn').forEach(btn => {
+      const m = btn.getAttribute('data-tts-model');
+      if (m === currentOpenaiModel) {
+        btn.className = 'openai-model-toggle-btn flex-1 py-1.5 px-3 rounded-lg text-xs font-semibold transition cursor-pointer bg-purple-600 text-white shadow-sm';
+      } else {
+        btn.className = 'openai-model-toggle-btn flex-1 py-1.5 px-3 rounded-lg text-xs font-semibold transition cursor-pointer text-slate-400 hover:text-white';
+      }
+    });
+
+    // 2. STT Progressive Disclosure
+    const sttId = sttProviderSelect?.value || localStorage.getItem('aetheria_stt_provider') || 'groq';
+    const sttObj = STT_CATALOG.find(x => x.id === sttId) || STT_CATALOG[0];
+    const savedSttKey = (sttApiKey?.value || localStorage.getItem('aetheria_stt_key') || '').trim();
+    const isSttConnected = (!sttObj.needsKey) || Boolean(savedSttKey);
+
+    if (sttActiveEngineName) sttActiveEngineName.textContent = sttObj.name;
+    if (sttActiveEngineDesc) sttActiveEngineDesc.textContent = sttObj.desc;
+    if (sttActiveIconBox) sttActiveIconBox.innerHTML = getVoiceEngineIconSvg(sttObj.id);
+
+    if (sttConnectionBadge) {
+      if (!sttObj.needsKey) {
+        sttConnectionBadge.className = 'px-2 py-0.5 rounded-full text-[10px] font-mono font-semibold bg-emerald-500/20 text-emerald-300 border border-emerald-500/30';
+        sttConnectionBadge.textContent = '100% Free • Ready';
+      } else if (!isSttConnected) {
+        sttConnectionBadge.className = 'px-2 py-0.5 rounded-full text-[10px] font-mono font-semibold bg-amber-500/20 text-amber-300 border border-amber-500/30';
+        sttConnectionBadge.textContent = 'Disconnected • Key Required';
+      } else {
+        sttConnectionBadge.className = 'px-2 py-0.5 rounded-full text-[10px] font-mono font-semibold bg-emerald-500/20 text-emerald-300 border border-emerald-500/30';
+        sttConnectionBadge.textContent = 'Connected & Active';
+      }
+    }
+
+    // STT Connection Card
+    if (sttConnectionCard) {
+      if (sttObj.needsKey && !isSttConnected) {
+        sttConnectionCard.classList.remove('hidden');
+        if (sttConnectTitle) sttConnectTitle.textContent = `Connect ${sttObj.name} API Key`;
+        if (sttConnectDesc) sttConnectDesc.textContent = `Enter your ${sttObj.keyHint || 'API Key'} to activate instant voice transcription.`;
+
+        // Check text keys
+        const groqTextKey = localStorage.getItem('aetheria_key_groq') || '';
+        const openaiTextKey = localStorage.getItem('aetheria_key_openai') || '';
+        if (sttQuickReuseKeyBtn) {
+          if (sttId === 'groq' && groqTextKey) {
+            sttQuickReuseKeyBtn.classList.remove('hidden');
+            if (sttQuickReuseLabel) sttQuickReuseLabel.textContent = '⚡ Connect using saved Groq Key from Text Engine';
+          } else if (sttId === 'openai' && openaiTextKey) {
+            sttQuickReuseKeyBtn.classList.remove('hidden');
+            if (sttQuickReuseLabel) sttQuickReuseLabel.textContent = '⚡ Connect using saved OpenAI Key from Text Engine';
+          } else {
+            sttQuickReuseKeyBtn.classList.add('hidden');
+          }
+        }
+      } else {
+        sttConnectionCard.classList.add('hidden');
+      }
+    }
+
+    if (sttCustomUrlContainer) {
+      sttCustomUrlContainer.classList.toggle('hidden', sttId !== 'custom-stt');
+    }
+
+    // Sync STT Model cards
+    const currentSttModel = sttModelSelect?.value || localStorage.getItem('aetheria_stt_model') || 'whisper-large-v3-turbo';
+    document.querySelectorAll('.stt-model-card').forEach(card => {
+      const m = card.getAttribute('data-stt-model');
+      if (m === currentSttModel) {
+        card.className = 'stt-model-card p-3 rounded-xl border text-left transition cursor-pointer bg-rose-950/60 border-rose-500/80 shadow-md shadow-rose-950/60';
+      } else {
+        card.className = 'stt-model-card p-3 rounded-xl border text-left transition cursor-pointer bg-white/[0.03] hover:bg-white/[0.06] border-white/10';
+      }
+    });
+
+    // Sync STT Language chips
+    const currentSttLang = sttLangSelect?.value || localStorage.getItem('aetheria_stt_lang') || 'auto';
+    document.querySelectorAll('.stt-lang-chip').forEach(chip => {
+      const l = chip.getAttribute('data-lang');
+      if (l === currentSttLang) {
+        chip.className = 'stt-lang-chip px-3.5 py-2 rounded-xl text-xs font-semibold transition cursor-pointer bg-rose-600 text-white shadow-sm flex items-center gap-1.5';
+      } else {
+        chip.className = 'stt-lang-chip px-3.5 py-2 rounded-xl text-xs font-semibold transition cursor-pointer bg-white/[0.04] hover:bg-white/[0.08] text-slate-300 hover:text-white border border-white/10 flex items-center gap-1.5';
+      }
+    });
+  }
+
+  // Visual Listeners (Zero OS native dropdowns!)
+  document.querySelectorAll('.eleven-voice-card').forEach(card => {
+    card.addEventListener('click', () => {
+      const v = card.getAttribute('data-voice');
+      if (v) {
+        if (voiceIdInput) voiceIdInput.value = v;
+        localStorage.setItem('aetheria_voice_id', v);
+        syncVoiceUiPanels();
+        showNotification(`✓ Voice selected: ${card.querySelector('.font-bold')?.textContent || v}`);
+      }
+    });
+  });
+
+  document.querySelectorAll('.openai-voice-card').forEach(card => {
+    card.addEventListener('click', () => {
+      const arch = card.getAttribute('data-arch');
+      if (arch) {
+        if (openaiVoiceSelect) openaiVoiceSelect.value = arch;
+        localStorage.setItem('aetheria_openai_voice', arch);
+        syncVoiceUiPanels();
+        showNotification(`✓ Voice archetype: ${arch.toUpperCase()}`);
+      }
+    });
+  });
+
+  document.querySelectorAll('.openai-model-toggle-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const m = btn.getAttribute('data-tts-model');
+      if (m) {
+        if (openaiTtsModelSelect) openaiTtsModelSelect.value = m;
+        localStorage.setItem('aetheria_openai_tts_model', m);
+        syncVoiceUiPanels();
+      }
+    });
+  });
+
+  document.querySelectorAll('.stt-model-card').forEach(card => {
+    card.addEventListener('click', () => {
+      const m = card.getAttribute('data-stt-model');
+      if (m) {
+        if (sttModelSelect) sttModelSelect.value = m;
+        localStorage.setItem('aetheria_stt_model', m);
+        syncVoiceUiPanels();
+        showNotification(`✓ Model selected: ${m}`);
+      }
+    });
+  });
+
+  document.querySelectorAll('.stt-lang-chip').forEach(chip => {
+    chip.addEventListener('click', () => {
+      const l = chip.getAttribute('data-lang');
+      if (l) {
+        if (sttLangSelect) sttLangSelect.value = l;
+        localStorage.setItem('aetheria_stt_lang', l);
+        syncVoiceUiPanels();
+        showNotification(`✓ Language set: ${chip.textContent.trim()}`);
+      }
+    });
+  });
+
+  // Connect Buttons (Progressive Disclosure)
+  ttsConnectConfirmBtn?.addEventListener('click', () => {
+    const val = voiceApiKey?.value.trim() || '';
+    if (!val) {
+      showNotification('⚠️ Please enter an API key first.', 'warning');
+      voiceApiKey?.focus();
+      return;
+    }
+    localStorage.setItem('aetheria_voice_key', val);
+    syncVoiceUiPanels();
+    showNotification('✓ Speech engine API Key connected successfully!');
+  });
+
+  ttsQuickReuseKeyBtn?.addEventListener('click', () => {
+    const openaiKey = localStorage.getItem('aetheria_key_openai') || '';
+    if (openaiKey) {
+      if (voiceApiKey) voiceApiKey.value = openaiKey;
+      localStorage.setItem('aetheria_voice_key', openaiKey);
       syncVoiceUiPanels();
-      showNotification('✓ Copied OpenAI API Key to Voice Settings!');
+      showNotification('✓ Connected OpenAI Key from Text Engine!');
     }
   });
 
-  copyTextKeyToSttBtn?.addEventListener('click', () => {
-    const prov = sttProviderSelect?.value || 'groq';
-    const k = (prov === 'groq' ? localStorage.getItem('aetheria_key_groq') : localStorage.getItem('aetheria_key_openai')) || '';
-    if (k && sttApiKey) {
-      sttApiKey.value = k;
-      localStorage.setItem('aetheria_stt_key', k);
+  sttConnectConfirmBtn?.addEventListener('click', () => {
+    const val = sttApiKey?.value.trim() || '';
+    if (!val) {
+      showNotification('⚠️ Please enter an API key first.', 'warning');
+      sttApiKey?.focus();
+      return;
+    }
+    localStorage.setItem('aetheria_stt_key', val);
+    syncVoiceUiPanels();
+    updateMicButtonState();
+    showNotification('✓ Voice input API Key connected successfully!');
+  });
+
+  sttQuickReuseKeyBtn?.addEventListener('click', () => {
+    const sttId = sttProviderSelect?.value || 'groq';
+    const key = (sttId === 'groq' ? localStorage.getItem('aetheria_key_groq') : localStorage.getItem('aetheria_key_openai')) || '';
+    if (key) {
+      if (sttApiKey) sttApiKey.value = key;
+      localStorage.setItem('aetheria_stt_key', key);
       syncVoiceUiPanels();
       updateMicButtonState();
-      showNotification(`✓ Copied ${prov.toUpperCase()} API Key to Voice Input!`);
+      showNotification(`✓ Connected ${sttId.toUpperCase()} Key from Text Engine!`);
     }
   });
 
@@ -7363,21 +8043,36 @@ const { character } = Astro.props;
     toggleSttKeyVisibilityBtn.textContent = isPass ? 'Hide' : 'Show';
   });
 
-  document.querySelectorAll('.quick-voice-pill').forEach(btn => {
-    btn.addEventListener('click', () => {
-      const v = btn.getAttribute('data-voice');
-      if (v && voiceIdInput) {
-        voiceIdInput.value = v;
-        localStorage.setItem('aetheria_voice_id', v);
-        showNotification(`✓ Voice selected: ${btn.textContent.trim()}`);
-      }
-    });
+  // Test Buttons with Connection Verification
+  testVoiceBtn?.addEventListener('click', async () => {
+    const prov = voiceProviderSelect?.value || 'browser';
+    const key = (voiceApiKey?.value || localStorage.getItem('aetheria_voice_key') || '').trim();
+    const ttsObj = TTS_CATALOG.find(x => x.id === prov) || TTS_CATALOG[0];
+
+    if (ttsObj.needsKey && !key) {
+      showNotification('🔒 Please connect your API key first to test voice synthesis.', 'warning');
+      voiceApiKey?.focus();
+      return;
+    }
+
+    const rate = parseFloat(sliderVoiceRate?.value || '1.0');
+    const pitch = parseFloat(sliderVoicePitch?.value || '1.0');
+    const testPhrase = `Greetings. This is a voice synthesis test for ${activeChar.name}. How do I sound to you?`;
+    
+    showNotification('Playing voice test...');
+    speak(testPhrase, testVoiceBtn);
   });
 
-  // Live STT test
+  // Live STT Test Button with Connection Verification
   let sttTestMediaRecorder = null;
   let sttTestChunks = [];
   testSttBtn?.addEventListener('click', async () => {
+    if (!isSttReady()) {
+      showNotification('🔒 Please connect your STT API key first to test recording.', 'warning');
+      sttApiKey?.focus();
+      return;
+    }
+
     if (!navigator.mediaDevices?.getUserMedia) {
       showNotification('⚠️ Microphone access is not supported by your browser.', 'warning');
       return;
@@ -7397,15 +8092,15 @@ const { character } = Astro.props;
         if (testSttBtnLabel) testSttBtnLabel.textContent = 'Transcribing...';
         try {
           const text = await transcribeAudioBlob(audioBlob);
-          if (sttTestOutputBox && sttTestOutputText) {
+          if (sttTestOutputBox) {
             sttTestOutputBox.classList.remove('hidden');
-            sttTestOutputText.textContent = text ? `"${text}"` : "(No speech detected or empty audio)";
+            sttTestOutputBox.textContent = text ? `"${text}"` : "(No speech detected or empty audio)";
           }
           showNotification('✓ Voice input transcribed successfully!');
         } catch (err) {
-          if (sttTestOutputBox && sttTestOutputText) {
+          if (sttTestOutputBox) {
             sttTestOutputBox.classList.remove('hidden');
-            sttTestOutputText.textContent = `Error: ${err.message || 'Transcription failed'}`;
+            sttTestOutputBox.textContent = `Error: ${err.message || 'Transcription failed'}`;
           }
         } finally {
           testSttBtn.disabled = false;
@@ -7443,8 +8138,10 @@ const { character } = Astro.props;
       endpoint = 'https://api.groq.com/openai/v1/audio/transcriptions';
     } else if (prov === 'openai') {
       endpoint = 'https://api.openai.com/v1/audio/transcriptions';
-    } else if (prov === 'custom' && customUrl) {
-      endpoint = customUrl;
+    } else if (prov === 'faster-whisper') {
+      endpoint = 'http://localhost:8000/v1/audio/transcriptions';
+    } else if (prov === 'custom-stt' || prov === 'custom') {
+      endpoint = customUrl || 'http://localhost:8000/v1/audio/transcriptions';
     } else {
       endpoint = 'https://api.groq.com/openai/v1/audio/transcriptions';
     }
@@ -7458,11 +8155,12 @@ const { character } = Astro.props;
       formData.append('language', lang);
     }
 
+    const headers = {};
+    if (apiKey) headers['Authorization'] = `Bearer ${apiKey}`;
+
     const res = await fetch(endpoint, {
       method: 'POST',
-      headers: {
-        'Authorization': `Bearer ${apiKey}`
-      },
+      headers,
       body: formData
     });
 
@@ -7482,7 +8180,12 @@ const { character } = Astro.props;
 
   function isSttReady() {
     const prov = localStorage.getItem('aetheria_stt_provider') || 'groq';
-    if (prov === 'browser') return true;
+    if (prov === 'browser' || prov === 'browser-stt') return true;
+    if (prov === 'faster-whisper') return true;
+    if (prov === 'custom-stt' || prov === 'custom') {
+      const url = (localStorage.getItem('aetheria_stt_custom_url') || '').trim();
+      return Boolean(url);
+    }
     let key = (localStorage.getItem('aetheria_stt_key') || '').trim();
     if (!key) {
       if (prov === 'groq') key = (localStorage.getItem('aetheria_key_groq') || localStorage.getItem('aetheria_text_key') || '').trim();
@@ -7626,6 +8329,7 @@ const { character } = Astro.props;
       if (sttCustomUrl) localStorage.setItem('aetheria_stt_custom_url', sttCustomUrl.value.trim());
       if (sttModelSelect) localStorage.setItem('aetheria_stt_model', sttModelSelect.value);
       if (sttLangSelect) localStorage.setItem('aetheria_stt_lang', sttLangSelect.value);
+      syncVoiceUiPanels();
       updateMicButtonState();
 
       if (imageProviderSelect) localStorage.setItem('aetheria_image_provider', imageProviderSelect.value);
