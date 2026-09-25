@@ -797,48 +797,52 @@ const { character } = Astro.props;
                 <!-- 2. EXPERT MANUAL PANE (Hidden in wizard mode) -->
                 <div id="manual-pane" class="space-y-4 hidden" dir="ltr" lang="en">
 
-                  <!-- 1. API Profiles Toolbar (Flat, Sleek, Un-nested) -->
-                  <div class="p-3 rounded-2xl bg-white/[0.03] border border-white/[0.08] flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-2.5" dir="ltr" lang="en">
-                    <div class="flex items-center gap-2 min-w-0">
-                      <div class="w-6 h-6 rounded-lg bg-purple-500/20 border border-purple-500/30 flex items-center justify-center shrink-0">
-                        <Tag class="w-3.5 h-3.5 text-purple-400" />
+                  <!-- 1. API Profiles Toolbar (Clean 2-row Responsive Layout) -->
+                  <div class="p-3 rounded-2xl bg-white/[0.03] border border-white/[0.08] flex flex-col gap-2.5" dir="ltr" lang="en">
+                    <div class="flex items-center justify-between gap-2">
+                      <div class="flex items-center gap-2 min-w-0">
+                        <div class="w-6 h-6 rounded-lg bg-purple-500/20 border border-purple-500/30 flex items-center justify-center shrink-0">
+                          <Tag class="w-3.5 h-3.5 text-purple-400" />
+                        </div>
+                        <span class="text-xs font-semibold text-slate-300 shrink-0">API Profile</span>
+                        <span id="active-profile-badge" class="hidden text-[10px] px-2 py-0.5 rounded-full bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 font-semibold font-mono truncate max-w-[120px]">Active</span>
                       </div>
-                      <span class="text-xs font-semibold text-slate-300 shrink-0">API Profile:</span>
+                      <div class="flex items-center gap-1.5 shrink-0">
+                        <button 
+                          type="button" 
+                          id="btn-show-save-profile" 
+                          class="px-2.5 py-1.5 rounded-lg bg-purple-600/80 hover:bg-purple-600 text-white text-xs font-semibold flex items-center gap-1 transition cursor-pointer active:scale-95"
+                          title="Save current provider & credentials as a new named profile"
+                        >
+                          <Plus class="w-3.5 h-3.5" />
+                          <span>Save Profile</span>
+                        </button>
+                        <button 
+                          type="button" 
+                          id="btn-update-active-profile" 
+                          class="hidden px-2.5 py-1.5 rounded-lg bg-purple-950/40 hover:bg-purple-900/60 text-purple-300 hover:text-white text-xs font-medium border border-purple-500/30 transition cursor-pointer" 
+                          title="Update active profile with latest changes"
+                        >
+                          <Check class="w-3.5 h-3.5 inline mr-0.5" />
+                          <span>Update</span>
+                        </button>
+                        <button 
+                          type="button" 
+                          id="btn-delete-active-profile" 
+                          class="hidden px-2 py-1.5 rounded-lg bg-rose-500/10 hover:bg-rose-500/20 text-rose-300 border border-rose-500/20 text-xs font-medium transition cursor-pointer" 
+                          title="Delete this profile"
+                        >
+                          <Trash2 class="w-3.5 h-3.5 inline" />
+                        </button>
+                      </div>
+                    </div>
+                    <div class="w-full">
                       <select 
                         id="api-profile-select" 
-                        class="flex-1 sm:max-w-xs px-2.5 py-1.5 rounded-lg bg-black/60 border border-purple-500/30 text-xs text-white outline-none focus:border-purple-400 font-medium cursor-pointer transition truncate"
+                        class="w-full px-3 py-2 rounded-xl bg-black/60 border border-purple-500/30 text-xs text-white outline-none focus:border-purple-400 font-medium cursor-pointer transition truncate box-border"
                       >
-                        <option value="">Direct Mode (Active Provider)</option>
+                        <option value="">Direct Mode (No Profile)</option>
                       </select>
-                      <span id="active-profile-badge" class="hidden text-[10px] px-2 py-0.5 rounded-full bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 font-semibold font-mono shrink-0">Active</span>
-                    </div>
-                    <div class="flex items-center gap-1.5 shrink-0 self-end sm:self-auto">
-                      <button 
-                        type="button" 
-                        id="btn-show-save-profile" 
-                        class="px-2.5 py-1.5 rounded-lg bg-purple-600/80 hover:bg-purple-600 text-white text-xs font-semibold flex items-center gap-1 transition cursor-pointer active:scale-95"
-                        title="Save current provider & credentials as a new named profile"
-                      >
-                        <Plus class="w-3.5 h-3.5" />
-                        <span>Save Profile</span>
-                      </button>
-                      <button 
-                        type="button" 
-                        id="btn-update-active-profile" 
-                        class="hidden px-2.5 py-1.5 rounded-lg bg-purple-950/40 hover:bg-purple-900/60 text-purple-300 hover:text-white text-xs font-medium border border-purple-500/30 transition cursor-pointer" 
-                        title="Update active profile with latest changes"
-                      >
-                        <Check class="w-3.5 h-3.5 inline mr-0.5" />
-                        <span>Update</span>
-                      </button>
-                      <button 
-                        type="button" 
-                        id="btn-delete-active-profile" 
-                        class="hidden px-2 py-1.5 rounded-lg bg-rose-500/10 hover:bg-rose-500/20 text-rose-300 border border-rose-500/20 text-xs font-medium transition cursor-pointer" 
-                        title="Delete this profile"
-                      >
-                        <Trash2 class="w-3.5 h-3.5 inline" />
-                      </button>
                     </div>
                   </div>
 
@@ -1388,12 +1392,12 @@ const { character } = Astro.props;
 
                   <div>
                     <label class="block text-xs font-semibold text-slate-300 mb-1.5">Inference Steps</label>
-                    <input id="image-steps-input" type="number" min="4" max="50" value="20" class="w-full px-3.5 py-2 rounded-xl bg-white/[0.05] border border-white/10 text-xs text-white outline-none" />
+                    <input id="image-steps-input" dir="ltr" lang="en" type="text" inputmode="numeric" autocomplete="off" spellcheck="false" value="20" class="w-full px-3.5 py-2 rounded-xl bg-white/[0.05] border border-white/10 text-xs text-white outline-none font-mono force-ltr-numeric" />
                   </div>
 
                   <div>
                     <label class="block text-xs font-semibold text-slate-300 mb-1.5">Guidance / CFG Scale</label>
-                    <input id="image-cfg-input" type="number" min="1.0" max="15.0" step="0.5" value="3.5" class="w-full px-3.5 py-2 rounded-xl bg-white/[0.05] border border-white/10 text-xs text-white outline-none" />
+                    <input id="image-cfg-input" dir="ltr" lang="en" type="text" inputmode="decimal" autocomplete="off" spellcheck="false" value="3.5" class="w-full px-3.5 py-2 rounded-xl bg-white/[0.05] border border-white/10 text-xs text-white outline-none font-mono force-ltr-numeric" />
                   </div>
                 </div>
 
@@ -1688,7 +1692,7 @@ const { character } = Astro.props;
 
                   <div>
                     <label class="block text-[11px] font-semibold text-slate-300 mb-1">Priority / Insertion Order</label>
-                    <input id="lore-input-order" type="number" value="100" class="w-full px-3 py-2 rounded-xl bg-white/[0.05] border border-white/10 text-xs text-white outline-none" />
+                    <input id="lore-input-order" dir="ltr" lang="en" type="text" inputmode="numeric" autocomplete="off" spellcheck="false" value="100" class="w-full px-3 py-2 rounded-xl bg-white/[0.05] border border-white/10 text-xs text-white outline-none font-mono force-ltr-numeric" />
                   </div>
 
                   <div class="flex items-center gap-3 pt-4">
@@ -4195,20 +4199,13 @@ const { character } = Astro.props;
 
   // Helper: Set empty state for model dropdown when not connected
   function setEmptyModelDropdown() {
-    const prov = textProviderSelect?.value || 'groq';
-    const defaults = DEFAULT_PROVIDER_MODELS[prov];
-    if (defaults && defaults.length > 0) {
-      populateModelDropdown(defaults, defaults[0], false);
-      if (modelCountBadge) modelCountBadge.textContent = `${defaults.length} Curated Models`;
-      return;
-    }
     currentSyncedModels = [];
     if (!textModelSelect) return;
-    textModelSelect.innerHTML = '<option value="" disabled selected>No API connected — Enter API key &amp; fetch models</option>';
+    textModelSelect.innerHTML = '<option value="" disabled selected>No API Key — Enter key to load models</option>';
     textModelSelect.disabled = true;
     if (textModelInput) textModelInput.value = '';
     updateCustomModelTrigger('');
-    if (modelCountBadge) modelCountBadge.textContent = 'Not connected';
+    if (modelCountBadge) modelCountBadge.textContent = '0 Models';
     if (dynamicPresetsContainer) {
       dynamicPresetsContainer.innerHTML = '<span class="text-[10px] text-slate-500 italic">No models loaded. Connect API key to sync.</span>';
     }
@@ -4615,7 +4612,7 @@ const { character } = Astro.props;
 
     const defaultOpt = document.createElement('option');
     defaultOpt.value = '';
-    defaultOpt.textContent = '-- Direct Provider Mode (No Profile Selected) --';
+    defaultOpt.textContent = 'Direct Mode (No Profile)';
     if (!currentActive) defaultOpt.selected = true;
     apiProfileSelect.appendChild(defaultOpt);
 
@@ -4868,25 +4865,29 @@ const { character } = Astro.props;
     if (textBaseUrl) textBaseUrl.value = savedUrl;
     localStorage.setItem('aetheria_text_base_url', savedUrl);
 
-    // 3. LOAD incoming provider's models (NEVER keep old provider's models!)
-    let modelsList = [];
-    const cachedRaw = localStorage.getItem('aetheria_synced_models_' + newProv);
-    if (cachedRaw) {
-      try { modelsList = JSON.parse(cachedRaw); } catch(e) {}
-    }
-    if (!Array.isArray(modelsList) || modelsList.length === 0) {
-      modelsList = DEFAULT_PROVIDER_MODELS[newProv] || ['default'];
-    }
+    // 3. LOAD incoming provider's models (Clear if key is required but missing)
+    const requiresKey = conf.hasKey && !conf.isKeyOptional;
+    if (requiresKey && !savedKey.trim()) {
+      setEmptyModelDropdown();
+      localStorage.removeItem('aetheria_text_model');
+    } else {
+      let modelsList = [];
+      const cachedRaw = localStorage.getItem('aetheria_synced_models_' + newProv);
+      if (cachedRaw) {
+        try { modelsList = JSON.parse(cachedRaw); } catch(e) {}
+      }
+      if (!Array.isArray(modelsList) || modelsList.length === 0) {
+        modelsList = DEFAULT_PROVIDER_MODELS[newProv] || ['default'];
+      }
 
-    // 4. Determine selected model for new provider
-    const savedModelForProv = localStorage.getItem('aetheria_model_' + newProv);
-    const selectedModel = (savedModelForProv && modelsList.includes(savedModelForProv))
-      ? savedModelForProv
-      : modelsList[0];
+      const savedModelForProv = localStorage.getItem('aetheria_model_' + newProv);
+      const selectedModel = (savedModelForProv && modelsList.includes(savedModelForProv))
+        ? savedModelForProv
+        : modelsList[0];
 
-    populateModelDropdown(modelsList, selectedModel, false);
-    updateDynamicPresets(modelsList);
-    localStorage.setItem('aetheria_text_model', selectedModel);
+      populateModelDropdown(modelsList, selectedModel, false);
+      localStorage.setItem('aetheria_text_model', selectedModel);
+    }
 
     // 5. Update UI controls & badges
     syncProviderVisibility();
@@ -5033,6 +5034,10 @@ const { character } = Astro.props;
     if (imageProviderSelect) imageProviderSelect.value = imgProv;
     const imgKey = localStorage.getItem('aetheria_image_key') || '';
     if (imageApiKey) imageApiKey.value = imgKey;
+    const imgSteps = Math.round(toAsciiNumber(localStorage.getItem('aetheria_image_steps'), 20));
+    if (imageStepsInput) imageStepsInput.value = String(imgSteps);
+    const imgCfg = toAsciiNumber(localStorage.getItem('aetheria_image_cfg'), 3.5);
+    if (imageCfgInput) imageCfgInput.value = String(imgCfg);
 
     // 5. Video settings
     const vidProv = localStorage.getItem('aetheria_video_provider') || 'fal-kling';
@@ -5093,40 +5098,53 @@ const { character } = Astro.props;
     const profiles = getSavedApiProfiles();
     const activeProf = profiles.find(p => p.id === activeProfId && p.provider === prov);
 
-    let modelsList = [];
-    if (activeProf && Array.isArray(activeProf.syncedModels) && activeProf.syncedModels.length > 0) {
-      modelsList = activeProf.syncedModels;
+    const requiresKey = conf.hasKey && !conf.isKeyOptional;
+    const currentKey = (textApiKey?.value.trim() || (activeProf ? activeProf.apiKey : '') || localStorage.getItem('aetheria_key_' + prov) || '').trim();
+
+    if (requiresKey && !currentKey) {
+      setEmptyModelDropdown();
+      localStorage.removeItem('aetheria_text_model');
+      if (pingProviderName) pingProviderName.textContent = conf.name;
+      if (pingLatencyText) pingLatencyText.textContent = 'API Key Required • Enter Key';
+      if (pingIndicatorDot) pingIndicatorDot.className = 'w-2 h-2 rounded-full bg-amber-400';
     } else {
-      const cachedModelsRaw = localStorage.getItem('aetheria_synced_models_' + prov);
-      if (cachedModelsRaw) {
-        try {
-          modelsList = JSON.parse(cachedModelsRaw);
-        } catch (e) {}
+      let modelsList = [];
+      if (activeProf && Array.isArray(activeProf.syncedModels) && activeProf.syncedModels.length > 0) {
+        modelsList = activeProf.syncedModels;
+      } else {
+        const cachedModelsRaw = localStorage.getItem('aetheria_synced_models_' + prov);
+        if (cachedModelsRaw) {
+          try {
+            modelsList = JSON.parse(cachedModelsRaw);
+          } catch (e) {}
+        }
+        if (!Array.isArray(modelsList) || modelsList.length === 0) {
+          modelsList = DEFAULT_PROVIDER_MODELS[prov] || ['default'];
+        }
       }
-      if (!Array.isArray(modelsList) || modelsList.length === 0) {
-        modelsList = DEFAULT_PROVIDER_MODELS[prov] || ['default'];
+
+      let targetModel = '';
+      if (activeProf && activeProf.model) {
+        targetModel = activeProf.model;
+      } else {
+        targetModel = localStorage.getItem('aetheria_model_' + prov) || localStorage.getItem('aetheria_text_model') || '';
       }
-    }
 
-    let targetModel = '';
-    if (activeProf && activeProf.model) {
-      targetModel = activeProf.model;
-    } else {
-      targetModel = localStorage.getItem('aetheria_model_' + prov) || localStorage.getItem('aetheria_text_model') || '';
-    }
+      const selectedModel = (targetModel && modelsList.includes(targetModel)) ? targetModel : modelsList[0];
+      populateModelDropdown(modelsList, selectedModel, false);
+      localStorage.setItem('aetheria_text_model', selectedModel);
+      localStorage.setItem('aetheria_model_' + prov, selectedModel);
 
-    const selectedModel = (targetModel && modelsList.includes(targetModel)) ? targetModel : modelsList[0];
-    populateModelDropdown(modelsList, selectedModel, false);
-    updateDynamicPresets(modelsList);
-    localStorage.setItem('aetheria_text_model', selectedModel);
-    localStorage.setItem('aetheria_model_' + prov, selectedModel);
-
-    // Health Check widget update
-    if (pingProviderName) {
-      pingProviderName.textContent = conf.name;
-    }
-    if (pingLatencyText) {
-      pingLatencyText.textContent = 'Configured • Ready to test';
+      // Health Check widget update
+      if (pingProviderName) {
+        pingProviderName.textContent = conf.name;
+      }
+      if (pingLatencyText) {
+        pingLatencyText.textContent = 'Configured • Ready to test';
+      }
+      if (pingIndicatorDot) {
+        pingIndicatorDot.className = 'w-2 h-2 rounded-full bg-emerald-400';
+      }
     }
 
     // Voice & Image tabs
@@ -6153,6 +6171,8 @@ const { character } = Astro.props;
       }
     }
 
+    syncProviderVisibility();
+
     if (key.length >= 10) {
       const cached = localStorage.getItem('aetheria_synced_models_' + prov);
       if (!cached) {
@@ -6177,6 +6197,29 @@ const { character } = Astro.props;
         saveApiProfilesToStorage(profs);
       }
     }
+  });
+
+  // Real-time ASCII digit normalization for image and lore inputs
+  imageStepsInput?.addEventListener('input', () => {
+    const raw = String(imageStepsInput.value || '');
+    const converted = raw.replace(/[۰-۹]/g, d => '۰۱۲۳۴۵۶۷۸۹'.indexOf(d))
+                         .replace(/[٠-٩]/g, d => '٠١٢٣٤٥٦٧٨٩'.indexOf(d));
+    if (converted !== raw) imageStepsInput.value = converted;
+  });
+
+  imageCfgInput?.addEventListener('input', () => {
+    const raw = String(imageCfgInput.value || '');
+    const converted = raw.replace(/[۰-۹]/g, d => '۰۱۲۳۴۵۶۷۸۹'.indexOf(d))
+                         .replace(/[٠-٩]/g, d => '٠١٢٣٤٥٦٧٨٩'.indexOf(d));
+    if (converted !== raw) imageCfgInput.value = converted;
+  });
+
+  const loreInputOrder = document.getElementById('lore-input-order');
+  loreInputOrder?.addEventListener('input', () => {
+    const raw = String(loreInputOrder.value || '');
+    const converted = raw.replace(/[۰-۹]/g, d => '۰۱۲۳۴۵۶۷۸۹'.indexOf(d))
+                         .replace(/[٠-٩]/g, d => '٠١٢٣٤٥٦٧٨٩'.indexOf(d));
+    if (converted !== raw) loreInputOrder.value = converted;
   });
 
   // Manual model select and input changes
@@ -6405,8 +6448,8 @@ const { character } = Astro.props;
       if (imageProviderSelect) localStorage.setItem('aetheria_image_provider', imageProviderSelect.value);
       if (imageApiKey) localStorage.setItem('aetheria_image_key', imageApiKey.value.trim());
       if (imageAspectSelect) localStorage.setItem('aetheria_image_aspect', imageAspectSelect.value);
-      if (imageStepsInput) localStorage.setItem('aetheria_image_steps', imageStepsInput.value);
-      if (imageCfgInput) localStorage.setItem('aetheria_image_cfg', imageCfgInput.value);
+      if (imageStepsInput) localStorage.setItem('aetheria_image_steps', String(Math.round(toAsciiNumber(imageStepsInput.value, 20))));
+      if (imageCfgInput) localStorage.setItem('aetheria_image_cfg', String(toAsciiNumber(imageCfgInput.value, 3.5)));
       if (toggleImageAnchor) localStorage.setItem('aetheria_image_anchor', toggleImageAnchor.checked ? 'true' : 'false');
       if (imageNegativePrompt) localStorage.setItem('aetheria_image_negative', imageNegativePrompt.value.trim());
 
