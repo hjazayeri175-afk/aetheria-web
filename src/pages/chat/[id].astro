@@ -50,7 +50,8 @@ import {
   Flag,
   Rewind,
   ArrowUp,
-  Mic
+  Mic,
+  MoreVertical
 } from '@lucide/astro';
 
 export function getStaticPaths() {
@@ -171,10 +172,109 @@ const { character } = Astro.props;
           </div>
         </div>
 
-        <!-- Chat Settings Button -->
+        <!-- Unified Header Overflow Menu (⋮) for Mobile & Secondary Controls -->
+        <div class="relative">
+          <button 
+            id="chat-header-overflow-btn"
+            type="button"
+            class="p-2 sm:px-2.5 rounded-xl bg-white/[0.04] hover:bg-white/[0.08] border border-white/[0.08] text-slate-300 hover:text-white text-xs transition cursor-pointer active:scale-95 flex items-center justify-center"
+            title="More Options"
+            aria-label="More Options"
+          >
+            <MoreVertical class="w-4 h-4 text-slate-300" />
+          </button>
+
+          <!-- Overflow Dropdown Menu Popover -->
+          <div 
+            id="chat-header-overflow-menu" 
+            class="hidden absolute right-0 top-full mt-2 w-64 rounded-2xl bg-[#1e1f24] border border-white/[0.12] shadow-2xl shadow-black/90 p-1.5 z-50 backdrop-blur-2xl transition-all select-none text-left"
+          >
+            <!-- 1. Settings & Model Configuration -->
+            <button 
+              id="overflow-item-settings"
+              type="button"
+              class="w-full px-3 py-2.5 rounded-xl hover:bg-white/[0.06] text-left flex items-center gap-2.5 text-xs text-slate-200 hover:text-white transition cursor-pointer"
+            >
+              <div class="w-7 h-7 rounded-lg bg-purple-500/15 border border-purple-500/25 text-purple-400 flex items-center justify-center shrink-0">
+                <SlidersHorizontal class="w-3.5 h-3.5" />
+              </div>
+              <div class="flex-1 min-w-0">
+                <div class="font-medium">Settings & AI Models</div>
+                <div class="text-[10px] text-slate-400">BYOK, model, prompt parameters</div>
+              </div>
+            </button>
+
+            <!-- 2. Character Details / Lore Sidebar -->
+            <button 
+              id="overflow-item-lore"
+              type="button"
+              class="w-full px-3 py-2.5 rounded-xl hover:bg-white/[0.06] text-left flex items-center gap-2.5 text-xs text-slate-200 hover:text-white transition cursor-pointer"
+            >
+              <div class="w-7 h-7 rounded-lg bg-indigo-500/15 border border-indigo-500/25 text-indigo-400 flex items-center justify-center shrink-0">
+                <PanelLeft class="w-3.5 h-3.5" />
+              </div>
+              <div class="flex-1 min-w-0">
+                <div class="font-medium">Character Profile</div>
+                <div class="text-[10px] text-slate-400">View lorebook, traits & scenario</div>
+              </div>
+            </button>
+
+            <!-- 3. Voice Read Aloud Toggle -->
+            <button 
+              id="overflow-item-tts"
+              type="button"
+              class="w-full px-3 py-2.5 rounded-xl hover:bg-white/[0.06] text-left flex items-center justify-between gap-2.5 text-xs text-slate-200 hover:text-white transition cursor-pointer"
+            >
+              <div class="flex items-center gap-2.5 min-w-0">
+                <div class="w-7 h-7 rounded-lg bg-emerald-500/15 border border-emerald-500/25 text-emerald-400 flex items-center justify-center shrink-0">
+                  <Volume2 class="w-3.5 h-3.5" />
+                </div>
+                <div>
+                  <div class="font-medium">Voice Narration</div>
+                  <div id="overflow-tts-status-text" class="text-[10px] text-slate-400">Auto-read speech</div>
+                </div>
+              </div>
+              <span id="overflow-tts-status-pill" class="px-2 py-0.5 rounded-full text-[10px] font-mono bg-white/[0.06] text-slate-400">OFF</span>
+            </button>
+
+            <div class="my-1 border-t border-white/[0.08]"></div>
+
+            <!-- 4. Export Conversation -->
+            <button 
+              id="overflow-item-export"
+              type="button"
+              class="w-full px-3 py-2.5 rounded-xl hover:bg-white/[0.06] text-left flex items-center gap-2.5 text-xs text-slate-200 hover:text-white transition cursor-pointer"
+            >
+              <div class="w-7 h-7 rounded-lg bg-sky-500/15 border border-sky-500/25 text-sky-400 flex items-center justify-center shrink-0">
+                <Download class="w-3.5 h-3.5" />
+              </div>
+              <div class="flex-1 min-w-0">
+                <div class="font-medium">Export Chat</div>
+                <div class="text-[10px] text-slate-400">Download Markdown file</div>
+              </div>
+            </button>
+
+            <!-- 5. Clear Chat History -->
+            <button 
+              id="overflow-item-clear"
+              type="button"
+              class="w-full px-3 py-2.5 rounded-xl hover:bg-red-500/15 text-left flex items-center gap-2.5 text-xs text-rose-300 hover:text-rose-200 transition cursor-pointer group"
+            >
+              <div class="w-7 h-7 rounded-lg bg-red-500/15 border border-red-500/25 text-red-400 flex items-center justify-center shrink-0 group-hover:bg-red-500/30">
+                <Trash2 class="w-3.5 h-3.5" />
+              </div>
+              <div class="flex-1 min-w-0">
+                <div class="font-medium text-rose-300">Clear Chat</div>
+                <div class="text-[10px] text-rose-400/70">Reset timeline to start</div>
+              </div>
+            </button>
+          </div>
+        </div>
+
+        <!-- Chat Settings Button (Direct shortcut on tablet / desktop) -->
         <button 
           id="chat-byok-btn"
-          class="flex items-center gap-1.5 p-2 sm:px-3 sm:py-1.5 rounded-xl bg-purple-950/50 hover:bg-purple-900/60 border border-purple-500/40 text-purple-200 text-xs font-medium transition cursor-pointer shadow-lg shadow-purple-950/50 active:scale-95 group"
+          class="hidden md:flex items-center gap-1.5 p-2 sm:px-3 sm:py-1.5 rounded-xl bg-purple-950/50 hover:bg-purple-900/60 border border-purple-500/40 text-purple-200 text-xs font-medium transition cursor-pointer shadow-lg shadow-purple-950/50 active:scale-95 group"
           title="Chat Preferences (Voice, Selfies & AI Settings)"
         >
           <SlidersHorizontal class="w-3.5 h-3.5 text-purple-400 group-hover:rotate-45 transition duration-300" />
@@ -184,7 +284,7 @@ const { character } = Astro.props;
         <!-- Toggle Lore Sidebar (Desktop / Mobile Drawer) -->
         <button 
           id="toggle-sidebar-btn"
-          class="p-2 rounded-xl bg-white/[0.04] hover:bg-white/[0.08] border border-white/[0.08] text-slate-400 hover:text-slate-200 text-xs transition cursor-pointer"
+          class="hidden md:flex p-2 rounded-xl bg-white/[0.04] hover:bg-white/[0.08] border border-white/[0.08] text-slate-400 hover:text-slate-200 text-xs transition cursor-pointer"
           title="Toggle Character Details"
         >
           <PanelLeft class="w-4 h-4 text-purple-400" />
@@ -193,7 +293,7 @@ const { character } = Astro.props;
         <!-- Voice Read Aloud Quick Toggle -->
         <button 
           id="toggle-tts-btn"
-          class="p-2 rounded-xl bg-white/[0.04] hover:bg-white/[0.08] border border-white/[0.08] text-slate-400 hover:text-purple-300 text-xs transition cursor-pointer"
+          class="hidden lg:flex p-2 rounded-xl bg-white/[0.04] hover:bg-white/[0.08] border border-white/[0.08] text-slate-400 hover:text-purple-300 text-xs transition cursor-pointer"
           title="Toggle Auto Voice Read Aloud"
         >
           <Volume2 id="tts-icon-on" class="w-4 h-4 text-purple-400 hidden" />
@@ -203,7 +303,7 @@ const { character } = Astro.props;
         <!-- Export Chat -->
         <button 
           id="export-chat-btn"
-          class="hidden sm:flex items-center gap-1.5 px-2.5 py-1.5 rounded-xl bg-white/[0.04] hover:bg-white/[0.08] border border-white/[0.08] text-slate-300 hover:text-white text-xs transition cursor-pointer"
+          class="hidden xl:flex items-center gap-1.5 px-2.5 py-1.5 rounded-xl bg-white/[0.04] hover:bg-white/[0.08] border border-white/[0.08] text-slate-300 hover:text-white text-xs transition cursor-pointer"
           title="Export Conversation (Markdown)"
         >
           <Download class="w-3.5 h-3.5 text-slate-400" />
@@ -213,7 +313,7 @@ const { character } = Astro.props;
         <!-- Clear Chat History -->
         <button 
           id="clear-chat-btn"
-          class="p-2 rounded-xl bg-white/[0.04] hover:bg-red-500/20 border border-white/[0.08] hover:border-red-500/30 text-slate-400 hover:text-red-400 text-xs transition cursor-pointer"
+          class="hidden xl:flex p-2 rounded-xl bg-white/[0.04] hover:bg-red-500/20 border border-white/[0.08] hover:border-red-500/30 text-slate-400 hover:text-red-400 text-xs transition cursor-pointer"
           title="Clear Conversation History"
         >
           <Trash2 class="w-4 h-4" />
@@ -1685,8 +1785,8 @@ const { character } = Astro.props;
 
         <!-- Bottom Chat Input Bar -->
         <div class="px-3 pt-2 pb-2.5 sm:px-6 sm:pt-2.5 sm:pb-4 border-t border-white/[0.08] bg-[#080a15]/95 backdrop-blur-xl shrink-0 w-full max-w-full">
-          <!-- In-Chat Multi-Modal & Action Toolbar -->
-          <div class="max-w-4xl mx-auto mb-2 flex items-center justify-between gap-1.5 overflow-x-auto no-scrollbar">
+          <!-- In-Chat Multi-Modal & Action Toolbar (Hidden: consolidated cleanly into the '+' menu) -->
+          <div class="hidden max-w-4xl mx-auto mb-2 items-center justify-between gap-1.5 overflow-x-auto no-scrollbar">
             <!-- Left: Generative Creative Tools -->
             <div class="flex items-center gap-1.5 shrink-0">
               <!-- 1. Request Selfie Photo -->
@@ -1754,59 +1854,85 @@ const { character } = Astro.props;
             <!-- Gemini-Style Floating Tools Popover (Triggered by + button) -->
             <div 
               id="chat-plus-menu" 
-              class="hidden absolute bottom-full left-0 mb-2.5 w-64 bg-[#1e1f24] border border-white/[0.08] rounded-2xl p-1.5 shadow-2xl shadow-black/70 backdrop-blur-xl z-50 flex flex-col gap-0.5"
+              class="hidden absolute bottom-full left-0 mb-3 w-72 bg-[#1e1f24] border border-white/[0.12] rounded-2xl p-1.5 shadow-2xl shadow-black/90 backdrop-blur-2xl z-50 flex flex-col gap-1 select-none"
             >
-              <div class="px-2.5 py-1.5 text-[10px] font-semibold uppercase tracking-wider text-neutral-400">Creative Actions & Tools</div>
+              <div class="px-3 py-1.5 text-[10px] font-semibold uppercase tracking-wider text-slate-400 border-b border-white/[0.06] mb-0.5">Roleplay & Media Tools</div>
+              
+              <!-- 1. Request Selfie Photo -->
               <button 
                 type="button" 
                 id="plus-action-selfie"
-                class="w-full px-2.5 py-2 rounded-xl hover:bg-white/[0.06] text-left flex items-center gap-2.5 text-xs text-neutral-200 hover:text-white transition cursor-pointer"
+                class="w-full px-2.5 py-2 rounded-xl hover:bg-white/[0.06] text-left flex items-center gap-2.5 text-xs text-slate-200 hover:text-white transition cursor-pointer"
               >
-                <div class="w-6 h-6 rounded-lg bg-pink-500/10 text-pink-400 flex items-center justify-center shrink-0">
+                <div class="w-7 h-7 rounded-lg bg-pink-500/15 border border-pink-500/25 text-pink-400 flex items-center justify-center shrink-0">
                   <Camera class="w-3.5 h-3.5" />
                 </div>
-                <div>
+                <div class="flex-1 min-w-0">
                   <div class="font-medium">Request Selfie</div>
-                  <div class="text-[10px] text-neutral-400">Character selfie generation</div>
+                  <div class="text-[10px] text-slate-400">Generate character portrait photo</div>
                 </div>
               </button>
+
+              <!-- 2. Request Living Video Clip -->
               <button 
                 type="button" 
                 id="plus-action-video"
-                class="w-full px-2.5 py-2 rounded-xl hover:bg-white/[0.06] text-left flex items-center gap-2.5 text-xs text-neutral-200 hover:text-white transition cursor-pointer"
+                class="w-full px-2.5 py-2 rounded-xl hover:bg-white/[0.06] text-left flex items-center gap-2.5 text-xs text-slate-200 hover:text-white transition cursor-pointer"
               >
-                <div class="w-6 h-6 rounded-lg bg-purple-500/10 text-purple-400 flex items-center justify-center shrink-0">
+                <div class="w-7 h-7 rounded-lg bg-purple-500/15 border border-purple-500/25 text-purple-400 flex items-center justify-center shrink-0">
                   <Video class="w-3.5 h-3.5" />
                 </div>
-                <div>
+                <div class="flex-1 min-w-0">
                   <div class="font-medium">Generate Video</div>
-                  <div class="text-[10px] text-neutral-400">Living motion portrait</div>
+                  <div class="text-[10px] text-slate-400">Living motion character clip</div>
                 </div>
               </button>
+
+              <!-- 3. Active Persona Switcher -->
               <button 
                 type="button" 
                 id="plus-action-persona"
-                class="w-full px-2.5 py-2 rounded-xl hover:bg-white/[0.06] text-left flex items-center gap-2.5 text-xs text-neutral-200 hover:text-white transition cursor-pointer"
+                class="w-full px-2.5 py-2 rounded-xl hover:bg-white/[0.06] text-left flex items-center gap-2.5 text-xs text-slate-200 hover:text-white transition cursor-pointer"
               >
-                <div class="w-6 h-6 rounded-lg bg-indigo-500/10 text-indigo-400 flex items-center justify-center shrink-0">
+                <div class="w-7 h-7 rounded-lg bg-indigo-500/15 border border-indigo-500/25 text-indigo-400 flex items-center justify-center shrink-0">
                   <User class="w-3.5 h-3.5" />
                 </div>
-                <div>
-                  <div class="font-medium">Switch Persona</div>
-                  <div class="text-[10px] text-neutral-400">Change your role/identity</div>
+                <div class="flex-1 min-w-0">
+                  <div class="font-medium flex items-center gap-1.5">
+                    <span>User Persona</span>
+                    <span id="plus-active-persona-badge" class="px-1.5 py-0.2 rounded-md bg-purple-500/20 text-purple-300 text-[10px] font-mono">You</span>
+                  </div>
+                  <div class="text-[10px] text-slate-400">Switch or customize persona</div>
                 </div>
               </button>
+
+              <!-- 4. Regenerate Reply -->
+              <button 
+                type="button" 
+                id="plus-action-retry"
+                class="w-full px-2.5 py-2 rounded-xl hover:bg-white/[0.06] text-left flex items-center gap-2.5 text-xs text-slate-200 hover:text-white transition cursor-pointer"
+              >
+                <div class="w-7 h-7 rounded-lg bg-cyan-500/15 border border-cyan-500/25 text-cyan-400 flex items-center justify-center shrink-0">
+                  <RefreshCw class="w-3.5 h-3.5" />
+                </div>
+                <div class="flex-1 min-w-0">
+                  <div class="font-medium">Regenerate Reply</div>
+                  <div class="text-[10px] text-slate-400">Reroll latest character response</div>
+                </div>
+              </button>
+
+              <!-- 5. Rewind Last Turn -->
               <button 
                 type="button" 
                 id="plus-action-rewind"
-                class="w-full px-2.5 py-2 rounded-xl hover:bg-white/[0.06] text-left flex items-center gap-2.5 text-xs text-neutral-200 hover:text-white transition cursor-pointer"
+                class="w-full px-2.5 py-2 rounded-xl hover:bg-white/[0.06] text-left flex items-center gap-2.5 text-xs text-slate-200 hover:text-white transition cursor-pointer"
               >
-                <div class="w-6 h-6 rounded-lg bg-amber-500/10 text-amber-400 flex items-center justify-center shrink-0">
+                <div class="w-7 h-7 rounded-lg bg-amber-500/15 border border-amber-500/25 text-amber-400 flex items-center justify-center shrink-0">
                   <Rewind class="w-3.5 h-3.5" />
                 </div>
-                <div>
+                <div class="flex-1 min-w-0">
                   <div class="font-medium">Rewind Turn</div>
-                  <div class="text-[10px] text-neutral-400">Step back to previous state</div>
+                  <div class="text-[10px] text-slate-400">Undo and step back one turn</div>
                 </div>
               </button>
             </div>
@@ -6089,6 +6215,17 @@ const { character } = Astro.props;
     if (toggleAutoplayVoice) {
       toggleAutoplayVoice.checked = ttsEnabled;
     }
+    const overflowTtsStatusPill = document.getElementById('overflow-tts-status-pill');
+    const overflowTtsStatusText = document.getElementById('overflow-tts-status-text');
+    if (overflowTtsStatusPill) {
+      overflowTtsStatusPill.textContent = ttsEnabled ? 'ON' : 'OFF';
+      overflowTtsStatusPill.className = ttsEnabled 
+        ? 'px-2 py-0.5 rounded-full text-[10px] font-mono bg-emerald-500/20 text-emerald-300 border border-emerald-500/30'
+        : 'px-2 py-0.5 rounded-full text-[10px] font-mono bg-white/[0.06] text-slate-400';
+    }
+    if (overflowTtsStatusText) {
+      overflowTtsStatusText.textContent = ttsEnabled ? 'Auto-read active' : 'Narration muted';
+    }
   }
 
   // Voice speech synthesis (ElevenLabs direct REST API or Browser Web Speech fallback)
@@ -7753,9 +7890,12 @@ const { character } = Astro.props;
   const chatMaskLabel = document.getElementById('chat-active-mask-label');
 
   function updateChatMaskLabel() {
+    const isEnabled = isPersonaGloballyActive();
+    const plusPersonaBadge = document.getElementById('plus-active-persona-badge');
+    if (plusPersonaBadge) {
+      plusPersonaBadge.textContent = isEnabled ? (activeUserPersona.name || 'You') : 'Off';
+    }
     if (chatMaskLabel) {
-      const isEnabled = isPersonaGloballyActive();
-
       if (!isEnabled) {
         chatMaskLabel.textContent = 'Persona Off';
         maskBtn?.classList.remove('bg-purple-500/10', 'border-purple-500/30', 'text-purple-300');
@@ -8234,6 +8374,11 @@ const { character } = Astro.props;
     plusMenu?.classList.add('hidden');
     plusBtn?.classList.remove('rotate-45', 'text-purple-400');
     document.getElementById('chat-action-rewind-btn')?.click();
+  });
+  document.getElementById('plus-action-retry')?.addEventListener('click', () => {
+    plusMenu?.classList.add('hidden');
+    plusBtn?.classList.remove('rotate-45', 'text-purple-400');
+    document.getElementById('chat-action-regenerate-btn')?.click();
   });
 
   // Speech-to-Text via Web Speech API
@@ -8724,8 +8869,57 @@ Requirements:
   const sessionsDropdown = document.getElementById('sessions-dropdown');
   const createNewSessionBtn = document.getElementById('create-new-session-btn');
 
+  // Unified Header Overflow Menu (⋮)
+  const headerOverflowBtn = document.getElementById('chat-header-overflow-btn');
+  const headerOverflowMenu = document.getElementById('chat-header-overflow-menu');
+
+  function closeHeaderOverflowMenu() {
+    headerOverflowMenu?.classList.add('hidden');
+    headerOverflowBtn?.classList.remove('bg-white/[0.12]', 'text-white');
+  }
+
+  headerOverflowBtn?.addEventListener('click', (e) => {
+    e.stopPropagation();
+    sessionsDropdown?.classList.add('hidden');
+    plusMenu?.classList.add('hidden');
+    plusBtn?.classList.remove('rotate-45', 'text-purple-400');
+    const isHidden = headerOverflowMenu?.classList.toggle('hidden');
+    if (!isHidden) {
+      headerOverflowBtn.classList.add('bg-white/[0.12]', 'text-white');
+      syncTtsUi();
+    } else {
+      headerOverflowBtn.classList.remove('bg-white/[0.12]', 'text-white');
+    }
+  });
+
+  document.getElementById('overflow-item-settings')?.addEventListener('click', () => {
+    closeHeaderOverflowMenu();
+    byokBtn?.click();
+  });
+
+  document.getElementById('overflow-item-lore')?.addEventListener('click', () => {
+    closeHeaderOverflowMenu();
+    toggleSidebarBtn?.click();
+  });
+
+  document.getElementById('overflow-item-tts')?.addEventListener('click', () => {
+    toggleTtsBtn?.click();
+    syncTtsUi();
+  });
+
+  document.getElementById('overflow-item-export')?.addEventListener('click', () => {
+    closeHeaderOverflowMenu();
+    exportChatBtn?.click();
+  });
+
+  document.getElementById('overflow-item-clear')?.addEventListener('click', () => {
+    closeHeaderOverflowMenu();
+    clearChatBtn?.click();
+  });
+
   sessionsBtn?.addEventListener('click', (e) => {
     e.stopPropagation();
+    closeHeaderOverflowMenu();
     renderSessionsDropdown();
     sessionsDropdown?.classList.toggle('hidden');
   });
@@ -8733,6 +8927,15 @@ Requirements:
   document.addEventListener('click', (e) => {
     if (sessionsDropdown && !sessionsDropdown.contains(e.target) && e.target !== sessionsBtn) {
       sessionsDropdown.classList.add('hidden');
+    }
+    if (headerOverflowMenu && !headerOverflowMenu.contains(e.target) && !headerOverflowBtn?.contains(e.target)) {
+      closeHeaderOverflowMenu();
+    }
+  });
+
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape') {
+      closeHeaderOverflowMenu();
     }
   });
 
