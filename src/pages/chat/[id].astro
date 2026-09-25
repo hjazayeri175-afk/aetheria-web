@@ -5851,13 +5851,13 @@ const { character } = Astro.props;
             payload.thinking = { type: 'disabled' };
           }
         } else {
+          const isOModel = typeof model === 'string' && /^o[13](-mini)?/i.test(model);
           payload = {
             model: model,
             messages: [{ role: 'system', content: systemPrompt }, ...payloadMessages],
-            temperature: temp,
-            max_tokens: effectiveMaxTokens,
-            max_completion_tokens: effectiveMaxTokens,
-            top_p: topP,
+            temperature: isOModel ? undefined : temp,
+            ...(isOModel ? { max_completion_tokens: effectiveMaxTokens } : { max_tokens: effectiveMaxTokens }),
+            top_p: isOModel ? undefined : topP,
             stream: enableStreaming
           };
 
@@ -6060,8 +6060,7 @@ const { character } = Astro.props;
                     ...payloadMessages
                   ],
                   temperature: temp,
-                  max_tokens: 2048,
-                  max_completion_tokens: 2048,
+                  ...(typeof model === 'string' && /^o[13](-mini)?/i.test(model) ? { max_completion_tokens: 2048 } : { max_tokens: 2048 }),
                   stream: false
                 };
                 if (provider === 'openrouter') {
@@ -6400,12 +6399,12 @@ const { character } = Astro.props;
             payload.thinking = { type: 'disabled' };
           }
         } else {
+          const isOModel = typeof model === 'string' && /^o[13](-mini)?/i.test(model);
           payload = {
             model: model,
             messages: [{ role: 'system', content: swipeSystemPrompt }, ...payloadMessages],
-            temperature: temp,
-            max_tokens: tokenBudget,
-            max_completion_tokens: tokenBudget
+            temperature: isOModel ? undefined : temp,
+            ...(isOModel ? { max_completion_tokens: tokenBudget } : { max_tokens: tokenBudget })
           };
           if (provider === 'openrouter') {
             if (isThinkingEnabled) {

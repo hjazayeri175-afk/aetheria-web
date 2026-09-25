@@ -657,6 +657,18 @@ export default {
           return jsonResponse({ error: 'Endpoint and request body are required' }, 400);
         }
 
+        // Sanitize conflicting token parameters across providers
+        if (requestBody && typeof requestBody === 'object') {
+          if (requestBody.max_tokens !== undefined && requestBody.max_completion_tokens !== undefined) {
+            const isOModel = typeof requestBody.model === 'string' && /^o[13](-mini)?/i.test(requestBody.model);
+            if (isOModel) {
+              delete requestBody.max_tokens;
+            } else {
+              delete requestBody.max_completion_tokens;
+            }
+          }
+        }
+
         console.log('[PROXY_CHAT]', JSON.stringify({
           targetUrl,
           model: requestBody?.model,
