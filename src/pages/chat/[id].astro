@@ -184,10 +184,10 @@ const { character } = Astro.props;
         <button 
           id="toggle-tts-btn"
           class="p-2 rounded-xl bg-white/[0.04] hover:bg-white/[0.08] border border-white/[0.08] text-slate-400 hover:text-purple-300 text-xs transition cursor-pointer"
-          title="Toggle Voice Read Aloud"
+          title="Toggle Auto Voice Read Aloud"
         >
-          <Volume2 id="tts-icon-on" class="w-4 h-4 text-purple-400" />
-          <VolumeX id="tts-icon-off" class="w-4 h-4 text-slate-500 hidden" />
+          <Volume2 id="tts-icon-on" class="w-4 h-4 text-purple-400 hidden" />
+          <VolumeX id="tts-icon-off" class="w-4 h-4 text-slate-400" />
         </button>
 
         <!-- Export Chat -->
@@ -2199,7 +2199,7 @@ const { character } = Astro.props;
   }
 
   let conversation = [];
-  let ttsEnabled = true;
+  let ttsEnabled = false;
 
   // Multi-session & Branching state
   // ==========================================
@@ -3703,6 +3703,10 @@ const { character } = Astro.props;
     const vidProv = localStorage.getItem('aetheria_video_provider') || 'kling';
     if (videoProviderSelect) videoProviderSelect.value = vidProv;
 
+    // Sync Voice Autoplay state (Default: false / muted)
+    ttsEnabled = localStorage.getItem('aetheria_voice_autoplay') === 'true';
+    syncTtsUi();
+
     // 6. Sync UI and populate models
     syncProviderVisibility();
   }
@@ -4920,7 +4924,12 @@ const { character } = Astro.props;
       if (sliderVoiceRate) localStorage.setItem('aetheria_voice_rate', sliderVoiceRate.value);
       if (sliderVoicePitch) localStorage.setItem('aetheria_voice_pitch', sliderVoicePitch.value);
       if (toggleFilterNarration) localStorage.setItem('aetheria_voice_filter_narration', toggleFilterNarration.checked ? 'true' : 'false');
-      if (toggleAutoplayVoice) localStorage.setItem('aetheria_voice_autoplay', toggleAutoplayVoice.checked ? 'true' : 'false');
+      if (toggleAutoplayVoice) {
+        localStorage.setItem('aetheria_voice_autoplay', toggleAutoplayVoice.checked ? 'true' : 'false');
+        ttsEnabled = toggleAutoplayVoice.checked;
+        syncTtsUi();
+        if (!ttsEnabled) stopSpeaking();
+      }
 
       if (imageProviderSelect) localStorage.setItem('aetheria_image_provider', imageProviderSelect.value);
       if (imageApiKey) localStorage.setItem('aetheria_image_key', imageApiKey.value.trim());
@@ -5520,23 +5529,64 @@ const { character } = Astro.props;
   }
 
   let activeAudio = null;
+  let currentSpeakingIdx = null;
 
-  // Voice speech synthesis (ElevenLabs direct REST API or Browser Web Speech fallback)
-  async function speak(text) {
-    if (!ttsEnabled) return;
-    const filterActions = localStorage.getItem('aetheria_voice_filter') !== 'false';
-    let cleanText = text;
-    if (filterActions) {
-      cleanText = text.replace(/\*[^*]+\*/g, '').trim();
-    }
-    if (!cleanText) return;
-
+  function stopSpeaking() {
     if (activeAudio) {
-      activeAudio.pause();
+      try {
+        activeAudio.pause();
+        activeAudio.currentTime = 0;
+      } catch (e) {}
       activeAudio = null;
     }
     if (window.speechSynthesis) {
-      window.speechSynthesis.cancel();
+      try {
+        window.speechSynthesis.cancel();
+      } catch (e) {}
+    }
+    currentSpeakingIdx = null;
+    document.querySelectorAll('.msg-speak-btn').forEach(btn => {
+      btn.innerHTML = '<span>🔊 Listen</span>';
+      btn.classList.remove('text-purple-400', 'text-rose-400');
+      btn.classList.add('text-slate-500');
+    });
+  }
+
+  function syncTtsUi() {
+    if (ttsIconOn && ttsIconOff) {
+      ttsIconOn.classList.toggle('hidden', !ttsEnabled);
+      ttsIconOff.classList.toggle('hidden', ttsEnabled);
+    }
+    if (toggleAutoplayVoice) {
+      toggleAutoplayVoice.checked = ttsEnabled;
+    }
+  }
+
+  // Voice speech synthesis (ElevenLabs direct REST API or Browser Web Speech fallback)
+  async function speak(text, triggerBtn = null, msgIdx = null) {
+    // If the same message is currently being read aloud, toggle it off / stop immediately
+    if (msgIdx !== null && currentSpeakingIdx === msgIdx) {
+      stopSpeaking();
+      return;
+    }
+
+    // Stop any existing speech before starting new one
+    stopSpeaking();
+
+    const filterActions = localStorage.getItem('aetheria_voice_filter') !== 'false';
+    let cleanText = text;
+    // Strip thought process / internal details
+    cleanText = cleanText.replace(/<details[\s\S]*?<\/details>/gi, '').trim();
+    if (filterActions) {
+      cleanText = cleanText.replace(/\*[^*]+\*/g, '').trim();
+    }
+    if (!cleanText) return;
+
+    currentSpeakingIdx = msgIdx;
+    if (triggerBtn) {
+      triggerBtn.innerHTML = '<span>⏹️ Stop</span>';
+      triggerBtn.classList.remove('text-slate-500');
+      triggerBtn.classList.add('text-purple-400');
     }
 
     const provider = localStorage.getItem('aetheria_voice_provider') || 'browser';
@@ -5566,6 +5616,12 @@ const { character } = Astro.props;
           const blob = await res.blob();
           const audioUrl = URL.createObjectURL(blob);
           activeAudio = new Audio(audioUrl);
+          activeAudio.onended = () => {
+            stopSpeaking();
+          };
+          activeAudio.onerror = () => {
+            stopSpeaking();
+          };
           activeAudio.play();
           return;
         } else {
@@ -5581,7 +5637,17 @@ const { character } = Astro.props;
       const utterance = new SpeechSynthesisUtterance(cleanText);
       utterance.rate = parseFloat(localStorage.getItem('aetheria_voice_rate') || '1.0');
       utterance.pitch = parseFloat(localStorage.getItem('aetheria_voice_pitch') || '1.0');
-      utterance.lang = 'en-US';
+      // If Persian characters detected, set Persian language tag
+      const isPersian = /[\u0600-\u06FF]/.test(cleanText);
+      utterance.lang = isPersian ? 'fa-IR' : 'en-US';
+
+      utterance.onend = () => {
+        stopSpeaking();
+      };
+      utterance.onerror = () => {
+        stopSpeaking();
+      };
+
       window.speechSynthesis.speak(utterance);
     }
   }
@@ -6277,7 +6343,7 @@ const { character } = Astro.props;
 
     if (typingIndicator) typingIndicator.classList.add('hidden');
 
-    if (ttsEnabled || localStorage.getItem('aetheria_voice_autoplay') === 'true') {
+    if (ttsEnabled && localStorage.getItem('aetheria_voice_autoplay') === 'true') {
       speak(replyText);
     }
 
@@ -7159,12 +7225,12 @@ const { character } = Astro.props;
       return;
     }
 
-    // Speak button
+    // Speak / Stop button
     const speakBtn = target.closest('.msg-speak-btn');
     if (speakBtn) {
       const idx = parseInt(speakBtn.getAttribute('data-idx') || '0', 10);
       const msg = conversation[idx];
-      if (msg) speak(msg.text);
+      if (msg) speak(msg.text, speakBtn, idx);
     }
   });
 
@@ -7556,9 +7622,14 @@ Requirements:
   // Toggle Voice TTS
   toggleTtsBtn?.addEventListener('click', () => {
     ttsEnabled = !ttsEnabled;
-    ttsIconOn?.classList.toggle('hidden', !ttsEnabled);
-    ttsIconOff?.classList.toggle('hidden', ttsEnabled);
-    showNotification(ttsEnabled ? 'Voice Read Aloud enabled' : 'Voice Read Aloud muted');
+    localStorage.setItem('aetheria_voice_autoplay', ttsEnabled ? 'true' : 'false');
+    syncTtsUi();
+    if (!ttsEnabled) {
+      stopSpeaking();
+      showNotification('Auto-read voice muted');
+    } else {
+      showNotification('Auto-read voice enabled');
+    }
   });
 
   // Clear chat
@@ -8102,6 +8173,16 @@ Requirements:
       const orig = savePinnedBtn.innerHTML;
       savePinnedBtn.innerHTML = 'Saved! ✓';
       setTimeout(() => { savePinnedBtn.innerHTML = orig; }, 1500);
+    }
+  });
+
+  // Stop voice speech on page leave / backgrounding
+  window.addEventListener('beforeunload', () => {
+    stopSpeaking();
+  });
+  document.addEventListener('visibilitychange', () => {
+    if (document.hidden) {
+      stopSpeaking();
     }
   });
 
