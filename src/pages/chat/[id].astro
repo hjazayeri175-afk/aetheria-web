@@ -1674,70 +1674,73 @@ const { character } = Astro.props;
           </div>
         </div>
 
-        <!-- In-Chat Multi-Modal & Action Toolbar (Part 2) -->
-        <div class="px-2.5 sm:px-6 py-1.5 bg-[#070913]/90 border-t border-white/[0.06] flex items-center justify-between gap-1.5 overflow-x-auto no-scrollbar shrink-0 w-full max-w-full">
-          <div class="flex items-center gap-1.5 shrink-0">
-            <!-- 1. Request Selfie Photo -->
-            <button 
-              type="button" 
-              id="chat-action-selfie-btn"
-              class="px-2.5 py-1.5 rounded-xl bg-purple-500/10 hover:bg-purple-500/20 border border-purple-500/30 text-purple-300 hover:text-white text-[11px] sm:text-xs font-medium flex items-center gap-1.5 transition active:scale-95 cursor-pointer shadow-sm shrink-0"
-              title="Request a contextual selfie photo from character"
-            >
-              <Camera class="w-3.5 h-3.5 text-purple-400" />
-              <span>Selfie</span>
-            </button>
-
-            <!-- 2. Request Living Video Clip -->
-            <button 
-              type="button" 
-              id="chat-action-video-btn"
-              class="px-2.5 py-1.5 rounded-xl bg-pink-500/10 hover:bg-pink-500/20 border border-pink-500/30 text-pink-300 hover:text-white text-[11px] sm:text-xs font-medium flex items-center gap-1.5 transition active:scale-95 cursor-pointer shadow-sm group shrink-0"
-              title="Generate a dynamic cinematic video animation"
-            >
-              <Film class="w-3.5 h-3.5 text-pink-400 group-hover:animate-pulse" />
-              <span>Video</span>
-            </button>
-          </div>
-
-          <div class="flex items-center gap-1.5 shrink-0">
-            <!-- 3. Regenerate / Modify Last Reply -->
-            <button 
-              type="button" 
-              id="chat-action-regenerate-btn"
-              class="px-2.5 py-1.5 rounded-xl bg-white/[0.04] hover:bg-white/[0.08] border border-white/[0.08] text-slate-300 hover:text-white text-[11px] sm:text-xs font-medium flex items-center gap-1.5 transition active:scale-95 cursor-pointer shrink-0"
-              title="Regenerate or modify last response (Try again, Longer, Shorter...)"
-            >
-              <RefreshCw class="w-3 h-3 text-cyan-400" />
-              <span class="inline">Retry</span>
-            </button>
-
-            <!-- 4. Rewind Last Turn -->
-            <button 
-              type="button" 
-              id="chat-action-rewind-btn"
-              class="px-2.5 py-1.5 rounded-xl bg-white/[0.04] hover:bg-white/[0.08] border border-white/[0.08] text-slate-300 hover:text-amber-300 text-[11px] sm:text-xs font-medium flex items-center gap-1.5 transition active:scale-95 cursor-pointer shrink-0"
-              title="Rewind last turn (restore your prompt to input box)"
-            >
-              <RotateCcw class="w-3 h-3 text-amber-400" />
-              <span class="inline">Rewind</span>
-            </button>
-
-            <!-- 5. Active Persona Switcher -->
-            <button 
-              type="button" 
-              id="chat-action-mask-btn"
-              class="px-2.5 py-1.5 rounded-xl bg-purple-950/40 hover:bg-purple-900/50 border border-purple-500/30 text-purple-300 hover:text-white text-[11px] sm:text-xs font-medium flex items-center gap-1.5 transition active:scale-95 cursor-pointer shrink-0"
-              title="Click to switch persona"
-            >
-              <User class="w-3 h-3 text-purple-400" />
-              <span id="chat-active-mask-label" class="inline max-w-[80px] sm:max-w-[120px] truncate">Persona: You</span>
-            </button>
-          </div>
-        </div>
-
         <!-- Bottom Chat Input Bar -->
-        <div class="p-2 sm:p-5 border-t border-white/[0.08] bg-[#080a15]/95 backdrop-blur-xl shrink-0 w-full max-w-full">
+        <div class="px-3 pt-2 pb-2.5 sm:px-6 sm:pt-2.5 sm:pb-4 border-t border-white/[0.08] bg-[#080a15]/95 backdrop-blur-xl shrink-0 w-full max-w-full">
+          <!-- In-Chat Multi-Modal & Action Toolbar -->
+          <div class="max-w-4xl mx-auto mb-2 flex items-center justify-between gap-1.5 overflow-x-auto no-scrollbar">
+            <!-- Left: Generative Creative Tools -->
+            <div class="flex items-center gap-1.5 shrink-0">
+              <!-- 1. Request Selfie Photo -->
+              <button 
+                type="button" 
+                id="chat-action-selfie-btn"
+                class="px-2.5 py-1 rounded-full bg-white/[0.04] hover:bg-white/[0.08] border border-white/[0.08] hover:border-purple-500/40 text-slate-300 hover:text-white text-[11px] font-medium flex items-center gap-1.5 transition active:scale-95 cursor-pointer shadow-sm shrink-0"
+                title="Request a contextual selfie photo from character"
+              >
+                <Camera class="w-3.5 h-3.5 text-purple-400" />
+                <span>Selfie</span>
+              </button>
+
+              <!-- 2. Request Living Video Clip -->
+              <button 
+                type="button" 
+                id="chat-action-video-btn"
+                class="px-2.5 py-1 rounded-full bg-white/[0.04] hover:bg-white/[0.08] border border-white/[0.08] hover:border-pink-500/40 text-slate-300 hover:text-white text-[11px] font-medium flex items-center gap-1.5 transition active:scale-95 cursor-pointer shadow-sm group shrink-0"
+                title="Generate a dynamic cinematic video animation"
+              >
+                <Film class="w-3.5 h-3.5 text-pink-400 group-hover:scale-110 transition-transform" />
+                <span>Video</span>
+              </button>
+            </div>
+
+            <!-- Right: Roleplay & Controls -->
+            <div class="flex items-center gap-1.5 shrink-0">
+              <!-- 3. Regenerate / Modify Last Reply -->
+              <button 
+                type="button" 
+                id="chat-action-regenerate-btn"
+                class="px-2.5 py-1 rounded-full bg-white/[0.03] hover:bg-white/[0.08] border border-white/[0.07] hover:border-cyan-500/40 text-slate-400 hover:text-cyan-300 text-[11px] font-medium flex items-center gap-1.5 transition active:scale-95 cursor-pointer shrink-0"
+                title="Regenerate or modify last response"
+              >
+                <RefreshCw class="w-3 h-3 text-cyan-400" />
+                <span class="hidden sm:inline">Retry</span>
+              </button>
+
+              <!-- 4. Rewind Last Turn -->
+              <button 
+                type="button" 
+                id="chat-action-rewind-btn"
+                class="px-2.5 py-1 rounded-full bg-white/[0.03] hover:bg-white/[0.08] border border-white/[0.07] hover:border-amber-500/40 text-slate-400 hover:text-amber-300 text-[11px] font-medium flex items-center gap-1.5 transition active:scale-95 cursor-pointer shrink-0"
+                title="Rewind last turn"
+              >
+                <RotateCcw class="w-3 h-3 text-amber-400" />
+                <span class="hidden sm:inline">Rewind</span>
+              </button>
+
+              <!-- 5. Active Persona Switcher -->
+              <button 
+                type="button" 
+                id="chat-action-mask-btn"
+                class="px-2.5 py-1 rounded-full bg-purple-500/10 hover:bg-purple-500/20 border border-purple-500/30 text-purple-300 hover:text-white text-[11px] font-medium flex items-center gap-1.5 transition active:scale-95 cursor-pointer shrink-0"
+                title="Click to switch persona"
+              >
+                <User class="w-3 h-3 text-purple-400 shrink-0" />
+                <span id="chat-active-mask-label" class="inline max-w-[100px] sm:max-w-[140px] truncate">You</span>
+              </button>
+            </div>
+          </div>
+
+          <!-- Bottom Input Form -->
           <form id="room-input-form" class="w-full max-w-4xl mx-auto flex items-end gap-2">
             <div class="flex-1 min-w-0 relative rounded-2xl bg-white/[0.04] hover:bg-white/[0.06] focus-within:bg-[#0c0f1e] border border-white/[0.1] focus-within:border-purple-500/60 transition shadow-inner">
               <textarea 
@@ -1745,6 +1748,7 @@ const { character } = Astro.props;
                 rows="1" 
                 placeholder={`Message ${character.name}...`}
                 class="w-full px-3.5 py-2.5 sm:px-4 sm:py-3 bg-transparent text-xs sm:text-sm text-white placeholder:text-slate-500 outline-none resize-none max-h-32 leading-relaxed"
+                style="scrollbar-width: none; -ms-overflow-style: none;"
               ></textarea>
             </div>
 
@@ -1759,16 +1763,6 @@ const { character } = Astro.props;
               <span class="hidden sm:inline text-xs">Send</span>
             </button>
           </form>
-
-          <div class="max-w-4xl mx-auto flex items-center justify-between text-[10px] text-slate-500 mt-1.5 px-1">
-            <span class="flex items-center gap-1.5 truncate">
-              <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 shrink-0"></span>
-              <span id="active-privacy-tag" class="truncate">Encrypted memory • Zero server logs</span>
-            </span>
-            <span id="active-scenario-tag" class="hidden sm:inline text-purple-400/80 font-mono shrink-0">
-              Scenario: Default Encounter
-            </span>
-          </div>
         </div>
 
       </section>
@@ -2207,7 +2201,7 @@ const { character } = Astro.props;
     if (tName) tName.textContent = `${activeChar.name} is thinking...`;
 
     const rInput = document.getElementById('room-input');
-    if (rInput) rInput.placeholder = `Type a message to ${activeChar.name}... (Press Enter to send, Shift+Enter for newline)`;
+    if (rInput) rInput.placeholder = activeChar?.name ? `Message ${activeChar.name}...` : 'Message...';
   }
 
   let conversation = [];
@@ -7295,13 +7289,16 @@ const { character } = Astro.props;
       const isEnabled = isPersonaGloballyActive();
 
       if (!isEnabled) {
-        chatMaskLabel.textContent = 'Persona: Off';
-        maskBtn?.classList.remove('bg-purple-950/40', 'border-purple-500/30', 'text-purple-300');
+        chatMaskLabel.textContent = 'Persona Off';
+        maskBtn?.classList.remove('bg-purple-500/10', 'border-purple-500/30', 'text-purple-300');
         maskBtn?.classList.add('bg-white/[0.03]', 'border-white/10', 'text-slate-400');
+        maskBtn?.setAttribute('title', 'Persona disabled (Click to enable/switch)');
       } else {
-        chatMaskLabel.textContent = `Persona: ${activeUserPersona.name || 'You'}`;
-        maskBtn?.classList.add('bg-purple-950/40', 'border-purple-500/30', 'text-purple-300');
+        const pName = activeUserPersona.name || 'You';
+        chatMaskLabel.textContent = pName;
+        maskBtn?.classList.add('bg-purple-500/10', 'border-purple-500/30', 'text-purple-300');
         maskBtn?.classList.remove('bg-white/[0.03]', 'border-white/10', 'text-slate-400');
+        maskBtn?.setAttribute('title', `Active Persona: ${pName} (Click to switch)`);
       }
     }
   }
