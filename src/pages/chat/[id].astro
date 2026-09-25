@@ -1225,139 +1225,370 @@ const { character } = Astro.props;
               </div>
             </div>
 
-              <!-- ================= 2. TAB: VOICE ENGINE ================= -->
-              <div id="tab-voice" class="engine-tab-pane hidden space-y-5">
-                <div class="flex items-center justify-between pb-2 border-b border-white/[0.06]">
-                  <div>
-                    <h4 class="text-xs sm:text-sm font-bold text-white flex items-center gap-2">
-                      <Volume2 class="w-4 h-4 text-emerald-400" />
-                      <span>Voice & Spoken Audio</span>
-                    </h4>
-                    <p class="text-[11px] text-slate-400">Reads character dialogue aloud with natural emotion and pacing.</p>
-                  </div>
-                  <button type="button" id="test-voice-btn" class="px-3 py-1.5 rounded-xl bg-emerald-950/40 hover:bg-emerald-900/60 border border-emerald-500/30 text-emerald-300 text-xs font-semibold flex items-center gap-1.5 transition cursor-pointer">
-                    <Play class="w-3.5 h-3.5 text-emerald-400" />
-                    <span>Test Voice</span>
+              <!-- ================= 2. TAB: VOICE & AUDIO SYSTEMS ================= -->
+              <div id="tab-voice" class="engine-tab-pane hidden space-y-4" dir="ltr" lang="en">
+                
+                <!-- Sub-tab Navigator (TTS Output vs STT Input) -->
+                <div class="flex items-center gap-1.5 p-1 rounded-2xl bg-white/[0.04] border border-white/[0.08]">
+                  <button 
+                    type="button" 
+                    id="voice-subtab-tts-btn" 
+                    class="flex-1 py-2 px-3 rounded-xl bg-purple-600 text-white text-xs font-semibold flex items-center justify-center gap-2 transition cursor-pointer shadow-sm shadow-purple-900/40"
+                  >
+                    <Volume2 class="w-3.5 h-3.5" />
+                    <span>Speech Output (TTS)</span>
+                  </button>
+                  <button 
+                    type="button" 
+                    id="voice-subtab-stt-btn" 
+                    class="flex-1 py-2 px-3 rounded-xl text-slate-300 hover:text-white hover:bg-white/[0.04] text-xs font-semibold flex items-center justify-center gap-2 transition cursor-pointer"
+                  >
+                    <Mic class="w-3.5 h-3.5" />
+                    <span>Voice Input (STT)</span>
                   </button>
                 </div>
 
-                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                  <div>
-                    <label class="block text-xs font-semibold text-slate-300 mb-1.5">Voice Provider</label>
-                    <select id="voice-provider-select" class="w-full px-3.5 py-2.5 rounded-xl bg-white/[0.05] border border-white/10 text-xs text-white outline-none focus:border-emerald-500/60">
+                <!-- PANE 1: TTS SPEECH OUTPUT -->
+                <div id="voice-tts-pane" class="space-y-4">
+                  <!-- Header & Status -->
+                  <div class="p-3 rounded-2xl bg-white/[0.03] border border-white/[0.08] flex items-center justify-between gap-2">
+                    <div class="flex items-center gap-2.5 min-w-0">
+                      <div class="w-8 h-8 rounded-xl bg-purple-500/20 border border-purple-500/30 flex items-center justify-center text-purple-300 shrink-0">
+                        <Volume2 class="w-4 h-4 text-purple-400" />
+                      </div>
+                      <div class="min-w-0">
+                        <div class="flex items-center gap-2">
+                          <h4 class="text-xs sm:text-sm font-bold text-white truncate">Speech Output (TTS)</h4>
+                          <span id="tts-status-badge" class="px-2 py-0.5 rounded-full text-[10px] font-mono bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 font-semibold shrink-0">
+                            Active
+                          </span>
+                        </div>
+                        <p class="text-[11px] text-slate-400 truncate">Synthesizes character dialogue with expressive audio</p>
+                      </div>
+                    </div>
+                    <button 
+                      type="button" 
+                      id="test-voice-btn" 
+                      class="px-3 py-1.5 rounded-xl bg-purple-600/20 hover:bg-purple-600/30 text-purple-300 hover:text-purple-200 border border-purple-500/30 text-xs font-semibold flex items-center gap-1.5 transition cursor-pointer shrink-0 active:scale-95"
+                    >
+                      <Play class="w-3.5 h-3.5 text-purple-400" />
+                      <span>Test Voice</span>
+                    </button>
+                  </div>
+
+                  <!-- TTS Engine Selector (Custom Popover - No Native OS Dialog) -->
+                  <div class="relative w-full">
+                    <label class="block text-xs font-semibold text-slate-300 mb-1.5">TTS Engine / Provider</label>
+                    <select id="voice-provider-select" class="hidden">
                       <option value="browser">Built-in Device Voice (100% Free)</option>
                       <option value="elevenlabs">ElevenLabs (Ultra-Realistic Emotional Voice)</option>
                       <option value="openai">OpenAI Audio (Clear & Expressive)</option>
                       <option value="custom">Custom Audio Endpoint (Kokoro, XTTS)</option>
                     </select>
+
+                    <button
+                      type="button"
+                      id="custom-tts-trigger"
+                      class="w-full px-3.5 py-2.5 rounded-xl bg-black/60 hover:bg-black/80 border border-purple-500/30 hover:border-purple-500/50 flex items-center justify-between text-xs text-white transition cursor-pointer text-left group"
+                      aria-haspopup="listbox"
+                      aria-expanded="false"
+                    >
+                      <div class="flex items-center gap-2.5 min-w-0 pr-2">
+                        <span class="w-2 h-2 rounded-full bg-emerald-400 shrink-0" id="custom-tts-status-dot"></span>
+                        <div class="min-w-0 flex flex-col">
+                          <span id="custom-tts-trigger-label" class="font-bold text-slate-100 truncate">Built-in Device Voice</span>
+                          <span id="custom-tts-trigger-sub" class="text-[10px] text-slate-400 truncate">100% Free • Local Browser Speech</span>
+                        </div>
+                      </div>
+                      <ChevronDown class="w-4 h-4 text-slate-400 group-hover:text-purple-300 transition-transform duration-200 shrink-0" id="custom-tts-chevron" />
+                    </button>
+
+                    <!-- Custom Dropdown Menu -->
+                    <div 
+                      id="custom-tts-menu" 
+                      class="hidden absolute left-0 right-0 top-full mt-1.5 z-50 bg-[#0c0f24]/95 backdrop-blur-xl border border-purple-500/30 rounded-2xl p-1.5 shadow-2xl shadow-purple-950/80 space-y-1"
+                      role="listbox"
+                    >
+                      <!-- Options rendered in JS -->
+                    </div>
                   </div>
 
-                  <div id="voice-key-container" class="hidden">
-                    <label class="block text-xs font-semibold text-slate-300 mb-1.5">Voice API Key</label>
+                  <!-- TTS API Key & URL -->
+                  <div id="voice-key-container" class="hidden space-y-2">
+                    <div class="flex items-center justify-between">
+                      <label class="block text-xs font-semibold text-slate-300">TTS API Key</label>
+                      <button type="button" id="copy-text-key-to-tts-btn" class="text-[10px] text-purple-400 hover:text-purple-300 font-semibold cursor-pointer underline hidden">
+                        Paste OpenAI Key from Text Tab
+                      </button>
+                    </div>
+                    <div class="relative">
+                      <input 
+                        id="voice-api-key" 
+                        type="password" 
+                        placeholder="ElevenLabs or OpenAI key..." 
+                        class="w-full px-3.5 py-2.5 rounded-xl bg-white/[0.05] border border-white/10 text-xs text-white placeholder:text-slate-500 outline-none focus:border-purple-500/60 font-mono pr-12"
+                      />
+                      <button type="button" id="toggle-voice-key-visibility-btn" class="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-white text-xs cursor-pointer p-1">
+                        Show
+                      </button>
+                    </div>
+                  </div>
+
+                  <div id="voice-custom-url-container" class="hidden space-y-1.5">
+                    <label class="block text-xs font-semibold text-slate-300">Custom Audio Endpoint URL</label>
                     <input 
-                      id="voice-api-key" 
-                      type="password" 
-                      placeholder="ElevenLabs or OpenAI key..." 
-                      class="w-full px-3.5 py-2.5 rounded-xl bg-white/[0.05] border border-white/10 text-xs text-white placeholder:text-slate-500 outline-none focus:border-emerald-500/60 font-mono"
+                      id="voice-custom-url" 
+                      type="url" 
+                      placeholder="http://localhost:8880/v1/audio/speech" 
+                      class="w-full px-3.5 py-2.5 rounded-xl bg-white/[0.05] border border-white/10 text-xs text-white placeholder:text-slate-500 outline-none focus:border-purple-500/60 font-mono"
                     />
                   </div>
-                </div>
 
-                <!-- Voice ID / Presets -->
-                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                  <div id="eleven-voice-container">
-                    <label class="block text-xs font-semibold text-slate-300 mb-1.5">ElevenLabs Voice ID / Preset</label>
+                  <!-- ElevenLabs Voice Preset -->
+                  <div id="eleven-voice-container" class="hidden space-y-2">
+                    <label class="block text-xs font-semibold text-slate-300">ElevenLabs Voice ID / Preset</label>
                     <input 
                       id="voice-id-input" 
                       type="text" 
                       value="21m00Tcm4TlvDq8ikWAM"
                       placeholder="Voice identifier"
-                      class="w-full px-3.5 py-2.5 rounded-xl bg-white/[0.05] border border-white/10 text-xs text-white outline-none focus:border-emerald-500/60 font-mono"
+                      class="w-full px-3.5 py-2.5 rounded-xl bg-white/[0.05] border border-white/10 text-xs text-white outline-none focus:border-purple-500/60 font-mono"
                     />
-                    <div class="flex flex-wrap gap-1.5 pt-1.5">
-                      <button type="button" class="quick-voice-pill text-[10px] px-2 py-0.5 rounded-lg bg-white/[0.04] text-slate-300 hover:text-emerald-300 border border-white/10 transition" data-voice="21m00Tcm4TlvDq8ikWAM">Rachel (Calm)</button>
-                      <button type="button" class="quick-voice-pill text-[10px] px-2 py-0.5 rounded-lg bg-white/[0.04] text-slate-300 hover:text-emerald-300 border border-white/10 transition" data-voice="pNInz6obpgDQGcFmaJgB">Adam (Deep Male)</button>
-                      <button type="button" class="quick-voice-pill text-[10px] px-2 py-0.5 rounded-lg bg-white/[0.04] text-slate-300 hover:text-emerald-300 border border-white/10 transition" data-voice="EXAVITQu4vr4xnSDxMaL">Bella (Expressive)</button>
-                      <button type="button" class="quick-voice-pill text-[10px] px-2 py-0.5 rounded-lg bg-white/[0.04] text-slate-300 hover:text-emerald-300 border border-white/10 transition" data-voice="ErXwobaYiN019PkySvjV">Antoni (Storyteller)</button>
+                    <div class="flex flex-wrap gap-1.5 pt-1">
+                      <button type="button" class="quick-voice-pill text-[10px] px-2.5 py-1 rounded-lg bg-white/[0.04] text-slate-300 hover:text-purple-300 border border-white/10 transition cursor-pointer" data-voice="21m00Tcm4TlvDq8ikWAM">Rachel (Calm)</button>
+                      <button type="button" class="quick-voice-pill text-[10px] px-2.5 py-1 rounded-lg bg-white/[0.04] text-slate-300 hover:text-purple-300 border border-white/10 transition cursor-pointer" data-voice="pNInz6obpgDQGcFmaJgB">Adam (Deep Male)</button>
+                      <button type="button" class="quick-voice-pill text-[10px] px-2.5 py-1 rounded-lg bg-white/[0.04] text-slate-300 hover:text-purple-300 border border-white/10 transition cursor-pointer" data-voice="EXAVITQu4vr4xnSDxMaL">Bella (Expressive)</button>
+                      <button type="button" class="quick-voice-pill text-[10px] px-2.5 py-1 rounded-lg bg-white/[0.04] text-slate-300 hover:text-purple-300 border border-white/10 transition cursor-pointer" data-voice="ErXwobaYiN019PkySvjV">Antoni (Storyteller)</button>
+                      <button type="button" class="quick-voice-pill text-[10px] px-2.5 py-1 rounded-lg bg-white/[0.04] text-slate-300 hover:text-purple-300 border border-white/10 transition cursor-pointer" data-voice="MF3mGyEYCl7XYWbV9V6O">Elli (Gentle)</button>
+                      <button type="button" class="quick-voice-pill text-[10px] px-2.5 py-1 rounded-lg bg-white/[0.04] text-slate-300 hover:text-purple-300 border border-white/10 transition cursor-pointer" data-voice="TxGEqnHWrfWFTfGW9XjX">Josh (Warm Male)</button>
                     </div>
                   </div>
 
-                  <div id="openai-voice-container" class="hidden">
-                    <label class="block text-xs font-semibold text-slate-300 mb-1.5">OpenAI Voice Archetype</label>
-                    <select id="openai-voice-select" class="w-full px-3.5 py-2.5 rounded-xl bg-white/[0.05] border border-white/10 text-xs text-white outline-none">
-                      <option value="nova">Nova (Warm & Energetic Female)</option>
-                      <option value="shimmer">Shimmer (Clear & Expressive Female)</option>
-                      <option value="onyx">Onyx (Deep Authoritative Male)</option>
-                      <option value="alloy">Alloy (Versatile & Balanced)</option>
-                      <option value="echo">Echo (Soft & Resonant Male)</option>
-                      <option value="fable">Fable (British Cadence)</option>
-                    </select>
+                  <!-- OpenAI Audio Voice Selector -->
+                  <div id="openai-voice-container" class="hidden space-y-3">
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                      <div>
+                        <label class="block text-xs font-semibold text-slate-300 mb-1.5">OpenAI Voice Archetype</label>
+                        <select id="openai-voice-select" class="w-full px-3 py-2 rounded-xl bg-black/60 border border-purple-500/30 text-xs text-white outline-none cursor-pointer">
+                          <option value="nova">Nova (Warm & Energetic Female)</option>
+                          <option value="shimmer">Shimmer (Clear & Expressive Female)</option>
+                          <option value="onyx">Onyx (Deep Authoritative Male)</option>
+                          <option value="alloy">Alloy (Versatile & Balanced)</option>
+                          <option value="echo">Echo (Soft & Resonant Male)</option>
+                          <option value="fable">Fable (British Cadence)</option>
+                        </select>
+                      </div>
+                      <div>
+                        <label class="block text-xs font-semibold text-slate-300 mb-1.5">TTS Model</label>
+                        <select id="openai-tts-model-select" class="w-full px-3 py-2 rounded-xl bg-black/60 border border-purple-500/30 text-xs text-white outline-none cursor-pointer">
+                          <option value="tts-1">tts-1 (Fast & Low Latency)</option>
+                          <option value="tts-1-hd">tts-1-hd (Ultra High Definition)</option>
+                        </select>
+                      </div>
+                    </div>
+                  </div>
+
+                  <!-- Voice Sliders Card -->
+                  <div class="p-3.5 sm:p-4 rounded-2xl bg-white/[0.02] border border-white/[0.06] space-y-4">
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                      <!-- Stability (ElevenLabs) -->
+                      <div id="eleven-stability-box" class="space-y-1.5 hidden" dir="ltr">
+                        <div class="flex items-center justify-between text-xs">
+                          <label for="badge-stability" class="text-slate-300 font-medium cursor-pointer">Stability</label>
+                          <input id="badge-stability" dir="ltr" lang="en" type="text" inputmode="decimal" autocomplete="off" spellcheck="false" value="0.50" class="w-16 px-1.5 py-0.5 rounded-lg bg-purple-950/80 border border-purple-500/40 text-purple-300 font-mono font-bold text-xs text-center outline-none force-ltr-numeric" />
+                        </div>
+                        <input id="slider-stability" dir="ltr" type="range" min="0.0" max="1.0" step="0.05" value="0.50" class="w-full accent-purple-500 cursor-pointer" />
+                      </div>
+
+                      <!-- Clarity (ElevenLabs) -->
+                      <div id="eleven-clarity-box" class="space-y-1.5 hidden" dir="ltr">
+                        <div class="flex items-center justify-between text-xs">
+                          <label for="badge-clarity" class="text-slate-300 font-medium cursor-pointer">Clarity Boost</label>
+                          <input id="badge-clarity" dir="ltr" lang="en" type="text" inputmode="decimal" autocomplete="off" spellcheck="false" value="0.75" class="w-16 px-1.5 py-0.5 rounded-lg bg-purple-950/80 border border-purple-500/40 text-purple-300 font-mono font-bold text-xs text-center outline-none force-ltr-numeric" />
+                        </div>
+                        <input id="slider-clarity" dir="ltr" type="range" min="0.0" max="1.0" step="0.05" value="0.75" class="w-full accent-purple-500 cursor-pointer" />
+                      </div>
+
+                      <!-- Speed Rate -->
+                      <div class="space-y-1.5" dir="ltr">
+                        <div class="flex items-center justify-between text-xs">
+                          <label for="badge-voice-rate" class="text-slate-300 font-medium cursor-pointer">Speech Rate</label>
+                          <div class="flex items-center gap-0.5" dir="ltr">
+                            <input id="badge-voice-rate" dir="ltr" lang="en" type="text" inputmode="decimal" autocomplete="off" spellcheck="false" value="1.0" class="w-14 px-1.5 py-0.5 rounded-lg bg-purple-950/80 border border-purple-500/40 text-purple-300 font-mono font-bold text-xs text-center outline-none force-ltr-numeric" />
+                            <span class="text-[10px] text-purple-400 font-mono font-semibold">x</span>
+                          </div>
+                        </div>
+                        <input id="slider-voice-rate" dir="ltr" type="range" min="0.5" max="2.0" step="0.1" value="1.0" class="w-full accent-purple-500 cursor-pointer" />
+                      </div>
+
+                      <!-- Pitch -->
+                      <div class="space-y-1.5" dir="ltr">
+                        <div class="flex items-center justify-between text-xs">
+                          <label for="badge-voice-pitch" class="text-slate-300 font-medium cursor-pointer">Tone Pitch</label>
+                          <input id="badge-voice-pitch" dir="ltr" lang="en" type="text" inputmode="decimal" autocomplete="off" spellcheck="false" value="1.0" class="w-16 px-1.5 py-0.5 rounded-lg bg-purple-950/80 border border-purple-500/40 text-purple-300 font-mono font-bold text-xs text-center outline-none force-ltr-numeric" />
+                        </div>
+                        <input id="slider-voice-pitch" dir="ltr" type="range" min="0.5" max="1.5" step="0.05" value="1.0" class="w-full accent-purple-500 cursor-pointer" />
+                      </div>
+                    </div>
+
+                    <!-- Roleplay Audio Toggles -->
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-2">
+                      <label class="flex items-center justify-between p-3 rounded-xl bg-white/[0.03] border border-white/10 cursor-pointer">
+                        <div>
+                          <span class="text-xs font-semibold text-slate-200 block">Filter Narration (*actions*)</span>
+                          <span class="text-[10px] text-slate-400">Only speaks spoken dialogue; skips *actions*</span>
+                        </div>
+                        <input id="toggle-filter-narration" type="checkbox" checked class="w-4 h-4 accent-purple-500 cursor-pointer" />
+                      </label>
+
+                      <label class="flex items-center justify-between p-3 rounded-xl bg-white/[0.03] border border-white/10 cursor-pointer">
+                        <div>
+                          <span class="text-xs font-semibold text-slate-200 block">Auto-Play Character Voice</span>
+                          <span class="text-[10px] text-slate-400">Speaks replies automatically on arrival</span>
+                        </div>
+                        <input id="toggle-autoplay-voice" type="checkbox" class="w-4 h-4 accent-purple-500 cursor-pointer" />
+                      </label>
+                    </div>
                   </div>
                 </div>
 
-                <!-- Voice Sliders -->
-                <div class="p-4 rounded-2xl bg-white/[0.02] border border-white/[0.06] space-y-4">
-                  <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                    <!-- Stability -->
-                    <div class="space-y-1.5" dir="ltr">
-                      <div class="flex items-center justify-between text-xs">
-                        <label for="badge-stability" class="text-slate-300 font-medium cursor-pointer">Stability (Consistency vs Emotion)</label>
-                        <input id="badge-stability" dir="ltr" lang="en" type="text" inputmode="decimal" autocomplete="off" spellcheck="false" value="0.50" title="Click or tap to type exact value" class="w-16 px-1.5 py-0.5 rounded-lg bg-emerald-950/80 hover:bg-emerald-900/80 focus:bg-emerald-900 border border-emerald-500/40 focus:border-emerald-400 text-emerald-300 font-mono font-bold text-xs text-center outline-none transition force-ltr-numeric" />
+                <!-- PANE 2: STT VOICE RECOGNITION (SPEECH-TO-TEXT) -->
+                <div id="voice-stt-pane" class="space-y-4 hidden">
+                  <!-- Header & Status -->
+                  <div class="p-3 rounded-2xl bg-white/[0.03] border border-white/[0.08] flex items-center justify-between gap-2">
+                    <div class="flex items-center gap-2.5 min-w-0">
+                      <div class="w-8 h-8 rounded-xl bg-rose-500/20 border border-rose-500/30 flex items-center justify-center text-rose-300 shrink-0">
+                        <Mic class="w-4 h-4 text-rose-400" />
                       </div>
-                      <input id="slider-stability" dir="ltr" type="range" min="0.0" max="1.0" step="0.05" value="0.50" class="w-full accent-emerald-500 cursor-pointer" />
-                    </div>
-
-                    <!-- Similarity / Clarity -->
-                    <div class="space-y-1.5" dir="ltr">
-                      <div class="flex items-center justify-between text-xs">
-                        <label for="badge-clarity" class="text-slate-300 font-medium cursor-pointer">Clarity & Similarity Boost</label>
-                        <input id="badge-clarity" dir="ltr" lang="en" type="text" inputmode="decimal" autocomplete="off" spellcheck="false" value="0.75" title="Click or tap to type exact value" class="w-16 px-1.5 py-0.5 rounded-lg bg-emerald-950/80 hover:bg-emerald-900/80 focus:bg-emerald-900 border border-emerald-500/40 focus:border-emerald-400 text-emerald-300 font-mono font-bold text-xs text-center outline-none transition force-ltr-numeric" />
+                      <div class="min-w-0">
+                        <div class="flex items-center gap-2">
+                          <h4 class="text-xs sm:text-sm font-bold text-white truncate">Voice Input (STT)</h4>
+                          <span id="stt-status-badge" class="px-2 py-0.5 rounded-full text-[10px] font-mono bg-amber-500/20 text-amber-300 border border-amber-500/30 font-semibold shrink-0">
+                            Key Required
+                          </span>
+                        </div>
+                        <p class="text-[11px] text-slate-400 truncate">Hold send button or tap mic to speak into chat</p>
                       </div>
-                      <input id="slider-clarity" dir="ltr" type="range" min="0.0" max="1.0" step="0.05" value="0.75" class="w-full accent-emerald-500 cursor-pointer" />
                     </div>
+                    <button 
+                      type="button" 
+                      id="test-stt-btn" 
+                      class="px-3 py-1.5 rounded-xl bg-rose-600/20 hover:bg-rose-600/30 text-rose-300 hover:text-rose-200 border border-rose-500/30 text-xs font-semibold flex items-center gap-1.5 transition cursor-pointer shrink-0 active:scale-95"
+                    >
+                      <Mic class="w-3.5 h-3.5 text-rose-400" />
+                      <span id="test-stt-btn-label">Test Mic (3s)</span>
+                    </button>
+                  </div>
 
-                    <!-- Speed Rate -->
-                    <div class="space-y-1.5" dir="ltr">
-                      <div class="flex items-center justify-between text-xs">
-                        <label for="badge-voice-rate" class="text-slate-300 font-medium cursor-pointer">Speech Rate</label>
-                        <div class="flex items-center gap-0.5" dir="ltr">
-                          <input id="badge-voice-rate" dir="ltr" lang="en" type="text" inputmode="decimal" autocomplete="off" spellcheck="false" value="1.0" title="Click or tap to type exact value" class="w-14 px-1.5 py-0.5 rounded-lg bg-emerald-950/80 hover:bg-emerald-900/80 focus:bg-emerald-900 border border-emerald-500/40 focus:border-emerald-400 text-emerald-300 font-mono font-bold text-xs text-center outline-none transition force-ltr-numeric" />
-                          <span class="text-[10px] text-emerald-400 font-mono font-semibold">x</span>
+                  <!-- STT Engine Selector (Custom Popover - No Native OS Dialog) -->
+                  <div class="relative w-full">
+                    <label class="block text-xs font-semibold text-slate-300 mb-1.5">STT Transcription Engine</label>
+                    <select id="stt-provider-select" class="hidden">
+                      <option value="groq">Groq Whisper (Ultra-Fast LPU Hardware)</option>
+                      <option value="openai">OpenAI Whisper (High Multilingual Accuracy)</option>
+                      <option value="custom">Custom Whisper Endpoint (Self-Hosted / Local)</option>
+                      <option value="browser">Browser Built-in Web Speech (100% Free)</option>
+                    </select>
+
+                    <button
+                      type="button"
+                      id="custom-stt-trigger"
+                      class="w-full px-3.5 py-2.5 rounded-xl bg-black/60 hover:bg-black/80 border border-purple-500/30 hover:border-purple-500/50 flex items-center justify-between text-xs text-white transition cursor-pointer text-left group"
+                      aria-haspopup="listbox"
+                      aria-expanded="false"
+                    >
+                      <div class="flex items-center gap-2.5 min-w-0 pr-2">
+                        <span class="w-2 h-2 rounded-full bg-amber-400 shrink-0" id="custom-stt-status-dot"></span>
+                        <div class="min-w-0 flex flex-col">
+                          <span id="custom-stt-trigger-label" class="font-bold text-slate-100 truncate">Groq Whisper</span>
+                          <span id="custom-stt-trigger-sub" class="text-[10px] text-slate-400 truncate">Fastest • Free LPU Tier</span>
                         </div>
                       </div>
-                      <input id="slider-voice-rate" dir="ltr" type="range" min="0.5" max="2.0" step="0.1" value="1.0" class="w-full accent-emerald-500 cursor-pointer" />
-                    </div>
+                      <ChevronDown class="w-4 h-4 text-slate-400 group-hover:text-purple-300 transition-transform duration-200 shrink-0" id="custom-stt-chevron" />
+                    </button>
 
-                    <!-- Pitch -->
-                    <div class="space-y-1.5" dir="ltr">
-                      <div class="flex items-center justify-between text-xs">
-                        <label for="badge-voice-pitch" class="text-slate-300 font-medium cursor-pointer">Tone Pitch</label>
-                        <input id="badge-voice-pitch" dir="ltr" lang="en" type="text" inputmode="decimal" autocomplete="off" spellcheck="false" value="1.0" title="Click or tap to type exact value" class="w-16 px-1.5 py-0.5 rounded-lg bg-emerald-950/80 hover:bg-emerald-900/80 focus:bg-emerald-900 border border-emerald-500/40 focus:border-emerald-400 text-emerald-300 font-mono font-bold text-xs text-center outline-none transition force-ltr-numeric" />
-                      </div>
-                      <input id="slider-voice-pitch" dir="ltr" type="range" min="0.5" max="1.5" step="0.05" value="1.0" class="w-full accent-emerald-500 cursor-pointer" />
+                    <!-- Custom Dropdown Menu -->
+                    <div 
+                      id="custom-stt-menu" 
+                      class="hidden absolute left-0 right-0 top-full mt-1.5 z-50 bg-[#0c0f24]/95 backdrop-blur-xl border border-purple-500/30 rounded-2xl p-1.5 shadow-2xl shadow-purple-950/80 space-y-1"
+                      role="listbox"
+                    >
+                      <!-- Options rendered in JS -->
                     </div>
                   </div>
 
-                  <!-- Roleplay Audio Toggles -->
-                  <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-2">
-                    <label class="flex items-center justify-between p-3 rounded-xl bg-white/[0.03] border border-white/10 cursor-pointer">
-                      <div>
-                        <span class="text-xs font-semibold text-slate-200 block">Filter Narration (*actions*)</span>
-                        <span class="text-[10px] text-slate-400">Only speaks spoken quotes; ignores asterisks</span>
-                      </div>
-                      <input id="toggle-filter-narration" type="checkbox" checked class="w-4 h-4 accent-emerald-500 cursor-pointer" />
-                    </label>
+                  <!-- STT API Key & Paste Helpers -->
+                  <div id="stt-key-container" class="space-y-2">
+                    <div class="flex items-center justify-between">
+                      <label class="block text-xs font-semibold text-slate-300">STT API Key</label>
+                      <button type="button" id="copy-text-key-to-stt-btn" class="text-[10px] text-rose-400 hover:text-rose-300 font-semibold cursor-pointer underline">
+                        Copy API Key from Text Tab
+                      </button>
+                    </div>
+                    <div class="relative">
+                      <input 
+                        id="stt-api-key" 
+                        type="password" 
+                        placeholder="gsk_... (Groq) or sk-... (OpenAI)" 
+                        class="w-full px-3.5 py-2.5 rounded-xl bg-white/[0.05] border border-white/10 text-xs text-white placeholder:text-slate-500 outline-none focus:border-rose-500/60 font-mono pr-12"
+                      />
+                      <button type="button" id="toggle-stt-key-visibility-btn" class="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-white text-xs cursor-pointer p-1">
+                        Show
+                      </button>
+                    </div>
+                  </div>
 
-                    <label class="flex items-center justify-between p-3 rounded-xl bg-white/[0.03] border border-white/10 cursor-pointer">
-                      <div>
-                        <span class="text-xs font-semibold text-slate-200 block">Auto-Play Voice</span>
-                        <span class="text-[10px] text-slate-400">Play voice automatically when message arrives</span>
-                      </div>
-                      <input id="toggle-autoplay-voice" type="checkbox" class="w-4 h-4 accent-emerald-500 cursor-pointer" />
-                    </label>
+                  <div id="stt-custom-url-container" class="hidden space-y-1.5">
+                    <label class="block text-xs font-semibold text-slate-300">Custom Whisper Endpoint URL</label>
+                    <input 
+                      id="stt-custom-url" 
+                      type="url" 
+                      placeholder="http://localhost:8000/v1/audio/transcriptions" 
+                      class="w-full px-3.5 py-2.5 rounded-xl bg-white/[0.05] border border-white/10 text-xs text-white placeholder:text-slate-500 outline-none focus:border-rose-500/60 font-mono"
+                    />
+                  </div>
+
+                  <!-- STT Model & Language Selection -->
+                  <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                    <div id="stt-model-container">
+                      <label class="block text-xs font-semibold text-slate-300 mb-1.5">Whisper Model</label>
+                      <select id="stt-model-select" class="w-full px-3 py-2 rounded-xl bg-black/60 border border-purple-500/30 text-xs text-white outline-none cursor-pointer">
+                        <option value="whisper-large-v3-turbo">whisper-large-v3-turbo (Ultra-Fast)</option>
+                        <option value="whisper-large-v3">whisper-large-v3 (Maximum Accuracy)</option>
+                        <option value="whisper-1">whisper-1 (OpenAI Default)</option>
+                      </select>
+                    </div>
+
+                    <div>
+                      <label class="block text-xs font-semibold text-slate-300 mb-1.5">Spoken Language</label>
+                      <select id="stt-lang-select" class="w-full px-3 py-2 rounded-xl bg-black/60 border border-purple-500/30 text-xs text-white outline-none cursor-pointer">
+                        <option value="auto">Auto-Detect Language</option>
+                        <option value="fa">Persian (فارسی - fa)</option>
+                        <option value="en">English (en)</option>
+                      </select>
+                    </div>
+                  </div>
+
+                  <!-- Live STT Test Feedback Area -->
+                  <div id="stt-test-output-box" class="hidden p-3 rounded-xl bg-rose-950/20 border border-rose-500/30 space-y-1">
+                    <div class="text-[10px] uppercase font-bold tracking-wider text-rose-400">Microphone Test Result:</div>
+                    <div id="stt-test-output-text" class="text-xs text-white font-medium italic">"..."</div>
+                  </div>
+
+                  <!-- Push to Talk Instructions Banner -->
+                  <div class="p-3 rounded-2xl bg-white/[0.02] border border-white/[0.06] flex items-center gap-3">
+                    <div class="w-8 h-8 rounded-xl bg-purple-500/10 border border-purple-500/20 flex items-center justify-center text-purple-400 shrink-0">
+                      <Zap class="w-4 h-4" />
+                    </div>
+                    <div class="text-xs text-slate-300">
+                      <span class="font-semibold text-white">Push-to-Talk Enabled:</span>
+                      In chat, <span class="text-purple-300 font-semibold">hold down the Send button</span> to record voice. Release to send directly, or slide away to cancel.
+                    </div>
                   </div>
                 </div>
+
               </div>
+
 
               <!-- ================= 3. TAB: IMAGE ENGINE ================= -->
               <div id="tab-image" class="engine-tab-pane hidden space-y-5">
@@ -2033,8 +2264,36 @@ const { character } = Astro.props;
             <!-- Unified Gemini Pill Input Bar -->
             <div 
               id="room-input-container" 
-              class="relative flex items-end gap-1.5 sm:gap-2 px-2.5 py-1.5 sm:px-3 sm:py-2 rounded-[28px] bg-[#1e1f24] hover:bg-[#212329] focus-within:bg-[#1e1f24] border border-white/[0.08] focus-within:border-white/20 transition-all duration-200 shadow-xl shadow-black/40"
+              class="relative flex items-end gap-1.5 sm:gap-2 px-2.5 py-1.5 sm:px-3 sm:py-2 rounded-[28px] bg-[#1e1f24] hover:bg-[#212329] focus-within:bg-[#1e1f24] border border-white/[0.08] focus-within:border-white/20 transition-all duration-200 shadow-xl shadow-black/40 overflow-hidden"
             >
+              <!-- Floating Push-to-Talk / Recording Overlay Bar -->
+              <div 
+                id="voice-recording-overlay" 
+                class="hidden absolute inset-0 bg-[#141624] rounded-[28px] border border-rose-500/50 px-3 sm:px-4 py-1.5 flex items-center justify-between z-20 backdrop-blur-md shadow-lg shadow-rose-950/40"
+              >
+                <div class="flex items-center gap-2.5 min-w-0 flex-1">
+                  <span class="w-2.5 h-2.5 rounded-full bg-rose-500 animate-ping shrink-0"></span>
+                  <div class="flex items-center gap-1 font-mono text-xs font-bold text-rose-300 shrink-0">
+                    <span id="voice-recording-timer">0:00</span>
+                  </div>
+                  <!-- Mini Waveform Visualizer -->
+                  <div class="flex items-center gap-0.5 h-3.5 shrink-0">
+                    <span class="w-1 h-2 bg-rose-400 rounded-full animate-pulse"></span>
+                    <span class="w-1 h-3.5 bg-rose-500 rounded-full animate-pulse delay-75"></span>
+                    <span class="w-1 h-2 bg-rose-400 rounded-full animate-pulse delay-150"></span>
+                    <span class="w-1 h-3 bg-rose-500 rounded-full animate-pulse delay-100"></span>
+                  </div>
+                  <span id="voice-recording-hint" class="text-[11px] text-slate-300 truncate">Release to send • Slide away to cancel</span>
+                </div>
+                <button 
+                  type="button" 
+                  id="cancel-voice-recording-btn" 
+                  class="px-2.5 py-1 rounded-xl bg-rose-500/20 hover:bg-rose-500/30 text-rose-300 text-xs font-semibold border border-rose-500/30 shrink-0 transition cursor-pointer active:scale-95"
+                >
+                  Cancel
+                </button>
+              </div>
+
               <!-- Left Action Button (+) -->
               <button 
                 type="button" 
@@ -3344,14 +3603,32 @@ const { character } = Astro.props;
   const toggleStreaming = document.getElementById('toggle-streaming');
   const toggleThinking = document.getElementById('toggle-thinking');
 
-  // Voice Inputs
+  // Voice Inputs (TTS Output)
+  const voiceSubtabTtsBtn = document.getElementById('voice-subtab-tts-btn');
+  const voiceSubtabSttBtn = document.getElementById('voice-subtab-stt-btn');
+  const voiceTtsPane = document.getElementById('voice-tts-pane');
+  const voiceSttPane = document.getElementById('voice-stt-pane');
+  const ttsStatusBadge = document.getElementById('tts-status-badge');
   const voiceProviderSelect = document.getElementById('voice-provider-select');
+  const customTtsTrigger = document.getElementById('custom-tts-trigger');
+  const customTtsTriggerLabel = document.getElementById('custom-tts-trigger-label');
+  const customTtsTriggerSub = document.getElementById('custom-tts-trigger-sub');
+  const customTtsStatusDot = document.getElementById('custom-tts-status-dot');
+  const customTtsChevron = document.getElementById('custom-tts-chevron');
+  const customTtsMenu = document.getElementById('custom-tts-menu');
   const voiceApiKey = document.getElementById('voice-api-key');
   const voiceKeyContainer = document.getElementById('voice-key-container');
+  const copyTextKeyToTtsBtn = document.getElementById('copy-text-key-to-tts-btn');
+  const toggleVoiceKeyVisibilityBtn = document.getElementById('toggle-voice-key-visibility-btn');
+  const voiceCustomUrlContainer = document.getElementById('voice-custom-url-container');
+  const voiceCustomUrl = document.getElementById('voice-custom-url');
   const voiceIdInput = document.getElementById('voice-id-input');
   const elevenVoiceContainer = document.getElementById('eleven-voice-container');
+  const elevenStabilityBox = document.getElementById('eleven-stability-box');
+  const elevenClarityBox = document.getElementById('eleven-clarity-box');
   const openaiVoiceContainer = document.getElementById('openai-voice-container');
   const openaiVoiceSelect = document.getElementById('openai-voice-select');
+  const openaiTtsModelSelect = document.getElementById('openai-tts-model-select');
   const sliderStability = document.getElementById('slider-stability');
   const badgeStability = document.getElementById('badge-stability');
   const sliderClarity = document.getElementById('slider-clarity');
@@ -3363,6 +3640,33 @@ const { character } = Astro.props;
   const toggleFilterNarration = document.getElementById('toggle-filter-narration');
   const toggleAutoplayVoice = document.getElementById('toggle-autoplay-voice');
   const testVoiceBtn = document.getElementById('test-voice-btn');
+
+  // Voice Inputs (STT Recognition)
+  const sttStatusBadge = document.getElementById('stt-status-badge');
+  const sttProviderSelect = document.getElementById('stt-provider-select');
+  const customSttTrigger = document.getElementById('custom-stt-trigger');
+  const customSttTriggerLabel = document.getElementById('custom-stt-trigger-label');
+  const customSttTriggerSub = document.getElementById('custom-stt-trigger-sub');
+  const customSttStatusDot = document.getElementById('custom-stt-status-dot');
+  const customSttChevron = document.getElementById('custom-stt-chevron');
+  const customSttMenu = document.getElementById('custom-stt-menu');
+  const sttKeyContainer = document.getElementById('stt-key-container');
+  const sttApiKey = document.getElementById('stt-api-key');
+  const copyTextKeyToSttBtn = document.getElementById('copy-text-key-to-stt-btn');
+  const toggleSttKeyVisibilityBtn = document.getElementById('toggle-stt-key-visibility-btn');
+  const sttCustomUrlContainer = document.getElementById('stt-custom-url-container');
+  const sttCustomUrl = document.getElementById('stt-custom-url');
+  const sttModelContainer = document.getElementById('stt-model-container');
+  const sttModelSelect = document.getElementById('stt-model-select');
+  const sttLangSelect = document.getElementById('stt-lang-select');
+  const testSttBtn = document.getElementById('test-stt-btn');
+  const testSttBtnLabel = document.getElementById('test-stt-btn-label');
+  const sttTestOutputBox = document.getElementById('stt-test-output-box');
+  const sttTestOutputText = document.getElementById('stt-test-output-text');
+  const voiceRecordingOverlay = document.getElementById('voice-recording-overlay');
+  const voiceRecordingTimer = document.getElementById('voice-recording-timer');
+  const voiceRecordingHint = document.getElementById('voice-recording-hint');
+  const cancelVoiceRecordingBtn = document.getElementById('cancel-voice-recording-btn');
 
   // Image Inputs
   const imageProviderSelect = document.getElementById('image-provider-select');
@@ -5231,11 +5535,22 @@ const { character } = Astro.props;
     const thinkingVal = localStorage.getItem('aetheria_text_thinking');
     if (toggleThinking) toggleThinking.checked = thinkingVal === 'true'; // default off for snappy roleplay
 
-    // 3. Voice settings
+    // 3. Voice settings (TTS Output & STT Input)
     const voiceProv = localStorage.getItem('aetheria_voice_provider') || 'browser';
     if (voiceProviderSelect) voiceProviderSelect.value = voiceProv;
+    updateCustomTtsDisplay(voiceProv);
+
     const voiceKey = localStorage.getItem('aetheria_voice_key') || '';
     if (voiceApiKey) voiceApiKey.value = voiceKey;
+    const voiceUrl = localStorage.getItem('aetheria_voice_custom_url') || '';
+    if (voiceCustomUrl) voiceCustomUrl.value = voiceUrl;
+
+    const voiceId = localStorage.getItem('aetheria_voice_id') || '21m00Tcm4TlvDq8ikWAM';
+    if (voiceIdInput) voiceIdInput.value = voiceId;
+    const openaiVoice = localStorage.getItem('aetheria_openai_voice') || 'nova';
+    if (openaiVoiceSelect) openaiVoiceSelect.value = openaiVoice;
+    const openaiTtsModel = localStorage.getItem('aetheria_openai_tts_model') || 'tts-1';
+    if (openaiTtsModelSelect) openaiTtsModelSelect.value = openaiTtsModel;
 
     const stability = localStorage.getItem('aetheria_voice_stability') || '0.50';
     if (sliderStability) sliderStability.value = stability;
@@ -5264,6 +5579,24 @@ const { character } = Astro.props;
       if (badgeVoicePitch.tagName === 'INPUT') badgeVoicePitch.value = voicePitch;
       else badgeVoicePitch.textContent = voicePitch;
     }
+
+    // STT Settings
+    const sttProv = localStorage.getItem('aetheria_stt_provider') || 'groq';
+    if (sttProviderSelect) sttProviderSelect.value = sttProv;
+    updateCustomSttDisplay(sttProv);
+
+    const sttKey = localStorage.getItem('aetheria_stt_key') || '';
+    if (sttApiKey) sttApiKey.value = sttKey;
+    const sttUrl = localStorage.getItem('aetheria_stt_custom_url') || '';
+    if (sttCustomUrl) sttCustomUrl.value = sttUrl;
+
+    const sttModel = localStorage.getItem('aetheria_stt_model') || 'whisper-large-v3-turbo';
+    if (sttModelSelect) sttModelSelect.value = sttModel;
+    const sttLang = localStorage.getItem('aetheria_stt_lang') || 'auto';
+    if (sttLangSelect) sttLangSelect.value = sttLang;
+
+    syncVoiceUiPanels();
+    updateMicButtonState();
 
     // 4. Image settings
     const imgProv = localStorage.getItem('aetheria_image_provider') || 'pollinations';
@@ -6472,14 +6805,32 @@ const { character } = Astro.props;
   });
 
   // Test Voice button
-  testVoiceBtn?.addEventListener('click', () => {
+  testVoiceBtn?.addEventListener('click', async () => {
     const prov = voiceProviderSelect?.value || 'browser';
     const rate = parseFloat(sliderVoiceRate?.value || '1.0');
     const pitch = parseFloat(sliderVoicePitch?.value || '1.0');
+    const previewText = `Greetings traveler. I am ${character.name}. This is a live voice preview.`;
+
+    if (prov === 'elevenlabs') {
+      const key = voiceApiKey?.value.trim() || localStorage.getItem('aetheria_voice_key');
+      const vId = voiceIdInput?.value.trim() || '21m00Tcm4TlvDq8ikWAM';
+      if (key) {
+        showNotification('Fetching ElevenLabs voice preview...');
+        speak(previewText);
+        return;
+      }
+    } else if (prov === 'openai') {
+      const key = voiceApiKey?.value.trim() || localStorage.getItem('aetheria_voice_key') || localStorage.getItem('aetheria_key_openai');
+      if (key) {
+        showNotification('Fetching OpenAI Audio preview...');
+        speak(previewText);
+        return;
+      }
+    }
     
     if (window.speechSynthesis) {
       window.speechSynthesis.cancel();
-      const utterance = new SpeechSynthesisUtterance(`Greetings traveler. I am ${character.name}. This is a live voice preview.`);
+      const utterance = new SpeechSynthesisUtterance(previewText);
       utterance.rate = rate;
       utterance.pitch = pitch;
       utterance.lang = 'en-US';
@@ -6733,13 +7084,438 @@ const { character } = Astro.props;
   });
   pingTextBtn?.addEventListener('click', pingTextConnection);
 
-  // Voice and Image provider changes
-  voiceProviderSelect?.addEventListener('change', () => {
-    const val = voiceProviderSelect.value;
-    if (voiceKeyContainer) voiceKeyContainer.classList.toggle('hidden', val === 'browser');
-    if (elevenVoiceContainer) elevenVoiceContainer.classList.toggle('hidden', val !== 'elevenlabs');
-    if (openaiVoiceContainer) openaiVoiceContainer.classList.toggle('hidden', val !== 'openai');
+  // ==========================================
+  // 2026 DUAL-ENGINE VOICE SYSTEMS (TTS & STT)
+  // ==========================================
+  const TTS_PROVIDERS = [
+    { id: 'browser', name: 'Built-in Device Voice', sub: '100% Free • Local Browser Speech' },
+    { id: 'elevenlabs', name: 'ElevenLabs', sub: 'Ultra-Realistic Emotional Voice Cloning' },
+    { id: 'openai', name: 'OpenAI Audio', sub: 'Clear & Expressive Dialogue (tts-1 / tts-1-hd)' },
+    { id: 'custom', name: 'Custom Audio Endpoint', sub: 'Self-hosted (Kokoro, XTTS, vLLM)' }
+  ];
+
+  const STT_PROVIDERS = [
+    { id: 'groq', name: 'Groq Whisper', sub: 'Ultra-Fast LPU Hardware (Generous Free Tier)' },
+    { id: 'openai', name: 'OpenAI Whisper', sub: 'Industry Standard whisper-1 (High Accuracy)' },
+    { id: 'custom', name: 'Custom Whisper Endpoint', sub: 'Self-hosted / Localhost (/v1/audio/transcriptions)' },
+    { id: 'browser', name: 'Browser Built-in (Web Speech)', sub: '100% Free Local Speech Recognition' }
+  ];
+
+  // Voice Sub-tab navigation
+  voiceSubtabTtsBtn?.addEventListener('click', () => {
+    voiceSubtabTtsBtn.className = 'flex-1 py-2 px-3 rounded-xl bg-purple-600 text-white text-xs font-semibold flex items-center justify-center gap-2 transition cursor-pointer shadow-sm shadow-purple-900/40';
+    voiceSubtabSttBtn.className = 'flex-1 py-2 px-3 rounded-xl text-slate-300 hover:text-white hover:bg-white/[0.04] text-xs font-semibold flex items-center justify-center gap-2 transition cursor-pointer';
+    voiceTtsPane?.classList.remove('hidden');
+    voiceSttPane?.classList.add('hidden');
   });
+
+  voiceSubtabSttBtn?.addEventListener('click', () => {
+    voiceSubtabSttBtn.className = 'flex-1 py-2 px-3 rounded-xl bg-rose-600 text-white text-xs font-semibold flex items-center justify-center gap-2 transition cursor-pointer shadow-sm shadow-rose-900/40';
+    voiceSubtabTtsBtn.className = 'flex-1 py-2 px-3 rounded-xl text-slate-300 hover:text-white hover:bg-white/[0.04] text-xs font-semibold flex items-center justify-center gap-2 transition cursor-pointer';
+    voiceSttPane?.classList.remove('hidden');
+    voiceTtsPane?.classList.add('hidden');
+  });
+
+  // Custom Dropdowns for TTS and STT (NO NATIVE OS DIALOGS)
+  function renderCustomTtsMenu() {
+    if (!customTtsMenu) return;
+    const current = voiceProviderSelect?.value || 'browser';
+    customTtsMenu.innerHTML = TTS_PROVIDERS.map(p => `
+      <button 
+        type="button" 
+        data-tts-id="${p.id}"
+        class="custom-tts-item w-full px-3 py-2 rounded-xl text-left flex items-center justify-between transition cursor-pointer text-xs group ${
+          p.id === current ? 'bg-purple-600/25 text-white border border-purple-500/40' : 'text-slate-300 hover:bg-white/[0.05] hover:text-white'
+        }"
+      >
+        <div class="flex items-center gap-2 min-w-0 pr-2">
+          <span class="w-2 h-2 rounded-full ${p.id === current ? 'bg-emerald-400' : 'bg-purple-400'} shrink-0"></span>
+          <div class="min-w-0 flex flex-col">
+            <span class="font-semibold text-white truncate">${p.name}</span>
+            <span class="text-[10px] text-slate-400 truncate">${p.sub}</span>
+          </div>
+        </div>
+        ${p.id === current ? '<span class="text-purple-400 text-xs font-bold ml-1">✓</span>' : ''}
+      </button>
+    `).join('');
+
+    customTtsMenu.querySelectorAll('.custom-tts-item').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const id = btn.getAttribute('data-tts-id');
+        if (voiceProviderSelect && id) {
+          voiceProviderSelect.value = id;
+          voiceProviderSelect.dispatchEvent(new Event('change'));
+        }
+        closeCustomTtsMenu();
+      });
+    });
+  }
+
+  function updateCustomTtsDisplay(id) {
+    const p = TTS_PROVIDERS.find(x => x.id === id) || TTS_PROVIDERS[0];
+    if (customTtsTriggerLabel) customTtsTriggerLabel.textContent = p.name;
+    if (customTtsTriggerSub) customTtsTriggerSub.textContent = p.sub;
+    renderCustomTtsMenu();
+  }
+
+  function openCustomTtsMenu() {
+    customTtsMenu?.classList.remove('hidden');
+    customTtsChevron?.classList.add('rotate-180');
+  }
+
+  function closeCustomTtsMenu() {
+    customTtsMenu?.classList.add('hidden');
+    customTtsChevron?.classList.remove('rotate-180');
+  }
+
+  customTtsTrigger?.addEventListener('click', (e) => {
+    e.stopPropagation();
+    if (customTtsMenu?.classList.contains('hidden')) openCustomTtsMenu();
+    else closeCustomTtsMenu();
+  });
+
+  // STT Custom Menu
+  function renderCustomSttMenu() {
+    if (!customSttMenu) return;
+    const current = sttProviderSelect?.value || 'groq';
+    customSttMenu.innerHTML = STT_PROVIDERS.map(p => `
+      <button 
+        type="button" 
+        data-stt-id="${p.id}"
+        class="custom-stt-item w-full px-3 py-2 rounded-xl text-left flex items-center justify-between transition cursor-pointer text-xs group ${
+          p.id === current ? 'bg-rose-600/25 text-white border border-rose-500/40' : 'text-slate-300 hover:bg-white/[0.05] hover:text-white'
+        }"
+      >
+        <div class="flex items-center gap-2 min-w-0 pr-2">
+          <span class="w-2 h-2 rounded-full ${p.id === current ? 'bg-emerald-400' : 'bg-rose-400'} shrink-0"></span>
+          <div class="min-w-0 flex flex-col">
+            <span class="font-semibold text-white truncate">${p.name}</span>
+            <span class="text-[10px] text-slate-400 truncate">${p.sub}</span>
+          </div>
+        </div>
+        ${p.id === current ? '<span class="text-rose-400 text-xs font-bold ml-1">✓</span>' : ''}
+      </button>
+    `).join('');
+
+    customSttMenu.querySelectorAll('.custom-stt-item').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const id = btn.getAttribute('data-stt-id');
+        if (sttProviderSelect && id) {
+          sttProviderSelect.value = id;
+          sttProviderSelect.dispatchEvent(new Event('change'));
+        }
+        closeCustomSttMenu();
+      });
+    });
+  }
+
+  function updateCustomSttDisplay(id) {
+    const p = STT_PROVIDERS.find(x => x.id === id) || STT_PROVIDERS[0];
+    if (customSttTriggerLabel) customSttTriggerLabel.textContent = p.name;
+    if (customSttTriggerSub) customSttTriggerSub.textContent = p.sub;
+    renderCustomSttMenu();
+  }
+
+  function openCustomSttMenu() {
+    customSttMenu?.classList.remove('hidden');
+    customSttChevron?.classList.add('rotate-180');
+  }
+
+  function closeCustomSttMenu() {
+    customSttMenu?.classList.add('hidden');
+    customSttChevron?.classList.remove('rotate-180');
+  }
+
+  customSttTrigger?.addEventListener('click', (e) => {
+    e.stopPropagation();
+    if (customSttMenu?.classList.contains('hidden')) openCustomSttMenu();
+    else closeCustomSttMenu();
+  });
+
+  // Close menus on outside click
+  document.addEventListener('click', (e) => {
+    if (customTtsMenu && !customTtsMenu.contains(e.target) && !customTtsTrigger?.contains(e.target)) {
+      closeCustomTtsMenu();
+    }
+    if (customSttMenu && !customSttMenu.contains(e.target) && !customSttTrigger?.contains(e.target)) {
+      closeCustomSttMenu();
+    }
+  });
+
+  // UI Panels synchronization
+  function syncVoiceUiPanels() {
+    const ttsVal = voiceProviderSelect?.value || 'browser';
+    updateCustomTtsDisplay(ttsVal);
+
+    if (voiceKeyContainer) voiceKeyContainer.classList.toggle('hidden', ttsVal === 'browser');
+    if (voiceCustomUrlContainer) voiceCustomUrlContainer.classList.toggle('hidden', ttsVal !== 'custom');
+    if (elevenVoiceContainer) elevenVoiceContainer.classList.toggle('hidden', ttsVal !== 'elevenlabs');
+    if (elevenStabilityBox) elevenStabilityBox.classList.toggle('hidden', ttsVal !== 'elevenlabs');
+    if (elevenClarityBox) elevenClarityBox.classList.toggle('hidden', ttsVal !== 'elevenlabs');
+    if (openaiVoiceContainer) openaiVoiceContainer.classList.toggle('hidden', ttsVal !== 'openai');
+
+    // Quick copy OpenAI key to TTS
+    const openaiKey = localStorage.getItem('aetheria_key_openai') || '';
+    if (copyTextKeyToTtsBtn) {
+      copyTextKeyToTtsBtn.classList.toggle('hidden', !openaiKey || ttsVal !== 'openai');
+    }
+
+    // TTS Status
+    const ttsKey = voiceApiKey?.value.trim() || localStorage.getItem('aetheria_voice_key') || '';
+    if (ttsStatusBadge) {
+      if (ttsVal === 'browser') {
+        ttsStatusBadge.className = 'px-2 py-0.5 rounded-full text-[10px] font-mono bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 font-semibold shrink-0';
+        ttsStatusBadge.textContent = 'Free • Ready';
+        if (customTtsStatusDot) customTtsStatusDot.className = 'w-2 h-2 rounded-full bg-emerald-400 shrink-0';
+      } else if (!ttsKey) {
+        ttsStatusBadge.className = 'px-2 py-0.5 rounded-full text-[10px] font-mono bg-amber-500/20 text-amber-300 border border-amber-500/30 font-semibold shrink-0';
+        ttsStatusBadge.textContent = 'Key Required';
+        if (customTtsStatusDot) customTtsStatusDot.className = 'w-2 h-2 rounded-full bg-amber-400 shrink-0';
+      } else {
+        ttsStatusBadge.className = 'px-2 py-0.5 rounded-full text-[10px] font-mono bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 font-semibold shrink-0';
+        ttsStatusBadge.textContent = 'Configured';
+        if (customTtsStatusDot) customTtsStatusDot.className = 'w-2 h-2 rounded-full bg-emerald-400 shrink-0';
+      }
+    }
+
+    // STT Panels
+    const sttVal = sttProviderSelect?.value || 'groq';
+    updateCustomSttDisplay(sttVal);
+
+    if (sttKeyContainer) sttKeyContainer.classList.toggle('hidden', sttVal === 'browser');
+    if (sttCustomUrlContainer) sttCustomUrlContainer.classList.toggle('hidden', sttVal !== 'custom');
+    if (sttModelContainer) sttModelContainer.classList.toggle('hidden', sttVal === 'browser');
+
+    // Quick copy button for STT
+    const groqKey = localStorage.getItem('aetheria_key_groq') || '';
+    if (copyTextKeyToSttBtn) {
+      if (sttVal === 'groq' && groqKey) {
+        copyTextKeyToSttBtn.classList.remove('hidden');
+        copyTextKeyToSttBtn.textContent = 'Paste Groq Key from Text Tab';
+      } else if (sttVal === 'openai' && openaiKey) {
+        copyTextKeyToSttBtn.classList.remove('hidden');
+        copyTextKeyToSttBtn.textContent = 'Paste OpenAI Key from Text Tab';
+      } else {
+        copyTextKeyToSttBtn.classList.add('hidden');
+      }
+    }
+
+    // STT Status
+    const isReady = isSttReady();
+    if (sttStatusBadge) {
+      if (sttVal === 'browser') {
+        sttStatusBadge.className = 'px-2 py-0.5 rounded-full text-[10px] font-mono bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 font-semibold shrink-0';
+        sttStatusBadge.textContent = 'Browser Free';
+        if (customSttStatusDot) customSttStatusDot.className = 'w-2 h-2 rounded-full bg-emerald-400 shrink-0';
+      } else if (!isReady) {
+        sttStatusBadge.className = 'px-2 py-0.5 rounded-full text-[10px] font-mono bg-amber-500/20 text-amber-300 border border-amber-500/30 font-semibold shrink-0';
+        sttStatusBadge.textContent = 'Key Required';
+        if (customSttStatusDot) customSttStatusDot.className = 'w-2 h-2 rounded-full bg-amber-400 shrink-0';
+      } else {
+        sttStatusBadge.className = 'px-2 py-0.5 rounded-full text-[10px] font-mono bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 font-semibold shrink-0';
+        sttStatusBadge.textContent = 'STT Ready';
+        if (customSttStatusDot) customSttStatusDot.className = 'w-2 h-2 rounded-full bg-emerald-400 shrink-0';
+      }
+    }
+  }
+
+  voiceProviderSelect?.addEventListener('change', syncVoiceUiPanels);
+  sttProviderSelect?.addEventListener('change', syncVoiceUiPanels);
+  voiceApiKey?.addEventListener('input', syncVoiceUiPanels);
+  sttApiKey?.addEventListener('input', () => {
+    syncVoiceUiPanels();
+    updateMicButtonState();
+  });
+
+  copyTextKeyToTtsBtn?.addEventListener('click', () => {
+    const k = localStorage.getItem('aetheria_key_openai') || '';
+    if (k && voiceApiKey) {
+      voiceApiKey.value = k;
+      localStorage.setItem('aetheria_voice_key', k);
+      syncVoiceUiPanels();
+      showNotification('✓ Copied OpenAI API Key to Voice Settings!');
+    }
+  });
+
+  copyTextKeyToSttBtn?.addEventListener('click', () => {
+    const prov = sttProviderSelect?.value || 'groq';
+    const k = (prov === 'groq' ? localStorage.getItem('aetheria_key_groq') : localStorage.getItem('aetheria_key_openai')) || '';
+    if (k && sttApiKey) {
+      sttApiKey.value = k;
+      localStorage.setItem('aetheria_stt_key', k);
+      syncVoiceUiPanels();
+      updateMicButtonState();
+      showNotification(`✓ Copied ${prov.toUpperCase()} API Key to Voice Input!`);
+    }
+  });
+
+  toggleVoiceKeyVisibilityBtn?.addEventListener('click', () => {
+    if (!voiceApiKey) return;
+    const isPass = voiceApiKey.type === 'password';
+    voiceApiKey.type = isPass ? 'text' : 'password';
+    toggleVoiceKeyVisibilityBtn.textContent = isPass ? 'Hide' : 'Show';
+  });
+
+  toggleSttKeyVisibilityBtn?.addEventListener('click', () => {
+    if (!sttApiKey) return;
+    const isPass = sttApiKey.type === 'password';
+    sttApiKey.type = isPass ? 'text' : 'password';
+    toggleSttKeyVisibilityBtn.textContent = isPass ? 'Hide' : 'Show';
+  });
+
+  document.querySelectorAll('.quick-voice-pill').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const v = btn.getAttribute('data-voice');
+      if (v && voiceIdInput) {
+        voiceIdInput.value = v;
+        localStorage.setItem('aetheria_voice_id', v);
+        showNotification(`✓ Voice selected: ${btn.textContent.trim()}`);
+      }
+    });
+  });
+
+  // Live STT test
+  let sttTestMediaRecorder = null;
+  let sttTestChunks = [];
+  testSttBtn?.addEventListener('click', async () => {
+    if (!navigator.mediaDevices?.getUserMedia) {
+      showNotification('⚠️ Microphone access is not supported by your browser.', 'warning');
+      return;
+    }
+    if (testSttBtn.disabled) return;
+
+    try {
+      const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+      sttTestChunks = [];
+      sttTestMediaRecorder = new MediaRecorder(stream);
+      sttTestMediaRecorder.ondataavailable = (e) => {
+        if (e.data && e.data.size > 0) sttTestChunks.push(e.data);
+      };
+      sttTestMediaRecorder.onstop = async () => {
+        stream.getTracks().forEach(t => t.stop());
+        const audioBlob = new Blob(sttTestChunks, { type: sttTestMediaRecorder.mimeType || 'audio/webm' });
+        if (testSttBtnLabel) testSttBtnLabel.textContent = 'Transcribing...';
+        try {
+          const text = await transcribeAudioBlob(audioBlob);
+          if (sttTestOutputBox && sttTestOutputText) {
+            sttTestOutputBox.classList.remove('hidden');
+            sttTestOutputText.textContent = text ? `"${text}"` : "(No speech detected or empty audio)";
+          }
+          showNotification('✓ Voice input transcribed successfully!');
+        } catch (err) {
+          if (sttTestOutputBox && sttTestOutputText) {
+            sttTestOutputBox.classList.remove('hidden');
+            sttTestOutputText.textContent = `Error: ${err.message || 'Transcription failed'}`;
+          }
+        } finally {
+          testSttBtn.disabled = false;
+          if (testSttBtnLabel) testSttBtnLabel.textContent = 'Test Mic (3s)';
+        }
+      };
+
+      testSttBtn.disabled = true;
+      if (testSttBtnLabel) testSttBtnLabel.textContent = 'Listening (3s)...';
+      sttTestMediaRecorder.start();
+      setTimeout(() => {
+        if (sttTestMediaRecorder && sttTestMediaRecorder.state === 'recording') {
+          sttTestMediaRecorder.stop();
+        }
+      }, 3000);
+    } catch (err) {
+      showNotification(`⚠️ Microphone permission denied: ${err.message}`, 'error');
+    }
+  });
+
+  // Audio transcription API dispatcher
+  async function transcribeAudioBlob(blob) {
+    const prov = localStorage.getItem('aetheria_stt_provider') || 'groq';
+    let apiKey = (localStorage.getItem('aetheria_stt_key') || '').trim();
+    if (!apiKey) {
+      if (prov === 'groq') apiKey = (localStorage.getItem('aetheria_key_groq') || localStorage.getItem('aetheria_text_key') || '').trim();
+      if (prov === 'openai') apiKey = (localStorage.getItem('aetheria_key_openai') || localStorage.getItem('aetheria_text_key') || '').trim();
+    }
+    const model = localStorage.getItem('aetheria_stt_model') || (prov === 'groq' ? 'whisper-large-v3-turbo' : 'whisper-1');
+    const lang = localStorage.getItem('aetheria_stt_lang') || 'auto';
+    const customUrl = localStorage.getItem('aetheria_stt_custom_url') || '';
+
+    let endpoint = '';
+    if (prov === 'groq') {
+      endpoint = 'https://api.groq.com/openai/v1/audio/transcriptions';
+    } else if (prov === 'openai') {
+      endpoint = 'https://api.openai.com/v1/audio/transcriptions';
+    } else if (prov === 'custom' && customUrl) {
+      endpoint = customUrl;
+    } else {
+      endpoint = 'https://api.groq.com/openai/v1/audio/transcriptions';
+    }
+
+    const formData = new FormData();
+    const fileExt = blob.type.includes('mp4') ? 'mp4' : 'webm';
+    formData.append('file', blob, `voice_recording.${fileExt}`);
+    formData.append('model', model);
+    formData.append('response_format', 'json');
+    if (lang && lang !== 'auto') {
+      formData.append('language', lang);
+    }
+
+    const res = await fetch(endpoint, {
+      method: 'POST',
+      headers: {
+        'Authorization': `Bearer ${apiKey}`
+      },
+      body: formData
+    });
+
+    if (!res.ok) {
+      const errText = await res.text();
+      let msg = `HTTP ${res.status}`;
+      try {
+        const errJson = JSON.parse(errText);
+        msg = errJson.error?.message || msg;
+      } catch(e) {}
+      throw new Error(msg);
+    }
+
+    const data = await res.json();
+    return data.text || '';
+  }
+
+  function isSttReady() {
+    const prov = localStorage.getItem('aetheria_stt_provider') || 'groq';
+    if (prov === 'browser') return true;
+    let key = (localStorage.getItem('aetheria_stt_key') || '').trim();
+    if (!key) {
+      if (prov === 'groq') key = (localStorage.getItem('aetheria_key_groq') || localStorage.getItem('aetheria_text_key') || '').trim();
+      if (prov === 'openai') key = (localStorage.getItem('aetheria_key_openai') || localStorage.getItem('aetheria_text_key') || '').trim();
+    }
+    return Boolean(key);
+  }
+
+  function updateMicButtonState() {
+    if (!micBtn) return;
+    const ready = isSttReady();
+    if (ready) {
+      micBtn.classList.remove('opacity-40');
+      micBtn.title = "Voice Input: Tap to speak, or hold to send voice";
+    } else {
+      micBtn.classList.add('opacity-40');
+      micBtn.title = "Voice Input (Configure STT Key in Settings)";
+    }
+  }
+
+  function promptConfigureStt() {
+    showNotification('🔒 Voice input requires an STT API Key. Opening Voice Settings...', 'warning');
+    if (byokBtn) {
+      byokBtn.click();
+      setTimeout(() => {
+        const tabVoiceBtn = document.getElementById('tab-btn-voice');
+        tabVoiceBtn?.click();
+        setTimeout(() => {
+          voiceSubtabSttBtn?.click();
+        }, 100);
+      }, 200);
+    }
+  }
 
   imageProviderSelect?.addEventListener('change', () => {
     const val = imageProviderSelect.value;
@@ -6829,8 +7605,10 @@ const { character } = Astro.props;
 
       if (voiceProviderSelect) localStorage.setItem('aetheria_voice_provider', voiceProviderSelect.value);
       if (voiceApiKey) localStorage.setItem('aetheria_voice_key', voiceApiKey.value.trim());
+      if (voiceCustomUrl) localStorage.setItem('aetheria_voice_custom_url', voiceCustomUrl.value.trim());
       if (voiceIdInput) localStorage.setItem('aetheria_voice_id', voiceIdInput.value.trim());
       if (openaiVoiceSelect) localStorage.setItem('aetheria_openai_voice', openaiVoiceSelect.value);
+      if (openaiTtsModelSelect) localStorage.setItem('aetheria_openai_tts_model', openaiTtsModelSelect.value);
       if (sliderStability) localStorage.setItem('aetheria_voice_stability', sliderStability.value);
       if (sliderClarity) localStorage.setItem('aetheria_voice_clarity', sliderClarity.value);
       if (sliderVoiceRate) localStorage.setItem('aetheria_voice_rate', sliderVoiceRate.value);
@@ -6842,6 +7620,13 @@ const { character } = Astro.props;
         syncTtsUi();
         if (!ttsEnabled) stopSpeaking();
       }
+
+      if (sttProviderSelect) localStorage.setItem('aetheria_stt_provider', sttProviderSelect.value);
+      if (sttApiKey) localStorage.setItem('aetheria_stt_key', sttApiKey.value.trim());
+      if (sttCustomUrl) localStorage.setItem('aetheria_stt_custom_url', sttCustomUrl.value.trim());
+      if (sttModelSelect) localStorage.setItem('aetheria_stt_model', sttModelSelect.value);
+      if (sttLangSelect) localStorage.setItem('aetheria_stt_lang', sttLangSelect.value);
+      updateMicButtonState();
 
       if (imageProviderSelect) localStorage.setItem('aetheria_image_provider', imageProviderSelect.value);
       if (imageApiKey) localStorage.setItem('aetheria_image_key', imageApiKey.value.trim());
@@ -7611,6 +8396,71 @@ const { character } = Astro.props;
         }
       } catch (err) {
         console.warn('ElevenLabs speech error, falling back to browser:', err);
+      }
+    }
+
+    if (provider === 'openai' && voiceKey) {
+      try {
+        const archetype = localStorage.getItem('aetheria_openai_voice') || 'nova';
+        const model = localStorage.getItem('aetheria_openai_tts_model') || 'tts-1';
+        const speed = parseFloat(localStorage.getItem('aetheria_voice_rate') || '1.0');
+        const res = await fetch('https://api.openai.com/v1/audio/speech', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${voiceKey}`
+          },
+          body: JSON.stringify({
+            model: model,
+            voice: archetype,
+            input: cleanText.slice(0, 2000),
+            speed: Math.max(0.5, Math.min(2.0, speed))
+          })
+        });
+        if (res.ok) {
+          const blob = await res.blob();
+          const audioUrl = URL.createObjectURL(blob);
+          activeAudio = new Audio(audioUrl);
+          activeAudio.onended = () => stopSpeaking();
+          activeAudio.onerror = () => stopSpeaking();
+          activeAudio.play();
+          return;
+        } else {
+          console.warn('OpenAI TTS API returned HTTP', res.status);
+        }
+      } catch (err) {
+        console.warn('OpenAI speech error, falling back to browser:', err);
+      }
+    }
+
+    if (provider === 'custom') {
+      const customUrl = (localStorage.getItem('aetheria_voice_custom_url') || '').trim();
+      if (customUrl) {
+        try {
+          const speed = parseFloat(localStorage.getItem('aetheria_voice_rate') || '1.0');
+          const res = await fetch(customUrl, {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+              ...(voiceKey ? { 'Authorization': `Bearer ${voiceKey}` } : {})
+            },
+            body: JSON.stringify({
+              input: cleanText.slice(0, 2000),
+              speed: speed
+            })
+          });
+          if (res.ok) {
+            const blob = await res.blob();
+            const audioUrl = URL.createObjectURL(blob);
+            activeAudio = new Audio(audioUrl);
+            activeAudio.onended = () => stopSpeaking();
+            activeAudio.onerror = () => stopSpeaking();
+            activeAudio.play();
+            return;
+          }
+        } catch (err) {
+          console.warn('Custom TTS error, falling back to browser:', err);
+        }
       }
     }
 
@@ -9685,23 +10535,175 @@ const { character } = Astro.props;
     } catch (e) {}
   }
 
-  micBtn?.addEventListener('click', () => {
-    if (!speechRec) {
-      if (typeof showToast === 'function') {
-        showToast('Voice input is not supported in this browser.', 'warning');
-      }
+  let activeMediaRecorder = null;
+  let activeAudioChunks = [];
+  let recordingInterval = null;
+  let recordingStartTime = 0;
+  let isRecordingChatAudio = false;
+  let isHoldSendingChatAudio = false;
+  let isChatRecordingCancelled = false;
+  let holdSendTimer = null;
+  let touchStartY = 0;
+
+  async function startChatAudioRecording(isHold = false) {
+    if (!isSttReady()) {
+      promptConfigureStt();
       return;
     }
-    if (isListeningVoice) {
-      speechRec.stop();
-    } else {
-      try {
-        speechRec.start();
-      } catch (err) {
-        speechRec.stop();
+    if (isRecordingChatAudio) return;
+
+    if (!navigator.mediaDevices?.getUserMedia) {
+      showNotification('⚠️ Microphone recording not supported on this device.', 'warning');
+      return;
+    }
+
+    try {
+      const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+      activeAudioChunks = [];
+      activeMediaRecorder = new MediaRecorder(stream);
+      isRecordingChatAudio = true;
+      isHoldSendingChatAudio = isHold;
+      isChatRecordingCancelled = false;
+
+      activeMediaRecorder.ondataavailable = (e) => {
+        if (e.data && e.data.size > 0) activeAudioChunks.push(e.data);
+      };
+
+      activeMediaRecorder.onstop = async () => {
+        stream.getTracks().forEach(t => t.stop());
+        clearInterval(recordingInterval);
+        isRecordingChatAudio = false;
+        voiceRecordingOverlay?.classList.add('hidden');
+        micBtn?.classList.remove('text-rose-400', 'bg-rose-500/20', 'animate-pulse');
+
+        if (isChatRecordingCancelled) {
+          showNotification('Recording cancelled');
+          return;
+        }
+
+        const audioBlob = new Blob(activeAudioChunks, { type: activeMediaRecorder.mimeType || 'audio/webm' });
+        showNotification('Transcribing voice audio...');
+
+        try {
+          const transcript = await transcribeAudioBlob(audioBlob);
+          if (!transcript || !transcript.trim()) {
+            showNotification('No speech recognized.', 'info');
+            return;
+          }
+
+          if (isHoldSendingChatAudio) {
+            // Push-to-Talk auto-send
+            if (typeof sendUserMessage === 'function') {
+              sendUserMessage(transcript.trim());
+            } else if (input) {
+              input.value = transcript.trim();
+              document.getElementById('room-send-btn')?.click();
+            }
+          } else {
+            // Tap-to-record fills input
+            if (input) {
+              input.value = (input.value ? input.value + ' ' : '') + transcript.trim();
+              adjustInputHeight();
+              updateSendBtnState();
+              input.focus();
+            }
+          }
+        } catch (err) {
+          showNotification(`⚠️ Voice transcription error: ${err.message}`, 'error');
+        }
+      };
+
+      // Show recording UI
+      voiceRecordingOverlay?.classList.remove('hidden');
+      micBtn?.classList.add('text-rose-400', 'bg-rose-500/20', 'animate-pulse');
+      if (voiceRecordingHint) {
+        voiceRecordingHint.textContent = isHold ? 'Release to send • Slide away to cancel' : 'Tap mic again or Cancel to finish';
       }
+
+      recordingStartTime = Date.now();
+      if (voiceRecordingTimer) voiceRecordingTimer.textContent = '0:00';
+      recordingInterval = setInterval(() => {
+        const sec = Math.floor((Date.now() - recordingStartTime) / 1000);
+        const m = Math.floor(sec / 60);
+        const s = sec % 60;
+        if (voiceRecordingTimer) {
+          voiceRecordingTimer.textContent = `${m}:${s < 10 ? '0' : ''}${s}`;
+        }
+      }, 500);
+
+      activeMediaRecorder.start();
+    } catch (err) {
+      showNotification(`⚠️ Microphone permission denied: ${err.message}`, 'error');
+      isRecordingChatAudio = false;
+    }
+  }
+
+  function stopChatAudioRecording(cancel = false) {
+    if (!isRecordingChatAudio || !activeMediaRecorder) return;
+    if (cancel) isChatRecordingCancelled = true;
+    if (activeMediaRecorder.state === 'recording') {
+      activeMediaRecorder.stop();
+    }
+  }
+
+  cancelVoiceRecordingBtn?.addEventListener('click', () => {
+    stopChatAudioRecording(true);
+  });
+
+  // Tap on mic button
+  micBtn?.addEventListener('click', () => {
+    if (!isSttReady()) {
+      promptConfigureStt();
+      return;
+    }
+    if (isRecordingChatAudio) {
+      stopChatAudioRecording(false);
+    } else {
+      startChatAudioRecording(false);
     }
   });
+
+  // Hold Send Button to Record (Push-to-Talk)
+  const roomSendBtn = document.getElementById('room-send-btn');
+  
+  function handleHoldStart(e) {
+    if (input && input.value.trim().length > 0) return; // if text typed, normal send
+    if (e.touches && e.touches[0]) touchStartY = e.touches[0].clientY;
+
+    holdSendTimer = setTimeout(() => {
+      startChatAudioRecording(true);
+    }, 280);
+  }
+
+  function handleHoldEnd(e) {
+    if (holdSendTimer) {
+      clearTimeout(holdSendTimer);
+      holdSendTimer = null;
+    }
+    if (isRecordingChatAudio && isHoldSendingChatAudio) {
+      stopChatAudioRecording(false);
+    }
+  }
+
+  function handleHoldMove(e) {
+    if (!isRecordingChatAudio || !isHoldSendingChatAudio) return;
+    if (e.touches && e.touches[0]) {
+      const diffY = touchStartY - e.touches[0].clientY;
+      if (Math.abs(diffY) > 60) {
+        isChatRecordingCancelled = true;
+        if (voiceRecordingHint) voiceRecordingHint.textContent = 'Cancelled (Release to discard)';
+      }
+    }
+  }
+
+  roomSendBtn?.addEventListener('mousedown', handleHoldStart);
+  roomSendBtn?.addEventListener('mouseup', handleHoldEnd);
+  roomSendBtn?.addEventListener('mouseleave', handleHoldEnd);
+
+  roomSendBtn?.addEventListener('touchstart', handleHoldStart, { passive: true });
+  roomSendBtn?.addEventListener('touchend', handleHoldEnd);
+  roomSendBtn?.addEventListener('touchcancel', () => stopChatAudioRecording(true));
+  roomSendBtn?.addEventListener('touchmove', handleHoldMove, { passive: true });
 
   // Initial state synchronization
   adjustInputHeight();
