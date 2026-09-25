@@ -48,7 +48,9 @@ import {
   Lock,
   LockOpen,
   Flag,
-  Rewind
+  Rewind,
+  ArrowUp,
+  Mic
 } from '@lucide/astro';
 
 export function getStaticPaths() {
@@ -1741,28 +1743,114 @@ const { character } = Astro.props;
             </div>
           </div>
 
-          <!-- Bottom Input Form -->
-          <form id="room-input-form" class="w-full max-w-4xl mx-auto flex items-end gap-2">
-            <div class="flex-1 min-w-0 relative rounded-2xl bg-white/[0.04] hover:bg-white/[0.06] focus-within:bg-[#0c0f1e] border border-white/[0.1] focus-within:border-purple-500/60 transition shadow-inner">
+          <!-- Bottom Input Form (Google Gemini Capsule) -->
+          <form id="room-input-form" class="w-full max-w-4xl mx-auto relative">
+            <!-- Gemini-Style Floating Tools Popover (Triggered by + button) -->
+            <div 
+              id="chat-plus-menu" 
+              class="hidden absolute bottom-full left-0 mb-2.5 w-64 bg-[#1e1f24] border border-white/[0.08] rounded-2xl p-1.5 shadow-2xl shadow-black/70 backdrop-blur-xl z-50 flex flex-col gap-0.5"
+            >
+              <div class="px-2.5 py-1.5 text-[10px] font-semibold uppercase tracking-wider text-neutral-400">Creative Actions & Tools</div>
+              <button 
+                type="button" 
+                id="plus-action-selfie"
+                class="w-full px-2.5 py-2 rounded-xl hover:bg-white/[0.06] text-left flex items-center gap-2.5 text-xs text-neutral-200 hover:text-white transition cursor-pointer"
+              >
+                <div class="w-6 h-6 rounded-lg bg-pink-500/10 text-pink-400 flex items-center justify-center shrink-0">
+                  <Camera class="w-3.5 h-3.5" />
+                </div>
+                <div>
+                  <div class="font-medium">Request Selfie</div>
+                  <div class="text-[10px] text-neutral-400">Character selfie generation</div>
+                </div>
+              </button>
+              <button 
+                type="button" 
+                id="plus-action-video"
+                class="w-full px-2.5 py-2 rounded-xl hover:bg-white/[0.06] text-left flex items-center gap-2.5 text-xs text-neutral-200 hover:text-white transition cursor-pointer"
+              >
+                <div class="w-6 h-6 rounded-lg bg-purple-500/10 text-purple-400 flex items-center justify-center shrink-0">
+                  <Video class="w-3.5 h-3.5" />
+                </div>
+                <div>
+                  <div class="font-medium">Generate Video</div>
+                  <div class="text-[10px] text-neutral-400">Living motion portrait</div>
+                </div>
+              </button>
+              <button 
+                type="button" 
+                id="plus-action-persona"
+                class="w-full px-2.5 py-2 rounded-xl hover:bg-white/[0.06] text-left flex items-center gap-2.5 text-xs text-neutral-200 hover:text-white transition cursor-pointer"
+              >
+                <div class="w-6 h-6 rounded-lg bg-indigo-500/10 text-indigo-400 flex items-center justify-center shrink-0">
+                  <User class="w-3.5 h-3.5" />
+                </div>
+                <div>
+                  <div class="font-medium">Switch Persona</div>
+                  <div class="text-[10px] text-neutral-400">Change your role/identity</div>
+                </div>
+              </button>
+              <button 
+                type="button" 
+                id="plus-action-rewind"
+                class="w-full px-2.5 py-2 rounded-xl hover:bg-white/[0.06] text-left flex items-center gap-2.5 text-xs text-neutral-200 hover:text-white transition cursor-pointer"
+              >
+                <div class="w-6 h-6 rounded-lg bg-amber-500/10 text-amber-400 flex items-center justify-center shrink-0">
+                  <Rewind class="w-3.5 h-3.5" />
+                </div>
+                <div>
+                  <div class="font-medium">Rewind Turn</div>
+                  <div class="text-[10px] text-neutral-400">Step back to previous state</div>
+                </div>
+              </button>
+            </div>
+
+            <!-- Unified Gemini Pill Input Bar -->
+            <div 
+              id="room-input-container" 
+              class="relative flex items-end gap-1.5 sm:gap-2 px-2.5 py-1.5 sm:px-3 sm:py-2 rounded-[28px] bg-[#1e1f24] hover:bg-[#212329] focus-within:bg-[#1e1f24] border border-white/[0.08] focus-within:border-white/20 transition-all duration-200 shadow-xl shadow-black/40"
+            >
+              <!-- Left Action Button (+) -->
+              <button 
+                type="button" 
+                id="chat-input-plus-btn"
+                class="w-8 h-8 sm:w-9 sm:h-9 rounded-full flex items-center justify-center text-neutral-400 hover:text-white hover:bg-white/[0.08] transition-all active:scale-95 shrink-0 self-end mb-0.5 cursor-pointer"
+                title="Quick Tools & Actions"
+              >
+                <Plus class="w-4 h-4 sm:w-5 sm:h-5 transition-transform duration-200" />
+              </button>
+
+              <!-- Dynamic Auto-Growing Textarea -->
               <textarea 
                 id="room-input" 
                 rows="1" 
+                dir="auto"
                 placeholder={`Message ${character.name}...`}
-                class="w-full px-3.5 py-2.5 sm:px-4 sm:py-3 bg-transparent text-xs sm:text-sm text-white placeholder:text-slate-500 outline-none resize-none max-h-32 leading-relaxed"
-                style="scrollbar-width: none; -ms-overflow-style: none;"
+                class="flex-1 min-w-0 py-1.5 sm:py-2 px-1.5 bg-transparent text-sm sm:text-[15px] text-white placeholder:text-neutral-500 outline-none resize-none leading-relaxed transition-[height] duration-75"
+                style="min-height: 24px; max-height: 120px; height: 24px; overflow-y: hidden; scrollbar-width: thin;"
               ></textarea>
-            </div>
 
-            <!-- Send Button -->
-            <button 
-              type="submit" 
-              id="room-send-btn"
-              class="h-10 w-10 sm:h-11 sm:w-auto sm:px-5 rounded-2xl bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-500 hover:to-indigo-500 text-white font-semibold flex items-center justify-center gap-1.5 shadow-lg shadow-purple-900/40 hover:shadow-purple-600/50 transition-all duration-200 cursor-pointer active:scale-95 shrink-0"
-              title="Send Message"
-            >
-              <Send class="w-4 h-4" />
-              <span class="hidden sm:inline text-xs">Send</span>
-            </button>
+              <!-- Right Actions: Mic + Send Button -->
+              <div class="flex items-center gap-1 shrink-0 self-end mb-0.5">
+                <button 
+                  type="button" 
+                  id="chat-input-mic-btn"
+                  class="w-8 h-8 sm:w-9 sm:h-9 rounded-full flex items-center justify-center text-neutral-400 hover:text-white hover:bg-white/[0.08] transition-all active:scale-95 cursor-pointer"
+                  title="Voice Input (Speech to Text)"
+                >
+                  <Mic class="w-4 h-4 sm:w-[18px] sm:h-[18px]" />
+                </button>
+
+                <button 
+                  type="submit" 
+                  id="room-send-btn"
+                  class="w-8 h-8 sm:w-9 sm:h-9 rounded-full bg-gradient-to-tr from-purple-600 to-indigo-600 hover:from-purple-500 hover:to-indigo-500 text-white flex items-center justify-center transition-all duration-200 cursor-pointer active:scale-95 shadow-md shadow-indigo-950/40 opacity-40 scale-95"
+                  title="Send Message"
+                >
+                  <ArrowUp class="w-4 h-4 sm:w-[18px] sm:h-[18px] stroke-[2.5]" />
+                </button>
+              </div>
+            </div>
           </form>
         </div>
 
@@ -2633,6 +2721,58 @@ const { character } = Astro.props;
   const typingIndicator = document.getElementById('full-typing-indicator');
   const inputForm = document.getElementById('room-input-form');
   const input = document.getElementById('room-input');
+
+  // Device detection: Mobile / Touch
+  const isTouchDevice = () => {
+    return (
+      'ontouchstart' in window ||
+      navigator.maxTouchPoints > 0 ||
+      window.matchMedia('(pointer: coarse)').matches
+    );
+  };
+
+  function updateSendBtnState() {
+    const sendBtn = document.getElementById('room-send-btn');
+    if (!sendBtn || !input) return;
+    const hasText = input.value.trim().length > 0;
+    if (hasText) {
+      sendBtn.classList.remove('opacity-40', 'scale-95');
+      sendBtn.classList.add('opacity-100', 'scale-100');
+    } else {
+      sendBtn.classList.add('opacity-40', 'scale-95');
+      sendBtn.classList.remove('opacity-100', 'scale-100');
+    }
+  }
+
+  function adjustInputHeight() {
+    if (!input) return;
+    input.style.height = 'auto';
+
+    const computed = window.getComputedStyle(input);
+    const fontSize = parseFloat(computed.fontSize) || 14;
+    const lineHeight = parseFloat(computed.lineHeight) || (fontSize * 1.5);
+    const paddingTop = parseFloat(computed.paddingTop) || 6;
+    const paddingBottom = parseFloat(computed.paddingBottom) || 6;
+
+    const singleLineHeight = lineHeight + paddingTop + paddingBottom;
+    const maxLinesHeight = (lineHeight * 5) + paddingTop + paddingBottom;
+
+    const scrollHeight = input.scrollHeight;
+
+    if (scrollHeight <= singleLineHeight + 4) {
+      // Line 1: Single line height
+      input.style.height = `${singleLineHeight}px`;
+      input.style.overflowY = 'hidden';
+    } else if (scrollHeight < maxLinesHeight + 4) {
+      // Lines 2 to 5: Expand line by line smoothly
+      input.style.height = `${scrollHeight}px`;
+      input.style.overflowY = 'hidden';
+    } else {
+      // Line 5+: Cap at 5 lines and enable smooth vertical scroll
+      input.style.height = `${maxLinesHeight}px`;
+      input.style.overflowY = 'auto';
+    }
+  }
   const toggleSidebarBtn = document.getElementById('toggle-sidebar-btn');
   const sidebar = document.getElementById('character-sidebar');
   const sidebarBackdrop = document.getElementById('sidebar-backdrop');
@@ -5999,7 +6139,8 @@ const { character } = Astro.props;
 
     if (input) {
       input.value = '';
-      input.style.height = 'auto';
+      adjustInputHeight();
+      updateSendBtnState();
     }
 
     if (typingIndicator) {
@@ -7737,24 +7878,160 @@ const { character } = Astro.props;
     }
   });
 
-  // Event Listeners
+  // -------------------------------------------------------------
+  // EVENT LISTENERS: GEMINI INPUT, DYNAMIC RESIZING, & CONTROLS
+  // -------------------------------------------------------------
   inputForm?.addEventListener('submit', (e) => {
     e.preventDefault();
-    if (input) handleSendMessage(input.value);
-  });
-
-  input?.addEventListener('keydown', (e) => {
-    if (e.key === 'Enter' && !e.shiftKey) {
-      e.preventDefault();
+    if (input && input.value.trim().length > 0) {
       handleSendMessage(input.value);
     }
   });
 
-  // Auto-resize textarea
-  input?.addEventListener('input', () => {
-    input.style.height = 'auto';
-    input.style.height = `${Math.min(input.scrollHeight, 128)}px`;
+  input?.addEventListener('keydown', (e) => {
+    if (e.isComposing || e.keyCode === 229) return;
+
+    if (e.key === 'Enter') {
+      if (isTouchDevice()) {
+        // Mobile / Touch keyboards: Enter key ALWAYS goes to a new line (never sends!)
+        setTimeout(adjustInputHeight, 0);
+        return;
+      }
+
+      // Desktop: Shift + Enter creates a new line
+      if (e.shiftKey) {
+        setTimeout(adjustInputHeight, 0);
+        return;
+      }
+
+      // Desktop: Enter sends the message
+      e.preventDefault();
+      if (input.value.trim().length > 0) {
+        handleSendMessage(input.value);
+      }
+    }
   });
+
+  // Dynamic 1 to 5 lines auto-grow & live state
+  input?.addEventListener('input', () => {
+    adjustInputHeight();
+    updateSendBtnState();
+  });
+
+  input?.addEventListener('paste', () => {
+    setTimeout(() => {
+      adjustInputHeight();
+      updateSendBtnState();
+    }, 10);
+  });
+
+  // Gemini-style Plus Menu (+) Controls
+  const plusBtn = document.getElementById('chat-input-plus-btn');
+  const plusMenu = document.getElementById('chat-plus-menu');
+  const micBtn = document.getElementById('chat-input-mic-btn');
+
+  plusBtn?.addEventListener('click', (e) => {
+    e.stopPropagation();
+    if (!plusMenu) return;
+    const isHidden = plusMenu.classList.contains('hidden');
+    if (isHidden) {
+      plusMenu.classList.remove('hidden');
+      plusBtn.classList.add('rotate-45', 'text-purple-400');
+    } else {
+      plusMenu.classList.add('hidden');
+      plusBtn.classList.remove('rotate-45', 'text-purple-400');
+    }
+  });
+
+  document.addEventListener('click', (e) => {
+    if (plusMenu && !plusMenu.classList.contains('hidden')) {
+      if (!plusMenu.contains(e.target) && e.target !== plusBtn) {
+        plusMenu.classList.add('hidden');
+        plusBtn?.classList.remove('rotate-45', 'text-purple-400');
+      }
+    }
+  });
+
+  // Plus menu quick actions
+  document.getElementById('plus-action-selfie')?.addEventListener('click', () => {
+    plusMenu?.classList.add('hidden');
+    plusBtn?.classList.remove('rotate-45', 'text-purple-400');
+    document.getElementById('chat-action-selfie-btn')?.click();
+  });
+  document.getElementById('plus-action-video')?.addEventListener('click', () => {
+    plusMenu?.classList.add('hidden');
+    plusBtn?.classList.remove('rotate-45', 'text-purple-400');
+    document.getElementById('chat-action-video-btn')?.click();
+  });
+  document.getElementById('plus-action-persona')?.addEventListener('click', () => {
+    plusMenu?.classList.add('hidden');
+    plusBtn?.classList.remove('rotate-45', 'text-purple-400');
+    document.getElementById('chat-action-mask-btn')?.click();
+  });
+  document.getElementById('plus-action-rewind')?.addEventListener('click', () => {
+    plusMenu?.classList.add('hidden');
+    plusBtn?.classList.remove('rotate-45', 'text-purple-400');
+    document.getElementById('chat-action-rewind-btn')?.click();
+  });
+
+  // Speech-to-Text via Web Speech API
+  let speechRec = null;
+  let isListeningVoice = false;
+  if (typeof window !== 'undefined' && ('webkitSpeechRecognition' in window || 'SpeechRecognition' in window)) {
+    const SpeechAPI = window.SpeechRecognition || window.webkitSpeechRecognition;
+    try {
+      speechRec = new SpeechAPI();
+      speechRec.continuous = false;
+      speechRec.interimResults = true;
+      speechRec.lang = 'fa-IR';
+
+      speechRec.onstart = () => {
+        isListeningVoice = true;
+        micBtn?.classList.add('text-rose-400', 'bg-rose-500/20', 'animate-pulse');
+      };
+      speechRec.onend = () => {
+        isListeningVoice = false;
+        micBtn?.classList.remove('text-rose-400', 'bg-rose-500/20', 'animate-pulse');
+      };
+      speechRec.onresult = (evt) => {
+        let transcript = '';
+        for (let i = evt.resultIndex; i < evt.results.length; ++i) {
+          transcript += evt.results[i][0].transcript;
+        }
+        if (transcript && input) {
+          input.value = (input.value ? input.value + ' ' : '') + transcript;
+          adjustInputHeight();
+          updateSendBtnState();
+        }
+      };
+      speechRec.onerror = () => {
+        isListeningVoice = false;
+        micBtn?.classList.remove('text-rose-400', 'bg-rose-500/20', 'animate-pulse');
+      };
+    } catch (e) {}
+  }
+
+  micBtn?.addEventListener('click', () => {
+    if (!speechRec) {
+      if (typeof showToast === 'function') {
+        showToast('Voice input is not supported in this browser.', 'warning');
+      }
+      return;
+    }
+    if (isListeningVoice) {
+      speechRec.stop();
+    } else {
+      try {
+        speechRec.start();
+      } catch (err) {
+        speechRec.stop();
+      }
+    }
+  });
+
+  // Initial state synchronization
+  adjustInputHeight();
+  updateSendBtnState();
 
   // Dynamic Smart Prompts System
   function renderSmartPrompts(prompts) {
@@ -7786,8 +8063,8 @@ const { character } = Astro.props;
         if (prompt && input) {
           input.value = prompt;
           input.focus();
-          input.style.height = 'auto';
-          input.style.height = `${Math.min(input.scrollHeight, 128)}px`;
+          adjustInputHeight();
+          updateSendBtnState();
         }
       });
     });
