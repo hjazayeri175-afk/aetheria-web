@@ -798,7 +798,7 @@ const { character } = Astro.props;
                     <div class="flex items-center gap-2.5">
                       <span id="ping-indicator-dot" class="w-2.5 h-2.5 rounded-full bg-emerald-400 shrink-0"></span>
                       <div class="min-w-0">
-                        <div class="text-xs font-semibold text-white truncate" id="ping-provider-name">Free Cloud AI (Instant &amp; Keyless)</div>
+                        <div class="text-xs font-semibold text-white truncate" id="ping-provider-name">Groq LPU (Ultra-Fast)</div>
                         <div class="text-[10px] text-slate-400 font-mono truncate" id="ping-latency-text">Ready • Latency: ~85ms</div>
                       </div>
                     </div>
@@ -813,6 +813,92 @@ const { character } = Astro.props;
                   </div>
 
                   <div id="ping-status-msg" class="hidden text-xs px-3.5 py-2.5 rounded-xl border leading-relaxed"></div>
+
+                  <!-- API Profiles Manager (Multi-Profile BYOK with Custom Names) -->
+                  <div class="p-3.5 sm:p-4 rounded-2xl bg-gradient-to-br from-[#121424] via-[#161a32] to-[#0e101c] border border-purple-500/30 shadow-lg shadow-purple-950/40 space-y-3">
+                    <div class="flex items-center justify-between gap-2 flex-wrap">
+                      <div class="flex items-center gap-2">
+                        <div class="w-7 h-7 rounded-xl bg-purple-500/20 border border-purple-500/40 flex items-center justify-center text-xs text-purple-300 shrink-0">
+                          <Tag class="w-3.5 h-3.5 text-purple-400" />
+                        </div>
+                        <div>
+                          <div class="flex items-center gap-1.5">
+                            <span class="text-xs font-bold text-white">API Profiles (مدیریت اکانت‌ها با نام دلخواه)</span>
+                            <span id="active-profile-badge" class="hidden text-[10px] px-2 py-0.5 rounded-full bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 font-semibold font-mono">Active</span>
+                          </div>
+                          <span class="text-[10px] text-purple-300/80 block">امکان ذخیره چند API با نام دلخواه و سوئیچ فوری بدون پاک شدن تنظیمات قبلی</span>
+                        </div>
+                      </div>
+                      <div class="flex items-center gap-1.5">
+                        <button 
+                          type="button" 
+                          id="btn-show-save-profile" 
+                          class="px-2.5 py-1.5 rounded-xl bg-purple-600/80 hover:bg-purple-600 text-white text-xs font-semibold flex items-center gap-1 transition cursor-pointer shadow-sm shadow-purple-950 active:scale-95 shrink-0"
+                          title="Save current provider, key and model under a custom name"
+                        >
+                          <Plus class="w-3.5 h-3.5" />
+                          <span>Save as New Profile</span>
+                        </button>
+                      </div>
+                    </div>
+
+                    <!-- Profile Switcher Dropdown & Actions -->
+                    <div class="flex items-center gap-2">
+                      <div class="relative flex-1">
+                        <select 
+                          id="api-profile-select" 
+                          class="w-full px-3 py-2 rounded-xl bg-black/60 border border-purple-500/30 text-xs text-white outline-none focus:border-purple-400 font-medium cursor-pointer transition"
+                        >
+                          <option value="">-- Direct Provider Mode (No Named Profile Active) --</option>
+                        </select>
+                      </div>
+                      <button 
+                        type="button" 
+                        id="btn-update-active-profile" 
+                        class="hidden px-2.5 py-2 rounded-xl bg-purple-950/40 hover:bg-purple-900/60 text-purple-300 hover:text-white text-xs font-medium border border-purple-500/30 transition cursor-pointer shrink-0" 
+                        title="Update active profile with latest changes"
+                      >
+                        <Check class="w-3.5 h-3.5 inline mr-0.5" />
+                        <span>Update</span>
+                      </button>
+                      <button 
+                        type="button" 
+                        id="btn-delete-active-profile" 
+                        class="hidden px-2.5 py-2 rounded-xl bg-rose-500/10 hover:bg-rose-500/20 text-rose-300 border border-rose-500/20 text-xs font-medium transition cursor-pointer shrink-0" 
+                        title="Delete this profile"
+                      >
+                        <Trash2 class="w-3.5 h-3.5 inline mr-0.5" />
+                        <span>Delete</span>
+                      </button>
+                    </div>
+
+                    <!-- Inline Form for Creating New Profile -->
+                    <div id="new-profile-form" class="hidden p-3 rounded-xl bg-black/70 border border-purple-500/40 space-y-2.5">
+                      <div class="flex items-center justify-between text-xs text-purple-200 font-semibold">
+                        <span class="flex items-center gap-1.5">
+                          <Tag class="w-3 h-3 text-purple-400" />
+                          <span>نام دلخواه برای این پروفایل (Custom Profile Name)</span>
+                        </span>
+                        <button type="button" id="btn-cancel-new-profile" class="text-slate-400 hover:text-white text-[11px] cursor-pointer">✕ Cancel</button>
+                      </div>
+                      <div class="flex items-center gap-2">
+                        <input 
+                          type="text" 
+                          id="new-profile-name-input" 
+                          placeholder="مثلاً: گرپ شخصی، دیپ‌سیک کاری، اولاما خانه..." 
+                          class="flex-1 px-3 py-1.5 rounded-lg bg-white/[0.06] border border-white/15 text-xs text-white placeholder:text-slate-500 outline-none focus:border-purple-400 font-medium"
+                          dir="auto"
+                        />
+                        <button 
+                          type="button" 
+                          id="btn-confirm-save-profile" 
+                          class="px-3.5 py-1.5 rounded-lg bg-gradient-to-r from-purple-600 to-indigo-600 hover:brightness-110 text-white text-xs font-bold transition cursor-pointer shadow-md shadow-purple-950 shrink-0"
+                        >
+                          Save Profile
+                        </button>
+                      </div>
+                    </div>
+                  </div>
 
                 <!-- Provider & Key Grid -->
                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
@@ -2920,6 +3006,18 @@ const { character } = Astro.props;
   function updateHeaderPill() {
     const el = document.getElementById('chat-engine-label');
     if (el) {
+      const activeProfId = localStorage.getItem('aetheria_active_profile_id');
+      if (activeProfId) {
+        try {
+          const profiles = JSON.parse(localStorage.getItem('aetheria_api_profiles') || '[]');
+          const p = profiles.find(x => x.id === activeProfId);
+          if (p) {
+            const mShort = (p.model || '').split('/').pop() || p.model || 'Model';
+            el.textContent = `🏷️ ${p.name} • ${mShort}`;
+            return;
+          }
+        } catch (e) {}
+      }
       const provSelect = document.getElementById('text-provider-select');
       const prov = (provSelect ? provSelect.value : '') || localStorage.getItem('aetheria_text_provider') || 'groq';
       const m = localStorage.getItem('aetheria_text_model') || '';
@@ -3102,6 +3200,17 @@ const { character } = Astro.props;
   // Tabs
   const engineTabBtns = document.querySelectorAll('.engine-tab-btn');
   const engineTabPanes = document.querySelectorAll('.engine-tab-pane');
+
+  // API Profile Elements
+  const apiProfileSelect = document.getElementById('api-profile-select');
+  const btnShowSaveProfile = document.getElementById('btn-show-save-profile');
+  const btnUpdateActiveProfile = document.getElementById('btn-update-active-profile');
+  const btnDeleteActiveProfile = document.getElementById('btn-delete-active-profile');
+  const newProfileForm = document.getElementById('new-profile-form');
+  const newProfileNameInput = document.getElementById('new-profile-name-input');
+  const btnConfirmSaveProfile = document.getElementById('btn-confirm-save-profile');
+  const btnCancelNewProfile = document.getElementById('btn-cancel-new-profile');
+  const activeProfileBadge = document.getElementById('active-profile-badge');
 
   // Text inputs & Engine Controls
   const textProviderSelect = document.getElementById('text-provider-select');
@@ -4086,6 +4195,13 @@ const { character } = Astro.props;
 
   // Helper: Set empty state for model dropdown when not connected
   function setEmptyModelDropdown() {
+    const prov = textProviderSelect?.value || 'groq';
+    const defaults = DEFAULT_PROVIDER_MODELS[prov];
+    if (defaults && defaults.length > 0) {
+      populateModelDropdown(defaults, defaults[0], false);
+      if (modelCountBadge) modelCountBadge.textContent = `${defaults.length} Curated Models`;
+      return;
+    }
     currentSyncedModels = [];
     if (!textModelSelect) return;
     textModelSelect.innerHTML = '<option value="" disabled selected>No API connected — Enter API key &amp; fetch models</option>';
@@ -4099,7 +4215,7 @@ const { character } = Astro.props;
   }
 
   // Populate dynamic model select dropdown
-  function populateModelDropdown(models, selected) {
+  function populateModelDropdown(models, selected, allowUnknown = false) {
     if (!textModelSelect) return;
     const unique = Array.from(new Set(models || [])).filter(Boolean);
     currentSyncedModels = unique;
@@ -4117,20 +4233,34 @@ const { character } = Astro.props;
       if (m === selected) opt.selected = true;
       textModelSelect.appendChild(opt);
     });
+
+    let finalSelected = selected;
     if (selected && !unique.includes(selected)) {
-      const opt = document.createElement('option');
-      opt.value = selected;
-      opt.textContent = selected;
-      opt.selected = true;
-      textModelSelect.prepend(opt);
+      if (allowUnknown) {
+        const opt = document.createElement('option');
+        opt.value = selected;
+        opt.textContent = selected;
+        opt.selected = true;
+        textModelSelect.prepend(opt);
+      } else {
+        finalSelected = unique[0];
+        if (textModelSelect.options.length > 0) {
+          textModelSelect.options[0].selected = true;
+        }
+      }
+    } else if (!selected) {
+      finalSelected = unique[0];
+      if (textModelSelect.options.length > 0) {
+        textModelSelect.options[0].selected = true;
+      }
     }
-    const finalSelected = selected || unique[0];
+
     if (textModelInput) {
       textModelInput.value = finalSelected;
     }
     updateCustomModelTrigger(finalSelected);
     if (modelCountBadge) {
-      modelCountBadge.textContent = `${unique.length} Models Synced`;
+      modelCountBadge.textContent = `${unique.length} Models`;
     }
   }
 
@@ -4236,16 +4366,17 @@ const { character } = Astro.props;
     const isEvent = provArg && typeof provArg === 'object' && provArg.preventDefault;
     if (isEvent) provArg.preventDefault();
     const prov = (typeof provArg === 'string' ? provArg : (textProviderSelect?.value || 'groq'));
-    const conf = PROVIDER_CONFIGS[prov] || PROVIDER_CONFIGS.demo;
+    const conf = PROVIDER_CONFIGS[prov] || PROVIDER_CONFIGS.groq;
     const key = (typeof keyArg === 'string' ? keyArg : (textApiKey?.value.trim() || localStorage.getItem('aetheria_text_key') || ''));
     const baseUrl = (typeof baseUrlArg === 'string' ? baseUrlArg : (textBaseUrl?.value.trim() || conf.defaultUrl || ''));
 
     if (prov === 'perplexity') {
       const pModels = ['sonar-pro', 'sonar', 'sonar-reasoning'];
       localStorage.setItem('aetheria_synced_models_perplexity', JSON.stringify(pModels));
-      populateModelDropdown(pModels, pModels[0]);
+      populateModelDropdown(pModels, pModels[0], false);
       updateDynamicPresets(pModels);
       localStorage.setItem('aetheria_text_model', pModels[0]);
+      localStorage.setItem('aetheria_model_perplexity', pModels[0]);
       updateHeaderPill();
       showNotification('✓ Loaded active Perplexity Sonar models!');
       return pModels;
@@ -4329,9 +4460,24 @@ const { character } = Astro.props;
         models = extractModelIds(responseData, prov);
         if (models && models.length > 0) {
           localStorage.setItem('aetheria_synced_models_' + prov, JSON.stringify(models));
-          populateModelDropdown(models, models[0]);
+          populateModelDropdown(models, models[0], false);
           updateDynamicPresets(models);
           localStorage.setItem('aetheria_text_model', models[0]);
+          localStorage.setItem('aetheria_model_' + prov, models[0]);
+
+          // Update active profile if applicable
+          const activeProfId = localStorage.getItem(ACTIVE_PROFILE_KEY);
+          if (activeProfId) {
+            const profs = getSavedApiProfiles();
+            const p = profs.find(x => x.id === activeProfId);
+            if (p && p.provider === prov) {
+              p.syncedModels = models;
+              p.model = models[0];
+              p.updatedAt = Date.now();
+              saveApiProfilesToStorage(profs);
+              renderApiProfilesDropdown(activeProfId);
+            }
+          }
           updateHeaderPill();
           showNotification(`✓ Successfully loaded ${models.length} live models from ${conf.name} API!`);
         } else {
@@ -4433,19 +4579,365 @@ const { character } = Astro.props;
     }
   }
 
+  // ==========================================
+  // NAMED API PROFILES MANAGEMENT SYSTEM
+  // ==========================================
+  const PROFILES_STORAGE_KEY = 'aetheria_api_profiles';
+  const ACTIVE_PROFILE_KEY = 'aetheria_active_profile_id';
+  let currentActiveProvider = localStorage.getItem('aetheria_text_provider') || 'groq';
+
+  function getSavedApiProfiles() {
+    try {
+      const raw = localStorage.getItem(PROFILES_STORAGE_KEY);
+      if (!raw) return [];
+      const parsed = JSON.parse(raw);
+      return Array.isArray(parsed) ? parsed : [];
+    } catch (e) {
+      console.error('Error reading API profiles:', e);
+      return [];
+    }
+  }
+
+  function saveApiProfilesToStorage(profiles) {
+    try {
+      localStorage.setItem(PROFILES_STORAGE_KEY, JSON.stringify(profiles));
+    } catch (e) {
+      console.error('Error saving API profiles:', e);
+    }
+  }
+
+  function renderApiProfilesDropdown(activeId = null) {
+    if (!apiProfileSelect) return;
+    const currentActive = activeId !== null ? activeId : localStorage.getItem(ACTIVE_PROFILE_KEY);
+    const profiles = getSavedApiProfiles();
+
+    apiProfileSelect.innerHTML = '';
+
+    const defaultOpt = document.createElement('option');
+    defaultOpt.value = '';
+    defaultOpt.textContent = '-- Direct Provider Mode (No Profile Selected) --';
+    if (!currentActive) defaultOpt.selected = true;
+    apiProfileSelect.appendChild(defaultOpt);
+
+    profiles.forEach(prof => {
+      const opt = document.createElement('option');
+      opt.value = prof.id;
+      const provName = PROVIDER_CONFIGS[prof.provider]?.name || prof.provider;
+      const modelShort = (prof.model || '').split('/').pop() || prof.model || 'Default';
+      opt.textContent = `🏷️ ${prof.name} (${provName} • ${modelShort})`;
+      if (prof.id === currentActive) opt.selected = true;
+      apiProfileSelect.appendChild(opt);
+    });
+
+    updateProfileButtonsUI(currentActive, profiles);
+  }
+
+  function updateProfileButtonsUI(activeId, profiles = null) {
+    const profs = profiles || getSavedApiProfiles();
+    const activeProf = profs.find(p => p.id === activeId);
+
+    if (activeProf) {
+      if (btnUpdateActiveProfile) btnUpdateActiveProfile.classList.remove('hidden');
+      if (btnDeleteActiveProfile) btnDeleteActiveProfile.classList.remove('hidden');
+      if (activeProfileBadge) {
+        activeProfileBadge.classList.remove('hidden');
+        activeProfileBadge.textContent = activeProf.name;
+      }
+    } else {
+      if (btnUpdateActiveProfile) btnUpdateActiveProfile.classList.add('hidden');
+      if (btnDeleteActiveProfile) btnDeleteActiveProfile.classList.add('hidden');
+      if (activeProfileBadge) activeProfileBadge.classList.add('hidden');
+    }
+  }
+
+  function switchApiProfile(profileId) {
+    if (!profileId) {
+      localStorage.removeItem(ACTIVE_PROFILE_KEY);
+      renderApiProfilesDropdown(null);
+      updateHeaderPill();
+      showNotification('Direct Provider Mode active');
+      return;
+    }
+
+    const profiles = getSavedApiProfiles();
+    const prof = profiles.find(p => p.id === profileId);
+    if (!prof) {
+      localStorage.removeItem(ACTIVE_PROFILE_KEY);
+      renderApiProfilesDropdown(null);
+      return;
+    }
+
+    localStorage.setItem(ACTIVE_PROFILE_KEY, prof.id);
+
+    // 1. Set Provider
+    const targetProv = prof.provider || 'groq';
+    if (textProviderSelect) {
+      textProviderSelect.value = targetProv;
+    }
+    localStorage.setItem('aetheria_text_provider', targetProv);
+    currentActiveProvider = targetProv;
+    updateQuickProvChips(targetProv);
+
+    // 2. Set API Key and Base URL
+    const targetKey = prof.apiKey || '';
+    if (textApiKey) textApiKey.value = targetKey;
+    localStorage.setItem('aetheria_text_key', targetKey);
+    localStorage.setItem('aetheria_key_' + targetProv, targetKey);
+
+    const targetUrl = prof.baseUrl || '';
+    if (textBaseUrl) textBaseUrl.value = targetUrl;
+    localStorage.setItem('aetheria_text_base_url', targetUrl);
+    localStorage.setItem('aetheria_url_' + targetProv, targetUrl);
+
+    // 3. Set Models strictly for this profile/provider
+    let modelsList = [];
+    if (Array.isArray(prof.syncedModels) && prof.syncedModels.length > 0) {
+      modelsList = prof.syncedModels;
+    } else {
+      const cachedRaw = localStorage.getItem('aetheria_synced_models_' + targetProv);
+      if (cachedRaw) {
+        try { modelsList = JSON.parse(cachedRaw); } catch (e) {}
+      }
+      if (!Array.isArray(modelsList) || modelsList.length === 0) {
+        modelsList = DEFAULT_PROVIDER_MODELS[targetProv] || ['default'];
+      }
+    }
+
+    const selectedModel = (prof.model && modelsList.includes(prof.model)) ? prof.model : modelsList[0];
+    populateModelDropdown(modelsList, selectedModel, false);
+    updateDynamicPresets(modelsList);
+    localStorage.setItem('aetheria_text_model', selectedModel);
+    localStorage.setItem('aetheria_model_' + targetProv, selectedModel);
+
+    // 4. Update UI
+    syncProviderVisibility();
+    renderApiProfilesDropdown(prof.id);
+    updateHeaderPill();
+
+    const provName = PROVIDER_CONFIGS[targetProv]?.name || targetProv;
+    showNotification(`✓ سوئیچ به پروفایل: ${prof.name} (${provName})`);
+  }
+
+  function saveCurrentAsNewProfile(name) {
+    const profileName = (name || '').trim();
+    if (!profileName) {
+      showNotification('⚠️ لطفاً یک نام برای این پروفایل وارد کنید.');
+      return;
+    }
+
+    const prov = textProviderSelect?.value || 'groq';
+    const apiKey = (textApiKey?.value || '').trim();
+    const baseUrl = (textBaseUrl?.value || '').trim();
+    const isCustomInput = Boolean(textModelInput && !textModelInput.classList.contains('hidden'));
+    let model = isCustomInput ? textModelInput.value.trim() : (textModelSelect ? textModelSelect.value : '');
+    if (!model || model.includes('No API connected')) {
+      model = localStorage.getItem('aetheria_text_model') || (DEFAULT_PROVIDER_MODELS[prov] ? DEFAULT_PROVIDER_MODELS[prov][0] : 'default');
+    }
+
+    let syncedModels = currentSyncedModels;
+    if (!Array.isArray(syncedModels) || syncedModels.length === 0) {
+      try {
+        syncedModels = JSON.parse(localStorage.getItem('aetheria_synced_models_' + prov) || '[]');
+      } catch(e) {}
+    }
+    if (!Array.isArray(syncedModels) || syncedModels.length === 0) {
+      syncedModels = DEFAULT_PROVIDER_MODELS[prov] || [model];
+    }
+
+    const newProfile = {
+      id: 'prof_' + Date.now() + '_' + Math.random().toString(36).substring(2, 7),
+      name: profileName,
+      provider: prov,
+      apiKey: apiKey,
+      baseUrl: baseUrl,
+      model: model,
+      syncedModels: syncedModels,
+      updatedAt: Date.now()
+    };
+
+    const profiles = getSavedApiProfiles();
+    profiles.push(newProfile);
+    saveApiProfilesToStorage(profiles);
+    localStorage.setItem(ACTIVE_PROFILE_KEY, newProfile.id);
+
+    // Cache per-provider
+    localStorage.setItem('aetheria_key_' + prov, apiKey);
+    localStorage.setItem('aetheria_url_' + prov, baseUrl);
+    localStorage.setItem('aetheria_model_' + prov, model);
+    localStorage.setItem('aetheria_text_provider', prov);
+    localStorage.setItem('aetheria_text_key', apiKey);
+    localStorage.setItem('aetheria_text_base_url', baseUrl);
+    localStorage.setItem('aetheria_text_model', model);
+
+    renderApiProfilesDropdown(newProfile.id);
+    updateHeaderPill();
+
+    if (newProfileForm) newProfileForm.classList.add('hidden');
+    if (newProfileNameInput) newProfileNameInput.value = '';
+
+    showNotification(`✓ پروفایل «${profileName}» با موفقیت ذخیره شد!`);
+  }
+
+  function updateActiveProfile() {
+    const activeId = localStorage.getItem(ACTIVE_PROFILE_KEY);
+    if (!activeId) {
+      showNotification('⚠️ هیچ پروفایلی فعال نیست. از دکمه Save as New Profile استفاده کنید.');
+      return;
+    }
+
+    const profiles = getSavedApiProfiles();
+    const idx = profiles.findIndex(p => p.id === activeId);
+    if (idx === -1) return;
+
+    const prov = textProviderSelect?.value || 'groq';
+    const apiKey = (textApiKey?.value || '').trim();
+    const baseUrl = (textBaseUrl?.value || '').trim();
+    const isCustomInput = Boolean(textModelInput && !textModelInput.classList.contains('hidden'));
+    let model = isCustomInput ? textModelInput.value.trim() : (textModelSelect ? textModelSelect.value : '');
+    if (!model || model.includes('No API connected')) {
+      model = localStorage.getItem('aetheria_text_model') || (DEFAULT_PROVIDER_MODELS[prov] ? DEFAULT_PROVIDER_MODELS[prov][0] : 'default');
+    }
+
+    profiles[idx].provider = prov;
+    profiles[idx].apiKey = apiKey;
+    profiles[idx].baseUrl = baseUrl;
+    profiles[idx].model = model;
+    if (Array.isArray(currentSyncedModels) && currentSyncedModels.length > 0) {
+      profiles[idx].syncedModels = currentSyncedModels;
+    }
+    profiles[idx].updatedAt = Date.now();
+
+    saveApiProfilesToStorage(profiles);
+
+    localStorage.setItem('aetheria_key_' + prov, apiKey);
+    localStorage.setItem('aetheria_url_' + prov, baseUrl);
+    localStorage.setItem('aetheria_model_' + prov, model);
+
+    renderApiProfilesDropdown(activeId);
+    updateHeaderPill();
+    showNotification(`✓ تغییرات پروفایل «${profiles[idx].name}» ذخیره شد.`);
+  }
+
+  function deleteActiveProfile() {
+    const activeId = localStorage.getItem(ACTIVE_PROFILE_KEY);
+    if (!activeId) return;
+
+    const profiles = getSavedApiProfiles();
+    const prof = profiles.find(p => p.id === activeId);
+    if (!prof) return;
+
+    if (!confirm(`آیا از حذف پروفایل «${prof.name}» اطمینان دارید؟`)) return;
+
+    const remaining = profiles.filter(p => p.id !== activeId);
+    saveApiProfilesToStorage(remaining);
+    localStorage.removeItem(ACTIVE_PROFILE_KEY);
+    renderApiProfilesDropdown(null);
+    updateHeaderPill();
+    showNotification(`✓ پروفایل «${prof.name}» حذف شد.`);
+  }
+
+  // Handle Provider switching: saves old provider data, loads new provider data, isolates models
+  function handleProviderChange(newProv) {
+    const oldProv = currentActiveProvider;
+
+    // 1. SAVE outgoing provider's current settings so they are never lost!
+    if (oldProv && oldProv !== newProv) {
+      if (textApiKey) {
+        localStorage.setItem('aetheria_key_' + oldProv, textApiKey.value.trim());
+      }
+      if (textBaseUrl) {
+        localStorage.setItem('aetheria_url_' + oldProv, textBaseUrl.value.trim());
+      }
+      const curModel = localStorage.getItem('aetheria_text_model');
+      if (curModel) {
+        localStorage.setItem('aetheria_model_' + oldProv, curModel);
+      }
+    }
+
+    currentActiveProvider = newProv;
+    localStorage.setItem('aetheria_text_provider', newProv);
+
+    // 2. LOAD incoming provider's saved settings
+    const conf = PROVIDER_CONFIGS[newProv] || PROVIDER_CONFIGS.groq;
+    const savedKey = localStorage.getItem('aetheria_key_' + newProv) || '';
+    const savedUrl = localStorage.getItem('aetheria_url_' + newProv) || (conf.defaultUrl || '');
+
+    if (textApiKey) textApiKey.value = savedKey;
+    localStorage.setItem('aetheria_text_key', savedKey);
+
+    if (textBaseUrl) textBaseUrl.value = savedUrl;
+    localStorage.setItem('aetheria_text_base_url', savedUrl);
+
+    // 3. LOAD incoming provider's models (NEVER keep old provider's models!)
+    let modelsList = [];
+    const cachedRaw = localStorage.getItem('aetheria_synced_models_' + newProv);
+    if (cachedRaw) {
+      try { modelsList = JSON.parse(cachedRaw); } catch(e) {}
+    }
+    if (!Array.isArray(modelsList) || modelsList.length === 0) {
+      modelsList = DEFAULT_PROVIDER_MODELS[newProv] || ['default'];
+    }
+
+    // 4. Determine selected model for new provider
+    const savedModelForProv = localStorage.getItem('aetheria_model_' + newProv);
+    const selectedModel = (savedModelForProv && modelsList.includes(savedModelForProv))
+      ? savedModelForProv
+      : modelsList[0];
+
+    populateModelDropdown(modelsList, selectedModel, false);
+    updateDynamicPresets(modelsList);
+    localStorage.setItem('aetheria_text_model', selectedModel);
+
+    // 5. Update UI controls & badges
+    syncProviderVisibility();
+    updateQuickProvChips(newProv);
+    updateHeaderPill();
+
+    // 6. If active profile's provider does not match the newly selected provider, unselect active profile
+    const activeProfId = localStorage.getItem(ACTIVE_PROFILE_KEY);
+    if (activeProfId) {
+      const profs = getSavedApiProfiles();
+      const p = profs.find(x => x.id === activeProfId);
+      if (p && p.provider !== newProv) {
+        localStorage.removeItem(ACTIVE_PROFILE_KEY);
+        renderApiProfilesDropdown(null);
+      }
+    }
+  }
+
   // Load all engine settings from localStorage
   function loadEngineSettings() {
-    // 1. Text provider & Key
-    let textProv = localStorage.getItem('aetheria_text_provider') || 'groq';
-    if (textProv === 'demo') textProv = 'groq';
+    // 0. Check if active API profile exists
+    const activeProfId = localStorage.getItem(ACTIVE_PROFILE_KEY);
+    const profiles = getSavedApiProfiles();
+    const activeProf = profiles.find(p => p.id === activeProfId);
+
+    let textProv = 'groq';
+    let textKey = '';
+    let baseUrl = '';
+
+    if (activeProf) {
+      textProv = activeProf.provider || 'groq';
+      textKey = activeProf.apiKey || '';
+      baseUrl = activeProf.baseUrl || '';
+    } else {
+      textProv = localStorage.getItem('aetheria_text_provider') || 'groq';
+      if (textProv === 'demo') textProv = 'groq';
+      textKey = localStorage.getItem('aetheria_key_' + textProv) || localStorage.getItem('aetheria_text_key') || '';
+      baseUrl = localStorage.getItem('aetheria_url_' + textProv) || localStorage.getItem('aetheria_text_base_url') || '';
+    }
+
+    currentActiveProvider = textProv;
     if (textProviderSelect) textProviderSelect.value = textProv;
     updateQuickProvChips(textProv);
 
-    const textKey = localStorage.getItem('aetheria_text_key') || '';
     if (textApiKey) textApiKey.value = textKey;
+    localStorage.setItem('aetheria_text_key', textKey);
 
-    const baseUrl = localStorage.getItem('aetheria_text_base_url') || '';
     if (textBaseUrl) textBaseUrl.value = baseUrl;
+    localStorage.setItem('aetheria_text_base_url', baseUrl);
+
+    renderApiProfilesDropdown(activeProfId);
 
     // 2. Hyperparameters
     const temp = localStorage.getItem('aetheria_text_temp') || '0.85';
@@ -4597,22 +5089,37 @@ const { character } = Astro.props;
     }
 
     // Model selection sync: load synced models or curated registry defaults
-    const cachedModelsRaw = localStorage.getItem('aetheria_synced_models_' + prov);
+    const activeProfId = localStorage.getItem(ACTIVE_PROFILE_KEY);
+    const profiles = getSavedApiProfiles();
+    const activeProf = profiles.find(p => p.id === activeProfId && p.provider === prov);
+
     let modelsList = [];
-    if (cachedModelsRaw) {
-      try {
-        modelsList = JSON.parse(cachedModelsRaw);
-      } catch (e) {}
-    }
-    if (!Array.isArray(modelsList) || modelsList.length === 0) {
-      modelsList = DEFAULT_PROVIDER_MODELS[prov] || ['default'];
+    if (activeProf && Array.isArray(activeProf.syncedModels) && activeProf.syncedModels.length > 0) {
+      modelsList = activeProf.syncedModels;
+    } else {
+      const cachedModelsRaw = localStorage.getItem('aetheria_synced_models_' + prov);
+      if (cachedModelsRaw) {
+        try {
+          modelsList = JSON.parse(cachedModelsRaw);
+        } catch (e) {}
+      }
+      if (!Array.isArray(modelsList) || modelsList.length === 0) {
+        modelsList = DEFAULT_PROVIDER_MODELS[prov] || ['default'];
+      }
     }
 
-    const savedModel = localStorage.getItem('aetheria_text_model');
-    const selectedModel = (savedModel && modelsList.includes(savedModel)) ? savedModel : modelsList[0];
-    populateModelDropdown(modelsList, selectedModel);
+    let targetModel = '';
+    if (activeProf && activeProf.model) {
+      targetModel = activeProf.model;
+    } else {
+      targetModel = localStorage.getItem('aetheria_model_' + prov) || localStorage.getItem('aetheria_text_model') || '';
+    }
+
+    const selectedModel = (targetModel && modelsList.includes(targetModel)) ? targetModel : modelsList[0];
+    populateModelDropdown(modelsList, selectedModel, false);
     updateDynamicPresets(modelsList);
     localStorage.setItem('aetheria_text_model', selectedModel);
+    localStorage.setItem('aetheria_model_' + prov, selectedModel);
 
     // Health Check widget update
     if (pingProviderName) {
@@ -4704,6 +5211,7 @@ const { character } = Astro.props;
 
   // Switch between Wizard View and Manual View
   function switchEngineViewMode(mode) {
+    localStorage.setItem('aetheria_engine_view_mode', mode);
     if (mode === 'wizard') {
       wizardPane?.classList.remove('hidden');
       manualPane?.classList.add('hidden');
@@ -4790,10 +5298,9 @@ const { character } = Astro.props;
   function selectProviderFromUI(provId) {
     if (textProviderSelect) {
       textProviderSelect.value = provId;
-      textProviderSelect.dispatchEvent(new Event('change'));
+      handleProviderChange(provId);
     }
     updateProviderTriggerDisplay(provId);
-    updateQuickProvChips(provId);
     closeProviderModal();
   }
 
@@ -4890,14 +5397,13 @@ const { character } = Astro.props;
       const prov = btn.getAttribute('data-provider');
       if (textProviderSelect && prov) {
         textProviderSelect.value = prov;
-        textProviderSelect.dispatchEvent(new Event('change'));
-        updateQuickProvChips(prov);
+        handleProviderChange(prov);
       }
     });
   });
 
   textProviderSelect?.addEventListener('change', () => {
-    updateQuickProvChips(textProviderSelect.value);
+    handleProviderChange(textProviderSelect.value);
   });
 
   function unlockHyperparameters() {
@@ -5617,11 +6123,24 @@ const { character } = Astro.props;
     });
   });
 
-  // Manual API Key input changes
+  // Manual API Key & Base URL input changes (Live auto-save per provider & profile)
   textApiKey?.addEventListener('input', () => {
     const key = textApiKey.value.trim();
     localStorage.setItem('aetheria_text_key', key);
     const prov = textProviderSelect?.value || 'groq';
+    localStorage.setItem('aetheria_key_' + prov, key);
+
+    const activeProfId = localStorage.getItem(ACTIVE_PROFILE_KEY);
+    if (activeProfId) {
+      const profs = getSavedApiProfiles();
+      const p = profs.find(x => x.id === activeProfId);
+      if (p && p.provider === prov) {
+        p.apiKey = key;
+        p.updatedAt = Date.now();
+        saveApiProfilesToStorage(profs);
+      }
+    }
+
     if (key.length >= 10) {
       const cached = localStorage.getItem('aetheria_synced_models_' + prov);
       if (!cached) {
@@ -5630,20 +6149,105 @@ const { character } = Astro.props;
     }
   });
 
-  // Manual provider selection change
-  textProviderSelect?.addEventListener('change', () => {
-    localStorage.setItem('aetheria_text_provider', textProviderSelect.value);
-    syncProviderVisibility();
+  textBaseUrl?.addEventListener('input', () => {
+    const url = textBaseUrl.value.trim();
+    localStorage.setItem('aetheria_text_base_url', url);
+    const prov = textProviderSelect?.value || 'groq';
+    localStorage.setItem('aetheria_url_' + prov, url);
+
+    const activeProfId = localStorage.getItem(ACTIVE_PROFILE_KEY);
+    if (activeProfId) {
+      const profs = getSavedApiProfiles();
+      const p = profs.find(x => x.id === activeProfId);
+      if (p && p.provider === prov) {
+        p.baseUrl = url;
+        p.updatedAt = Date.now();
+        saveApiProfilesToStorage(profs);
+      }
+    }
   });
 
   // Manual model select and input changes
   textModelSelect?.addEventListener('change', () => {
-    if (textModelInput) textModelInput.value = textModelSelect.value;
-    localStorage.setItem('aetheria_text_model', textModelSelect.value);
+    const val = textModelSelect.value;
+    const prov = textProviderSelect?.value || 'groq';
+    if (textModelInput) textModelInput.value = val;
+    localStorage.setItem('aetheria_text_model', val);
+    localStorage.setItem('aetheria_model_' + prov, val);
+
+    const activeProfId = localStorage.getItem(ACTIVE_PROFILE_KEY);
+    if (activeProfId) {
+      const profs = getSavedApiProfiles();
+      const p = profs.find(x => x.id === activeProfId);
+      if (p && p.provider === prov) {
+        p.model = val;
+        p.updatedAt = Date.now();
+        saveApiProfilesToStorage(profs);
+        renderApiProfilesDropdown(activeProfId);
+      }
+    }
+    updateHeaderPill();
   });
+
   textModelInput?.addEventListener('input', () => {
-    localStorage.setItem('aetheria_text_model', textModelInput.value.trim());
+    const val = textModelInput.value.trim();
+    const prov = textProviderSelect?.value || 'groq';
+    localStorage.setItem('aetheria_text_model', val);
+    localStorage.setItem('aetheria_model_' + prov, val);
+
+    const activeProfId = localStorage.getItem(ACTIVE_PROFILE_KEY);
+    if (activeProfId) {
+      const profs = getSavedApiProfiles();
+      const p = profs.find(x => x.id === activeProfId);
+      if (p && p.provider === prov) {
+        p.model = val;
+        p.updatedAt = Date.now();
+        saveApiProfilesToStorage(profs);
+        renderApiProfilesDropdown(activeProfId);
+      }
+    }
+    updateHeaderPill();
   });
+
+  // API Profile Management Event Listeners
+  apiProfileSelect?.addEventListener('change', () => {
+    switchApiProfile(apiProfileSelect.value);
+  });
+
+  btnShowSaveProfile?.addEventListener('click', () => {
+    if (newProfileForm) {
+      newProfileForm.classList.toggle('hidden');
+      if (!newProfileForm.classList.contains('hidden') && newProfileNameInput) {
+        const prov = textProviderSelect?.value || 'groq';
+        const provName = PROVIDER_CONFIGS[prov]?.name || prov;
+        newProfileNameInput.value = `${provName} Profile`;
+        newProfileNameInput.focus();
+        newProfileNameInput.select();
+      }
+    }
+  });
+
+  btnCancelNewProfile?.addEventListener('click', () => {
+    if (newProfileForm) newProfileForm.classList.add('hidden');
+  });
+
+  btnConfirmSaveProfile?.addEventListener('click', () => {
+    if (newProfileNameInput) {
+      saveCurrentAsNewProfile(newProfileNameInput.value);
+    }
+  });
+
+  newProfileNameInput?.addEventListener('keydown', (e) => {
+    if (e.key === 'Enter') {
+      e.preventDefault();
+      saveCurrentAsNewProfile(newProfileNameInput.value);
+    } else if (e.key === 'Escape') {
+      if (newProfileForm) newProfileForm.classList.add('hidden');
+    }
+  });
+
+  btnUpdateActiveProfile?.addEventListener('click', updateActiveProfile);
+  btnDeleteActiveProfile?.addEventListener('click', deleteActiveProfile);
 
   // Toggle model input mode (Custom Luxury Trigger vs custom text input)
   toggleModelInputModeBtn?.addEventListener('click', () => {
@@ -5692,22 +6296,26 @@ const { character } = Astro.props;
   // Modal Open/Close
   byokBtn?.addEventListener('click', () => {
     byokTray?.classList.remove('hidden');
-    if (!wizardChatBox || wizardChatBox.children.length === 0) {
-      initWizard();
-    }
+    loadEngineSettings();
+    const savedMode = localStorage.getItem('aetheria_engine_view_mode') || 'manual';
+    switchEngineViewMode(savedMode);
   });
   closeByok?.addEventListener('click', () => byokTray?.classList.add('hidden'));
   cancelByok?.addEventListener('click', () => byokTray?.classList.add('hidden'));
   // Save all engine settings to localStorage (Bulletproof with fallback)
   function saveAllSettings() {
     try {
-      const prov = textProviderSelect?.value || 'openrouter';
+      const prov = textProviderSelect?.value || 'groq';
       const key = (textApiKey?.value || '').trim();
       const baseUrl = (textBaseUrl?.value || '').trim();
 
       if (textProviderSelect) localStorage.setItem('aetheria_text_provider', prov);
       if (textApiKey) localStorage.setItem('aetheria_text_key', key);
       if (textBaseUrl) localStorage.setItem('aetheria_text_base_url', baseUrl);
+
+      // Save per-provider
+      localStorage.setItem('aetheria_key_' + prov, key);
+      localStorage.setItem('aetheria_url_' + prov, baseUrl);
 
       const isCustomInput = Boolean(textModelInput && !textModelInput.classList.contains('hidden'));
       let model = isCustomInput ? textModelInput.value.trim() : (textModelSelect ? textModelSelect.value : '');
@@ -5728,10 +6336,30 @@ const { character } = Astro.props;
 
       if (model) {
         localStorage.setItem('aetheria_text_model', model);
+        localStorage.setItem('aetheria_model_' + prov, model);
         updateCustomModelTrigger(model);
         if (textModelSelect) {
           textModelSelect.disabled = false;
           textModelSelect.value = model;
+        }
+      }
+
+      // If active profile exists, update it automatically
+      const activeProfId = localStorage.getItem(ACTIVE_PROFILE_KEY);
+      if (activeProfId) {
+        const profiles = getSavedApiProfiles();
+        const pIdx = profiles.findIndex(p => p.id === activeProfId);
+        if (pIdx !== -1) {
+          profiles[pIdx].provider = prov;
+          profiles[pIdx].apiKey = key;
+          profiles[pIdx].baseUrl = baseUrl;
+          if (model) profiles[pIdx].model = model;
+          if (Array.isArray(currentSyncedModels) && currentSyncedModels.length > 0) {
+            profiles[pIdx].syncedModels = currentSyncedModels;
+          }
+          profiles[pIdx].updatedAt = Date.now();
+          saveApiProfilesToStorage(profiles);
+          renderApiProfilesDropdown(activeProfId);
         }
       }
       updateHeaderPill();
