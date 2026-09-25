@@ -2058,6 +2058,61 @@ const { character } = Astro.props;
     return result;
   }
 
+  // Sanitize history messages sent to LLM: strictly scrub persona names/identities if persona is disabled
+  function getSanitizedHistoryForAPI(historySlice) {
+    if (!Array.isArray(historySlice)) return [];
+    if (isPersonaGloballyActive()) {
+      return historySlice.map(m => ({
+        role: m.role || (m.sender === 'user' ? 'user' : 'assistant'),
+        content: m.content || m.text || ''
+      }));
+    }
+
+    const knownNames = new Set(['Traveler']);
+    try {
+      const rawPersona = localStorage.getItem('aetheria_user_persona');
+      if (rawPersona) {
+        const parsed = JSON.parse(rawPersona);
+        if (parsed.name && parsed.name.trim() && parsed.name.trim().toLowerCase() !== 'you') {
+          knownNames.add(parsed.name.trim());
+        }
+      }
+      const rawMasks = localStorage.getItem('aetheria_user_personas');
+      if (rawMasks) {
+        const masks = JSON.parse(rawMasks);
+        if (Array.isArray(masks)) {
+          masks.forEach(m => {
+            if (m.name && m.name.trim() && m.name.trim().toLowerCase() !== 'you') {
+              knownNames.add(m.name.trim());
+            }
+          });
+        }
+      }
+      const dName = localStorage.getItem('aetheria_user_display_name');
+      if (dName && dName.trim() && dName.trim().toLowerCase() !== 'you') {
+        knownNames.add(dName.trim());
+      }
+    } catch {}
+
+    const nameList = [...knownNames].filter(n => n && n.length > 1);
+
+    return historySlice.map(m => {
+      let content = m.content || m.text || '';
+      nameList.forEach(name => {
+        const escaped = name.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+        content = content
+          .replace(new RegExp(`\\b${escaped}'s\\b`, 'gi'), 'your')
+          .replace(new RegExp(`,\\s*${escaped}\\b`, 'gi'), '')
+          .replace(new RegExp(`\\b${escaped},\\s*`, 'gi'), '')
+          .replace(new RegExp(`\\b${escaped}\\b`, 'gi'), 'you');
+      });
+      return {
+        role: m.role || (m.sender === 'user' ? 'user' : 'assistant'),
+        content: content
+      };
+    });
+  }
+
   // Retrieve all unique scenario greetings (first_mes + alternate_greetings)
   function getCharacterGreetings() {
     const rawList = [
@@ -5584,11 +5639,8 @@ const { character } = Astro.props;
             content: m.text
           }));
 
-        // Send clean user and assistant conversation history (pure dialogue without artificial prompt injection)
-        const payloadMessages = historySlice.map(m => ({
-          role: m.role,
-          content: m.content
-        }));
+        // Send clean user and assistant conversation history (strictly sanitized of persona when disabled)
+        const payloadMessages = getSanitizedHistoryForAPI(historySlice);
 
         let payload;
         let headers = { 'Content-Type': 'application/json' };
@@ -5944,12 +5996,9 @@ const { character } = Astro.props;
       if (typingIndicator) typingIndicator.classList.remove('hidden');
       try {
         const sysPrompt = buildSystemPrompt(userText);
-        const demoHistory = conversation.slice(-8)
-          .filter(m => m.text && !isPoisonedOrErrorMessage(m.text))
-          .map(m => ({
-            role: m.sender === 'user' ? 'user' : 'assistant',
-            content: m.text
-          }));
+        const rawDemoHistory = conversation.slice(-8)
+          .filter(m => m.text && !isPoisonedOrErrorMessage(m.text));
+        const demoHistory = getSanitizedHistoryForAPI(rawDemoHistory);
         const demoRes = await fetch('/api/chat/demo', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
@@ -6057,11 +6106,8 @@ const { character } = Astro.props;
             content: m.text
           }));
 
-        // Send clean swipe history
-        const payloadMessages = historySlice.map(m => ({
-          role: m.role,
-          content: m.content
-        }));
+        // Send clean swipe history (strictly sanitized of persona when disabled)
+        const payloadMessages = getSanitizedHistoryForAPI(historySlice);
 
         if (payloadMessages.length === 0) {
           payloadMessages.push({
@@ -6169,16 +6215,13 @@ const { character } = Astro.props;
         const lastUserMsg = conversation.slice(0, msgIdx).reverse().find(m => m.sender === 'user');
         const systemPrompt = buildSystemPrompt(lastUserMsg ? lastUserMsg.text : '');
         const historySlice = conversation.slice(0, msgIdx)
-          .filter(m => m.text && !isPoisonedOrErrorMessage(m.text))
-          .map(m => ({
-            role: m.sender === 'user' ? 'user' : 'assistant',
-            content: m.text
-          }));
+          .filter(m => m.text && !isPoisonedOrErrorMessage(m.text));
+        const sanitizedHistory = getSanitizedHistoryForAPI(historySlice);
         const demoRes = await fetch('/api/chat/demo', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
-            messages: [{ role: 'system', content: systemPrompt }, ...historySlice]
+            messages: [{ role: 'system', content: systemPrompt }, ...sanitizedHistory]
           }),
           signal: AbortSignal.timeout(12000)
         });
