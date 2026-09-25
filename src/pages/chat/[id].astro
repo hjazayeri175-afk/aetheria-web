@@ -141,25 +141,31 @@ const { character } = Astro.props;
           <!-- Sessions Dropdown Popover -->
           <div 
             id="sessions-dropdown" 
-            class="hidden fixed inset-x-3 top-16 sm:absolute sm:inset-auto sm:right-0 sm:top-full sm:mt-2 w-auto sm:w-80 max-w-[calc(100vw-1.5rem)] rounded-2xl bg-[#0c0f20]/98 border border-purple-500/30 shadow-2xl shadow-purple-950/80 p-3 z-50 backdrop-blur-2xl"
+            class="hidden fixed inset-x-3.5 top-16 sm:absolute sm:inset-auto sm:right-0 sm:top-full sm:mt-2.5 w-auto sm:w-84 max-w-[calc(100vw-1.75rem)] rounded-2xl bg-[#1e1f24] border border-white/[0.12] shadow-2xl shadow-black/90 p-3.5 z-50 backdrop-blur-2xl transition-all select-none text-left"
           >
-            <div class="flex items-center justify-between pb-2 mb-2 border-b border-white/[0.08]">
-              <div class="flex items-center gap-1.5">
-                <GitBranch class="w-3.5 h-3.5 text-emerald-400" />
-                <span class="text-xs font-bold text-white">Story Branches</span>
+            <div class="flex items-center justify-between pb-3 mb-2.5 border-b border-white/[0.08]">
+              <div class="flex items-center gap-2">
+                <div class="w-7 h-7 rounded-xl bg-emerald-500/15 border border-emerald-500/25 flex items-center justify-center text-emerald-400">
+                  <GitBranch class="w-3.5 h-3.5" />
+                </div>
+                <div>
+                  <span class="text-xs font-semibold text-slate-100 block">Story Timelines</span>
+                  <span class="text-[10px] text-slate-400 block font-normal">Switch or branch stories</span>
+                </div>
               </div>
               <button 
                 id="create-new-session-btn"
                 type="button"
-                class="px-2.5 py-1 rounded-lg bg-emerald-500/20 hover:bg-emerald-500/30 border border-emerald-500/40 text-emerald-300 text-[11px] font-bold flex items-center gap-1 transition cursor-pointer"
+                class="px-3 py-1.5 rounded-full bg-white/10 hover:bg-white/15 active:scale-95 text-slate-200 hover:text-white text-[11px] font-medium flex items-center gap-1.5 transition cursor-pointer"
+                title="Start a fresh timeline from the beginning"
               >
-                <Plus class="w-3 h-3" />
+                <Plus class="w-3 h-3 text-emerald-400" />
                 <span>New Branch</span>
               </button>
             </div>
 
             <!-- List of Sessions Container -->
-            <div id="sessions-list" class="max-h-60 overflow-y-auto space-y-1.5 pr-0.5 text-xs">
+            <div id="sessions-list" class="max-h-64 overflow-y-auto space-y-1.5 pr-0.5 text-xs">
               <!-- Rendered via JS -->
             </div>
           </div>
@@ -2341,12 +2347,14 @@ const { character } = Astro.props;
     danger: `<svg class="w-5 h-5 text-rose-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18"/><path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"/><path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"/><line x1="10" x2="10" y1="11" y2="17"/><line x1="14" x2="14" y1="11" y2="17"/></svg>`,
     warning: `<svg class="w-5 h-5 text-amber-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z"/><line x1="12" x2="12" y1="9" y2="13"/><line x1="12" x2="12.01" y1="17" y2="17"/></svg>`,
     info: `<svg class="w-5 h-5 text-sky-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4"/><path d="M12 8h.01"/></svg>`,
+    branch: `<svg class="w-5 h-5 text-emerald-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="6" x2="6" y1="3" y2="15"/><circle cx="18" cy="6" r="3"/><circle cx="6" cy="18" r="3"/><path d="M18 9a9 9 0 0 1-9 9"/></svg>`,
     settings: `<svg class="w-5 h-5 text-indigo-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>`,
     flag: `<svg class="w-5 h-5 text-rose-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 15s1-1 4-1 5 2 8 2 4-1 4-1V3s-1 1-4 1-5-2-8-2-4 1-4 1z"/><line x1="4" x2="4" y1="22" y2="15"/></svg>`,
     sparkle: `<svg class="w-5 h-5 text-purple-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m12 3-1.912 5.813a2 2 0 0 1-1.275 1.275L3 12l5.813 1.912a2 2 0 0 1 1.275 1.275L12 21l1.912-5.813a2 2 0 0 1 1.275-1.275L21 12l-5.813-1.912a2 2 0 0 1-1.275-1.275L12 3Z"/></svg>`
   };
 
   const TOOLBAR_ICONS = {
+    branch: `<svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><line x1="6" x2="6" y1="3" y2="15"/><circle cx="18" cy="6" r="3"/><circle cx="6" cy="18" r="3"/><path d="M18 9a9 9 0 0 1-9 9"/></svg>`,
     speaker: `<svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/><path d="M15.54 8.46a5 5 0 0 1 0 7.07"/><path d="M19.07 4.93a10 10 0 0 1 0 14.14"/></svg>`,
     stop: `<svg class="w-4 h-4 fill-current" viewBox="0 0 24 24"><rect x="6" y="6" width="12" height="12" rx="2"/></svg>`,
     copy: `<svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><rect width="14" height="14" x="8" y="8" rx="2" ry="2"/><path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2"/></svg>`,
@@ -2369,6 +2377,7 @@ const { character } = Astro.props;
   function getModalIconSvg(icon, type) {
     if (typeof icon === 'string' && icon.startsWith('<svg')) return icon;
     if (icon === 'rewind' || icon === '↩️' || icon === '⏪') return MODAL_SVGS.rewind;
+    if (icon === 'branch' || icon === '🌿') return MODAL_SVGS.branch;
     if (icon === 'settings' || icon === '⚙️') return MODAL_SVGS.settings;
     if (icon === 'danger' || icon === '🗑️' || type === 'danger') return MODAL_SVGS.danger;
     if (icon === 'warning' || icon === '⚠️' || type === 'warning') return MODAL_SVGS.warning;
@@ -2484,6 +2493,98 @@ const { character } = Astro.props;
       cancelText: '',
       type: 'info',
       icon
+    });
+  }
+
+  function showPromptModal({
+    title = 'Story Branch Name',
+    message = 'Enter a name for this timeline branch:',
+    defaultValue = '',
+    placeholder = 'e.g. Alternate Path',
+    confirmText = 'Confirm',
+    cancelText = 'Cancel',
+    icon = 'branch'
+  } = {}) {
+    return new Promise((resolve) => {
+      const iconSvg = getModalIconSvg(icon, 'default');
+      const backdrop = document.createElement('div');
+      backdrop.className = 'fixed inset-0 z-[10000] flex items-center justify-center p-4 bg-black/75 backdrop-blur-md transition-opacity duration-200 opacity-0';
+
+      const modal = document.createElement('div');
+      modal.className = 'w-full max-w-[420px] rounded-[28px] bg-[#1e1f24] border border-white/[0.1] p-6 shadow-2xl shadow-black/95 transform scale-95 opacity-0 transition-all duration-200 ease-out text-left select-none';
+
+      modal.innerHTML = `
+        <div class="flex items-center gap-3.5 mb-2.5">
+          <div class="w-10 h-10 rounded-2xl flex items-center justify-center shrink-0 bg-emerald-500/15 border border-emerald-500/20 text-emerald-400">
+            ${iconSvg}
+          </div>
+          <h3 class="text-lg sm:text-xl font-medium text-slate-100 tracking-tight leading-snug">${escapeHtml(title)}</h3>
+        </div>
+        ${message ? `<p class="text-xs sm:text-sm text-slate-400 leading-relaxed font-normal mb-3.5">${escapeHtml(message)}</p>` : ''}
+        <div class="relative">
+          <input 
+            id="prompt-modal-input" 
+            type="text" 
+            dir="auto"
+            value="${escapeHtml(defaultValue)}" 
+            placeholder="${escapeHtml(placeholder)}"
+            class="w-full h-11 px-4 rounded-xl bg-black/40 border border-white/10 text-sm text-white placeholder:text-slate-500 focus:outline-none focus:border-emerald-500/60 focus:ring-1 focus:ring-emerald-500/40 transition"
+          />
+        </div>
+        <div class="mt-6 flex items-center justify-end gap-2.5">
+          <button id="prompt-modal-cancel" type="button" class="h-10 px-5 rounded-full text-xs sm:text-sm font-medium text-slate-300 hover:text-white hover:bg-white/[0.08] active:scale-95 transition-all text-center cursor-pointer">
+            ${escapeHtml(cancelText)}
+          </button>
+          <button id="prompt-modal-confirm" type="button" class="h-10 px-6 rounded-full text-xs sm:text-sm font-semibold transition-all active:scale-95 text-center cursor-pointer flex items-center justify-center gap-1.5 bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 text-white shadow-md shadow-emerald-950/40">
+            ${escapeHtml(confirmText)}
+          </button>
+        </div>
+      `;
+
+      backdrop.appendChild(modal);
+      document.body.appendChild(backdrop);
+
+      const input = modal.querySelector('#prompt-modal-input');
+      requestAnimationFrame(() => {
+        backdrop.classList.remove('opacity-0');
+        modal.classList.remove('scale-95', 'opacity-0');
+        if (input) {
+          input.focus();
+          input.select();
+        }
+      });
+
+      const cleanup = (val) => {
+        backdrop.classList.add('opacity-0');
+        modal.classList.add('scale-95', 'opacity-0');
+        setTimeout(() => backdrop.remove(), 200);
+        window.removeEventListener('keydown', onKeyDown);
+        resolve(val);
+      };
+
+      const confirmBtn = modal.querySelector('#prompt-modal-confirm');
+      const cancelBtn = modal.querySelector('#prompt-modal-cancel');
+      if (confirmBtn) {
+        confirmBtn.onclick = () => {
+          const val = input ? input.value.trim() : '';
+          cleanup(val || defaultValue || null);
+        };
+      }
+      if (cancelBtn) cancelBtn.onclick = () => cleanup(null);
+      backdrop.onclick = (e) => {
+        if (e.target === backdrop) cleanup(null);
+      };
+
+      const onKeyDown = (e) => {
+        if (e.key === 'Escape') {
+          cleanup(null);
+        } else if (e.key === 'Enter') {
+          e.preventDefault();
+          const val = input ? input.value.trim() : '';
+          cleanup(val || defaultValue || null);
+        }
+      };
+      window.addEventListener('keydown', onKeyDown);
     });
   }
 
@@ -5374,30 +5475,33 @@ const { character } = Astro.props;
     chatSessions.forEach(ses => {
       const isActive = ses.id === currentSessionId;
       const item = document.createElement('div');
-      item.className = `p-2.5 rounded-xl border transition flex items-center justify-between gap-2 cursor-pointer ${
+      item.className = `p-2.5 rounded-xl border transition-all flex items-center justify-between gap-2.5 cursor-pointer ${
         isActive 
-          ? 'bg-purple-900/40 border-purple-500/50 text-white shadow-sm shadow-purple-950/40' 
-          : 'bg-white/[0.03] hover:bg-white/[0.06] border-white/[0.06] text-slate-300'
+          ? 'bg-emerald-500/[0.12] border-emerald-500/40 text-white shadow-sm shadow-emerald-950/20' 
+          : 'bg-black/20 hover:bg-white/[0.05] border-white/[0.06] text-slate-300'
       }`;
+
+      const safeTitle = escapeHtml(ses.title || 'Untitled Branch');
+      const safeSnippet = escapeHtml((ses.lastMessage || 'Fresh timeline').replace(/[\r\n]+/g, ' ').slice(0, 32));
 
       item.innerHTML = `
         <div class="flex-1 min-w-0 session-select-area" data-session-id="${ses.id}">
           <div class="flex items-center gap-1.5">
-            <span class="font-bold text-xs truncate ${isActive ? 'text-purple-300' : 'text-slate-200'}">${ses.title}</span>
-            ${isActive ? '<span class="text-[9px] px-1.5 py-0.2 rounded bg-emerald-500/20 text-emerald-400 font-mono">Active</span>' : ''}
+            <span class="font-medium text-xs truncate ${isActive ? 'text-emerald-300' : 'text-slate-200'}">${safeTitle}</span>
+            ${isActive ? '<span class="text-[9px] px-1.5 py-0.5 rounded-full bg-emerald-500/20 text-emerald-400 font-mono font-medium shrink-0 border border-emerald-500/30">Active</span>' : ''}
           </div>
-          <div class="flex items-center gap-2 text-[10px] text-slate-500 mt-0.5">
-            <span>${ses.messageCount || 0} messages</span>
+          <div class="flex items-center gap-1.5 text-[10px] text-slate-400 mt-0.5">
+            <span>${ses.messageCount || 0} msgs</span>
             <span>•</span>
-            <span class="truncate max-w-[110px]">${ses.lastMessage ? `"${ses.lastMessage}"` : 'New timeline'}</span>
+            <span class="truncate max-w-[130px] opacity-75">${safeSnippet}</span>
           </div>
         </div>
         <div class="flex items-center gap-1 shrink-0">
-          <button type="button" class="rename-session-btn p-1.5 rounded-lg text-slate-400 hover:text-white hover:bg-white/[0.08] transition" data-session-id="${ses.id}" title="Rename branch">
+          <button type="button" class="rename-session-btn p-1.5 rounded-lg text-slate-400 hover:text-white hover:bg-white/[0.08] active:scale-95 transition cursor-pointer" data-session-id="${ses.id}" title="Rename branch">
             ${TOOLBAR_ICONS.edit}
           </button>
           ${ses.id !== 'session_default' ? `
-            <button type="button" class="delete-session-btn p-1.5 rounded-lg text-slate-400 hover:text-rose-400 hover:bg-white/[0.08] transition" data-session-id="${ses.id}" title="Delete branch">
+            <button type="button" class="delete-session-btn p-1.5 rounded-lg text-slate-400 hover:text-rose-400 hover:bg-rose-500/10 active:scale-95 transition cursor-pointer" data-session-id="${ses.id}" title="Delete branch">
               ${TOOLBAR_ICONS.trash}
             </button>
           ` : ''}
@@ -5408,13 +5512,22 @@ const { character } = Astro.props;
         if (!isActive) switchSession(ses.id);
       });
 
-      item.querySelector('.rename-session-btn')?.addEventListener('click', (e) => {
+      item.querySelector('.rename-session-btn')?.addEventListener('click', async (e) => {
         e.stopPropagation();
-        const newTitle = prompt('Rename story branch:', ses.title);
+        const newTitle = await showPromptModal({
+          title: 'Rename Story Branch',
+          message: 'Choose a new title for this timeline:',
+          defaultValue: ses.title,
+          placeholder: 'Branch title...',
+          confirmText: 'Save',
+          cancelText: 'Cancel',
+          icon: 'branch'
+        });
         if (newTitle && newTitle.trim()) {
           ses.title = newTitle.trim();
           saveSessionsIndex();
           renderSessionsDropdown();
+          showNotification('Branch renamed.', 'success');
         }
       });
 
@@ -5442,10 +5555,20 @@ const { character } = Astro.props;
     showNotification(`Switched to branch: ${ses?.title || sessionId}`);
   }
 
-  function createNewSession() {
+  async function createNewSession() {
     const branchNum = chatSessions.length + 1;
-    const defaultTitle = `Branch #${branchNum}`;
-    const title = prompt('Enter a name for this new story branch:', defaultTitle) || defaultTitle;
+    const defaultTitle = `Fresh Timeline #${branchNum}`;
+    const title = await showPromptModal({
+      title: 'New Story Timeline',
+      message: 'Start a clean, fresh timeline from the beginning with this character:',
+      defaultValue: defaultTitle,
+      placeholder: 'Timeline name...',
+      confirmText: 'Start Timeline',
+      cancelText: 'Cancel',
+      icon: 'branch'
+    });
+    if (!title || !title.trim()) return;
+
     const newId = 'session_' + Date.now();
 
     const newSes = {
@@ -5472,6 +5595,46 @@ const { character } = Astro.props;
     localStorage.setItem(getSessionStorageKey(newId), JSON.stringify(initialConv));
 
     switchSession(newId);
+  }
+
+  async function branchFromMessage(msgIdx) {
+    if (msgIdx < 0 || msgIdx >= conversation.length) return;
+    const targetMsg = conversation[msgIdx];
+    const preview = (targetMsg?.text || '').slice(0, 24).trim().replace(/[\r\n]+/g, ' ');
+    const branchNum = chatSessions.length + 1;
+    const defaultTitle = `Branch #${branchNum}${preview ? ` ("${preview}...")` : ` (Turn ${msgIdx + 1})`}`;
+
+    const title = await showPromptModal({
+      title: 'Branch Story from Here',
+      message: `Create a new timeline branching from message #${msgIdx + 1}. All previous turns are preserved so you can explore an alternate path without affecting your current chat.`,
+      defaultValue: defaultTitle,
+      placeholder: 'Branch title...',
+      confirmText: 'Create Branch',
+      cancelText: 'Cancel',
+      icon: 'branch'
+    });
+
+    if (!title || !title.trim()) return;
+
+    // Slice history up to and including msgIdx
+    const slicedConv = JSON.parse(JSON.stringify(conversation.slice(0, msgIdx + 1)));
+    const newId = 'session_' + Date.now();
+
+    const newSes = {
+      id: newId,
+      title: title.trim(),
+      createdAt: new Date().toISOString(),
+      updatedAt: new Date().toISOString(),
+      messageCount: slicedConv.length,
+      lastMessage: slicedConv[slicedConv.length - 1]?.text || ''
+    };
+
+    chatSessions.push(newSes);
+    saveSessionsIndex();
+
+    localStorage.setItem(getSessionStorageKey(newId), JSON.stringify(slicedConv));
+    switchSession(newId);
+    showNotification(`Branch created from message #${msgIdx + 1}!`, 'success');
   }
 
   async function deleteSession(sessionId) {
@@ -6814,6 +6977,10 @@ const { character } = Astro.props;
         <span class="text-slate-400 group-hover:text-purple-300 transition-colors">${TOOLBAR_ICONS.edit}</span>
         <span>Edit message</span>
       </button>
+      <button type="button" class="more-opt-btn group flex items-center gap-2.5 px-2.5 py-2 rounded-xl text-xs font-medium text-slate-200 hover:text-emerald-400 hover:bg-emerald-500/10 active:scale-[0.98] transition cursor-pointer text-left" data-action="branch">
+        <span class="text-slate-400 group-hover:text-emerald-400 transition-colors">${TOOLBAR_ICONS.branch}</span>
+        <span>Branch from here</span>
+      </button>
       <button type="button" class="more-opt-btn group flex items-center gap-2.5 px-2.5 py-2 rounded-xl text-xs font-medium text-slate-200 hover:text-amber-300 hover:bg-white/[0.08] active:scale-[0.98] transition cursor-pointer text-left" data-action="rewind">
         <span class="text-slate-400 group-hover:text-amber-300 transition-colors">${TOOLBAR_ICONS.rewind}</span>
         <span>${isUser ? 'Rewind to input' : 'Rewind to here'}</span>
@@ -6865,6 +7032,8 @@ const { character } = Astro.props;
         popover.remove();
         if (action === 'edit') {
           enableEditMessage(msgIdx);
+        } else if (action === 'branch') {
+          branchFromMessage(msgIdx);
         } else if (action === 'rewind') {
           rewindTurn(msgIdx);
         } else if (action === 'delete') {
