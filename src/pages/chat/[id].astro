@@ -27,6 +27,9 @@ import {
   Video, 
   Film,
   Brain, 
+  Cpu,
+  Globe,
+  Key,
   Zap, 
   Play, 
   Eye, 
@@ -792,70 +795,37 @@ const { character } = Astro.props;
                 </div>
 
                 <!-- 2. EXPERT MANUAL PANE (Hidden in wizard mode) -->
-                <div id="manual-pane" class="space-y-4 hidden">
-                  <!-- Latency & Ping Indicator -->
-                  <div class="flex flex-col sm:flex-row items-stretch sm:items-center justify-between p-3.5 rounded-2xl bg-white/[0.03] border border-white/[0.08] gap-3">
-                    <div class="flex items-center gap-2.5">
-                      <span id="ping-indicator-dot" class="w-2.5 h-2.5 rounded-full bg-emerald-400 shrink-0"></span>
-                      <div class="min-w-0">
-                        <div class="text-xs font-semibold text-white truncate" id="ping-provider-name">Groq LPU (Ultra-Fast)</div>
-                        <div class="text-[10px] text-slate-400 font-mono truncate" id="ping-latency-text">Ready • Latency: ~85ms</div>
+                <div id="manual-pane" class="space-y-4 hidden" dir="ltr" lang="en">
+
+                  <!-- 1. API Profiles Toolbar (Flat, Sleek, Un-nested) -->
+                  <div class="p-3 rounded-2xl bg-white/[0.03] border border-white/[0.08] flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-2.5" dir="ltr" lang="en">
+                    <div class="flex items-center gap-2 min-w-0">
+                      <div class="w-6 h-6 rounded-lg bg-purple-500/20 border border-purple-500/30 flex items-center justify-center shrink-0">
+                        <Tag class="w-3.5 h-3.5 text-purple-400" />
                       </div>
+                      <span class="text-xs font-semibold text-slate-300 shrink-0">API Profile:</span>
+                      <select 
+                        id="api-profile-select" 
+                        class="flex-1 sm:max-w-xs px-2.5 py-1.5 rounded-lg bg-black/60 border border-purple-500/30 text-xs text-white outline-none focus:border-purple-400 font-medium cursor-pointer transition truncate"
+                      >
+                        <option value="">Direct Mode (Active Provider)</option>
+                      </select>
+                      <span id="active-profile-badge" class="hidden text-[10px] px-2 py-0.5 rounded-full bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 font-semibold font-mono shrink-0">Active</span>
                     </div>
-                    <button 
-                      type="button" 
-                      id="ping-text-btn" 
-                      class="px-3 py-1.5 rounded-xl bg-purple-900/40 hover:bg-purple-800/60 border border-purple-500/30 text-purple-300 hover:text-white text-xs font-semibold flex items-center justify-center gap-1.5 transition cursor-pointer shrink-0 shadow-sm shadow-purple-950"
-                    >
-                      <Zap class="w-3.5 h-3.5 text-cyan-400" />
-                      <span>Test Health / Latency</span>
-                    </button>
-                  </div>
-
-                  <div id="ping-status-msg" class="hidden text-xs px-3.5 py-2.5 rounded-xl border leading-relaxed"></div>
-
-                  <!-- API Profiles Manager (Multi-Profile BYOK with Custom Names) -->
-                  <div class="p-3.5 sm:p-4 rounded-2xl bg-gradient-to-br from-[#121424] via-[#161a32] to-[#0e101c] border border-purple-500/30 shadow-lg shadow-purple-950/40 space-y-3">
-                    <div class="flex items-center justify-between gap-2 flex-wrap">
-                      <div class="flex items-center gap-2">
-                        <div class="w-7 h-7 rounded-xl bg-purple-500/20 border border-purple-500/40 flex items-center justify-center text-xs text-purple-300 shrink-0">
-                          <Tag class="w-3.5 h-3.5 text-purple-400" />
-                        </div>
-                        <div>
-                          <div class="flex items-center gap-1.5">
-                            <span class="text-xs font-bold text-white">API Profiles</span>
-                            <span id="active-profile-badge" class="hidden text-[10px] px-2 py-0.5 rounded-full bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 font-semibold font-mono">Active</span>
-                          </div>
-                          <span class="text-[10px] text-purple-300/80 block">Save and switch between custom API keys without losing provider settings</span>
-                        </div>
-                      </div>
-                      <div class="flex items-center gap-1.5">
-                        <button 
-                          type="button" 
-                          id="btn-show-save-profile" 
-                          class="px-2.5 py-1.5 rounded-xl bg-purple-600/80 hover:bg-purple-600 text-white text-xs font-semibold flex items-center gap-1 transition cursor-pointer shadow-sm shadow-purple-950 active:scale-95 shrink-0"
-                          title="Save current provider, key and model under a custom name"
-                        >
-                          <Plus class="w-3.5 h-3.5" />
-                          <span>Save as New Profile</span>
-                        </button>
-                      </div>
-                    </div>
-
-                    <!-- Profile Switcher Dropdown & Actions -->
-                    <div class="flex items-center gap-2">
-                      <div class="relative flex-1">
-                        <select 
-                          id="api-profile-select" 
-                          class="w-full px-3 py-2 rounded-xl bg-black/60 border border-purple-500/30 text-xs text-white outline-none focus:border-purple-400 font-medium cursor-pointer transition"
-                        >
-                          <option value="">-- Direct Provider Mode (No Named Profile Active) --</option>
-                        </select>
-                      </div>
+                    <div class="flex items-center gap-1.5 shrink-0 self-end sm:self-auto">
+                      <button 
+                        type="button" 
+                        id="btn-show-save-profile" 
+                        class="px-2.5 py-1.5 rounded-lg bg-purple-600/80 hover:bg-purple-600 text-white text-xs font-semibold flex items-center gap-1 transition cursor-pointer active:scale-95"
+                        title="Save current provider & credentials as a new named profile"
+                      >
+                        <Plus class="w-3.5 h-3.5" />
+                        <span>Save Profile</span>
+                      </button>
                       <button 
                         type="button" 
                         id="btn-update-active-profile" 
-                        class="hidden px-2.5 py-2 rounded-xl bg-purple-950/40 hover:bg-purple-900/60 text-purple-300 hover:text-white text-xs font-medium border border-purple-500/30 transition cursor-pointer shrink-0" 
+                        class="hidden px-2.5 py-1.5 rounded-lg bg-purple-950/40 hover:bg-purple-900/60 text-purple-300 hover:text-white text-xs font-medium border border-purple-500/30 transition cursor-pointer" 
                         title="Update active profile with latest changes"
                       >
                         <Check class="w-3.5 h-3.5 inline mr-0.5" />
@@ -864,240 +834,250 @@ const { character } = Astro.props;
                       <button 
                         type="button" 
                         id="btn-delete-active-profile" 
-                        class="hidden px-2.5 py-2 rounded-xl bg-rose-500/10 hover:bg-rose-500/20 text-rose-300 border border-rose-500/20 text-xs font-medium transition cursor-pointer shrink-0" 
+                        class="hidden px-2 py-1.5 rounded-lg bg-rose-500/10 hover:bg-rose-500/20 text-rose-300 border border-rose-500/20 text-xs font-medium transition cursor-pointer" 
                         title="Delete this profile"
                       >
-                        <Trash2 class="w-3.5 h-3.5 inline mr-0.5" />
-                        <span>Delete</span>
+                        <Trash2 class="w-3.5 h-3.5 inline" />
                       </button>
                     </div>
+                  </div>
 
-                    <!-- Inline Form for Creating New Profile -->
-                    <div id="new-profile-form" class="hidden p-3 rounded-xl bg-black/70 border border-purple-500/40 space-y-2.5">
-                      <div class="flex items-center justify-between text-xs text-purple-200 font-semibold">
-                        <span class="flex items-center gap-1.5">
-                          <Tag class="w-3 h-3 text-purple-400" />
-                          <span>Custom Profile Name</span>
-                        </span>
-                        <button type="button" id="btn-cancel-new-profile" class="text-slate-400 hover:text-white text-[11px] cursor-pointer">✕ Cancel</button>
-                      </div>
-                      <div class="flex items-center gap-2">
-                        <input 
-                          type="text" 
-                          id="new-profile-name-input" 
-                          placeholder="e.g. Personal Groq, Work OpenRouter, Local Ollama..." 
-                          class="flex-1 px-3 py-1.5 rounded-lg bg-white/[0.06] border border-white/15 text-xs text-white placeholder:text-slate-500 outline-none focus:border-purple-400 font-medium"
-                          dir="auto"
-                        />
+                  <!-- Inline Form for Creating New Profile (Flat & Clean) -->
+                  <div id="new-profile-form" class="hidden p-3 rounded-xl bg-purple-950/40 border border-purple-500/30 space-y-2" dir="ltr" lang="en">
+                    <div class="flex items-center justify-between text-xs text-purple-200 font-semibold">
+                      <span class="flex items-center gap-1.5">
+                        <Tag class="w-3.5 h-3.5 text-purple-400" />
+                        <span>Save Current Configuration As New Profile</span>
+                      </span>
+                      <button type="button" id="btn-cancel-new-profile" class="text-slate-400 hover:text-white text-xs cursor-pointer">✕ Cancel</button>
+                    </div>
+                    <div class="flex items-center gap-2">
+                      <input 
+                        type="text" 
+                        id="new-profile-name-input" 
+                        placeholder="e.g. Work Groq, Personal DeepSeek, Local Ollama..." 
+                        class="flex-1 px-3 py-1.5 rounded-lg bg-black/60 border border-purple-500/30 text-xs text-white placeholder:text-slate-500 outline-none focus:border-purple-400 font-medium"
+                        dir="ltr"
+                        lang="en"
+                      />
+                      <button 
+                        type="button" 
+                        id="btn-confirm-save-profile" 
+                        class="px-3.5 py-1.5 rounded-lg bg-purple-600 hover:bg-purple-500 text-white text-xs font-bold transition cursor-pointer shrink-0"
+                      >
+                        Save
+                      </button>
+                    </div>
+                  </div>
+
+                  <!-- 2. Unified AI Model Provider & Live Latency Card -->
+                  <div class="p-3.5 sm:p-4 rounded-2xl bg-white/[0.02] border border-white/[0.08] space-y-3" dir="ltr" lang="en">
+                    <div class="flex items-center justify-between flex-wrap gap-2">
+                      <label class="text-xs font-semibold text-slate-300 flex items-center gap-1.5">
+                        <Cpu class="w-3.5 h-3.5 text-purple-400" />
+                        <span>AI Model Provider</span>
+                      </label>
+
+                      <!-- Integrated Live Latency Indicator & Test Ping -->
+                      <div class="flex items-center gap-2.5">
+                        <div class="flex items-center gap-1.5">
+                          <span id="ping-indicator-dot" class="w-2 h-2 rounded-full bg-emerald-400 shrink-0"></span>
+                          <span class="text-[11px] text-slate-400 font-mono truncate" id="ping-latency-text">Ready • Latency: ~85ms</span>
+                        </div>
+                        <span id="ping-provider-name" class="hidden"></span>
                         <button 
                           type="button" 
-                          id="btn-confirm-save-profile" 
-                          class="px-3.5 py-1.5 rounded-lg bg-gradient-to-r from-purple-600 to-indigo-600 hover:brightness-110 text-white text-xs font-bold transition cursor-pointer shadow-md shadow-purple-950 shrink-0"
+                          id="ping-text-btn" 
+                          class="px-2.5 py-1 rounded-lg bg-purple-900/40 hover:bg-purple-800/60 border border-purple-500/30 text-purple-300 hover:text-white text-xs font-semibold flex items-center gap-1 transition cursor-pointer shrink-0 shadow-sm shadow-purple-950"
+                          title="Test connection and measure real network latency"
                         >
-                          Save Profile
+                          <Zap class="w-3 h-3 text-cyan-400" />
+                          <span>Test Latency</span>
                         </button>
                       </div>
                     </div>
-                  </div>
 
-                <!-- Provider & Key Grid -->
-                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                  <div>
-                    <label class="block text-xs font-semibold text-slate-300 mb-1.5 flex items-center justify-between">
-                      <span>AI Model Provider</span>
-                      <span class="text-[10px] text-purple-400 font-normal">Quick 1-Tap Select</span>
-                    </label>
-
-                    <!-- Quick Provider Chips -->
-                    <div class="flex flex-wrap gap-1.5 mb-2.5" id="quick-provider-chips">
-                      <button type="button" data-provider="google" class="quick-prov-chip px-2.5 py-1.5 rounded-xl text-[11px] font-semibold bg-white/[0.04] hover:bg-purple-600/20 border border-white/10 hover:border-purple-500/40 text-slate-300 hover:text-white transition flex items-center gap-1.5 cursor-pointer">
-                        <span>✨</span>
-                        <span>Gemini</span>
-                      </button>
-                      <button type="button" data-provider="openrouter" class="quick-prov-chip px-2.5 py-1.5 rounded-xl text-[11px] font-semibold bg-white/[0.04] hover:bg-purple-600/20 border border-white/10 hover:border-purple-500/40 text-slate-300 hover:text-white transition flex items-center gap-1.5 cursor-pointer">
-                        <span>🌐</span>
-                        <span>OpenRouter</span>
-                      </button>
-                      <button type="button" data-provider="groq" class="quick-prov-chip px-2.5 py-1.5 rounded-xl text-[11px] font-semibold bg-white/[0.04] hover:bg-purple-600/20 border border-white/10 hover:border-purple-500/40 text-slate-300 hover:text-white transition flex items-center gap-1.5 cursor-pointer">
-                        <span>⚡</span>
-                        <span>Groq</span>
-                      </button>
-                      <button type="button" data-provider="openai" class="quick-prov-chip px-2.5 py-1.5 rounded-xl text-[11px] font-semibold bg-white/[0.04] hover:bg-purple-600/20 border border-white/10 hover:border-purple-500/40 text-slate-300 hover:text-white transition flex items-center gap-1.5 cursor-pointer">
-                        <span>🟢</span>
-                        <span>OpenAI</span>
-                      </button>
-                      <button type="button" data-provider="deepseek" class="quick-prov-chip px-2.5 py-1.5 rounded-xl text-[11px] font-semibold bg-white/[0.04] hover:bg-purple-600/20 border border-white/10 hover:border-purple-500/40 text-slate-300 hover:text-white transition flex items-center gap-1.5 cursor-pointer">
-                        <span>🐳</span>
-                        <span>DeepSeek</span>
-                      </button>
-                      <button type="button" data-provider="custom-proxy" class="quick-prov-chip px-2.5 py-1.5 rounded-xl text-[11px] font-semibold bg-white/[0.04] hover:bg-purple-600/20 border border-white/10 hover:border-purple-500/40 text-slate-300 hover:text-white transition flex items-center gap-1.5 cursor-pointer">
-                        <span>⚙️</span>
-                        <span>Custom/Local</span>
-                      </button>
-                    </div>
-
-                    <!-- Hidden native select keeps 100% of existing script integration intact -->
+                    <!-- Hidden underlying select for state compatibility -->
                     <select id="text-provider-select" class="hidden">
-                      <option value="google">Google Gemini</option>
-                      <option value="openrouter">OpenRouter</option>
-                      <option value="groq" selected>Groq</option>
-                      <option value="deepseek">DeepSeek</option>
-                      <option value="openai">OpenAI</option>
-                      <option value="anthropic">Anthropic Claude</option>
-                      <option value="custom-proxy">Custom / OpenAI-Compatible</option>
-                      <option value="custom-local">Localhost (Ollama / LM Studio)</option>
-                      <option value="mistral">Mistral AI</option>
-                      <option value="xai">xAI Grok</option>
-                      <option value="together">Together AI</option>
-                      <option value="fireworks">Fireworks AI</option>
-                      <option value="cohere">Cohere</option>
-                      <option value="perplexity">Perplexity AI</option>
-                      <option value="novita">Novita AI</option>
-                      <option value="featherless">Featherless AI</option>
-                      <option value="siliconflow">SiliconFlow</option>
-                      <option value="huggingface">Hugging Face</option>
+                      <option value="groq" selected>Groq (Ultra-Fast LPU)</option>
+                      <option value="google">Google Gemini 2.0 / 1.5</option>
+                      <option value="openrouter">OpenRouter (Unified Multi-Model)</option>
+                      <option value="openai">OpenAI (Official GPT-4o / o1)</option>
+                      <option value="anthropic">Anthropic Claude (3.7 Sonnet / Haiku)</option>
+                      <option value="deepseek">DeepSeek Official (V3 / R1)</option>
+                      <option value="mistral">Mistral AI (Large / Codestral)</option>
+                      <option value="xai">xAI Grok (Grok-2 / Beta)</option>
+                      <option value="cerebras">Cerebras (Ultra-Fast Wafer)</option>
+                      <option value="sambanova">SambaNova Cloud (Fast Llama 3.3)</option>
+                      <option value="together">Together AI (100+ Open Models)</option>
+                      <option value="fireworks">Fireworks AI (High-Speed Function Calling)</option>
+                      <option value="cohere">Cohere Command R / R+</option>
+                      <option value="perplexity">Perplexity Sonar (Live Web Search)</option>
+                      <option value="hyperbolic">Hyperbolic (Decentralized GPU)</option>
+                      <option value="novita">Novita AI (Fast Open-Source)</option>
+                      <option value="deepinfra">DeepInfra (Serverless Inference)</option>
+                      <option value="lepton">Lepton AI (Production AI Compute)</option>
+                      <option value="replicate">Replicate (Multi-modal & Language)</option>
                       <option value="cloudflare">Cloudflare Workers AI</option>
-                      <option value="cerebras">Cerebras</option>
-                      <option value="sambanova">SambaNova Systems</option>
-                      <option value="ai21">AI21 Labs</option>
+                      <option value="custom-proxy">Custom OpenAI-Compatible API</option>
+                      <option value="custom-local">Localhost (Ollama / LM Studio / vLLM)</option>
                     </select>
 
-                    <!-- Luxury Custom Trigger (Replaces the native OS picker) -->
+                    <!-- The Single Primary Provider Trigger -->
                     <button 
                       type="button" 
                       id="provider-custom-trigger" 
-                      class="w-full px-3.5 py-2.5 rounded-xl bg-[#0c1026] hover:bg-[#111736] border border-white/10 hover:border-purple-500/40 text-xs text-white flex items-center justify-between transition cursor-pointer group shadow-sm"
+                      class="w-full flex items-center justify-between p-3 rounded-xl bg-purple-950/20 hover:bg-purple-900/30 border border-purple-500/30 hover:border-purple-400 text-left transition group cursor-pointer shadow-sm hover:shadow-purple-950/50"
                     >
-                      <div class="flex items-center gap-2.5 min-w-0">
-                        <div id="provider-trigger-icon-box" class="w-7 h-7 rounded-lg bg-purple-500/20 border border-purple-500/30 flex items-center justify-center text-sm shrink-0">
+                      <div class="flex items-center gap-3 min-w-0">
+                        <div id="provider-trigger-icon-box" class="w-8 h-8 rounded-lg bg-purple-500/20 border border-purple-500/30 flex items-center justify-center text-sm shrink-0">
                           ⚡
                         </div>
-                        <div class="text-left truncate">
-                          <div id="provider-trigger-name" class="font-bold text-slate-100 text-xs leading-tight">Groq</div>
-                          <div id="provider-trigger-desc" class="text-[10px] text-purple-400 truncate leading-tight">Ultra-Fast LPU Inference</div>
+                        <div class="min-w-0">
+                          <div id="provider-trigger-name" class="text-xs font-bold text-white truncate">Groq</div>
+                          <div id="provider-trigger-desc" class="text-[10px] text-purple-300/80 truncate">Ultra-Fast LPU Inference</div>
                         </div>
                       </div>
-                      <div class="flex items-center gap-1.5 text-slate-400 group-hover:text-purple-300 transition shrink-0 pl-2">
-                        <span class="text-[10px] font-medium bg-white/[0.06] px-2 py-0.5 rounded-md border border-white/5">Change</span>
-                        <ChevronDown class="w-3.5 h-3.5" />
+                      <div class="flex items-center gap-1.5 shrink-0 text-slate-400 group-hover:text-white text-xs transition">
+                        <span class="font-medium hidden sm:inline text-purple-300/70">Change</span>
+                        <ChevronDown class="w-4 h-4" />
                       </div>
                     </button>
+
+                    <!-- Ping status message container -->
+                    <div id="ping-status-msg" class="hidden text-xs px-3.5 py-2.5 rounded-xl border leading-relaxed"></div>
                   </div>
 
-                  <!-- API Key Container -->
-                  <div id="api-key-container">
-                    <label class="block text-xs font-semibold text-slate-300 mb-1.5 flex items-center justify-between">
-                      <span id="api-key-label">API Key</span>
-                      <div class="flex items-center gap-2">
-                        <a id="get-key-link" href="https://aistudio.google.com/app/apikey" target="_blank" rel="noopener noreferrer" class="hidden text-[10px] text-cyan-400 hover:text-cyan-300 underline underline-offset-2">Get Free Key</a>
-                        <button type="button" id="toggle-key-visibility" class="text-[10px] text-purple-400 hover:text-purple-300">Show/Hide</button>
+                  <!-- 3. Unified Connection Credentials (API Key & Base URL) -->
+                  <div class="p-3.5 sm:p-4 rounded-2xl bg-white/[0.02] border border-white/[0.08] space-y-3" dir="ltr" lang="en">
+                    <!-- Endpoint Base URL (Visible for custom-proxy & custom-local) -->
+                    <div id="custom-base-url-container" class="hidden space-y-1.5">
+                      <div class="flex items-center justify-between text-xs">
+                        <label id="custom-base-url-label" for="text-base-url" class="font-semibold text-slate-300 flex items-center gap-1.5">
+                          <Globe class="w-3.5 h-3.5 text-cyan-400" />
+                          <span>Endpoint Base URL</span>
+                        </label>
+                        <span class="text-[10px] text-cyan-300/80 font-mono">OpenAI-Compatible /v1</span>
                       </div>
-                    </label>
-                    <div class="relative">
+                      <input 
+                        type="url" 
+                        id="text-base-url" 
+                        class="w-full px-3.5 py-2.5 rounded-xl bg-white/[0.04] border border-white/10 text-xs text-white placeholder:text-slate-500 outline-none focus:border-cyan-400 font-mono transition" 
+                        placeholder="http://localhost:11434/v1"
+                        dir="ltr"
+                        lang="en"
+                      />
+                      <p id="custom-base-url-hint" class="text-[11px] text-slate-400 leading-tight">
+                        Ollama: <code class="text-cyan-300">http://localhost:11434/v1</code> • LM Studio: <code class="text-cyan-300">http://localhost:1234/v1</code> • vLLM: <code class="text-cyan-300">http://localhost:8000/v1</code>
+                      </p>
+                    </div>
+
+                    <!-- API Key Container -->
+                    <div id="api-key-container" class="space-y-1.5">
+                      <div class="flex items-center justify-between text-xs">
+                        <label class="block text-xs font-semibold text-slate-300 flex items-center justify-between w-full">
+                          <span id="api-key-label" class="flex items-center gap-1.5">
+                            <Key class="w-3.5 h-3.5 text-purple-400" />
+                            <span>API Key</span>
+                          </span>
+                          <div class="flex items-center gap-2">
+                            <a id="get-key-link" href="https://aistudio.google.com/app/apikey" target="_blank" rel="noopener noreferrer" class="hidden text-[10px] text-cyan-400 hover:text-cyan-300 underline underline-offset-2">Get Free Key</a>
+                            <button type="button" id="toggle-key-visibility" class="text-[10px] text-purple-400 hover:text-purple-300 cursor-pointer">Show/Hide</button>
+                          </div>
+                        </label>
+                      </div>
                       <input 
                         id="text-api-key" 
                         type="password" 
                         placeholder="sk-... or gsk_..." 
-                        class="w-full px-3.5 py-2.5 rounded-xl bg-white/[0.05] border border-white/10 text-xs text-white placeholder:text-slate-500 outline-none focus:border-purple-500/60 font-mono"
+                        class="w-full px-3.5 py-2.5 rounded-xl bg-white/[0.04] border border-white/10 text-xs text-white placeholder:text-slate-500 outline-none focus:border-purple-500/60 font-mono transition" 
+                        autocomplete="off"
+                        spellcheck="false"
+                        dir="ltr"
+                        lang="en"
                       />
                     </div>
                   </div>
-                </div>
 
-                <!-- Custom Base URL Container (Visible for custom-local or custom-proxy) -->
-                <div id="custom-base-url-container" class="hidden space-y-1.5">
-                  <label id="custom-base-url-label" class="block text-xs font-semibold text-slate-300">Localhost Base URL</label>
-                  <input 
-                    id="text-base-url" 
-                    type="url" 
-                    placeholder="http://localhost:11434/v1" 
-                    class="w-full px-3.5 py-2.5 rounded-xl bg-white/[0.05] border border-white/10 text-xs text-white placeholder:text-slate-500 outline-none focus:border-purple-500/60 font-mono"
-                  />
-                  <p id="custom-base-url-hint" class="text-[10px] text-slate-400">For Ollama: http://localhost:11434/v1 • For LM Studio: http://localhost:1234/v1 • For vLLM: http://localhost:8000/v1</p>
-                </div>
+                  <!-- 4. Dynamic Model Selector & Live Fetcher -->
+                  <div class="p-3.5 sm:p-4 rounded-2xl bg-white/[0.02] border border-white/[0.08] space-y-2.5" dir="ltr" lang="en">
+                    <div class="flex items-center justify-between flex-wrap gap-2">
+                      <label class="text-xs font-semibold text-slate-300 flex items-center gap-2">
+                        <Cpu class="w-3.5 h-3.5 text-cyan-400" />
+                        <span>AI Model</span>
+                        <span id="model-count-badge" class="text-[10px] px-2 py-0.5 rounded-full bg-purple-500/15 border border-purple-500/30 text-purple-300 font-medium">Ready</span>
+                      </label>
+                      <div class="flex items-center gap-1.5">
+                        <button 
+                          type="button" 
+                          id="fetch-models-btn" 
+                          class="w-7 h-7 rounded-xl text-slate-400 hover:text-cyan-300 hover:bg-cyan-500/10 border border-white/10 hover:border-cyan-500/30 transition flex items-center justify-center cursor-pointer"
+                          title="Sync live models from API"
+                        >
+                          <RefreshCw class="w-3.5 h-3.5 text-cyan-400" id="fetch-models-icon" />
+                          <span id="fetch-models-text" class="sr-only">Fetch Models</span>
+                        </button>
+                        <button 
+                          type="button" 
+                          id="toggle-model-input-mode-btn" 
+                          class="px-2.5 py-1 rounded-xl text-[10px] font-medium text-slate-300 hover:text-white bg-white/[0.04] hover:bg-white/[0.08] border border-white/10 transition cursor-pointer"
+                          title="Toggle between model catalog and typing custom ID"
+                        >
+                          Custom ID
+                        </button>
+                      </div>
+                    </div>
 
-                <!-- Dynamic Model Selector & Live Fetcher -->
-                <div class="space-y-2">
-                  <div class="flex items-center justify-between">
-                    <label class="block text-xs font-semibold text-slate-300 flex items-center gap-2">
-                      <span>AI Model</span>
-                      <span id="model-count-badge" class="text-[10px] px-2 py-0.5 rounded-full bg-purple-500/15 border border-purple-500/30 text-purple-300 font-medium">Ready</span>
-                    </label>
-                    <div class="flex items-center gap-1.5">
-                      <button 
-                        type="button" 
-                        id="fetch-models-btn" 
-                        class="w-7 h-7 rounded-xl text-slate-400 hover:text-cyan-300 hover:bg-cyan-500/10 border border-white/10 hover:border-cyan-500/30 transition flex items-center justify-center cursor-pointer"
-                        title="Sync live models from API"
+                    <!-- Custom Luxury Searchable Model Trigger -->
+                    <div id="custom-model-trigger-container" class="relative w-full">
+                      <button
+                        type="button"
+                        id="custom-model-trigger-btn"
+                        class="w-full flex items-center justify-between px-3.5 py-2.5 rounded-xl bg-gradient-to-r from-[#11142e] via-[#161a3f] to-[#0e1128] border border-purple-500/30 hover:border-purple-400/60 text-xs text-white transition-all shadow-md group cursor-pointer"
                       >
-                        <RefreshCw class="w-3.5 h-3.5 text-cyan-400" id="fetch-models-icon" />
-                        <span id="fetch-models-text" class="sr-only">Fetch Models</span>
-                      </button>
-                      <button 
-                        type="button" 
-                        id="toggle-model-input-mode-btn" 
-                        class="px-2.5 py-1 rounded-xl text-[10px] font-medium text-slate-300 hover:text-white bg-white/[0.04] hover:bg-white/[0.08] border border-white/10 transition cursor-pointer"
-                        title="Toggle between model catalog and typing custom ID"
-                      >
-                        Custom ID
+                        <div class="flex items-center gap-2.5 min-w-0">
+                          <div id="trigger-model-badge" class="px-2 py-0.5 rounded-md text-[10px] font-bold tracking-wide uppercase bg-purple-500/20 text-purple-300 border border-purple-500/30 shrink-0">
+                            AI
+                          </div>
+                          <div class="flex flex-col text-left truncate">
+                            <span id="trigger-model-title" class="font-semibold text-white truncate text-xs">
+                              Select AI Model
+                            </span>
+                            <span id="trigger-model-subtitle" class="text-[10px] text-slate-400 truncate font-mono">
+                              No model selected
+                            </span>
+                          </div>
+                        </div>
+                        <div class="flex items-center gap-1.5 shrink-0 pl-2">
+                          <span class="text-[10px] px-2.5 py-1 rounded-lg bg-purple-500/15 text-purple-300 group-hover:bg-purple-500/25 border border-purple-500/30 transition flex items-center gap-1 font-medium">
+                            <svg class="w-3 h-3 text-purple-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
+                            <span>Search 450+</span>
+                          </span>
+                          <svg class="w-3.5 h-3.5 text-slate-400 group-hover:text-white transition transform group-hover:translate-y-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
+                        </div>
                       </button>
                     </div>
+
+                    <!-- Native select kept hidden for 100% DOM synchronization -->
+                    <select id="text-model-select" class="hidden" disabled>
+                      <option value="" disabled selected>No API connected — Enter API key &amp; fetch models</option>
+                    </select>
+
+                    <!-- Manual Model Input (Hidden by default, toggled via button) -->
+                    <input 
+                      id="text-model-input" 
+                      type="text" 
+                      value=""
+                      class="hidden w-full px-3.5 py-2.5 rounded-xl bg-white/[0.05] border border-white/10 text-xs text-white outline-none focus:border-purple-500/60 font-mono"
+                      placeholder="Enter custom model identifier"
+                      dir="ltr"
+                      lang="en"
+                    />
                   </div>
-
-                  <!-- Custom Luxury Searchable Model Trigger -->
-                  <div id="custom-model-trigger-container" class="relative w-full">
-                    <button
-                      type="button"
-                      id="custom-model-trigger-btn"
-                      class="w-full flex items-center justify-between px-3.5 py-2.5 rounded-xl bg-gradient-to-r from-[#11142e] via-[#161a3f] to-[#0e1128] border border-purple-500/30 hover:border-purple-400/60 text-xs text-white transition-all shadow-md group cursor-pointer"
-                    >
-                      <div class="flex items-center gap-2.5 min-w-0">
-                        <div id="trigger-model-badge" class="px-2 py-0.5 rounded-md text-[10px] font-bold tracking-wide uppercase bg-purple-500/20 text-purple-300 border border-purple-500/30 shrink-0">
-                          AI
-                        </div>
-                        <div class="flex flex-col text-left truncate">
-                          <span id="trigger-model-title" class="font-semibold text-white truncate text-xs">
-                            Select AI Model
-                          </span>
-                          <span id="trigger-model-subtitle" class="text-[10px] text-slate-400 truncate font-mono">
-                            No model selected
-                          </span>
-                        </div>
-                      </div>
-                      <div class="flex items-center gap-1.5 shrink-0 pl-2">
-                        <span class="text-[10px] px-2.5 py-1 rounded-lg bg-purple-500/15 text-purple-300 group-hover:bg-purple-500/25 border border-purple-500/30 transition flex items-center gap-1 font-medium">
-                          <svg class="w-3 h-3 text-purple-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
-                          <span>Search 450+</span>
-                        </span>
-                        <svg class="w-3.5 h-3.5 text-slate-400 group-hover:text-white transition transform group-hover:translate-y-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
-                      </div>
-                    </button>
-                  </div>
-
-                  <!-- Native select kept hidden for 100% DOM synchronization -->
-                  <select id="text-model-select" class="hidden" disabled>
-                    <option value="" disabled selected>No API connected — Enter API key &amp; fetch models</option>
-                  </select>
-
-                  <!-- Manual Model Input (Hidden by default, toggled via button) -->
-                  <input 
-                    id="text-model-input" 
-                    type="text" 
-                    value=""
-                    class="hidden w-full px-3.5 py-2.5 rounded-xl bg-white/[0.05] border border-white/10 text-xs text-white outline-none focus:border-purple-500/60 font-mono"
-                    placeholder="Enter custom model identifier"
-                  />
-
-                  <!-- Dynamic Quick Model Presets -->
-                  <div id="dynamic-presets-wrapper" class="hidden flex-wrap items-center gap-1.5 pt-0.5">
-                    <span class="text-[10px] text-slate-500">Quick:</span>
-                    <div id="dynamic-presets-container" class="flex flex-wrap gap-1.5"></div>
-                  </div>
-                </div>
 
                 <!-- Sliders Grid (Hyperparameters) - Inside Manual Pane, always fully unlocked -->
-                <div id="hyperparams-card" class="p-4 sm:p-5 rounded-2xl bg-white/[0.02] border border-white/[0.06] space-y-4">
-                  <div class="flex items-center justify-between text-xs font-bold text-slate-300 uppercase tracking-wider">
+                <div id="hyperparams-card" class="p-4 sm:p-5 rounded-2xl bg-white/[0.02] border border-white/[0.06] space-y-4" dir="ltr" lang="en">
+                  <div class="flex items-center justify-between text-xs font-bold text-slate-300 uppercase tracking-wider" dir="ltr">
                     <div class="flex items-center gap-2">
                       <SlidersHorizontal class="w-4 h-4 text-purple-400" />
                       <span>Hyperparameter Tuning</span>
@@ -1105,15 +1085,15 @@ const { character } = Astro.props;
                     <span class="text-[10px] text-purple-400 font-normal lowercase">sampling & memory</span>
                   </div>
 
-                  <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  <div class="grid grid-cols-1 sm:grid-cols-2 gap-4" dir="ltr">
                     <!-- Temperature -->
-                    <div class="space-y-1.5">
+                    <div class="space-y-1.5" dir="ltr">
                       <div class="flex items-center justify-between text-xs">
                         <label for="badge-temp" class="text-slate-300 font-medium cursor-pointer">Temperature</label>
-                        <input id="badge-temp" type="number" min="0.0" max="2.0" step="0.05" value="0.85" title="Click or tap to type exact value" class="w-16 px-1.5 py-0.5 rounded-lg bg-purple-950/80 hover:bg-purple-900/80 focus:bg-purple-900 border border-purple-500/40 focus:border-purple-400 text-purple-300 font-mono font-bold text-xs text-center outline-none transition [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none" />
+                        <input id="badge-temp" dir="ltr" lang="en" type="number" min="0.0" max="2.0" step="0.05" value="0.85" title="Click or tap to type exact value" class="w-16 px-1.5 py-0.5 rounded-lg bg-purple-950/80 hover:bg-purple-900/80 focus:bg-purple-900 border border-purple-500/40 focus:border-purple-400 text-purple-300 font-mono font-bold text-xs text-center outline-none transition force-ltr-numeric [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none" />
                       </div>
-                      <input id="slider-temp" type="range" min="0.0" max="2.0" step="0.05" value="0.85" class="w-full accent-purple-500 cursor-pointer" />
-                      <div class="flex justify-between text-[10px] text-slate-500">
+                      <input id="slider-temp" dir="ltr" type="range" min="0.0" max="2.0" step="0.05" value="0.85" class="w-full accent-purple-500 cursor-pointer" />
+                      <div class="flex justify-between text-[10px] text-slate-500 font-mono" dir="ltr">
                         <span>Precise (0.1)</span>
                         <span>Balanced (0.85)</span>
                         <span>Creative (1.5)</span>
@@ -1121,16 +1101,16 @@ const { character } = Astro.props;
                     </div>
 
                     <!-- Max Response Tokens -->
-                    <div class="space-y-1.5">
+                    <div class="space-y-1.5" dir="ltr">
                       <div class="flex items-center justify-between text-xs">
                         <label for="badge-tokens" class="text-slate-300 font-medium cursor-pointer">Max Response Tokens</label>
-                        <div class="flex items-center gap-1">
-                          <input id="badge-tokens" type="number" min="64" max="8192" step="64" value="2048" title="Click or tap to type exact value" class="w-16 px-1.5 py-0.5 rounded-lg bg-purple-950/80 hover:bg-purple-900/80 focus:bg-purple-900 border border-purple-500/40 focus:border-purple-400 text-purple-300 font-mono font-bold text-xs text-center outline-none transition [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none" />
-                          <span class="text-[10px] text-purple-400 font-mono font-semibold">tok</span>
+                        <div class="flex items-center gap-1.5" dir="ltr">
+                          <input id="badge-tokens" dir="ltr" lang="en" type="number" min="64" max="8192" step="64" value="2048" title="Click or tap to type exact value" class="w-16 px-1.5 py-0.5 rounded-lg bg-purple-950/80 hover:bg-purple-900/80 focus:bg-purple-900 border border-purple-500/40 focus:border-purple-400 text-purple-300 font-mono font-bold text-xs text-center outline-none transition force-ltr-numeric [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none" />
+                          <span class="text-[10px] text-purple-400 font-mono font-semibold select-none">tok</span>
                         </div>
                       </div>
-                      <input id="slider-tokens" type="range" min="64" max="4096" step="64" value="2048" class="w-full accent-purple-500 cursor-pointer" />
-                      <div class="flex justify-between text-[10px] text-slate-500">
+                      <input id="slider-tokens" dir="ltr" type="range" min="64" max="4096" step="64" value="2048" class="w-full accent-purple-500 cursor-pointer" />
+                      <div class="flex justify-between text-[10px] text-slate-500 font-mono" dir="ltr">
                         <span>Short (150)</span>
                         <span>Standard (1024)</span>
                         <span>Novella (2048+)</span>
@@ -1138,7 +1118,7 @@ const { character } = Astro.props;
                     </div>
 
                     <!-- Thinking Mode (Reasoning) -->
-                    <div class="space-y-1.5 p-3 rounded-xl bg-purple-950/20 border border-purple-500/20">
+                    <div class="space-y-1.5 p-3 rounded-xl bg-purple-950/20 border border-purple-500/20" dir="ltr">
                       <div class="flex items-center justify-between text-xs">
                         <div class="flex items-center gap-1.5">
                           <svg class="w-4 h-4 text-purple-400 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9.5 2A2.5 2.5 0 0 1 12 4.5v15a2.5 2.5 0 0 1-4.96.44 2.5 2.5 0 0 1-2.96-3.08 3 3 0 0 1-.34-5.58 2.5 2.5 0 0 1 1.32-4.24 2.5 2.5 0 0 1 4.44-5.04Z"/><path d="M14.5 2A2.5 2.5 0 0 0 12 4.5v15a2.5 2.5 0 0 0 4.96.44 2.5 2.5 0 0 0 2.96-3.08 3 3 0 0 0 .34-5.58 2.5 2.5 0 0 0-1.32-4.24 2.5 2.5 0 0 0-4.44-5.04Z"/></svg>
@@ -1155,57 +1135,57 @@ const { character } = Astro.props;
                     </div>
 
                     <!-- Top-P -->
-                    <div class="space-y-1.5">
+                    <div class="space-y-1.5" dir="ltr">
                       <div class="flex items-center justify-between text-xs">
                         <label for="badge-top-p" class="text-slate-300 font-medium cursor-pointer">Top-P (Nucleus Sampling)</label>
-                        <input id="badge-top-p" type="number" min="0.05" max="1.0" step="0.05" value="0.95" title="Click or tap to type exact value" class="w-16 px-1.5 py-0.5 rounded-lg bg-purple-950/80 hover:bg-purple-900/80 focus:bg-purple-900 border border-purple-500/40 focus:border-purple-400 text-purple-300 font-mono font-bold text-xs text-center outline-none transition [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none" />
+                        <input id="badge-top-p" dir="ltr" lang="en" type="number" min="0.05" max="1.0" step="0.05" value="0.95" title="Click or tap to type exact value" class="w-16 px-1.5 py-0.5 rounded-lg bg-purple-950/80 hover:bg-purple-900/80 focus:bg-purple-900 border border-purple-500/40 focus:border-purple-400 text-purple-300 font-mono font-bold text-xs text-center outline-none transition force-ltr-numeric [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none" />
                       </div>
-                      <input id="slider-top-p" type="range" min="0.05" max="1.0" step="0.05" value="0.95" class="w-full accent-purple-500 cursor-pointer" />
+                      <input id="slider-top-p" dir="ltr" type="range" min="0.05" max="1.0" step="0.05" value="0.95" class="w-full accent-purple-500 cursor-pointer" />
                       <p class="text-[10px] text-slate-500">Filters out tokens below cumulative probability threshold.</p>
                     </div>
 
                     <!-- Repetition Penalty -->
-                    <div class="space-y-1.5">
+                    <div class="space-y-1.5" dir="ltr">
                       <div class="flex items-center justify-between text-xs">
                         <label for="badge-rep-pen" class="text-slate-300 font-medium cursor-pointer">Repetition Penalty</label>
-                        <input id="badge-rep-pen" type="number" min="1.0" max="2.0" step="0.02" value="1.10" title="Click or tap to type exact value" class="w-16 px-1.5 py-0.5 rounded-lg bg-purple-950/80 hover:bg-purple-900/80 focus:bg-purple-900 border border-purple-500/40 focus:border-purple-400 text-purple-300 font-mono font-bold text-xs text-center outline-none transition [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none" />
+                        <input id="badge-rep-pen" dir="ltr" lang="en" type="number" min="1.0" max="2.0" step="0.02" value="1.10" title="Click or tap to type exact value" class="w-16 px-1.5 py-0.5 rounded-lg bg-purple-950/80 hover:bg-purple-900/80 focus:bg-purple-900 border border-purple-500/40 focus:border-purple-400 text-purple-300 font-mono font-bold text-xs text-center outline-none transition force-ltr-numeric [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none" />
                       </div>
-                      <input id="slider-rep-pen" type="range" min="1.0" max="2.0" step="0.02" value="1.10" class="w-full accent-purple-500 cursor-pointer" />
+                      <input id="slider-rep-pen" dir="ltr" type="range" min="1.0" max="2.0" step="0.02" value="1.10" class="w-full accent-purple-500 cursor-pointer" />
                       <p class="text-[10px] text-slate-500">Prevents the model from repeating recurring dialogue loops.</p>
                     </div>
 
                     <!-- Frequency Penalty -->
-                    <div class="space-y-1.5">
+                    <div class="space-y-1.5" dir="ltr">
                       <div class="flex items-center justify-between text-xs">
                         <label for="badge-freq-pen" class="text-slate-300 font-medium cursor-pointer">Frequency Penalty</label>
-                        <input id="badge-freq-pen" type="number" min="-2.0" max="2.0" step="0.1" value="0.00" title="Click or tap to type exact value" class="w-16 px-1.5 py-0.5 rounded-lg bg-purple-950/80 hover:bg-purple-900/80 focus:bg-purple-900 border border-purple-500/40 focus:border-purple-400 text-purple-300 font-mono font-bold text-xs text-center outline-none transition [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none" />
+                        <input id="badge-freq-pen" dir="ltr" lang="en" type="number" min="-2.0" max="2.0" step="0.1" value="0.00" title="Click or tap to type exact value" class="w-16 px-1.5 py-0.5 rounded-lg bg-purple-950/80 hover:bg-purple-900/80 focus:bg-purple-900 border border-purple-500/40 focus:border-purple-400 text-purple-300 font-mono font-bold text-xs text-center outline-none transition force-ltr-numeric [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none" />
                       </div>
-                      <input id="slider-freq-pen" type="range" min="-2.0" max="2.0" step="0.1" value="0.0" class="w-full accent-purple-500 cursor-pointer" />
+                      <input id="slider-freq-pen" dir="ltr" type="range" min="-2.0" max="2.0" step="0.1" value="0.0" class="w-full accent-purple-500 cursor-pointer" />
                     </div>
 
                     <!-- Presence Penalty -->
-                    <div class="space-y-1.5">
+                    <div class="space-y-1.5" dir="ltr">
                       <div class="flex items-center justify-between text-xs">
                         <label for="badge-pres-pen" class="text-slate-300 font-medium cursor-pointer">Presence Penalty</label>
-                        <input id="badge-pres-pen" type="number" min="-2.0" max="2.0" step="0.1" value="0.00" title="Click or tap to type exact value" class="w-16 px-1.5 py-0.5 rounded-lg bg-purple-950/80 hover:bg-purple-900/80 focus:bg-purple-900 border border-purple-500/40 focus:border-purple-400 text-purple-300 font-mono font-bold text-xs text-center outline-none transition [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none" />
+                        <input id="badge-pres-pen" dir="ltr" lang="en" type="number" min="-2.0" max="2.0" step="0.1" value="0.00" title="Click or tap to type exact value" class="w-16 px-1.5 py-0.5 rounded-lg bg-purple-950/80 hover:bg-purple-900/80 focus:bg-purple-900 border border-purple-500/40 focus:border-purple-400 text-purple-300 font-mono font-bold text-xs text-center outline-none transition force-ltr-numeric [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none" />
                       </div>
-                      <input id="slider-pres-pen" type="range" min="-2.0" max="2.0" step="0.1" value="0.0" class="w-full accent-purple-500 cursor-pointer" />
+                      <input id="slider-pres-pen" dir="ltr" type="range" min="-2.0" max="2.0" step="0.1" value="0.0" class="w-full accent-purple-500 cursor-pointer" />
                     </div>
 
                     <!-- Context Turns -->
-                    <div class="space-y-1.5">
+                    <div class="space-y-1.5" dir="ltr">
                       <div class="flex items-center justify-between text-xs">
                         <label for="badge-context" class="text-slate-300 font-medium cursor-pointer">Context Memory Window</label>
-                        <div class="flex items-center gap-1">
-                          <input id="badge-context" type="number" min="2" max="60" step="2" value="16" title="Click or tap to type exact value" class="w-14 px-1.5 py-0.5 rounded-lg bg-purple-950/80 hover:bg-purple-900/80 focus:bg-purple-900 border border-purple-500/40 focus:border-purple-400 text-purple-300 font-mono font-bold text-xs text-center outline-none transition [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none" />
-                          <span class="text-[10px] text-purple-400 font-mono font-semibold">turns</span>
+                        <div class="flex items-center gap-1.5" dir="ltr">
+                          <input id="badge-context" dir="ltr" lang="en" type="number" min="2" max="60" step="2" value="16" title="Click or tap to type exact value" class="w-14 px-1.5 py-0.5 rounded-lg bg-purple-950/80 hover:bg-purple-900/80 focus:bg-purple-900 border border-purple-500/40 focus:border-purple-400 text-purple-300 font-mono font-bold text-xs text-center outline-none transition force-ltr-numeric [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none" />
+                          <span class="text-[10px] text-purple-400 font-mono font-semibold select-none">turns</span>
                         </div>
                       </div>
-                      <input id="slider-context" type="range" min="2" max="60" step="2" value="16" class="w-full accent-purple-500 cursor-pointer" />
+                      <input id="slider-context" dir="ltr" type="range" min="2" max="60" step="2" value="16" class="w-full accent-purple-500 cursor-pointer" />
                     </div>
 
                     <!-- Streaming Toggle -->
-                    <div class="flex items-center justify-between p-3 rounded-xl bg-white/[0.03] border border-white/10 self-end">
+                    <div class="flex items-center justify-between p-3 rounded-xl bg-white/[0.03] border border-white/10 self-end" dir="ltr">
                       <div>
                         <span class="text-xs font-semibold text-slate-200 block">Token Streaming</span>
                         <span class="text-[10px] text-slate-400">Stream words in real-time as generated</span>
@@ -3298,16 +3278,28 @@ const { character } = Astro.props;
   const videoDurationSelect = document.getElementById('video-duration-select');
   const videoResSelect = document.getElementById('video-res-select');
 
+  // Sanitize numeric inputs, converting any Persian / Arabic digits to standard ASCII 0-9
+  function toAsciiNumber(val, fallback = 0) {
+    if (val === null || val === undefined) return fallback;
+    let s = String(val).trim();
+    if (!s) return fallback;
+    s = s.replace(/[۰-۹]/g, d => '۰۱۲۳۴۵۶۷۸۹'.indexOf(d))
+         .replace(/[٠-٩]/g, d => '٠١٢٣٤٥٦٧٨٩'.indexOf(d));
+    const n = parseFloat(s);
+    return isNaN(n) ? fallback : n;
+  }
+
   // Dual Control Sync: Real-time Range Slider <-> Numeric Input Badge
   function setupDualControl(slider, inputOrBadge, unit = '') {
     if (!slider || !inputOrBadge) return;
     const isInput = inputOrBadge.tagName === 'INPUT';
 
     const syncToBadge = (val) => {
+      const asciiVal = toAsciiNumber(val);
       if (isInput) {
-        inputOrBadge.value = val;
+        inputOrBadge.value = asciiVal;
       } else {
-        inputOrBadge.textContent = unit ? `${val} ${unit}` : val;
+        inputOrBadge.textContent = unit ? `${asciiVal} ${unit}` : asciiVal;
       }
     };
 
@@ -3320,10 +3312,10 @@ const { character } = Astro.props;
 
     if (isInput) {
       inputOrBadge.addEventListener('input', () => {
-        const val = parseFloat(inputOrBadge.value);
+        const val = toAsciiNumber(inputOrBadge.value, NaN);
         if (!isNaN(val)) {
-          const min = parseFloat(slider.min);
-          const max = parseFloat(slider.max);
+          const min = toAsciiNumber(slider.min, 0);
+          const max = toAsciiNumber(slider.max, 100);
           if (val >= min && val <= max) {
             slider.value = val;
           }
@@ -3331,11 +3323,11 @@ const { character } = Astro.props;
       });
 
       inputOrBadge.addEventListener('change', () => {
-        let val = parseFloat(inputOrBadge.value);
-        const min = parseFloat(slider.min);
-        const max = parseFloat(slider.max);
+        const min = toAsciiNumber(slider.min, 0);
+        const max = toAsciiNumber(slider.max, 100);
+        let val = toAsciiNumber(inputOrBadge.value, NaN);
         if (isNaN(val)) {
-          val = parseFloat(slider.value) || min;
+          val = toAsciiNumber(slider.value, min);
         } else {
           if (val < min) val = min;
           if (val > max) val = max;
@@ -3345,11 +3337,11 @@ const { character } = Astro.props;
       });
 
       inputOrBadge.addEventListener('blur', () => {
-        let val = parseFloat(inputOrBadge.value);
-        const min = parseFloat(slider.min);
-        const max = parseFloat(slider.max);
+        const min = toAsciiNumber(slider.min, 0);
+        const max = toAsciiNumber(slider.max, 100);
+        let val = toAsciiNumber(inputOrBadge.value, NaN);
         if (isNaN(val)) {
-          val = parseFloat(slider.value) || min;
+          val = toAsciiNumber(slider.value, min);
         } else {
           if (val < min) val = min;
           if (val > max) val = max;
@@ -3367,7 +3359,7 @@ const { character } = Astro.props;
   setupDualControl(sliderRepPen, badgeRepPen);
   setupDualControl(sliderFreqPen, badgeFreqPen);
   setupDualControl(sliderPresPen, badgePresPen);
-  setupDualControl(sliderContext, badgeContext, 'Turns');
+  setupDualControl(sliderContext, badgeContext);
   setupDualControl(sliderStability, badgeStability);
   setupDualControl(sliderClarity, badgeClarity);
   setupDualControl(sliderVoiceRate, badgeVoiceRate, 'x');
@@ -4940,53 +4932,53 @@ const { character } = Astro.props;
     renderApiProfilesDropdown(activeProfId);
 
     // 2. Hyperparameters
-    const temp = localStorage.getItem('aetheria_text_temp') || '0.85';
+    const temp = toAsciiNumber(localStorage.getItem('aetheria_text_temp'), 0.85);
     if (sliderTemp) sliderTemp.value = temp;
     if (badgeTemp) {
       if (badgeTemp.tagName === 'INPUT') badgeTemp.value = temp;
       else badgeTemp.textContent = temp;
     }
 
-    const tokens = localStorage.getItem('aetheria_text_tokens') || '2048';
+    const tokens = Math.round(toAsciiNumber(localStorage.getItem('aetheria_text_tokens'), 2048));
     if (sliderTokens) sliderTokens.value = tokens;
     if (badgeTokens) {
       if (badgeTokens.tagName === 'INPUT') badgeTokens.value = tokens;
       else badgeTokens.textContent = `${tokens} tok`;
     }
 
-    const topP = localStorage.getItem('aetheria_text_top_p') || '0.95';
+    const topP = toAsciiNumber(localStorage.getItem('aetheria_text_top_p'), 0.95);
     if (sliderTopP) sliderTopP.value = topP;
     if (badgeTopP) {
       if (badgeTopP.tagName === 'INPUT') badgeTopP.value = topP;
       else badgeTopP.textContent = topP;
     }
 
-    const repPen = localStorage.getItem('aetheria_text_rep_pen') || '1.10';
+    const repPen = toAsciiNumber(localStorage.getItem('aetheria_text_rep_pen'), 1.10);
     if (sliderRepPen) sliderRepPen.value = repPen;
     if (badgeRepPen) {
       if (badgeRepPen.tagName === 'INPUT') badgeRepPen.value = repPen;
       else badgeRepPen.textContent = repPen;
     }
 
-    const freqPen = localStorage.getItem('aetheria_text_freq_pen') || '0.00';
+    const freqPen = toAsciiNumber(localStorage.getItem('aetheria_text_freq_pen'), 0.00);
     if (sliderFreqPen) sliderFreqPen.value = freqPen;
     if (badgeFreqPen) {
       if (badgeFreqPen.tagName === 'INPUT') badgeFreqPen.value = freqPen;
       else badgeFreqPen.textContent = freqPen;
     }
 
-    const presPen = localStorage.getItem('aetheria_text_pres_pen') || '0.00';
+    const presPen = toAsciiNumber(localStorage.getItem('aetheria_text_pres_pen'), 0.00);
     if (sliderPresPen) sliderPresPen.value = presPen;
     if (badgePresPen) {
       if (badgePresPen.tagName === 'INPUT') badgePresPen.value = presPen;
       else badgePresPen.textContent = presPen;
     }
 
-    const contextLimit = localStorage.getItem('aetheria_text_context') || '16';
+    const contextLimit = Math.round(toAsciiNumber(localStorage.getItem('aetheria_text_context'), 16));
     if (sliderContext) sliderContext.value = contextLimit;
     if (badgeContext) {
       if (badgeContext.tagName === 'INPUT') badgeContext.value = contextLimit;
-      else badgeContext.textContent = `${contextLimit} Turns`;
+      else badgeContext.textContent = `${contextLimit} turns`;
     }
 
     const streaming = localStorage.getItem('aetheria_text_streaming');
@@ -7357,12 +7349,12 @@ const { character } = Astro.props;
     }
 
     const model = savedModel;
-    const temp = parseFloat(localStorage.getItem('aetheria_text_temp') || '0.85');
-    const maxTokens = parseInt(localStorage.getItem('aetheria_text_tokens') || '2048', 10);
-    const topP = parseFloat(localStorage.getItem('aetheria_text_top_p') || '0.95');
-    const repPen = parseFloat(localStorage.getItem('aetheria_text_rep_pen') || '1.10');
-    const freqPen = parseFloat(localStorage.getItem('aetheria_text_freq_pen') || '0.00');
-    const presPen = parseFloat(localStorage.getItem('aetheria_text_pres_pen') || '0.00');
+    const temp = toAsciiNumber(localStorage.getItem('aetheria_text_temp'), 0.85);
+    const maxTokens = Math.round(toAsciiNumber(localStorage.getItem('aetheria_text_tokens'), 2048));
+    const topP = toAsciiNumber(localStorage.getItem('aetheria_text_top_p'), 0.95);
+    const repPen = toAsciiNumber(localStorage.getItem('aetheria_text_rep_pen'), 1.10);
+    const freqPen = toAsciiNumber(localStorage.getItem('aetheria_text_freq_pen'), 0.00);
+    const presPen = toAsciiNumber(localStorage.getItem('aetheria_text_pres_pen'), 0.00);
     const enableStreaming = localStorage.getItem('aetheria_text_streaming') !== 'false';
     const enableThinking = localStorage.getItem('aetheria_text_thinking') === 'true';
 
@@ -7389,7 +7381,7 @@ const { character } = Astro.props;
         }
 
         let systemPrompt = buildSystemPrompt(userText);
-        const contextLimit = parseInt(localStorage.getItem('aetheria_text_context') || '16', 10);
+        const contextLimit = Math.round(toAsciiNumber(localStorage.getItem('aetheria_text_context'), 16));
         const historySlice = conversation
           .slice(-contextLimit)
           .filter(m => m.text && !isPoisonedOrErrorMessage(m.text))
@@ -8072,12 +8064,12 @@ const { character } = Astro.props;
       showNotification('⚠️ Please select an active model in Settings first.');
       return;
     }
-    const temp = Math.min(1.2, parseFloat(localStorage.getItem('aetheria_text_temp') || '0.85') + 0.15); // higher temperature for variety
-    const maxTokens = parseInt(localStorage.getItem('aetheria_text_tokens') || '2048', 10);
-    const topP = parseFloat(localStorage.getItem('aetheria_text_top_p') || '0.95');
-    const repPen = parseFloat(localStorage.getItem('aetheria_text_rep_pen') || '1.10');
-    const freqPen = parseFloat(localStorage.getItem('aetheria_text_freq_pen') || '0.00');
-    const presPen = parseFloat(localStorage.getItem('aetheria_text_pres_pen') || '0.00');
+    const temp = Math.min(1.2, toAsciiNumber(localStorage.getItem('aetheria_text_temp'), 0.85) + 0.15); // higher temperature for variety
+    const maxTokens = Math.round(toAsciiNumber(localStorage.getItem('aetheria_text_tokens'), 2048));
+    const topP = toAsciiNumber(localStorage.getItem('aetheria_text_top_p'), 0.95);
+    const repPen = toAsciiNumber(localStorage.getItem('aetheria_text_rep_pen'), 1.10);
+    const freqPen = toAsciiNumber(localStorage.getItem('aetheria_text_freq_pen'), 0.00);
+    const presPen = toAsciiNumber(localStorage.getItem('aetheria_text_pres_pen'), 0.00);
 
     let newReply = '';
 

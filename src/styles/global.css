@@ -93,3 +93,12 @@ body {
   padding-bottom: env(safe-area-inset-bottom, 1rem);
 }
 
+/* Force ASCII digits and strict LTR layout for numeric inputs and badges */
+.force-ltr-numeric {
+  direction: ltr !important;
+  unicode-bidi: isolate !important;
+  font-variant-numeric: tabular-nums lining-nums !important;
+  -webkit-font-feature-settings: "tnum" 1, "lnum" 1 !important;
+  font-feature-settings: "tnum" 1, "lnum" 1 !important;
+}
+
