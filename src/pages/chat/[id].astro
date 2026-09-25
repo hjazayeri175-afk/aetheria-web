@@ -3987,6 +3987,18 @@ const { character } = Astro.props;
   setupDualControl(sliderVoicePitch, badgeVoicePitch);
   setupDualControl(sliderMotion, badgeMotion);
 
+  // Instant persistence for engine toggles
+  if (toggleThinking) {
+    toggleThinking.addEventListener('change', () => {
+      localStorage.setItem('aetheria_text_thinking', toggleThinking.checked ? 'true' : 'false');
+    });
+  }
+  if (toggleStreaming) {
+    toggleStreaming.addEventListener('change', () => {
+      localStorage.setItem('aetheria_text_streaming', toggleStreaming.checked ? 'true' : 'false');
+    });
+  }
+
   // Safe helper to extract balanced <details> and <div ...> blocks without breaking nested tags
   function extractBalancedHtmlBlocks(str) {
     const htmlBlocks = [];
@@ -4073,11 +4085,17 @@ const { character } = Astro.props;
     if (!text) return '';
 
     // Parse <think>...</think> tags from reasoning models (e.g. DeepSeek R1 / Qwen)
-    text = text.replace(/<think>([\s\S]*?)(?:<\/think>|$)/gi, (_, thought) => {
-      const trimmed = thought.trim();
-      if (!trimmed) return '';
-      return `${buildReasoningDetailsHtml(trimmed)}\n\n`;
-    });
+    const isThinkingOn = localStorage.getItem('aetheria_text_thinking') === 'true';
+    if (isThinkingOn) {
+      text = text.replace(/<think>([\s\S]*?)(?:<\/think>|$)/gi, (_, thought) => {
+        const trimmed = thought.trim();
+        if (!trimmed) return '';
+        return `${buildReasoningDetailsHtml(trimmed)}\n\n`;
+      });
+    } else {
+      // Thinking mode is OFF: completely strip internal thinking tags so no reasoning block appears
+      text = text.replace(/<think>[\s\S]*?(?:<\/think>|$)/gi, '').trim();
+    }
 
     // Protect balanced <details> and <div ...> blocks (e.g. thought boxes, pause notices)
     const { masked, blocks: htmlBlocks } = extractBalancedHtmlBlocks(text);
@@ -9480,15 +9498,11 @@ const { character } = Astro.props;
                 exclude: true
               };
             }
+          } else if (provider === 'groq') {
+            payload.reasoning_format = enableThinking ? 'parsed' : 'hidden';
           } else if (isReasoningModel) {
-            if (!enableThinking) {
-              // Explicitly disable thinking for snappy character roleplay
-              payload.thinking = { type: 'disabled' };
-              payload.chat_template_kwargs = { thinking: false };
-            } else {
-              payload.thinking = { type: 'enabled' };
+            if (enableThinking) {
               payload.reasoning_effort = 'low';
-              payload.chat_template_kwargs = { thinking: true };
             }
           }
         }
@@ -9502,12 +9516,13 @@ const { character } = Astro.props;
             body: JSON.stringify(payload)
           });
           // If 400 Bad Request and payload contained thinking parameters, retry once cleanly without them
-          if (res.status === 400 && (payload.thinking || payload.chat_template_kwargs || payload.reasoning || payload.reasoning_effort)) {
+          if (res.status === 400 && (payload.thinking || payload.chat_template_kwargs || payload.reasoning || payload.reasoning_effort || payload.reasoning_format)) {
             const cleanPayload = { ...payload };
             delete cleanPayload.thinking;
             delete cleanPayload.reasoning_effort;
             delete cleanPayload.chat_template_kwargs;
             delete cleanPayload.reasoning;
+            delete cleanPayload.reasoning_format;
             res = await fetch(endpoint, {
               method: 'POST',
               headers,
@@ -9617,7 +9632,7 @@ const { character } = Astro.props;
 
                       const reasoningToken = extractStreamToken(rawReasoning);
 
-                      if (reasoningToken) {
+                      if (enableThinking && reasoningToken) {
                         reasoningText += reasoningToken;
                       }
                       if (contentToken) {
@@ -9628,7 +9643,7 @@ const { character } = Astro.props;
                       if (bubbleEl) {
                         if (contentText) {
                           let display = '';
-                          if (reasoningText.trim()) {
+                          if (enableThinking && reasoningText.trim()) {
                             display = `${buildReasoningDetailsHtml(reasoningText)}\n\n${contentText}`;
                           } else {
                             display = contentText;
@@ -9636,7 +9651,7 @@ const { character } = Astro.props;
                           charMsg.text = display;
                           charMsg.swipes[0] = display;
                           bubbleEl.innerHTML = formatMessageText(display);
-                        } else if (reasoningText) {
+                        } else if (enableThinking && reasoningText) {
                           bubbleEl.innerHTML = `<div class="flex items-center gap-2 text-xs text-purple-300 italic mb-2 animate-pulse"><svg class="w-3.5 h-3.5 text-purple-400 animate-spin" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2v4m0 12v4M4.93 4.93l2.83 2.83m8.48 8.48 2.83 2.83M2 12h4m12 0h4M4.93 19.07l2.83-2.83m8.48-8.48 2.83-2.83"/></svg><span>Thinking & processing character persona...</span></div><div class="text-xs text-slate-400 font-mono leading-relaxed line-clamp-4 whitespace-pre-wrap border-l-2 border-purple-500/40 pl-2">${reasoningText}</div>`;
                         }
                         if (chatStream) chatStream.scrollTop = chatStream.scrollHeight;
@@ -9651,7 +9666,7 @@ const { character } = Astro.props;
 
             // Auto-synthesis: If model spent tokens in reasoning and left dialogue empty,
             // automatically perform a fast follow-up to extract/continue dialogue so the user gets both!
-            if (!contentText.trim() && reasoningText.trim()) {
+            if (enableThinking && !contentText.trim() && reasoningText.trim()) {
               if (bubbleEl) {
                 bubbleEl.innerHTML = `${buildReasoningDetailsHtml(reasoningText)}\n\n<div class="flex items-center gap-2 text-xs text-purple-400 italic animate-pulse"><span>✨</span><span>Finalizing ${activeChar.name || 'character'}'s dialogue...</span></div>`;
               }
@@ -9693,11 +9708,11 @@ const { character } = Astro.props;
             }
 
             // Combine content and reasoning
-            if (contentText && reasoningText.trim()) {
+            if (enableThinking && contentText && reasoningText.trim()) {
               replyText = `${buildReasoningDetailsHtml(reasoningText)}\n\n${contentText}`;
             } else if (contentText) {
               replyText = contentText;
-            } else if (reasoningText.trim()) {
+            } else if (enableThinking && reasoningText.trim()) {
               const notice = finishReason === 'length'
                 ? `The model reached the token limit (${effectiveMaxTokens}) during reasoning.`
                 : `The model completed reasoning but paused before generating spoken dialogue.`;
@@ -9713,10 +9728,10 @@ const { character } = Astro.props;
                   const choice = json.choices?.[0];
                   const cText = extractStreamToken(choice?.message?.content || choice?.text || (json.content && json.content[0] && json.content[0].text) || json.response || '');
                   const rText = extractStreamToken(choice?.message?.reasoning_content || choice?.message?.reasoning || choice?.message?.thought || choice?.message?.thinking || choice?.message?.reasoning_details || '').trim();
-                  if (cText && rText) {
+                  if (enableThinking && cText && rText) {
                     replyText = `${buildReasoningDetailsHtml(rText)}\n\n${cText}`;
                   } else {
-                    replyText = cText || rText;
+                    replyText = cText || (enableThinking ? rText : '');
                   }
                   if (json.error) {
                     throw new Error(json.error.message || json.error.code || JSON.stringify(json.error));
@@ -9727,6 +9742,10 @@ const { character } = Astro.props;
                   }
                 }
               }
+            }
+
+            if (!enableThinking && replyText) {
+              replyText = replyText.replace(/<think>[\s\S]*?(?:<\/think>|$)/gi, '').trim();
             }
 
             if (replyText.trim()) {
@@ -9760,10 +9779,14 @@ const { character } = Astro.props;
               || choice?.message?.reasoning_details 
               || '').trim();
 
-            if (cText && rText) {
+            if (enableThinking && cText && rText) {
               replyText = `${buildReasoningDetailsHtml(rText)}\n\n${cText}`;
             } else {
-              replyText = cText || rText;
+              replyText = cText || (enableThinking ? rText : '');
+            }
+
+            if (!enableThinking && replyText) {
+              replyText = replyText.replace(/<think>[\s\S]*?(?:<\/think>|$)/gi, '').trim();
             }
 
             if (!replyText.trim()) {
@@ -10122,7 +10145,7 @@ const { character } = Astro.props;
       swipeSystemPrompt += `\n\n[REGENERATION DIRECTIVE - UNBIASED ROLEPLAY]:\n- Respond naturally in-character without assuming personalized user backstory, custom personas, or stored user traits.\n- Base the interaction strictly on the scenario and the immediate scene dialogue.`;
     }
 
-    if (isThinkingEnabled || isReasoningModel) {
+    if (isThinkingEnabled && isReasoningModel) {
       tokenBudget = Math.max(tokenBudget, 8192);
       swipeSystemPrompt += `\n\n[REASONING & ROLEPLAY PROTOCOL]:\n- Keep internal thinking focused on {{char}}'s inner emotions and subtext.\n- CRITICAL: You MUST write {{char}}'s spoken dialogue, emotional reactions, and roleplay actions (*in asterisks*) outside the thought process as your final response.\n- Never end your turn inside the thinking phase without {{char}} speaking to {{user}}.`;
     }
@@ -10194,9 +10217,12 @@ const { character } = Astro.props;
             } else {
               payload.reasoning = { effort: 'none', exclude: true };
             }
-          } else if (!isThinkingEnabled) {
-            payload.thinking = { type: 'disabled' };
-            payload.chat_template_kwargs = { thinking: false };
+          } else if (provider === 'groq') {
+            payload.reasoning_format = isThinkingEnabled ? 'parsed' : 'hidden';
+          } else if (isReasoningModel) {
+            if (isThinkingEnabled) {
+              payload.reasoning_effort = 'low';
+            }
           }
         }
 
@@ -10247,13 +10273,17 @@ const { character } = Astro.props;
               || choice?.message?.reasoning_details 
               || '').trim();
             const cleanDialogue = stripInternalArtifactsForLLM(cText);
-            if (cleanDialogue && rText) {
+            if (isThinkingEnabled && cleanDialogue && rText) {
               newReply = `${buildReasoningDetailsHtml(rText)}\n\n${cleanDialogue}`;
             } else if (cleanDialogue) {
               newReply = cleanDialogue;
             } else {
               // Only thought returned without dialogue -> do not treat as valid dialogue
               newReply = '';
+            }
+
+            if (!isThinkingEnabled && newReply) {
+              newReply = newReply.replace(/<think>[\s\S]*?(?:<\/think>|$)/gi, '').trim();
             }
           }
         }
