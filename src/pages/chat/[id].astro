@@ -860,7 +860,6 @@ const { character } = Astro.props;
                       <option value="anthropic">Anthropic Claude</option>
                       <option value="custom-proxy">Custom / OpenAI-Compatible</option>
                       <option value="custom-local">Localhost (Ollama / LM Studio)</option>
-                      <option value="demo">Free Cloud AI</option>
                       <option value="mistral">Mistral AI</option>
                       <option value="xai">xAI Grok</option>
                       <option value="together">Together AI</option>
@@ -916,14 +915,6 @@ const { character } = Astro.props;
                         class="w-full px-3.5 py-2.5 rounded-xl bg-white/[0.05] border border-white/10 text-xs text-white placeholder:text-slate-500 outline-none focus:border-purple-500/60 font-mono"
                       />
                     </div>
-                  </div>
-                </div>
-
-                <!-- Free Cloud Notice Banner (Visible when 'demo' is selected) -->
-                <div id="free-cloud-notice" class="p-3.5 rounded-2xl bg-emerald-500/10 border border-emerald-500/20 flex items-start gap-2.5">
-                  <span class="w-2 h-2 rounded-full bg-emerald-400 mt-1 shrink-0 animate-pulse"></span>
-                  <div class="text-xs text-slate-300 leading-relaxed">
-                    <span class="font-semibold text-emerald-300">Free Instant Cloud Engine is active.</span> No API key, configuration, or credit card required. Unlimited zero-setup roleplay out of the box!
                   </div>
                 </div>
 
@@ -2930,7 +2921,7 @@ const { character } = Astro.props;
     const el = document.getElementById('chat-engine-label');
     if (el) {
       const provSelect = document.getElementById('text-provider-select');
-      const prov = (provSelect ? provSelect.value : '') || localStorage.getItem('aetheria_text_provider') || 'demo';
+      const prov = (provSelect ? provSelect.value : '') || localStorage.getItem('aetheria_text_provider') || 'groq';
       const m = localStorage.getItem('aetheria_text_model') || '';
       const pName = (typeof PROVIDER_CONFIGS !== 'undefined' && PROVIDER_CONFIGS[prov]?.name) || prov;
       el.textContent = m ? `${pName} • ${m.split('/').pop() || m}` : pName;
@@ -3118,7 +3109,7 @@ const { character } = Astro.props;
   const apiKeyContainer = document.getElementById('api-key-container');
   const apiKeyLabel = document.getElementById('api-key-label');
   const getKeyLink = document.getElementById('get-key-link');
-  const freeCloudNotice = document.getElementById('free-cloud-notice');
+
   const textBaseUrl = document.getElementById('text-base-url');
   const customBaseUrlContainer = document.getElementById('custom-base-url-container');
   const customBaseUrlLabel = document.getElementById('custom-base-url-label');
@@ -3441,13 +3432,6 @@ const { character } = Astro.props;
   // COMPREHENSIVE AI ENGINE & PROVIDER REGISTRY (20+ Providers + 2 Custom)
   // ==========================================
   const PROVIDER_CONFIGS = {
-    demo: {
-      name: 'Free Cloud AI',
-      label: 'Free AI',
-      hasKey: false,
-      hasUrl: false,
-      chatEndpoint: '/api/chat/demo'
-    },
     groq: {
       name: 'Groq',
       label: 'Groq',
@@ -3574,7 +3558,7 @@ const { character } = Astro.props;
       hasKey: true,
       hasUrl: false,
       modelsEndpoint: 'https://api.cohere.com/v1/models',
-      chatEndpoint: 'https://api.cohere.com/v1/chat',
+      chatEndpoint: 'https://api.cohere.com/compatibility/v1/chat/completions',
       keyPlaceholder: 'sk-... (dashboard.cohere.com)',
       keyLink: 'https://dashboard.cohere.com/api-keys'
     },
@@ -3674,6 +3658,123 @@ const { character } = Astro.props;
       urlPlaceholder: 'https://api.your-provider.com/v1',
       urlHint: 'Directs chat completions & models to any OpenAI-compatible base URL (DeepInfra, vLLM, OneAPI, etc).'
     }
+  };
+
+  // Curated, battle-tested default model registries for every provider
+  const DEFAULT_PROVIDER_MODELS = {
+    groq: [
+      'llama-3.3-70b-versatile',
+      'llama-3.1-8b-instant',
+      'deepseek-r1-distill-llama-70b',
+      'mixtral-8x7b-32768',
+      'gemma2-9b-it'
+    ],
+    google: [
+      'gemini-2.0-flash',
+      'gemini-2.0-pro-exp-02-05',
+      'gemini-1.5-pro',
+      'gemini-1.5-flash'
+    ],
+    openai: [
+      'gpt-4o',
+      'gpt-4o-mini',
+      'o3-mini',
+      'o1',
+      'chatgpt-4o-latest'
+    ],
+    anthropic: [
+      'claude-3-7-sonnet-20250219',
+      'claude-3-5-sonnet-20241022',
+      'claude-3-5-haiku-20241022',
+      'claude-3-opus-20240229'
+    ],
+    openrouter: [
+      'deepseek/deepseek-chat',
+      'deepseek/deepseek-r1',
+      'anthropic/claude-3.7-sonnet',
+      'anthropic/claude-3.5-sonnet',
+      'meta-llama/llama-3.3-70b-instruct',
+      'google/gemini-2.0-flash-001'
+    ],
+    deepseek: [
+      'deepseek-chat',
+      'deepseek-reasoner'
+    ],
+    xai: [
+      'grok-2-latest',
+      'grok-2-vision-latest',
+      'grok-beta'
+    ],
+    mistral: [
+      'mistral-large-latest',
+      'mistral-small-latest',
+      'codestral-latest',
+      'open-mistral-nemo'
+    ],
+    cerebras: [
+      'llama-3.3-70b',
+      'llama3.1-8b'
+    ],
+    sambanova: [
+      'Meta-Llama-3.3-70B-Instruct',
+      'DeepSeek-R1-Distill-Llama-70B',
+      'Meta-Llama-3.1-8B-Instruct'
+    ],
+    together: [
+      'meta-llama/Llama-3.3-70B-Instruct-Turbo',
+      'deepseek-ai/DeepSeek-R1',
+      'mistralai/Mixtral-8x7B-Instruct-v0.1'
+    ],
+    fireworks: [
+      'accounts/fireworks/models/llama-v3p3-70b-instruct',
+      'accounts/fireworks/models/deepseek-r1'
+    ],
+    cohere: [
+      'command-r-plus-08-2024',
+      'command-r-08-2024',
+      'command-light'
+    ],
+    perplexity: [
+      'sonar-pro',
+      'sonar',
+      'sonar-reasoning'
+    ],
+    novita: [
+      'meta-llama/llama-3.3-70b-instruct',
+      'deepseek/deepseek-r1'
+    ],
+    featherless: [
+      'Sao10K/L3-8B-Stheno-v3.2',
+      'meta-llama/Meta-Llama-3.1-70B-Instruct',
+      'mistralai/Mistral-7B-Instruct-v0.3'
+    ],
+    siliconflow: [
+      'deepseek-ai/DeepSeek-V3',
+      'deepseek-ai/DeepSeek-R1',
+      'meta-llama/Meta-Llama-3.3-70B-Instruct'
+    ],
+    huggingface: [
+      'meta-llama/Llama-3.3-70B-Instruct',
+      'mistralai/Mistral-7B-Instruct-v0.3',
+      'Qwen/Qwen2.5-72B-Instruct'
+    ],
+    cloudflare: [
+      '@cf/meta/llama-3.3-70b-instruct',
+      '@cf/meta/llama-3.1-8b-instruct'
+    ],
+    ai21: [
+      'jamba-1.5-large',
+      'jamba-1.5-mini'
+    ],
+    'custom-local': [
+      'llama3:latest',
+      'qwen2.5:latest',
+      'deepseek-r1:latest',
+      'mistral:latest'
+    ],
+    'custom-proxy': [
+      'default'
+    ]
   };
 
   // ==========================================
@@ -4139,12 +4240,15 @@ const { character } = Astro.props;
     const key = (typeof keyArg === 'string' ? keyArg : (textApiKey?.value.trim() || localStorage.getItem('aetheria_text_key') || ''));
     const baseUrl = (typeof baseUrlArg === 'string' ? baseUrlArg : (textBaseUrl?.value.trim() || conf.defaultUrl || ''));
 
-    if (prov === 'demo') {
-      populateModelDropdown(['Free Cloud AI'], 'Free Cloud AI');
-      updateDynamicPresets(['Free Cloud AI']);
-      localStorage.setItem('aetheria_text_model', 'Free Cloud AI');
-      showNotification('✓ Using Free Cloud AI (Instant)');
-      return ['Free Cloud AI'];
+    if (prov === 'perplexity') {
+      const pModels = ['sonar-pro', 'sonar', 'sonar-reasoning'];
+      localStorage.setItem('aetheria_synced_models_perplexity', JSON.stringify(pModels));
+      populateModelDropdown(pModels, pModels[0]);
+      updateDynamicPresets(pModels);
+      localStorage.setItem('aetheria_text_model', pModels[0]);
+      updateHeaderPill();
+      showNotification('✓ Loaded active Perplexity Sonar models!');
+      return pModels;
     }
 
     if (conf.hasKey && !conf.isKeyOptional && !key) {
@@ -4254,19 +4358,9 @@ const { character } = Astro.props;
     if (!pingStatusMsg) return;
     const t0 = performance.now();
     const prov = textProviderSelect?.value || 'groq';
-    const conf = PROVIDER_CONFIGS[prov] || PROVIDER_CONFIGS.demo;
+    const conf = PROVIDER_CONFIGS[prov] || PROVIDER_CONFIGS.groq;
     const key = textApiKey?.value.trim() || localStorage.getItem('aetheria_text_key') || '';
     const baseUrl = textBaseUrl?.value.trim() || conf.defaultUrl || '';
-
-    if (prov === 'demo') {
-      await new Promise(r => setTimeout(r, 85));
-      const dt = Math.round(performance.now() - t0);
-      pingStatusMsg.className = 'text-xs px-3.5 py-2.5 rounded-xl border bg-emerald-950/40 border-emerald-500/30 text-emerald-300';
-      pingStatusMsg.innerHTML = `✓ Free Cloud AI Ready • Latency: ${dt}ms • Model: Instant Cloud Engine`;
-      if (pingLatencyText) pingLatencyText.textContent = `Online • Latency: ${dt}ms`;
-      if (pingIndicatorDot) pingIndicatorDot.className = 'w-2.5 h-2.5 rounded-full bg-emerald-400 shrink-0';
-      return;
-    }
 
     if (conf.hasKey && !conf.isKeyOptional && !key) {
       pingStatusMsg.className = 'text-xs px-3.5 py-2.5 rounded-xl border bg-amber-950/40 border-amber-500/30 text-amber-300';
@@ -4342,7 +4436,8 @@ const { character } = Astro.props;
   // Load all engine settings from localStorage
   function loadEngineSettings() {
     // 1. Text provider & Key
-    const textProv = localStorage.getItem('aetheria_text_provider') || 'demo';
+    let textProv = localStorage.getItem('aetheria_text_provider') || 'groq';
+    if (textProv === 'demo') textProv = 'groq';
     if (textProviderSelect) textProviderSelect.value = textProv;
     updateQuickProvChips(textProv);
 
@@ -4468,12 +4563,7 @@ const { character } = Astro.props;
   // Adapt submenus & input fields dynamically based on selected provider
   function syncProviderVisibility() {
     const prov = textProviderSelect?.value || 'groq';
-    const conf = PROVIDER_CONFIGS[prov] || PROVIDER_CONFIGS.demo;
-
-    // Free cloud notice
-    if (freeCloudNotice) {
-      freeCloudNotice.classList.toggle('hidden', prov !== 'demo');
-    }
+    const conf = PROVIDER_CONFIGS[prov] || PROVIDER_CONFIGS.groq;
 
     // API Key container
     if (apiKeyContainer) {
@@ -4506,38 +4596,30 @@ const { character } = Astro.props;
       customBaseUrlHint.textContent = conf.urlHint || '';
     }
 
-    // Model selection sync (Zero hardcoded fallback)
-    if (prov === 'demo') {
-      populateModelDropdown(['Free Cloud AI'], 'Free Cloud AI');
-      localStorage.setItem('aetheria_text_model', 'Free Cloud AI');
-    } else {
-      const cachedModelsRaw = localStorage.getItem('aetheria_synced_models_' + prov);
-      if (cachedModelsRaw) {
-        try {
-          const cachedModels = JSON.parse(cachedModelsRaw);
-          if (Array.isArray(cachedModels) && cachedModels.length > 0) {
-            const savedModel = localStorage.getItem('aetheria_text_model');
-            const selectedModel = (savedModel && cachedModels.includes(savedModel)) ? savedModel : cachedModels[0];
-            populateModelDropdown(cachedModels, selectedModel);
-            localStorage.setItem('aetheria_text_model', selectedModel);
-          } else {
-            setEmptyModelDropdown();
-          }
-        } catch (e) {
-          setEmptyModelDropdown();
-        }
-      } else {
-        // NOT connected yet -> keep completely EMPTY!
-        setEmptyModelDropdown();
-      }
+    // Model selection sync: load synced models or curated registry defaults
+    const cachedModelsRaw = localStorage.getItem('aetheria_synced_models_' + prov);
+    let modelsList = [];
+    if (cachedModelsRaw) {
+      try {
+        modelsList = JSON.parse(cachedModelsRaw);
+      } catch (e) {}
     }
+    if (!Array.isArray(modelsList) || modelsList.length === 0) {
+      modelsList = DEFAULT_PROVIDER_MODELS[prov] || ['default'];
+    }
+
+    const savedModel = localStorage.getItem('aetheria_text_model');
+    const selectedModel = (savedModel && modelsList.includes(savedModel)) ? savedModel : modelsList[0];
+    populateModelDropdown(modelsList, selectedModel);
+    updateDynamicPresets(modelsList);
+    localStorage.setItem('aetheria_text_model', selectedModel);
 
     // Health Check widget update
     if (pingProviderName) {
       pingProviderName.textContent = conf.name;
     }
     if (pingLatencyText) {
-      pingLatencyText.textContent = prov === 'demo' ? 'Online • Free Tier' : 'Configured • Ready to test';
+      pingLatencyText.textContent = 'Configured • Ready to test';
     }
 
     // Voice & Image tabs
@@ -4669,8 +4751,7 @@ const { character } = Astro.props;
     { id: 'cloudflare', name: 'Cloudflare Workers AI', desc: 'Distributed edge inference running close to your location', badge: 'Edge Network', icon: '☁️', category: 'Other Cloud Engines' },
     { id: 'cerebras', name: 'Cerebras', desc: 'Wafer-scale silicon delivering extreme token generation rates', badge: 'Extreme Speed', icon: '🏎️', category: 'Other Cloud Engines' },
     { id: 'sambanova', name: 'SambaNova Systems', desc: 'Reconfigurable dataflow architecture for high enterprise throughput', badge: 'Enterprise', icon: '⚡', category: 'Other Cloud Engines' },
-    { id: 'ai21', name: 'AI21 Labs', desc: 'Hybrid SSM-transformer architectures for long-form context', badge: 'Hybrid LLM', icon: '📐', category: 'Other Cloud Engines' },
-    { id: 'demo', name: 'Free Cloud AI (Keyless)', desc: 'Instant pre-configured demo mode with no API key required', badge: 'Demo', icon: '🎁', category: 'Other Cloud Engines' }
+    { id: 'ai21', name: 'AI21 Labs', desc: 'Hybrid SSM-transformer architectures for long-form context', badge: 'Hybrid LLM', icon: '📐', category: 'Other Cloud Engines' }
   ];
 
   const providerSelectModal = document.getElementById('provider-select-modal');
@@ -5540,8 +5621,8 @@ const { character } = Astro.props;
   textApiKey?.addEventListener('input', () => {
     const key = textApiKey.value.trim();
     localStorage.setItem('aetheria_text_key', key);
-    const prov = textProviderSelect?.value || 'demo';
-    if (key.length >= 10 && prov !== 'demo') {
+    const prov = textProviderSelect?.value || 'groq';
+    if (key.length >= 10) {
       const cached = localStorage.getItem('aetheria_synced_models_' + prov);
       if (!cached) {
         fetchModelsForProvider();
@@ -5634,18 +5715,14 @@ const { character } = Astro.props;
         model = localStorage.getItem('aetheria_text_model') || '';
       }
 
-      if ((!model || model.includes('No API connected')) && prov !== 'demo') {
+      if (!model || model.includes('No API connected')) {
         const cached = localStorage.getItem('aetheria_synced_models_' + prov);
         try {
           const list = JSON.parse(cached || '[]');
           if (list.length > 0) model = list[0];
         } catch (e) {}
-        if (!model) {
-          if (prov === 'openrouter') model = 'deepseek/deepseek-chat';
-          else if (prov === 'groq') model = 'llama-3.3-70b-versatile';
-          else if (prov === 'google') model = 'gemini-2.0-flash';
-          else if (prov === 'anthropic') model = 'claude-3-5-sonnet-20241022';
-          else if (prov === 'openai') model = 'gpt-4o';
+        if (!model && DEFAULT_PROVIDER_MODELS[prov]) {
+          model = DEFAULT_PROVIDER_MODELS[prov][0];
         }
       }
 
@@ -6616,45 +6693,41 @@ const { character } = Astro.props;
       if (chatStream) chatStream.scrollTop = chatStream.scrollHeight;
     }
 
-    const provider = localStorage.getItem('aetheria_text_provider') || 'demo';
-    const conf = PROVIDER_CONFIGS[provider] || PROVIDER_CONFIGS.demo;
+    const provider = localStorage.getItem('aetheria_text_provider') || 'groq';
+    const conf = PROVIDER_CONFIGS[provider] || PROVIDER_CONFIGS.groq;
     const apiKey = localStorage.getItem('aetheria_text_key') || '';
     let savedModel = localStorage.getItem('aetheria_text_model') || '';
 
-    // Enforce 100% dynamic models - NEVER fall back to hardcoded legacy models
-    if (provider !== 'demo') {
-      if (!savedModel || savedModel.includes('No API connected') || savedModel === 'Free Cloud AI') {
-        const cachedRaw = localStorage.getItem('aetheria_synced_models_' + provider);
-        let cachedList = [];
-        try { cachedList = JSON.parse(cachedRaw || '[]'); } catch (e) {}
-        if (Array.isArray(cachedList) && cachedList.length > 0) {
-          savedModel = cachedList[0];
-          localStorage.setItem('aetheria_text_model', savedModel);
-        } else if (apiKey) {
-          try {
-            const fetched = await fetchModelsForProvider(provider, apiKey);
-            if (Array.isArray(fetched) && fetched.length > 0) {
-              savedModel = fetched[0];
-              localStorage.setItem('aetheria_text_model', savedModel);
-            }
-          } catch (e) {}
-        }
-      }
+    // Require API Key if provider requires it
+    if (conf.hasKey && !conf.isKeyOptional && !apiKey) {
+      if (typingIndicator) typingIndicator.classList.add('hidden');
+      const keyPromptMsg = {
+        sender: 'character',
+        text: `⚠️ **API Key Required for ${conf.name}**\nPlease open **Engine Settings (⚙️)** and enter your API key to chat with ${activeChar.name}.\n\n*(Your API key remains 100% private in your own browser's localStorage and is never shared or stored on any server.)*`,
+        timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+        swipes: [''],
+        swipeIndex: 0
+      };
+      conversation.push(keyPromptMsg);
+      appendMessageToDOM(keyPromptMsg, conversation.length - 1);
+      return;
+    }
 
-      if (!savedModel || savedModel.includes('No API connected') || savedModel === 'Free Cloud AI') {
-        if (typingIndicator) typingIndicator.classList.add('hidden');
-        const errAlert = {
-          sender: 'character',
-          text: `⚠️ **No Active Model Selected for ${conf.name}**\nPlease open Engine Settings (⚙️), enter your API key, and click **"Fetch Models"** to sync the active 2026 models directly from your provider account.`,
-          timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
-          swipes: [''],
-          swipeIndex: 0
-        };
-        conversation.push(errAlert);
-        appendMessageToDOM(errAlert, conversation.length - 1);
-        return;
+    // Dynamic model selection fallback
+    if (!savedModel || savedModel.includes('No API connected') || savedModel === 'Free Cloud AI') {
+      const cachedRaw = localStorage.getItem('aetheria_synced_models_' + provider);
+      let cachedList = [];
+      try { cachedList = JSON.parse(cachedRaw || '[]'); } catch (e) {}
+      if (Array.isArray(cachedList) && cachedList.length > 0) {
+        savedModel = cachedList[0];
+      } else if (DEFAULT_PROVIDER_MODELS[provider]) {
+        savedModel = DEFAULT_PROVIDER_MODELS[provider][0];
+      }
+      if (savedModel) {
+        localStorage.setItem('aetheria_text_model', savedModel);
       }
     }
+
     const model = savedModel;
     const temp = parseFloat(localStorage.getItem('aetheria_text_temp') || '0.85');
     const maxTokens = parseInt(localStorage.getItem('aetheria_text_tokens') || '2048', 10);
@@ -6668,7 +6741,7 @@ const { character } = Astro.props;
     let replyText = '';
 
     // Direct LLM Call with Real-time Streaming & Resilient Fallbacks
-    if ((apiKey || provider === 'custom-local') && provider !== 'demo') {
+    if (apiKey || provider === 'custom-local') {
       try {
         let endpoint = conf.chatEndpoint;
         if (conf.hasUrl) {
@@ -7127,59 +7200,6 @@ const { character } = Astro.props;
       }
     }
 
-    // Fallback response generator ONLY if provider is explicitly 'demo'
-    if (!replyText && provider === 'demo') {
-      if (typingIndicator) typingIndicator.classList.remove('hidden');
-      try {
-        const sysPrompt = buildSystemPrompt(userText);
-        const rawDemoHistory = conversation.slice(-contextLimit)
-          .filter(m => m.text && !isPoisonedOrErrorMessage(m.text));
-        const demoHistory = getSanitizedHistoryForAPI(rawDemoHistory);
-        const demoRes = await fetch('/api/chat/demo', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            messages: [
-              { role: 'system', content: sysPrompt },
-              ...demoHistory
-            ],
-            temperature: temp,
-            max_tokens: maxTokens,
-            top_p: topP,
-            frequency_penalty: freqPen,
-            presence_penalty: presPen,
-            repetition_penalty: repPen,
-            stream: enableStreaming
-          }),
-          signal: AbortSignal.timeout(15000)
-        });
-        if (demoRes.ok) {
-          const demoData = await demoRes.json();
-          replyText = (demoData.response || demoData.choices?.[0]?.message?.content || '').trim();
-        }
-      } catch (e) {
-        console.warn('Free Cloud fallback error:', e);
-      }
-
-      if (!replyText) {
-        await new Promise(r => setTimeout(r, 400));
-        replyText = pickResponse(userText);
-      }
-
-      if (typingIndicator) typingIndicator.classList.add('hidden');
-      const charMsg = {
-        sender: 'character',
-        text: replyText,
-        timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
-        swipes: [replyText],
-        swipeIndex: 0
-      };
-      conversation.push(charMsg);
-      saveChat();
-      appendMessageToDOM(charMsg, conversation.length - 1);
-      if (chatStream) chatStream.scrollTop = chatStream.scrollHeight;
-    }
-
     if (typingIndicator) typingIndicator.classList.add('hidden');
 
     if (ttsEnabled && localStorage.getItem('aetheria_voice_autoplay') === 'true') {
@@ -7406,17 +7426,20 @@ const { character } = Astro.props;
     }
     if (typingIndicator) typingIndicator.classList.remove('hidden');
 
-    const provider = localStorage.getItem('aetheria_text_provider') || 'demo';
+    const provider = localStorage.getItem('aetheria_text_provider') || 'groq';
     const apiKey = localStorage.getItem('aetheria_text_key') || '';
     let model = localStorage.getItem('aetheria_text_model') || '';
-    if (!model && provider !== 'demo') {
+    if (!model) {
       const cached = localStorage.getItem('aetheria_synced_models_' + provider);
       try {
         const list = JSON.parse(cached || '[]');
         if (list.length > 0) model = list[0];
       } catch (e) {}
+      if (!model && DEFAULT_PROVIDER_MODELS[provider]) {
+        model = DEFAULT_PROVIDER_MODELS[provider][0];
+      }
     }
-    if (!model && provider !== 'demo') {
+    if (!model) {
       if (typingIndicator) typingIndicator.classList.add('hidden');
       showNotification('⚠️ Please select an active model in Settings first.');
       return;
@@ -7470,9 +7493,9 @@ const { character } = Astro.props;
     }
     swipeSystemPrompt = formatMacroText(swipeSystemPrompt);
 
-    if ((apiKey || provider === 'custom-local') && provider !== 'demo') {
+    if (apiKey || provider === 'custom-local') {
       try {
-        const conf = PROVIDER_CONFIGS[provider] || PROVIDER_CONFIGS.demo;
+        const conf = PROVIDER_CONFIGS[provider] || PROVIDER_CONFIGS.groq;
         let endpoint = conf.chatEndpoint;
         if (conf.hasUrl) {
           const base = localStorage.getItem('aetheria_text_base_url') || conf.defaultUrl || 'http://localhost:11434/v1';
@@ -7600,29 +7623,6 @@ const { character } = Astro.props;
           }
         }
       } catch (err) {}
-    }
-
-    if (!newReply) {
-      try {
-        const demoRes = await fetch('/api/chat/demo', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            messages: [{ role: 'system', content: swipeSystemPrompt }, ...payloadMessages],
-            temperature: temp,
-            max_tokens: tokenBudget,
-            top_p: topP,
-            frequency_penalty: freqPen,
-            presence_penalty: presPen,
-            repetition_penalty: repPen
-          }),
-          signal: AbortSignal.timeout(12000)
-        });
-        if (demoRes.ok) {
-          const demoData = await demoRes.json();
-          newReply = (demoData.response || demoData.choices?.[0]?.message?.content || '').trim();
-        }
-      } catch (e) {}
     }
 
     if (!newReply) {
@@ -8782,23 +8782,26 @@ Requirements:
       const userPrompt = `Recent dialogue:\n${historySnippet}\n\nProvide the 3-4 reply ideas for the user as a JSON array:`;
 
       // 2. Determine Provider & API Key (BYOK User API)
-      const provider = localStorage.getItem('aetheria_text_provider') || 'demo';
+      const provider = localStorage.getItem('aetheria_text_provider') || 'groq';
       const apiKey = (localStorage.getItem('aetheria_text_key') || '').trim();
       let model = (localStorage.getItem('aetheria_text_model') || '').trim();
-      const conf = PROVIDER_CONFIGS[provider] || PROVIDER_CONFIGS.demo;
+      const conf = PROVIDER_CONFIGS[provider] || PROVIDER_CONFIGS.groq;
 
-      if (!model && provider !== 'demo') {
+      if (!model) {
         const cached = localStorage.getItem('aetheria_synced_models_' + provider);
         try {
           const list = JSON.parse(cached || '[]');
           if (list.length > 0) model = list[0];
         } catch (e) {}
+        if (!model && DEFAULT_PROVIDER_MODELS[provider]) {
+          model = DEFAULT_PROVIDER_MODELS[provider][0];
+        }
       }
 
       let generatedPills = null;
 
       // Try User's BYOK API if configured
-      if (provider !== 'demo' && (apiKey || provider === 'custom-local') && model && !model.includes('No API connected')) {
+      if ((apiKey || provider === 'custom-local') && model && !model.includes('No API connected')) {
         try {
           let endpoint = conf.chatEndpoint;
           if (conf.hasUrl) {
@@ -8900,33 +8903,13 @@ Requirements:
         }
       }
 
-      // If BYOK was not used or returned empty, fall back to /api/chat/demo on edge worker
+      // If BYOK was not configured or returned empty, use character-tailored suggestion ideas
       if (!generatedPills) {
-        const demoRes = await fetch('/api/chat/demo', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            messages: [
-              { role: 'system', content: systemPrompt },
-              { role: 'user', content: userPrompt }
-            ]
-          }),
-          signal: currentSignal
-        });
-
-        if (demoRes.ok) {
-          const resData = await demoRes.json().catch(() => null);
-          let text = '';
-          if (resData?.choices?.[0]?.message?.content) {
-            text = resData.choices[0].message.content;
-          } else if (typeof resData === 'string') {
-            text = resData;
-          }
-          const extracted = extractSuggestionsFromText(text);
-          if (extracted.length > 0) {
-            generatedPills = extracted;
-          }
-        }
+        generatedPills = [
+          `*Looks at ${activeChar.name} intently* "Tell me more about what you're thinking."`,
+          `*Takes a step closer* "What would you like to do next?"`,
+          `*Smiles softly* "I'm right here with you."`
+        ];
       }
 
       if (generatedPills && generatedPills.length > 0) {
