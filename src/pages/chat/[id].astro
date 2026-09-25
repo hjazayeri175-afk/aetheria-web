@@ -1938,19 +1938,36 @@ const { character } = Astro.props;
     globalNotes: 'Never speak, narrate, or assume actions for {{user}}. Maintain atmospheric immersion.'
   };
 
-  // 1. Resolve User Persona / Mask from localStorage
-  try {
-    const rawPersona = localStorage.getItem('aetheria_user_persona');
-    if (rawPersona) {
-      const parsed = JSON.parse(rawPersona);
-      activeUserPersona = { ...activeUserPersona, ...parsed };
-      if (activeUserPersona.name === 'Traveler') activeUserPersona.name = 'You';
-    }
-    if (localStorage.getItem('aetheria_persona_enabled') === 'false') {
-      activeUserPersona.disabled = true;
-      activeUserPersona.id = 'none';
-    }
-  } catch {}
+  // 1. Resolve User Persona / Mask from localStorage (Physical Data Isolation when disabled)
+  const isPersonaGloballyEnabled = (localStorage.getItem('aetheria_persona_enabled') !== 'false');
+  if (isPersonaGloballyEnabled) {
+    try {
+      const rawPersona = localStorage.getItem('aetheria_user_persona');
+      if (rawPersona) {
+        const parsed = JSON.parse(rawPersona);
+        activeUserPersona = { ...activeUserPersona, ...parsed };
+        if (activeUserPersona.name === 'Traveler') activeUserPersona.name = 'You';
+      }
+    } catch {}
+  } else {
+    // Physical isolation: do not load or hold any persona data in runtime memory
+    activeUserPersona = {
+      id: 'none',
+      name: 'You',
+      disabled: true,
+      age: '',
+      gender: '',
+      pronouns: '',
+      title: '',
+      avatar: '',
+      appearance: '',
+      personality: '',
+      bio: '',
+      lore: '',
+      globalNotes: '',
+      directives: ''
+    };
+  }
 
   // 2. Resolve Custom Character if URL is /chat/custom or has ?id=
   const urlParams = new URLSearchParams(window.location.search);
@@ -5367,10 +5384,10 @@ const { character } = Astro.props;
     const isPersonaEnabled = isPersonaGloballyActive();
 
     // Standard Main Prompt (Pure narrative framing without rigid corporate rules)
-    if (isPersonaEnabled) {
+    if (isPersonaEnabled && activeUserPersona && activeUserPersona.name && activeUserPersona.name.trim()) {
       prompt += `Write {{char}}'s next reply in this fictional roleplay with {{user}}.\n\n`;
     } else {
-      prompt += `Write {{char}}'s next reply in this fictional roleplay directly to the user in the second person ("you").\n\n`;
+      prompt += `Write {{char}}'s next reply in this fictional roleplay.\n\n`;
     }
 
     if (beforeCharContent) {
@@ -5389,8 +5406,8 @@ const { character } = Astro.props;
       prompt += `<START>\n${activeChar.mesExample}\n\n`;
     }
 
-    // User Persona / Active Mask (Strict Override Enforcement if enabled)
-    if (isPersonaEnabled) {
+    // User Persona: Physical isolation - ONLY attached if explicitly enabled. Zero meta-injections when disabled.
+    if (isPersonaEnabled && activeUserPersona && !activeUserPersona.disabled && activeUserPersona.id !== 'none') {
       const uName = (activeUserPersona.name && activeUserPersona.name.trim()) ? activeUserPersona.name.trim() : 'User';
       prompt += `[USER IDENTITY & ACTIVE ROLEPLAY MASK: {{user}}]\n`;
       prompt += `Name: ${uName}\n`;
@@ -5409,14 +5426,6 @@ const { character } = Astro.props;
       prompt += `1. The above profile for {{user}} (${uName}) is absolute and authoritative.\n`;
       prompt += `2. If any character greeting, card description, or scenario suggests or assumes a different age, appearance, gender, or backstory for {{user}}, you MUST completely ignore and override that assumption in favor of {{user}}'s explicit profile above.\n`;
       prompt += `3. You must perceive, interact with, and address {{user}} strictly in accordance with their designated age (${activeUserPersona.age || 'unspecified'}), appearance, and personality at all times.\n\n`;
-    } else {
-      prompt += `[CRITICAL: ANONYMOUS USER - NO PERSONA OR PRESET IDENTITY]\n`;
-      prompt += `User persona is completely DISABLED by user preference. The user is entirely anonymous and has NO predefined name, age, appearance, gender, occupation, or backstory.\n`;
-      prompt += `MANDATORY INSTRUCTIONS FOR {{char}}:\n`;
-      prompt += `1. Address and refer to the user strictly in the second person ("you" / "your").\n`;
-      prompt += `2. NEVER call the user "User" or treat "User" as a name. Do not invent, guess, or assign any name to the user.\n`;
-      prompt += `3. Do NOT assume, invent, or describe any physical appearance, age, gender, clothing, or past history for the user. Treat the user as an undefined blank slate.\n`;
-      prompt += `4. Even if previous messages or character card scenarios suggested a specific role, background, or name for the user, completely ignore it now. Interact with the user strictly as an unknown individual whose identity is unrevealed until the user explicitly states it in conversation.\n\n`;
     }
 
     if (afterCharContent) {
