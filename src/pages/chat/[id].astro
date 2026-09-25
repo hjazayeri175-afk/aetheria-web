@@ -46,7 +46,8 @@ import {
   Search,
   Cloud,
   Lock,
-  LockOpen
+  LockOpen,
+  Flag
 } from '@lucide/astro';
 
 export function getStaticPaths() {
@@ -364,6 +365,17 @@ const { character } = Astro.props;
             Multi-modal roleplay ready. Supports live LLM cognition, streaming speech synthesis, and dynamic scene selfies.
           </p>
         </div>
+
+        <!-- Report Character / Content Compliance -->
+        <button
+          type="button"
+          id="report-character-sidebar-btn"
+          class="w-full flex items-center justify-center gap-2 py-2 px-3 rounded-xl bg-white/[0.03] hover:bg-rose-500/10 border border-white/[0.08] hover:border-rose-500/30 text-slate-400 hover:text-rose-300 text-xs font-medium transition cursor-pointer active:scale-95"
+          title="Report legal issue or safety violation regarding this character"
+        >
+          <Flag class="w-3.5 h-3.5 text-rose-400" />
+          <span>Report Content / Legal Issue</span>
+        </button>
 
         <!-- Session Privacy -->
         <div class="text-[10px] text-slate-500 text-center pt-4 border-t border-white/[0.05]">
@@ -2247,6 +2259,7 @@ const { character } = Astro.props;
     warning: `<svg class="w-5 h-5 text-amber-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z"/><line x1="12" x2="12" y1="9" y2="13"/><line x1="12" x2="12.01" y1="17" y2="17"/></svg>`,
     info: `<svg class="w-5 h-5 text-sky-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4"/><path d="M12 8h.01"/></svg>`,
     settings: `<svg class="w-5 h-5 text-indigo-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>`,
+    flag: `<svg class="w-5 h-5 text-rose-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 15s1-1 4-1 5 2 8 2 4-1 4-1V3s-1 1-4 1-5-2-8-2-4 1-4 1z"/><line x1="4" x2="4" y1="22" y2="15"/></svg>`,
     sparkle: `<svg class="w-5 h-5 text-purple-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m12 3-1.912 5.813a2 2 0 0 1-1.275 1.275L3 12l5.813 1.912a2 2 0 0 1 1.275 1.275L12 21l1.912-5.813a2 2 0 0 1 1.275-1.275L21 12l-5.813-1.912a2 2 0 0 1-1.275-1.275L12 3Z"/></svg>`
   };
 
@@ -2265,7 +2278,8 @@ const { character } = Astro.props;
     plus: `<svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14M5 12h14"/></svg>`,
     longer: `<svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m16 8-4-4-4 4"/><path d="m8 16 4 4 4-4"/><path d="M4 2h16"/><path d="M4 22h16"/><path d="M12 4v16"/></svg>`,
     shorter: `<svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m16 4-4 4-4-4"/><path d="m8 20 4-4 4 4"/><path d="M4 2h16"/><path d="M4 22h16"/><path d="M12 8v8"/></svg>`,
-    depersonalize: `<svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><line x1="17" y1="8" x2="22" y2="13"/><line x1="22" y1="8" x2="17" y2="13"/></svg>`
+    depersonalize: `<svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><line x1="17" y1="8" x2="22" y2="13"/><line x1="22" y1="8" x2="17" y2="13"/></svg>`,
+    flag: `<svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M4 15s1-1 4-1 5 2 8 2 4-1 4-1V3s-1 1-4 1-5-2-8-2-4 1-4 1z"/><line x1="4" x2="4" y1="22" y2="15"/></svg>`
   };
 
   function getModalIconSvg(icon, type) {
@@ -2396,6 +2410,211 @@ const { character } = Astro.props;
 
   // Intercept any fallback window.alert to use sleek toast
   window.alert = (msg) => showNotification(String(msg), 'info');
+
+  // ==========================================
+  // CROWDSOURCED MODERATION & ISSUE REPORT MODAL
+  // ==========================================
+  function openReportModal({
+    targetType = 'message', // 'message' | 'character' | 'bug'
+    targetId = '',
+    targetName = '',
+    category = 'legal', // 'legal' | 'safety' | 'bug' | 'spam' | 'other'
+    snippet = '',
+    metadata = {}
+  } = {}) {
+    // Remove any existing report modal
+    const existing = document.getElementById('report-issue-modal');
+    if (existing) existing.remove();
+
+    const backdrop = document.createElement('div');
+    backdrop.id = 'report-issue-modal';
+    backdrop.className = 'fixed inset-0 z-[10001] flex items-center justify-center p-3 sm:p-4 bg-black/80 backdrop-blur-md transition-opacity duration-200 opacity-0';
+
+    const safeSnippet = String(snippet || '').trim();
+    const truncatedSnippet = safeSnippet.length > 240 ? safeSnippet.slice(0, 240) + '...' : safeSnippet;
+    const safeTargetName = String(targetName || (targetType === 'character' ? 'Character' : 'AI Message')).replace(/</g, '&lt;').replace(/>/g, '&gt;');
+
+    backdrop.innerHTML = `
+      <div class="w-full max-w-lg rounded-2xl sm:rounded-3xl bg-[#0c0f1d] border border-white/10 p-5 sm:p-6 shadow-2xl shadow-black/90 transform scale-95 transition-all duration-200 text-left max-h-[92vh] overflow-y-auto custom-scrollbar flex flex-col">
+        
+        <!-- Header -->
+        <div class="flex items-start justify-between pb-4 border-b border-white/[0.08]">
+          <div class="flex items-center gap-3">
+            <div class="w-10 h-10 rounded-2xl bg-rose-500/10 border border-rose-500/20 flex items-center justify-center text-rose-400 shrink-0 shadow-inner">
+              <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M4 15s1-1 4-1 5 2 8 2 4-1 4-1V3s-1 1-4 1-5-2-8-2-4 1-4 1z"/>
+                <line x1="4" x2="4" y1="22" y2="15"/>
+              </svg>
+            </div>
+            <div>
+              <h3 class="text-sm sm:text-base font-bold text-white tracking-wide flex items-center gap-2">
+                <span>Report Content or Issue</span>
+                <span class="px-2 py-0.5 rounded-full text-[10px] font-mono bg-rose-500/15 text-rose-300 border border-rose-500/30">Community Watch</span>
+              </h3>
+              <p class="text-xs text-slate-400 mt-0.5">Help keep Aetheria compliant, ethical, and high-quality.</p>
+            </div>
+          </div>
+          <button type="button" id="close-report-modal-btn" class="p-1.5 rounded-xl bg-white/[0.05] hover:bg-white/[0.1] text-slate-400 hover:text-white transition cursor-pointer">
+            <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg>
+          </button>
+        </div>
+
+        <!-- Target Context Preview -->
+        <div class="mt-4 p-3 rounded-xl bg-white/[0.03] border border-white/[0.06] text-xs space-y-1">
+          <div class="flex items-center justify-between text-[11px] text-slate-400">
+            <span class="font-medium text-purple-300">Target: ${safeTargetName}</span>
+            <span class="font-mono text-[10px] px-1.5 py-0.5 rounded bg-white/[0.06] text-slate-400 uppercase">${targetType}</span>
+          </div>
+          ${truncatedSnippet ? `<p class="text-slate-300/85 italic font-serif line-clamp-3 pl-2.5 border-l-2 border-purple-500/40 mt-1 select-text">"${truncatedSnippet.replace(/</g, '&lt;').replace(/>/g, '&gt;')}"</p>` : ''}
+        </div>
+
+        <!-- Issue Category Picker -->
+        <div class="mt-4 space-y-2">
+          <label class="block text-xs font-semibold text-slate-300">Select Issue Category <span class="text-rose-400">*</span></label>
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-2" id="report-category-group">
+            
+            <label class="report-cat-card flex items-start gap-2.5 p-2.5 rounded-xl border border-white/[0.08] hover:border-purple-500/40 bg-white/[0.02] cursor-pointer transition select-none">
+              <input type="radio" name="report_category" value="legal" class="mt-0.5 accent-rose-500 cursor-pointer" ${category === 'legal' ? 'checked' : ''} />
+              <div class="min-w-0">
+                <span class="text-xs font-semibold text-white block">⚖️ Legal & Copyright</span>
+                <span class="text-[11px] text-slate-400 leading-snug block">Report legal issue, IP/DMCA infringement, or regulatory non-compliance</span>
+              </div>
+            </label>
+
+            <label class="report-cat-card flex items-start gap-2.5 p-2.5 rounded-xl border border-white/[0.08] hover:border-purple-500/40 bg-white/[0.02] cursor-pointer transition select-none">
+              <input type="radio" name="report_category" value="safety" class="mt-0.5 accent-rose-500 cursor-pointer" ${category === 'safety' ? 'checked' : ''} />
+              <div class="min-w-0">
+                <span class="text-xs font-semibold text-white block">🛡️ Community & Ethics</span>
+                <span class="text-[11px] text-slate-400 leading-snug block">Hate speech, extreme abuse, unmoderated online creator violation</span>
+              </div>
+            </label>
+
+            <label class="report-cat-card flex items-start gap-2.5 p-2.5 rounded-xl border border-white/[0.08] hover:border-purple-500/40 bg-white/[0.02] cursor-pointer transition select-none">
+              <input type="radio" name="report_category" value="bug" class="mt-0.5 accent-rose-500 cursor-pointer" ${category === 'bug' ? 'checked' : ''} />
+              <div class="min-w-0">
+                <span class="text-xs font-semibold text-white block">🐛 Technical Bug & Glitch</span>
+                <span class="text-[11px] text-slate-400 leading-snug block">Prompt leak, model crash, UI break, or engine failure</span>
+              </div>
+            </label>
+
+            <label class="report-cat-card flex items-start gap-2.5 p-2.5 rounded-xl border border-white/[0.08] hover:border-purple-500/40 bg-white/[0.02] cursor-pointer transition select-none">
+              <input type="radio" name="report_category" value="spam" class="mt-0.5 accent-rose-500 cursor-pointer" ${category === 'spam' ? 'checked' : ''} />
+              <div class="min-w-0">
+                <span class="text-xs font-semibold text-white block">🚫 Spam & Misleading</span>
+                <span class="text-[11px] text-slate-400 leading-snug block">Malicious links, scam, deception, or junk card generation</span>
+              </div>
+            </label>
+
+          </div>
+        </div>
+
+        <!-- Details Textarea -->
+        <div class="mt-4 space-y-1.5">
+          <label class="block text-xs font-semibold text-slate-300">Explanation / Details <span class="text-slate-500 font-normal">(Optional but recommended)</span></label>
+          <textarea 
+            id="report-details-input" 
+            rows="3" 
+            placeholder="Describe what occurred or specify what rule was violated..." 
+            class="w-full px-3 py-2 rounded-xl bg-black/40 border border-white/10 text-xs text-slate-200 placeholder-slate-500 focus:outline-none focus:border-rose-500/60 resize-none leading-relaxed transition"
+          ></textarea>
+        </div>
+
+        <!-- Star Bounty / Crowdsourced Moderation Notice -->
+        <div class="mt-4 p-3 rounded-xl bg-gradient-to-r from-amber-500/10 via-purple-500/10 to-transparent border border-amber-500/20 flex items-start gap-2.5">
+          <span class="text-base shrink-0 select-none">⭐</span>
+          <div class="text-[11px] text-amber-200/90 leading-relaxed">
+            <strong class="text-amber-300 font-semibold">Crowdsourced Integrity & Star Bounties:</strong> Private chats remain completely private. For public online cards and community systems, users act as frontline monitors. Confirmed reports of critical platform bugs or policy violations are rewarded with Stars!
+          </div>
+        </div>
+
+        <!-- Action Buttons -->
+        <div class="mt-5 flex items-center justify-end gap-2.5 pt-3 border-t border-white/[0.08]">
+          <button type="button" id="cancel-report-btn" class="px-4 py-2.5 rounded-xl text-xs font-medium text-slate-300 hover:text-white bg-white/[0.05] hover:bg-white/[0.1] border border-white/10 transition cursor-pointer">
+            Cancel
+          </button>
+          <button type="button" id="submit-report-btn" class="flex items-center gap-2 px-5 py-2.5 rounded-xl text-xs font-semibold text-white bg-gradient-to-r from-rose-600 to-pink-600 hover:from-rose-500 hover:to-pink-500 shadow-md shadow-rose-950/50 transition cursor-pointer active:scale-95 disabled:opacity-50">
+            <span>Submit Report</span>
+          </button>
+        </div>
+
+      </div>
+    `;
+
+    document.body.appendChild(backdrop);
+    requestAnimationFrame(() => {
+      backdrop.classList.remove('opacity-0');
+      const dialog = backdrop.firstElementChild;
+      if (dialog) dialog.classList.remove('scale-95');
+    });
+
+    const closeModal = () => {
+      backdrop.classList.add('opacity-0');
+      const dialog = backdrop.firstElementChild;
+      if (dialog) dialog.classList.add('scale-95');
+      setTimeout(() => backdrop.remove(), 200);
+      window.removeEventListener('keydown', handleKey);
+    };
+
+    const handleKey = (e) => {
+      if (e.key === 'Escape') closeModal();
+    };
+    window.addEventListener('keydown', handleKey);
+
+    const closeBtn = backdrop.querySelector('#close-report-modal-btn');
+    const cancelBtn = backdrop.querySelector('#cancel-report-btn');
+    if (closeBtn) closeBtn.onclick = closeModal;
+    if (cancelBtn) cancelBtn.onclick = closeModal;
+    backdrop.onclick = (e) => {
+      if (e.target === backdrop) closeModal();
+    };
+
+    const submitBtn = backdrop.querySelector('#submit-report-btn');
+    const detailsInput = backdrop.querySelector('#report-details-input');
+
+    if (submitBtn) {
+      submitBtn.onclick = async () => {
+        const checkedRadio = backdrop.querySelector('input[name="report_category"]:checked');
+        const selectedCat = checkedRadio ? checkedRadio.value : 'legal';
+        const details = detailsInput ? detailsInput.value.trim() : '';
+
+        submitBtn.disabled = true;
+        submitBtn.innerHTML = `
+          <svg class="w-3.5 h-3.5 animate-spin" viewBox="0 0 24 24" fill="none" stroke="currentColor"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>
+          <span>Submitting...</span>
+        `;
+
+        try {
+          const res = await fetch('/api/reports', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              targetType,
+              targetId,
+              targetName: safeTargetName,
+              category: selectedCat,
+              details,
+              snippet: safeSnippet,
+              metadata
+            })
+          });
+
+          const data = await res.json();
+          if (res.ok && data.success) {
+            showNotification('✓ Report submitted. Thank you for helping keep Aetheria safe!', 'info');
+            closeModal();
+          } else {
+            showNotification(data.error || 'Failed to submit report. Please try again.', 'error');
+            submitBtn.disabled = false;
+            submitBtn.innerHTML = '<span>Submit Report</span>';
+          }
+        } catch (err) {
+          showNotification('Network error while submitting report.', 'error');
+          submitBtn.disabled = false;
+          submitBtn.innerHTML = '<span>Submit Report</span>';
+        }
+      };
+    }
+  }
 
   function updateHeaderPill() {
     const el = document.getElementById('chat-engine-label');
@@ -5504,6 +5723,9 @@ const { character } = Astro.props;
             <button class="msg-delete-btn w-7 h-7 sm:w-8 sm:h-8 rounded-lg flex items-center justify-center text-slate-400 hover:text-rose-400 hover:bg-white/[0.08] active:scale-95 transition cursor-pointer" data-idx="${idx}" title="Delete message">
               ${TOOLBAR_ICONS.trash}
             </button>
+            <button class="msg-report-btn w-7 h-7 sm:w-8 sm:h-8 rounded-lg flex items-center justify-center text-slate-400 hover:text-rose-400 hover:bg-white/[0.08] active:scale-95 transition cursor-pointer" data-idx="${idx}" title="Report legal issue or safety violation">
+              ${TOOLBAR_ICONS.flag}
+            </button>
           </div>
         </div>
       `;
@@ -6416,6 +6638,11 @@ const { character } = Astro.props;
         <span class="text-cyan-400 group-hover:text-cyan-300 transition-colors">${TOOLBAR_ICONS.retry}</span>
         <span>Try again</span>
       </button>
+      <div class="h-px bg-white/[0.08] my-1 mx-1.5"></div>
+      <button type="button" class="regen-report-legal-btn group flex items-center gap-2.5 px-2.5 py-2 rounded-xl text-xs font-medium text-slate-400 hover:text-rose-400 hover:bg-rose-500/10 active:scale-[0.98] transition cursor-pointer text-left" data-idx="${msgIdx}">
+        <span class="text-slate-400 group-hover:text-rose-400 transition-colors">${TOOLBAR_ICONS.flag}</span>
+        <span>Report legal issue</span>
+      </button>
     `;
 
     document.body.appendChild(popover);
@@ -6450,6 +6677,29 @@ const { character } = Astro.props;
         generateNewSwipe(msgIdx, mode);
       });
     });
+
+    const reportLegalBtn = popover.querySelector('.regen-report-legal-btn');
+    if (reportLegalBtn) {
+      reportLegalBtn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        popover.remove();
+        const msg = conversation[msgIdx];
+        openReportModal({
+          targetType: 'message',
+          targetId: `msg_${msgIdx}_${Date.now()}`,
+          targetName: (typeof activeChar !== 'undefined' && activeChar ? activeChar.name : 'AI Response'),
+          category: 'legal',
+          snippet: msg ? msg.text : '',
+          metadata: {
+            messageIndex: msgIdx,
+            characterId: typeof activeChar !== 'undefined' ? activeChar?.id : '',
+            characterName: typeof activeChar !== 'undefined' ? activeChar?.name : '',
+            provider: localStorage.getItem('aetheria_text_provider') || 'auto',
+            model: localStorage.getItem('aetheria_text_model') || 'auto'
+          }
+        });
+      });
+    }
   }
 
   // Generate Alternative Swipe Variation (Supports Longer, Shorter, Don't personalize, Retry)
@@ -7362,6 +7612,51 @@ const { character } = Astro.props;
       const idx = parseInt(speakBtn.getAttribute('data-idx') || '0', 10);
       const msg = conversation[idx];
       if (msg) speak(msg.text, speakBtn, idx);
+      return;
+    }
+
+    // Report message / response button
+    const reportMsgBtn = target.closest('.msg-report-btn');
+    if (reportMsgBtn) {
+      const idx = parseInt(reportMsgBtn.getAttribute('data-idx') || '0', 10);
+      const msg = conversation[idx];
+      if (msg) {
+        openReportModal({
+          targetType: 'message',
+          targetId: `msg_${idx}_${Date.now()}`,
+          targetName: (typeof activeChar !== 'undefined' && activeChar ? activeChar.name : 'AI Response'),
+          category: 'legal',
+          snippet: msg.text,
+          metadata: {
+            messageIndex: idx,
+            sender: msg.sender,
+            characterId: typeof activeChar !== 'undefined' ? activeChar?.id : '',
+            characterName: typeof activeChar !== 'undefined' ? activeChar?.name : '',
+            provider: localStorage.getItem('aetheria_text_provider') || 'auto',
+            model: localStorage.getItem('aetheria_text_model') || 'auto'
+          }
+        });
+      }
+      return;
+    }
+
+    // Report character sidebar button
+    const reportCharBtn = target.closest('#report-character-sidebar-btn');
+    if (reportCharBtn) {
+      openReportModal({
+        targetType: 'character',
+        targetId: typeof activeChar !== 'undefined' ? activeChar.id : 'character',
+        targetName: typeof activeChar !== 'undefined' ? activeChar.name : 'Character',
+        category: 'safety',
+        snippet: typeof activeChar !== 'undefined' ? `${activeChar.name}: ${(activeChar.description || '').slice(0, 300)}` : '',
+        metadata: {
+          characterId: typeof activeChar !== 'undefined' ? activeChar.id : '',
+          characterName: typeof activeChar !== 'undefined' ? activeChar.name : '',
+          category: typeof activeChar !== 'undefined' ? activeChar.category : '',
+          tags: typeof activeChar !== 'undefined' ? activeChar.tags : []
+        }
+      });
+      return;
     }
   });
 

@@ -597,6 +597,78 @@ export default {
       }
 
       // ==========================================
+      // 10.5 CROWDSOURCED MODERATION & ISSUE REPORTING
+      // ==========================================
+      if (url.pathname === '/api/reports' && request.method === 'POST') {
+        try {
+          const auth = await getAuthenticatedUser(request, env);
+          const body = await request.json() as any;
+
+          const category = (body.category || 'other').trim();
+          const targetType = (body.targetType || 'message').trim();
+          const targetId = (body.targetId || '').trim();
+          const targetName = (body.targetName || '').trim();
+          const details = (body.details || '').trim();
+          const snippet = (body.snippet || '').trim().slice(0, 4000);
+          const metadata = typeof body.metadata === 'object' ? JSON.stringify(body.metadata) : (body.metadata || '');
+
+          if (!targetId && !details && !snippet) {
+            return jsonResponse({ error: 'Report details or target are required' }, 400);
+          }
+
+          const reportId = crypto.randomUUID();
+          const now = Math.floor(Date.now() / 1000);
+          const reporterId = auth ? auth.user.id : (body.guestId || 'guest');
+          const reporterEmail = auth ? auth.user.email : (body.contactEmail || null);
+
+          await env.DB.prepare(`
+            INSERT INTO reports (
+              id, reporter_id, reporter_email, target_type, target_id, 
+              target_name, category, details, snippet, metadata, 
+              status, stars_rewarded, created_at, updated_at
+            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 'pending', 0, ?, ?)
+          `).bind(
+            reportId,
+            reporterId,
+            reporterEmail,
+            targetType,
+            targetId,
+            targetName,
+            category,
+            details,
+            snippet,
+            metadata,
+            now,
+            now
+          ).run();
+
+          return jsonResponse({
+            success: true,
+            reportId,
+            message: 'Report submitted successfully. Our safety and moderation team will review it.'
+          });
+        } catch (err: any) {
+          return jsonResponse({ error: 'Failed to record report: ' + (err.message || 'Database error') }, 500);
+        }
+      }
+
+      if (url.pathname === '/api/reports/my' && request.method === 'GET') {
+        const auth = await getAuthenticatedUser(request, env);
+        if (!auth) {
+          return jsonResponse({ error: 'Authentication required' }, 401);
+        }
+
+        const reports = await env.DB.prepare(`
+          SELECT id, target_type, target_name, category, details, status, stars_rewarded, created_at 
+          FROM reports 
+          WHERE reporter_id = ? 
+          ORDER BY created_at DESC LIMIT 30
+        `).bind(auth.user.id).all();
+
+        return jsonResponse({ success: true, reports: reports.results });
+      }
+
+      // ==========================================
       // 11. CORS-FREE EDGE PROXY: MODELS & CHAT
       // ==========================================
       if (url.pathname === '/api/proxy/fetch-models' && request.method === 'POST') {

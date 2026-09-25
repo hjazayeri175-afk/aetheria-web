@@ -137,3 +137,26 @@ CREATE TABLE IF NOT EXISTS transactions (
 
 CREATE INDEX IF NOT EXISTS idx_tx_from ON transactions(from_user_id);
 CREATE INDEX IF NOT EXISTS idx_tx_to ON transactions(to_user_id);
+
+-- 10. Moderation & Bug Reports (Crowdsourced Monitoring)
+CREATE TABLE IF NOT EXISTS reports (
+    id TEXT PRIMARY KEY,
+    reporter_id TEXT, -- user ID if logged in, or 'guest'
+    reporter_email TEXT,
+    target_type TEXT NOT NULL, -- 'message', 'character', 'bug'
+    target_id TEXT NOT NULL,   -- msg identifier, character id, or feature
+    target_name TEXT,          -- character name or snippet title
+    category TEXT NOT NULL,    -- 'legal', 'safety', 'bug', 'copyright', 'spam', 'other'
+    details TEXT,              -- user description
+    snippet TEXT,              -- reported text snippet or context
+    metadata TEXT,             -- JSON string of device / model / platform context
+    status TEXT DEFAULT 'pending', -- 'pending', 'investigating', 'resolved', 'rewarded', 'dismissed'
+    stars_rewarded INTEGER DEFAULT 0,
+    created_at INTEGER NOT NULL,
+    updated_at INTEGER NOT NULL
+);
+
+CREATE INDEX IF NOT EXISTS idx_reports_status ON reports(status);
+CREATE INDEX IF NOT EXISTS idx_reports_target ON reports(target_type, target_id);
+CREATE INDEX IF NOT EXISTS idx_reports_created ON reports(created_at DESC);
+

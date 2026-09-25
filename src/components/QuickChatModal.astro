@@ -9,7 +9,8 @@ import {
   BookOpen,
   Scroll,
   Pencil,
-  ArrowRight
+  ArrowRight,
+  Flag
 } from '@lucide/astro';
 ---
 
@@ -58,6 +59,16 @@ import {
           title="Share character link"
         >
           <Share2 class="w-4 h-4" />
+        </button>
+
+        <!-- Report Button -->
+        <button 
+          type="button"
+          id="showcase-report-btn"
+          class="p-2 rounded-xl bg-white/[0.05] hover:bg-rose-500/20 text-slate-400 hover:text-rose-400 transition cursor-pointer"
+          title="Report legal issue or guidelines violation"
+        >
+          <Flag class="w-4 h-4" />
         </button>
 
         <!-- Close Button -->
@@ -186,6 +197,7 @@ import {
   const showcaseStarIcon = document.getElementById('showcase-star-icon');
   const showcaseStarCount = document.getElementById('showcase-star-count');
   const showcaseShareBtn = document.getElementById('showcase-share-btn');
+  const showcaseReportBtn = document.getElementById('showcase-report-btn');
   const showcaseStartBtn = document.getElementById('showcase-start-chat-btn') as HTMLAnchorElement;
   const showcaseEditBtn = document.getElementById('showcase-edit-btn') as HTMLAnchorElement;
   const showcaseStartBtnLabel = document.getElementById('showcase-start-btn-label');
@@ -359,6 +371,41 @@ import {
     }).catch(() => {
       showShowcaseToast('Character URL: ' + link);
     });
+  });
+
+  // Report Character Button
+  showcaseReportBtn?.addEventListener('click', (e) => {
+    e.stopPropagation();
+    if (!activeCharacter) return;
+    
+    const reason = prompt(`Report "${activeCharacter.name}" for a safety, legal, or content issue:\n\nEnter details or reason for reporting:`);
+    if (reason && reason.trim()) {
+      showShowcaseToast('Submitting report...');
+      fetch('/api/reports', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          targetType: 'character',
+          targetId: activeCharacter.id,
+          targetName: activeCharacter.name,
+          category: 'legal',
+          details: reason.trim(),
+          snippet: `${activeCharacter.name} - ${activeCharacter.title}: ${(activeCharacter.description || '').slice(0, 300)}`,
+          metadata: {
+            isCustom: !!activeCharacter.isCustom,
+            category: activeCharacter.category
+          }
+        })
+      }).then(r => r.json()).then(data => {
+        if (data.success) {
+          showShowcaseToast('✓ Report received. Thank you for helping keep Aetheria safe!');
+        } else {
+          showShowcaseToast(data.error || 'Failed to submit report');
+        }
+      }).catch(() => {
+        showShowcaseToast('Network error while reporting');
+      });
+    }
   });
 
   // Event Listeners for opening and closing
