@@ -2273,7 +2273,8 @@ const { character } = Astro.props;
     longer: `<svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m16 8-4-4-4 4"/><path d="m8 16 4 4 4-4"/><path d="M4 2h16"/><path d="M4 22h16"/><path d="M12 4v16"/></svg>`,
     shorter: `<svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m16 4-4 4-4-4"/><path d="m8 20 4-4 4 4"/><path d="M4 2h16"/><path d="M4 22h16"/><path d="M12 8v8"/></svg>`,
     depersonalize: `<svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><line x1="17" y1="8" x2="22" y2="13"/><line x1="22" y1="8" x2="17" y2="13"/></svg>`,
-    flag: `<svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M4 15s1-1 4-1 5 2 8 2 4-1 4-1V3s-1 1-4 1-5-2-8-2-4 1-4 1z"/><line x1="4" x2="4" y1="22" y2="15"/></svg>`
+    flag: `<svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M4 15s1-1 4-1 5 2 8 2 4-1 4-1V3s-1 1-4 1-5-2-8-2-4 1-4 1z"/><line x1="4" x2="4" y1="22" y2="15"/></svg>`,
+    dots: `<svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="1"/><circle cx="19" cy="12" r="1"/><circle cx="5" cy="12" r="1"/></svg>`
   };
 
   function getModalIconSvg(icon, type) {
@@ -5703,17 +5704,8 @@ const { character } = Astro.props;
             <button class="msg-copy-btn w-7 h-7 sm:w-8 sm:h-8 rounded-lg flex items-center justify-center text-slate-400 hover:text-slate-200 hover:bg-white/[0.08] active:scale-95 transition cursor-pointer" data-text="${encodeURIComponent(msg.text)}" title="Copy message">
               ${TOOLBAR_ICONS.copy}
             </button>
-            <button class="msg-edit-btn w-7 h-7 sm:w-8 sm:h-8 rounded-lg flex items-center justify-center text-slate-400 hover:text-purple-300 hover:bg-white/[0.08] active:scale-95 transition cursor-pointer" data-idx="${idx}" title="Edit message">
-              ${TOOLBAR_ICONS.edit}
-            </button>
-            <button class="msg-rewind-btn w-7 h-7 sm:w-8 sm:h-8 rounded-lg flex items-center justify-center text-slate-400 hover:text-amber-400 hover:bg-white/[0.08] active:scale-95 transition cursor-pointer" data-idx="${idx}" title="Rewind chat to this turn">
-              ${TOOLBAR_ICONS.undo}
-            </button>
-            <button class="msg-delete-btn w-7 h-7 sm:w-8 sm:h-8 rounded-lg flex items-center justify-center text-slate-400 hover:text-rose-400 hover:bg-white/[0.08] active:scale-95 transition cursor-pointer" data-idx="${idx}" title="Delete message">
-              ${TOOLBAR_ICONS.trash}
-            </button>
-            <button class="msg-report-btn w-7 h-7 sm:w-8 sm:h-8 rounded-lg flex items-center justify-center text-slate-400 hover:text-rose-400 hover:bg-white/[0.08] active:scale-95 transition cursor-pointer" data-idx="${idx}" title="Report legal issue or safety violation">
-              ${TOOLBAR_ICONS.flag}
+            <button class="msg-more-btn w-7 h-7 sm:w-8 sm:h-8 rounded-lg flex items-center justify-center text-slate-400 hover:text-slate-200 hover:bg-white/[0.08] active:scale-95 transition cursor-pointer" data-idx="${idx}" data-is-user="false" title="More options">
+              ${TOOLBAR_ICONS.dots}
             </button>
           </div>
         </div>
@@ -5736,14 +5728,8 @@ const { character } = Astro.props;
             <button class="msg-copy-btn w-7 h-7 sm:w-8 sm:h-8 rounded-lg flex items-center justify-center text-slate-400 hover:text-slate-200 hover:bg-white/[0.08] active:scale-95 transition cursor-pointer" data-text="${encodeURIComponent(msg.text)}" title="Copy text">
               ${TOOLBAR_ICONS.copy}
             </button>
-            <button class="msg-edit-btn w-7 h-7 sm:w-8 sm:h-8 rounded-lg flex items-center justify-center text-slate-400 hover:text-purple-300 hover:bg-white/[0.08] active:scale-95 transition cursor-pointer" data-idx="${idx}" title="Edit your message">
-              ${TOOLBAR_ICONS.edit}
-            </button>
-            <button class="msg-rewind-btn w-7 h-7 sm:w-8 sm:h-8 rounded-lg flex items-center justify-center text-slate-400 hover:text-amber-400 hover:bg-white/[0.08] active:scale-95 transition cursor-pointer" data-idx="${idx}" title="Rewind prompt to input box">
-              ${TOOLBAR_ICONS.undo}
-            </button>
-            <button class="msg-delete-btn w-7 h-7 sm:w-8 sm:h-8 rounded-lg flex items-center justify-center text-slate-400 hover:text-rose-400 hover:bg-white/[0.08] active:scale-95 transition cursor-pointer" data-idx="${idx}" title="Delete message">
-              ${TOOLBAR_ICONS.trash}
+            <button class="msg-more-btn w-7 h-7 sm:w-8 sm:h-8 rounded-lg flex items-center justify-center text-slate-400 hover:text-slate-200 hover:bg-white/[0.08] active:scale-95 transition cursor-pointer" data-idx="${idx}" data-is-user="true" title="More options">
+              ${TOOLBAR_ICONS.dots}
             </button>
           </div>
         </div>
@@ -6603,6 +6589,9 @@ const { character } = Astro.props;
       if (wasSame) return;
     }
 
+    const moreExisting = document.getElementById('chat-more-popover');
+    if (moreExisting) moreExisting.remove();
+
     const popover = document.createElement('div');
     popover.id = 'chat-regenerate-popover';
     popover.setAttribute('data-msg-idx', String(msgIdx));
@@ -6626,11 +6615,6 @@ const { character } = Astro.props;
       <button type="button" class="regen-opt-btn group flex items-center gap-2.5 px-2.5 py-2 rounded-xl text-xs font-medium text-slate-200 hover:text-cyan-300 hover:bg-white/[0.08] active:scale-[0.98] transition cursor-pointer text-left" data-mode="retry">
         <span class="text-cyan-400 group-hover:text-cyan-300 transition-colors">${TOOLBAR_ICONS.retry}</span>
         <span>Try again</span>
-      </button>
-      <div class="h-px bg-white/[0.08] my-1 mx-1.5"></div>
-      <button type="button" class="regen-report-legal-btn group flex items-center gap-2.5 px-2.5 py-2 rounded-xl text-xs font-medium text-slate-400 hover:text-rose-400 hover:bg-rose-500/10 active:scale-[0.98] transition cursor-pointer text-left" data-idx="${msgIdx}">
-        <span class="text-slate-400 group-hover:text-rose-400 transition-colors">${TOOLBAR_ICONS.flag}</span>
-        <span>Report legal issue</span>
       </button>
     `;
 
@@ -6666,29 +6650,119 @@ const { character } = Astro.props;
         generateNewSwipe(msgIdx, mode);
       });
     });
+  }
 
-    const reportLegalBtn = popover.querySelector('.regen-report-legal-btn');
-    if (reportLegalBtn) {
-      reportLegalBtn.addEventListener('click', (e) => {
-        e.stopPropagation();
-        popover.remove();
-        const msg = conversation[msgIdx];
-        openReportModal({
-          targetType: 'message',
-          targetId: `msg_${msgIdx}_${Date.now()}`,
-          targetName: (typeof activeChar !== 'undefined' && activeChar ? activeChar.name : 'AI Response'),
-          category: 'legal',
-          snippet: msg ? msg.text : '',
-          metadata: {
-            messageIndex: msgIdx,
-            characterId: typeof activeChar !== 'undefined' ? activeChar?.id : '',
-            characterName: typeof activeChar !== 'undefined' ? activeChar?.name : '',
-            provider: localStorage.getItem('aetheria_text_provider') || 'auto',
-            model: localStorage.getItem('aetheria_text_model') || 'auto'
-          }
-        });
-      });
+  // Contextual Message More Options Menu (Gemini / Claude style: Edit, Rewind, Delete, Report)
+  function openMessageMoreMenu(buttonEl, msgIdx, isUser = false) {
+    const existing = document.getElementById('chat-more-popover');
+    if (existing) {
+      const wasSame = existing.getAttribute('data-msg-idx') === String(msgIdx);
+      existing.remove();
+      if (wasSame) return;
     }
+
+    const regenExisting = document.getElementById('chat-regenerate-popover');
+    if (regenExisting) regenExisting.remove();
+
+    const popover = document.createElement('div');
+    popover.id = 'chat-more-popover';
+    popover.setAttribute('data-msg-idx', String(msgIdx));
+    popover.className = 'fixed z-[1000] p-1.5 bg-[#161824]/95 backdrop-blur-xl border border-white/10 rounded-2xl shadow-2xl shadow-black/90 ring-1 ring-white/10 flex flex-col min-w-[175px] select-none text-left transform scale-95 opacity-0 transition-all duration-150 ease-out';
+
+    let itemsHtml = `
+      <button type="button" class="more-opt-btn group flex items-center gap-2.5 px-2.5 py-2 rounded-xl text-xs font-medium text-slate-200 hover:text-white hover:bg-white/[0.08] active:scale-[0.98] transition cursor-pointer text-left" data-action="edit">
+        <span class="text-slate-400 group-hover:text-purple-300 transition-colors">${TOOLBAR_ICONS.edit}</span>
+        <span>Edit message</span>
+      </button>
+      <button type="button" class="more-opt-btn group flex items-center gap-2.5 px-2.5 py-2 rounded-xl text-xs font-medium text-slate-200 hover:text-amber-300 hover:bg-white/[0.08] active:scale-[0.98] transition cursor-pointer text-left" data-action="rewind">
+        <span class="text-slate-400 group-hover:text-amber-300 transition-colors">${TOOLBAR_ICONS.undo}</span>
+        <span>${isUser ? 'Rewind to input' : 'Rewind to here'}</span>
+      </button>
+      <button type="button" class="more-opt-btn group flex items-center gap-2.5 px-2.5 py-2 rounded-xl text-xs font-medium text-slate-200 hover:text-rose-400 hover:bg-rose-500/10 active:scale-[0.98] transition cursor-pointer text-left" data-action="delete">
+        <span class="text-slate-400 group-hover:text-rose-400 transition-colors">${TOOLBAR_ICONS.trash}</span>
+        <span>Delete message</span>
+      </button>
+    `;
+
+    if (!isUser) {
+      itemsHtml += `
+        <div class="h-px bg-white/[0.08] my-1 mx-1.5"></div>
+        <button type="button" class="more-opt-btn group flex items-center gap-2.5 px-2.5 py-2 rounded-xl text-xs font-medium text-slate-400 hover:text-rose-400 hover:bg-rose-500/10 active:scale-[0.98] transition cursor-pointer text-left" data-action="report">
+          <span class="text-slate-400 group-hover:text-rose-400 transition-colors">${TOOLBAR_ICONS.flag}</span>
+          <span>Report issue</span>
+        </button>
+      `;
+    }
+
+    popover.innerHTML = itemsHtml;
+    document.body.appendChild(popover);
+
+    const rect = buttonEl.getBoundingClientRect();
+    const popoverRect = popover.getBoundingClientRect();
+
+    let top = rect.top - popoverRect.height - 8;
+    if (top < 10) {
+      top = rect.bottom + 8;
+    }
+    let left = isUser ? (rect.right - popoverRect.width) : rect.left;
+    if (left + popoverRect.width > window.innerWidth - 12) {
+      left = window.innerWidth - popoverRect.width - 12;
+    }
+    if (left < 12) left = 12;
+
+    popover.style.top = `${top}px`;
+    popover.style.left = `${left}px`;
+
+    requestAnimationFrame(() => {
+      popover.classList.remove('scale-95', 'opacity-0');
+      popover.classList.add('scale-100', 'opacity-100');
+    });
+
+    popover.querySelectorAll('.more-opt-btn').forEach(btn => {
+      btn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        const action = btn.getAttribute('data-action');
+        popover.remove();
+        if (action === 'edit') {
+          enableEditMessage(msgIdx);
+        } else if (action === 'rewind') {
+          rewindTurn(msgIdx);
+        } else if (action === 'delete') {
+          showConfirmModal({
+            title: 'Delete Message?',
+            message: 'Remove this message from the conversation history?',
+            confirmText: 'Delete',
+            cancelText: 'Cancel',
+            icon: 'danger',
+            type: 'danger'
+          }).then(confirmed => {
+            if (confirmed) {
+              conversation.splice(msgIdx, 1);
+              saveChat();
+              renderAllMessages();
+              showNotification('Message deleted.');
+            }
+          });
+        } else if (action === 'report') {
+          const msg = conversation[msgIdx];
+          openReportModal({
+            targetType: 'message',
+            targetId: `msg_${msgIdx}_${Date.now()}`,
+            targetName: (typeof activeChar !== 'undefined' && activeChar ? activeChar.name : 'AI Response'),
+            category: 'safety',
+            snippet: msg ? msg.text : '',
+            metadata: {
+              messageIndex: msgIdx,
+              sender: msg ? msg.sender : 'character',
+              characterId: typeof activeChar !== 'undefined' ? activeChar?.id : '',
+              characterName: typeof activeChar !== 'undefined' ? activeChar?.name : '',
+              provider: localStorage.getItem('aetheria_text_provider') || 'auto',
+              model: localStorage.getItem('aetheria_text_model') || 'auto'
+            }
+          });
+        }
+      });
+    });
   }
 
   // Generate Alternative Swipe Variation (Supports Longer, Shorter, Don't personalize, Retry)
@@ -7492,21 +7566,36 @@ const { character } = Astro.props;
     }
   });
 
-  const dismissRegenPopover = () => {
-    const pop = document.getElementById('chat-regenerate-popover');
-    if (pop) pop.remove();
+  const dismissMessagePopovers = () => {
+    const pop1 = document.getElementById('chat-regenerate-popover');
+    if (pop1) pop1.remove();
+    const pop2 = document.getElementById('chat-more-popover');
+    if (pop2) pop2.remove();
   };
-  chatStream?.addEventListener('scroll', dismissRegenPopover, { passive: true });
-  window.addEventListener('scroll', dismissRegenPopover, { passive: true });
+  chatStream?.addEventListener('scroll', dismissMessagePopovers, { passive: true });
+  window.addEventListener('scroll', dismissMessagePopovers, { passive: true });
 
   // Global delegation for dynamic message buttons (Edit, Rewind, Swipes, Speak, Copy, Delete, Lightbox)
   document.addEventListener('click', (e) => {
     const target = e.target;
 
-    // Dismiss contextual regeneration popover on outside click
+    // Dismiss contextual regeneration popovers on outside click
     const regenPopover = document.getElementById('chat-regenerate-popover');
     if (regenPopover && !regenPopover.contains(target) && !target.closest('.msg-regenerate-btn') && !target.closest('#chat-action-regenerate-btn')) {
       regenPopover.remove();
+    }
+    const morePopover = document.getElementById('chat-more-popover');
+    if (morePopover && !morePopover.contains(target) && !target.closest('.msg-more-btn')) {
+      morePopover.remove();
+    }
+
+    // More options button (...) on character or user message
+    const moreMsgBtn = target.closest('.msg-more-btn');
+    if (moreMsgBtn) {
+      const idx = parseInt(moreMsgBtn.getAttribute('data-idx') || '0', 10);
+      const isUser = moreMsgBtn.getAttribute('data-is-user') === 'true';
+      openMessageMoreMenu(moreMsgBtn, idx, isUser);
+      return;
     }
 
     // Regenerate / modify response button on character message
