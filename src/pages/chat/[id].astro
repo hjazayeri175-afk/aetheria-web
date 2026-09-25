@@ -1032,8 +1032,8 @@ const { character } = Astro.props;
                     <!-- Temperature -->
                     <div class="space-y-1.5">
                       <div class="flex items-center justify-between text-xs">
-                        <span class="text-slate-300 font-medium">Temperature</span>
-                        <span id="badge-temp" class="text-purple-300 font-mono font-bold text-xs bg-purple-950/60 px-2 py-0.5 rounded-lg">0.85</span>
+                        <label for="badge-temp" class="text-slate-300 font-medium cursor-pointer">Temperature</label>
+                        <input id="badge-temp" type="number" min="0.0" max="2.0" step="0.05" value="0.85" title="Click or tap to type exact value" class="w-16 px-1.5 py-0.5 rounded-lg bg-purple-950/80 hover:bg-purple-900/80 focus:bg-purple-900 border border-purple-500/40 focus:border-purple-400 text-purple-300 font-mono font-bold text-xs text-center outline-none transition [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none" />
                       </div>
                       <input id="slider-temp" type="range" min="0.0" max="2.0" step="0.05" value="0.85" class="w-full accent-purple-500 cursor-pointer" />
                       <div class="flex justify-between text-[10px] text-slate-500">
@@ -1046,10 +1046,13 @@ const { character } = Astro.props;
                     <!-- Max Response Tokens -->
                     <div class="space-y-1.5">
                       <div class="flex items-center justify-between text-xs">
-                        <span class="text-slate-300 font-medium">Max Response Tokens</span>
-                        <span id="badge-tokens" class="text-purple-300 font-mono font-bold text-xs bg-purple-950/60 px-2 py-0.5 rounded-lg">2048 tok</span>
+                        <label for="badge-tokens" class="text-slate-300 font-medium cursor-pointer">Max Response Tokens</label>
+                        <div class="flex items-center gap-1">
+                          <input id="badge-tokens" type="number" min="64" max="8192" step="64" value="2048" title="Click or tap to type exact value" class="w-16 px-1.5 py-0.5 rounded-lg bg-purple-950/80 hover:bg-purple-900/80 focus:bg-purple-900 border border-purple-500/40 focus:border-purple-400 text-purple-300 font-mono font-bold text-xs text-center outline-none transition [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none" />
+                          <span class="text-[10px] text-purple-400 font-mono font-semibold">tok</span>
+                        </div>
                       </div>
-                      <input id="slider-tokens" type="range" min="128" max="4096" step="64" value="2048" class="w-full accent-purple-500 cursor-pointer" />
+                      <input id="slider-tokens" type="range" min="64" max="4096" step="64" value="2048" class="w-full accent-purple-500 cursor-pointer" />
                       <div class="flex justify-between text-[10px] text-slate-500">
                         <span>Short (150)</span>
                         <span>Standard (1024)</span>
@@ -1077,18 +1080,18 @@ const { character } = Astro.props;
                     <!-- Top-P -->
                     <div class="space-y-1.5">
                       <div class="flex items-center justify-between text-xs">
-                        <span class="text-slate-300 font-medium">Top-P (Nucleus Sampling)</span>
-                        <span id="badge-top-p" class="text-purple-300 font-mono font-bold text-xs bg-purple-950/60 px-2 py-0.5 rounded-lg">0.95</span>
+                        <label for="badge-top-p" class="text-slate-300 font-medium cursor-pointer">Top-P (Nucleus Sampling)</label>
+                        <input id="badge-top-p" type="number" min="0.05" max="1.0" step="0.05" value="0.95" title="Click or tap to type exact value" class="w-16 px-1.5 py-0.5 rounded-lg bg-purple-950/80 hover:bg-purple-900/80 focus:bg-purple-900 border border-purple-500/40 focus:border-purple-400 text-purple-300 font-mono font-bold text-xs text-center outline-none transition [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none" />
                       </div>
-                      <input id="slider-top-p" type="range" min="0.1" max="1.0" step="0.05" value="0.95" class="w-full accent-purple-500 cursor-pointer" />
+                      <input id="slider-top-p" type="range" min="0.05" max="1.0" step="0.05" value="0.95" class="w-full accent-purple-500 cursor-pointer" />
                       <p class="text-[10px] text-slate-500">Filters out tokens below cumulative probability threshold.</p>
                     </div>
 
                     <!-- Repetition Penalty -->
                     <div class="space-y-1.5">
                       <div class="flex items-center justify-between text-xs">
-                        <span class="text-slate-300 font-medium">Repetition Penalty</span>
-                        <span id="badge-rep-pen" class="text-purple-300 font-mono font-bold text-xs bg-purple-950/60 px-2 py-0.5 rounded-lg">1.10</span>
+                        <label for="badge-rep-pen" class="text-slate-300 font-medium cursor-pointer">Repetition Penalty</label>
+                        <input id="badge-rep-pen" type="number" min="1.0" max="2.0" step="0.02" value="1.10" title="Click or tap to type exact value" class="w-16 px-1.5 py-0.5 rounded-lg bg-purple-950/80 hover:bg-purple-900/80 focus:bg-purple-900 border border-purple-500/40 focus:border-purple-400 text-purple-300 font-mono font-bold text-xs text-center outline-none transition [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none" />
                       </div>
                       <input id="slider-rep-pen" type="range" min="1.0" max="2.0" step="0.02" value="1.10" class="w-full accent-purple-500 cursor-pointer" />
                       <p class="text-[10px] text-slate-500">Prevents the model from repeating recurring dialogue loops.</p>
@@ -1097,8 +1100,8 @@ const { character } = Astro.props;
                     <!-- Frequency Penalty -->
                     <div class="space-y-1.5">
                       <div class="flex items-center justify-between text-xs">
-                        <span class="text-slate-300 font-medium">Frequency Penalty</span>
-                        <span id="badge-freq-pen" class="text-purple-300 font-mono font-bold text-xs bg-purple-950/60 px-2 py-0.5 rounded-lg">0.00</span>
+                        <label for="badge-freq-pen" class="text-slate-300 font-medium cursor-pointer">Frequency Penalty</label>
+                        <input id="badge-freq-pen" type="number" min="-2.0" max="2.0" step="0.1" value="0.00" title="Click or tap to type exact value" class="w-16 px-1.5 py-0.5 rounded-lg bg-purple-950/80 hover:bg-purple-900/80 focus:bg-purple-900 border border-purple-500/40 focus:border-purple-400 text-purple-300 font-mono font-bold text-xs text-center outline-none transition [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none" />
                       </div>
                       <input id="slider-freq-pen" type="range" min="-2.0" max="2.0" step="0.1" value="0.0" class="w-full accent-purple-500 cursor-pointer" />
                     </div>
@@ -1106,8 +1109,8 @@ const { character } = Astro.props;
                     <!-- Presence Penalty -->
                     <div class="space-y-1.5">
                       <div class="flex items-center justify-between text-xs">
-                        <span class="text-slate-300 font-medium">Presence Penalty</span>
-                        <span id="badge-pres-pen" class="text-purple-300 font-mono font-bold text-xs bg-purple-950/60 px-2 py-0.5 rounded-lg">0.00</span>
+                        <label for="badge-pres-pen" class="text-slate-300 font-medium cursor-pointer">Presence Penalty</label>
+                        <input id="badge-pres-pen" type="number" min="-2.0" max="2.0" step="0.1" value="0.00" title="Click or tap to type exact value" class="w-16 px-1.5 py-0.5 rounded-lg bg-purple-950/80 hover:bg-purple-900/80 focus:bg-purple-900 border border-purple-500/40 focus:border-purple-400 text-purple-300 font-mono font-bold text-xs text-center outline-none transition [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none" />
                       </div>
                       <input id="slider-pres-pen" type="range" min="-2.0" max="2.0" step="0.1" value="0.0" class="w-full accent-purple-500 cursor-pointer" />
                     </div>
@@ -1115,10 +1118,13 @@ const { character } = Astro.props;
                     <!-- Context Turns -->
                     <div class="space-y-1.5">
                       <div class="flex items-center justify-between text-xs">
-                        <span class="text-slate-300 font-medium">Context Memory Window</span>
-                        <span id="badge-context" class="text-purple-300 font-mono font-bold text-xs bg-purple-950/60 px-2 py-0.5 rounded-lg">16 Turns</span>
+                        <label for="badge-context" class="text-slate-300 font-medium cursor-pointer">Context Memory Window</label>
+                        <div class="flex items-center gap-1">
+                          <input id="badge-context" type="number" min="2" max="60" step="2" value="16" title="Click or tap to type exact value" class="w-14 px-1.5 py-0.5 rounded-lg bg-purple-950/80 hover:bg-purple-900/80 focus:bg-purple-900 border border-purple-500/40 focus:border-purple-400 text-purple-300 font-mono font-bold text-xs text-center outline-none transition [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none" />
+                          <span class="text-[10px] text-purple-400 font-mono font-semibold">turns</span>
+                        </div>
                       </div>
-                      <input id="slider-context" type="range" min="4" max="40" step="2" value="16" class="w-full accent-purple-500 cursor-pointer" />
+                      <input id="slider-context" type="range" min="2" max="60" step="2" value="16" class="w-full accent-purple-500 cursor-pointer" />
                     </div>
 
                     <!-- Streaming Toggle -->
@@ -1211,8 +1217,8 @@ const { character } = Astro.props;
                     <!-- Stability -->
                     <div class="space-y-1.5">
                       <div class="flex items-center justify-between text-xs">
-                        <span class="text-slate-300 font-medium">Stability (Consistency vs Emotion)</span>
-                        <span id="badge-stability" class="text-emerald-300 font-mono font-bold text-xs bg-emerald-950/60 px-2 py-0.5 rounded-lg">0.50</span>
+                        <label for="badge-stability" class="text-slate-300 font-medium cursor-pointer">Stability (Consistency vs Emotion)</label>
+                        <input id="badge-stability" type="number" min="0.0" max="1.0" step="0.05" value="0.50" title="Click or tap to type exact value" class="w-16 px-1.5 py-0.5 rounded-lg bg-emerald-950/80 hover:bg-emerald-900/80 focus:bg-emerald-900 border border-emerald-500/40 focus:border-emerald-400 text-emerald-300 font-mono font-bold text-xs text-center outline-none transition [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none" />
                       </div>
                       <input id="slider-stability" type="range" min="0.0" max="1.0" step="0.05" value="0.50" class="w-full accent-emerald-500 cursor-pointer" />
                     </div>
@@ -1220,8 +1226,8 @@ const { character } = Astro.props;
                     <!-- Similarity / Clarity -->
                     <div class="space-y-1.5">
                       <div class="flex items-center justify-between text-xs">
-                        <span class="text-slate-300 font-medium">Clarity & Similarity Boost</span>
-                        <span id="badge-clarity" class="text-emerald-300 font-mono font-bold text-xs bg-emerald-950/60 px-2 py-0.5 rounded-lg">0.75</span>
+                        <label for="badge-clarity" class="text-slate-300 font-medium cursor-pointer">Clarity & Similarity Boost</label>
+                        <input id="badge-clarity" type="number" min="0.0" max="1.0" step="0.05" value="0.75" title="Click or tap to type exact value" class="w-16 px-1.5 py-0.5 rounded-lg bg-emerald-950/80 hover:bg-emerald-900/80 focus:bg-emerald-900 border border-emerald-500/40 focus:border-emerald-400 text-emerald-300 font-mono font-bold text-xs text-center outline-none transition [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none" />
                       </div>
                       <input id="slider-clarity" type="range" min="0.0" max="1.0" step="0.05" value="0.75" class="w-full accent-emerald-500 cursor-pointer" />
                     </div>
@@ -1229,8 +1235,11 @@ const { character } = Astro.props;
                     <!-- Speed Rate -->
                     <div class="space-y-1.5">
                       <div class="flex items-center justify-between text-xs">
-                        <span class="text-slate-300 font-medium">Speech Rate</span>
-                        <span id="badge-voice-rate" class="text-emerald-300 font-mono font-bold text-xs bg-emerald-950/60 px-2 py-0.5 rounded-lg">1.0x</span>
+                        <label for="badge-voice-rate" class="text-slate-300 font-medium cursor-pointer">Speech Rate</label>
+                        <div class="flex items-center gap-0.5">
+                          <input id="badge-voice-rate" type="number" min="0.5" max="2.0" step="0.1" value="1.0" title="Click or tap to type exact value" class="w-14 px-1.5 py-0.5 rounded-lg bg-emerald-950/80 hover:bg-emerald-900/80 focus:bg-emerald-900 border border-emerald-500/40 focus:border-emerald-400 text-emerald-300 font-mono font-bold text-xs text-center outline-none transition [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none" />
+                          <span class="text-[10px] text-emerald-400 font-mono font-semibold">x</span>
+                        </div>
                       </div>
                       <input id="slider-voice-rate" type="range" min="0.5" max="2.0" step="0.1" value="1.0" class="w-full accent-emerald-500 cursor-pointer" />
                     </div>
@@ -1238,8 +1247,8 @@ const { character } = Astro.props;
                     <!-- Pitch -->
                     <div class="space-y-1.5">
                       <div class="flex items-center justify-between text-xs">
-                        <span class="text-slate-300 font-medium">Tone Pitch</span>
-                        <span id="badge-voice-pitch" class="text-emerald-300 font-mono font-bold text-xs bg-emerald-950/60 px-2 py-0.5 rounded-lg">1.0</span>
+                        <label for="badge-voice-pitch" class="text-slate-300 font-medium cursor-pointer">Tone Pitch</label>
+                        <input id="badge-voice-pitch" type="number" min="0.5" max="1.5" step="0.05" value="1.0" title="Click or tap to type exact value" class="w-16 px-1.5 py-0.5 rounded-lg bg-emerald-950/80 hover:bg-emerald-900/80 focus:bg-emerald-900 border border-emerald-500/40 focus:border-emerald-400 text-emerald-300 font-mono font-bold text-xs text-center outline-none transition [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none" />
                       </div>
                       <input id="slider-voice-pitch" type="range" min="0.5" max="1.5" step="0.05" value="1.0" class="w-full accent-emerald-500 cursor-pointer" />
                     </div>
@@ -1398,8 +1407,8 @@ const { character } = Astro.props;
                     <!-- Motion Strength -->
                     <div class="space-y-1.5">
                       <div class="flex items-center justify-between text-xs">
-                        <span class="text-slate-300 font-medium">Motion Intensity (1-100)</span>
-                        <span id="badge-motion" class="text-cyan-300 font-mono font-bold text-xs bg-cyan-950/60 px-2 py-0.5 rounded-lg">50</span>
+                        <label for="badge-motion" class="text-slate-300 font-medium cursor-pointer">Motion Intensity (1-100)</label>
+                        <input id="badge-motion" type="number" min="1" max="100" step="1" value="50" title="Click or tap to type exact value" class="w-14 px-1.5 py-0.5 rounded-lg bg-cyan-950/80 hover:bg-cyan-900/80 focus:bg-cyan-900 border border-cyan-500/40 focus:border-cyan-400 text-cyan-300 font-mono font-bold text-xs text-center outline-none transition [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none" />
                       </div>
                       <input id="slider-motion" type="range" min="1" max="100" step="1" value="50" class="w-full accent-cyan-500 cursor-pointer" />
                       <div class="flex justify-between text-[10px] text-slate-500">
@@ -3189,6 +3198,82 @@ const { character } = Astro.props;
   const videoDurationSelect = document.getElementById('video-duration-select');
   const videoResSelect = document.getElementById('video-res-select');
 
+  // Dual Control Sync: Real-time Range Slider <-> Numeric Input Badge
+  function setupDualControl(slider, inputOrBadge, unit = '') {
+    if (!slider || !inputOrBadge) return;
+    const isInput = inputOrBadge.tagName === 'INPUT';
+
+    const syncToBadge = (val) => {
+      if (isInput) {
+        inputOrBadge.value = val;
+      } else {
+        inputOrBadge.textContent = unit ? `${val} ${unit}` : val;
+      }
+    };
+
+    slider.addEventListener('input', () => {
+      syncToBadge(slider.value);
+    });
+    slider.addEventListener('change', () => {
+      syncToBadge(slider.value);
+    });
+
+    if (isInput) {
+      inputOrBadge.addEventListener('input', () => {
+        const val = parseFloat(inputOrBadge.value);
+        if (!isNaN(val)) {
+          const min = parseFloat(slider.min);
+          const max = parseFloat(slider.max);
+          if (val >= min && val <= max) {
+            slider.value = val;
+          }
+        }
+      });
+
+      inputOrBadge.addEventListener('change', () => {
+        let val = parseFloat(inputOrBadge.value);
+        const min = parseFloat(slider.min);
+        const max = parseFloat(slider.max);
+        if (isNaN(val)) {
+          val = parseFloat(slider.value) || min;
+        } else {
+          if (val < min) val = min;
+          if (val > max) val = max;
+        }
+        slider.value = val;
+        inputOrBadge.value = val;
+      });
+
+      inputOrBadge.addEventListener('blur', () => {
+        let val = parseFloat(inputOrBadge.value);
+        const min = parseFloat(slider.min);
+        const max = parseFloat(slider.max);
+        if (isNaN(val)) {
+          val = parseFloat(slider.value) || min;
+        } else {
+          if (val < min) val = min;
+          if (val > max) val = max;
+        }
+        slider.value = val;
+        inputOrBadge.value = val;
+      });
+    }
+  }
+
+  // Bind dual controls for real-time bidirectional slider and numeric typing synchronization
+  setupDualControl(sliderTemp, badgeTemp);
+  setupDualControl(sliderTokens, badgeTokens, 'tok');
+  setupDualControl(sliderTopP, badgeTopP);
+  setupDualControl(sliderRepPen, badgeRepPen);
+  setupDualControl(sliderFreqPen, badgeFreqPen);
+  setupDualControl(sliderPresPen, badgePresPen);
+  setupDualControl(sliderContext, badgeContext, 'Turns');
+  setupDualControl(sliderStability, badgeStability);
+  setupDualControl(sliderClarity, badgeClarity);
+  setupDualControl(sliderVoiceRate, badgeVoiceRate, 'x');
+  setupDualControl(sliderVoicePitch, badgeVoicePitch);
+  setupDualControl(sliderMotion, badgeMotion);
+
   // Safe helper to extract balanced <details> and <div ...> blocks without breaking nested tags
   function extractBalancedHtmlBlocks(str) {
     const htmlBlocks = [];
@@ -4268,20 +4353,57 @@ const { character } = Astro.props;
     if (textBaseUrl) textBaseUrl.value = baseUrl;
 
     // 2. Hyperparameters
-    const temp = localStorage.getItem('aetheria_text_temp');
-    if (temp && tempSlider) { tempSlider.value = temp; if (tempVal) tempVal.textContent = temp; }
+    const temp = localStorage.getItem('aetheria_text_temp') || '0.85';
+    if (sliderTemp) sliderTemp.value = temp;
+    if (badgeTemp) {
+      if (badgeTemp.tagName === 'INPUT') badgeTemp.value = temp;
+      else badgeTemp.textContent = temp;
+    }
 
-    const tokens = localStorage.getItem('aetheria_text_tokens');
-    if (tokens && tokensSlider) { tokensSlider.value = tokens; if (tokensVal) tokensVal.textContent = tokens; }
+    const tokens = localStorage.getItem('aetheria_text_tokens') || '2048';
+    if (sliderTokens) sliderTokens.value = tokens;
+    if (badgeTokens) {
+      if (badgeTokens.tagName === 'INPUT') badgeTokens.value = tokens;
+      else badgeTokens.textContent = `${tokens} tok`;
+    }
 
-    const topP = localStorage.getItem('aetheria_text_top_p');
-    if (topP && topPSlider) { topPSlider.value = topP; if (topPVal) topPVal.textContent = topP; }
+    const topP = localStorage.getItem('aetheria_text_top_p') || '0.95';
+    if (sliderTopP) sliderTopP.value = topP;
+    if (badgeTopP) {
+      if (badgeTopP.tagName === 'INPUT') badgeTopP.value = topP;
+      else badgeTopP.textContent = topP;
+    }
 
-    const repPen = localStorage.getItem('aetheria_text_rep_pen');
-    if (repPen && repPenSlider) { repPenSlider.value = repPen; if (repPenVal) repPenVal.textContent = repPen; }
+    const repPen = localStorage.getItem('aetheria_text_rep_pen') || '1.10';
+    if (sliderRepPen) sliderRepPen.value = repPen;
+    if (badgeRepPen) {
+      if (badgeRepPen.tagName === 'INPUT') badgeRepPen.value = repPen;
+      else badgeRepPen.textContent = repPen;
+    }
+
+    const freqPen = localStorage.getItem('aetheria_text_freq_pen') || '0.00';
+    if (sliderFreqPen) sliderFreqPen.value = freqPen;
+    if (badgeFreqPen) {
+      if (badgeFreqPen.tagName === 'INPUT') badgeFreqPen.value = freqPen;
+      else badgeFreqPen.textContent = freqPen;
+    }
+
+    const presPen = localStorage.getItem('aetheria_text_pres_pen') || '0.00';
+    if (sliderPresPen) sliderPresPen.value = presPen;
+    if (badgePresPen) {
+      if (badgePresPen.tagName === 'INPUT') badgePresPen.value = presPen;
+      else badgePresPen.textContent = presPen;
+    }
+
+    const contextLimit = localStorage.getItem('aetheria_text_context') || '16';
+    if (sliderContext) sliderContext.value = contextLimit;
+    if (badgeContext) {
+      if (badgeContext.tagName === 'INPUT') badgeContext.value = contextLimit;
+      else badgeContext.textContent = `${contextLimit} Turns`;
+    }
 
     const streaming = localStorage.getItem('aetheria_text_streaming');
-    if (streaming && toggleStreaming) toggleStreaming.checked = streaming !== 'false';
+    if (toggleStreaming) toggleStreaming.checked = streaming !== 'false';
     const thinkingVal = localStorage.getItem('aetheria_text_thinking');
     if (toggleThinking) toggleThinking.checked = thinkingVal === 'true'; // default off for snappy roleplay
 
@@ -4291,6 +4413,34 @@ const { character } = Astro.props;
     const voiceKey = localStorage.getItem('aetheria_voice_key') || '';
     if (voiceApiKey) voiceApiKey.value = voiceKey;
 
+    const stability = localStorage.getItem('aetheria_voice_stability') || '0.50';
+    if (sliderStability) sliderStability.value = stability;
+    if (badgeStability) {
+      if (badgeStability.tagName === 'INPUT') badgeStability.value = stability;
+      else badgeStability.textContent = stability;
+    }
+
+    const clarity = localStorage.getItem('aetheria_voice_clarity') || '0.75';
+    if (sliderClarity) sliderClarity.value = clarity;
+    if (badgeClarity) {
+      if (badgeClarity.tagName === 'INPUT') badgeClarity.value = clarity;
+      else badgeClarity.textContent = clarity;
+    }
+
+    const voiceRate = localStorage.getItem('aetheria_voice_rate') || '1.0';
+    if (sliderVoiceRate) sliderVoiceRate.value = voiceRate;
+    if (badgeVoiceRate) {
+      if (badgeVoiceRate.tagName === 'INPUT') badgeVoiceRate.value = voiceRate;
+      else badgeVoiceRate.textContent = `${voiceRate}x`;
+    }
+
+    const voicePitch = localStorage.getItem('aetheria_voice_pitch') || '1.0';
+    if (sliderVoicePitch) sliderVoicePitch.value = voicePitch;
+    if (badgeVoicePitch) {
+      if (badgeVoicePitch.tagName === 'INPUT') badgeVoicePitch.value = voicePitch;
+      else badgeVoicePitch.textContent = voicePitch;
+    }
+
     // 4. Image settings
     const imgProv = localStorage.getItem('aetheria_image_provider') || 'pollinations';
     if (imageProviderSelect) imageProviderSelect.value = imgProv;
@@ -4298,8 +4448,14 @@ const { character } = Astro.props;
     if (imageApiKey) imageApiKey.value = imgKey;
 
     // 5. Video settings
-    const vidProv = localStorage.getItem('aetheria_video_provider') || 'kling';
+    const vidProv = localStorage.getItem('aetheria_video_provider') || 'fal-kling';
     if (videoProviderSelect) videoProviderSelect.value = vidProv;
+    const motion = localStorage.getItem('aetheria_video_motion') || '50';
+    if (sliderMotion) sliderMotion.value = motion;
+    if (badgeMotion) {
+      if (badgeMotion.tagName === 'INPUT') badgeMotion.value = motion;
+      else badgeMotion.textContent = motion;
+    }
 
     // Sync Voice Autoplay state (Default: false / muted)
     ttsEnabled = localStorage.getItem('aetheria_voice_autoplay') === 'true';
@@ -5542,6 +5698,7 @@ const { character } = Astro.props;
       if (videoModelSelect) localStorage.setItem('aetheria_video_model', videoModelSelect.value);
       if (videoRatioSelect) localStorage.setItem('aetheria_video_ratio', videoRatioSelect.value);
       if (videoDurationSelect) localStorage.setItem('aetheria_video_duration', videoDurationSelect.value);
+      if (sliderMotion) localStorage.setItem('aetheria_video_motion', sliderMotion.value);
 
       if (engineLabel) {
         const pName = PROVIDER_CONFIGS[prov]?.name || 'Engine';
@@ -6500,9 +6657,13 @@ const { character } = Astro.props;
     }
     const model = savedModel;
     const temp = parseFloat(localStorage.getItem('aetheria_text_temp') || '0.85');
-    const maxTokens = Math.max(1024, parseInt(localStorage.getItem('aetheria_text_tokens') || '2048', 10));
+    const maxTokens = parseInt(localStorage.getItem('aetheria_text_tokens') || '2048', 10);
     const topP = parseFloat(localStorage.getItem('aetheria_text_top_p') || '0.95');
+    const repPen = parseFloat(localStorage.getItem('aetheria_text_rep_pen') || '1.10');
+    const freqPen = parseFloat(localStorage.getItem('aetheria_text_freq_pen') || '0.00');
+    const presPen = parseFloat(localStorage.getItem('aetheria_text_pres_pen') || '0.00');
     const enableStreaming = localStorage.getItem('aetheria_text_streaming') !== 'false';
+    const enableThinking = localStorage.getItem('aetheria_text_thinking') === 'true';
 
     let replyText = '';
 
@@ -6560,12 +6721,11 @@ const { character } = Astro.props;
           headers['X-Title'] = 'Aetheria AI';
         }
 
-        const enableThinking = localStorage.getItem('aetheria_text_thinking') === 'true';
         let effectiveMaxTokens = maxTokens;
-        const isReasoningModel = /deepseek|r1|reasoning|qwq|flash|thinking/i.test(model);
-        if (enableThinking || isReasoningModel) {
+        const isReasoningModel = /deepseek-reasoner|\br1\b|reasoning|qwq|thinking/i.test(model);
+        if (enableThinking && isReasoningModel) {
           // Generous token budget so internal thinking never starves the character response
-          effectiveMaxTokens = Math.max(maxTokens, 8192);
+          effectiveMaxTokens = Math.max(maxTokens, 4096);
           systemPrompt += `\n\n[REASONING & ROLEPLAY PROTOCOL]:\n- Keep internal thinking focused on {{char}}'s inner emotions and subtext.\n- CRITICAL: You MUST write {{char}}'s spoken dialogue, emotional reactions, and roleplay actions (*in asterisks*) outside the thought process as your final response.\n- Never end your turn inside the thinking phase without {{char}} speaking to {{user}}.`;
           systemPrompt = formatMacroText(systemPrompt);
         }
@@ -6577,6 +6737,7 @@ const { character } = Astro.props;
             messages: payloadMessages,
             max_tokens: effectiveMaxTokens,
             temperature: temp,
+            top_p: topP,
             stream: enableStreaming
           };
           if (enableThinking) {
@@ -6592,6 +6753,9 @@ const { character } = Astro.props;
             temperature: isOModel ? undefined : temp,
             ...(isOModel ? { max_completion_tokens: effectiveMaxTokens } : { max_tokens: effectiveMaxTokens }),
             top_p: isOModel ? undefined : topP,
+            ...(freqPen !== 0 ? { frequency_penalty: freqPen } : {}),
+            ...(presPen !== 0 ? { presence_penalty: presPen } : {}),
+            ...(repPen !== 1.0 ? { repetition_penalty: repPen } : {}),
             stream: enableStreaming
           };
 
@@ -6968,7 +7132,7 @@ const { character } = Astro.props;
       if (typingIndicator) typingIndicator.classList.remove('hidden');
       try {
         const sysPrompt = buildSystemPrompt(userText);
-        const rawDemoHistory = conversation.slice(-8)
+        const rawDemoHistory = conversation.slice(-contextLimit)
           .filter(m => m.text && !isPoisonedOrErrorMessage(m.text));
         const demoHistory = getSanitizedHistoryForAPI(rawDemoHistory);
         const demoRes = await fetch('/api/chat/demo', {
@@ -6978,7 +7142,14 @@ const { character } = Astro.props;
             messages: [
               { role: 'system', content: sysPrompt },
               ...demoHistory
-            ]
+            ],
+            temperature: temp,
+            max_tokens: maxTokens,
+            top_p: topP,
+            frequency_penalty: freqPen,
+            presence_penalty: presPen,
+            repetition_penalty: repPen,
+            stream: enableStreaming
           }),
           signal: AbortSignal.timeout(15000)
         });
@@ -7251,7 +7422,11 @@ const { character } = Astro.props;
       return;
     }
     const temp = Math.min(1.2, parseFloat(localStorage.getItem('aetheria_text_temp') || '0.85') + 0.15); // higher temperature for variety
-    const maxTokens = Math.max(1024, parseInt(localStorage.getItem('aetheria_text_tokens') || '2048', 10));
+    const maxTokens = parseInt(localStorage.getItem('aetheria_text_tokens') || '2048', 10);
+    const topP = parseFloat(localStorage.getItem('aetheria_text_top_p') || '0.95');
+    const repPen = parseFloat(localStorage.getItem('aetheria_text_rep_pen') || '1.10');
+    const freqPen = parseFloat(localStorage.getItem('aetheria_text_freq_pen') || '0.00');
+    const presPen = parseFloat(localStorage.getItem('aetheria_text_pres_pen') || '0.00');
 
     let newReply = '';
 
@@ -7335,7 +7510,8 @@ const { character } = Astro.props;
             system: swipeSystemPrompt,
             messages: payloadMessages,
             max_tokens: tokenBudget,
-            temperature: temp
+            temperature: temp,
+            top_p: topP
           };
           if (isThinkingEnabled) {
             payload.thinking = { type: 'enabled', budget_tokens: 2048 };
@@ -7348,7 +7524,11 @@ const { character } = Astro.props;
             model: model,
             messages: [{ role: 'system', content: swipeSystemPrompt }, ...payloadMessages],
             temperature: isOModel ? undefined : temp,
-            ...(isOModel ? { max_completion_tokens: tokenBudget } : { max_tokens: tokenBudget })
+            ...(isOModel ? { max_completion_tokens: tokenBudget } : { max_tokens: tokenBudget }),
+            top_p: isOModel ? undefined : topP,
+            ...(freqPen !== 0 ? { frequency_penalty: freqPen } : {}),
+            ...(presPen !== 0 ? { presence_penalty: presPen } : {}),
+            ...(repPen !== 1.0 ? { repetition_penalty: repPen } : {})
           };
           if (provider === 'openrouter') {
             if (isThinkingEnabled) {
@@ -7428,7 +7608,13 @@ const { character } = Astro.props;
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
-            messages: [{ role: 'system', content: swipeSystemPrompt }, ...payloadMessages]
+            messages: [{ role: 'system', content: swipeSystemPrompt }, ...payloadMessages],
+            temperature: temp,
+            max_tokens: tokenBudget,
+            top_p: topP,
+            frequency_penalty: freqPen,
+            presence_penalty: presPen,
+            repetition_penalty: repPen
           }),
           signal: AbortSignal.timeout(12000)
         });

@@ -818,13 +818,25 @@ export default {
         if (env.AI) {
           try {
             const aiModel = '@cf/meta/llama-3.1-8b-instruct-fp8';
+            const runOptions: Record<string, any> = {
+              messages,
+              stream: stream,
+              max_tokens: typeof payload.max_tokens === 'number' ? Math.min(2048, Math.max(64, payload.max_tokens)) : 600,
+              temperature: typeof payload.temperature === 'number' ? payload.temperature : 0.85,
+              top_p: typeof payload.top_p === 'number' ? payload.top_p : 0.95
+            };
+            if (typeof payload.repetition_penalty === 'number') {
+              runOptions.repetition_penalty = payload.repetition_penalty;
+            }
+            if (typeof payload.frequency_penalty === 'number') {
+              runOptions.frequency_penalty = payload.frequency_penalty;
+            }
+            if (typeof payload.presence_penalty === 'number') {
+              runOptions.presence_penalty = payload.presence_penalty;
+            }
+
             if (stream) {
-              const aiStream = await env.AI.run(aiModel, {
-                messages,
-                stream: true,
-                max_tokens: payload.max_tokens || 400,
-                temperature: payload.temperature || 0.85
-              });
+              const aiStream = await env.AI.run(aiModel, runOptions);
               return new Response(aiStream, {
                 headers: {
                   'Content-Type': 'text/event-stream; charset=utf-8',
@@ -836,12 +848,7 @@ export default {
                 }
               });
             } else {
-              const result = await env.AI.run(aiModel, {
-                messages,
-                stream: false,
-                max_tokens: payload.max_tokens || 400,
-                temperature: payload.temperature || 0.85
-              });
+              const result = await env.AI.run(aiModel, runOptions);
               const reply = result?.response || '';
               return jsonResponse({
                 choices: [{
