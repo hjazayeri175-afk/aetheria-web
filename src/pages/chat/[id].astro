@@ -1090,7 +1090,7 @@ const { character } = Astro.props;
                     <div class="space-y-1.5" dir="ltr">
                       <div class="flex items-center justify-between text-xs">
                         <label for="badge-temp" class="text-slate-300 font-medium cursor-pointer">Temperature</label>
-                        <input id="badge-temp" dir="ltr" lang="en" type="number" min="0.0" max="2.0" step="0.05" value="0.85" title="Click or tap to type exact value" class="w-16 px-1.5 py-0.5 rounded-lg bg-purple-950/80 hover:bg-purple-900/80 focus:bg-purple-900 border border-purple-500/40 focus:border-purple-400 text-purple-300 font-mono font-bold text-xs text-center outline-none transition force-ltr-numeric [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none" />
+                        <input id="badge-temp" dir="ltr" lang="en" type="text" inputmode="decimal" autocomplete="off" spellcheck="false" value="0.85" title="Click or tap to type exact value" class="w-16 px-1.5 py-0.5 rounded-lg bg-purple-950/80 hover:bg-purple-900/80 focus:bg-purple-900 border border-purple-500/40 focus:border-purple-400 text-purple-300 font-mono font-bold text-xs text-center outline-none transition force-ltr-numeric" />
                       </div>
                       <input id="slider-temp" dir="ltr" type="range" min="0.0" max="2.0" step="0.05" value="0.85" class="w-full accent-purple-500 cursor-pointer" />
                       <div class="flex justify-between text-[10px] text-slate-500 font-mono" dir="ltr">
@@ -1105,7 +1105,7 @@ const { character } = Astro.props;
                       <div class="flex items-center justify-between text-xs">
                         <label for="badge-tokens" class="text-slate-300 font-medium cursor-pointer">Max Response Tokens</label>
                         <div class="flex items-center gap-1.5" dir="ltr">
-                          <input id="badge-tokens" dir="ltr" lang="en" type="number" min="64" max="8192" step="64" value="2048" title="Click or tap to type exact value" class="w-16 px-1.5 py-0.5 rounded-lg bg-purple-950/80 hover:bg-purple-900/80 focus:bg-purple-900 border border-purple-500/40 focus:border-purple-400 text-purple-300 font-mono font-bold text-xs text-center outline-none transition force-ltr-numeric [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none" />
+                          <input id="badge-tokens" dir="ltr" lang="en" type="text" inputmode="numeric" autocomplete="off" spellcheck="false" value="2048" title="Click or tap to type exact value" class="w-16 px-1.5 py-0.5 rounded-lg bg-purple-950/80 hover:bg-purple-900/80 focus:bg-purple-900 border border-purple-500/40 focus:border-purple-400 text-purple-300 font-mono font-bold text-xs text-center outline-none transition force-ltr-numeric" />
                           <span class="text-[10px] text-purple-400 font-mono font-semibold select-none">tok</span>
                         </div>
                       </div>
@@ -1138,7 +1138,7 @@ const { character } = Astro.props;
                     <div class="space-y-1.5" dir="ltr">
                       <div class="flex items-center justify-between text-xs">
                         <label for="badge-top-p" class="text-slate-300 font-medium cursor-pointer">Top-P (Nucleus Sampling)</label>
-                        <input id="badge-top-p" dir="ltr" lang="en" type="number" min="0.05" max="1.0" step="0.05" value="0.95" title="Click or tap to type exact value" class="w-16 px-1.5 py-0.5 rounded-lg bg-purple-950/80 hover:bg-purple-900/80 focus:bg-purple-900 border border-purple-500/40 focus:border-purple-400 text-purple-300 font-mono font-bold text-xs text-center outline-none transition force-ltr-numeric [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none" />
+                        <input id="badge-top-p" dir="ltr" lang="en" type="text" inputmode="decimal" autocomplete="off" spellcheck="false" value="0.95" title="Click or tap to type exact value" class="w-16 px-1.5 py-0.5 rounded-lg bg-purple-950/80 hover:bg-purple-900/80 focus:bg-purple-900 border border-purple-500/40 focus:border-purple-400 text-purple-300 font-mono font-bold text-xs text-center outline-none transition force-ltr-numeric" />
                       </div>
                       <input id="slider-top-p" dir="ltr" type="range" min="0.05" max="1.0" step="0.05" value="0.95" class="w-full accent-purple-500 cursor-pointer" />
                       <p class="text-[10px] text-slate-500">Filters out tokens below cumulative probability threshold.</p>
@@ -1148,7 +1148,7 @@ const { character } = Astro.props;
                     <div class="space-y-1.5" dir="ltr">
                       <div class="flex items-center justify-between text-xs">
                         <label for="badge-rep-pen" class="text-slate-300 font-medium cursor-pointer">Repetition Penalty</label>
-                        <input id="badge-rep-pen" dir="ltr" lang="en" type="number" min="1.0" max="2.0" step="0.02" value="1.10" title="Click or tap to type exact value" class="w-16 px-1.5 py-0.5 rounded-lg bg-purple-950/80 hover:bg-purple-900/80 focus:bg-purple-900 border border-purple-500/40 focus:border-purple-400 text-purple-300 font-mono font-bold text-xs text-center outline-none transition force-ltr-numeric [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none" />
+                        <input id="badge-rep-pen" dir="ltr" lang="en" type="text" inputmode="decimal" autocomplete="off" spellcheck="false" value="1.10" title="Click or tap to type exact value" class="w-16 px-1.5 py-0.5 rounded-lg bg-purple-950/80 hover:bg-purple-900/80 focus:bg-purple-900 border border-purple-500/40 focus:border-purple-400 text-purple-300 font-mono font-bold text-xs text-center outline-none transition force-ltr-numeric" />
                       </div>
                       <input id="slider-rep-pen" dir="ltr" type="range" min="1.0" max="2.0" step="0.02" value="1.10" class="w-full accent-purple-500 cursor-pointer" />
                       <p class="text-[10px] text-slate-500">Prevents the model from repeating recurring dialogue loops.</p>
@@ -1158,7 +1158,7 @@ const { character } = Astro.props;
                     <div class="space-y-1.5" dir="ltr">
                       <div class="flex items-center justify-between text-xs">
                         <label for="badge-freq-pen" class="text-slate-300 font-medium cursor-pointer">Frequency Penalty</label>
-                        <input id="badge-freq-pen" dir="ltr" lang="en" type="number" min="-2.0" max="2.0" step="0.1" value="0.00" title="Click or tap to type exact value" class="w-16 px-1.5 py-0.5 rounded-lg bg-purple-950/80 hover:bg-purple-900/80 focus:bg-purple-900 border border-purple-500/40 focus:border-purple-400 text-purple-300 font-mono font-bold text-xs text-center outline-none transition force-ltr-numeric [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none" />
+                        <input id="badge-freq-pen" dir="ltr" lang="en" type="text" inputmode="decimal" autocomplete="off" spellcheck="false" value="0.00" title="Click or tap to type exact value" class="w-16 px-1.5 py-0.5 rounded-lg bg-purple-950/80 hover:bg-purple-900/80 focus:bg-purple-900 border border-purple-500/40 focus:border-purple-400 text-purple-300 font-mono font-bold text-xs text-center outline-none transition force-ltr-numeric" />
                       </div>
                       <input id="slider-freq-pen" dir="ltr" type="range" min="-2.0" max="2.0" step="0.1" value="0.0" class="w-full accent-purple-500 cursor-pointer" />
                     </div>
@@ -1167,7 +1167,7 @@ const { character } = Astro.props;
                     <div class="space-y-1.5" dir="ltr">
                       <div class="flex items-center justify-between text-xs">
                         <label for="badge-pres-pen" class="text-slate-300 font-medium cursor-pointer">Presence Penalty</label>
-                        <input id="badge-pres-pen" dir="ltr" lang="en" type="number" min="-2.0" max="2.0" step="0.1" value="0.00" title="Click or tap to type exact value" class="w-16 px-1.5 py-0.5 rounded-lg bg-purple-950/80 hover:bg-purple-900/80 focus:bg-purple-900 border border-purple-500/40 focus:border-purple-400 text-purple-300 font-mono font-bold text-xs text-center outline-none transition force-ltr-numeric [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none" />
+                        <input id="badge-pres-pen" dir="ltr" lang="en" type="text" inputmode="decimal" autocomplete="off" spellcheck="false" value="0.00" title="Click or tap to type exact value" class="w-16 px-1.5 py-0.5 rounded-lg bg-purple-950/80 hover:bg-purple-900/80 focus:bg-purple-900 border border-purple-500/40 focus:border-purple-400 text-purple-300 font-mono font-bold text-xs text-center outline-none transition force-ltr-numeric" />
                       </div>
                       <input id="slider-pres-pen" dir="ltr" type="range" min="-2.0" max="2.0" step="0.1" value="0.0" class="w-full accent-purple-500 cursor-pointer" />
                     </div>
@@ -1177,7 +1177,7 @@ const { character } = Astro.props;
                       <div class="flex items-center justify-between text-xs">
                         <label for="badge-context" class="text-slate-300 font-medium cursor-pointer">Context Memory Window</label>
                         <div class="flex items-center gap-1.5" dir="ltr">
-                          <input id="badge-context" dir="ltr" lang="en" type="number" min="2" max="60" step="2" value="16" title="Click or tap to type exact value" class="w-14 px-1.5 py-0.5 rounded-lg bg-purple-950/80 hover:bg-purple-900/80 focus:bg-purple-900 border border-purple-500/40 focus:border-purple-400 text-purple-300 font-mono font-bold text-xs text-center outline-none transition force-ltr-numeric [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none" />
+                          <input id="badge-context" dir="ltr" lang="en" type="text" inputmode="numeric" autocomplete="off" spellcheck="false" value="16" title="Click or tap to type exact value" class="w-14 px-1.5 py-0.5 rounded-lg bg-purple-950/80 hover:bg-purple-900/80 focus:bg-purple-900 border border-purple-500/40 focus:border-purple-400 text-purple-300 font-mono font-bold text-xs text-center outline-none transition force-ltr-numeric" />
                           <span class="text-[10px] text-purple-400 font-mono font-semibold select-none">turns</span>
                         </div>
                       </div>
@@ -1272,42 +1272,42 @@ const { character } = Astro.props;
                 <div class="p-4 rounded-2xl bg-white/[0.02] border border-white/[0.06] space-y-4">
                   <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     <!-- Stability -->
-                    <div class="space-y-1.5">
+                    <div class="space-y-1.5" dir="ltr">
                       <div class="flex items-center justify-between text-xs">
                         <label for="badge-stability" class="text-slate-300 font-medium cursor-pointer">Stability (Consistency vs Emotion)</label>
-                        <input id="badge-stability" type="number" min="0.0" max="1.0" step="0.05" value="0.50" title="Click or tap to type exact value" class="w-16 px-1.5 py-0.5 rounded-lg bg-emerald-950/80 hover:bg-emerald-900/80 focus:bg-emerald-900 border border-emerald-500/40 focus:border-emerald-400 text-emerald-300 font-mono font-bold text-xs text-center outline-none transition [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none" />
+                        <input id="badge-stability" dir="ltr" lang="en" type="text" inputmode="decimal" autocomplete="off" spellcheck="false" value="0.50" title="Click or tap to type exact value" class="w-16 px-1.5 py-0.5 rounded-lg bg-emerald-950/80 hover:bg-emerald-900/80 focus:bg-emerald-900 border border-emerald-500/40 focus:border-emerald-400 text-emerald-300 font-mono font-bold text-xs text-center outline-none transition force-ltr-numeric" />
                       </div>
-                      <input id="slider-stability" type="range" min="0.0" max="1.0" step="0.05" value="0.50" class="w-full accent-emerald-500 cursor-pointer" />
+                      <input id="slider-stability" dir="ltr" type="range" min="0.0" max="1.0" step="0.05" value="0.50" class="w-full accent-emerald-500 cursor-pointer" />
                     </div>
 
                     <!-- Similarity / Clarity -->
-                    <div class="space-y-1.5">
+                    <div class="space-y-1.5" dir="ltr">
                       <div class="flex items-center justify-between text-xs">
                         <label for="badge-clarity" class="text-slate-300 font-medium cursor-pointer">Clarity & Similarity Boost</label>
-                        <input id="badge-clarity" type="number" min="0.0" max="1.0" step="0.05" value="0.75" title="Click or tap to type exact value" class="w-16 px-1.5 py-0.5 rounded-lg bg-emerald-950/80 hover:bg-emerald-900/80 focus:bg-emerald-900 border border-emerald-500/40 focus:border-emerald-400 text-emerald-300 font-mono font-bold text-xs text-center outline-none transition [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none" />
+                        <input id="badge-clarity" dir="ltr" lang="en" type="text" inputmode="decimal" autocomplete="off" spellcheck="false" value="0.75" title="Click or tap to type exact value" class="w-16 px-1.5 py-0.5 rounded-lg bg-emerald-950/80 hover:bg-emerald-900/80 focus:bg-emerald-900 border border-emerald-500/40 focus:border-emerald-400 text-emerald-300 font-mono font-bold text-xs text-center outline-none transition force-ltr-numeric" />
                       </div>
-                      <input id="slider-clarity" type="range" min="0.0" max="1.0" step="0.05" value="0.75" class="w-full accent-emerald-500 cursor-pointer" />
+                      <input id="slider-clarity" dir="ltr" type="range" min="0.0" max="1.0" step="0.05" value="0.75" class="w-full accent-emerald-500 cursor-pointer" />
                     </div>
 
                     <!-- Speed Rate -->
-                    <div class="space-y-1.5">
+                    <div class="space-y-1.5" dir="ltr">
                       <div class="flex items-center justify-between text-xs">
                         <label for="badge-voice-rate" class="text-slate-300 font-medium cursor-pointer">Speech Rate</label>
-                        <div class="flex items-center gap-0.5">
-                          <input id="badge-voice-rate" type="number" min="0.5" max="2.0" step="0.1" value="1.0" title="Click or tap to type exact value" class="w-14 px-1.5 py-0.5 rounded-lg bg-emerald-950/80 hover:bg-emerald-900/80 focus:bg-emerald-900 border border-emerald-500/40 focus:border-emerald-400 text-emerald-300 font-mono font-bold text-xs text-center outline-none transition [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none" />
+                        <div class="flex items-center gap-0.5" dir="ltr">
+                          <input id="badge-voice-rate" dir="ltr" lang="en" type="text" inputmode="decimal" autocomplete="off" spellcheck="false" value="1.0" title="Click or tap to type exact value" class="w-14 px-1.5 py-0.5 rounded-lg bg-emerald-950/80 hover:bg-emerald-900/80 focus:bg-emerald-900 border border-emerald-500/40 focus:border-emerald-400 text-emerald-300 font-mono font-bold text-xs text-center outline-none transition force-ltr-numeric" />
                           <span class="text-[10px] text-emerald-400 font-mono font-semibold">x</span>
                         </div>
                       </div>
-                      <input id="slider-voice-rate" type="range" min="0.5" max="2.0" step="0.1" value="1.0" class="w-full accent-emerald-500 cursor-pointer" />
+                      <input id="slider-voice-rate" dir="ltr" type="range" min="0.5" max="2.0" step="0.1" value="1.0" class="w-full accent-emerald-500 cursor-pointer" />
                     </div>
 
                     <!-- Pitch -->
-                    <div class="space-y-1.5">
+                    <div class="space-y-1.5" dir="ltr">
                       <div class="flex items-center justify-between text-xs">
                         <label for="badge-voice-pitch" class="text-slate-300 font-medium cursor-pointer">Tone Pitch</label>
-                        <input id="badge-voice-pitch" type="number" min="0.5" max="1.5" step="0.05" value="1.0" title="Click or tap to type exact value" class="w-16 px-1.5 py-0.5 rounded-lg bg-emerald-950/80 hover:bg-emerald-900/80 focus:bg-emerald-900 border border-emerald-500/40 focus:border-emerald-400 text-emerald-300 font-mono font-bold text-xs text-center outline-none transition [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none" />
+                        <input id="badge-voice-pitch" dir="ltr" lang="en" type="text" inputmode="decimal" autocomplete="off" spellcheck="false" value="1.0" title="Click or tap to type exact value" class="w-16 px-1.5 py-0.5 rounded-lg bg-emerald-950/80 hover:bg-emerald-900/80 focus:bg-emerald-900 border border-emerald-500/40 focus:border-emerald-400 text-emerald-300 font-mono font-bold text-xs text-center outline-none transition force-ltr-numeric" />
                       </div>
-                      <input id="slider-voice-pitch" type="range" min="0.5" max="1.5" step="0.05" value="1.0" class="w-full accent-emerald-500 cursor-pointer" />
+                      <input id="slider-voice-pitch" dir="ltr" type="range" min="0.5" max="1.5" step="0.05" value="1.0" class="w-full accent-emerald-500 cursor-pointer" />
                     </div>
                   </div>
 
@@ -1462,10 +1462,10 @@ const { character } = Astro.props;
                 <div class="p-4 rounded-2xl bg-white/[0.02] border border-white/[0.06] space-y-4">
                   <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     <!-- Motion Strength -->
-                    <div class="space-y-1.5">
+                    <div class="space-y-1.5" dir="ltr">
                       <div class="flex items-center justify-between text-xs">
                         <label for="badge-motion" class="text-slate-300 font-medium cursor-pointer">Motion Intensity (1-100)</label>
-                        <input id="badge-motion" type="number" min="1" max="100" step="1" value="50" title="Click or tap to type exact value" class="w-14 px-1.5 py-0.5 rounded-lg bg-cyan-950/80 hover:bg-cyan-900/80 focus:bg-cyan-900 border border-cyan-500/40 focus:border-cyan-400 text-cyan-300 font-mono font-bold text-xs text-center outline-none transition [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none" />
+                        <input id="badge-motion" dir="ltr" lang="en" type="text" inputmode="numeric" autocomplete="off" spellcheck="false" value="50" title="Click or tap to type exact value" class="w-14 px-1.5 py-0.5 rounded-lg bg-cyan-950/80 hover:bg-cyan-900/80 focus:bg-cyan-900 border border-cyan-500/40 focus:border-cyan-400 text-cyan-300 font-mono font-bold text-xs text-center outline-none transition force-ltr-numeric" />
                       </div>
                       <input id="slider-motion" type="range" min="1" max="100" step="1" value="50" class="w-full accent-cyan-500 cursor-pointer" />
                       <div class="flex justify-between text-[10px] text-slate-500">
@@ -3296,10 +3296,11 @@ const { character } = Astro.props;
 
     const syncToBadge = (val) => {
       const asciiVal = toAsciiNumber(val);
+      const strVal = String(asciiVal);
       if (isInput) {
-        inputOrBadge.value = asciiVal;
+        inputOrBadge.value = strVal;
       } else {
-        inputOrBadge.textContent = unit ? `${asciiVal} ${unit}` : asciiVal;
+        inputOrBadge.textContent = unit ? `${strVal} ${unit}` : strVal;
       }
     };
 
@@ -3312,7 +3313,14 @@ const { character } = Astro.props;
 
     if (isInput) {
       inputOrBadge.addEventListener('input', () => {
-        const val = toAsciiNumber(inputOrBadge.value, NaN);
+        // Sanitize any Persian or Arabic digits in real-time
+        const raw = String(inputOrBadge.value || '');
+        const converted = raw.replace(/[۰-۹]/g, d => '۰۱۲۳۴۵۶۷۸۹'.indexOf(d))
+                             .replace(/[٠-٩]/g, d => '٠١٢٣٤٥٦٧٨٩'.indexOf(d));
+        if (converted !== raw) {
+          inputOrBadge.value = converted;
+        }
+        const val = toAsciiNumber(converted, NaN);
         if (!isNaN(val)) {
           const min = toAsciiNumber(slider.min, 0);
           const max = toAsciiNumber(slider.max, 100);
@@ -3333,7 +3341,7 @@ const { character } = Astro.props;
           if (val > max) val = max;
         }
         slider.value = val;
-        inputOrBadge.value = val;
+        inputOrBadge.value = String(val);
       });
 
       inputOrBadge.addEventListener('blur', () => {
@@ -3347,14 +3355,14 @@ const { character } = Astro.props;
           if (val > max) val = max;
         }
         slider.value = val;
-        inputOrBadge.value = val;
+        inputOrBadge.value = String(val);
       });
     }
   }
 
   // Bind dual controls for real-time bidirectional slider and numeric typing synchronization
   setupDualControl(sliderTemp, badgeTemp);
-  setupDualControl(sliderTokens, badgeTokens, 'tok');
+  setupDualControl(sliderTokens, badgeTokens);
   setupDualControl(sliderTopP, badgeTopP);
   setupDualControl(sliderRepPen, badgeRepPen);
   setupDualControl(sliderFreqPen, badgeFreqPen);
@@ -3362,7 +3370,7 @@ const { character } = Astro.props;
   setupDualControl(sliderContext, badgeContext);
   setupDualControl(sliderStability, badgeStability);
   setupDualControl(sliderClarity, badgeClarity);
-  setupDualControl(sliderVoiceRate, badgeVoiceRate, 'x');
+  setupDualControl(sliderVoiceRate, badgeVoiceRate);
   setupDualControl(sliderVoicePitch, badgeVoicePitch);
   setupDualControl(sliderMotion, badgeMotion);
 
@@ -5181,7 +5189,7 @@ const { character } = Astro.props;
     if (sliderTemp) sliderTemp.value = wizSliderTemp.value;
     const badge = document.getElementById('badge-temp');
     if (badge) {
-      if (badge.tagName === 'INPUT') (badge as HTMLInputElement).value = Number(wizSliderTemp.value).toFixed(2);
+      if (badge.tagName === 'INPUT') badge.value = Number(wizSliderTemp.value).toFixed(2);
       else badge.textContent = Number(wizSliderTemp.value).toFixed(2);
     }
   });
@@ -5190,7 +5198,7 @@ const { character } = Astro.props;
     if (sliderTokens) sliderTokens.value = wizSliderTokens.value;
     const badge = document.getElementById('badge-tokens');
     if (badge) {
-      if (badge.tagName === 'INPUT') (badge as HTMLInputElement).value = wizSliderTokens.value;
+      if (badge.tagName === 'INPUT') badge.value = wizSliderTokens.value;
       else badge.textContent = `${wizSliderTokens.value} tok`;
     }
   });
@@ -5199,7 +5207,7 @@ const { character } = Astro.props;
     if (sliderContext) sliderContext.value = wizSliderContext.value;
     const badge = document.getElementById('badge-context');
     if (badge) {
-      if (badge.tagName === 'INPUT') (badge as HTMLInputElement).value = wizSliderContext.value;
+      if (badge.tagName === 'INPUT') badge.value = wizSliderContext.value;
       else badge.textContent = `${wizSliderContext.value} turns`;
     }
   });
@@ -5208,7 +5216,7 @@ const { character } = Astro.props;
     if (sliderRepPen) sliderRepPen.value = wizSliderRepPen.value;
     const badge = document.getElementById('badge-rep-pen');
     if (badge) {
-      if (badge.tagName === 'INPUT') (badge as HTMLInputElement).value = Number(wizSliderRepPen.value).toFixed(2);
+      if (badge.tagName === 'INPUT') badge.value = Number(wizSliderRepPen.value).toFixed(2);
       else badge.textContent = Number(wizSliderRepPen.value).toFixed(2);
     }
   });
