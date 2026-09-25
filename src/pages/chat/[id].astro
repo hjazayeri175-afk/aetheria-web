@@ -2064,59 +2064,89 @@ const { character } = Astro.props;
     return result;
   }
 
-  // Sanitize history messages sent to LLM: strictly scrub persona names/identities if persona is disabled
+  // Strictly clean internal thoughts, HTML details tags, and UI artifacts before sending history to LLM API
+  function stripInternalArtifactsForLLM(text) {
+    if (!text || typeof text !== 'string') return '';
+    let cleaned = text;
+    // Strip <details>...</details>
+    cleaned = cleaned.replace(/<details[\s\S]*?<\/details>/gi, '');
+    // Strip <think>...</think>
+    cleaned = cleaned.replace(/<think>[\s\S]*?<\/think>/gi, '');
+    cleaned = cleaned.replace(/<thought>[\s\S]*?<\/thought>/gi, '');
+    // Strip unclosed <details> or <think>
+    cleaned = cleaned.replace(/<details[\s\S]*$/gi, '');
+    cleaned = cleaned.replace(/<think>[\s\S]*$/gi, '');
+    cleaned = cleaned.replace(/<thought>[\s\S]*$/gi, '');
+    // Strip [Internal Thoughts: ...]
+    cleaned = cleaned.replace(/\[Internal Thoughts:[\s\S]*?\]/gi, '');
+    // Strip [Directive: ...]
+    cleaned = cleaned.replace(/\[Directive:[\s\S]*?\]/gi, '');
+    // Strip UI notices and alerts
+    cleaned = cleaned.replace(/<div class="[^"]*(?:bg-amber|border-amber|rounded)[^"]*"[\s\S]*?<\/div>/gi, '');
+    // Strip any lingering HTML tags like </details> or </div>
+    cleaned = cleaned.replace(/<\/?(?:details|summary|div|span|p|code)[^>]*>/gi, '');
+    return cleaned.trim();
+  }
+
+  // Sanitize history messages sent to LLM: strictly scrub persona names/identities if persona is disabled,
+  // and strip internal thoughts / UI markup so LLMs never hallucinate tags or leak CoT into dialogue
   function getSanitizedHistoryForAPI(historySlice) {
     if (!Array.isArray(historySlice)) return [];
-    if (isPersonaGloballyActive()) {
-      return historySlice.map(m => ({
-        role: m.role || (m.sender === 'user' ? 'user' : 'assistant'),
-        content: m.content || m.text || ''
-      }));
+    const isPersonaActive = isPersonaGloballyActive();
+
+    let nameList = [];
+    if (!isPersonaActive) {
+      const knownNames = new Set(['Traveler']);
+      try {
+        const rawPersona = localStorage.getItem('aetheria_user_persona');
+        if (rawPersona) {
+          const parsed = JSON.parse(rawPersona);
+          if (parsed.name && parsed.name.trim() && parsed.name.trim().toLowerCase() !== 'you') {
+            knownNames.add(parsed.name.trim());
+          }
+        }
+        const rawMasks = localStorage.getItem('aetheria_user_personas');
+        if (rawMasks) {
+          const masks = JSON.parse(rawMasks);
+          if (Array.isArray(masks)) {
+            masks.forEach(m => {
+              if (m.name && m.name.trim() && m.name.trim().toLowerCase() !== 'you') {
+                knownNames.add(m.name.trim());
+              }
+            });
+          }
+        }
+        const dName = localStorage.getItem('aetheria_user_display_name');
+        if (dName && dName.trim() && dName.trim().toLowerCase() !== 'you') {
+          knownNames.add(dName.trim());
+        }
+      } catch {}
+      nameList = [...knownNames].filter(n => n && n.length > 1);
     }
 
-    const knownNames = new Set(['Traveler']);
-    try {
-      const rawPersona = localStorage.getItem('aetheria_user_persona');
-      if (rawPersona) {
-        const parsed = JSON.parse(rawPersona);
-        if (parsed.name && parsed.name.trim() && parsed.name.trim().toLowerCase() !== 'you') {
-          knownNames.add(parsed.name.trim());
-        }
-      }
-      const rawMasks = localStorage.getItem('aetheria_user_personas');
-      if (rawMasks) {
-        const masks = JSON.parse(rawMasks);
-        if (Array.isArray(masks)) {
-          masks.forEach(m => {
-            if (m.name && m.name.trim() && m.name.trim().toLowerCase() !== 'you') {
-              knownNames.add(m.name.trim());
-            }
+    return historySlice
+      .map(m => {
+        let content = m.content || m.text || '';
+        // Always strip internal thoughts and UI markup from history sent to API
+        content = stripInternalArtifactsForLLM(content);
+
+        if (!isPersonaActive && nameList.length > 0) {
+          nameList.forEach(name => {
+            const escaped = name.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+            content = content
+              .replace(new RegExp(`\\b${escaped}'s\\b`, 'gi'), 'your')
+              .replace(new RegExp(`,\\s*${escaped}\\b`, 'gi'), '')
+              .replace(new RegExp(`\\b${escaped},\\s*`, 'gi'), '')
+              .replace(new RegExp(`\\b${escaped}\\b`, 'gi'), 'you');
           });
         }
-      }
-      const dName = localStorage.getItem('aetheria_user_display_name');
-      if (dName && dName.trim() && dName.trim().toLowerCase() !== 'you') {
-        knownNames.add(dName.trim());
-      }
-    } catch {}
 
-    const nameList = [...knownNames].filter(n => n && n.length > 1);
-
-    return historySlice.map(m => {
-      let content = m.content || m.text || '';
-      nameList.forEach(name => {
-        const escaped = name.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
-        content = content
-          .replace(new RegExp(`\\b${escaped}'s\\b`, 'gi'), 'your')
-          .replace(new RegExp(`,\\s*${escaped}\\b`, 'gi'), '')
-          .replace(new RegExp(`\\b${escaped},\\s*`, 'gi'), '')
-          .replace(new RegExp(`\\b${escaped}\\b`, 'gi'), 'you');
-      });
-      return {
-        role: m.role || (m.sender === 'user' ? 'user' : 'assistant'),
-        content: content
-      };
-    });
+        return {
+          role: m.role || (m.sender === 'user' ? 'user' : 'assistant'),
+          content: content
+        };
+      })
+      .filter(m => m.content && m.content.trim().length > 0);
   }
 
   // Retrieve all unique scenario greetings (first_mes + alternate_greetings)
@@ -2656,6 +2686,9 @@ const { character } = Astro.props;
     // Protect balanced <details> and <div ...> blocks (e.g. thought boxes, pause notices)
     const { masked, blocks: htmlBlocks } = extractBalancedHtmlBlocks(text);
     let s = masked;
+
+    // Strip orphan/stray reasoning or disclosure tags leaked by model in raw text
+    s = s.replace(/<\/?(?:details|summary|think|thought)[^>]*>/gi, '');
 
     // 0. Extract markdown images before escaping: ![alt](url)
     const mediaPlaceholders = [];
@@ -6014,10 +6047,11 @@ const { character } = Astro.props;
                 const autoPayload = {
                   model: model,
                   messages: [
-                    { role: 'system', content: systemPrompt },
-                    ...payloadMessages,
-                    { role: 'assistant', content: `[Internal Thoughts:\n${reasoningText.slice(-2000)}\n]` },
-                    { role: 'user', content: `[Directive: Reasoning concluded. Immediately write ${activeChar.name || 'character'}'s spoken dialogue and actions to ${activeUserPersona?.name || 'User'} now.]` }
+                    { 
+                      role: 'system', 
+                      content: `${systemPrompt}\n\n[CRITICAL DIRECTIVE]: Internal reasoning is completed. Immediately write ${activeChar.name || 'character'}'s spoken dialogue, emotional reactions, and roleplay actions (*in asterisks*) to ${activeUserPersona?.name || 'User'}. Output ONLY pure spoken dialogue and actions, with NO thinking tags, NO disclosure tags, and NO raw markdown thoughts.` 
+                    },
+                    ...payloadMessages
                   ],
                   temperature: temp,
                   max_tokens: 2048,
@@ -6034,9 +6068,12 @@ const { character } = Astro.props;
                 });
                 if (autoRes.ok) {
                   const autoData = await autoRes.json();
-                  const synthesized = extractStreamToken(autoData.choices?.[0]?.message?.content || autoData.choices?.[0]?.text || (autoData.content && autoData.content[0] && autoData.content[0].text) || autoData.response || '').trim();
+                  let synthesized = extractStreamToken(autoData.choices?.[0]?.message?.content || autoData.choices?.[0]?.text || (autoData.content && autoData.content[0] && autoData.content[0].text) || autoData.response || '').trim();
                   if (synthesized) {
-                    contentText = synthesized;
+                    synthesized = stripInternalArtifactsForLLM(synthesized);
+                    if (synthesized) {
+                      contentText = synthesized;
+                    }
                   }
                 }
               } catch (autoErr) {
@@ -6313,7 +6350,14 @@ const { character } = Astro.props;
         }
 
         const isThinkingEnabled = (localStorage.getItem('aetheria_text_thinking') === 'true');
-        const tokenBudget = isThinkingEnabled ? Math.max(maxTokens, 3500) : maxTokens;
+        const isReasoningModel = /deepseek|r1|reasoning|qwq|flash|thinking/i.test(model);
+        let swipeSystemPrompt = systemPrompt;
+        let tokenBudget = maxTokens;
+        if (isThinkingEnabled || isReasoningModel) {
+          tokenBudget = Math.max(maxTokens, 8192);
+          swipeSystemPrompt += `\n\n[REASONING & ROLEPLAY PROTOCOL]:\n- Keep internal thinking focused on {{char}}'s inner emotions and subtext.\n- CRITICAL: You MUST write {{char}}'s spoken dialogue, emotional reactions, and roleplay actions (*in asterisks*) outside the thought process as your final response.\n- Never end your turn inside the thinking phase without {{char}} speaking to {{user}}.`;
+          swipeSystemPrompt = formatMacroText(swipeSystemPrompt);
+        }
 
         let payload;
         let headers = { 'Content-Type': 'application/json' };
@@ -6339,7 +6383,7 @@ const { character } = Astro.props;
         if (provider === 'anthropic') {
           payload = {
             model: model,
-            system: systemPrompt,
+            system: swipeSystemPrompt,
             messages: payloadMessages,
             max_tokens: tokenBudget,
             temperature: temp
@@ -6352,7 +6396,7 @@ const { character } = Astro.props;
         } else {
           payload = {
             model: model,
-            messages: [{ role: 'system', content: systemPrompt }, ...payloadMessages],
+            messages: [{ role: 'system', content: swipeSystemPrompt }, ...payloadMessages],
             temperature: temp,
             max_tokens: tokenBudget,
             max_completion_tokens: tokenBudget
@@ -6406,10 +6450,11 @@ const { character } = Astro.props;
               || choice?.message?.thinking 
               || choice?.message?.reasoning_details 
               || '').trim();
-            if (cText && rText) {
-              newReply = `<details class="mb-3 rounded-lg border border-purple-500/20 bg-purple-950/20 px-3 py-2 text-xs text-purple-300 select-none"><summary class="cursor-pointer font-medium hover:text-purple-200">💭 Thought Process (${rText.length} chars)</summary><div class="mt-2 text-slate-300 font-mono text-[11px] leading-relaxed whitespace-pre-wrap">${rText}</div></details>\n\n${cText}`;
-            } else if (cText) {
-              newReply = cText;
+            const cleanDialogue = stripInternalArtifactsForLLM(cText);
+            if (cleanDialogue && rText) {
+              newReply = `<details class="mb-3 rounded-lg border border-purple-500/20 bg-purple-950/20 px-3 py-2 text-xs text-purple-300 select-none"><summary class="cursor-pointer font-medium hover:text-purple-200">💭 Thought Process (${rText.length} chars)</summary><div class="mt-2 text-slate-300 font-mono text-[11px] leading-relaxed whitespace-pre-wrap">${rText}</div></details>\n\n${cleanDialogue}`;
+            } else if (cleanDialogue) {
+              newReply = cleanDialogue;
             } else {
               // Only thought returned without dialogue -> do not treat as valid dialogue
               newReply = '';
