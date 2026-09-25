@@ -5406,26 +5406,21 @@ const { character } = Astro.props;
       prompt += `<START>\n${activeChar.mesExample}\n\n`;
     }
 
-    // User Persona: Physical isolation - ONLY attached if explicitly enabled. Zero meta-injections when disabled.
+    // User Persona: Pure Tavern format - ONLY attached if explicitly enabled. Zero meta-injections or artificial rules.
     if (isPersonaEnabled && activeUserPersona && !activeUserPersona.disabled && activeUserPersona.id !== 'none') {
       const uName = (activeUserPersona.name && activeUserPersona.name.trim()) ? activeUserPersona.name.trim() : 'User';
-      prompt += `[USER IDENTITY & ACTIVE ROLEPLAY MASK: {{user}}]\n`;
-      prompt += `Name: ${uName}\n`;
-      if (activeUserPersona.age) prompt += `Age / Life Stage: ${activeUserPersona.age}\n`;
-      if (activeUserPersona.gender || activeUserPersona.pronouns) prompt += `Gender & Pronouns: ${activeUserPersona.gender || activeUserPersona.pronouns}\n`;
-      if (activeUserPersona.title) prompt += `Occupation / Role: ${activeUserPersona.title}\n`;
-      if (activeUserPersona.appearance) prompt += `Physical Appearance: ${activeUserPersona.appearance}\n`;
-      if (activeUserPersona.personality) prompt += `Personality & Demeanor: ${activeUserPersona.personality}\n`;
+      prompt += `[User: {{user}}]\n`;
+      if (uName !== 'User') prompt += `Name: ${uName}\n`;
+      if (activeUserPersona.age) prompt += `Age: ${activeUserPersona.age}\n`;
+      if (activeUserPersona.gender || activeUserPersona.pronouns) prompt += `Gender: ${activeUserPersona.gender || activeUserPersona.pronouns}\n`;
+      if (activeUserPersona.title) prompt += `Role: ${activeUserPersona.title}\n`;
+      if (activeUserPersona.appearance) prompt += `Appearance: ${activeUserPersona.appearance}\n`;
+      if (activeUserPersona.personality) prompt += `Personality: ${activeUserPersona.personality}\n`;
       const userLore = activeUserPersona.lore || activeUserPersona.bio || '';
-      if (userLore) prompt += `Backstory Lore: ${userLore}\n`;
+      if (userLore) prompt += `Backstory: ${userLore}\n`;
       const userRules = activeUserPersona.directives || activeUserPersona.globalNotes || '';
-      if (userRules) prompt += `Roleplay Preferences: ${userRules}\n`;
-
-      // Strict Override Directive
-      prompt += `\n[CRITICAL USER IDENTITY OVERRIDE RULES]\n`;
-      prompt += `1. The above profile for {{user}} (${uName}) is absolute and authoritative.\n`;
-      prompt += `2. If any character greeting, card description, or scenario suggests or assumes a different age, appearance, gender, or backstory for {{user}}, you MUST completely ignore and override that assumption in favor of {{user}}'s explicit profile above.\n`;
-      prompt += `3. You must perceive, interact with, and address {{user}} strictly in accordance with their designated age (${activeUserPersona.age || 'unspecified'}), appearance, and personality at all times.\n\n`;
+      if (userRules) prompt += `Details: ${userRules}\n\n`;
+      else prompt += `\n`;
     }
 
     if (afterCharContent) {
