@@ -5759,7 +5759,7 @@ const { character } = Astro.props;
           endpoint = 'https://api.groq.com/openai/v1/chat/completions';
         }
 
-        const systemPrompt = buildSystemPrompt(userText);
+        let systemPrompt = buildSystemPrompt(userText);
         const contextLimit = parseInt(localStorage.getItem('aetheria_text_context') || '16', 10);
         const historySlice = conversation
           .slice(-contextLimit)
@@ -5798,7 +5798,9 @@ const { character } = Astro.props;
         const isReasoningModel = /deepseek|r1|reasoning|qwq|flash|thinking/i.test(model);
         if (enableThinking || isReasoningModel) {
           // Generous token budget so internal thinking never starves the character response
-          effectiveMaxTokens = Math.max(maxTokens, 4096);
+          effectiveMaxTokens = Math.max(maxTokens, 8192);
+          systemPrompt += `\n\n[REASONING & ROLEPLAY PROTOCOL]:\n- Keep internal thinking focused on {{char}}'s inner emotions and subtext.\n- CRITICAL: You MUST write {{char}}'s spoken dialogue, emotional reactions, and roleplay actions (*in asterisks*) outside the thought process as your final response.\n- Never end your turn inside the thinking phase without {{char}} speaking to {{user}}.`;
+          systemPrompt = formatMacroText(systemPrompt);
         }
 
         if (provider === 'anthropic') {
@@ -5821,6 +5823,7 @@ const { character } = Astro.props;
             messages: [{ role: 'system', content: systemPrompt }, ...payloadMessages],
             temperature: temp,
             max_tokens: effectiveMaxTokens,
+            max_completion_tokens: effectiveMaxTokens,
             top_p: topP,
             stream: enableStreaming
           };
@@ -5999,6 +6002,46 @@ const { character } = Astro.props;
               }
             } catch (streamErr) {
               console.warn('Stream read error:', streamErr);
+            }
+
+            // Auto-synthesis: If model spent tokens in reasoning and left dialogue empty,
+            // automatically perform a fast follow-up to extract/continue dialogue so the user gets both!
+            if (!contentText.trim() && reasoningText.trim()) {
+              if (bubbleEl) {
+                bubbleEl.innerHTML = `<details class="mb-3 rounded-lg border border-purple-500/20 bg-purple-950/20 px-3 py-2 text-xs text-purple-300 select-none"><summary class="cursor-pointer font-medium hover:text-purple-200">💭 Thought Process (${reasoningText.length} chars)</summary><div class="mt-2 text-slate-300 font-mono text-[11px] leading-relaxed whitespace-pre-wrap">${reasoningText}</div></details>\n\n<div class="flex items-center gap-2 text-xs text-purple-400 italic animate-pulse"><span>✨</span><span>Finalizing ${activeChar.name || 'character'}'s dialogue...</span></div>`;
+              }
+              try {
+                const autoPayload = {
+                  model: model,
+                  messages: [
+                    { role: 'system', content: systemPrompt },
+                    ...payloadMessages,
+                    { role: 'assistant', content: `[Internal Thoughts:\n${reasoningText.slice(-2000)}\n]` },
+                    { role: 'user', content: `[Directive: Reasoning concluded. Immediately write ${activeChar.name || 'character'}'s spoken dialogue and actions to ${activeUserPersona?.name || 'User'} now.]` }
+                  ],
+                  temperature: temp,
+                  max_tokens: 2048,
+                  max_completion_tokens: 2048,
+                  stream: false
+                };
+                if (provider === 'openrouter') {
+                  autoPayload.reasoning = { effort: 'none', exclude: true };
+                }
+                const autoRes = await fetch(endpoint, {
+                  method: 'POST',
+                  headers,
+                  body: JSON.stringify(autoPayload)
+                });
+                if (autoRes.ok) {
+                  const autoData = await autoRes.json();
+                  const synthesized = extractStreamToken(autoData.choices?.[0]?.message?.content || autoData.choices?.[0]?.text || (autoData.content && autoData.content[0] && autoData.content[0].text) || autoData.response || '').trim();
+                  if (synthesized) {
+                    contentText = synthesized;
+                  }
+                }
+              } catch (autoErr) {
+                console.warn('Auto-synthesis failed:', autoErr);
+              }
             }
 
             // Combine content and reasoning
