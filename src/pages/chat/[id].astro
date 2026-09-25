@@ -2424,110 +2424,105 @@ const { character } = Astro.props;
     backdrop.id = 'report-issue-modal';
     backdrop.className = 'fixed inset-0 z-[10001] flex items-center justify-center p-3 sm:p-4 bg-black/80 backdrop-blur-md transition-opacity duration-200 opacity-0';
 
-    const safeSnippet = String(snippet || '').trim();
-    const truncatedSnippet = safeSnippet.length > 240 ? safeSnippet.slice(0, 240) + '...' : safeSnippet;
-    const safeTargetName = String(targetName || (targetType === 'character' ? 'Character' : 'AI Message')).replace(/</g, '&lt;').replace(/>/g, '&gt;');
+    const cleanSnippet = (() => {
+      if (!snippet) return '';
+      let s = String(snippet);
+      s = s.replace(/<details[\s\S]*?<\/details>/gi, '');
+      s = s.replace(/<think[\s\S]*?<\/think>/gi, '');
+      s = s.replace(/<[^>]+>/g, ' ');
+      s = s.replace(/&nbsp;/g, ' ')
+           .replace(/&amp;/g, '&')
+           .replace(/&lt;/g, '<')
+           .replace(/&gt;/g, '>')
+           .replace(/&quot;/g, '"')
+           .replace(/&#039;/g, "'")
+           .replace(/&#x27;/g, "'");
+      s = s.replace(/```[\s\S]*?```/g, '');
+      s = s.replace(/`([^`]+)`/g, '$1');
+      s = s.replace(/[*_~#]/g, '');
+      s = s.replace(/\s+/g, ' ').trim();
+      return s;
+    })();
+
+    const displaySnippet = cleanSnippet.length > 200 ? cleanSnippet.slice(0, 200) + '...' : cleanSnippet;
+    const safeTargetName = String(targetName || (targetType === 'character' ? 'Character' : 'Response')).replace(/</g, '&lt;').replace(/>/g, '&gt;');
 
     backdrop.innerHTML = `
-      <div class="w-full max-w-lg rounded-2xl sm:rounded-3xl bg-[#0c0f1d] border border-white/10 p-5 sm:p-6 shadow-2xl shadow-black/90 transform scale-95 transition-all duration-200 text-left max-h-[92vh] overflow-y-auto custom-scrollbar flex flex-col">
+      <div class="w-full max-w-md rounded-2xl bg-[#0f1118] border border-white/10 p-5 sm:p-6 shadow-2xl shadow-black/80 transform scale-95 transition-all duration-200 text-left max-h-[90vh] overflow-y-auto custom-scrollbar flex flex-col">
         
         <!-- Header -->
-        <div class="flex items-start justify-between pb-4 border-b border-white/[0.08]">
-          <div class="flex items-center gap-3">
-            <div class="w-10 h-10 rounded-2xl bg-rose-500/10 border border-rose-500/20 flex items-center justify-center text-rose-400 shrink-0 shadow-inner">
-              <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                <path d="M4 15s1-1 4-1 5 2 8 2 4-1 4-1V3s-1 1-4 1-5-2-8-2-4 1-4 1z"/>
-                <line x1="4" x2="4" y1="22" y2="15"/>
-              </svg>
-            </div>
-            <div>
-              <h3 class="text-sm sm:text-base font-bold text-white tracking-wide flex items-center gap-2">
-                <span>Report Content or Issue</span>
-                <span class="px-2 py-0.5 rounded-full text-[10px] font-mono bg-rose-500/15 text-rose-300 border border-rose-500/30">Community Watch</span>
-              </h3>
-              <p class="text-xs text-slate-400 mt-0.5">Help keep Aetheria compliant, ethical, and high-quality.</p>
-            </div>
+        <div class="flex items-start justify-between pb-3.5 border-b border-white/[0.08]">
+          <div>
+            <h3 class="text-sm sm:text-base font-semibold text-white tracking-tight">Report an issue</h3>
+            <p class="text-xs text-slate-400 mt-0.5">Help us understand what went wrong.</p>
           </div>
-          <button type="button" id="close-report-modal-btn" class="p-1.5 rounded-xl bg-white/[0.05] hover:bg-white/[0.1] text-slate-400 hover:text-white transition cursor-pointer">
+          <button type="button" id="close-report-modal-btn" class="p-1.5 -mr-1 -mt-1 rounded-lg text-slate-400 hover:text-white hover:bg-white/[0.06] transition cursor-pointer">
             <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg>
           </button>
         </div>
 
-        <!-- Target Context Preview -->
-        <div class="mt-4 p-3 rounded-xl bg-white/[0.03] border border-white/[0.06] text-xs space-y-1">
-          <div class="flex items-center justify-between text-[11px] text-slate-400">
-            <span class="font-medium text-purple-300">Target: ${safeTargetName}</span>
-            <span class="font-mono text-[10px] px-1.5 py-0.5 rounded bg-white/[0.06] text-slate-400 uppercase">${targetType}</span>
-          </div>
-          ${truncatedSnippet ? `<p class="text-slate-300/85 italic font-serif line-clamp-3 pl-2.5 border-l-2 border-purple-500/40 mt-1 select-text">"${truncatedSnippet.replace(/</g, '&lt;').replace(/>/g, '&gt;')}"</p>` : ''}
-        </div>
+        <!-- Target Snippet Preview -->
+        ${displaySnippet ? `
+        <div class="mt-4 px-3.5 py-2.5 rounded-xl bg-white/[0.03] border border-white/[0.06] text-xs">
+          <div class="text-[11px] font-medium text-slate-400 mb-1">${safeTargetName}:</div>
+          <p class="text-slate-300 italic line-clamp-2 leading-relaxed select-text">"${displaySnippet.replace(/</g, '&lt;').replace(/>/g, '&gt;')}"</p>
+        </div>` : ''}
 
-        <!-- Issue Category Picker -->
-        <div class="mt-4 space-y-2">
-          <label class="block text-xs font-semibold text-slate-300">Select Issue Category <span class="text-rose-400">*</span></label>
-          <div class="grid grid-cols-1 sm:grid-cols-2 gap-2" id="report-category-group">
-            
-            <label class="report-cat-card flex items-start gap-2.5 p-2.5 rounded-xl border border-white/[0.08] hover:border-purple-500/40 bg-white/[0.02] cursor-pointer transition select-none">
-              <input type="radio" name="report_category" value="legal" class="mt-0.5 accent-rose-500 cursor-pointer" ${category === 'legal' ? 'checked' : ''} />
-              <div class="min-w-0">
-                <span class="text-xs font-semibold text-white block">⚖️ Legal & Copyright</span>
-                <span class="text-[11px] text-slate-400 leading-snug block">Report legal issue, IP/DMCA infringement, or regulatory non-compliance</span>
-              </div>
-            </label>
+        <!-- Category Options -->
+        <div class="mt-4 space-y-1.5">
+          <div class="text-[11px] font-medium text-slate-400 mb-1.5">Reason</div>
+          
+          <label class="group flex items-start gap-3 p-3 rounded-xl border border-white/[0.06] hover:border-white/15 bg-white/[0.02] hover:bg-white/[0.04] cursor-pointer transition select-none">
+            <input type="radio" name="report_category" value="safety" class="mt-0.5 accent-rose-500 cursor-pointer" ${category === 'safety' ? 'checked' : ''} />
+            <div class="min-w-0">
+              <span class="text-xs font-medium text-white block">Harmful or inappropriate content</span>
+              <span class="text-[11px] text-slate-400 leading-snug block mt-0.5">Violence, hate speech, sexual content, or harassment</span>
+            </div>
+          </label>
 
-            <label class="report-cat-card flex items-start gap-2.5 p-2.5 rounded-xl border border-white/[0.08] hover:border-purple-500/40 bg-white/[0.02] cursor-pointer transition select-none">
-              <input type="radio" name="report_category" value="safety" class="mt-0.5 accent-rose-500 cursor-pointer" ${category === 'safety' ? 'checked' : ''} />
-              <div class="min-w-0">
-                <span class="text-xs font-semibold text-white block">🛡️ Community & Ethics</span>
-                <span class="text-[11px] text-slate-400 leading-snug block">Hate speech, extreme abuse, unmoderated online creator violation</span>
-              </div>
-            </label>
+          <label class="group flex items-start gap-3 p-3 rounded-xl border border-white/[0.06] hover:border-white/15 bg-white/[0.02] hover:bg-white/[0.04] cursor-pointer transition select-none">
+            <input type="radio" name="report_category" value="legal" class="mt-0.5 accent-rose-500 cursor-pointer" ${category === 'legal' ? 'checked' : ''} />
+            <div class="min-w-0">
+              <span class="text-xs font-medium text-white block">Copyright or legal violation</span>
+              <span class="text-[11px] text-slate-400 leading-snug block mt-0.5">Intellectual property infringement or illegal material</span>
+            </div>
+          </label>
 
-            <label class="report-cat-card flex items-start gap-2.5 p-2.5 rounded-xl border border-white/[0.08] hover:border-purple-500/40 bg-white/[0.02] cursor-pointer transition select-none">
-              <input type="radio" name="report_category" value="bug" class="mt-0.5 accent-rose-500 cursor-pointer" ${category === 'bug' ? 'checked' : ''} />
-              <div class="min-w-0">
-                <span class="text-xs font-semibold text-white block">🐛 Technical Bug & Glitch</span>
-                <span class="text-[11px] text-slate-400 leading-snug block">Prompt leak, model crash, UI break, or engine failure</span>
-              </div>
-            </label>
+          <label class="group flex items-start gap-3 p-3 rounded-xl border border-white/[0.06] hover:border-white/15 bg-white/[0.02] hover:bg-white/[0.04] cursor-pointer transition select-none">
+            <input type="radio" name="report_category" value="bug" class="mt-0.5 accent-rose-500 cursor-pointer" ${category === 'bug' ? 'checked' : ''} />
+            <div class="min-w-0">
+              <span class="text-xs font-medium text-white block">Technical malfunction or glitch</span>
+              <span class="text-[11px] text-slate-400 leading-snug block mt-0.5">Repetitive loops, broken response, or system error</span>
+            </div>
+          </label>
 
-            <label class="report-cat-card flex items-start gap-2.5 p-2.5 rounded-xl border border-white/[0.08] hover:border-purple-500/40 bg-white/[0.02] cursor-pointer transition select-none">
-              <input type="radio" name="report_category" value="spam" class="mt-0.5 accent-rose-500 cursor-pointer" ${category === 'spam' ? 'checked' : ''} />
-              <div class="min-w-0">
-                <span class="text-xs font-semibold text-white block">🚫 Spam & Misleading</span>
-                <span class="text-[11px] text-slate-400 leading-snug block">Malicious links, scam, deception, or junk card generation</span>
-              </div>
-            </label>
-
-          </div>
+          <label class="group flex items-start gap-3 p-3 rounded-xl border border-white/[0.06] hover:border-white/15 bg-white/[0.02] hover:bg-white/[0.04] cursor-pointer transition select-none">
+            <input type="radio" name="report_category" value="spam" class="mt-0.5 accent-rose-500 cursor-pointer" ${category === 'spam' ? 'checked' : ''} />
+            <div class="min-w-0">
+              <span class="text-xs font-medium text-white block">Spam or misleading information</span>
+              <span class="text-[11px] text-slate-400 leading-snug block mt-0.5">Deceptive content, advertising, or phishing</span>
+            </div>
+          </label>
         </div>
 
         <!-- Details Textarea -->
         <div class="mt-4 space-y-1.5">
-          <label class="block text-xs font-semibold text-slate-300">Explanation / Details <span class="text-slate-500 font-normal">(Optional but recommended)</span></label>
+          <label class="block text-[11px] font-medium text-slate-400">Additional details <span class="text-slate-500">(optional)</span></label>
           <textarea 
             id="report-details-input" 
-            rows="3" 
-            placeholder="Describe what occurred or specify what rule was violated..." 
-            class="w-full px-3 py-2 rounded-xl bg-black/40 border border-white/10 text-xs text-slate-200 placeholder-slate-500 focus:outline-none focus:border-rose-500/60 resize-none leading-relaxed transition"
+            rows="2" 
+            placeholder="Provide any additional context..." 
+            class="w-full px-3 py-2 rounded-xl bg-black/30 border border-white/10 text-xs text-slate-200 placeholder-slate-500 focus:outline-none focus:border-white/30 resize-none transition leading-relaxed"
           ></textarea>
-        </div>
-
-        <!-- Star Bounty / Crowdsourced Moderation Notice -->
-        <div class="mt-4 p-3 rounded-xl bg-gradient-to-r from-amber-500/10 via-purple-500/10 to-transparent border border-amber-500/20 flex items-start gap-2.5">
-          <span class="text-base shrink-0 select-none">⭐</span>
-          <div class="text-[11px] text-amber-200/90 leading-relaxed">
-            <strong class="text-amber-300 font-semibold">Crowdsourced Integrity & Star Bounties:</strong> Private chats remain completely private. For public online cards and community systems, users act as frontline monitors. Confirmed reports of critical platform bugs or policy violations are rewarded with Stars!
-          </div>
         </div>
 
         <!-- Action Buttons -->
         <div class="mt-5 flex items-center justify-end gap-2.5 pt-3 border-t border-white/[0.08]">
-          <button type="button" id="cancel-report-btn" class="px-4 py-2.5 rounded-xl text-xs font-medium text-slate-300 hover:text-white bg-white/[0.05] hover:bg-white/[0.1] border border-white/10 transition cursor-pointer">
+          <button type="button" id="cancel-report-btn" class="px-3.5 py-2 rounded-xl text-xs font-medium text-slate-400 hover:text-white hover:bg-white/[0.05] transition cursor-pointer">
             Cancel
           </button>
-          <button type="button" id="submit-report-btn" class="flex items-center gap-2 px-5 py-2.5 rounded-xl text-xs font-semibold text-white bg-gradient-to-r from-rose-600 to-pink-600 hover:from-rose-500 hover:to-pink-500 shadow-md shadow-rose-950/50 transition cursor-pointer active:scale-95 disabled:opacity-50">
-            <span>Submit Report</span>
+          <button type="button" id="submit-report-btn" class="px-4 py-2 rounded-xl text-xs font-medium text-white bg-rose-600 hover:bg-rose-500 active:scale-95 shadow-sm shadow-rose-950/40 transition cursor-pointer disabled:opacity-50">
+            Submit
           </button>
         </div>
 
@@ -2587,7 +2582,7 @@ const { character } = Astro.props;
               targetName: safeTargetName,
               category: selectedCat,
               details,
-              snippet: safeSnippet,
+              snippet: cleanSnippet || safeSnippet,
               metadata
             })
           });
