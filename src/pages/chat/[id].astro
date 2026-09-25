@@ -823,10 +823,10 @@ const { character } = Astro.props;
                         </div>
                         <div>
                           <div class="flex items-center gap-1.5">
-                            <span class="text-xs font-bold text-white">API Profiles (مدیریت اکانت‌ها با نام دلخواه)</span>
+                            <span class="text-xs font-bold text-white">API Profiles</span>
                             <span id="active-profile-badge" class="hidden text-[10px] px-2 py-0.5 rounded-full bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 font-semibold font-mono">Active</span>
                           </div>
-                          <span class="text-[10px] text-purple-300/80 block">امکان ذخیره چند API با نام دلخواه و سوئیچ فوری بدون پاک شدن تنظیمات قبلی</span>
+                          <span class="text-[10px] text-purple-300/80 block">Save and switch between custom API keys without losing provider settings</span>
                         </div>
                       </div>
                       <div class="flex items-center gap-1.5">
@@ -877,7 +877,7 @@ const { character } = Astro.props;
                       <div class="flex items-center justify-between text-xs text-purple-200 font-semibold">
                         <span class="flex items-center gap-1.5">
                           <Tag class="w-3 h-3 text-purple-400" />
-                          <span>نام دلخواه برای این پروفایل (Custom Profile Name)</span>
+                          <span>Custom Profile Name</span>
                         </span>
                         <button type="button" id="btn-cancel-new-profile" class="text-slate-400 hover:text-white text-[11px] cursor-pointer">✕ Cancel</button>
                       </div>
@@ -885,7 +885,7 @@ const { character } = Astro.props;
                         <input 
                           type="text" 
                           id="new-profile-name-input" 
-                          placeholder="مثلاً: گرپ شخصی، دیپ‌سیک کاری، اولاما خانه..." 
+                          placeholder="e.g. Personal Groq, Work OpenRouter, Local Ollama..." 
                           class="flex-1 px-3 py-1.5 rounded-lg bg-white/[0.06] border border-white/15 text-xs text-white placeholder:text-slate-500 outline-none focus:border-purple-400 font-medium"
                           dir="auto"
                         />
@@ -4715,13 +4715,13 @@ const { character } = Astro.props;
     updateHeaderPill();
 
     const provName = PROVIDER_CONFIGS[targetProv]?.name || targetProv;
-    showNotification(`✓ سوئیچ به پروفایل: ${prof.name} (${provName})`);
+    showNotification(`✓ Switched to profile: ${prof.name} (${provName})`);
   }
 
   function saveCurrentAsNewProfile(name) {
     const profileName = (name || '').trim();
     if (!profileName) {
-      showNotification('⚠️ لطفاً یک نام برای این پروفایل وارد کنید.');
+      showNotification('⚠️ Please enter a name for this profile.');
       return;
     }
 
@@ -4775,13 +4775,13 @@ const { character } = Astro.props;
     if (newProfileForm) newProfileForm.classList.add('hidden');
     if (newProfileNameInput) newProfileNameInput.value = '';
 
-    showNotification(`✓ پروفایل «${profileName}» با موفقیت ذخیره شد!`);
+    showNotification(`✓ Profile "${profileName}" saved successfully!`);
   }
 
   function updateActiveProfile() {
     const activeId = localStorage.getItem(ACTIVE_PROFILE_KEY);
     if (!activeId) {
-      showNotification('⚠️ هیچ پروفایلی فعال نیست. از دکمه Save as New Profile استفاده کنید.');
+      showNotification('⚠️ No active profile selected. Use "Save as New Profile" instead.');
       return;
     }
 
@@ -4815,7 +4815,7 @@ const { character } = Astro.props;
 
     renderApiProfilesDropdown(activeId);
     updateHeaderPill();
-    showNotification(`✓ تغییرات پروفایل «${profiles[idx].name}» ذخیره شد.`);
+    showNotification(`✓ Profile "${profiles[idx].name}" updated.`);
   }
 
   function deleteActiveProfile() {
@@ -4826,14 +4826,14 @@ const { character } = Astro.props;
     const prof = profiles.find(p => p.id === activeId);
     if (!prof) return;
 
-    if (!confirm(`آیا از حذف پروفایل «${prof.name}» اطمینان دارید؟`)) return;
+    if (!confirm(`Are you sure you want to delete profile "${prof.name}"?`)) return;
 
     const remaining = profiles.filter(p => p.id !== activeId);
     saveApiProfilesToStorage(remaining);
     localStorage.removeItem(ACTIVE_PROFILE_KEY);
     renderApiProfilesDropdown(null);
     updateHeaderPill();
-    showNotification(`✓ پروفایل «${prof.name}» حذف شد.`);
+    showNotification(`✓ Profile "${prof.name}" deleted.`);
   }
 
   // Handle Provider switching: saves old provider data, loads new provider data, isolates models
