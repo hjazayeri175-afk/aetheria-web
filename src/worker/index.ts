@@ -831,6 +831,108 @@ export default {
         }
       }
 
+      // Edge AI Image Generation (Free Tier / Keyless Selfie Engine)
+      if (url.pathname === '/api/image/generate' && request.method === 'POST') {
+        const body = await request.json().catch(() => ({})) as any;
+        const prompt = body?.prompt;
+        if (!prompt || typeof prompt !== 'string') {
+          return jsonResponse({ error: 'Prompt is required' }, 400);
+        }
+
+        if (!env.AI) {
+          return jsonResponse({ error: 'Workers AI binding is not configured' }, 503);
+        }
+
+        const cleanPrompt = prompt.trim().slice(0, 1000);
+        let imageBase64: string | null = null;
+        let usedModel = '';
+
+        function bytesToBase64(bytes: Uint8Array): string {
+          let binary = '';
+          const len = bytes.byteLength;
+          const chunkSize = 8192;
+          for (let i = 0; i < len; i += chunkSize) {
+            const chunk = bytes.subarray(i, Math.min(i + chunkSize, len));
+            binary += String.fromCharCode.apply(null, chunk as any);
+          }
+          return btoa(binary);
+        }
+
+        // 1. Primary: Flux 1 Schnell
+        try {
+          const aiResult: any = await env.AI.run('@cf/black-forest-labs/flux-1-schnell', {
+            prompt: cleanPrompt,
+            steps: 4
+          });
+          if (aiResult?.image) {
+            imageBase64 = `data:image/jpeg;base64,${aiResult.image}`;
+            usedModel = 'flux-1-schnell';
+          } else if (aiResult) {
+            const buf = await new Response(aiResult).arrayBuffer();
+            if (buf.byteLength > 0) {
+              imageBase64 = `data:image/jpeg;base64,${bytesToBase64(new Uint8Array(buf))}`;
+              usedModel = 'flux-1-schnell';
+            }
+          }
+        } catch (fluxErr: any) {
+          console.warn('Edge AI flux-1-schnell failed, trying fallback:', fluxErr?.message || fluxErr);
+        }
+
+        // 2. Secondary: SDXL Lightning (High speed)
+        if (!imageBase64) {
+          try {
+            const aiResult: any = await env.AI.run('@cf/bytedance/stable-diffusion-xl-lightning', {
+              prompt: cleanPrompt
+            });
+            if (aiResult?.image) {
+              imageBase64 = `data:image/jpeg;base64,${aiResult.image}`;
+              usedModel = 'sdxl-lightning';
+            } else if (aiResult) {
+              const buf = await new Response(aiResult).arrayBuffer();
+              if (buf.byteLength > 0) {
+                imageBase64 = `data:image/jpeg;base64,${bytesToBase64(new Uint8Array(buf))}`;
+                usedModel = 'sdxl-lightning';
+              }
+            }
+          } catch (sdErr: any) {
+            console.warn('Edge AI sdxl-lightning failed, trying fallback:', sdErr?.message || sdErr);
+          }
+        }
+
+        // 3. Tertiary: Stable Diffusion XL Base 1.0
+        if (!imageBase64) {
+          try {
+            const aiResult: any = await env.AI.run('@cf/stabilityai/stable-diffusion-xl-base-1.0', {
+              prompt: cleanPrompt
+            });
+            if (aiResult?.image) {
+              imageBase64 = `data:image/jpeg;base64,${aiResult.image}`;
+              usedModel = 'sdxl-base';
+            } else if (aiResult) {
+              const buf = await new Response(aiResult).arrayBuffer();
+              if (buf.byteLength > 0) {
+                imageBase64 = `data:image/jpeg;base64,${bytesToBase64(new Uint8Array(buf))}`;
+                usedModel = 'sdxl-base';
+              }
+            }
+          } catch (baseErr: any) {
+            console.warn('Edge AI sdxl-base failed:', baseErr?.message || baseErr);
+          }
+        }
+
+        if (imageBase64) {
+          return jsonResponse({
+            success: true,
+            url: imageBase64,
+            model: usedModel
+          });
+        }
+
+        return jsonResponse({
+          error: 'Free Edge Image Generation is temporarily congested. Please retry in a few moments.'
+        }, 503);
+      }
+
       return jsonResponse({ error: 'Endpoint not found' }, 404);
     } catch (err: any) {
       return jsonResponse({ error: err.message || 'Internal Edge Error' }, 500);

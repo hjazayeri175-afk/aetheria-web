@@ -1644,15 +1644,21 @@ const { character } = Astro.props;
 
           <!-- Dynamic Prompts Container -->
           <div id="smart-prompts-container" class="flex items-center gap-2 overflow-x-auto no-scrollbar scroll-smooth py-0.5">
-            {character.starterPrompts && character.starterPrompts.map((prompt) => (
-              <button 
-                type="button"
-                class="room-starter-pill shrink-0 px-3 py-1.5 rounded-xl bg-white/[0.04] hover:bg-purple-900/30 hover:border-purple-500/40 border border-white/[0.08] text-xs text-slate-300 hover:text-white transition duration-200 cursor-pointer active:scale-95 whitespace-nowrap"
-                data-prompt={prompt}
-              >
-                "{prompt}"
-              </button>
-            ))}
+            {character.starterPrompts && character.starterPrompts.map((prompt) => {
+              const cleanPrompt = String(prompt).trim().replace(/^["'«“]+|["'»”]+$/g, '').trim();
+              const displayLabel = cleanPrompt.startsWith('*') ? cleanPrompt : `"${cleanPrompt}"`;
+              return (
+                <button 
+                  type="button"
+                  class="room-starter-pill group flex items-center gap-1.5 shrink-0 px-3 py-1.5 rounded-xl bg-white/[0.04] hover:bg-purple-950/40 border border-white/[0.08] hover:border-purple-500/30 text-xs text-slate-300 hover:text-white transition duration-200 cursor-pointer active:scale-95 whitespace-nowrap shadow-sm"
+                  data-prompt={cleanPrompt}
+                  title="Click to fill reply"
+                >
+                  <span class="w-1.5 h-1.5 rounded-full bg-purple-400/60 group-hover:bg-purple-400 group-hover:scale-125 transition"></span>
+                  <span>{displayLabel}</span>
+                </button>
+              );
+            })}
           </div>
         </div>
 
@@ -2391,6 +2397,7 @@ const { character } = Astro.props;
   const refreshSmartPromptsBtn = document.getElementById('refresh-smart-prompts-btn');
   const smartPromptsRefreshIcon = document.getElementById('smart-prompts-refresh-icon');
   let isGeneratingSmartPrompts = false;
+  let smartPromptsAbortController = null;
   
   // Fullscreen Artwork Lightbox
   const lightboxModal = document.getElementById('artwork-lightbox-modal');
@@ -6964,15 +6971,23 @@ const { character } = Astro.props;
     if (!prompts || prompts.length === 0) {
       prompts = activeChar.starterPrompts || character.starterPrompts || [];
     }
-    smartPromptsContainer.innerHTML = prompts.map(p => `
-      <button 
-        type="button"
-        class="room-starter-pill shrink-0 px-3 py-1.5 rounded-xl bg-purple-950/40 hover:bg-purple-900/60 hover:border-purple-400/50 border border-purple-500/25 text-xs text-purple-200 hover:text-white transition duration-200 cursor-pointer active:scale-95 whitespace-nowrap shadow-sm"
-        data-prompt="${p.replace(/"/g, '&quot;')}"
-      >
-        "${p.replace(/"/g, '&quot;')}"
-      </button>
-    `).join('');
+    smartPromptsContainer.innerHTML = prompts.map(p => {
+      const cleanPrompt = String(p).trim().replace(/^["'«“]+|["'»”]+$/g, '').trim();
+      const displayLabel = cleanPrompt.startsWith('*') ? cleanPrompt : `"${cleanPrompt}"`;
+      const escapedVal = cleanPrompt.replace(/"/g, '&quot;');
+      const escapedDisplay = displayLabel.replace(/"/g, '&quot;');
+      return `
+        <button 
+          type="button"
+          class="room-starter-pill group flex items-center gap-1.5 shrink-0 px-3 py-1.5 rounded-xl bg-white/[0.04] hover:bg-purple-950/40 border border-white/[0.08] hover:border-purple-500/30 text-xs text-slate-300 hover:text-white transition duration-200 cursor-pointer active:scale-95 whitespace-nowrap shadow-sm"
+          data-prompt="${escapedVal}"
+          title="Click to fill reply"
+        >
+          <span class="w-1.5 h-1.5 rounded-full bg-purple-400/60 group-hover:bg-purple-400 group-hover:scale-125 transition"></span>
+          <span>${escapedDisplay}</span>
+        </button>
+      `;
+    }).join('');
 
     smartPromptsContainer.querySelectorAll('.room-starter-pill').forEach((btn) => {
       btn.addEventListener('click', () => {
@@ -6987,9 +7002,59 @@ const { character } = Astro.props;
     });
   }
 
+  function extractSuggestionsFromText(rawText) {
+    if (!rawText || typeof rawText !== 'string') return [];
+
+    // 1. Direct JSON parse
+    try {
+      const direct = JSON.parse(rawText.trim());
+      if (Array.isArray(direct)) {
+        return direct.map(s => String(s).trim()).filter(Boolean);
+      }
+      if (direct?.choices?.[0]?.message?.content) {
+        return extractSuggestionsFromText(direct.choices[0].message.content);
+      }
+      if (direct?.content?.[0]?.text) {
+        return extractSuggestionsFromText(direct.content[0].text);
+      }
+    } catch (e) {}
+
+    // 2. Bracket match for JSON array [...]
+    const bracketMatch = rawText.match(/\[\s*["'«“][\s\S]*?["'»”]\s*\]/);
+    if (bracketMatch) {
+      try {
+        const parsed = JSON.parse(bracketMatch[0]);
+        if (Array.isArray(parsed)) {
+          return parsed.map(s => String(s).trim()).filter(Boolean);
+        }
+      } catch (e) {}
+    }
+
+    // 3. Fallback: Parse numbered list or markdown bullet lines (e.g. 1. ... or - ...)
+    const lineMatches = rawText
+      .split('\n')
+      .map(l => l.trim())
+      .filter(l => /^(\d+[\.\)]|\-|\*)\s+/.test(l))
+      .map(l => l.replace(/^(\d+[\.\)]|\-|\*)\s+/, '').replace(/^["'«“]|["'»”]$/g, '').trim())
+      .filter(l => l.length > 2 && l.length < 120);
+
+    if (lineMatches.length >= 2) {
+      return lineMatches.slice(0, 4);
+    }
+
+    return [];
+  }
+
   async function fetchDynamicSuggestions(contextText) {
-    if (isGeneratingSmartPrompts) return;
-    isGeneratingSmartPrompts = true;
+    if (smartPromptsAbortController) {
+      try { smartPromptsAbortController.abort(); } catch (e) {}
+    }
+    smartPromptsAbortController = new AbortController();
+    const currentSignal = smartPromptsAbortController.signal;
+
+    const timeoutId = setTimeout(() => {
+      try { smartPromptsAbortController?.abort(); } catch (e) {}
+    }, 12000);
 
     if (smartPromptsLoading) {
       smartPromptsLoading.classList.remove('hidden');
@@ -7000,66 +7065,225 @@ const { character } = Astro.props;
     }
 
     try {
-      let targetText = contextText;
-      if (!targetText) {
-        for (let i = conversation.length - 1; i >= 0; i--) {
-          if (conversation[i].sender === 'character') {
-            targetText = conversation[i].text;
-            break;
+      // 1. Gather rich context from character card and recent roleplay dialogue
+      const charName = activeChar.name || character.name || 'Character';
+      const charTitle = activeChar.title || character.title || '';
+      const charScenario = (activeChar.scenario || character.scenario || '').slice(0, 300);
+      const charPersonality = (activeChar.personality || character.personality || '').slice(0, 200);
+
+      // Extract last 4 non-system conversation turns
+      const recentValid = conversation
+        .filter(m => m.text && !isPoisonedOrErrorMessage(m.text))
+        .slice(-4);
+
+      let historySnippet = '';
+      if (recentValid.length > 0) {
+        historySnippet = recentValid.map(m => {
+          const roleLabel = m.sender === 'user' ? 'User' : charName;
+          const cleanBody = (m.text || '').replace(/<details[\s\S]*?<\/details>/gi, '').trim().slice(0, 300);
+          return `${roleLabel}: "${cleanBody}"`;
+        }).join('\n');
+      }
+
+      // If contextText provided explicitly (e.g. fresh reply or swipe) and not in history, append it
+      if (contextText && !historySnippet.includes(contextText.slice(0, 50))) {
+        const cleanFresh = contextText.replace(/<details[\s\S]*?<\/details>/gi, '').trim().slice(0, 300);
+        historySnippet += (historySnippet ? '\n' : '') + `${charName}: "${cleanFresh}"`;
+      }
+
+      if (!historySnippet) {
+        const greeting = (activeChar.greeting || character.greeting || '').replace(/<details[\s\S]*?<\/details>/gi, '').trim().slice(0, 300);
+        historySnippet = `${charName}: "${greeting}"`;
+      }
+
+      // Detect language (Persian if Persian characters exist in history snippet)
+      const hasPersian = /[\u0600-\u06FF]/.test(historySnippet);
+
+      const systemPrompt = `You are an immersive roleplay assistant and story co-writer.
+Given the character profile and the recent dialogue flow, suggest 3 to 4 distinct, creative, and engaging reply options that the user can say or do next.
+
+Character: ${charName}${charTitle ? ` (${charTitle})` : ''}
+${charScenario ? `Scenario: ${charScenario}` : ''}
+${charPersonality ? `Personality: ${charPersonality}` : ''}
+
+Generate 3 or 4 diverse roleplay avenues:
+1. Direct dialogue reacting naturally to what was just said/asked.
+2. Inquisitive or story-progressing question diving into character secrets, thoughts, or lore.
+3. Expressive physical action or roleplay emote with asterisks (e.g. *takes a step forward*, *hands over the item*).
+4. A bold, witty, or unexpected reaction.
+
+Requirements:
+- Length: Short and punchy (under 12 words per option).
+- Language: Strictly match the dialogue language (${hasPersian ? 'Persian / فارسی' : 'English'}).
+- Output format: Return ONLY a valid JSON array of strings, e.g. ["Option 1", "Option 2", "Option 3", "Option 4"].
+- No markdown wrappers, no backticks, no introductory text.`;
+
+      const userPrompt = `Recent dialogue:\n${historySnippet}\n\nProvide the 3-4 reply ideas for the user as a JSON array:`;
+
+      // 2. Determine Provider & API Key (BYOK User API)
+      const provider = localStorage.getItem('aetheria_text_provider') || 'demo';
+      const apiKey = (localStorage.getItem('aetheria_text_key') || '').trim();
+      let model = (localStorage.getItem('aetheria_text_model') || '').trim();
+      const conf = PROVIDER_CONFIGS[provider] || PROVIDER_CONFIGS.demo;
+
+      if (!model && provider !== 'demo') {
+        const cached = localStorage.getItem('aetheria_synced_models_' + provider);
+        try {
+          const list = JSON.parse(cached || '[]');
+          if (list.length > 0) model = list[0];
+        } catch (e) {}
+      }
+
+      let generatedPills = null;
+
+      // Try User's BYOK API if configured
+      if (provider !== 'demo' && (apiKey || provider === 'custom-local') && model && !model.includes('No API connected')) {
+        try {
+          let endpoint = conf.chatEndpoint;
+          if (conf.hasUrl) {
+            const rawBase = (localStorage.getItem('aetheria_text_base_url') || conf.defaultUrl || 'http://localhost:11434/v1').trim();
+            const base = rawBase.replace(/\/+$/, '');
+            endpoint = base.endsWith('/chat/completions') ? base : (base.endsWith('/v1') ? base + '/chat/completions' : base + '/chat/completions');
+          } else if (provider === 'google') {
+            endpoint = 'https://generativelanguage.googleapis.com/v1beta/openai/chat/completions';
+          } else if (!endpoint) {
+            endpoint = 'https://api.groq.com/openai/v1/chat/completions';
+          }
+
+          let headers = { 'Content-Type': 'application/json' };
+          let reqBody;
+
+          if (provider === 'anthropic') {
+            headers['x-api-key'] = apiKey;
+            headers['anthropic-version'] = '2023-06-01';
+            headers['anthropic-dangerous-direct-browser-access'] = 'true';
+            reqBody = {
+              model: model,
+              max_tokens: 300,
+              temperature: 0.8,
+              system: systemPrompt,
+              messages: [{ role: 'user', content: userPrompt }]
+            };
+          } else {
+            if (apiKey) {
+              if (provider === 'google') {
+                headers['x-goog-api-key'] = apiKey;
+                headers['Authorization'] = `Bearer ${apiKey}`;
+              } else {
+                headers['Authorization'] = `Bearer ${apiKey}`;
+              }
+            }
+            if (provider === 'openrouter') {
+              headers['HTTP-Referer'] = window.location.origin || 'https://aetheria.ai';
+              headers['X-Title'] = 'Aetheria AI';
+            }
+            reqBody = {
+              model: model,
+              messages: [
+                { role: 'system', content: systemPrompt },
+                { role: 'user', content: userPrompt }
+              ],
+              max_tokens: 250,
+              temperature: 0.8,
+              stream: false
+            };
+          }
+
+          // Attempt 1: Direct fetch from browser
+          let res;
+          try {
+            res = await fetch(endpoint, {
+              method: 'POST',
+              headers,
+              body: JSON.stringify(reqBody),
+              signal: currentSignal
+            });
+          } catch (netErr) {
+            if (currentSignal.aborted) return;
+            // Attempt 2: Fallback via Worker CORS Proxy
+            res = await fetch('/api/proxy/chat', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({
+                endpoint,
+                apiKey,
+                body: reqBody,
+                headers: {
+                  ...(provider === 'anthropic' ? { 'anthropic-version': '2023-06-01' } : {}),
+                  ...(provider === 'openrouter' ? { 'HTTP-Referer': 'https://aetheria.ai', 'X-Title': 'Aetheria AI' } : {})
+                }
+              }),
+              signal: currentSignal
+            });
+          }
+
+          if (res && res.ok) {
+            const resData = await res.json().catch(() => null);
+            let text = '';
+            if (resData?.choices?.[0]?.message?.content) {
+              text = resData.choices[0].message.content;
+            } else if (resData?.content?.[0]?.text) {
+              text = resData.content[0].text;
+            } else if (typeof resData === 'string') {
+              text = resData;
+            }
+
+            const extracted = extractSuggestionsFromText(text);
+            if (extracted.length > 0) {
+              generatedPills = extracted;
+            }
+          }
+        } catch (byokErr) {
+          if (currentSignal.aborted) return;
+          console.warn('Smart ideas BYOK call failed, falling back to edge:', byokErr);
+        }
+      }
+
+      // If BYOK was not used or returned empty, fall back to /api/chat/demo on edge worker
+      if (!generatedPills) {
+        const demoRes = await fetch('/api/chat/demo', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            messages: [
+              { role: 'system', content: systemPrompt },
+              { role: 'user', content: userPrompt }
+            ]
+          }),
+          signal: currentSignal
+        });
+
+        if (demoRes.ok) {
+          const resData = await demoRes.json().catch(() => null);
+          let text = '';
+          if (resData?.choices?.[0]?.message?.content) {
+            text = resData.choices[0].message.content;
+          } else if (typeof resData === 'string') {
+            text = resData;
+          }
+          const extracted = extractSuggestionsFromText(text);
+          if (extracted.length > 0) {
+            generatedPills = extracted;
           }
         }
       }
-      if (!targetText) targetText = activeChar.greeting || character.greeting || '';
 
-      const cleanText = targetText.replace(/\*[^*]+\*/g, '').slice(0, 400).trim();
+      if (generatedPills && generatedPills.length > 0) {
+        const cleanPills = generatedPills
+          .map(p => String(p).trim().replace(/^["'«“]+|["'»”]+$/g, '').trim())
+          .filter(p => p.length > 1 && p.length < 120)
+          .slice(0, 4);
 
-      const systemPrompt = `You are a roleplay co-writer for an interactive story with "${activeChar.name}".
-Based on the character's last message, suggest exactly 3 short, diverse, high-impact options the user could say or do next.
-Requirements:
-1. Return ONLY a valid JSON array of 3 strings: ["option 1", "option 2", "option 3"].
-2. Each option must be under 10 words.
-3. Diverse roleplay angles: one conversational/witty reply, one story-progressing question, one bold physical or tactical action.
-4. Language must match the dialogue.
-5. Absolutely NO markdown, NO codeblocks, NO extra text.`;
-
-      const userPrompt = `Character: ${activeChar.name}\nLast words:\n"${cleanText}"`;
-
-      const res = await fetch('/api/chat/demo', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          messages: [
-            { role: 'system', content: systemPrompt },
-            { role: 'user', content: userPrompt }
-          ]
-        }),
-        signal: AbortSignal.timeout(7000)
-      });
-
-      if (res.ok) {
-        const raw = await res.text();
-        let parsed = null;
-        try {
-          parsed = JSON.parse(raw.trim());
-        } catch {
-          const match = raw.match(/\[[\s\S]*?\]/);
-          if (match) {
-            try { parsed = JSON.parse(match[0]); } catch {}
-          }
-        }
-
-        if (Array.isArray(parsed) && parsed.length > 0) {
-          const cleanPills = parsed.filter(p => typeof p === 'string' && p.trim().length > 0).slice(0, 4);
-          if (cleanPills.length > 0) {
-            renderSmartPrompts(cleanPills);
-            return;
-          }
+        if (cleanPills.length > 0) {
+          renderSmartPrompts(cleanPills);
+          return;
         }
       }
     } catch (err) {
+      if (err.name === 'AbortError') return;
       console.warn('Smart suggestions fetch error:', err);
     } finally {
-      isGeneratingSmartPrompts = false;
+      clearTimeout(timeoutId);
       if (smartPromptsLoading) {
         smartPromptsLoading.classList.add('hidden');
         smartPromptsLoading.classList.remove('flex');
