@@ -2569,6 +2569,79 @@ const { character } = Astro.props;
   const videoDurationSelect = document.getElementById('video-duration-select');
   const videoResSelect = document.getElementById('video-res-select');
 
+  // Safe helper to extract balanced <details> and <div ...> blocks without breaking nested tags
+  function extractBalancedHtmlBlocks(str) {
+    const htmlBlocks = [];
+    let result = '';
+    let i = 0;
+    const n = str.length;
+
+    while (i < n) {
+      const sub = str.slice(i, i + 8).toLowerCase();
+      if (sub.startsWith('<details') || sub.startsWith('<div')) {
+        const isDetails = sub.startsWith('<details');
+        const targetTag = isDetails ? 'details' : 'div';
+        const tagRegex = new RegExp(`<(/?)\\s*${targetTag}(\\s[^>]*)?>`, 'gi');
+        tagRegex.lastIndex = i;
+
+        let depth = 0;
+        let startPos = i;
+        let matched = false;
+        let match;
+
+        while ((match = tagRegex.exec(str)) !== null) {
+          const isClose = !!match[1];
+          if (!isClose) {
+            depth++;
+          } else {
+            depth--;
+            if (depth === 0) {
+              const endPos = tagRegex.lastIndex;
+              const idx = htmlBlocks.length;
+              htmlBlocks.push(str.slice(startPos, endPos));
+              result += `__HTML_BLOCK_${idx}__`;
+              i = endPos;
+              matched = true;
+              break;
+            }
+          }
+        }
+
+        if (!matched) {
+          result += str[i];
+          i++;
+        }
+      } else {
+        result += str[i];
+        i++;
+      }
+    }
+
+    return { masked: result, blocks: htmlBlocks };
+  }
+
+  // Bulletproof extraction of text from any streaming chunk or JSON response
+  // Completely prevents '[object Object]' when providers return nested objects/arrays in reasoning_details or content blocks
+  function extractStreamToken(val) {
+    if (val === null || val === undefined) return '';
+    if (typeof val === 'string') return val;
+    if (typeof val === 'number') return String(val);
+    if (Array.isArray(val)) {
+      return val.map(item => extractStreamToken(item)).join('');
+    }
+    if (typeof val === 'object') {
+      if (typeof val.text === 'string') return val.text;
+      if (typeof val.content === 'string') return val.content;
+      if (typeof val.summary === 'string') return val.summary;
+      if (typeof val.thought === 'string') return val.thought;
+      if (typeof val.reasoning === 'string') return val.reasoning;
+      if (Array.isArray(val.content)) return extractStreamToken(val.content);
+      if (Array.isArray(val.reasoning_details)) return extractStreamToken(val.reasoning_details);
+      return '';
+    }
+    return '';
+  }
+
   // Format action text (*italic*), bold, code, markdown images, and paragraphs (Cinematic Markdown)
   function formatMessageText(text) {
     if (!text) return '';
@@ -2580,13 +2653,9 @@ const { character } = Astro.props;
       return `<details class="mb-3 rounded-lg border border-purple-500/20 bg-purple-950/20 px-3 py-2 text-xs text-purple-300 select-none"><summary class="cursor-pointer font-medium hover:text-purple-200">💭 Thought Process (${trimmed.length} chars)</summary><div class="mt-2 text-slate-300 font-mono text-[11px] leading-relaxed whitespace-pre-wrap">${trimmed}</div></details>\n\n`;
     });
 
-    // Protect <details> reasoning blocks and HTML notice containers from escaping
-    const htmlBlocks = [];
-    let s = text.replace(/<(?:details|div)[\s\S]*?<\/(?:details|div)>/gi, (match) => {
-      const idx = htmlBlocks.length;
-      htmlBlocks.push(match);
-      return `__HTML_BLOCK_${idx}__`;
-    });
+    // Protect balanced <details> and <div ...> blocks (e.g. thought boxes, pause notices)
+    const { masked, blocks: htmlBlocks } = extractBalancedHtmlBlocks(text);
+    let s = masked;
 
     // 0. Extract markdown images before escaping: ![alt](url)
     const mediaPlaceholders = [];
@@ -2636,12 +2705,20 @@ const { character } = Astro.props;
     s = s.replace(/__HTML_BLOCK_(\d+)__/g, (_, idx) => (htmlBlocks && htmlBlocks[idx]) || '');
 
     // 7. Multi-line paragraphs: double newlines become separate paragraphs
-    const paragraphs = s.split(/\n{2,}/);
-    if (paragraphs.length > 1) {
-      return paragraphs.map(p => `<p class="mb-2.5 last:mb-0 leading-relaxed">${p.replace(/\n/g, '<br/>')}</p>`).join('');
-    }
+    // Do NOT wrap raw block elements (<details> or <div>) inside <p> tags to avoid DOM nesting corruption
+    const rawParagraphs = s.split(/\n{2,}/);
+    const rendered = rawParagraphs
+      .map(p => {
+        const trimmed = p.trim();
+        if (!trimmed) return '';
+        if (trimmed.startsWith('<details') || trimmed.startsWith('<div')) {
+          return trimmed;
+        }
+        return `<p class="mb-2.5 last:mb-0 leading-relaxed">${trimmed.replace(/\n/g, '<br/>')}</p>`;
+      })
+      .filter(Boolean);
 
-    return `<p class="leading-relaxed">${s.replace(/\n/g, '<br/>')}</p>`;
+    return rendered.join('');
   }
 
   // ==========================================
@@ -5554,8 +5631,15 @@ const { character } = Astro.props;
       const lastEl = document.querySelector('#chat-stream > div:last-child');
       if (lastEl) lastEl.remove();
       saveChat();
-      // Prompt character to write the response now
-      handleSendMessage('Please write ' + (activeChar.name || '{{char}}') + '\'s reply now without further internal thinking.');
+    }
+    const lastUserMsg = conversation.slice().reverse().find(m => m.sender === 'user');
+    if (lastUserMsg) {
+      const userText = lastUserMsg.text;
+      conversation.pop();
+      const lastUserEl = document.querySelector('#chat-stream > div:last-child');
+      if (lastUserEl) lastUserEl.remove();
+      saveChat();
+      handleSendMessage(userText);
     }
   };
 
@@ -5711,10 +5795,10 @@ const { character } = Astro.props;
 
         const enableThinking = localStorage.getItem('aetheria_text_thinking') === 'true';
         let effectiveMaxTokens = maxTokens;
-        const isReasoningModel = /deepseek|r1|reasoning|qwq|flash/i.test(model);
+        const isReasoningModel = /deepseek|r1|reasoning|qwq|flash|thinking/i.test(model);
         if (enableThinking || isReasoningModel) {
           // Generous token budget so internal thinking never starves the character response
-          effectiveMaxTokens = Math.max(maxTokens, 3500);
+          effectiveMaxTokens = Math.max(maxTokens, 4096);
         }
 
         if (provider === 'anthropic') {
@@ -5726,6 +5810,11 @@ const { character } = Astro.props;
             temperature: temp,
             stream: enableStreaming
           };
+          if (enableThinking) {
+            payload.thinking = { type: 'enabled', budget_tokens: 2048 };
+          } else {
+            payload.thinking = { type: 'disabled' };
+          }
         } else {
           payload = {
             model: model,
@@ -5736,15 +5825,28 @@ const { character } = Astro.props;
             stream: enableStreaming
           };
 
-          if (isReasoningModel) {
+          if (provider === 'openrouter') {
+            if (enableThinking) {
+              payload.reasoning = {
+                effort: 'low',
+                exclude: false
+              };
+            } else {
+              // OpenRouter standard: effort 'none' disables thinking, exclude: true strips reasoning if model forces it internally
+              payload.reasoning = {
+                effort: 'none',
+                exclude: true
+              };
+            }
+          } else if (isReasoningModel) {
             if (!enableThinking) {
               // Explicitly disable thinking for snappy character roleplay
               payload.thinking = { type: 'disabled' };
-              payload.reasoning_effort = 'low';
               payload.chat_template_kwargs = { thinking: false };
             } else {
               payload.thinking = { type: 'enabled' };
               payload.reasoning_effort = 'low';
+              payload.chat_template_kwargs = { thinking: true };
             }
           }
         }
@@ -5758,11 +5860,12 @@ const { character } = Astro.props;
             body: JSON.stringify(payload)
           });
           // If 400 Bad Request and payload contained thinking parameters, retry once cleanly without them
-          if (res.status === 400 && (payload.thinking || payload.chat_template_kwargs)) {
+          if (res.status === 400 && (payload.thinking || payload.chat_template_kwargs || payload.reasoning || payload.reasoning_effort)) {
             const cleanPayload = { ...payload };
             delete cleanPayload.thinking;
             delete cleanPayload.reasoning_effort;
             delete cleanPayload.chat_template_kwargs;
+            delete cleanPayload.reasoning;
             res = await fetch(endpoint, {
               method: 'POST',
               headers,
@@ -5843,25 +5946,28 @@ const { character } = Astro.props;
                       if (c?.finish_reason) finishReason = c.finish_reason;
 
                       // 1. Content token
-                      const contentToken = c?.delta?.content 
-                        || c?.delta?.text 
-                        || c?.text 
-                        || c?.message?.content 
-                        || parsed.delta?.content 
-                        || parsed.delta?.text 
-                        || parsed.response 
-                        || parsed.content 
-                        || '';
+                      const rawContent = c?.delta?.content 
+                        ?? c?.delta?.text 
+                        ?? c?.text 
+                        ?? c?.message?.content 
+                        ?? parsed.delta?.content 
+                        ?? parsed.delta?.text 
+                        ?? parsed.response 
+                        ?? parsed.content;
+
+                      const contentToken = extractStreamToken(rawContent);
 
                       // 2. Reasoning / Thinking token (DeepSeek R1/V4, Qwen, Ollama, OpenRouter)
-                      const reasoningToken = c?.delta?.reasoning_content 
-                        || c?.delta?.reasoning 
-                        || c?.delta?.thought 
-                        || c?.delta?.thinking 
-                        || c?.delta?.reasoning_details 
-                        || c?.message?.reasoning_content 
-                        || parsed.thinking 
-                        || '';
+                      const rawReasoning = c?.delta?.reasoning_content 
+                        ?? c?.delta?.reasoning 
+                        ?? c?.delta?.thought 
+                        ?? c?.delta?.thinking 
+                        ?? c?.delta?.reasoning_details 
+                        ?? c?.message?.reasoning_content 
+                        ?? c?.message?.reasoning_details 
+                        ?? parsed.thinking;
+
+                      const reasoningToken = extractStreamToken(rawReasoning);
 
                       if (reasoningToken) {
                         reasoningText += reasoningToken;
@@ -5914,10 +6020,10 @@ const { character } = Astro.props;
                 try {
                   const json = JSON.parse(fullText);
                   const choice = json.choices?.[0];
-                  const cText = choice?.message?.content || choice?.text || (json.content && json.content[0] && json.content[0].text) || json.response || '';
-                  const rText = choice?.message?.reasoning_content || choice?.message?.reasoning || choice?.message?.thought || choice?.message?.thinking || '';
+                  const cText = extractStreamToken(choice?.message?.content || choice?.text || (json.content && json.content[0] && json.content[0].text) || json.response || '');
+                  const rText = extractStreamToken(choice?.message?.reasoning_content || choice?.message?.reasoning || choice?.message?.thought || choice?.message?.thinking || choice?.message?.reasoning_details || '').trim();
                   if (cText && rText) {
-                    replyText = `<details class="mb-3 rounded-lg border border-purple-500/20 bg-purple-950/20 px-3 py-2 text-xs text-purple-300 select-none"><summary class="cursor-pointer font-medium hover:text-purple-200">💭 Thought Process</summary><div class="mt-2 text-slate-300 font-mono text-[11px] leading-relaxed whitespace-pre-wrap">${rText}</div></details>\n\n${cText}`;
+                    replyText = `<details class="mb-3 rounded-lg border border-purple-500/20 bg-purple-950/20 px-3 py-2 text-xs text-purple-300 select-none"><summary class="cursor-pointer font-medium hover:text-purple-200">💭 Thought Process (${rText.length} chars)</summary><div class="mt-2 text-slate-300 font-mono text-[11px] leading-relaxed whitespace-pre-wrap">${rText}</div></details>\n\n${cText}`;
                   } else {
                     replyText = cText || rText;
                   }
@@ -5951,19 +6057,20 @@ const { character } = Astro.props;
             // Standard non-streaming JSON mode
             const data = await res.json();
             const choice = data.choices?.[0];
-            const cText = choice?.message?.content 
+            const cText = extractStreamToken(choice?.message?.content 
               || choice?.text 
               || (data.content && data.content[0] && data.content[0].text) 
               || data.response 
-              || '';
-            const rText = choice?.message?.reasoning_content 
+              || '');
+            const rText = extractStreamToken(choice?.message?.reasoning_content 
               || choice?.message?.reasoning 
               || choice?.message?.thought 
               || choice?.message?.thinking 
-              || '';
+              || choice?.message?.reasoning_details 
+              || '').trim();
 
             if (cText && rText) {
-              replyText = `<details class="mb-3 rounded-lg border border-purple-500/20 bg-purple-950/20 px-3 py-2 text-xs text-purple-300 select-none"><summary class="cursor-pointer font-medium hover:text-purple-200">💭 Thought Process</summary><div class="mt-2 text-slate-300 font-mono text-[11px] leading-relaxed whitespace-pre-wrap">${rText}</div></details>\n\n${cText}`;
+              replyText = `<details class="mb-3 rounded-lg border border-purple-500/20 bg-purple-950/20 px-3 py-2 text-xs text-purple-300 select-none"><summary class="cursor-pointer font-medium hover:text-purple-200">💭 Thought Process (${rText.length} chars)</summary><div class="mt-2 text-slate-300 font-mono text-[11px] leading-relaxed whitespace-pre-wrap">${rText}</div></details>\n\n${cText}`;
             } else {
               replyText = cText || rText;
             }
@@ -6194,6 +6301,11 @@ const { character } = Astro.props;
             max_tokens: tokenBudget,
             temperature: temp
           };
+          if (isThinkingEnabled) {
+            payload.thinking = { type: 'enabled', budget_tokens: 2048 };
+          } else {
+            payload.thinking = { type: 'disabled' };
+          }
         } else {
           payload = {
             model: model,
@@ -6202,8 +6314,15 @@ const { character } = Astro.props;
             max_tokens: tokenBudget,
             max_completion_tokens: tokenBudget
           };
-          if (!isThinkingEnabled) {
+          if (provider === 'openrouter') {
+            if (isThinkingEnabled) {
+              payload.reasoning = { effort: 'low', exclude: false };
+            } else {
+              payload.reasoning = { effort: 'none', exclude: true };
+            }
+          } else if (!isThinkingEnabled) {
             payload.thinking = { type: 'disabled' };
+            payload.chat_template_kwargs = { thinking: false };
           }
         }
 
@@ -6230,18 +6349,19 @@ const { character } = Astro.props;
         if (res.ok) {
           const data = await res.json();
           if (provider === 'anthropic') {
-            newReply = data.content?.[0]?.text || '';
+            newReply = extractStreamToken(data.content?.[0]?.text || data.content || '');
           } else {
             const choice = data.choices?.[0];
-            const cText = (choice?.message?.content 
+            const cText = extractStreamToken(choice?.message?.content 
               || choice?.text 
               || (data.content && data.content[0] && data.content[0].text) 
               || data.response 
               || '').trim();
-            const rText = (choice?.message?.reasoning_content 
+            const rText = extractStreamToken(choice?.message?.reasoning_content 
               || choice?.message?.reasoning 
               || choice?.message?.thought 
               || choice?.message?.thinking 
+              || choice?.message?.reasoning_details 
               || '').trim();
             if (cText && rText) {
               newReply = `<details class="mb-3 rounded-lg border border-purple-500/20 bg-purple-950/20 px-3 py-2 text-xs text-purple-300 select-none"><summary class="cursor-pointer font-medium hover:text-purple-200">💭 Thought Process (${rText.length} chars)</summary><div class="mt-2 text-slate-300 font-mono text-[11px] leading-relaxed whitespace-pre-wrap">${rText}</div></details>\n\n${cText}`;
