@@ -836,13 +836,36 @@ const { character } = Astro.props;
                         </button>
                       </div>
                     </div>
-                    <div class="w-full">
-                      <select 
-                        id="api-profile-select" 
-                        class="w-full px-3 py-2 rounded-xl bg-black/60 border border-purple-500/30 text-xs text-white outline-none focus:border-purple-400 font-medium cursor-pointer transition truncate box-border"
-                      >
+                    <div class="relative w-full">
+                      <!-- Hidden standard select to retain full JS compatibility -->
+                      <select id="api-profile-select" class="hidden">
                         <option value="">Direct Mode (No Profile)</option>
                       </select>
+
+                      <!-- Custom 2026 Trigger Button -->
+                      <button
+                        type="button"
+                        id="custom-profile-trigger"
+                        class="w-full px-3 py-2.5 rounded-xl bg-black/60 hover:bg-black/80 border border-purple-500/30 hover:border-purple-500/50 flex items-center justify-between text-xs text-white transition cursor-pointer text-left group"
+                        aria-haspopup="listbox"
+                        aria-expanded="false"
+                      >
+                        <div class="flex items-center gap-2 min-w-0 pr-2">
+                          <span class="w-2 h-2 rounded-full bg-slate-400 shrink-0" id="custom-profile-status-dot"></span>
+                          <span id="custom-profile-trigger-label" class="font-medium text-slate-200 truncate">Direct Mode (No Profile)</span>
+                          <span id="custom-profile-trigger-tag" class="hidden text-[9px] px-1.5 py-0.2 rounded bg-purple-900/40 text-purple-300 border border-purple-500/30 uppercase font-mono shrink-0"></span>
+                        </div>
+                        <ChevronDown class="w-4 h-4 text-slate-400 group-hover:text-purple-300 transition-transform duration-200 shrink-0" id="custom-profile-chevron" />
+                      </button>
+
+                      <!-- Custom Popover Menu -->
+                      <div 
+                        id="custom-profile-menu" 
+                        class="hidden absolute left-0 right-0 top-full mt-1.5 z-50 bg-[#0c0f24]/95 backdrop-blur-xl border border-purple-500/30 rounded-2xl p-1.5 shadow-2xl shadow-purple-950/80 space-y-1 max-h-56 overflow-y-auto custom-scrollbar no-scrollbar"
+                        role="listbox"
+                      >
+                        <!-- Populated dynamically by renderCustomProfileMenu() -->
+                      </div>
                     </div>
                   </div>
 
@@ -2060,113 +2083,132 @@ const { character } = Astro.props;
     </div>
   </div>
   <!-- ======================================================== -->
-  <!-- LUXURY MODEL SEARCH & DISCOVERY MODAL (z-[70])            -->
+  <!-- 2026 ELITE MODEL SEARCH & DISCOVERY MODAL (z-[70])          -->
   <!-- ======================================================== -->
   <div 
     id="model-search-modal" 
-    class="fixed inset-0 z-[70] hidden items-center justify-center bg-black/85 backdrop-blur-md p-3 sm:p-5 transition-all duration-300"
+    class="fixed inset-0 z-[70] hidden items-end sm:items-center justify-center bg-black/80 backdrop-blur-md p-0 sm:p-4 transition-all duration-300"
   >
     <div 
-      class="relative w-full max-w-2xl bg-[#0b0e24] border border-purple-500/30 rounded-2xl sm:rounded-3xl shadow-2xl shadow-purple-950/90 flex flex-col max-h-[88vh] overflow-hidden"
+      class="relative w-full max-w-2xl bg-[#090c1f] border-t sm:border border-purple-500/30 rounded-t-3xl sm:rounded-3xl shadow-2xl shadow-purple-950/90 flex flex-col max-h-[90vh] sm:max-h-[85vh] overflow-hidden"
     >
-      <!-- Modal Header -->
-      <div class="p-4 sm:p-5 border-b border-white/[0.08] flex items-center justify-between bg-gradient-to-r from-purple-950/50 via-transparent to-indigo-950/50 shrink-0">
-        <div class="flex items-center gap-2.5">
-          <div class="w-9 h-9 rounded-xl bg-purple-500/20 border border-purple-500/30 flex items-center justify-center text-purple-300 shadow-inner">
-            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19.428 15.428a2 2 0 00-1.022-.547l-2.387-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547M8 4h8l-1 1v5.172a2 2 0 00.586 1.414l5 5c1.26 1.26.367 3.414-1.415 3.414H4.828c-1.782 0-2.674-2.154-1.414-3.414l5-5A2 2 0 009 10.172V5L8 4z"/></svg>
+      <!-- Mobile Pull Bar -->
+      <div class="sm:hidden pt-3 pb-1 flex justify-center shrink-0">
+        <div class="w-10 h-1 rounded-full bg-white/20"></div>
+      </div>
+
+      <!-- Modal Header (Clean 2026 Standard) -->
+      <div class="px-4 py-3.5 sm:px-6 sm:py-4 border-b border-white/[0.08] flex items-center justify-between shrink-0 bg-white/[0.01]">
+        <div class="flex items-center gap-3">
+          <div class="w-9 h-9 rounded-2xl bg-purple-500/15 border border-purple-500/25 flex items-center justify-center text-purple-300 shadow-inner">
+            <Bot class="w-4 h-4 text-purple-400" />
           </div>
           <div>
             <div class="flex items-center gap-2">
-              <h3 class="text-sm sm:text-base font-bold text-white tracking-wide">Model Catalog & Search</h3>
-              <span id="modal-models-count-badge" class="px-2 py-0.5 rounded-full text-[10px] font-mono bg-purple-500/20 text-purple-300 border border-purple-500/30">
+              <h3 class="text-sm sm:text-base font-bold text-white tracking-wide">Select AI Model</h3>
+              <span id="modal-models-count-badge" class="px-2 py-0.5 rounded-full text-[10px] font-medium font-mono bg-purple-500/15 text-purple-300 border border-purple-500/25">
                 0 Models
               </span>
             </div>
-            <p class="text-[11px] text-slate-400">Search and filter live synced models with zero latency</p>
+            <p class="text-[11px] text-slate-400 hidden sm:block">Browse and select from connected AI models</p>
           </div>
         </div>
         <button 
           type="button" 
           id="close-model-search-modal-btn" 
-          class="w-8 h-8 rounded-xl bg-white/[0.05] hover:bg-white/[0.1] text-slate-400 hover:text-white flex items-center justify-center transition cursor-pointer"
+          class="w-8 h-8 rounded-full bg-white/[0.06] hover:bg-white/[0.12] text-slate-400 hover:text-white flex items-center justify-center transition cursor-pointer active:scale-95"
+          title="Close"
         >
-          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+          <X class="w-4 h-4" />
         </button>
       </div>
 
-      <!-- Search Bar & Filters -->
-      <div class="p-3 sm:p-4 border-b border-white/[0.06] bg-black/25 shrink-0 space-y-2.5">
-        <!-- Search Input -->
+      <!-- Search & Category Filter Bar -->
+      <div class="p-3 sm:px-6 sm:py-3.5 border-b border-white/[0.06] bg-black/20 shrink-0 space-y-2.5">
+        <!-- Google-style Search Input -->
         <div class="relative">
-          <svg class="w-4 h-4 absolute left-3.5 top-1/2 -translate-y-1/2 text-purple-400 pointer-events-none" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
+          <Search class="w-4 h-4 absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none" />
           <input 
             id="model-search-input" 
             type="text" 
-            placeholder="Search models..." 
-            class="w-full pl-10 pr-9 py-2.5 rounded-xl bg-white/[0.06] border border-white/10 text-xs sm:text-sm text-white placeholder-slate-500 outline-none focus:border-purple-500/80 focus:ring-1 focus:ring-purple-500/50 transition font-sans"
+            placeholder="Search models by name, ID or brand..." 
+            class="w-full pl-10 pr-9 py-2 rounded-xl bg-white/[0.04] hover:bg-white/[0.06] focus:bg-white/[0.08] border border-white/[0.1] focus:border-purple-500/60 text-xs sm:text-sm text-white placeholder-slate-500 outline-none transition font-sans"
           />
           <button 
             type="button" 
             id="clear-model-search-btn" 
             class="hidden absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-white text-xs p-1"
+            title="Clear search"
           >
-            ✕
+            <X class="w-3.5 h-3.5" />
           </button>
         </div>
 
-        <!-- Category Filter Chips -->
-        <div class="flex items-center gap-1.5 overflow-x-auto no-scrollbar py-0.5 text-[11px]">
-          <button type="button" data-filter="all" class="model-cat-chip px-2.5 py-1 rounded-lg bg-purple-600 text-white font-medium shrink-0 transition">
+        <!-- Category Filter Chips (Scrollbar Hidden & Clean Tonal Style) -->
+        <div class="flex items-center gap-1.5 overflow-x-auto no-scrollbar py-0.5 text-xs">
+          <button type="button" data-filter="all" class="model-cat-chip px-3 py-1 rounded-full bg-purple-600 text-white font-medium shrink-0 transition cursor-pointer">
             All
           </button>
-          <button type="button" data-filter="roleplay" class="model-cat-chip px-2.5 py-1 rounded-lg bg-white/[0.05] hover:bg-white/[0.1] text-slate-300 font-medium shrink-0 transition flex items-center gap-1">
-            <span>🔥</span> Top Roleplay
+          <button type="button" data-filter="roleplay" class="model-cat-chip px-3 py-1 rounded-full bg-white/[0.05] hover:bg-white/[0.1] text-slate-300 font-medium shrink-0 transition cursor-pointer">
+            Roleplay
           </button>
-          <button type="button" data-filter="deepseek" class="model-cat-chip px-2.5 py-1 rounded-lg bg-white/[0.05] hover:bg-white/[0.1] text-cyan-300 font-medium shrink-0 transition">
+          <button type="button" data-filter="deepseek" class="model-cat-chip px-3 py-1 rounded-full bg-white/[0.05] hover:bg-white/[0.1] text-cyan-300 font-medium shrink-0 transition cursor-pointer">
             DeepSeek
           </button>
-          <button type="button" data-filter="anthropic" class="model-cat-chip px-2.5 py-1 rounded-lg bg-white/[0.05] hover:bg-white/[0.1] text-amber-300 font-medium shrink-0 transition">
+          <button type="button" data-filter="anthropic" class="model-cat-chip px-3 py-1 rounded-full bg-white/[0.05] hover:bg-white/[0.1] text-amber-300 font-medium shrink-0 transition cursor-pointer">
             Claude
           </button>
-          <button type="button" data-filter="meta" class="model-cat-chip px-2.5 py-1 rounded-lg bg-white/[0.05] hover:bg-white/[0.1] text-blue-300 font-medium shrink-0 transition">
+          <button type="button" data-filter="meta" class="model-cat-chip px-3 py-1 rounded-full bg-white/[0.05] hover:bg-white/[0.1] text-blue-300 font-medium shrink-0 transition cursor-pointer">
             Llama
           </button>
-          <button type="button" data-filter="google" class="model-cat-chip px-2.5 py-1 rounded-lg bg-white/[0.05] hover:bg-white/[0.1] text-emerald-300 font-medium shrink-0 transition">
+          <button type="button" data-filter="google" class="model-cat-chip px-3 py-1 rounded-full bg-white/[0.05] hover:bg-white/[0.1] text-emerald-300 font-medium shrink-0 transition cursor-pointer">
             Gemini
           </button>
-          <button type="button" data-filter="mistral" class="model-cat-chip px-2.5 py-1 rounded-lg bg-white/[0.05] hover:bg-white/[0.1] text-orange-300 font-medium shrink-0 transition">
+          <button type="button" data-filter="mistral" class="model-cat-chip px-3 py-1 rounded-full bg-white/[0.05] hover:bg-white/[0.1] text-orange-300 font-medium shrink-0 transition cursor-pointer">
             Mistral
           </button>
-          <button type="button" data-filter="free" class="model-cat-chip px-2.5 py-1 rounded-lg bg-white/[0.05] hover:bg-white/[0.1] text-green-300 font-medium shrink-0 transition flex items-center gap-1">
-            <span>🎁</span> Free (:free)
+          <button type="button" data-filter="free" class="model-cat-chip px-3 py-1 rounded-full bg-white/[0.05] hover:bg-white/[0.1] text-emerald-400 font-medium shrink-0 transition cursor-pointer">
+            Free
           </button>
         </div>
       </div>
 
       <!-- Models List Scroll Area -->
-      <div id="models-list-scroll" class="flex-1 overflow-y-auto p-3 sm:p-4 space-y-1.5 custom-scrollbar min-h-[300px]">
-        <div id="models-list-empty" class="hidden py-12 text-center text-slate-400">
-          <div class="text-3xl mb-2">🔍</div>
-          <div class="text-sm font-medium text-white mb-1">No models found</div>
-          <div class="text-xs text-slate-500">Try typing a different keyword or category filter</div>
+      <div id="models-list-scroll" class="flex-1 overflow-y-auto p-3 sm:p-5 space-y-2 custom-scrollbar min-h-[260px]">
+        <!-- Modern Minimalist Vector Empty State -->
+        <div id="models-list-empty" class="hidden py-10 text-center flex flex-col items-center justify-center">
+          <div class="w-12 h-12 rounded-2xl bg-purple-500/10 border border-purple-500/20 text-purple-400 flex items-center justify-center mb-3 shadow-inner">
+            <Search class="w-5 h-5" />
+          </div>
+          <div class="text-sm font-semibold text-white mb-1">No Models Found</div>
+          <div class="text-xs text-slate-400 max-w-xs mb-4">Connect an API key in settings or type a custom model ID manually.</div>
+          <button 
+            type="button" 
+            id="empty-state-custom-id-btn" 
+            class="px-3.5 py-1.5 rounded-xl bg-purple-600/80 hover:bg-purple-600 text-white text-xs font-semibold flex items-center gap-1.5 transition cursor-pointer active:scale-95"
+          >
+            <Pencil class="w-3.5 h-3.5" />
+            <span>Enter Custom Model ID</span>
+          </button>
         </div>
-        <div id="models-list-items" class="space-y-1.5">
+        <div id="models-list-items" class="space-y-2">
           <!-- Rendered dynamically -->
         </div>
       </div>
 
-      <!-- Modal Footer -->
-      <div class="p-3 sm:p-3.5 border-t border-white/[0.08] bg-black/40 flex items-center justify-between text-[11px] text-slate-400 shrink-0">
-        <div class="flex items-center gap-1.5 min-w-0 pr-2">
-          <span class="w-2 h-2 rounded-full bg-emerald-400 shrink-0"></span>
-          <span id="active-selected-model-text" class="font-mono text-purple-300 truncate max-w-[200px] sm:max-w-md">No model selected</span>
+      <!-- Modal Footer Action Bar -->
+      <div class="p-3 sm:px-6 sm:py-3.5 border-t border-white/[0.08] bg-black/40 flex items-center justify-between text-xs text-slate-400 shrink-0">
+        <div class="flex items-center gap-2 min-w-0 pr-2">
+          <span class="w-2 h-2 rounded-full bg-purple-400 shrink-0"></span>
+          <span id="active-selected-model-text" class="font-mono text-slate-300 truncate max-w-[180px] sm:max-w-xs">No model selected</span>
         </div>
         <button 
           type="button" 
           id="manual-input-from-modal-btn" 
-          class="text-slate-400 hover:text-white underline transition shrink-0 cursor-pointer"
+          class="px-3 py-1.5 rounded-xl bg-white/[0.05] hover:bg-white/[0.1] text-slate-200 hover:text-white border border-white/[0.08] transition flex items-center gap-1.5 cursor-pointer text-xs font-medium shrink-0 active:scale-95"
         >
-          Type Custom ID
+          <Pencil class="w-3.5 h-3.5 text-purple-400" />
+          <span>Custom ID</span>
         </button>
       </div>
     </div>
@@ -3187,6 +3229,13 @@ const { character } = Astro.props;
 
   // API Profile Elements
   const apiProfileSelect = document.getElementById('api-profile-select');
+  const customProfileTrigger = document.getElementById('custom-profile-trigger');
+  const customProfileTriggerLabel = document.getElementById('custom-profile-trigger-label');
+  const customProfileTriggerTag = document.getElementById('custom-profile-trigger-tag');
+  const customProfileStatusDot = document.getElementById('custom-profile-status-dot');
+  const customProfileChevron = document.getElementById('custom-profile-chevron');
+  const customProfileMenu = document.getElementById('custom-profile-menu');
+
   const btnShowSaveProfile = document.getElementById('btn-show-save-profile');
   const btnUpdateActiveProfile = document.getElementById('btn-update-active-profile');
   const btnDeleteActiveProfile = document.getElementById('btn-delete-active-profile');
@@ -4187,7 +4236,21 @@ const { character } = Astro.props;
   manualInputFromModalBtn?.addEventListener('click', () => {
     closeModelSearchModal();
     if (toggleModelInputModeBtn) {
-      toggleModelInputModeBtn.click();
+      if (textModelInput && textModelInput.classList.contains('hidden')) {
+        toggleModelInputModeBtn.click();
+      }
+      setTimeout(() => textModelInput?.focus(), 150);
+    }
+  });
+
+  const emptyStateCustomIdBtn = document.getElementById('empty-state-custom-id-btn');
+  emptyStateCustomIdBtn?.addEventListener('click', () => {
+    closeModelSearchModal();
+    if (toggleModelInputModeBtn) {
+      if (textModelInput && textModelInput.classList.contains('hidden')) {
+        toggleModelInputModeBtn.click();
+      }
+      setTimeout(() => textModelInput?.focus(), 150);
     }
   });
 
@@ -4626,8 +4689,126 @@ const { character } = Astro.props;
       apiProfileSelect.appendChild(opt);
     });
 
+    // 2026 Custom Dropdown Presentation (No Native OS Picker)
+    if (customProfileMenu) {
+      customProfileMenu.innerHTML = '';
+
+      // Direct Option
+      const directItem = document.createElement('button');
+      directItem.type = 'button';
+      directItem.className = `w-full px-3 py-2 rounded-xl text-left flex items-center justify-between transition cursor-pointer text-xs group ${
+        !currentActive ? 'bg-purple-600/25 text-white border border-purple-500/40' : 'text-slate-300 hover:bg-white/[0.05] hover:text-white'
+      }`;
+      directItem.innerHTML = `
+        <div class="flex items-center gap-2 min-w-0 pr-2">
+          <span class="w-2 h-2 rounded-full ${!currentActive ? 'bg-emerald-400' : 'bg-slate-500'} shrink-0"></span>
+          <span class="font-medium truncate">Direct Mode (No Profile)</span>
+        </div>
+        ${!currentActive ? '<span class="text-purple-400 text-xs font-bold">✓</span>' : ''}
+      `;
+      directItem.addEventListener('click', () => {
+        apiProfileSelect.value = '';
+        apiProfileSelect.dispatchEvent(new Event('change'));
+        closeCustomProfileMenu();
+      });
+      customProfileMenu.appendChild(directItem);
+
+      if (profiles.length > 0) {
+        const divider = document.createElement('div');
+        divider.className = 'h-px bg-white/[0.08] my-1';
+        customProfileMenu.appendChild(divider);
+      }
+
+      profiles.forEach(prof => {
+        const isSelected = prof.id === currentActive;
+        const provName = PROVIDER_CONFIGS[prof.provider]?.name || prof.provider;
+        const modelShort = (prof.model || '').split('/').pop() || prof.model || 'Default';
+
+        const item = document.createElement('button');
+        item.type = 'button';
+        item.className = `w-full px-3 py-2 rounded-xl text-left flex items-center justify-between transition cursor-pointer text-xs group ${
+          isSelected ? 'bg-purple-600/25 text-white border border-purple-500/40' : 'text-slate-300 hover:bg-white/[0.05] hover:text-white'
+        }`;
+        item.innerHTML = `
+          <div class="flex items-center gap-2 min-w-0 pr-2">
+            <span class="w-2 h-2 rounded-full ${isSelected ? 'bg-emerald-400' : 'bg-purple-400'} shrink-0"></span>
+            <div class="min-w-0 flex flex-col">
+              <span class="font-semibold text-white truncate">${prof.name}</span>
+              <span class="text-[10px] text-slate-400 truncate">${provName} • ${modelShort}</span>
+            </div>
+          </div>
+          <div class="flex items-center gap-1 shrink-0">
+            <span class="text-[9px] px-1.5 py-0.5 rounded bg-purple-900/40 text-purple-300 border border-purple-500/30 uppercase font-mono">${prof.provider}</span>
+            ${isSelected ? '<span class="text-purple-400 text-xs font-bold ml-1">✓</span>' : ''}
+          </div>
+        `;
+        item.addEventListener('click', () => {
+          apiProfileSelect.value = prof.id;
+          apiProfileSelect.dispatchEvent(new Event('change'));
+          closeCustomProfileMenu();
+        });
+        customProfileMenu.appendChild(item);
+      });
+    }
+
+    if (customProfileTriggerLabel) {
+      const activeProf = profiles.find(p => p.id === currentActive);
+      if (activeProf) {
+        customProfileTriggerLabel.textContent = activeProf.name;
+        if (customProfileTriggerTag) {
+          customProfileTriggerTag.textContent = activeProf.provider;
+          customProfileTriggerTag.classList.remove('hidden');
+        }
+        if (customProfileStatusDot) {
+          customProfileStatusDot.className = 'w-2 h-2 rounded-full bg-emerald-400 shrink-0';
+        }
+      } else {
+        customProfileTriggerLabel.textContent = 'Direct Mode (No Profile)';
+        if (customProfileTriggerTag) customProfileTriggerTag.classList.add('hidden');
+        if (customProfileStatusDot) {
+          customProfileStatusDot.className = 'w-2 h-2 rounded-full bg-slate-400 shrink-0';
+        }
+      }
+    }
+
     updateProfileButtonsUI(currentActive, profiles);
   }
+
+  function openCustomProfileMenu() {
+    if (!customProfileMenu) return;
+    customProfileMenu.classList.remove('hidden');
+    customProfileTrigger?.setAttribute('aria-expanded', 'true');
+    if (customProfileChevron) customProfileChevron.classList.add('rotate-180');
+  }
+
+  function closeCustomProfileMenu() {
+    if (!customProfileMenu) return;
+    customProfileMenu.classList.add('hidden');
+    customProfileTrigger?.setAttribute('aria-expanded', 'false');
+    if (customProfileChevron) customProfileChevron.classList.remove('rotate-180');
+  }
+
+  function toggleCustomProfileMenu() {
+    if (!customProfileMenu) return;
+    if (customProfileMenu.classList.contains('hidden')) {
+      openCustomProfileMenu();
+    } else {
+      closeCustomProfileMenu();
+    }
+  }
+
+  customProfileTrigger?.addEventListener('click', (e) => {
+    e.stopPropagation();
+    toggleCustomProfileMenu();
+  });
+
+  document.addEventListener('click', (e) => {
+    if (customProfileMenu && !customProfileMenu.classList.contains('hidden')) {
+      if (!customProfileMenu.contains(e.target) && !customProfileTrigger?.contains(e.target)) {
+        closeCustomProfileMenu();
+      }
+    }
+  });
 
   function updateProfileButtonsUI(activeId, profiles = null) {
     const profs = profiles || getSavedApiProfiles();
@@ -5349,7 +5530,9 @@ const { character } = Astro.props;
     if (filtered.length === 0) {
       providerModalItems.innerHTML = `
         <div class="py-12 text-center text-slate-400">
-          <div class="text-3xl mb-2">🔍</div>
+          <div class="w-12 h-12 rounded-2xl bg-purple-500/10 border border-purple-500/20 text-purple-400 flex items-center justify-center mx-auto mb-3 shadow-inner">
+            <svg class="w-5 h-5 stroke-[1.8]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-5.197-5.197m0 0A7.5 7.5 0 105.196 5.196a7.5 7.5 0 0010.607 10.607z"/></svg>
+          </div>
           <div class="text-sm font-medium text-white mb-1">No providers found</div>
           <div class="text-xs text-slate-500">Try a different search keyword</div>
         </div>
@@ -6971,7 +7154,7 @@ const { character } = Astro.props;
             <button type="button" class="lightbox-img-trigger block w-full relative group/img cursor-zoom-in text-left" data-img-url="${msg.mediaUrl}" data-img-title="${escapeHtml(activeChar.name)}'s Photo" data-img-desc="${escapeHtml(msg.text || 'Scene Snapshot')}">
               <img src="${msg.mediaUrl}" alt="${msg.text || 'Selfie'}" class="w-full h-auto object-cover max-h-96 rounded-t-2xl transition duration-300 group-hover/img:scale-105" loading="lazy" />
               <div class="absolute inset-0 bg-black/40 opacity-0 group-hover/img:opacity-100 transition flex items-center justify-center text-xs text-white font-medium backdrop-blur-xs gap-1.5">
-                <span>🔍</span>
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0zM10 7v6m3-3H7"/></svg>
                 <span>Click to Expand</span>
               </div>
             </button>

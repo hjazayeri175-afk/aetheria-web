@@ -93,6 +93,15 @@ body {
   padding-bottom: env(safe-area-inset-bottom, 1rem);
 }
 
+/* Utility: Hide scrollbar across all browsers */
+.no-scrollbar::-webkit-scrollbar {
+  display: none !important;
+}
+.no-scrollbar {
+  -ms-overflow-style: none !important;
+  scrollbar-width: none !important;
+}
+
 /* Force ASCII digits and strict LTR layout for numeric inputs and badges */
 .force-ltr-numeric {
   direction: ltr !important;
