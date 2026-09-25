@@ -6686,6 +6686,7 @@ const { character } = Astro.props;
             directives: ''
           };
           updateChatMaskLabel();
+          renderAllMessages();
           showNotification('Persona disabled. Playing anonymously with no identity.');
           cleanup();
           return;
@@ -6711,11 +6712,40 @@ const { character } = Astro.props;
           };
           localStorage.setItem('aetheria_user_persona', JSON.stringify(activeUserPersona));
           updateChatMaskLabel();
+          renderAllMessages();
           showNotification(`Switched to persona: ${activeUserPersona.name || 'You'}`);
           cleanup();
         }
       });
     });
+  });
+
+  window.addEventListener('pageshow', () => {
+    const isNowEnabled = (localStorage.getItem('aetheria_persona_enabled') !== 'false');
+    if (!isNowEnabled) {
+      activeUserPersona = {
+        id: 'none',
+        name: 'You',
+        disabled: true,
+        age: '',
+        gender: '',
+        title: '',
+        avatar: '',
+        appearance: '',
+        personality: '',
+        bio: '',
+        lore: '',
+        globalNotes: '',
+        directives: ''
+      };
+    } else {
+      try {
+        const raw = localStorage.getItem('aetheria_user_persona');
+        if (raw) activeUserPersona = JSON.parse(raw);
+      } catch {}
+    }
+    updateChatMaskLabel();
+    renderAllMessages();
   });
 
   selfieBtn?.addEventListener('click', handleGenerateSelfie);
