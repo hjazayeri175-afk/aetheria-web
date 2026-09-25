@@ -787,7 +787,8 @@ const PRESET_AVATARS = [
                 type="button" 
                 class="w-full py-3 px-4 rounded-2xl bg-gradient-to-r from-emerald-600 via-teal-600 to-emerald-600 hover:from-emerald-500 hover:to-teal-500 text-white font-bold text-xs sm:text-sm shadow-lg shadow-emerald-950/60 flex items-center justify-center gap-2 cursor-pointer transition active:scale-95"
               >
-                <span>🚀 Save & Start Chatting</span>
+                <Sparkles class="w-4 h-4 text-emerald-200" />
+                <span>Save & Start Chatting</span>
               </button>
             </div>
 
@@ -965,7 +966,7 @@ const PRESET_AVATARS = [
 
     if (nextStepBtn && nextBtnText) {
       if (currentStep === totalSteps) {
-        nextBtnText.textContent = '🚀 Save & Start Chatting';
+        nextBtnText.textContent = 'Save & Start Chatting';
         if (nextBtnIcon) nextBtnIcon.classList.add('hidden');
         nextStepBtn.className = 'px-6 py-3.5 rounded-2xl bg-gradient-to-r from-emerald-600 via-teal-600 to-emerald-600 hover:from-emerald-500 hover:to-teal-500 text-xs sm:text-sm font-bold text-white shadow-lg shadow-emerald-900/40 flex items-center gap-2 transition cursor-pointer active:scale-95';
       } else {
