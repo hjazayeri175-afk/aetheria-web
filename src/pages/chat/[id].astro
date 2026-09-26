@@ -2454,12 +2454,12 @@ const { character } = Astro.props;
           </div>
           <div>
             <div class="flex items-center gap-2">
-              <h3 id="voice-modal-title" class="text-sm sm:text-base font-bold text-white tracking-wide">Select Voice Engine</h3>
-              <span id="voice-modal-count-badge" class="px-2 py-0.5 rounded-full text-[10px] font-mono bg-purple-500/15 text-purple-300 border border-purple-500/25">
-                11 Engines
+              <h3 id="voice-modal-title" class="text-sm sm:text-base font-bold text-white tracking-wide">Character Voice</h3>
+              <span id="voice-modal-count-badge" class="px-2 py-0.5 rounded-full text-[10px] font-medium bg-purple-500/15 text-purple-300 border border-purple-500/25">
+                11 Available
               </span>
             </div>
-            <p id="voice-modal-subtitle" class="text-[11px] text-slate-400 hidden sm:block">Choose cloud neural synthesis or self-hosted audio</p>
+            <p id="voice-modal-subtitle" class="text-[11px] text-slate-400 hidden sm:block">Choose how your character speaks in chat</p>
           </div>
         </div>
         <button 
@@ -2480,7 +2480,7 @@ const { character } = Astro.props;
           <input 
             id="voice-modal-search" 
             type="text" 
-            placeholder="Search audio engines (e.g. ElevenLabs, OpenAI, Groq, Kokoro)..." 
+            placeholder="Search voices or providers..." 
             class="w-full pl-10 pr-9 py-2 rounded-xl bg-white/[0.04] hover:bg-white/[0.06] focus:bg-white/[0.08] border border-white/[0.1] focus:border-purple-500/60 text-xs sm:text-sm text-white placeholder-slate-500 outline-none transition font-sans"
           />
           <button 
@@ -2500,23 +2500,22 @@ const { character } = Astro.props;
       </div>
 
       <!-- Engine Cards List (Scrollable Area) -->
-      <div id="voice-modal-items" class="flex-1 overflow-y-auto p-3 sm:p-5 space-y-4 custom-scrollbar min-h-[280px]">
+      <div id="voice-modal-items" class="flex-1 overflow-y-auto p-3 sm:p-5 space-y-2.5 custom-scrollbar min-h-[280px]">
         <!-- Rendered dynamically in JS -->
       </div>
 
       <!-- Modal Footer Action Bar -->
-      <div class="p-3 sm:px-6 sm:py-3.5 border-t border-white/[0.08] bg-black/40 flex items-center justify-between text-xs text-slate-400 shrink-0">
+      <div class="p-3 sm:px-6 sm:py-3 border-t border-white/[0.08] bg-black/40 flex items-center justify-between text-xs text-slate-400 shrink-0">
         <div class="flex items-center gap-2 min-w-0 pr-2">
-          <span class="w-2 h-2 rounded-full bg-emerald-400 shrink-0"></span>
-          <span id="voice-modal-active-footer-text" class="font-semibold text-slate-200 truncate">Current: Built-in Device Voice</span>
+          <span class="w-2 h-2 rounded-full bg-emerald-400 shrink-0 animate-pulse"></span>
+          <span id="voice-modal-active-footer-text" class="font-medium text-slate-200 truncate text-xs">Active: Built-in Device Voice</span>
         </div>
         <button 
           type="button" 
           id="quick-select-free-voice-btn" 
-          class="px-3 py-1.5 rounded-xl bg-purple-600/20 hover:bg-purple-600/30 text-purple-300 hover:text-purple-200 border border-purple-500/30 transition flex items-center gap-1.5 cursor-pointer text-xs font-semibold shrink-0 active:scale-95"
+          class="px-4 py-1.5 rounded-xl bg-white/[0.08] hover:bg-white/[0.12] text-white border border-white/10 transition text-xs font-semibold shrink-0 active:scale-95 cursor-pointer"
         >
-          <Sparkles class="w-3.5 h-3.5" />
-          <span>Select 100% Free Local</span>
+          <span>Done</span>
         </button>
       </div>
     </div>
@@ -2703,7 +2702,7 @@ const { character } = Astro.props;
           <input 
             id="provider-modal-search" 
             type="text" 
-            placeholder="Search providers (e.g. OpenAI, DeepSeek, Localhost)..." 
+            placeholder="Search AI providers (OpenAI, DeepSeek, Groq)..." 
             class="w-full pl-10 pr-9 py-2 rounded-xl bg-white/[0.04] hover:bg-white/[0.06] focus:bg-white/[0.08] border border-white/[0.1] focus:border-purple-500/60 text-xs sm:text-sm text-white placeholder-slate-500 outline-none transition font-sans"
           />
           <button 
@@ -4644,7 +4643,11 @@ const { character } = Astro.props;
     const currentSelected = textModelSelect?.value || localStorage.getItem('aetheria_text_model') || '';
 
     if (modalModelsCountBadge) {
-      modalModelsCountBadge.textContent = `${filtered.length} of ${currentSyncedModels.length} Models`;
+      if (filtered.length === currentSyncedModels.length) {
+        modalModelsCountBadge.textContent = `${currentSyncedModels.length} Models`;
+      } else {
+        modalModelsCountBadge.textContent = `${filtered.length} of ${currentSyncedModels.length}`;
+      }
     }
 
     if (filtered.length === 0) {
@@ -6218,7 +6221,11 @@ const { character } = Astro.props;
     // Update count badge in header
     const providerModalCountBadge = document.getElementById('provider-modal-count-badge');
     if (providerModalCountBadge) {
-      providerModalCountBadge.textContent = `${filtered.length} of ${ALL_PROVIDERS.length} Engines`;
+      if (filtered.length === ALL_PROVIDERS.length) {
+        providerModalCountBadge.textContent = `${ALL_PROVIDERS.length} Providers`;
+      } else {
+        providerModalCountBadge.textContent = `${filtered.length} of ${ALL_PROVIDERS.length}`;
+      }
     }
 
     if (filtered.length === 0) {
@@ -7308,27 +7315,27 @@ const { character } = Astro.props;
     {
       id: 'browser',
       name: 'Built-in Device Voice',
-      desc: '100% free offline speech synthesis powered by your browser/device hardware',
+      desc: 'Free built-in voice using your phone or browser. Instant, offline, zero setup.',
       badge: '100% Free',
       badgeClass: 'bg-emerald-500/20 text-emerald-300 border-emerald-500/30',
-      category: 'Local & Free',
+      category: 'Free & Offline',
       needsKey: false
     },
     {
       id: 'elevenlabs',
       name: 'ElevenLabs',
-      desc: 'Industry-leading emotional voice cloning, nuanced breathing, and realistic character cadence',
+      desc: 'Lifelike character voices with natural emotions, whispering, and acting.',
       badge: 'Top Roleplay',
       badgeClass: 'bg-purple-500/20 text-purple-300 border-purple-500/30',
-      category: 'Ultra-Realistic',
+      category: 'Realistic',
       needsKey: true,
       keyHint: 'ElevenLabs API Key'
     },
     {
       id: 'openai',
       name: 'OpenAI Audio (TTS)',
-      desc: 'Crystal-clear expressive speech with natural inflections and studio-grade consistency',
-      badge: 'Studio Quality',
+      desc: 'Crystal-clear expressive voices with studio-grade consistency.',
+      badge: 'Popular',
       badgeClass: 'bg-emerald-500/20 text-emerald-300 border-emerald-500/30',
       category: 'Popular',
       needsKey: true,
@@ -7337,8 +7344,8 @@ const { character } = Astro.props;
     {
       id: 'google',
       name: 'Google Gemini & Cloud Voice',
-      desc: 'High-quality neural speech synthesis across dozens of languages with generous free tier',
-      badge: 'Generous Tier',
+      desc: 'Smooth multilingual speech with a generous free tier.',
+      badge: 'Multilingual',
       badgeClass: 'bg-blue-500/20 text-blue-300 border-blue-500/30',
       category: 'Popular',
       needsKey: true,
@@ -7347,7 +7354,7 @@ const { character } = Astro.props;
     {
       id: 'deepgram',
       name: 'Deepgram Aura',
-      desc: 'Sub-250ms ultra-low latency conversational text-to-speech designed for real-time agents',
+      desc: 'Ultra-fast speech synthesis built for instant voice conversation.',
       badge: 'Fastest',
       badgeClass: 'bg-amber-500/20 text-amber-300 border-amber-500/30',
       category: 'Fastest',
@@ -7357,7 +7364,7 @@ const { character } = Astro.props;
     {
       id: 'playht',
       name: 'PlayHT / Cartesia Sonic',
-      desc: 'Real-time ultra-responsive voice streaming with rich emotional depth and voice cloning',
+      desc: 'Fluid real-time voice streaming with natural inflection and tone.',
       badge: 'Streaming',
       badgeClass: 'bg-purple-500/20 text-purple-300 border-purple-500/30',
       category: 'Fastest',
@@ -7367,35 +7374,35 @@ const { character } = Astro.props;
     {
       id: 'fishaudio',
       name: 'Fish Audio (Fish Speech)',
-      desc: 'State-of-the-art open-weight architecture optimized for anime, gaming, and stylized characters',
-      badge: 'Character Voice',
+      desc: 'Expressive voices tailored for anime, gaming, and stylized characters.',
+      badge: 'Anime Voice',
       badgeClass: 'bg-pink-500/20 text-pink-300 border-pink-500/30',
-      category: 'Ultra-Realistic',
+      category: 'Realistic',
       needsKey: true,
       keyHint: 'Fish Audio Key'
     },
     {
       id: 'kokoro',
       name: 'Kokoro TTS (Open-Source)',
-      desc: 'Ultra-lightweight 82M parameter open-source model delivering astonishing audio clarity',
+      desc: 'Lightweight open-source speech model with astonishing clarity.',
       badge: 'Open Source',
       badgeClass: 'bg-cyan-500/20 text-cyan-300 border-cyan-500/30',
-      category: 'Local & Free',
+      category: 'Free & Offline',
       needsKey: false
     },
     {
       id: 'xtts',
       name: 'Coqui XTTS (Localhost)',
-      desc: 'Zero-shot voice cloning running locally on your workstation GPU with zero subscription costs',
+      desc: 'Private voice cloning running on your own computer GPU.',
       badge: 'Offline GPU',
       badgeClass: 'bg-cyan-500/20 text-cyan-300 border-cyan-500/30',
-      category: 'Local & Free',
+      category: 'Free & Offline',
       needsKey: false
     },
     {
       id: 'openrouter',
       name: 'OpenRouter Speech Gateway',
-      desc: 'Unified API gateway to multiple open-weight and commercial speech synthesis models',
+      desc: 'Access multiple speech models using your OpenRouter key.',
       badge: 'Multi-Model',
       badgeClass: 'bg-purple-500/20 text-purple-300 border-purple-500/30',
       category: 'Popular',
@@ -7405,10 +7412,10 @@ const { character } = Astro.props;
     {
       id: 'custom',
       name: 'Custom OpenAI-Compatible Audio',
-      desc: 'Connect any self-hosted or remote speech synthesis API matching the /v1/audio/speech format',
+      desc: 'Connect any self-hosted OpenAI-compatible speech endpoint.',
       badge: 'Custom URL',
       badgeClass: 'bg-purple-500/20 text-purple-300 border-purple-500/30',
-      category: 'Local & Free',
+      category: 'Free & Offline',
       needsKey: false
     }
   ];
@@ -7417,8 +7424,8 @@ const { character } = Astro.props;
     {
       id: 'groq',
       name: 'Groq Whisper',
-      desc: 'Ultra-fast speech transcription on Groq LPU hardware with near-instant response and free tier',
-      badge: 'Fastest LPU',
+      desc: 'Near-instant voice transcription powered by ultra-fast Groq chips.',
+      badge: 'Fastest',
       badgeClass: 'bg-amber-500/20 text-amber-300 border-amber-500/30',
       category: 'Fastest',
       needsKey: true,
@@ -7427,8 +7434,8 @@ const { character } = Astro.props;
     {
       id: 'openai',
       name: 'OpenAI Whisper',
-      desc: 'Industry standard whisper-1 model with world-class multilingual accuracy and punctuation',
-      badge: 'Industry Standard',
+      desc: 'Industry-standard accuracy across multiple languages and accents.',
+      badge: 'Accurate',
       badgeClass: 'bg-emerald-500/20 text-emerald-300 border-emerald-500/30',
       category: 'Popular',
       needsKey: true,
@@ -7437,8 +7444,8 @@ const { character } = Astro.props;
     {
       id: 'deepgram-stt',
       name: 'Deepgram Nova-2',
-      desc: 'Leading conversational speech recognition with 300ms turnaround and superior noise rejection',
-      badge: 'High Accuracy',
+      desc: 'Conversational speech recognition with background noise cancellation.',
+      badge: 'Fastest',
       badgeClass: 'bg-rose-500/20 text-rose-300 border-rose-500/30',
       category: 'Fastest',
       needsKey: true,
@@ -7447,8 +7454,8 @@ const { character } = Astro.props;
     {
       id: 'assemblyai',
       name: 'AssemblyAI Conformer',
-      desc: 'State-of-the-art speech intelligence and multi-speaker transcription accuracy',
-      badge: 'Enterprise',
+      desc: 'High-precision transcription with clean formatting.',
+      badge: 'Smart',
       badgeClass: 'bg-purple-500/20 text-purple-300 border-purple-500/30',
       category: 'Popular',
       needsKey: true,
@@ -7457,7 +7464,7 @@ const { character } = Astro.props;
     {
       id: 'google-stt',
       name: 'Google Cloud Speech',
-      desc: 'Accurate multilingual speech-to-text with native support for Persian, English, and 120+ languages',
+      desc: 'Top accuracy with native support for Persian, English, and 120+ languages.',
       badge: 'Multilingual',
       badgeClass: 'bg-blue-500/20 text-blue-300 border-blue-500/30',
       category: 'Popular',
@@ -7467,28 +7474,28 @@ const { character } = Astro.props;
     {
       id: 'faster-whisper',
       name: 'Faster-Whisper / Localhost',
-      desc: '100% offline, fully private Whisper transcription running locally via CUDA/ROCm on your GPU',
+      desc: 'Private offline speech recognition running on your own PC.',
       badge: 'Offline GPU',
       badgeClass: 'bg-cyan-500/20 text-cyan-300 border-cyan-500/30',
-      category: 'Local & Free',
+      category: 'Free & Offline',
       needsKey: false
     },
     {
       id: 'browser-stt',
-      name: 'Browser Built-in (Web Speech API)',
-      desc: 'Free client-side speech recognition built into Chrome and modern browsers, zero keys needed',
+      name: 'Built-in Device Mic',
+      desc: 'Free voice recognition built into your device. No API key needed.',
       badge: '100% Free',
       badgeClass: 'bg-emerald-500/20 text-emerald-300 border-emerald-500/30',
-      category: 'Local & Free',
+      category: 'Free & Offline',
       needsKey: false
     },
     {
       id: 'custom-stt',
       name: 'Custom Whisper Endpoint',
-      desc: 'Connect any self-hosted Whisper.cpp or OpenAI-compatible /v1/audio/transcriptions endpoint',
+      desc: 'Connect any self-hosted Whisper transcription endpoint.',
       badge: 'Custom URL',
       badgeClass: 'bg-purple-500/20 text-purple-300 border-purple-500/30',
-      category: 'Local & Free',
+      category: 'Free & Offline',
       needsKey: false
     }
   ];
@@ -7552,14 +7559,14 @@ const { character } = Astro.props;
     if (!voiceEngineModal) return;
 
     if (voiceModalTitle) {
-      voiceModalTitle.textContent = mode === 'tts' ? 'Select Speech Output Engine (TTS)' : 'Select Voice Recognition Engine (STT)';
+      voiceModalTitle.textContent = mode === 'tts' ? 'Character Voice' : 'Voice Input (STT)';
     }
     if (voiceModalSubtitle) {
-      voiceModalSubtitle.textContent = mode === 'tts' ? 'Choose neural cloud synthesis or local hardware voice' : 'Choose speech-to-text models for chat input';
+      voiceModalSubtitle.textContent = mode === 'tts' ? 'Choose how your character speaks in chat' : 'Choose speech recognition for voice typing';
     }
     if (voiceModalSearch) {
       voiceModalSearch.value = '';
-      voiceModalSearch.placeholder = mode === 'tts' ? 'Search TTS engines (e.g. ElevenLabs, OpenAI, Kokoro)...' : 'Search STT engines (e.g. Groq Whisper, Deepgram)...';
+      voiceModalSearch.placeholder = mode === 'tts' ? 'Search voices or providers...' : 'Search speech models...';
     }
 
     renderVoiceModalCategories();
@@ -7588,8 +7595,8 @@ const { character } = Astro.props;
   function renderVoiceModalCategories() {
     if (!voiceModalCategoryChips) return;
     const categories = voiceCatalogMode === 'tts' 
-      ? ['All', 'Popular', 'Ultra-Realistic', 'Fastest', 'Local & Free']
-      : ['All', 'Popular', 'Fastest', 'Local & Free'];
+      ? ['All', 'Popular', 'Realistic', 'Fastest', 'Free & Offline']
+      : ['All', 'Popular', 'Fastest', 'Free & Offline'];
 
     voiceModalCategoryChips.innerHTML = categories.map(cat => {
       const filterKey = cat.toLowerCase();
@@ -7629,9 +7636,9 @@ const { character } = Astro.props;
     const filtered = list.filter(item => {
       // Category match
       if (currentVoiceCatalogFilter === 'popular' && item.category !== 'Popular') return false;
-      if (currentVoiceCatalogFilter === 'ultra-realistic' && item.category !== 'Ultra-Realistic') return false;
+      if (currentVoiceCatalogFilter === 'realistic' && item.category !== 'Realistic') return false;
       if (currentVoiceCatalogFilter === 'fastest' && item.category !== 'Fastest') return false;
-      if (currentVoiceCatalogFilter === 'local & free' && item.category !== 'Local & Free') return false;
+      if (currentVoiceCatalogFilter === 'free & offline' && item.category !== 'Free & Offline') return false;
 
       // Query match
       if (!q) return true;
@@ -7642,12 +7649,35 @@ const { character } = Astro.props;
     });
 
     if (voiceModalCountBadge) {
-      voiceModalCountBadge.textContent = `${filtered.length} of ${list.length} Engines`;
+      if (!q && currentVoiceCatalogFilter === 'all') {
+        voiceModalCountBadge.textContent = `${list.length} Available`;
+      } else if (filtered.length === list.length) {
+        voiceModalCountBadge.textContent = `${list.length} Available`;
+      } else {
+        voiceModalCountBadge.textContent = `${filtered.length} of ${list.length}`;
+      }
     }
 
     if (voiceModalActiveFooterText) {
       const activeObj = list.find(x => x.id === currentActiveId) || list[0];
-      voiceModalActiveFooterText.textContent = `Current: ${activeObj.name}`;
+      voiceModalActiveFooterText.textContent = `Active: ${activeObj.name}`;
+    }
+
+    if (quickSelectFreeVoiceBtn) {
+      const isFreeDefaultActive = voiceCatalogMode === 'tts' 
+        ? currentActiveId === 'browser' 
+        : currentActiveId === 'browser-stt';
+
+      if (isFreeDefaultActive) {
+        quickSelectFreeVoiceBtn.innerHTML = `<span>Done</span>`;
+        quickSelectFreeVoiceBtn.className = 'px-4 py-1.5 rounded-xl bg-white/[0.08] hover:bg-white/[0.12] text-white border border-white/10 transition text-xs font-semibold shrink-0 active:scale-95 cursor-pointer';
+      } else {
+        quickSelectFreeVoiceBtn.innerHTML = `
+          <svg class="w-3.5 h-3.5 text-emerald-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
+          <span>Use Free Device Voice</span>
+        `;
+        quickSelectFreeVoiceBtn.className = 'px-3 py-1.5 rounded-xl bg-emerald-500/15 hover:bg-emerald-500/25 text-emerald-300 border border-emerald-500/30 transition flex items-center gap-1.5 cursor-pointer text-xs font-semibold shrink-0 active:scale-95';
+      }
     }
 
     if (filtered.length === 0) {
@@ -7678,15 +7708,15 @@ const { character } = Astro.props;
         <button
           type="button"
           data-engine-id="${item.id}"
-          class="voice-engine-card w-full p-3.5 sm:p-4 rounded-2xl border text-left transition-all flex items-start justify-between gap-3 cursor-pointer group ${
+          class="voice-engine-card w-full p-3 sm:p-3.5 rounded-2xl border text-left transition-all flex items-center justify-between gap-3 cursor-pointer group ${
             isSelected
               ? (voiceCatalogMode === 'tts' 
-                  ? 'bg-purple-950/40 border-purple-500/60 shadow-lg shadow-purple-950/50' 
-                  : 'bg-rose-950/40 border-rose-500/60 shadow-lg shadow-rose-950/50')
-              : 'bg-white/[0.02] hover:bg-white/[0.06] border-white/[0.06] hover:border-purple-500/30'
+                  ? 'bg-purple-950/40 border-purple-500/70 ring-1 ring-purple-500/30 shadow-md shadow-purple-950/40' 
+                  : 'bg-rose-950/40 border-rose-500/70 ring-1 ring-rose-500/30 shadow-md shadow-rose-950/40')
+              : 'bg-white/[0.02] hover:bg-white/[0.05] border-white/[0.06] hover:border-purple-500/30 active:scale-[0.99]'
           }"
         >
-          <div class="flex items-start gap-3 min-w-0 flex-1">
+          <div class="flex items-center gap-3 min-w-0 flex-1">
             <div class="w-10 h-10 rounded-xl ${
               isSelected 
                 ? (voiceCatalogMode === 'tts' ? 'bg-purple-500/30 border-purple-400/40' : 'bg-rose-500/30 border-rose-400/40')
@@ -7696,21 +7726,20 @@ const { character } = Astro.props;
             </div>
 
             <div class="min-w-0 flex-1">
-              <div class="flex items-center gap-2 flex-wrap mb-1">
+              <div class="flex items-center gap-2 mb-0.5">
                 <span class="font-bold text-xs sm:text-sm ${
                   isSelected ? 'text-white' : 'text-slate-100 group-hover:text-purple-200'
                 } truncate">${item.name}</span>
-                <span class="text-[9px] px-2 py-0.5 rounded-full font-semibold border ${item.badgeClass}">${item.badge}</span>
-                ${isSelected ? '<span class="text-[9px] px-1.5 py-0.2 rounded bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 font-bold uppercase font-mono">ACTIVE</span>' : ''}
+                <span class="text-[9px] px-2 py-0.5 rounded-full font-medium border shrink-0 ${item.badgeClass}">${item.badge}</span>
               </div>
-              <p class="text-[11px] sm:text-xs text-slate-400 leading-relaxed line-clamp-2">${item.desc}</p>
+              <p class="text-[11px] text-slate-400 leading-snug line-clamp-1">${item.desc}</p>
             </div>
           </div>
 
-          <div class="shrink-0 pt-0.5">
+          <div class="shrink-0 pl-1">
             ${isSelected
-              ? `<div class="w-6 h-6 rounded-full ${voiceCatalogMode === 'tts' ? 'bg-purple-600' : 'bg-rose-600'} text-white flex items-center justify-center text-xs font-bold shadow-md">✓</div>`
-              : `<div class="w-6 h-6 rounded-full bg-white/[0.02] border border-white/10 group-hover:border-purple-400/40 flex items-center justify-center text-slate-500 group-hover:text-purple-300 text-xs transition">→</div>`
+              ? `<div class="w-7 h-7 rounded-full ${voiceCatalogMode === 'tts' ? 'bg-purple-600' : 'bg-rose-600'} text-white flex items-center justify-center text-xs font-bold shadow-md shadow-purple-900/40">✓</div>`
+              : `<div class="w-7 h-7 rounded-full bg-white/[0.03] border border-white/10 group-hover:border-purple-400/40 flex items-center justify-center text-slate-400 group-hover:text-purple-300 text-xs transition">→</div>`
             }
           </div>
         </button>
@@ -7756,6 +7785,18 @@ const { character } = Astro.props;
   });
 
   quickSelectFreeVoiceBtn?.addEventListener('click', () => {
+    const currentActiveId = voiceCatalogMode === 'tts'
+      ? (voiceProviderSelect?.value || 'browser')
+      : (sttProviderSelect?.value || 'groq');
+    const isFreeDefaultActive = voiceCatalogMode === 'tts' 
+      ? currentActiveId === 'browser' 
+      : currentActiveId === 'browser-stt';
+
+    if (isFreeDefaultActive) {
+      closeVoiceEngineModal();
+      return;
+    }
+
     if (voiceCatalogMode === 'tts') {
       if (voiceProviderSelect) voiceProviderSelect.value = 'browser';
       localStorage.setItem('aetheria_voice_provider', 'browser');
@@ -7766,7 +7807,7 @@ const { character } = Astro.props;
     syncVoiceUiPanels();
     updateMicButtonState();
     closeVoiceEngineModal();
-    showNotification('✓ Switched to 100% Free Local Speech');
+    showNotification('✓ Switched to Free Device Voice');
   });
 
   // ==========================================
