@@ -691,6 +691,13 @@ export default {
           if (targetUrl.includes('anthropic.com')) {
             fetchHeaders['x-api-key'] = apiKey;
             fetchHeaders['anthropic-version'] = '2023-06-01';
+          } else if (targetUrl.includes('elevenlabs.io')) {
+            fetchHeaders['xi-api-key'] = apiKey;
+          } else if (targetUrl.includes('deepgram.com')) {
+            fetchHeaders['Authorization'] = `Token ${apiKey}`;
+          } else if (targetUrl.includes('cartesia.ai')) {
+            fetchHeaders['X-API-Key'] = apiKey;
+            fetchHeaders['Cartesia-Version'] = '2024-06-10';
           } else if (targetUrl.includes('googleapis.com')) {
             fetchHeaders['x-goog-api-key'] = apiKey;
             if (targetUrl.includes('/openai/')) {
@@ -760,6 +767,13 @@ export default {
           if (targetUrl.includes('anthropic.com')) {
             fetchHeaders['x-api-key'] = apiKey;
             fetchHeaders['anthropic-version'] = '2023-06-01';
+          } else if (targetUrl.includes('elevenlabs.io')) {
+            fetchHeaders['xi-api-key'] = apiKey;
+          } else if (targetUrl.includes('deepgram.com')) {
+            fetchHeaders['Authorization'] = `Token ${apiKey}`;
+          } else if (targetUrl.includes('cartesia.ai')) {
+            fetchHeaders['X-API-Key'] = apiKey;
+            fetchHeaders['Cartesia-Version'] = '2024-06-10';
           } else if (targetUrl.includes('googleapis.com')) {
             fetchHeaders['x-goog-api-key'] = apiKey;
             if (targetUrl.includes('/openai/')) {

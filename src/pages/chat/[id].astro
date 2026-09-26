@@ -1225,10 +1225,10 @@ const { character } = Astro.props;
               </div>
             </div>
 
-              <!-- ================= 2. TAB: VOICE & AUDIO SYSTEMS ================= -->
+<!-- ================= 2. TAB: VOICE & AUDIO SYSTEMS ================= -->
               <div id="tab-voice" class="engine-tab-pane hidden space-y-4" dir="ltr" lang="en">
                 
-                <!-- Sub-tab Navigator (TTS Output vs STT Input) -->
+                <!-- Sub-tab Navigator (Character Voice vs Microphone) -->
                 <div class="flex items-center gap-1.5 p-1 rounded-2xl bg-white/[0.04] border border-white/[0.08]">
                   <button 
                     type="button" 
@@ -1236,7 +1236,7 @@ const { character } = Astro.props;
                     class="flex-1 py-2 px-3 rounded-xl bg-purple-600 text-white text-xs font-semibold flex items-center justify-center gap-2 transition cursor-pointer shadow-sm shadow-purple-900/40"
                   >
                     <Volume2 class="w-3.5 h-3.5" />
-                    <span>Speech Output (TTS)</span>
+                    <span>Character Voice</span>
                   </button>
                   <button 
                     type="button" 
@@ -1244,7 +1244,7 @@ const { character } = Astro.props;
                     class="flex-1 py-2 px-3 rounded-xl text-slate-300 hover:text-white hover:bg-white/[0.04] text-xs font-semibold flex items-center justify-center gap-2 transition cursor-pointer"
                   >
                     <Mic class="w-3.5 h-3.5" />
-                    <span>Voice Input (STT)</span>
+                    <span>Microphone</span>
                   </button>
                 </div>
 
@@ -1258,7 +1258,102 @@ const { character } = Astro.props;
 
                 <!-- ================= PANE 1: TTS SPEECH OUTPUT ================= -->
                 <div id="voice-tts-pane" class="space-y-4">
-                  <!-- Active Engine Card (Consumer-Friendly Hero) -->
+
+                  <!-- 1. Voice Profiles Toolbar (Identical to Text Engine Architecture) -->
+                  <div class="p-3 rounded-2xl bg-white/[0.03] border border-white/[0.08] flex flex-col gap-2.5" dir="ltr" lang="en">
+                    <div class="flex items-center justify-between gap-2">
+                      <div class="flex items-center gap-2 min-w-0">
+                        <div class="w-6 h-6 rounded-lg bg-purple-500/20 border border-purple-500/30 flex items-center justify-center shrink-0">
+                          <Tag class="w-3.5 h-3.5 text-purple-400" />
+                        </div>
+                        <span class="text-xs font-semibold text-slate-300 shrink-0">Voice Profile</span>
+                        <span id="voice-active-profile-badge" class="hidden text-[10px] px-2 py-0.5 rounded-full bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 font-semibold font-mono truncate max-w-[120px]">Active</span>
+                      </div>
+                      <div class="flex items-center gap-1.5 shrink-0">
+                        <button 
+                          type="button" 
+                          id="btn-show-save-voice-profile" 
+                          class="px-2.5 py-1.5 rounded-lg bg-purple-600/80 hover:bg-purple-600 text-white text-xs font-semibold flex items-center gap-1 transition cursor-pointer active:scale-95"
+                          title="Save current voice & settings as a named profile"
+                        >
+                          <Plus class="w-3.5 h-3.5" />
+                          <span>Save Profile</span>
+                        </button>
+                        <button 
+                          type="button" 
+                          id="btn-update-active-voice-profile" 
+                          class="hidden px-2.5 py-1.5 rounded-lg bg-purple-950/40 hover:bg-purple-900/60 text-purple-300 hover:text-white text-xs font-medium border border-purple-500/30 transition cursor-pointer" 
+                          title="Update active profile with latest changes"
+                        >
+                          <Check class="w-3.5 h-3.5 inline mr-0.5" />
+                          <span>Update</span>
+                        </button>
+                        <button 
+                          type="button" 
+                          id="btn-delete-active-voice-profile" 
+                          class="hidden px-2 py-1.5 rounded-lg bg-rose-500/10 hover:bg-rose-500/20 text-rose-300 border border-rose-500/20 text-xs font-medium transition cursor-pointer" 
+                          title="Delete this profile"
+                        >
+                          <Trash2 class="w-3.5 h-3.5 inline" />
+                        </button>
+                      </div>
+                    </div>
+
+                    <div class="relative w-full">
+                      <!-- Trigger Button -->
+                      <button
+                        type="button"
+                        id="custom-voice-profile-trigger"
+                        class="w-full px-3 py-2.5 rounded-xl bg-black/60 hover:bg-black/80 border border-purple-500/30 hover:border-purple-500/50 flex items-center justify-between text-xs text-white transition cursor-pointer text-left group"
+                        aria-haspopup="listbox"
+                        aria-expanded="false"
+                      >
+                        <div class="flex items-center gap-2 min-w-0 pr-2">
+                          <span class="w-2 h-2 rounded-full bg-slate-400 shrink-0" id="custom-voice-profile-status-dot"></span>
+                          <span id="custom-voice-profile-trigger-label" class="font-medium text-slate-200 truncate">Device Voice (Default)</span>
+                          <span id="custom-voice-profile-trigger-tag" class="hidden text-[9px] px-1.5 py-0.2 rounded bg-purple-900/40 text-purple-300 border border-purple-500/30 uppercase font-mono shrink-0"></span>
+                        </div>
+                        <ChevronDown class="w-4 h-4 text-slate-400 group-hover:text-purple-300 transition-transform duration-200 shrink-0" id="custom-voice-profile-chevron" />
+                      </button>
+
+                      <!-- Popover Menu -->
+                      <div 
+                        id="custom-voice-profile-menu" 
+                        class="hidden absolute left-0 right-0 top-full mt-1.5 z-50 bg-[#0c0f24]/95 backdrop-blur-xl border border-purple-500/30 rounded-2xl p-1.5 shadow-2xl shadow-purple-950/80 space-y-1 max-h-56 overflow-y-auto custom-scrollbar no-scrollbar"
+                        role="listbox"
+                      >
+                        <!-- Populated dynamically -->
+                      </div>
+                    </div>
+                  </div>
+
+                  <!-- Inline Form for Creating New Voice Profile -->
+                  <div id="new-voice-profile-form" class="hidden p-3 rounded-xl bg-purple-950/40 border border-purple-500/30 space-y-2" dir="ltr" lang="en">
+                    <div class="flex items-center justify-between text-xs text-purple-200 font-semibold">
+                      <span class="flex items-center gap-1.5">
+                        <Tag class="w-3.5 h-3.5 text-purple-400" />
+                        <span>Save Voice Profile</span>
+                      </span>
+                      <button type="button" id="btn-cancel-new-voice-profile" class="text-slate-400 hover:text-white text-xs cursor-pointer">✕ Cancel</button>
+                    </div>
+                    <div class="flex items-center gap-2">
+                      <input 
+                        type="text" 
+                        id="new-voice-profile-name-input" 
+                        placeholder="e.g. Rachel Expressive, Nova Studio, Custom Cloned" 
+                        class="flex-1 px-3 py-1.5 rounded-lg bg-black/60 border border-white/10 text-xs text-white placeholder:text-slate-500 outline-none focus:border-purple-500"
+                      />
+                      <button 
+                        type="button" 
+                        id="btn-confirm-save-voice-profile" 
+                        class="px-3 py-1.5 rounded-lg bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-semibold shrink-0 cursor-pointer transition active:scale-95"
+                      >
+                        Save
+                      </button>
+                    </div>
+                  </div>
+
+                  <!-- 2. Active Speech Engine Hero Card -->
                   <div class="p-3.5 sm:p-4 rounded-2xl bg-gradient-to-r from-purple-950/40 via-purple-900/20 to-indigo-950/40 border border-purple-500/30 flex items-center justify-between gap-3 shadow-lg shadow-purple-950/40">
                     <div class="flex items-center gap-3 min-w-0">
                       <div id="tts-active-icon-box" class="w-11 h-11 rounded-2xl bg-purple-500/20 border border-purple-500/30 flex items-center justify-center text-purple-300 shrink-0 shadow-inner">
@@ -1271,7 +1366,7 @@ const { character } = Astro.props;
                             100% Free • Ready
                           </span>
                         </div>
-                        <p id="tts-active-engine-desc" class="text-[11px] text-slate-400 truncate">Local browser speech synthesis • Zero API keys needed</p>
+                        <p id="tts-active-engine-desc" class="text-[11px] text-slate-400 truncate">Device speech synthesizer • Offline & Private</p>
                       </div>
                     </div>
                     <button 
@@ -1284,20 +1379,34 @@ const { character } = Astro.props;
                     </button>
                   </div>
 
-                  <!-- Connection & Key Card (Progressive Disclosure) -->
-                  <div id="tts-connection-card" class="hidden p-3.5 sm:p-4 rounded-2xl bg-amber-950/20 border border-amber-500/30 space-y-3">
+                  <!-- 3. Free Device Voice Informative Banner (Shown when browser voice is active) -->
+                  <div id="tts-free-device-card" class="p-3.5 rounded-2xl bg-emerald-950/20 border border-emerald-500/30 flex items-center gap-3">
+                    <div class="w-8 h-8 rounded-xl bg-emerald-500/20 border border-emerald-500/30 flex items-center justify-center text-emerald-300 shrink-0">
+                      <Sparkles class="w-4 h-4 text-emerald-400" />
+                    </div>
+                    <div class="min-w-0 flex-1">
+                      <div class="text-xs font-bold text-white flex items-center gap-2">
+                        <span>Device Voice Active</span>
+                        <span class="px-2 py-0.5 rounded-full text-[9px] font-mono font-bold bg-emerald-500/20 text-emerald-300 border border-emerald-500/30">Free & Offline</span>
+                      </div>
+                      <p class="text-[11px] text-slate-400 mt-0.5">Runs on your browser/phone hardware. Zero API keys, zero setup, unlimited roleplay speech.</p>
+                    </div>
+                  </div>
+
+                  <!-- 4. Cloud API Key Connection Card (Progressive Disclosure - Clean, No Duplicate Badges) -->
+                  <div id="tts-connection-card" class="hidden p-3.5 sm:p-4 rounded-2xl bg-purple-950/20 border border-purple-500/30 space-y-3">
                     <div class="flex items-start justify-between gap-2">
-                      <div class="flex items-center gap-2">
-                        <div class="w-7 h-7 rounded-xl bg-amber-500/20 border border-amber-500/30 flex items-center justify-center text-amber-300 shrink-0">
+                      <div class="flex items-center gap-2.5">
+                        <div class="w-7 h-7 rounded-xl bg-purple-500/20 border border-purple-500/30 flex items-center justify-center text-purple-300 shrink-0">
                           <KeyRound class="w-3.5 h-3.5" />
                         </div>
                         <div>
                           <h5 id="tts-connect-title" class="text-xs font-bold text-white">Connect ElevenLabs API Key</h5>
-                          <p id="tts-connect-desc" class="text-[10px] text-slate-400">API Key required to synthesize expressive speech.</p>
+                          <p id="tts-connect-desc" class="text-[10px] text-slate-400">Keys are stored locally in your browser (BYOK).</p>
                         </div>
                       </div>
-                      <span class="px-2 py-0.5 rounded-full text-[9px] font-mono font-bold bg-amber-500/20 text-amber-300 border border-amber-500/30">
-                        KEY REQUIRED
+                      <span id="tts-key-status-badge" class="px-2 py-0.5 rounded-full text-[9px] font-mono font-bold bg-amber-500/20 text-amber-300 border border-amber-500/30">
+                        Key Required
                       </span>
                     </div>
 
@@ -1315,7 +1424,7 @@ const { character } = Astro.props;
                       <input 
                         id="voice-api-key" 
                         type="password" 
-                        placeholder="Enter API Key (sk-... or ElevenLabs key)" 
+                        placeholder="Enter API Key (xi-api-key or sk-...)" 
                         class="w-full px-3.5 py-2.5 rounded-xl bg-black/60 border border-white/10 text-xs text-white placeholder:text-slate-500 outline-none focus:border-purple-500/60 font-mono pr-16"
                       />
                       <button type="button" id="toggle-voice-key-visibility-btn" class="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-white text-xs cursor-pointer p-1">
@@ -1340,175 +1449,190 @@ const { character } = Astro.props;
                         class="px-4 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-semibold flex items-center gap-1.5 transition cursor-pointer active:scale-95 shadow-md shadow-emerald-950"
                       >
                         <Check class="w-3.5 h-3.5" />
-                        <span>Connect & Activate</span>
+                        <span>Save & Verify Key</span>
                       </button>
                     </div>
                   </div>
 
-                  <!-- TTS Controls (Unlocked when connected or free) -->
-                  <div id="tts-controls-unlocked" class="space-y-4">
-                    
-                    <!-- ElevenLabs Voice Presets (Visual Avatar Cards) -->
-                    <div id="eleven-voice-container" class="hidden space-y-2.5">
-                      <label class="block text-xs font-semibold text-slate-300">Select Character Voice Preset</label>
-                      <div class="grid grid-cols-2 sm:grid-cols-3 gap-2">
-                        <button type="button" class="eleven-voice-card p-2.5 rounded-xl border text-left transition cursor-pointer bg-white/[0.03] hover:bg-white/[0.06] border-white/10" data-voice="21m00Tcm4TlvDq8ikWAM">
-                          <div class="font-bold text-xs text-white">Rachel</div>
-                          <div class="text-[10px] text-purple-400 font-medium">Calm & Soothing ♀</div>
-                        </button>
-                        <button type="button" class="eleven-voice-card p-2.5 rounded-xl border text-left transition cursor-pointer bg-white/[0.03] hover:bg-white/[0.06] border-white/10" data-voice="pNInz6obpgDQGcFmaJgB">
-                          <div class="font-bold text-xs text-white">Adam</div>
-                          <div class="text-[10px] text-purple-400 font-medium">Deep & Cinematic ♂</div>
-                        </button>
-                        <button type="button" class="eleven-voice-card p-2.5 rounded-xl border text-left transition cursor-pointer bg-white/[0.03] hover:bg-white/[0.06] border-white/10" data-voice="EXAVITQu4vr4xnSDxMaL">
-                          <div class="font-bold text-xs text-white">Bella</div>
-                          <div class="text-[10px] text-purple-400 font-medium">Expressive & Playful ♀</div>
-                        </button>
-                        <button type="button" class="eleven-voice-card p-2.5 rounded-xl border text-left transition cursor-pointer bg-white/[0.03] hover:bg-white/[0.06] border-white/10" data-voice="ErXwobaYiN019PkySvjV">
-                          <div class="font-bold text-xs text-white">Antoni</div>
-                          <div class="text-[10px] text-purple-400 font-medium">Storyteller ♂</div>
-                        </button>
-                        <button type="button" class="eleven-voice-card p-2.5 rounded-xl border text-left transition cursor-pointer bg-white/[0.03] hover:bg-white/[0.06] border-white/10" data-voice="MF3mGyEYCl7XYWbV9V6O">
-                          <div class="font-bold text-xs text-white">Elli</div>
-                          <div class="text-[10px] text-purple-400 font-medium">Gentle & Intimate ♀</div>
-                        </button>
-                        <button type="button" class="eleven-voice-card p-2.5 rounded-xl border text-left transition cursor-pointer bg-white/[0.03] hover:bg-white/[0.06] border-white/10" data-voice="TxGEqnHWrfWFTfGW9XjX">
-                          <div class="font-bold text-xs text-white">Josh</div>
-                          <div class="text-[10px] text-purple-400 font-medium">Warm & Confident ♂</div>
-                        </button>
-                      </div>
-                      <input id="voice-id-input" type="text" value="21m00Tcm4TlvDq8ikWAM" class="w-full px-3 py-1.5 rounded-xl bg-white/[0.03] border border-white/10 text-xs text-slate-400 font-mono" placeholder="Or enter custom Voice ID" />
-                    </div>
-
-                    <!-- OpenAI Audio Voice Archetypes (Visual Cards - NO SELECT DROPDOWN) -->
-                    <div id="openai-voice-container" class="hidden space-y-3">
+                  <!-- 5. Dynamic Voice Selector & API Sync -->
+                  <div id="dynamic-voice-section" class="space-y-2.5">
+                    <div class="flex items-center justify-between gap-2">
                       <div>
-                        <label class="block text-xs font-semibold text-slate-300 mb-2">OpenAI Voice Archetype</label>
-                        <div class="grid grid-cols-2 sm:grid-cols-3 gap-2">
-                          <button type="button" class="openai-voice-card p-2.5 rounded-xl border text-left transition cursor-pointer bg-white/[0.03] hover:bg-white/[0.06] border-white/10" data-arch="nova">
-                            <div class="font-bold text-xs text-white">Nova</div>
-                            <div class="text-[10px] text-purple-400">Warm & Energetic ♀</div>
-                          </button>
-                          <button type="button" class="openai-voice-card p-2.5 rounded-xl border text-left transition cursor-pointer bg-white/[0.03] hover:bg-white/[0.06] border-white/10" data-arch="shimmer">
-                            <div class="font-bold text-xs text-white">Shimmer</div>
-                            <div class="text-[10px] text-purple-400">Clear & Expressive ♀</div>
-                          </button>
-                          <button type="button" class="openai-voice-card p-2.5 rounded-xl border text-left transition cursor-pointer bg-white/[0.03] hover:bg-white/[0.06] border-white/10" data-arch="onyx">
-                            <div class="font-bold text-xs text-white">Onyx</div>
-                            <div class="text-[10px] text-purple-400">Deep & Resonant ♂</div>
-                          </button>
-                          <button type="button" class="openai-voice-card p-2.5 rounded-xl border text-left transition cursor-pointer bg-white/[0.03] hover:bg-white/[0.06] border-white/10" data-arch="alloy">
-                            <div class="font-bold text-xs text-white">Alloy</div>
-                            <div class="text-[10px] text-purple-400">Versatile & Balanced</div>
-                          </button>
-                          <button type="button" class="openai-voice-card p-2.5 rounded-xl border text-left transition cursor-pointer bg-white/[0.03] hover:bg-white/[0.06] border-white/10" data-arch="echo">
-                            <div class="font-bold text-xs text-white">Echo</div>
-                            <div class="text-[10px] text-purple-400">Soft & Smooth ♂</div>
-                          </button>
-                          <button type="button" class="openai-voice-card p-2.5 rounded-xl border text-left transition cursor-pointer bg-white/[0.03] hover:bg-white/[0.06] border-white/10" data-arch="fable">
-                            <div class="font-bold text-xs text-white">Fable</div>
-                            <div class="text-[10px] text-purple-400">British Accent</div>
-                          </button>
-                        </div>
-                      </div>
-
-                      <!-- TTS Model Segmented Pill Toggle -->
-                      <div>
-                        <label class="block text-xs font-semibold text-slate-300 mb-1.5">Audio Quality Model</label>
-                        <div class="flex items-center gap-2 p-1 rounded-xl bg-black/40 border border-white/10">
-                          <button type="button" data-tts-model="tts-1" class="openai-model-toggle-btn flex-1 py-1.5 px-3 rounded-lg text-xs font-semibold transition cursor-pointer bg-purple-600 text-white shadow-sm">
-                            tts-1 (Fast & Low Latency)
-                          </button>
-                          <button type="button" data-tts-model="tts-1-hd" class="openai-model-toggle-btn flex-1 py-1.5 px-3 rounded-lg text-xs font-semibold transition cursor-pointer text-slate-400 hover:text-white">
-                            tts-1-hd (Ultra High Definition)
-                          </button>
-                        </div>
-                      </div>
-                    </div>
-
-                    <!-- Voice Sliders Card -->
-                    <div class="p-3.5 sm:p-4 rounded-2xl bg-white/[0.02] border border-white/[0.06] space-y-4">
-                      <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                        <!-- Stability (ElevenLabs) -->
-                        <div id="eleven-stability-box" class="space-y-1.5 hidden" dir="ltr">
-                          <div class="flex items-center justify-between text-xs">
-                            <label for="badge-stability" class="text-slate-300 font-medium cursor-pointer">Stability</label>
-                            <input id="badge-stability" dir="ltr" lang="en" type="text" inputmode="decimal" autocomplete="off" spellcheck="false" value="0.50" class="w-16 px-1.5 py-0.5 rounded-lg bg-purple-950/80 border border-purple-500/40 text-purple-300 font-mono font-bold text-xs text-center outline-none force-ltr-numeric" />
-                          </div>
-                          <input id="slider-stability" dir="ltr" type="range" min="0.0" max="1.0" step="0.05" value="0.50" class="w-full accent-purple-500 cursor-pointer" />
-                        </div>
-
-                        <!-- Clarity (ElevenLabs) -->
-                        <div id="eleven-clarity-box" class="space-y-1.5 hidden" dir="ltr">
-                          <div class="flex items-center justify-between text-xs">
-                            <label for="badge-clarity" class="text-slate-300 font-medium cursor-pointer">Clarity Boost</label>
-                            <input id="badge-clarity" dir="ltr" lang="en" type="text" inputmode="decimal" autocomplete="off" spellcheck="false" value="0.75" class="w-16 px-1.5 py-0.5 rounded-lg bg-purple-950/80 border border-purple-500/40 text-purple-300 font-mono font-bold text-xs text-center outline-none force-ltr-numeric" />
-                          </div>
-                          <input id="slider-clarity" dir="ltr" type="range" min="0.0" max="1.0" step="0.05" value="0.75" class="w-full accent-purple-500 cursor-pointer" />
-                        </div>
-
-                        <!-- Speed Rate -->
-                        <div class="space-y-1.5" dir="ltr">
-                          <div class="flex items-center justify-between text-xs">
-                            <label for="badge-voice-rate" class="text-slate-300 font-medium cursor-pointer">Speech Rate</label>
-                            <div class="flex items-center gap-0.5" dir="ltr">
-                              <input id="badge-voice-rate" dir="ltr" lang="en" type="text" inputmode="decimal" autocomplete="off" spellcheck="false" value="1.0" class="w-14 px-1.5 py-0.5 rounded-lg bg-purple-950/80 border border-purple-500/40 text-purple-300 font-mono font-bold text-xs text-center outline-none force-ltr-numeric" />
-                              <span class="text-[10px] text-purple-400 font-mono font-semibold">x</span>
-                            </div>
-                          </div>
-                          <input id="slider-voice-rate" dir="ltr" type="range" min="0.5" max="2.0" step="0.1" value="1.0" class="w-full accent-purple-500 cursor-pointer" />
-                        </div>
-
-                        <!-- Pitch -->
-                        <div class="space-y-1.5" dir="ltr">
-                          <div class="flex items-center justify-between text-xs">
-                            <label for="badge-voice-pitch" class="text-slate-300 font-medium cursor-pointer">Tone Pitch</label>
-                            <input id="badge-voice-pitch" dir="ltr" lang="en" type="text" inputmode="decimal" autocomplete="off" spellcheck="false" value="1.0" class="w-16 px-1.5 py-0.5 rounded-lg bg-purple-950/80 border border-purple-500/40 text-purple-300 font-mono font-bold text-xs text-center outline-none force-ltr-numeric" />
-                          </div>
-                          <input id="slider-voice-pitch" dir="ltr" type="range" min="0.5" max="1.5" step="0.05" value="1.0" class="w-full accent-purple-500 cursor-pointer" />
-                        </div>
-                      </div>
-
-                      <!-- Roleplay Audio Toggles -->
-                      <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-2">
-                        <label class="flex items-center justify-between p-3 rounded-xl bg-white/[0.03] border border-white/10 cursor-pointer">
-                          <div>
-                            <span class="text-xs font-semibold text-slate-200 block">Filter Narration (*actions*)</span>
-                            <span class="text-[10px] text-slate-400">Only speaks spoken dialogue; skips *actions*</span>
-                          </div>
-                          <input id="toggle-filter-narration" type="checkbox" checked class="w-4 h-4 accent-purple-500 cursor-pointer" />
-                        </label>
-
-                        <label class="flex items-center justify-between p-3 rounded-xl bg-white/[0.03] border border-white/10 cursor-pointer">
-                          <div>
-                            <span class="text-xs font-semibold text-slate-200 block">Auto-Play Character Voice</span>
-                            <span class="text-[10px] text-slate-400">Speaks replies automatically on arrival</span>
-                          </div>
-                          <input id="toggle-autoplay-voice" type="checkbox" class="w-4 h-4 accent-purple-500 cursor-pointer" />
-                        </label>
-                      </div>
-                    </div>
-
-                    <!-- Test Voice Card -->
-                    <div class="p-3 rounded-2xl bg-purple-950/20 border border-purple-500/30 flex items-center justify-between gap-3">
-                      <div>
-                        <div class="text-xs font-bold text-white">Live Voice Preview</div>
-                        <div class="text-[11px] text-slate-400">Listen to a sample greeting from {character.name}</div>
+                        <label class="block text-xs font-bold text-white">Voice & Character Tone</label>
+                        <span id="voice-sync-status-text" class="text-[10px] text-slate-400">Select or sync voices from your provider account</span>
                       </div>
                       <button 
                         type="button" 
-                        id="test-voice-btn" 
-                        class="px-4 py-2 rounded-xl bg-purple-600 hover:bg-purple-500 text-white text-xs font-semibold flex items-center gap-1.5 transition cursor-pointer active:scale-95 shadow-md shadow-purple-900/50"
+                        id="sync-voices-btn" 
+                        class="px-2.5 py-1.5 rounded-xl bg-purple-600/30 hover:bg-purple-600/50 border border-purple-500/40 text-purple-200 text-xs font-semibold flex items-center gap-1.5 transition cursor-pointer active:scale-95 shrink-0"
+                        title="Fetch latest voices and personal clones from API"
                       >
-                        <Play class="w-3.5 h-3.5" />
-                        <span>Test Voice</span>
+                        <RefreshCw id="sync-voices-icon" class="w-3.5 h-3.5 text-purple-400" />
+                        <span>Sync Voices</span>
                       </button>
                     </div>
 
+                    <!-- Voice Search & Filter Bar -->
+                    <div class="relative">
+                      <Search class="w-3.5 h-3.5 text-slate-400 absolute left-3 top-1/2 -translate-y-1/2 pointer-events-none" />
+                      <input 
+                        id="voice-search-input" 
+                        type="text" 
+                        placeholder="Search voices by name, gender, accent..." 
+                        class="w-full pl-9 pr-3.5 py-2 rounded-xl bg-black/50 border border-white/10 text-xs text-white placeholder:text-slate-500 outline-none focus:border-purple-500/60"
+                      />
+                    </div>
+
+                    <!-- Dynamic Voice Grid -->
+                    <div id="dynamic-voice-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2 max-h-64 overflow-y-auto pr-1 custom-scrollbar">
+                      <!-- Dynamically rendered voice cards -->
+                    </div>
+
+                    <!-- OpenAI Quality Model Toggle (Shown only for OpenAI) -->
+                    <div id="openai-model-toggle-container" class="hidden space-y-1.5 pt-1">
+                      <label class="block text-xs font-semibold text-slate-300">OpenAI Audio Quality</label>
+                      <div class="flex items-center gap-2 p-1 rounded-xl bg-black/40 border border-white/10">
+                        <button type="button" data-tts-model="tts-1" class="openai-model-toggle-btn flex-1 py-1.5 px-3 rounded-lg text-xs font-semibold transition cursor-pointer bg-purple-600 text-white shadow-sm">
+                          tts-1 (Fast & Low Latency)
+                        </button>
+                        <button type="button" data-tts-model="tts-1-hd" class="openai-model-toggle-btn flex-1 py-1.5 px-3 rounded-lg text-xs font-semibold transition cursor-pointer text-slate-400 hover:text-white">
+                          tts-1-hd (Studio HD)
+                        </button>
+                      </div>
+                    </div>
+
+                    <!-- Custom Voice ID Input -->
+                    <div id="custom-voice-id-box" class="pt-1">
+                      <div class="flex items-center gap-2">
+                        <input 
+                          id="voice-id-input" 
+                          type="text" 
+                          value="21m00Tcm4TlvDq8ikWAM" 
+                          class="flex-1 px-3 py-1.5 rounded-xl bg-white/[0.03] border border-white/10 text-xs text-slate-300 font-mono" 
+                          placeholder="Or enter custom Voice ID" 
+                        />
+                        <button 
+                          type="button" 
+                          id="apply-custom-voice-id-btn" 
+                          class="px-3 py-1.5 rounded-xl bg-white/[0.06] hover:bg-white/[0.1] text-xs font-semibold text-white border border-white/10 transition cursor-pointer active:scale-95 shrink-0"
+                        >
+                          Apply ID
+                        </button>
+                      </div>
+                    </div>
                   </div>
+
+                  <!-- 6. Human-Centric Pacing & Expression Controls (Replacing Raw DSP) -->
+                  <div class="p-3.5 sm:p-4 rounded-2xl bg-white/[0.02] border border-white/[0.06] space-y-4">
+                    
+                    <!-- Speed / Pacing Section -->
+                    <div class="space-y-2" dir="ltr">
+                      <div class="flex items-center justify-between text-xs">
+                        <label class="text-slate-300 font-medium">Speaking Pace</label>
+                        <div class="flex items-center gap-1 font-mono text-purple-300 text-xs">
+                          <span id="badge-voice-rate-label" class="font-bold">1.0x</span>
+                          <span id="badge-voice-rate-desc" class="text-slate-400 text-[10px]">(Natural)</span>
+                        </div>
+                      </div>
+                      <!-- Quick Preset Pills -->
+                      <div class="grid grid-cols-4 gap-1.5">
+                        <button type="button" class="voice-speed-preset-btn py-1.5 px-2 rounded-lg text-xs font-semibold bg-white/[0.04] hover:bg-white/[0.08] text-slate-300 border border-white/5 transition cursor-pointer" data-rate="0.85">0.85x Slow</button>
+                        <button type="button" class="voice-speed-preset-btn py-1.5 px-2 rounded-lg text-xs font-semibold bg-purple-600 text-white border border-purple-500/40 shadow-sm transition cursor-pointer" data-rate="1.0">1.0x Natural</button>
+                        <button type="button" class="voice-speed-preset-btn py-1.5 px-2 rounded-lg text-xs font-semibold bg-white/[0.04] hover:bg-white/[0.08] text-slate-300 border border-white/5 transition cursor-pointer" data-rate="1.15">1.15x Lively</button>
+                        <button type="button" class="voice-speed-preset-btn py-1.5 px-2 rounded-lg text-xs font-semibold bg-white/[0.04] hover:bg-white/[0.08] text-slate-300 border border-white/5 transition cursor-pointer" data-rate="1.3">1.3x Fast</button>
+                      </div>
+                      <input id="slider-voice-rate" dir="ltr" type="range" min="0.5" max="2.0" step="0.05" value="1.0" class="w-full accent-purple-500 cursor-pointer h-1.5 bg-white/10 rounded-lg" />
+                    </div>
+
+                    <!-- Tone / Vocal Mood Pitch Section -->
+                    <div id="voice-pitch-container" class="space-y-2" dir="ltr">
+                      <div class="flex items-center justify-between text-xs">
+                        <label class="text-slate-300 font-medium">Vocal Tone & Mood</label>
+                        <div class="flex items-center gap-1 font-mono text-purple-300 text-xs">
+                          <span id="badge-voice-pitch-label" class="font-bold">Natural (1.0)</span>
+                        </div>
+                      </div>
+                      <!-- Quick Tone Pills -->
+                      <div class="grid grid-cols-4 gap-1.5">
+                        <button type="button" class="voice-pitch-preset-btn py-1.5 px-2 rounded-lg text-xs font-semibold bg-white/[0.04] hover:bg-white/[0.08] text-slate-300 border border-white/5 transition cursor-pointer" data-pitch="0.85">Deep</button>
+                        <button type="button" class="voice-pitch-preset-btn py-1.5 px-2 rounded-lg text-xs font-semibold bg-white/[0.04] hover:bg-white/[0.08] text-slate-300 border border-white/5 transition cursor-pointer" data-pitch="0.95">Warm</button>
+                        <button type="button" class="voice-pitch-preset-btn py-1.5 px-2 rounded-lg text-xs font-semibold bg-purple-600 text-white border border-purple-500/40 shadow-sm transition cursor-pointer" data-pitch="1.0">Natural</button>
+                        <button type="button" class="voice-pitch-preset-btn py-1.5 px-2 rounded-lg text-xs font-semibold bg-white/[0.04] hover:bg-white/[0.08] text-slate-300 border border-white/5 transition cursor-pointer" data-pitch="1.15">Bright</button>
+                      </div>
+                      <input id="slider-voice-pitch" dir="ltr" type="range" min="0.5" max="1.5" step="0.05" value="1.0" class="w-full accent-purple-500 cursor-pointer h-1.5 bg-white/10 rounded-lg" />
+                    </div>
+
+                    <!-- ElevenLabs Advanced Emotion Controls (Stability & Clarity) -->
+                    <div id="eleven-extra-settings" class="hidden grid grid-cols-1 sm:grid-cols-2 gap-4 pt-2 border-t border-white/5" dir="ltr">
+                      <div class="space-y-1.5">
+                        <div class="flex items-center justify-between text-xs">
+                          <label for="slider-stability" class="text-slate-300 font-medium cursor-pointer">Expressiveness / Stability</label>
+                          <span id="badge-stability-val" class="text-purple-300 font-mono text-xs font-bold">50%</span>
+                        </div>
+                        <input id="slider-stability" dir="ltr" type="range" min="0.0" max="1.0" step="0.05" value="0.50" class="w-full accent-purple-500 cursor-pointer h-1.5 bg-white/10 rounded-lg" />
+                        <div class="flex justify-between text-[9px] text-slate-500">
+                          <span>More Emotional</span>
+                          <span>More Consistent</span>
+                        </div>
+                      </div>
+
+                      <div class="space-y-1.5">
+                        <div class="flex items-center justify-between text-xs">
+                          <label for="slider-clarity" class="text-slate-300 font-medium cursor-pointer">Clarity / Boost</label>
+                          <span id="badge-clarity-val" class="text-purple-300 font-mono text-xs font-bold">75%</span>
+                        </div>
+                        <input id="slider-clarity" dir="ltr" type="range" min="0.0" max="1.0" step="0.05" value="0.75" class="w-full accent-purple-500 cursor-pointer h-1.5 bg-white/10 rounded-lg" />
+                        <div class="flex justify-between text-[9px] text-slate-500">
+                          <span>Subtle</span>
+                          <span>High Clarity</span>
+                        </div>
+                      </div>
+                    </div>
+
+                    <!-- Roleplay Audio Toggles -->
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-2 border-t border-white/5">
+                      <label class="flex items-center justify-between p-3 rounded-xl bg-white/[0.03] border border-white/10 cursor-pointer hover:bg-white/[0.05] transition">
+                        <div>
+                          <span class="text-xs font-semibold text-slate-200 block">Filter Narration (*actions*)</span>
+                          <span class="text-[10px] text-slate-400">Only speaks dialogue; skips *actions*</span>
+                        </div>
+                        <input id="toggle-filter-narration" type="checkbox" checked class="w-4 h-4 accent-purple-500 cursor-pointer" />
+                      </label>
+
+                      <label class="flex items-center justify-between p-3 rounded-xl bg-white/[0.03] border border-white/10 cursor-pointer hover:bg-white/[0.05] transition">
+                        <div>
+                          <span class="text-xs font-semibold text-slate-200 block">Auto-Play Character Voice</span>
+                          <span class="text-[10px] text-slate-400">Speaks character replies on arrival</span>
+                        </div>
+                        <input id="toggle-autoplay-voice" type="checkbox" class="w-4 h-4 accent-purple-500 cursor-pointer" />
+                      </label>
+                    </div>
+                  </div>
+
+                  <!-- 7. Live Voice Audition / Preview Bar -->
+                  <div class="p-3.5 rounded-2xl bg-gradient-to-r from-purple-950/40 to-indigo-950/40 border border-purple-500/30 flex items-center justify-between gap-3 shadow-lg">
+                    <div class="min-w-0">
+                      <div class="text-xs font-bold text-white flex items-center gap-1.5">
+                        <Volume2 class="w-4 h-4 text-purple-400 shrink-0" />
+                        <span>Live Voice Audition</span>
+                      </div>
+                      <div id="voice-preview-status-text" class="text-[11px] text-slate-300 truncate">
+                        Listen to <span class="text-purple-300 font-semibold">{character.name}</span> speak with chosen voice
+                      </div>
+                    </div>
+                    <button 
+                      type="button" 
+                      id="test-voice-btn" 
+                      class="px-4 py-2 rounded-xl bg-purple-600 hover:bg-purple-500 text-white text-xs font-semibold flex items-center gap-2 transition cursor-pointer active:scale-95 shadow-md shadow-purple-900/50 shrink-0"
+                    >
+                      <Play id="test-voice-icon" class="w-3.5 h-3.5 fill-current" />
+                      <span id="test-voice-label">Play Sample</span>
+                    </button>
+                  </div>
+
                 </div>
 
-                <!-- ================= PANE 2: STT SPEECH INPUT ================= -->
+                                <!-- ================= PANE 2: STT SPEECH INPUT ================= -->
                 <div id="voice-stt-pane" class="space-y-4 hidden">
                   <!-- Active STT Engine Card -->
                   <div class="p-3.5 sm:p-4 rounded-2xl bg-gradient-to-r from-rose-950/40 via-purple-950/20 to-indigo-950/40 border border-rose-500/30 flex items-center justify-between gap-3 shadow-lg shadow-rose-950/40">
@@ -3841,6 +3965,36 @@ const { character } = Astro.props;
   const toggleFilterNarration = document.getElementById('toggle-filter-narration');
   const toggleAutoplayVoice = document.getElementById('toggle-autoplay-voice');
   const testVoiceBtn = document.getElementById('test-voice-btn');
+  const syncVoicesBtn = document.getElementById('sync-voices-btn');
+  const syncVoicesIcon = document.getElementById('sync-voices-icon');
+  const voiceSearchInput = document.getElementById('voice-search-input');
+  const dynamicVoiceGrid = document.getElementById('dynamic-voice-grid');
+  const ttsFreeDeviceCard = document.getElementById('tts-free-device-card');
+  const ttsKeyStatusBadge = document.getElementById('tts-key-status-badge');
+  const voicePreviewStatusText = document.getElementById('voice-preview-status-text');
+  const testVoiceIcon = document.getElementById('test-voice-icon');
+  const testVoiceLabel = document.getElementById('test-voice-label');
+  const badgeVoiceRateLabel = document.getElementById('badge-voice-rate-label');
+  const badgeVoiceRateDesc = document.getElementById('badge-voice-rate-desc');
+  const badgeVoicePitchLabel = document.getElementById('badge-voice-pitch-label');
+  const elevenExtraSettings = document.getElementById('eleven-extra-settings');
+  const voicePitchContainer = document.getElementById('voice-pitch-container');
+  const openaiModelToggleContainer = document.getElementById('openai-model-toggle-container');
+  const customVoiceProfileTrigger = document.getElementById('custom-voice-profile-trigger');
+  const customVoiceProfileMenu = document.getElementById('custom-voice-profile-menu');
+  const customVoiceProfileTriggerLabel = document.getElementById('custom-voice-profile-trigger-label');
+  const customVoiceProfileTriggerTag = document.getElementById('custom-voice-profile-trigger-tag');
+  const customVoiceProfileStatusDot = document.getElementById('custom-voice-profile-status-dot');
+  const customVoiceProfileChevron = document.getElementById('custom-voice-profile-chevron');
+  const btnShowSaveVoiceProfile = document.getElementById('btn-show-save-voice-profile');
+  const btnUpdateActiveVoiceProfile = document.getElementById('btn-update-active-voice-profile');
+  const btnDeleteActiveVoiceProfile = document.getElementById('btn-delete-active-voice-profile');
+  const newVoiceProfileForm = document.getElementById('new-voice-profile-form');
+  const newVoiceProfileNameInput = document.getElementById('new-voice-profile-name-input');
+  const btnConfirmSaveVoiceProfile = document.getElementById('btn-confirm-save-voice-profile');
+  const btnCancelNewVoiceProfile = document.getElementById('btn-cancel-new-voice-profile');
+  const voiceActiveProfileBadge = document.getElementById('voice-active-profile-badge');
+  const voiceSyncStatusText = document.getElementById('voice-sync-status-text');
 
   const sttApiKey = document.getElementById('stt-api-key');
   const toggleSttKeyVisibilityBtn = document.getElementById('toggle-stt-key-visibility-btn');
@@ -5815,6 +5969,9 @@ const { character } = Astro.props;
     const sttLang = localStorage.getItem('aetheria_stt_lang') || 'auto';
     if (sttLangSelect) sttLangSelect.value = sttLang;
 
+    if (typeof renderVoiceProfileMenu === 'function') renderVoiceProfileMenu();
+    if (typeof updateSpeedPillsAndLabel === 'function') updateSpeedPillsAndLabel(voiceRate);
+    if (typeof updatePitchPillsAndLabel === 'function') updatePitchPillsAndLabel(voicePitch);
     syncVoiceUiPanels();
     updateMicButtonState();
 
@@ -7028,41 +7185,6 @@ const { character } = Astro.props;
     }
   });
 
-  // Test Voice button
-  testVoiceBtn?.addEventListener('click', async () => {
-    const prov = voiceProviderSelect?.value || 'browser';
-    const rate = parseFloat(sliderVoiceRate?.value || '1.0');
-    const pitch = parseFloat(sliderVoicePitch?.value || '1.0');
-    const previewText = `Greetings traveler. I am ${character.name}. This is a live voice preview.`;
-
-    if (prov === 'elevenlabs') {
-      const key = voiceApiKey?.value.trim() || localStorage.getItem('aetheria_voice_key');
-      const vId = voiceIdInput?.value.trim() || '21m00Tcm4TlvDq8ikWAM';
-      if (key) {
-        showNotification('Fetching ElevenLabs voice preview...');
-        speak(previewText);
-        return;
-      }
-    } else if (prov === 'openai') {
-      const key = voiceApiKey?.value.trim() || localStorage.getItem('aetheria_voice_key') || localStorage.getItem('aetheria_key_openai');
-      if (key) {
-        showNotification('Fetching OpenAI Audio preview...');
-        speak(previewText);
-        return;
-      }
-    }
-    
-    if (window.speechSynthesis) {
-      window.speechSynthesis.cancel();
-      const utterance = new SpeechSynthesisUtterance(previewText);
-      utterance.rate = rate;
-      utterance.pitch = pitch;
-      utterance.lang = 'en-US';
-      window.speechSynthesis.speak(utterance);
-      showNotification('Playing speech synthesis preview...');
-    }
-  });
-
   // Test Image button
   testImageBtn?.addEventListener('click', () => {
     if (!testImagePreview || !testImagePreviewContainer) return;
@@ -7810,6 +7932,757 @@ const { character } = Astro.props;
     showNotification('✓ Switched to Free Device Voice');
   });
 
+// ==========================================
+  // VOICE KEYS & PER-PROVIDER STORAGE
+  // ==========================================
+  function getVoiceKeyForProvider(prov) {
+    if (!prov) return '';
+    const specificKey = localStorage.getItem('aetheria_voice_key_' + prov);
+    if (specificKey) return specificKey;
+    if (prov === 'openai') {
+      const textKey = localStorage.getItem('aetheria_key_openai');
+      if (textKey) return textKey;
+    }
+    return localStorage.getItem('aetheria_voice_key') || '';
+  }
+
+  function setVoiceKeyForProvider(prov, key) {
+    if (prov) {
+      localStorage.setItem('aetheria_voice_key_' + prov, key);
+    }
+    localStorage.setItem('aetheria_voice_key', key);
+  }
+
+  // ==========================================
+  // VOICE PROFILES (Named Presets)
+  // ==========================================
+  const VOICE_PROFILES_STORAGE_KEY = 'aetheria_voice_profiles';
+  const ACTIVE_VOICE_PROFILE_KEY = 'aetheria_active_voice_profile_id';
+
+  function getSavedVoiceProfiles() {
+    try {
+      const raw = localStorage.getItem(VOICE_PROFILES_STORAGE_KEY);
+      return raw ? JSON.parse(raw) : [];
+    } catch (e) {
+      return [];
+    }
+  }
+
+  function saveVoiceProfiles(profiles) {
+    try {
+      localStorage.setItem(VOICE_PROFILES_STORAGE_KEY, JSON.stringify(profiles));
+    } catch (e) {
+      console.error(e);
+    }
+  }
+
+  function renderVoiceProfileMenu() {
+    if (!customVoiceProfileMenu) return;
+    const profiles = getSavedVoiceProfiles();
+    const activeId = localStorage.getItem(ACTIVE_VOICE_PROFILE_KEY) || '';
+
+    let html = `
+      <button 
+        type="button" 
+        class="voice-profile-item w-full px-3 py-2 rounded-xl text-left transition flex items-center justify-between text-xs cursor-pointer ${
+          !activeId ? 'bg-purple-600/30 text-white font-semibold border border-purple-500/40' : 'text-slate-300 hover:bg-white/[0.06] hover:text-white'
+        }" 
+        data-profile-id=""
+      >
+        <div class="flex items-center gap-2 min-w-0">
+          <span class="w-2 h-2 rounded-full ${!activeId ? 'bg-emerald-400' : 'bg-slate-500'}"></span>
+          <span class="truncate">Device Voice (Default)</span>
+        </div>
+        ${!activeId ? '<span class="text-[10px] text-purple-300 font-mono">Active</span>' : ''}
+      </button>
+    `;
+
+    profiles.forEach(p => {
+      const isSel = p.id === activeId;
+      html += `
+        <button 
+          type="button" 
+          class="voice-profile-item w-full px-3 py-2 rounded-xl text-left transition flex items-center justify-between text-xs cursor-pointer ${
+            isSel ? 'bg-purple-600/30 text-white font-semibold border border-purple-500/40' : 'text-slate-300 hover:bg-white/[0.06] hover:text-white'
+          }" 
+          data-profile-id="${p.id}"
+        >
+          <div class="flex items-center gap-2 min-w-0">
+            <span class="w-2 h-2 rounded-full ${isSel ? 'bg-emerald-400' : 'bg-purple-400'}"></span>
+            <span class="truncate">${p.name}</span>
+          </div>
+          <span class="text-[9px] px-1.5 py-0.5 rounded bg-white/10 text-slate-300 font-mono uppercase">${p.provider}</span>
+        </button>
+      `;
+    });
+
+    customVoiceProfileMenu.innerHTML = html;
+
+    // Update active trigger label & tag
+    if (activeId) {
+      const activeProf = profiles.find(p => p.id === activeId);
+      if (activeProf) {
+        if (customVoiceProfileTriggerLabel) customVoiceProfileTriggerLabel.textContent = activeProf.name;
+        if (customVoiceProfileTriggerTag) {
+          customVoiceProfileTriggerTag.textContent = activeProf.provider;
+          customVoiceProfileTriggerTag.classList.remove('hidden');
+        }
+        if (customVoiceProfileStatusDot) customVoiceProfileStatusDot.className = 'w-2 h-2 rounded-full bg-emerald-400 shrink-0';
+        if (btnUpdateActiveVoiceProfile) btnUpdateActiveVoiceProfile.classList.remove('hidden');
+        if (btnDeleteActiveVoiceProfile) btnDeleteActiveVoiceProfile.classList.remove('hidden');
+        if (voiceActiveProfileBadge) {
+          voiceActiveProfileBadge.textContent = activeProf.name;
+          voiceActiveProfileBadge.classList.remove('hidden');
+        }
+      } else {
+        localStorage.removeItem(ACTIVE_VOICE_PROFILE_KEY);
+        renderVoiceProfileMenu();
+      }
+    } else {
+      if (customVoiceProfileTriggerLabel) customVoiceProfileTriggerLabel.textContent = 'Device Voice (Default)';
+      if (customVoiceProfileTriggerTag) customVoiceProfileTriggerTag.classList.add('hidden');
+      if (customVoiceProfileStatusDot) customVoiceProfileStatusDot.className = 'w-2 h-2 rounded-full bg-slate-400 shrink-0';
+      if (btnUpdateActiveVoiceProfile) btnUpdateActiveVoiceProfile.classList.add('hidden');
+      if (btnDeleteActiveVoiceProfile) btnDeleteActiveVoiceProfile.classList.add('hidden');
+      if (voiceActiveProfileBadge) voiceActiveProfileBadge.classList.add('hidden');
+    }
+
+    // Attach click listeners
+    customVoiceProfileMenu.querySelectorAll('.voice-profile-item').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const id = btn.getAttribute('data-profile-id');
+        if (id) {
+          applyVoiceProfile(id);
+        } else {
+          localStorage.removeItem(ACTIVE_VOICE_PROFILE_KEY);
+          if (voiceProviderSelect) voiceProviderSelect.value = 'browser';
+          localStorage.setItem('aetheria_voice_provider', 'browser');
+          syncVoiceUiPanels();
+          renderVoiceProfileMenu();
+          showNotification('✓ Switched to Device Voice profile');
+        }
+        closeVoiceProfileMenu();
+      });
+    });
+  }
+
+  function applyVoiceProfile(id) {
+    const profiles = getSavedVoiceProfiles();
+    const prof = profiles.find(p => p.id === id);
+    if (!prof) return;
+
+    localStorage.setItem(ACTIVE_VOICE_PROFILE_KEY, prof.id);
+    if (voiceProviderSelect) voiceProviderSelect.value = prof.provider;
+    localStorage.setItem('aetheria_voice_provider', prof.provider);
+
+    if (prof.apiKey) {
+      setVoiceKeyForProvider(prof.provider, prof.apiKey);
+      if (voiceApiKey) voiceApiKey.value = prof.apiKey;
+    }
+    if (prof.voiceId) {
+      if (voiceIdInput) voiceIdInput.value = prof.voiceId;
+      localStorage.setItem('aetheria_voice_id', prof.voiceId);
+      if (prof.provider === 'openai' && openaiVoiceSelect) {
+        openaiVoiceSelect.value = prof.voiceId;
+        localStorage.setItem('aetheria_openai_voice', prof.voiceId);
+      } else if (prof.provider === 'google') {
+        localStorage.setItem('aetheria_google_voice', prof.voiceId);
+      }
+    }
+    if (prof.speed) {
+      if (sliderVoiceRate) sliderVoiceRate.value = prof.speed;
+      localStorage.setItem('aetheria_voice_rate', prof.speed.toString());
+      updateSpeedPillsAndLabel(prof.speed);
+    }
+    if (prof.pitch) {
+      if (sliderVoicePitch) sliderVoicePitch.value = prof.pitch;
+      localStorage.setItem('aetheria_voice_pitch', prof.pitch.toString());
+      updatePitchPillsAndLabel(prof.pitch);
+    }
+    if (prof.stability !== undefined) {
+      if (sliderStability) sliderStability.value = prof.stability;
+      localStorage.setItem('aetheria_voice_stability', prof.stability.toString());
+      const badge = document.getElementById('badge-stability-val');
+      if (badge) badge.textContent = Math.round(prof.stability * 100) + '%';
+    }
+    if (prof.clarity !== undefined) {
+      if (sliderClarity) sliderClarity.value = prof.clarity;
+      localStorage.setItem('aetheria_voice_clarity', prof.clarity.toString());
+      const badge = document.getElementById('badge-clarity-val');
+      if (badge) badge.textContent = Math.round(prof.clarity * 100) + '%';
+    }
+    if (prof.model && prof.provider === 'openai') {
+      if (openaiTtsModelSelect) openaiTtsModelSelect.value = prof.model;
+      localStorage.setItem('aetheria_openai_tts_model', prof.model);
+    }
+
+    syncVoiceUiPanels();
+    renderVoiceProfileMenu();
+    showNotification(`✓ Loaded voice profile: ${prof.name}`);
+  }
+
+  function saveCurrentAsVoiceProfile(name) {
+    if (!name || !name.trim()) {
+      showNotification('⚠️ Please enter a profile name', 'warning');
+      return;
+    }
+    const prov = voiceProviderSelect?.value || localStorage.getItem('aetheria_voice_provider') || 'browser';
+    const profiles = getSavedVoiceProfiles();
+    const newProf = {
+      id: 'vp_' + Date.now(),
+      name: name.trim(),
+      provider: prov,
+      apiKey: getVoiceKeyForProvider(prov),
+      voiceId: voiceIdInput?.value || localStorage.getItem('aetheria_voice_id') || '21m00Tcm4TlvDq8ikWAM',
+      voiceName: getSelectedVoiceDisplayName(),
+      speed: parseFloat(sliderVoiceRate?.value || '1.0'),
+      pitch: parseFloat(sliderVoicePitch?.value || '1.0'),
+      stability: parseFloat(sliderStability?.value || '0.5'),
+      clarity: parseFloat(sliderClarity?.value || '0.75'),
+      model: prov === 'openai' ? (openaiTtsModelSelect?.value || 'tts-1') : 'eleven_multilingual_v2',
+      updatedAt: Date.now()
+    };
+    profiles.push(newProf);
+    saveVoiceProfiles(profiles);
+    localStorage.setItem(ACTIVE_VOICE_PROFILE_KEY, newProf.id);
+    renderVoiceProfileMenu();
+    if (newVoiceProfileForm) newVoiceProfileForm.classList.add('hidden');
+    if (newVoiceProfileNameInput) newVoiceProfileNameInput.value = '';
+    showNotification(`✓ Voice profile "${newProf.name}" saved!`);
+  }
+
+  function updateActiveVoiceProfile() {
+    const activeId = localStorage.getItem(ACTIVE_VOICE_PROFILE_KEY);
+    if (!activeId) return;
+    const profiles = getSavedVoiceProfiles();
+    const idx = profiles.findIndex(p => p.id === activeId);
+    if (idx === -1) return;
+
+    const prov = voiceProviderSelect?.value || localStorage.getItem('aetheria_voice_provider') || 'browser';
+    profiles[idx] = {
+      ...profiles[idx],
+      provider: prov,
+      apiKey: getVoiceKeyForProvider(prov),
+      voiceId: voiceIdInput?.value || localStorage.getItem('aetheria_voice_id') || '21m00Tcm4TlvDq8ikWAM',
+      voiceName: getSelectedVoiceDisplayName(),
+      speed: parseFloat(sliderVoiceRate?.value || '1.0'),
+      pitch: parseFloat(sliderVoicePitch?.value || '1.0'),
+      stability: parseFloat(sliderStability?.value || '0.5'),
+      clarity: parseFloat(sliderClarity?.value || '0.75'),
+      model: prov === 'openai' ? (openaiTtsModelSelect?.value || 'tts-1') : 'eleven_multilingual_v2',
+      updatedAt: Date.now()
+    };
+    saveVoiceProfiles(profiles);
+    renderVoiceProfileMenu();
+    showNotification(`✓ Updated profile "${profiles[idx].name}"!`);
+  }
+
+  async function deleteActiveVoiceProfile() {
+    const activeId = localStorage.getItem(ACTIVE_VOICE_PROFILE_KEY);
+    if (!activeId) return;
+    const profiles = getSavedVoiceProfiles();
+    const prof = profiles.find(p => p.id === activeId);
+    if (!prof) return;
+
+    const confirmed = await showConfirmModal({
+      title: 'Delete Voice Profile?',
+      message: `Are you sure you want to delete "${prof.name}"?`,
+      confirmText: 'Delete',
+      cancelText: 'Cancel',
+      icon: 'trash',
+      type: 'danger'
+    });
+    if (confirmed) {
+      const remaining = profiles.filter(p => p.id !== activeId);
+      saveVoiceProfiles(remaining);
+      localStorage.removeItem(ACTIVE_VOICE_PROFILE_KEY);
+      renderVoiceProfileMenu();
+      showNotification(`✓ Profile "${prof.name}" deleted.`);
+    }
+  }
+
+  function openVoiceProfileMenu() {
+    if (!customVoiceProfileMenu) return;
+    customVoiceProfileMenu.classList.remove('hidden');
+    if (customVoiceProfileChevron) customVoiceProfileChevron.classList.add('rotate-180');
+  }
+
+  function closeVoiceProfileMenu() {
+    if (!customVoiceProfileMenu) return;
+    customVoiceProfileMenu.classList.add('hidden');
+    if (customVoiceProfileChevron) customVoiceProfileChevron.classList.remove('rotate-180');
+  }
+
+  customVoiceProfileTrigger?.addEventListener('click', (e) => {
+    e.stopPropagation();
+    if (customVoiceProfileMenu?.classList.contains('hidden')) {
+      openVoiceProfileMenu();
+    } else {
+      closeVoiceProfileMenu();
+    }
+  });
+
+  document.addEventListener('click', (e) => {
+    if (customVoiceProfileMenu && !customVoiceProfileMenu.contains(e.target) && !customVoiceProfileTrigger?.contains(e.target)) {
+      closeVoiceProfileMenu();
+    }
+  });
+
+  btnShowSaveVoiceProfile?.addEventListener('click', () => {
+    if (newVoiceProfileForm) {
+      newVoiceProfileForm.classList.remove('hidden');
+      if (newVoiceProfileNameInput) {
+        newVoiceProfileNameInput.value = '';
+        newVoiceProfileNameInput.focus();
+      }
+    }
+  });
+
+  btnCancelNewVoiceProfile?.addEventListener('click', () => {
+    if (newVoiceProfileForm) newVoiceProfileForm.classList.add('hidden');
+  });
+
+  btnConfirmSaveVoiceProfile?.addEventListener('click', () => {
+    saveCurrentAsVoiceProfile(newVoiceProfileNameInput?.value || '');
+  });
+
+  newVoiceProfileNameInput?.addEventListener('keydown', (e) => {
+    if (e.key === 'Enter') {
+      saveCurrentAsVoiceProfile(newVoiceProfileNameInput.value);
+    }
+  });
+
+  btnUpdateActiveVoiceProfile?.addEventListener('click', updateActiveVoiceProfile);
+  btnDeleteActiveVoiceProfile?.addEventListener('click', deleteActiveVoiceProfile);
+
+  // ==========================================
+  // HUMAN CONTROLS: SPEED & TONE PRESETS
+  // ==========================================
+  function updateSpeedPillsAndLabel(rate) {
+    const rateVal = parseFloat(rate);
+    if (badgeVoiceRateLabel) badgeVoiceRateLabel.textContent = `${rateVal.toFixed(2).replace(/\.00$/, '')}x`;
+    if (badgeVoiceRateDesc) {
+      let desc = 'Natural';
+      if (rateVal <= 0.88) desc = 'Slow';
+      else if (rateVal <= 1.05) desc = 'Natural';
+      else if (rateVal <= 1.2) desc = 'Lively';
+      else desc = 'Fast';
+      badgeVoiceRateDesc.textContent = `(${desc})`;
+    }
+    document.querySelectorAll('.voice-speed-preset-btn').forEach(btn => {
+      const bRate = parseFloat(btn.getAttribute('data-rate') || '1.0');
+      if (Math.abs(bRate - rateVal) < 0.05) {
+        btn.className = 'voice-speed-preset-btn py-1.5 px-2 rounded-lg text-xs font-semibold bg-purple-600 text-white border border-purple-500/40 shadow-sm transition cursor-pointer';
+      } else {
+        btn.className = 'voice-speed-preset-btn py-1.5 px-2 rounded-lg text-xs font-semibold bg-white/[0.04] hover:bg-white/[0.08] text-slate-300 border border-white/5 transition cursor-pointer';
+      }
+    });
+  }
+
+  function updatePitchPillsAndLabel(pitch) {
+    const pitchVal = parseFloat(pitch);
+    if (badgeVoicePitchLabel) {
+      let desc = 'Natural (1.0)';
+      if (pitchVal <= 0.88) desc = 'Deep (0.85)';
+      else if (pitchVal <= 0.98) desc = 'Warm (0.95)';
+      else if (pitchVal <= 1.05) desc = 'Natural (1.0)';
+      else desc = 'Bright (1.15)';
+      badgeVoicePitchLabel.textContent = desc;
+    }
+    document.querySelectorAll('.voice-pitch-preset-btn').forEach(btn => {
+      const bPitch = parseFloat(btn.getAttribute('data-pitch') || '1.0');
+      if (Math.abs(bPitch - pitchVal) < 0.05) {
+        btn.className = 'voice-pitch-preset-btn py-1.5 px-2 rounded-lg text-xs font-semibold bg-purple-600 text-white border border-purple-500/40 shadow-sm transition cursor-pointer';
+      } else {
+        btn.className = 'voice-pitch-preset-btn py-1.5 px-2 rounded-lg text-xs font-semibold bg-white/[0.04] hover:bg-white/[0.08] text-slate-300 border border-white/5 transition cursor-pointer';
+      }
+    });
+  }
+
+  document.querySelectorAll('.voice-speed-preset-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const r = parseFloat(btn.getAttribute('data-rate') || '1.0');
+      if (sliderVoiceRate) sliderVoiceRate.value = r;
+      localStorage.setItem('aetheria_voice_rate', r.toString());
+      updateSpeedPillsAndLabel(r);
+    });
+  });
+
+  sliderVoiceRate?.addEventListener('input', () => {
+    const r = parseFloat(sliderVoiceRate.value);
+    localStorage.setItem('aetheria_voice_rate', r.toString());
+    updateSpeedPillsAndLabel(r);
+  });
+
+  document.querySelectorAll('.voice-pitch-preset-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const p = parseFloat(btn.getAttribute('data-pitch') || '1.0');
+      if (sliderVoicePitch) sliderVoicePitch.value = p;
+      localStorage.setItem('aetheria_voice_pitch', p.toString());
+      updatePitchPillsAndLabel(p);
+    });
+  });
+
+  sliderVoicePitch?.addEventListener('input', () => {
+    const p = parseFloat(sliderVoicePitch.value);
+    localStorage.setItem('aetheria_voice_pitch', p.toString());
+    updatePitchPillsAndLabel(p);
+  });
+
+  sliderStability?.addEventListener('input', () => {
+    const v = parseFloat(sliderStability.value);
+    localStorage.setItem('aetheria_voice_stability', v.toString());
+    const badge = document.getElementById('badge-stability-val');
+    if (badge) badge.textContent = Math.round(v * 100) + '%';
+  });
+
+  sliderClarity?.addEventListener('input', () => {
+    const v = parseFloat(sliderClarity.value);
+    localStorage.setItem('aetheria_voice_clarity', v.toString());
+    const badge = document.getElementById('badge-clarity-val');
+    if (badge) badge.textContent = Math.round(v * 100) + '%';
+  });
+
+  // ==========================================
+  // DYNAMIC VOICE CATALOG & API SYNC
+  // ==========================================
+  const DEFAULT_ELEVEN_VOICES = [
+    { id: '21m00Tcm4TlvDq8ikWAM', name: 'Rachel', gender: 'Female', accent: 'American', style: 'Calm & Narrative', preview_url: 'https://storage.googleapis.com/eleven-public-prod/database/user/premade/voices/21m00Tcm4TlvDq8ikWAM/67073289-4e5a-493e-8c34-eb163ff15e21.mp3' },
+    { id: 'pNInz6obpgDQGcFmaJgB', name: 'Adam', gender: 'Male', accent: 'American', style: 'Deep & Cinematic', preview_url: 'https://storage.googleapis.com/eleven-public-prod/database/user/premade/voices/pNInz6obpgDQGcFmaJgB/3f40f0c0-f38b-4a24-814d-16f5c5e88849.mp3' },
+    { id: 'EXAVITQu4vr4xnSDxMaL', name: 'Bella', gender: 'Female', accent: 'American', style: 'Expressive & Playful', preview_url: 'https://storage.googleapis.com/eleven-public-prod/database/user/premade/voices/EXAVITQu4vr4xnSDxMaL/0154817a-0d85-48b0-8f9f-72f1dc4442d7.mp3' },
+    { id: 'ErXwobaYiN019PkySvjV', name: 'Antoni', gender: 'Male', accent: 'American', style: 'Warm Storyteller', preview_url: 'https://storage.googleapis.com/eleven-public-prod/database/user/premade/voices/ErXwobaYiN019PkySvjV/38d8f8f2-53b6-455b-b9d5-71ee4a93f18e.mp3' },
+    { id: 'MF3mGyEYCl7XYWbV9V6O', name: 'Elli', gender: 'Female', accent: 'American', style: 'Gentle & Whispering', preview_url: 'https://storage.googleapis.com/eleven-public-prod/database/user/premade/voices/MF3mGyEYCl7XYWbV9V6O/2f1737e5-1a86-4f46-91e0-6395dc468c4d.mp3' },
+    { id: 'TxGEqnHWrfWFTfGW9XjX', name: 'Josh', gender: 'Male', accent: 'American', style: 'Natural & Confident', preview_url: 'https://storage.googleapis.com/eleven-public-prod/database/user/premade/voices/TxGEqnHWrfWFTfGW9XjX/3a9a1490-6429-45eb-92c9-601f2f81a7d6.mp3' },
+    { id: 'pMsXgVXv3BLzUgSXRplE', name: 'Serena', gender: 'Female', accent: 'American', style: 'Alluring & Soft', preview_url: 'https://storage.googleapis.com/eleven-public-prod/database/user/premade/voices/pMsXgVXv3BLzUgSXRplE/345b8fb3-4f05-4f4a-9ef1-4b13a77fcb88.mp3' },
+    { id: 'XB0fDUnXU5powFXDhCwa', name: 'Charlotte', gender: 'Female', accent: 'Swedish', style: 'Seductive & Elegant', preview_url: 'https://storage.googleapis.com/eleven-public-prod/database/user/premade/voices/XB0fDUnXU5powFXDhCwa/94235656-787a-4286-8c46-953e1a067ff3.mp3' }
+  ];
+
+  const DEFAULT_OPENAI_VOICES = [
+    { id: 'nova', name: 'Nova', gender: 'Female', accent: 'Warm & Energetic', style: 'Natural Roleplay' },
+    { id: 'shimmer', name: 'Shimmer', gender: 'Female', accent: 'Clear & Expressive', style: 'Bright Dialogue' },
+    { id: 'onyx', name: 'Onyx', gender: 'Male', accent: 'Deep & Authoritative', style: 'Cinematic Voice' },
+    { id: 'alloy', name: 'Alloy', gender: 'Neutral', accent: 'Balanced & Smooth', style: 'Versatile' },
+    { id: 'echo', name: 'Echo', gender: 'Male', accent: 'Soft & Balanced', style: 'Conversational' },
+    { id: 'fable', name: 'Fable', gender: 'Male', accent: 'British Accent', style: 'Theatrical & Warm' },
+    { id: 'sage', name: 'Sage', gender: 'Female', accent: 'Calm & Reflective', style: 'Soothing Tone' },
+    { id: 'coral', name: 'Coral', gender: 'Female', accent: 'Friendly & Casual', style: 'Warm Tone' },
+    { id: 'ash', name: 'Ash', gender: 'Male', accent: 'Direct & Crisp', style: 'Modern' }
+  ];
+
+  const DEFAULT_GOOGLE_VOICES = [
+    { id: 'en-US-Journey-F', name: 'Journey-F', gender: 'Female', accent: 'US English', style: 'Ultra Natural Neural' },
+    { id: 'en-US-Journey-D', name: 'Journey-D', gender: 'Male', accent: 'US English', style: 'Ultra Natural Neural' },
+    { id: 'en-US-Neural2-F', name: 'Neural2-F', gender: 'Female', accent: 'US English', style: 'Studio Neural Voice' },
+    { id: 'en-US-Neural2-D', name: 'Neural2-D', gender: 'Male', accent: 'US English', style: 'Studio Neural Voice' },
+    { id: 'fa-IR-Wavenet-A', name: 'Wavenet-A', gender: 'Female', accent: 'فارسی / Persian', style: 'Persian Neural ♀' },
+    { id: 'fa-IR-Wavenet-B', name: 'Wavenet-B', gender: 'Male', accent: 'فارسی / Persian', style: 'Persian Neural ♂' }
+  ];
+
+  function getAvailableVoicesForProvider(prov) {
+    if (prov === 'elevenlabs') {
+      try {
+        const cached = localStorage.getItem('aetheria_cached_voices_elevenlabs');
+        if (cached) {
+          const parsed = JSON.parse(cached);
+          if (Array.isArray(parsed) && parsed.length > 0) return parsed;
+        }
+      } catch (e) {}
+      return DEFAULT_ELEVEN_VOICES;
+    }
+    if (prov === 'openai') {
+      return DEFAULT_OPENAI_VOICES;
+    }
+    if (prov === 'google') {
+      try {
+        const cached = localStorage.getItem('aetheria_cached_voices_google');
+        if (cached) {
+          const parsed = JSON.parse(cached);
+          if (Array.isArray(parsed) && parsed.length > 0) return parsed;
+        }
+      } catch (e) {}
+      return DEFAULT_GOOGLE_VOICES;
+    }
+    if (prov === 'browser') {
+      if (window.speechSynthesis) {
+        const nativeVoices = window.speechSynthesis.getVoices();
+        if (nativeVoices && nativeVoices.length > 0) {
+          return nativeVoices.map(nv => ({
+            id: nv.voiceURI || nv.name,
+            name: nv.name,
+            gender: nv.name.toLowerCase().includes('female') ? 'Female' : nv.name.toLowerCase().includes('male') ? 'Male' : 'Natural',
+            accent: nv.lang || 'Device',
+            style: 'Local Native Voice'
+          }));
+        }
+      }
+      return [
+        { id: 'default', name: 'System Default Voice', gender: 'Natural', accent: 'Default', style: 'Offline Native' }
+      ];
+    }
+    return [];
+  }
+
+  function getSelectedVoiceDisplayName() {
+    const prov = voiceProviderSelect?.value || 'browser';
+    const vId = voiceIdInput?.value || localStorage.getItem('aetheria_voice_id');
+    const voices = getAvailableVoicesForProvider(prov);
+    const found = voices.find(v => v.id === vId);
+    return found ? found.name : (vId || 'Default Voice');
+  }
+
+  function renderDynamicVoiceCatalog(searchQuery = '') {
+    if (!dynamicVoiceGrid) return;
+    const prov = voiceProviderSelect?.value || localStorage.getItem('aetheria_voice_provider') || 'browser';
+    const voices = getAvailableVoicesForProvider(prov);
+    const currentVoiceId = voiceIdInput?.value || localStorage.getItem('aetheria_voice_id') || (prov === 'elevenlabs' ? '21m00Tcm4TlvDq8ikWAM' : prov === 'openai' ? 'nova' : 'en-US-Journey-F');
+
+    const q = (searchQuery || '').toLowerCase().trim();
+    const filtered = voices.filter(v => {
+      if (!q) return true;
+      return (v.name && v.name.toLowerCase().includes(q)) ||
+             (v.style && v.style.toLowerCase().includes(q)) ||
+             (v.accent && v.accent.toLowerCase().includes(q)) ||
+             (v.gender && v.gender.toLowerCase().includes(q)) ||
+             (v.id && v.id.toLowerCase().includes(q));
+    });
+
+    if (filtered.length === 0) {
+      dynamicVoiceGrid.innerHTML = `
+        <div class="col-span-full p-4 rounded-xl bg-white/[0.02] border border-white/5 text-center text-xs text-slate-400">
+          No voices match "${searchQuery}". Click "Sync Voices" to refresh from your API account.
+        </div>
+      `;
+      return;
+    }
+
+    dynamicVoiceGrid.innerHTML = filtered.map(v => {
+      const isSel = v.id === currentVoiceId || (prov === 'openai' && (v.id === openaiVoiceSelect?.value || v.id === localStorage.getItem('aetheria_openai_voice')));
+      return `
+        <div 
+          class="dynamic-voice-card p-2.5 rounded-xl border text-left transition cursor-pointer flex flex-col justify-between gap-1.5 relative group ${
+            isSel 
+              ? 'bg-purple-950/60 border-purple-500 shadow-md shadow-purple-950/80 ring-1 ring-purple-500/50' 
+              : 'bg-white/[0.03] hover:bg-white/[0.06] border-white/10 hover:border-purple-500/30'
+          }" 
+          data-voice-id="${v.id}"
+          data-voice-name="${v.name}"
+          data-preview-url="${v.preview_url || ''}"
+        >
+          <div class="flex items-start justify-between gap-1.5">
+            <div class="min-w-0 flex-1">
+              <div class="flex items-center gap-1.5 flex-wrap">
+                <span class="font-bold text-xs ${isSel ? 'text-white' : 'text-slate-200 group-hover:text-purple-200'} truncate">${v.name}</span>
+                ${isSel ? '<span class="px-1.5 py-0.2 rounded bg-purple-500/30 text-purple-300 text-[9px] font-bold font-mono">SELECTED</span>' : ''}
+              </div>
+              <p class="text-[10px] text-slate-400 truncate mt-0.5">${v.style || v.accent || ''}</p>
+            </div>
+            
+            <button 
+              type="button" 
+              class="preview-voice-card-btn w-6 h-6 rounded-lg bg-white/[0.06] hover:bg-purple-600 text-slate-300 hover:text-white flex items-center justify-center text-[10px] transition cursor-pointer shrink-0 active:scale-90" 
+              title="Audition ${v.name}"
+            >
+              ▶
+            </button>
+          </div>
+
+          <div class="flex items-center gap-1 flex-wrap pt-0.5">
+            ${v.gender ? `<span class="px-1.5 py-0.5 rounded-md bg-white/[0.04] text-[9px] text-slate-300 border border-white/5 font-medium">${v.gender}</span>` : ''}
+            ${v.accent ? `<span class="px-1.5 py-0.5 rounded-md bg-white/[0.04] text-[9px] text-slate-400 border border-white/5">${v.accent}</span>` : ''}
+            ${v.category ? `<span class="px-1.5 py-0.5 rounded-md bg-purple-900/30 text-[9px] text-purple-300 border border-purple-500/20">${v.category}</span>` : ''}
+          </div>
+        </div>
+      `;
+    }).join('');
+
+    // Attach card click listeners
+    dynamicVoiceGrid.querySelectorAll('.dynamic-voice-card').forEach(card => {
+      card.addEventListener('click', (e) => {
+        if (e.target.closest('.preview-voice-card-btn')) return;
+
+        const vId = card.getAttribute('data-voice-id');
+        const vName = card.getAttribute('data-voice-name');
+        if (!vId) return;
+
+        if (voiceIdInput) voiceIdInput.value = vId;
+        localStorage.setItem('aetheria_voice_id', vId);
+
+        if (prov === 'openai') {
+          if (openaiVoiceSelect) openaiVoiceSelect.value = vId;
+          localStorage.setItem('aetheria_openai_voice', vId);
+        } else if (prov === 'google') {
+          localStorage.setItem('aetheria_google_voice', vId);
+        }
+
+        renderDynamicVoiceCatalog(voiceSearchInput?.value || '');
+        showNotification(`✓ Voice selected: ${vName || vId}`);
+      });
+    });
+
+    // Attach preview button listeners
+    dynamicVoiceGrid.querySelectorAll('.preview-voice-card-btn').forEach(btn => {
+      btn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        const card = btn.closest('.dynamic-voice-card');
+        if (!card) return;
+        const vId = card.getAttribute('data-voice-id');
+        const vName = card.getAttribute('data-voice-name');
+        const previewUrl = card.getAttribute('data-preview-url');
+
+        if (previewUrl) {
+          stopSpeaking();
+          btn.textContent = '■';
+          activeAudio = new Audio(previewUrl);
+          activeAudio.onended = () => { btn.textContent = '▶'; };
+          activeAudio.onerror = () => { btn.textContent = '▶'; };
+          activeAudio.play();
+          showNotification(`Playing preview of ${vName}...`);
+        } else {
+          if (voiceIdInput) voiceIdInput.value = vId;
+          localStorage.setItem('aetheria_voice_id', vId);
+          if (prov === 'openai' && openaiVoiceSelect) {
+            openaiVoiceSelect.value = vId;
+            localStorage.setItem('aetheria_openai_voice', vId);
+          } else if (prov === 'google') {
+            localStorage.setItem('aetheria_google_voice', vId);
+          }
+          speak(`Hello! This is ${vName}.`, btn);
+        }
+      });
+    });
+  }
+
+  // Voice Search Filter Input
+  voiceSearchInput?.addEventListener('input', () => {
+    renderDynamicVoiceCatalog(voiceSearchInput.value);
+  });
+
+  // Apply Custom Voice ID button
+  const applyCustomVoiceIdBtn = document.getElementById('apply-custom-voice-id-btn');
+  applyCustomVoiceIdBtn?.addEventListener('click', () => {
+    const customId = (voiceIdInput?.value || '').trim();
+    if (!customId) {
+      showNotification('⚠️ Please enter a voice ID first', 'warning');
+      return;
+    }
+    localStorage.setItem('aetheria_voice_id', customId);
+    renderDynamicVoiceCatalog(voiceSearchInput?.value || '');
+    showNotification(`✓ Applied Voice ID: ${customId}`);
+  });
+
+  // Dynamic API Syncing Function
+  async function syncVoicesForProvider(prov, isManual = false) {
+    if (prov === 'browser') {
+      renderDynamicVoiceCatalog(voiceSearchInput?.value || '');
+      if (isManual) showNotification('✓ System voices refreshed.');
+      return;
+    }
+
+    const key = getVoiceKeyForProvider(prov);
+    if (!key && prov !== 'browser') {
+      if (isManual) {
+        showNotification(`⚠️ Please enter your ${prov.toUpperCase()} API key first.`, 'warning');
+        voiceApiKey?.focus();
+      }
+      renderDynamicVoiceCatalog(voiceSearchInput?.value || '');
+      return;
+    }
+
+    if (syncVoicesIcon) syncVoicesIcon.classList.add('animate-spin');
+    if (voiceSyncStatusText) voiceSyncStatusText.textContent = `Syncing voices from ${prov.toUpperCase()}...`;
+
+    try {
+      if (prov === 'elevenlabs') {
+        let voicesData = null;
+        try {
+          const res = await fetch('https://api.elevenlabs.io/v1/voices', {
+            method: 'GET',
+            headers: { 'xi-api-key': key, 'Accept': 'application/json' }
+          });
+          if (res.ok) {
+            voicesData = await res.json();
+          }
+        } catch (corsErr) {}
+
+        if (!voicesData) {
+          const proxyRes = await fetch(`/api/proxy/fetch-models?targetUrl=${encodeURIComponent('https://api.elevenlabs.io/v1/voices')}&apiKey=${encodeURIComponent(key)}`);
+          if (proxyRes.ok) {
+            voicesData = await proxyRes.json();
+          }
+        }
+
+        if (voicesData && Array.isArray(voicesData.voices)) {
+          const mapped = voicesData.voices.map(v => ({
+            id: v.voice_id,
+            name: v.name,
+            gender: (v.labels && v.labels.gender) ? (v.labels.gender.charAt(0).toUpperCase() + v.labels.gender.slice(1)) : 'Natural',
+            accent: (v.labels && v.labels.accent) ? v.labels.accent : '',
+            style: (v.labels && v.labels.description) ? v.labels.description : (v.category === 'cloned' ? 'Custom Cloned Voice' : 'Studio Voice'),
+            category: v.category === 'cloned' ? 'Cloned' : v.category === 'generated' ? 'Generated' : 'Library',
+            preview_url: v.preview_url || ''
+          }));
+          localStorage.setItem('aetheria_cached_voices_elevenlabs', JSON.stringify(mapped));
+          renderDynamicVoiceCatalog(voiceSearchInput?.value || '');
+          if (voiceSyncStatusText) voiceSyncStatusText.textContent = `Synced ${mapped.length} voices from ElevenLabs account`;
+          if (isManual) showNotification(`✓ Synced ${mapped.length} ElevenLabs voices!`);
+          return;
+        } else {
+          throw new Error('Could not fetch ElevenLabs voices list');
+        }
+      }
+
+      if (prov === 'openai') {
+        renderDynamicVoiceCatalog(voiceSearchInput?.value || '');
+        if (voiceSyncStatusText) voiceSyncStatusText.textContent = 'OpenAI Audio voice library active';
+        if (isManual) showNotification('✓ OpenAI Audio voices synced.');
+      }
+
+      if (prov === 'google') {
+        try {
+          const res = await fetch(`/api/proxy/fetch-models?targetUrl=${encodeURIComponent('https://texttospeech.googleapis.com/v1/voices')}&apiKey=${encodeURIComponent(key)}`);
+          if (res.ok) {
+            const data = await res.json();
+            if (data && Array.isArray(data.voices)) {
+              const filtered = data.voices.filter(v => 
+                v.name.includes('Journey') || 
+                v.name.includes('Neural2') || 
+                v.name.includes('Studio') || 
+                v.name.startsWith('fa-') || 
+                v.languageCodes?.includes('fa-IR') ||
+                v.name.includes('en-US')
+              ).slice(0, 30).map(v => ({
+                id: v.name,
+                name: v.name.replace(/^[a-z]{2}-[A-Z]{2}-/, ''),
+                gender: v.ssmlGender === 'FEMALE' ? 'Female' : v.ssmlGender === 'MALE' ? 'Male' : 'Natural',
+                accent: v.languageCodes ? v.languageCodes[0] : 'en-US',
+                style: v.name.includes('Journey') ? 'Ultra Natural Journey' : v.name.includes('Neural2') ? 'Neural2 Studio' : 'Google Neural'
+              }));
+              if (filtered.length > 0) {
+                localStorage.setItem('aetheria_cached_voices_google', JSON.stringify(filtered));
+                renderDynamicVoiceCatalog(voiceSearchInput?.value || '');
+                if (isManual) showNotification(`✓ Synced ${filtered.length} Google voices!`);
+                return;
+              }
+            }
+          }
+        } catch (gErr) {}
+        renderDynamicVoiceCatalog(voiceSearchInput?.value || '');
+      }
+
+    } catch (err) {
+      console.warn('Voice sync error:', err);
+      if (isManual) showNotification(`⚠️ Voice sync: ${err.message || 'Check key and connection'}`, 'warning');
+      renderDynamicVoiceCatalog(voiceSearchInput?.value || '');
+    } finally {
+      if (syncVoicesIcon) syncVoicesIcon.classList.remove('animate-spin');
+    }
+  }
+
+  syncVoicesBtn?.addEventListener('click', () => {
+    const prov = voiceProviderSelect?.value || 'browser';
+    syncVoicesForProvider(prov, true);
+  });
+
   // ==========================================
   // PROGRESSIVE DISCLOSURE UI CONTROLLER
   // ==========================================
@@ -7817,12 +8690,17 @@ const { character } = Astro.props;
     // 1. TTS Progressive Disclosure
     const ttsId = voiceProviderSelect?.value || localStorage.getItem('aetheria_voice_provider') || 'browser';
     const ttsObj = TTS_CATALOG.find(x => x.id === ttsId) || TTS_CATALOG[0];
-    const savedTtsKey = (voiceApiKey?.value || localStorage.getItem('aetheria_voice_key') || '').trim();
+    const savedTtsKey = getVoiceKeyForProvider(ttsId);
     const isTtsConnected = (!ttsObj.needsKey) || Boolean(savedTtsKey);
 
     if (ttsActiveEngineName) ttsActiveEngineName.textContent = ttsObj.name;
     if (ttsActiveEngineDesc) ttsActiveEngineDesc.textContent = ttsObj.desc;
     if (ttsActiveIconBox) ttsActiveIconBox.innerHTML = getVoiceEngineIconSvg(ttsObj.id);
+
+    // Sync input field value to provider key
+    if (voiceApiKey) {
+      voiceApiKey.value = savedTtsKey;
+    }
 
     if (ttsConnectionBadge) {
       if (!ttsObj.needsKey) {
@@ -7830,32 +8708,59 @@ const { character } = Astro.props;
         ttsConnectionBadge.textContent = '100% Free • Ready';
       } else if (!isTtsConnected) {
         ttsConnectionBadge.className = 'px-2 py-0.5 rounded-full text-[10px] font-mono font-semibold bg-amber-500/20 text-amber-300 border border-amber-500/30';
-        ttsConnectionBadge.textContent = 'Disconnected • Key Required';
+        ttsConnectionBadge.textContent = 'Key Required';
       } else {
         ttsConnectionBadge.className = 'px-2 py-0.5 rounded-full text-[10px] font-mono font-semibold bg-emerald-500/20 text-emerald-300 border border-emerald-500/30';
         ttsConnectionBadge.textContent = 'Connected & Active';
       }
     }
 
-    // Connection Card visibility
-    if (ttsConnectionCard) {
-      if (ttsObj.needsKey && !isTtsConnected) {
+    // Free device voice card vs Cloud connection card
+    if (ttsId === 'browser') {
+      if (ttsFreeDeviceCard) ttsFreeDeviceCard.classList.remove('hidden');
+      if (ttsConnectionCard) ttsConnectionCard.classList.add('hidden');
+    } else {
+      if (ttsFreeDeviceCard) ttsFreeDeviceCard.classList.add('hidden');
+      if (ttsConnectionCard) {
         ttsConnectionCard.classList.remove('hidden');
         if (ttsConnectTitle) ttsConnectTitle.textContent = `Connect ${ttsObj.name} API Key`;
-        if (ttsConnectDesc) ttsConnectDesc.textContent = `API Key required to activate ${ttsObj.name}. Stored securely on your device.`;
+        if (ttsConnectDesc) {
+          if (ttsId === 'elevenlabs') {
+            ttsConnectDesc.textContent = 'Enter your ElevenLabs xi-api-key. Stored locally in your browser.';
+          } else if (ttsId === 'openai') {
+            ttsConnectDesc.textContent = 'Enter your OpenAI API key (sk-...). Used for natural studio voice playback.';
+          } else if (ttsId === 'google') {
+            ttsConnectDesc.textContent = 'Enter your Google Cloud or AI Studio API key (AIzaSy...).';
+          } else {
+            ttsConnectDesc.textContent = `API Key required to activate ${ttsObj.name}. Stored securely on your device.`;
+          }
+        }
+        if (voiceApiKey) {
+          if (ttsId === 'elevenlabs') voiceApiKey.placeholder = 'Enter xi-api-key...';
+          else if (ttsId === 'openai') voiceApiKey.placeholder = 'Enter OpenAI key (sk-...)...';
+          else if (ttsId === 'google') voiceApiKey.placeholder = 'Enter Google key (AIzaSy...)...';
+          else voiceApiKey.placeholder = 'Enter API Key...';
+        }
+        if (ttsKeyStatusBadge) {
+          if (isTtsConnected) {
+            ttsKeyStatusBadge.className = 'px-2 py-0.5 rounded-full text-[9px] font-mono font-bold bg-emerald-500/20 text-emerald-300 border border-emerald-500/30';
+            ttsKeyStatusBadge.textContent = 'Key Connected';
+          } else {
+            ttsKeyStatusBadge.className = 'px-2 py-0.5 rounded-full text-[9px] font-mono font-bold bg-amber-500/20 text-amber-300 border border-amber-500/30';
+            ttsKeyStatusBadge.textContent = 'Key Required';
+          }
+        }
 
         // Check if OpenAI key exists in text tab
         const openaiTextKey = localStorage.getItem('aetheria_key_openai') || '';
         if (ttsQuickReuseKeyBtn) {
-          if (ttsId === 'openai' && openaiTextKey) {
+          if (ttsId === 'openai' && openaiTextKey && !savedTtsKey) {
             ttsQuickReuseKeyBtn.classList.remove('hidden');
             if (ttsQuickReuseLabel) ttsQuickReuseLabel.textContent = '⚡ Connect using saved OpenAI Key from Text Engine';
           } else {
             ttsQuickReuseKeyBtn.classList.add('hidden');
           }
         }
-      } else {
-        ttsConnectionCard.classList.add('hidden');
       }
     }
 
@@ -7863,35 +8768,20 @@ const { character } = Astro.props;
       voiceCustomUrlContainer.classList.toggle('hidden', ttsId !== 'custom');
     }
 
+    // Tone & Pitch visibility: hide for ElevenLabs (it uses stability/clarity)
+    if (voicePitchContainer) {
+      voicePitchContainer.classList.toggle('hidden', ttsId === 'elevenlabs');
+    }
+
     // ElevenLabs specific options
-    if (elevenVoiceContainer) elevenVoiceContainer.classList.toggle('hidden', ttsId !== 'elevenlabs');
-    if (elevenStabilityBox) elevenStabilityBox.classList.toggle('hidden', ttsId !== 'elevenlabs');
-    if (elevenClarityBox) elevenClarityBox.classList.toggle('hidden', ttsId !== 'elevenlabs');
+    if (elevenExtraSettings) {
+      elevenExtraSettings.classList.toggle('hidden', ttsId !== 'elevenlabs');
+    }
 
     // OpenAI specific options
-    if (openaiVoiceContainer) openaiVoiceContainer.classList.toggle('hidden', ttsId !== 'openai');
-
-    // Sync ElevenLabs Voice Presets active state
-    const currentVoiceId = voiceIdInput?.value || localStorage.getItem('aetheria_voice_id') || '21m00Tcm4TlvDq8ikWAM';
-    document.querySelectorAll('.eleven-voice-card').forEach(card => {
-      const v = card.getAttribute('data-voice');
-      if (v === currentVoiceId) {
-        card.className = 'eleven-voice-card p-2.5 rounded-xl border text-left transition cursor-pointer bg-purple-950/60 border-purple-500/80 shadow-md shadow-purple-950/60';
-      } else {
-        card.className = 'eleven-voice-card p-2.5 rounded-xl border text-left transition cursor-pointer bg-white/[0.03] hover:bg-white/[0.06] border-white/10';
-      }
-    });
-
-    // Sync OpenAI Voice Archetype active state
-    const currentOpenaiArch = openaiVoiceSelect?.value || localStorage.getItem('aetheria_openai_voice') || 'nova';
-    document.querySelectorAll('.openai-voice-card').forEach(card => {
-      const arch = card.getAttribute('data-arch');
-      if (arch === currentOpenaiArch) {
-        card.className = 'openai-voice-card p-2.5 rounded-xl border text-left transition cursor-pointer bg-purple-950/60 border-purple-500/80 shadow-md shadow-purple-950/60';
-      } else {
-        card.className = 'openai-voice-card p-2.5 rounded-xl border text-left transition cursor-pointer bg-white/[0.03] hover:bg-white/[0.06] border-white/10';
-      }
-    });
+    if (openaiModelToggleContainer) {
+      openaiModelToggleContainer.classList.toggle('hidden', ttsId !== 'openai');
+    }
 
     // Sync OpenAI TTS Model toggle
     const currentOpenaiModel = openaiTtsModelSelect?.value || localStorage.getItem('aetheria_openai_tts_model') || 'tts-1';
@@ -7903,6 +8793,9 @@ const { character } = Astro.props;
         btn.className = 'openai-model-toggle-btn flex-1 py-1.5 px-3 rounded-lg text-xs font-semibold transition cursor-pointer text-slate-400 hover:text-white';
       }
     });
+
+    // Render Dynamic Voice Catalog
+    renderDynamicVoiceCatalog(voiceSearchInput?.value || '');
 
     // 2. STT Progressive Disclosure
     const sttId = sttProviderSelect?.value || localStorage.getItem('aetheria_stt_provider') || 'groq';
@@ -7980,85 +8873,28 @@ const { character } = Astro.props;
     });
   }
 
-  // Visual Listeners (Zero OS native dropdowns!)
-  document.querySelectorAll('.eleven-voice-card').forEach(card => {
-    card.addEventListener('click', () => {
-      const v = card.getAttribute('data-voice');
-      if (v) {
-        if (voiceIdInput) voiceIdInput.value = v;
-        localStorage.setItem('aetheria_voice_id', v);
-        syncVoiceUiPanels();
-        showNotification(`✓ Voice selected: ${card.querySelector('.font-bold')?.textContent || v}`);
-      }
-    });
-  });
-
-  document.querySelectorAll('.openai-voice-card').forEach(card => {
-    card.addEventListener('click', () => {
-      const arch = card.getAttribute('data-arch');
-      if (arch) {
-        if (openaiVoiceSelect) openaiVoiceSelect.value = arch;
-        localStorage.setItem('aetheria_openai_voice', arch);
-        syncVoiceUiPanels();
-        showNotification(`✓ Voice archetype: ${arch.toUpperCase()}`);
-      }
-    });
-  });
-
-  document.querySelectorAll('.openai-model-toggle-btn').forEach(btn => {
-    btn.addEventListener('click', () => {
-      const m = btn.getAttribute('data-tts-model');
-      if (m) {
-        if (openaiTtsModelSelect) openaiTtsModelSelect.value = m;
-        localStorage.setItem('aetheria_openai_tts_model', m);
-        syncVoiceUiPanels();
-      }
-    });
-  });
-
-  document.querySelectorAll('.stt-model-card').forEach(card => {
-    card.addEventListener('click', () => {
-      const m = card.getAttribute('data-stt-model');
-      if (m) {
-        if (sttModelSelect) sttModelSelect.value = m;
-        localStorage.setItem('aetheria_stt_model', m);
-        syncVoiceUiPanels();
-        showNotification(`✓ Model selected: ${m}`);
-      }
-    });
-  });
-
-  document.querySelectorAll('.stt-lang-chip').forEach(chip => {
-    chip.addEventListener('click', () => {
-      const l = chip.getAttribute('data-lang');
-      if (l) {
-        if (sttLangSelect) sttLangSelect.value = l;
-        localStorage.setItem('aetheria_stt_lang', l);
-        syncVoiceUiPanels();
-        showNotification(`✓ Language set: ${chip.textContent.trim()}`);
-      }
-    });
-  });
-
-  // Connect Buttons (Progressive Disclosure)
+  // Connect Buttons
   ttsConnectConfirmBtn?.addEventListener('click', () => {
     const val = voiceApiKey?.value.trim() || '';
+    const prov = voiceProviderSelect?.value || 'browser';
     if (!val) {
       showNotification('⚠️ Please enter an API key first.', 'warning');
       voiceApiKey?.focus();
       return;
     }
-    localStorage.setItem('aetheria_voice_key', val);
+    setVoiceKeyForProvider(prov, val);
     syncVoiceUiPanels();
-    showNotification('✓ Speech engine API Key connected successfully!');
+    syncVoicesForProvider(prov, false);
+    showNotification(`✓ ${prov.toUpperCase()} API Key saved and verified!`);
   });
 
   ttsQuickReuseKeyBtn?.addEventListener('click', () => {
     const openaiKey = localStorage.getItem('aetheria_key_openai') || '';
     if (openaiKey) {
       if (voiceApiKey) voiceApiKey.value = openaiKey;
-      localStorage.setItem('aetheria_voice_key', openaiKey);
+      setVoiceKeyForProvider('openai', openaiKey);
       syncVoiceUiPanels();
+      syncVoicesForProvider('openai', false);
       showNotification('✓ Connected OpenAI Key from Text Engine!');
     }
   });
@@ -8102,27 +8938,35 @@ const { character } = Astro.props;
     toggleSttKeyVisibilityBtn.textContent = isPass ? 'Hide' : 'Show';
   });
 
-  // Test Buttons with Connection Verification
+  // Comprehensive Live Audition Button
   testVoiceBtn?.addEventListener('click', async () => {
     const prov = voiceProviderSelect?.value || 'browser';
-    const key = (voiceApiKey?.value || localStorage.getItem('aetheria_voice_key') || '').trim();
+    const key = getVoiceKeyForProvider(prov);
     const ttsObj = TTS_CATALOG.find(x => x.id === prov) || TTS_CATALOG[0];
 
     if (ttsObj.needsKey && !key) {
-      showNotification('🔒 Please connect your API key first to test voice synthesis.', 'warning');
+      showNotification('🔒 Please enter your API key first to test voice synthesis.', 'warning');
       voiceApiKey?.focus();
       return;
     }
 
-    const rate = parseFloat(sliderVoiceRate?.value || '1.0');
-    const pitch = parseFloat(sliderVoicePitch?.value || '1.0');
-    const testPhrase = `Greetings. This is a voice synthesis test for ${activeChar.name}. How do I sound to you?`;
+    const testPhrase = `Greetings. I am ${activeChar.name}. This is a live voice preview. How do I sound to you?`;
     
-    showNotification('Playing voice test...');
-    speak(testPhrase, testVoiceBtn);
+    if (testVoiceLabel) testVoiceLabel.textContent = 'Playing...';
+    if (testVoiceIcon) testVoiceIcon.classList.add('animate-pulse');
+    if (voicePreviewStatusText) voicePreviewStatusText.textContent = `Auditioning voice for ${activeChar.name}...`;
+
+    showNotification('Playing live voice sample...');
+    await speak(testPhrase, testVoiceBtn);
+
+    setTimeout(() => {
+      if (testVoiceLabel) testVoiceLabel.textContent = 'Play Sample';
+      if (testVoiceIcon) testVoiceIcon.classList.remove('animate-pulse');
+      if (voicePreviewStatusText) voicePreviewStatusText.textContent = `Listen to ${activeChar.name} speak with chosen voice`;
+    }, 2500);
   });
 
-  // Live STT Test Button with Connection Verification
+    // Live STT Test Button with Connection Verification
   let sttTestMediaRecorder = null;
   let sttTestChunks = [];
   testSttBtn?.addEventListener('click', async () => {
@@ -8365,8 +9209,18 @@ const { character } = Astro.props;
       if (toggleStreaming) localStorage.setItem('aetheria_text_streaming', toggleStreaming.checked ? 'true' : 'false');
       if (toggleThinking) localStorage.setItem('aetheria_text_thinking', toggleThinking.checked ? 'true' : 'false');
 
-      if (voiceProviderSelect) localStorage.setItem('aetheria_voice_provider', voiceProviderSelect.value);
-      if (voiceApiKey) localStorage.setItem('aetheria_voice_key', voiceApiKey.value.trim());
+      if (voiceProviderSelect) {
+        const vProv = voiceProviderSelect.value;
+        localStorage.setItem('aetheria_voice_provider', vProv);
+        if (voiceApiKey) {
+          const vKey = voiceApiKey.value.trim();
+          if (typeof setVoiceKeyForProvider === 'function') {
+            setVoiceKeyForProvider(vProv, vKey);
+          } else {
+            localStorage.setItem('aetheria_voice_key', vKey);
+          }
+        }
+      }
       if (voiceCustomUrl) localStorage.setItem('aetheria_voice_custom_url', voiceCustomUrl.value.trim());
       if (voiceIdInput) localStorage.setItem('aetheria_voice_id', voiceIdInput.value.trim());
       if (openaiVoiceSelect) localStorage.setItem('aetheria_openai_voice', openaiVoiceSelect.value);
@@ -9196,6 +10050,40 @@ const { character } = Astro.props;
       }
     }
 
+    if (provider === 'google' && voiceKey) {
+      try {
+        const speed = parseFloat(localStorage.getItem('aetheria_voice_rate') || '1.0');
+        const pitch = parseFloat(localStorage.getItem('aetheria_voice_pitch') || '1.0');
+        const voiceName = localStorage.getItem('aetheria_google_voice') || 'en-US-Journey-F';
+        const langCode = voiceName.startsWith('fa') ? 'fa-IR' : (voiceName.slice(0, 5) || 'en-US');
+        const res = await fetch(`https://texttospeech.googleapis.com/v1/text:synthesize?key=${voiceKey}`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            input: { text: cleanText.slice(0, 2000) },
+            voice: { languageCode: langCode, name: voiceName },
+            audioConfig: {
+              audioEncoding: 'MP3',
+              speakingRate: Math.max(0.5, Math.min(2.0, speed)),
+              pitch: Math.max(-20.0, Math.min(20.0, (pitch - 1.0) * 10))
+            }
+          })
+        });
+        if (res.ok) {
+          const data = await res.json();
+          if (data.audioContent) {
+            activeAudio = new Audio('data:audio/mp3;base64,' + data.audioContent);
+            activeAudio.onended = () => stopSpeaking();
+            activeAudio.onerror = () => stopSpeaking();
+            activeAudio.play();
+            return;
+          }
+        }
+      } catch (err) {
+        console.warn('Google Cloud TTS error, falling back to browser:', err);
+      }
+    }
+
     if (provider === 'custom') {
       const customUrl = (localStorage.getItem('aetheria_voice_custom_url') || '').trim();
       if (customUrl) {
@@ -9232,6 +10120,17 @@ const { character } = Astro.props;
       const utterance = new SpeechSynthesisUtterance(cleanText);
       utterance.rate = parseFloat(localStorage.getItem('aetheria_voice_rate') || '1.0');
       utterance.pitch = parseFloat(localStorage.getItem('aetheria_voice_pitch') || '1.0');
+      
+      // If user selected a specific browser voice URI, attach it
+      if (provider === 'browser') {
+        const chosenVoiceUri = localStorage.getItem('aetheria_voice_id');
+        if (chosenVoiceUri && window.speechSynthesis.getVoices) {
+          const vList = window.speechSynthesis.getVoices();
+          const match = vList.find(v => (v.voiceURI === chosenVoiceUri || v.name === chosenVoiceUri));
+          if (match) utterance.voice = match;
+        }
+      }
+
       // If Persian characters detected, set Persian language tag
       const isPersian = /[\u0600-\u06FF]/.test(cleanText);
       utterance.lang = isPersian ? 'fa-IR' : 'en-US';
