@@ -1488,37 +1488,40 @@ const { character } = Astro.props;
                       <div id="tts-connect-status" class="hidden text-[11px] px-3 py-2 rounded-xl"></div>
                     </div>
 
-                    <!-- 2. Connected State Bar (Sleek, Clean 1-Row) -->
-                    <div id="tts-connected-container" class="hidden space-y-3">
-                      <div class="p-3 rounded-xl bg-white/[0.03] border border-white/[0.08] flex items-center justify-between gap-2">
-                        <div class="flex items-center gap-2.5 min-w-0">
-                          <span class="w-2 h-2 rounded-full bg-emerald-400 shrink-0"></span>
-                          <div class="min-w-0">
-                            <div class="text-xs font-semibold text-white flex items-center gap-1.5">
-                              <span id="tts-connected-prov-name">ElevenLabs</span>
-                              <span class="text-[9px] px-1.5 py-0.5 rounded-full bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 font-medium">Connected</span>
-                              <span id="tts-connected-latency" class="hidden text-[10px] text-emerald-400 font-mono font-medium"></span>
-                            </div>
-                            <div class="text-[10px] text-slate-400 font-mono truncate" id="tts-connected-key-masked">••••••••</div>
+                    <!-- 2. Connected State Bar (Clean, Responsive 2-Row Architecture) -->
+                    <div id="tts-connected-container" class="hidden">
+                      <div class="p-3 sm:p-3.5 rounded-xl bg-white/[0.03] border border-white/[0.08] space-y-2.5">
+                        <!-- Row 1: Provider Identity & Status Badge -->
+                        <div class="flex items-center justify-between gap-2">
+                          <div class="flex items-center gap-2 min-w-0">
+                            <span class="w-2 h-2 rounded-full bg-emerald-400 shrink-0"></span>
+                            <span id="tts-connected-prov-name" class="text-xs font-semibold text-white truncate">ElevenLabs</span>
                           </div>
+                          <!-- Single Clean Status / Latency Chip -->
+                          <span id="tts-connected-latency" class="text-[10px] px-2 py-0.5 rounded-full bg-emerald-500/15 border border-emerald-500/30 text-emerald-400 font-mono font-medium shrink-0">Connected</span>
                         </div>
-                        <div class="flex items-center gap-1.5 shrink-0">
-                          <button 
-                            type="button" 
-                            id="tts-live-test-btn" 
-                            title="Test Connection Latency"
-                            class="px-2.5 py-1 rounded-lg bg-white/[0.05] hover:bg-white/[0.1] text-slate-300 hover:text-white border border-white/10 text-[11px] font-medium transition cursor-pointer flex items-center gap-1"
-                          >
-                            <Zap class="w-3 h-3 text-purple-400" id="tts-live-test-icon" />
-                            <span id="tts-live-test-text">Test</span>
-                          </button>
-                          <button 
-                            type="button" 
-                            id="tts-disconnect-btn" 
-                            class="px-2.5 py-1 rounded-lg bg-white/[0.05] hover:bg-white/[0.1] text-slate-300 hover:text-white border border-white/10 text-[11px] font-medium transition cursor-pointer"
-                          >
-                            Change Key
-                          </button>
+
+                        <!-- Row 2: Masked Key / URL & Action Buttons -->
+                        <div class="flex items-center justify-between gap-2 pt-2 border-t border-white/[0.04]">
+                          <div class="text-[11px] text-slate-400 font-mono truncate min-w-0" id="tts-connected-key-masked">••••••••</div>
+                          <div class="flex items-center gap-1.5 shrink-0">
+                            <button 
+                              type="button" 
+                              id="tts-live-test-btn" 
+                              title="Test Connection Latency"
+                              class="px-2.5 py-1 rounded-lg bg-white/[0.05] hover:bg-white/[0.1] active:scale-95 text-slate-300 hover:text-white border border-white/10 text-[11px] font-medium transition cursor-pointer flex items-center gap-1"
+                            >
+                              <Zap class="w-3 h-3 text-purple-400" id="tts-live-test-icon" />
+                              <span id="tts-live-test-text">Test</span>
+                            </button>
+                            <button 
+                              type="button" 
+                              id="tts-disconnect-btn" 
+                              class="px-2.5 py-1 rounded-lg bg-white/[0.05] hover:bg-white/[0.1] active:scale-95 text-slate-300 hover:text-white border border-white/10 text-[11px] font-medium transition cursor-pointer"
+                            >
+                              Change Key
+                            </button>
+                          </div>
                         </div>
                       </div>
                     </div>
@@ -1902,37 +1905,40 @@ const { character } = Astro.props;
                       <div id="stt-connect-status" class="hidden text-[11px] px-3 py-2 rounded-xl"></div>
                     </div>
 
-                    <!-- 2. Connected State Bar (Sleek, Clean 1-Row) -->
+                    <!-- 2. Connected State Bar (Clean, Responsive 2-Row Architecture) -->
                     <div id="stt-connected-container" class="hidden space-y-3">
-                      <div class="p-3 rounded-xl bg-white/[0.03] border border-white/[0.08] flex items-center justify-between gap-2">
-                        <div class="flex items-center gap-2.5 min-w-0">
-                          <span class="w-2 h-2 rounded-full bg-emerald-400 shrink-0"></span>
-                          <div class="min-w-0">
-                            <div class="text-xs font-semibold text-white flex items-center gap-1.5">
-                              <span id="stt-connected-prov-name">Groq Whisper</span>
-                              <span class="text-[9px] px-1.5 py-0.5 rounded-full bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 font-medium">Connected</span>
-                              <span id="stt-connected-latency" class="hidden text-[10px] text-emerald-400 font-mono font-medium"></span>
-                            </div>
-                            <div class="text-[10px] text-slate-400 font-mono truncate" id="stt-connected-key-masked">••••••••</div>
+                      <div class="p-3 sm:p-3.5 rounded-xl bg-white/[0.03] border border-white/[0.08] space-y-2.5">
+                        <!-- Row 1: Provider Identity & Status Badge -->
+                        <div class="flex items-center justify-between gap-2">
+                          <div class="flex items-center gap-2 min-w-0">
+                            <span class="w-2 h-2 rounded-full bg-rose-400 shrink-0"></span>
+                            <span id="stt-connected-prov-name" class="text-xs font-semibold text-white truncate">Groq Whisper</span>
                           </div>
+                          <!-- Single Clean Status / Latency Chip -->
+                          <span id="stt-connected-latency" class="text-[10px] px-2 py-0.5 rounded-full bg-rose-500/15 border border-rose-500/30 text-rose-300 font-mono font-medium shrink-0">Connected</span>
                         </div>
-                        <div class="flex items-center gap-1.5 shrink-0">
-                          <button 
-                            type="button" 
-                            id="stt-live-test-btn" 
-                            title="Test Connection Latency"
-                            class="px-2.5 py-1 rounded-lg bg-white/[0.05] hover:bg-white/[0.1] text-slate-300 hover:text-white border border-white/10 text-[11px] font-medium transition cursor-pointer flex items-center gap-1"
-                          >
-                            <Zap class="w-3 h-3 text-rose-400" id="stt-live-test-icon" />
-                            <span id="stt-live-test-text">Test</span>
-                          </button>
-                          <button 
-                            type="button" 
-                            id="stt-disconnect-btn" 
-                            class="px-2.5 py-1 rounded-lg bg-white/[0.05] hover:bg-white/[0.1] text-slate-300 hover:text-white border border-white/10 text-[11px] font-medium transition cursor-pointer"
-                          >
-                            Change Key
-                          </button>
+
+                        <!-- Row 2: Masked Key & Action Buttons -->
+                        <div class="flex items-center justify-between gap-2 pt-2 border-t border-white/[0.04]">
+                          <div class="text-[11px] text-slate-400 font-mono truncate min-w-0" id="stt-connected-key-masked">••••••••</div>
+                          <div class="flex items-center gap-1.5 shrink-0">
+                            <button 
+                              type="button" 
+                              id="stt-live-test-btn" 
+                              title="Test Connection Latency"
+                              class="px-2.5 py-1 rounded-lg bg-white/[0.05] hover:bg-white/[0.1] active:scale-95 text-slate-300 hover:text-white border border-white/10 text-[11px] font-medium transition cursor-pointer flex items-center gap-1"
+                            >
+                              <Zap class="w-3 h-3 text-rose-400" id="stt-live-test-icon" />
+                              <span id="stt-live-test-text">Test</span>
+                            </button>
+                            <button 
+                              type="button" 
+                              id="stt-disconnect-btn" 
+                              class="px-2.5 py-1 rounded-lg bg-white/[0.05] hover:bg-white/[0.1] active:scale-95 text-slate-300 hover:text-white border border-white/10 text-[11px] font-medium transition cursor-pointer"
+                            >
+                              Change Key
+                            </button>
+                          </div>
                         </div>
                       </div>
 
@@ -2317,37 +2323,40 @@ const { character } = Astro.props;
                       <div id="image-connect-status" class="hidden text-[11px] px-3 py-2 rounded-xl"></div>
                     </div>
 
-                    <!-- Connected State Bar -->
+                    <!-- Connected State Bar (Clean, Responsive 2-Row Architecture) -->
                     <div id="image-connected-container" class="hidden space-y-3">
-                      <div class="p-3 rounded-xl bg-white/[0.03] border border-white/[0.08] flex items-center justify-between gap-2">
-                        <div class="flex items-center gap-2.5 min-w-0">
-                          <span class="w-2 h-2 rounded-full bg-emerald-400 shrink-0"></span>
-                          <div class="min-w-0">
-                            <div class="text-xs font-semibold text-white flex items-center gap-1.5">
-                              <span id="image-connected-prov-name">Fal.ai Flux</span>
-                              <span class="text-[9px] px-1.5 py-0.5 rounded-full bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 font-medium">Connected</span>
-                              <span id="image-connected-latency" class="hidden text-[10px] text-emerald-400 font-mono font-medium"></span>
-                            </div>
-                            <div class="text-[10px] text-slate-400 font-mono truncate" id="image-connected-key-masked">••••••••</div>
+                      <div class="p-3 sm:p-3.5 rounded-xl bg-white/[0.03] border border-white/[0.08] space-y-2.5">
+                        <!-- Row 1: Provider Identity & Status Badge -->
+                        <div class="flex items-center justify-between gap-2">
+                          <div class="flex items-center gap-2 min-w-0">
+                            <span class="w-2 h-2 rounded-full bg-amber-400 shrink-0"></span>
+                            <span id="image-connected-prov-name" class="text-xs font-semibold text-white truncate">Fal.ai Flux</span>
                           </div>
+                          <!-- Single Clean Status / Latency Chip -->
+                          <span id="image-connected-latency" class="text-[10px] px-2 py-0.5 rounded-full bg-amber-500/15 border border-amber-500/30 text-amber-300 font-mono font-medium shrink-0">Connected</span>
                         </div>
-                        <div class="flex items-center gap-1.5 shrink-0">
-                          <button 
-                            type="button" 
-                            id="image-live-test-btn" 
-                            title="Test Connection Latency"
-                            class="px-2.5 py-1 rounded-lg bg-white/[0.05] hover:bg-white/[0.1] text-slate-300 hover:text-white border border-white/10 text-[11px] font-medium transition cursor-pointer flex items-center gap-1"
-                          >
-                            <Zap class="w-3 h-3 text-amber-400" id="image-live-test-icon" />
-                            <span id="image-live-test-text">Test</span>
-                          </button>
-                          <button 
-                            type="button" 
-                            id="image-disconnect-btn" 
-                            class="px-2.5 py-1 rounded-lg bg-white/[0.05] hover:bg-white/[0.1] text-slate-300 hover:text-white border border-white/10 text-[11px] font-medium transition cursor-pointer"
-                          >
-                            Change Key
-                          </button>
+
+                        <!-- Row 2: Masked Key & Action Buttons -->
+                        <div class="flex items-center justify-between gap-2 pt-2 border-t border-white/[0.04]">
+                          <div class="text-[11px] text-slate-400 font-mono truncate min-w-0" id="image-connected-key-masked">••••••••</div>
+                          <div class="flex items-center gap-1.5 shrink-0">
+                            <button 
+                              type="button" 
+                              id="image-live-test-btn" 
+                              title="Test Connection Latency"
+                              class="px-2.5 py-1 rounded-lg bg-white/[0.05] hover:bg-white/[0.1] active:scale-95 text-slate-300 hover:text-white border border-white/10 text-[11px] font-medium transition cursor-pointer flex items-center gap-1"
+                            >
+                              <Zap class="w-3 h-3 text-amber-400" id="image-live-test-icon" />
+                              <span id="image-live-test-text">Test</span>
+                            </button>
+                            <button 
+                              type="button" 
+                              id="image-disconnect-btn" 
+                              class="px-2.5 py-1 rounded-lg bg-white/[0.05] hover:bg-white/[0.1] active:scale-95 text-slate-300 hover:text-white border border-white/10 text-[11px] font-medium transition cursor-pointer"
+                            >
+                              Change Key
+                            </button>
+                          </div>
                         </div>
                       </div>
                     </div>
@@ -2615,37 +2624,40 @@ const { character } = Astro.props;
                       <div id="vision-connect-status" class="hidden text-[11px] px-3 py-2 rounded-xl"></div>
                     </div>
 
-                    <!-- Connected State Bar -->
+                    <!-- Connected State Bar (Clean, Responsive 2-Row Architecture) -->
                     <div id="vision-connected-container" class="hidden space-y-3">
-                      <div class="p-3 rounded-xl bg-white/[0.03] border border-white/[0.08] flex items-center justify-between gap-2">
-                        <div class="flex items-center gap-2.5 min-w-0">
-                          <span class="w-2 h-2 rounded-full bg-cyan-400 shrink-0"></span>
-                          <div class="min-w-0">
-                            <div class="text-xs font-semibold text-white flex items-center gap-1.5">
-                              <span id="vision-connected-prov-name">Vision Engine</span>
-                              <span class="text-[9px] px-1.5 py-0.5 rounded-full bg-cyan-500/20 text-cyan-300 border border-cyan-500/30 font-medium">Connected</span>
-                              <span id="vision-connected-latency" class="hidden text-[10px] text-cyan-400 font-mono font-medium"></span>
-                            </div>
-                            <div class="text-[10px] text-slate-400 font-mono truncate" id="vision-connected-key-masked">••••••••</div>
+                      <div class="p-3 sm:p-3.5 rounded-xl bg-white/[0.03] border border-white/[0.08] space-y-2.5">
+                        <!-- Row 1: Provider Identity & Status Badge -->
+                        <div class="flex items-center justify-between gap-2">
+                          <div class="flex items-center gap-2 min-w-0">
+                            <span class="w-2 h-2 rounded-full bg-cyan-400 shrink-0"></span>
+                            <span id="vision-connected-prov-name" class="text-xs font-semibold text-white truncate">Vision Engine</span>
                           </div>
+                          <!-- Single Clean Status / Latency Chip -->
+                          <span id="vision-connected-latency" class="text-[10px] px-2 py-0.5 rounded-full bg-cyan-500/15 border border-cyan-500/30 text-cyan-300 font-mono font-medium shrink-0">Connected</span>
                         </div>
-                        <div class="flex items-center gap-1.5 shrink-0">
-                          <button 
-                            type="button" 
-                            id="vision-live-test-btn" 
-                            title="Test Connection Latency"
-                            class="px-2.5 py-1 rounded-lg bg-white/[0.05] hover:bg-white/[0.1] text-slate-300 hover:text-white border border-white/10 text-[11px] font-medium transition cursor-pointer flex items-center gap-1"
-                          >
-                            <Zap class="w-3 h-3 text-cyan-400" id="vision-live-test-icon" />
-                            <span id="vision-live-test-text">Test</span>
-                          </button>
-                          <button 
-                            type="button" 
-                            id="vision-disconnect-btn" 
-                            class="px-2.5 py-1 rounded-lg bg-white/[0.05] hover:bg-white/[0.1] text-slate-300 hover:text-white border border-white/10 text-[11px] font-medium transition cursor-pointer"
-                          >
-                            Change Key
-                          </button>
+
+                        <!-- Row 2: Masked Key & Action Buttons -->
+                        <div class="flex items-center justify-between gap-2 pt-2 border-t border-white/[0.04]">
+                          <div class="text-[11px] text-slate-400 font-mono truncate min-w-0" id="vision-connected-key-masked">••••••••</div>
+                          <div class="flex items-center gap-1.5 shrink-0">
+                            <button 
+                              type="button" 
+                              id="vision-live-test-btn" 
+                              title="Test Connection Latency"
+                              class="px-2.5 py-1 rounded-lg bg-white/[0.05] hover:bg-white/[0.1] active:scale-95 text-slate-300 hover:text-white border border-white/10 text-[11px] font-medium transition cursor-pointer flex items-center gap-1"
+                            >
+                              <Zap class="w-3 h-3 text-cyan-400" id="vision-live-test-icon" />
+                              <span id="vision-live-test-text">Test</span>
+                            </button>
+                            <button 
+                              type="button" 
+                              id="vision-disconnect-btn" 
+                              class="px-2.5 py-1 rounded-lg bg-white/[0.05] hover:bg-white/[0.1] active:scale-95 text-slate-300 hover:text-white border border-white/10 text-[11px] font-medium transition cursor-pointer"
+                            >
+                              Change Key
+                            </button>
+                          </div>
                         </div>
                       </div>
                     </div>
@@ -2861,37 +2873,40 @@ const { character } = Astro.props;
                     <div id="video-connect-status" class="hidden text-[11px] px-3 py-2 rounded-xl"></div>
                   </div>
 
-                  <!-- 2. Connected State Bar -->
+                  <!-- 2. Connected State Bar (Clean, Responsive 2-Row Architecture) -->
                   <div id="video-connected-container" class="hidden space-y-3">
-                    <div class="p-3 rounded-xl bg-white/[0.03] border border-white/[0.08] flex items-center justify-between gap-2">
-                      <div class="flex items-center gap-2.5 min-w-0">
-                        <span class="w-2 h-2 rounded-full bg-emerald-400 shrink-0"></span>
-                        <div class="min-w-0">
-                          <div class="text-xs font-semibold text-white flex items-center gap-1.5">
-                            <span id="video-connected-prov-name">Fal.ai Kling</span>
-                            <span class="text-[9px] px-1.5 py-0.5 rounded-full bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 font-medium">Connected</span>
-                            <span id="video-connected-latency" class="hidden text-[10px] text-emerald-400 font-mono font-medium"></span>
-                          </div>
-                          <div class="text-[10px] text-slate-400 font-mono truncate" id="video-connected-key-masked">••••••••</div>
+                    <div class="p-3 sm:p-3.5 rounded-xl bg-white/[0.03] border border-white/[0.08] space-y-2.5">
+                      <!-- Row 1: Provider Identity & Status Badge -->
+                      <div class="flex items-center justify-between gap-2">
+                        <div class="flex items-center gap-2 min-w-0">
+                          <span class="w-2 h-2 rounded-full bg-emerald-400 shrink-0"></span>
+                          <span id="video-connected-prov-name" class="text-xs font-semibold text-white truncate">Fal.ai Kling</span>
                         </div>
+                        <!-- Single Clean Status / Latency Chip -->
+                        <span id="video-connected-latency" class="text-[10px] px-2 py-0.5 rounded-full bg-emerald-500/15 border border-emerald-500/30 text-emerald-400 font-mono font-medium shrink-0">Connected</span>
                       </div>
-                      <div class="flex items-center gap-1.5 shrink-0">
-                        <button 
-                          type="button" 
-                          id="video-live-test-btn" 
-                          title="Test Connection Latency"
-                          class="px-2.5 py-1 rounded-lg bg-white/[0.05] hover:bg-white/[0.1] text-slate-300 hover:text-white border border-white/10 text-[11px] font-medium transition cursor-pointer flex items-center gap-1"
-                        >
-                          <Zap class="w-3 h-3 text-cyan-400" id="video-live-test-icon" />
-                          <span id="video-live-test-text">Test</span>
-                        </button>
-                        <button 
-                          type="button" 
-                          id="video-disconnect-btn" 
-                          class="px-2.5 py-1 rounded-lg bg-white/[0.05] hover:bg-white/[0.1] text-slate-300 hover:text-white border border-white/10 text-[11px] font-medium transition cursor-pointer"
-                        >
-                          Change Key
-                        </button>
+
+                      <!-- Row 2: Masked Key & Action Buttons -->
+                      <div class="flex items-center justify-between gap-2 pt-2 border-t border-white/[0.04]">
+                        <div class="text-[11px] text-slate-400 font-mono truncate min-w-0" id="video-connected-key-masked">••••••••</div>
+                        <div class="flex items-center gap-1.5 shrink-0">
+                          <button 
+                            type="button" 
+                            id="video-live-test-btn" 
+                            title="Test Connection Latency"
+                            class="px-2.5 py-1 rounded-lg bg-white/[0.05] hover:bg-white/[0.1] active:scale-95 text-slate-300 hover:text-white border border-white/10 text-[11px] font-medium transition cursor-pointer flex items-center gap-1"
+                          >
+                            <Zap class="w-3 h-3 text-cyan-400" id="video-live-test-icon" />
+                            <span id="video-live-test-text">Test</span>
+                          </button>
+                          <button 
+                            type="button" 
+                            id="video-disconnect-btn" 
+                            class="px-2.5 py-1 rounded-lg bg-white/[0.05] hover:bg-white/[0.1] active:scale-95 text-slate-300 hover:text-white border border-white/10 text-[11px] font-medium transition cursor-pointer"
+                          >
+                            Change Key
+                          </button>
+                        </div>
                       </div>
                     </div>
                   </div>
@@ -11343,6 +11358,13 @@ const { character } = Astro.props;
 
         if (isTtsConnected) {
           if (ttsConnectedProvName) ttsConnectedProvName.textContent = ttsObj.name;
+          if (ttsConnectedLatency) {
+            ttsConnectedLatency.classList.remove('hidden');
+            ttsConnectedLatency.className = 'text-[10px] px-2 py-0.5 rounded-full bg-emerald-500/15 border border-emerald-500/30 text-emerald-400 font-mono font-medium shrink-0';
+            if (!ttsConnectedLatency.textContent || ttsConnectedLatency.textContent.includes('Offline')) {
+              ttsConnectedLatency.textContent = 'Connected';
+            }
+          }
           if (ttsConnectedKeyMasked) {
             if (isCustomTtsUrl) {
               ttsConnectedKeyMasked.textContent = customTtsUrlVal || 'Custom Endpoint';
@@ -11440,6 +11462,13 @@ const { character } = Astro.props;
 
         if (isSttConnected) {
           if (sttConnectedProvName) sttConnectedProvName.textContent = engObj.name;
+          if (sttConnectedLatency) {
+            sttConnectedLatency.classList.remove('hidden');
+            sttConnectedLatency.className = 'text-[10px] px-2 py-0.5 rounded-full bg-rose-500/15 border border-rose-500/30 text-rose-300 font-mono font-medium shrink-0';
+            if (!sttConnectedLatency.textContent || sttConnectedLatency.textContent.includes('Offline')) {
+              sttConnectedLatency.textContent = 'Connected';
+            }
+          }
           if (sttConnectedKeyMasked) {
             if (isCustomUrl) {
               sttConnectedKeyMasked.textContent = customUrlVal || 'Custom Endpoint';
@@ -12164,7 +12193,7 @@ const { character } = Astro.props;
 
     if (ttsConnectedLatency) {
       ttsConnectedLatency.textContent = `${testRes.latency}ms`;
-      ttsConnectedLatency.className = 'text-[10px] text-emerald-400 font-mono font-medium';
+      ttsConnectedLatency.className = 'text-[10px] px-2 py-0.5 rounded-full bg-emerald-500/15 border border-emerald-500/30 text-emerald-400 font-mono font-medium shrink-0';
       ttsConnectedLatency.classList.remove('hidden');
     }
 
@@ -12203,11 +12232,11 @@ const { character } = Astro.props;
       ttsConnectedLatency.classList.remove('hidden');
       if (res.ok) {
         ttsConnectedLatency.textContent = `${res.latency}ms`;
-        ttsConnectedLatency.className = 'text-[10px] text-emerald-400 font-mono font-medium';
+        ttsConnectedLatency.className = 'text-[10px] px-2 py-0.5 rounded-full bg-emerald-500/15 border border-emerald-500/30 text-emerald-400 font-mono font-medium shrink-0';
         showNotification(`✓ ${ttsObj.name} is Online (${res.latency}ms)`);
       } else {
         ttsConnectedLatency.textContent = 'Offline';
-        ttsConnectedLatency.className = 'text-[10px] text-rose-400 font-mono font-medium';
+        ttsConnectedLatency.className = 'text-[10px] px-2 py-0.5 rounded-full bg-rose-500/15 border border-rose-500/30 text-rose-400 font-mono font-medium shrink-0';
         showNotification(`✕ Connection failed: ${res.error}`, 'error');
       }
     }
@@ -12305,7 +12334,7 @@ const { character } = Astro.props;
 
     if (sttConnectedLatency) {
       sttConnectedLatency.textContent = `${testRes.latency}ms`;
-      sttConnectedLatency.className = 'text-[10px] text-emerald-400 font-mono font-medium';
+      sttConnectedLatency.className = 'text-[10px] px-2 py-0.5 rounded-full bg-rose-500/15 border border-rose-500/30 text-rose-300 font-mono font-medium shrink-0';
       sttConnectedLatency.classList.remove('hidden');
     }
 
@@ -12344,11 +12373,11 @@ const { character } = Astro.props;
       sttConnectedLatency.classList.remove('hidden');
       if (res.ok) {
         sttConnectedLatency.textContent = `${res.latency}ms`;
-        sttConnectedLatency.className = 'text-[10px] text-emerald-400 font-mono font-medium';
+        sttConnectedLatency.className = 'text-[10px] px-2 py-0.5 rounded-full bg-rose-500/15 border border-rose-500/30 text-rose-300 font-mono font-medium shrink-0';
         showNotification(`✓ ${engObj.name} is Online (${res.latency}ms)`);
       } else {
         sttConnectedLatency.textContent = 'Offline';
-        sttConnectedLatency.className = 'text-[10px] text-rose-400 font-mono font-medium';
+        sttConnectedLatency.className = 'text-[10px] px-2 py-0.5 rounded-full bg-rose-500/15 border border-rose-500/30 text-rose-400 font-mono font-medium shrink-0';
         showNotification(`✕ Connection failed: ${res.error}`, 'error');
       }
     }
@@ -12872,6 +12901,13 @@ const { character } = Astro.props;
 
         if (isImgConnected) {
           if (imageConnectedProvName) imageConnectedProvName.textContent = imgObj.name;
+          if (imageConnectedLatency) {
+            imageConnectedLatency.classList.remove('hidden');
+            imageConnectedLatency.className = 'text-[10px] px-2 py-0.5 rounded-full bg-amber-500/15 border border-amber-500/30 text-amber-300 font-mono font-medium shrink-0';
+            if (!imageConnectedLatency.textContent || imageConnectedLatency.textContent.includes('Offline')) {
+              imageConnectedLatency.textContent = 'Connected';
+            }
+          }
           if (imageConnectedKeyMasked) {
             if (isCustomUrl) {
               imageConnectedKeyMasked.textContent = customUrlVal || 'Custom Endpoint';
@@ -12943,6 +12979,13 @@ const { character } = Astro.props;
 
         if (isVisConnected) {
           if (visionConnectedProvName) visionConnectedProvName.textContent = visObj.name;
+          if (visionConnectedLatency) {
+            visionConnectedLatency.classList.remove('hidden');
+            visionConnectedLatency.className = 'text-[10px] px-2 py-0.5 rounded-full bg-cyan-500/15 border border-cyan-500/30 text-cyan-300 font-mono font-medium shrink-0';
+            if (!visionConnectedLatency.textContent || visionConnectedLatency.textContent.includes('Offline')) {
+              visionConnectedLatency.textContent = 'Connected';
+            }
+          }
           if (visionConnectedKeyMasked) {
             if (isCustomVisUrl) {
               visionConnectedKeyMasked.textContent = customVisUrlVal || 'Custom Endpoint';
@@ -13115,7 +13158,7 @@ const { character } = Astro.props;
 
     if (imageConnectedLatency) {
       imageConnectedLatency.textContent = `${testRes.latency}ms`;
-      imageConnectedLatency.className = 'text-[10px] text-emerald-400 font-mono font-medium';
+      imageConnectedLatency.className = 'text-[10px] px-2 py-0.5 rounded-full bg-amber-500/15 border border-amber-500/30 text-amber-300 font-mono font-medium shrink-0';
       imageConnectedLatency.classList.remove('hidden');
     }
 
@@ -13154,11 +13197,11 @@ const { character } = Astro.props;
       imageConnectedLatency.classList.remove('hidden');
       if (res.ok) {
         imageConnectedLatency.textContent = `${res.latency}ms`;
-        imageConnectedLatency.className = 'text-[10px] text-emerald-400 font-mono font-medium';
+        imageConnectedLatency.className = 'text-[10px] px-2 py-0.5 rounded-full bg-amber-500/15 border border-amber-500/30 text-amber-300 font-mono font-medium shrink-0';
         showNotification(`✓ ${obj.name} is Online (${res.latency}ms)`);
       } else {
         imageConnectedLatency.textContent = 'Offline';
-        imageConnectedLatency.className = 'text-[10px] text-rose-400 font-mono font-medium';
+        imageConnectedLatency.className = 'text-[10px] px-2 py-0.5 rounded-full bg-rose-500/15 border border-rose-500/30 text-rose-400 font-mono font-medium shrink-0';
         showNotification(`✕ Connection failed: ${res.error}`, 'error');
       }
     }
@@ -13253,7 +13296,7 @@ const { character } = Astro.props;
 
     if (visionConnectedLatency) {
       visionConnectedLatency.textContent = `${testRes.latency}ms`;
-      visionConnectedLatency.className = 'text-[10px] text-emerald-400 font-mono font-medium';
+      visionConnectedLatency.className = 'text-[10px] px-2 py-0.5 rounded-full bg-cyan-500/15 border border-cyan-500/30 text-cyan-300 font-mono font-medium shrink-0';
       visionConnectedLatency.classList.remove('hidden');
     }
 
@@ -13292,11 +13335,11 @@ const { character } = Astro.props;
       visionConnectedLatency.classList.remove('hidden');
       if (res.ok) {
         visionConnectedLatency.textContent = `${res.latency}ms`;
-        visionConnectedLatency.className = 'text-[10px] text-emerald-400 font-mono font-medium';
+        visionConnectedLatency.className = 'text-[10px] px-2 py-0.5 rounded-full bg-cyan-500/15 border border-cyan-500/30 text-cyan-300 font-mono font-medium shrink-0';
         showNotification(`✓ ${obj.name} is Online (${res.latency}ms)`);
       } else {
         visionConnectedLatency.textContent = 'Offline';
-        visionConnectedLatency.className = 'text-[10px] text-rose-400 font-mono font-medium';
+        visionConnectedLatency.className = 'text-[10px] px-2 py-0.5 rounded-full bg-rose-500/15 border border-rose-500/30 text-rose-400 font-mono font-medium shrink-0';
         showNotification(`✕ Connection failed: ${res.error}`, 'error');
       }
     }
@@ -13568,6 +13611,13 @@ const { character } = Astro.props;
 
       if (isVidConnected) {
         if (videoConnectedProvName) videoConnectedProvName.textContent = vidObj.name;
+        if (videoConnectedLatency) {
+          videoConnectedLatency.classList.remove('hidden');
+          videoConnectedLatency.className = 'text-[10px] px-2 py-0.5 rounded-full bg-emerald-500/15 border border-emerald-500/30 text-emerald-400 font-mono font-medium shrink-0';
+          if (!videoConnectedLatency.textContent || videoConnectedLatency.textContent.includes('Offline')) {
+            videoConnectedLatency.textContent = 'Connected';
+          }
+        }
         if (videoConnectedKeyMasked) {
           if (isCustomUrl) {
             videoConnectedKeyMasked.textContent = customUrlVal || 'Custom Endpoint';
@@ -13755,7 +13805,7 @@ const { character } = Astro.props;
 
     if (videoConnectedLatency) {
       videoConnectedLatency.textContent = `${testRes.latency}ms`;
-      videoConnectedLatency.className = 'text-[10px] text-emerald-400 font-mono font-medium';
+      videoConnectedLatency.className = 'text-[10px] px-2 py-0.5 rounded-full bg-emerald-500/15 border border-emerald-500/30 text-emerald-400 font-mono font-medium shrink-0';
       videoConnectedLatency.classList.remove('hidden');
     }
 
@@ -13794,11 +13844,11 @@ const { character } = Astro.props;
       videoConnectedLatency.classList.remove('hidden');
       if (res.ok) {
         videoConnectedLatency.textContent = `${res.latency}ms`;
-        videoConnectedLatency.className = 'text-[10px] text-emerald-400 font-mono font-medium';
+        videoConnectedLatency.className = 'text-[10px] px-2 py-0.5 rounded-full bg-emerald-500/15 border border-emerald-500/30 text-emerald-400 font-mono font-medium shrink-0';
         showNotification(`✓ ${obj.name} is Online (${res.latency}ms)`);
       } else {
         videoConnectedLatency.textContent = 'Offline';
-        videoConnectedLatency.className = 'text-[10px] text-rose-400 font-mono font-medium';
+        videoConnectedLatency.className = 'text-[10px] px-2 py-0.5 rounded-full bg-rose-500/15 border border-rose-500/30 text-rose-400 font-mono font-medium shrink-0';
         showNotification(`✕ Connection failed: ${res.error}`, 'error');
       }
     }
