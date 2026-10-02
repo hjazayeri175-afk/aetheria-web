@@ -698,6 +698,12 @@ export default {
           } else if (targetUrl.includes('cartesia.ai')) {
             fetchHeaders['X-API-Key'] = apiKey;
             fetchHeaders['Cartesia-Version'] = '2024-06-10';
+          } else if (targetUrl.includes('fal.ai') || targetUrl.includes('fal.run')) {
+            fetchHeaders['Authorization'] = apiKey.startsWith('Key ') ? apiKey : `Key ${apiKey}`;
+          } else if (targetUrl.includes('replicate.com')) {
+            fetchHeaders['Authorization'] = apiKey.startsWith('Bearer ') || apiKey.startsWith('Token ') ? apiKey : `Bearer ${apiKey}`;
+          } else if (targetUrl.includes('cloudflare.com')) {
+            fetchHeaders['Authorization'] = `Bearer ${apiKey}`;
           } else if (targetUrl.includes('googleapis.com')) {
             fetchHeaders['x-goog-api-key'] = apiKey;
             if (targetUrl.includes('/openai/')) {
@@ -715,10 +721,24 @@ export default {
 
         try {
           const apiRes = await fetch(finalUrl, {
-            method: 'GET',
+            method: payload.method || 'GET',
             headers: fetchHeaders
           });
-          const data = await apiRes.json();
+          let data = null;
+          const contentType = apiRes.headers.get('content-type') || '';
+          if (contentType.includes('application/json')) {
+            try {
+              data = await apiRes.json();
+            } catch (_) {
+              data = null;
+            }
+          } else {
+            try {
+              data = { text: await apiRes.text() };
+            } catch (_) {
+              data = null;
+            }
+          }
           return jsonResponse({ success: apiRes.ok, status: apiRes.status, data }, apiRes.status);
         } catch (fetchErr: any) {
           return jsonResponse({ success: false, error: fetchErr.message || 'Failed to reach endpoint' }, 502);

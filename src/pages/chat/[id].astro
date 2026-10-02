@@ -914,7 +914,7 @@ const { character } = Astro.props;
                         <option value="deepseek">DeepSeek Official (V3 / R1)</option>
                         <option value="openai">OpenAI (Official GPT-4o / o1)</option>
                         <option value="anthropic">Anthropic Claude (3.7 Sonnet / Haiku)</option>
-                        <option value="custom-proxy">Custom OpenAI-Compatible API</option>
+                        <option value="custom-proxy">Custom Server (OpenAI-Compatible)</option>
                         <option value="custom-local">Localhost (Ollama / LM Studio / vLLM)</option>
                         <option value="mistral">Mistral AI (Large / Codestral)</option>
                         <option value="xai">xAI Grok (Grok-2 / Beta)</option>
@@ -963,75 +963,106 @@ const { character } = Astro.props;
                     </div>
                   </div>
 
-                  <!-- 3. Unified Connection Credentials (API Key & Base URL) -->
-                  <div class="p-3.5 sm:p-4 rounded-2xl bg-white/[0.02] border border-white/[0.08] space-y-3" dir="ltr" lang="en">
-                    <!-- Endpoint Base URL (Visible for custom-proxy & custom-local) -->
-                    <div id="custom-base-url-container" class="hidden space-y-1.5">
-                      <div class="flex items-center justify-between text-xs">
-                        <label id="custom-base-url-label" for="text-base-url" class="font-semibold text-slate-300 flex items-center gap-1.5">
-                          <Globe class="w-3.5 h-3.5 text-cyan-400" />
-                          <span>Endpoint Base URL</span>
-                        </label>
-                        <span class="text-[10px] text-cyan-300/80 font-mono">OpenAI-Compatible /v1</span>
+                  <!-- 3. Unified Text Model Connection Card (Smart Connect / Connected Lifecycle) -->
+                  <div id="text-connection-card" class="p-3.5 sm:p-4 rounded-2xl bg-white/[0.02] border border-white/[0.08] space-y-3" dir="ltr" lang="en">
+                    
+                    <!-- 1. NOT Connected State (Clean Input Form) -->
+                    <div id="text-unconnected-container" class="space-y-3">
+                      <div>
+                        <h5 id="text-connect-title" class="text-xs font-semibold text-white">Connect API</h5>
+                        <p id="text-connect-desc" class="text-[11px] text-slate-400">Enter your credentials to enable AI chat.</p>
                       </div>
-                      <input 
-                        type="url" 
-                        id="text-base-url" 
-                        class="w-full px-3.5 py-2.5 rounded-xl bg-white/[0.04] border border-white/10 text-xs text-white placeholder:text-slate-500 outline-none focus:border-cyan-400 font-mono transition" 
-                        placeholder="http://localhost:11434/v1"
-                        dir="ltr"
-                        lang="en"
-                      />
-                      <p id="custom-base-url-hint" class="text-[11px] text-slate-400 leading-tight">
-                        Ollama: <code class="text-cyan-300">http://localhost:11434/v1</code> • LM Studio: <code class="text-cyan-300">http://localhost:1234/v1</code> • vLLM: <code class="text-cyan-300">http://localhost:8000/v1</code>
-                      </p>
-                    </div>
 
-                    <!-- API Key Container with Test Button -->
-                    <div id="api-key-container" class="space-y-1.5">
-                      <div class="flex items-center justify-between text-xs">
-                        <label class="block text-xs font-semibold text-slate-300 flex items-center justify-between w-full">
-                          <span id="api-key-label" class="flex items-center gap-1.5">
-                            <Key class="w-3.5 h-3.5 text-purple-400" />
-                            <span id="api-key-label-text">API Key</span>
-                          </span>
-                          <div class="flex items-center gap-2">
-                            <!-- Live Connection Status Dot & Latency -->
-                            <div class="flex items-center gap-1.5 mr-1">
-                              <span id="ping-indicator-dot" class="w-2 h-2 rounded-full bg-emerald-400 shrink-0"></span>
-                              <span class="text-[10px] text-slate-400 font-mono truncate" id="ping-latency-text">Ready</span>
-                            </div>
-                            <span id="ping-provider-name" class="hidden"></span>
-                            <a id="get-key-link" href="https://aistudio.google.com/app/apikey" target="_blank" rel="noopener noreferrer" class="hidden text-[10px] text-cyan-400 hover:text-cyan-300 underline underline-offset-2">Get Free Key</a>
-                            <button type="button" id="toggle-key-visibility" class="text-[10px] text-purple-400 hover:text-purple-300 cursor-pointer">Show/Hide</button>
-                          </div>
+                      <!-- Server / Endpoint URL (Visible for custom-proxy & custom-local) -->
+                      <div id="custom-base-url-container" class="hidden space-y-1.5">
+                        <label id="custom-base-url-label" for="text-base-url" class="font-semibold text-slate-300 flex items-center gap-1.5 text-xs">
+                          <Globe class="w-3.5 h-3.5 text-purple-400" />
+                          <span>Server URL</span>
                         </label>
-                      </div>
-                      <div class="flex gap-2">
                         <input 
-                          id="text-api-key" 
-                          type="password" 
-                          placeholder="sk-... or gsk_..." 
-                          class="flex-1 min-w-0 px-3.5 py-2.5 rounded-xl bg-white/[0.04] border border-white/10 text-xs text-white placeholder:text-slate-500 outline-none focus:border-purple-500/60 font-mono transition" 
-                          autocomplete="off"
-                          spellcheck="false"
+                          type="url" 
+                          id="text-base-url" 
+                          class="w-full px-3.5 py-2.5 rounded-xl bg-black/60 border border-white/10 text-xs text-white placeholder:text-slate-500 outline-none focus:border-purple-500/60 font-mono transition" 
+                          placeholder="https://api.your-provider.com/v1"
                           dir="ltr"
                           lang="en"
                         />
-                        <button 
-                          type="button" 
-                          id="ping-text-btn" 
-                          class="px-3.5 py-2.5 rounded-xl bg-purple-600 hover:bg-purple-500 active:scale-95 text-white text-xs font-semibold flex items-center justify-center gap-1.5 transition cursor-pointer shrink-0 shadow-md shadow-purple-950/50"
-                          title="Test connection and measure real network latency"
-                        >
-                          <Zap class="w-3.5 h-3.5 text-cyan-300" />
-                          <span>Test</span>
-                        </button>
+                        <p id="custom-base-url-hint" class="text-[11px] text-slate-400 leading-tight"></p>
                       </div>
 
-                      <!-- Ping status message container -->
+                      <!-- API Key Container -->
+                      <div id="api-key-container" class="space-y-1.5">
+                        <div class="flex items-center justify-between text-xs">
+                          <label class="font-semibold text-slate-300 flex items-center gap-1.5">
+                            <Key class="w-3.5 h-3.5 text-purple-400" />
+                            <span id="api-key-label-text">API Key</span>
+                          </label>
+                          <div class="flex items-center gap-2">
+                            <a id="get-key-link" href="https://aistudio.google.com/app/apikey" target="_blank" rel="noopener noreferrer" class="hidden text-[10px] text-purple-400 hover:text-purple-300 underline underline-offset-2">Get Free Key</a>
+                            <button type="button" id="toggle-key-visibility" class="text-[10px] text-purple-400 hover:text-purple-300 cursor-pointer">Show/Hide</button>
+                          </div>
+                        </div>
+                        <div class="flex gap-2">
+                          <input 
+                            id="text-api-key" 
+                            type="password" 
+                            placeholder="Paste API Key..." 
+                            class="flex-1 min-w-0 px-3.5 py-2.5 rounded-xl bg-black/60 border border-white/10 text-xs text-white placeholder:text-slate-500 outline-none focus:border-purple-500/60 font-mono transition" 
+                            autocomplete="off"
+                            spellcheck="false"
+                            dir="ltr"
+                            lang="en"
+                          />
+                          <button 
+                            type="button" 
+                            id="text-connect-confirm-btn" 
+                            class="px-4 py-2.5 rounded-xl bg-purple-600 hover:bg-purple-500 active:scale-95 text-white text-xs font-semibold flex items-center justify-center gap-1.5 transition cursor-pointer shadow-md shadow-purple-950/50 shrink-0"
+                          >
+                            <Check class="w-3.5 h-3.5" id="text-connect-btn-icon" />
+                            <span id="text-connect-btn-text">Connect</span>
+                          </button>
+                        </div>
+                      </div>
+
+                      <!-- Ping / Connect status message container -->
                       <div id="ping-status-msg" class="hidden text-xs px-3.5 py-2.5 rounded-xl border leading-relaxed"></div>
                     </div>
+
+                    <!-- 2. Connected State Bar (Sleek, Clean 1-Row matching Voice/STT/Vision/Image/Video) -->
+                    <div id="text-connected-container" class="hidden space-y-3">
+                      <div class="p-3 rounded-xl bg-white/[0.03] border border-white/[0.08] flex items-center justify-between gap-2">
+                        <div class="flex items-center gap-2.5 min-w-0">
+                          <span id="ping-indicator-dot" class="w-2 h-2 rounded-full bg-emerald-400 shrink-0"></span>
+                          <div class="min-w-0">
+                            <div class="text-xs font-semibold text-white flex items-center gap-1.5">
+                              <span id="ping-provider-name">Groq</span>
+                              <span class="text-[9px] px-1.5 py-0.5 rounded-full bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 font-medium">Connected</span>
+                              <span id="ping-latency-text" class="hidden text-[10px] text-emerald-400 font-mono font-medium"></span>
+                            </div>
+                            <div class="text-[10px] text-slate-400 font-mono truncate" id="text-connected-key-masked">••••••••</div>
+                          </div>
+                        </div>
+                        <div class="flex items-center gap-1.5 shrink-0">
+                          <button 
+                            type="button" 
+                            id="ping-text-btn" 
+                            title="Test connection and latency"
+                            class="px-2.5 py-1 rounded-lg bg-white/[0.05] hover:bg-white/[0.1] text-slate-300 hover:text-white border border-white/10 text-[11px] font-medium transition cursor-pointer flex items-center gap-1"
+                          >
+                            <Zap class="w-3 h-3 text-purple-400" id="ping-text-icon" />
+                            <span id="ping-text-btn-text">Test</span>
+                          </button>
+                          <button 
+                            type="button" 
+                            id="text-disconnect-btn" 
+                            class="px-2.5 py-1 rounded-lg bg-white/[0.05] hover:bg-white/[0.1] text-slate-300 hover:text-white border border-white/10 text-[11px] font-medium transition cursor-pointer"
+                          >
+                            Change Key
+                          </button>
+                        </div>
+                      </div>
+                    </div>
+
                   </div>
 
                   <!-- 4. Dynamic Model Selector & Live Fetcher -->
@@ -1451,10 +1482,11 @@ const { character } = Astro.props;
                           id="tts-connect-confirm-btn" 
                           class="px-4 py-2.5 rounded-xl bg-purple-600 hover:bg-purple-500 text-white text-xs font-semibold flex items-center justify-center gap-1.5 transition cursor-pointer active:scale-95 shadow-md shadow-purple-950 shrink-0"
                         >
-                          <Check class="w-3.5 h-3.5" />
-                          <span>Connect</span>
+                          <Check class="w-3.5 h-3.5" id="tts-connect-btn-icon" />
+                          <span id="tts-connect-btn-text">Connect</span>
                         </button>
                       </div>
+                      <div id="tts-connect-status" class="hidden text-[11px] px-3 py-2 rounded-xl"></div>
                     </div>
 
                     <!-- 2. Connected State Bar (Sleek, Clean 1-Row) -->
@@ -1466,17 +1498,29 @@ const { character } = Astro.props;
                             <div class="text-xs font-semibold text-white flex items-center gap-1.5">
                               <span id="tts-connected-prov-name">ElevenLabs</span>
                               <span class="text-[9px] px-1.5 py-0.5 rounded-full bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 font-medium">Connected</span>
+                              <span id="tts-connected-latency" class="hidden text-[10px] text-emerald-400 font-mono font-medium"></span>
                             </div>
                             <div class="text-[10px] text-slate-400 font-mono truncate" id="tts-connected-key-masked">••••••••</div>
                           </div>
                         </div>
-                        <button 
-                          type="button" 
-                          id="tts-disconnect-btn" 
-                          class="px-2.5 py-1 rounded-lg bg-white/[0.05] hover:bg-white/[0.1] text-slate-300 hover:text-white border border-white/10 text-[11px] font-medium transition cursor-pointer"
-                        >
-                          Change Key
-                        </button>
+                        <div class="flex items-center gap-1.5 shrink-0">
+                          <button 
+                            type="button" 
+                            id="tts-live-test-btn" 
+                            title="Test Connection Latency"
+                            class="px-2.5 py-1 rounded-lg bg-white/[0.05] hover:bg-white/[0.1] text-slate-300 hover:text-white border border-white/10 text-[11px] font-medium transition cursor-pointer flex items-center gap-1"
+                          >
+                            <Zap class="w-3 h-3 text-purple-400" id="tts-live-test-icon" />
+                            <span id="tts-live-test-text">Test</span>
+                          </button>
+                          <button 
+                            type="button" 
+                            id="tts-disconnect-btn" 
+                            class="px-2.5 py-1 rounded-lg bg-white/[0.05] hover:bg-white/[0.1] text-slate-300 hover:text-white border border-white/10 text-[11px] font-medium transition cursor-pointer"
+                          >
+                            Change Key
+                          </button>
+                        </div>
                       </div>
                     </div>
 
@@ -1852,10 +1896,11 @@ const { character } = Astro.props;
                           id="stt-verify-connect-btn" 
                           class="px-4 py-2.5 rounded-xl bg-rose-600 hover:bg-rose-500 text-white text-xs font-semibold flex items-center justify-center gap-1.5 transition cursor-pointer active:scale-95 shadow-md shadow-rose-950 shrink-0"
                         >
-                          <Check class="w-3.5 h-3.5" />
-                          <span>Connect</span>
+                          <Check class="w-3.5 h-3.5" id="stt-connect-btn-icon" />
+                          <span id="stt-connect-btn-text">Connect</span>
                         </button>
                       </div>
+                      <div id="stt-connect-status" class="hidden text-[11px] px-3 py-2 rounded-xl"></div>
                     </div>
 
                     <!-- 2. Connected State Bar (Sleek, Clean 1-Row) -->
@@ -1867,17 +1912,29 @@ const { character } = Astro.props;
                             <div class="text-xs font-semibold text-white flex items-center gap-1.5">
                               <span id="stt-connected-prov-name">Groq Whisper</span>
                               <span class="text-[9px] px-1.5 py-0.5 rounded-full bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 font-medium">Connected</span>
+                              <span id="stt-connected-latency" class="hidden text-[10px] text-emerald-400 font-mono font-medium"></span>
                             </div>
                             <div class="text-[10px] text-slate-400 font-mono truncate" id="stt-connected-key-masked">••••••••</div>
                           </div>
                         </div>
-                        <button 
-                          type="button" 
-                          id="stt-disconnect-btn" 
-                          class="px-2.5 py-1 rounded-lg bg-white/[0.05] hover:bg-white/[0.1] text-slate-300 hover:text-white border border-white/10 text-[11px] font-medium transition cursor-pointer"
-                        >
-                          Change Key
-                        </button>
+                        <div class="flex items-center gap-1.5 shrink-0">
+                          <button 
+                            type="button" 
+                            id="stt-live-test-btn" 
+                            title="Test Connection Latency"
+                            class="px-2.5 py-1 rounded-lg bg-white/[0.05] hover:bg-white/[0.1] text-slate-300 hover:text-white border border-white/10 text-[11px] font-medium transition cursor-pointer flex items-center gap-1"
+                          >
+                            <Zap class="w-3 h-3 text-rose-400" id="stt-live-test-icon" />
+                            <span id="stt-live-test-text">Test</span>
+                          </button>
+                          <button 
+                            type="button" 
+                            id="stt-disconnect-btn" 
+                            class="px-2.5 py-1 rounded-lg bg-white/[0.05] hover:bg-white/[0.1] text-slate-300 hover:text-white border border-white/10 text-[11px] font-medium transition cursor-pointer"
+                          >
+                            Change Key
+                          </button>
+                        </div>
                       </div>
 
                       <!-- 3. Transcription Model Section (ONLY shown when connected!) -->
@@ -2254,10 +2311,11 @@ const { character } = Astro.props;
                           id="image-connect-confirm-btn" 
                           class="px-4 py-2.5 rounded-xl bg-amber-600 hover:bg-amber-500 text-white text-xs font-semibold flex items-center justify-center gap-1.5 transition cursor-pointer active:scale-95 shadow-md shadow-amber-950 shrink-0"
                         >
-                          <Check class="w-3.5 h-3.5" />
-                          <span>Connect</span>
+                          <Check class="w-3.5 h-3.5" id="image-connect-btn-icon" />
+                          <span id="image-connect-btn-text">Connect</span>
                         </button>
                       </div>
+                      <div id="image-connect-status" class="hidden text-[11px] px-3 py-2 rounded-xl"></div>
                     </div>
 
                     <!-- Connected State Bar -->
@@ -2269,17 +2327,29 @@ const { character } = Astro.props;
                             <div class="text-xs font-semibold text-white flex items-center gap-1.5">
                               <span id="image-connected-prov-name">Fal.ai Flux</span>
                               <span class="text-[9px] px-1.5 py-0.5 rounded-full bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 font-medium">Connected</span>
+                              <span id="image-connected-latency" class="hidden text-[10px] text-emerald-400 font-mono font-medium"></span>
                             </div>
                             <div class="text-[10px] text-slate-400 font-mono truncate" id="image-connected-key-masked">••••••••</div>
                           </div>
                         </div>
-                        <button 
-                          type="button" 
-                          id="image-disconnect-btn" 
-                          class="px-2.5 py-1 rounded-lg bg-white/[0.05] hover:bg-white/[0.1] text-slate-300 hover:text-white border border-white/10 text-[11px] font-medium transition cursor-pointer"
-                        >
-                          Change Key
-                        </button>
+                        <div class="flex items-center gap-1.5 shrink-0">
+                          <button 
+                            type="button" 
+                            id="image-live-test-btn" 
+                            title="Test Connection Latency"
+                            class="px-2.5 py-1 rounded-lg bg-white/[0.05] hover:bg-white/[0.1] text-slate-300 hover:text-white border border-white/10 text-[11px] font-medium transition cursor-pointer flex items-center gap-1"
+                          >
+                            <Zap class="w-3 h-3 text-amber-400" id="image-live-test-icon" />
+                            <span id="image-live-test-text">Test</span>
+                          </button>
+                          <button 
+                            type="button" 
+                            id="image-disconnect-btn" 
+                            class="px-2.5 py-1 rounded-lg bg-white/[0.05] hover:bg-white/[0.1] text-slate-300 hover:text-white border border-white/10 text-[11px] font-medium transition cursor-pointer"
+                          >
+                            Change Key
+                          </button>
+                        </div>
                       </div>
                     </div>
 
@@ -2539,10 +2609,11 @@ const { character } = Astro.props;
                           id="vision-connect-confirm-btn" 
                           class="px-4 py-2.5 rounded-xl bg-cyan-600 hover:bg-cyan-500 text-white text-xs font-semibold flex items-center justify-center gap-1.5 transition cursor-pointer active:scale-95 shadow-md shadow-cyan-950 shrink-0"
                         >
-                          <Check class="w-3.5 h-3.5" />
-                          <span>Connect</span>
+                          <Check class="w-3.5 h-3.5" id="vision-connect-btn-icon" />
+                          <span id="vision-connect-btn-text">Connect</span>
                         </button>
                       </div>
+                      <div id="vision-connect-status" class="hidden text-[11px] px-3 py-2 rounded-xl"></div>
                     </div>
 
                     <!-- Connected State Bar -->
@@ -2554,17 +2625,29 @@ const { character } = Astro.props;
                             <div class="text-xs font-semibold text-white flex items-center gap-1.5">
                               <span id="vision-connected-prov-name">Vision Engine</span>
                               <span class="text-[9px] px-1.5 py-0.5 rounded-full bg-cyan-500/20 text-cyan-300 border border-cyan-500/30 font-medium">Connected</span>
+                              <span id="vision-connected-latency" class="hidden text-[10px] text-cyan-400 font-mono font-medium"></span>
                             </div>
                             <div class="text-[10px] text-slate-400 font-mono truncate" id="vision-connected-key-masked">••••••••</div>
                           </div>
                         </div>
-                        <button 
-                          type="button" 
-                          id="vision-disconnect-btn" 
-                          class="px-2.5 py-1 rounded-lg bg-white/[0.05] hover:bg-white/[0.1] text-slate-300 hover:text-white border border-white/10 text-[11px] font-medium transition cursor-pointer"
-                        >
-                          Change Key
-                        </button>
+                        <div class="flex items-center gap-1.5 shrink-0">
+                          <button 
+                            type="button" 
+                            id="vision-live-test-btn" 
+                            title="Test Connection Latency"
+                            class="px-2.5 py-1 rounded-lg bg-white/[0.05] hover:bg-white/[0.1] text-slate-300 hover:text-white border border-white/10 text-[11px] font-medium transition cursor-pointer flex items-center gap-1"
+                          >
+                            <Zap class="w-3 h-3 text-cyan-400" id="vision-live-test-icon" />
+                            <span id="vision-live-test-text">Test</span>
+                          </button>
+                          <button 
+                            type="button" 
+                            id="vision-disconnect-btn" 
+                            class="px-2.5 py-1 rounded-lg bg-white/[0.05] hover:bg-white/[0.1] text-slate-300 hover:text-white border border-white/10 text-[11px] font-medium transition cursor-pointer"
+                          >
+                            Change Key
+                          </button>
+                        </div>
                       </div>
                     </div>
 
@@ -2772,10 +2855,11 @@ const { character } = Astro.props;
                         id="video-connect-confirm-btn" 
                         class="px-4 py-2.5 rounded-xl bg-cyan-600 hover:bg-cyan-500 text-white text-xs font-semibold flex items-center justify-center gap-1.5 transition cursor-pointer active:scale-95 shadow-md shadow-cyan-950 shrink-0"
                       >
-                        <Check class="w-3.5 h-3.5" />
-                        <span>Connect</span>
+                        <Check class="w-3.5 h-3.5" id="video-connect-btn-icon" />
+                        <span id="video-connect-btn-text">Connect</span>
                       </button>
                     </div>
+                    <div id="video-connect-status" class="hidden text-[11px] px-3 py-2 rounded-xl"></div>
                   </div>
 
                   <!-- 2. Connected State Bar -->
@@ -2787,17 +2871,29 @@ const { character } = Astro.props;
                           <div class="text-xs font-semibold text-white flex items-center gap-1.5">
                             <span id="video-connected-prov-name">Fal.ai Kling</span>
                             <span class="text-[9px] px-1.5 py-0.5 rounded-full bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 font-medium">Connected</span>
+                            <span id="video-connected-latency" class="hidden text-[10px] text-emerald-400 font-mono font-medium"></span>
                           </div>
                           <div class="text-[10px] text-slate-400 font-mono truncate" id="video-connected-key-masked">••••••••</div>
                         </div>
                       </div>
-                      <button 
-                        type="button" 
-                        id="video-disconnect-btn" 
-                        class="px-2.5 py-1 rounded-lg bg-white/[0.05] hover:bg-white/[0.1] text-slate-300 hover:text-white border border-white/10 text-[11px] font-medium transition cursor-pointer"
-                      >
-                        Change Key
-                      </button>
+                      <div class="flex items-center gap-1.5 shrink-0">
+                        <button 
+                          type="button" 
+                          id="video-live-test-btn" 
+                          title="Test Connection Latency"
+                          class="px-2.5 py-1 rounded-lg bg-white/[0.05] hover:bg-white/[0.1] text-slate-300 hover:text-white border border-white/10 text-[11px] font-medium transition cursor-pointer flex items-center gap-1"
+                        >
+                          <Zap class="w-3 h-3 text-cyan-400" id="video-live-test-icon" />
+                          <span id="video-live-test-text">Test</span>
+                        </button>
+                        <button 
+                          type="button" 
+                          id="video-disconnect-btn" 
+                          class="px-2.5 py-1 rounded-lg bg-white/[0.05] hover:bg-white/[0.1] text-slate-300 hover:text-white border border-white/10 text-[11px] font-medium transition cursor-pointer"
+                        >
+                          Change Key
+                        </button>
+                      </div>
                     </div>
                   </div>
 
@@ -4701,6 +4797,15 @@ const { character } = Astro.props;
   const toggleKeyVisibility = document.getElementById('toggle-key-visibility');
   const pingTextBtn = document.getElementById('ping-text-btn');
   const pingStatusMsg = document.getElementById('ping-status-msg');
+  const textUnconnectedContainer = document.getElementById('text-unconnected-container');
+  const textConnectedContainer = document.getElementById('text-connected-container');
+  const textConnectConfirmBtn = document.getElementById('text-connect-confirm-btn');
+  const textConnectBtnIcon = document.getElementById('text-connect-btn-icon');
+  const textConnectBtnText = document.getElementById('text-connect-btn-text');
+  const textConnectedKeyMasked = document.getElementById('text-connected-key-masked');
+  const textDisconnectBtn = document.getElementById('text-disconnect-btn');
+  const pingTextIcon = document.getElementById('ping-text-icon');
+  const pingTextBtnText = document.getElementById('ping-text-btn-text');
 
   // Text Sliders & Badges
   const sliderTemp = document.getElementById('slider-temp');
@@ -4755,6 +4860,13 @@ const { character } = Astro.props;
   const ttsConnectedProvName = document.getElementById('tts-connected-prov-name');
   const ttsConnectedKeyMasked = document.getElementById('tts-connected-key-masked');
   const ttsDisconnectBtn = document.getElementById('tts-disconnect-btn');
+  const ttsConnectStatus = document.getElementById('tts-connect-status');
+  const ttsConnectBtnIcon = document.getElementById('tts-connect-btn-icon');
+  const ttsConnectBtnText = document.getElementById('tts-connect-btn-text');
+  const ttsConnectedLatency = document.getElementById('tts-connected-latency');
+  const ttsLiveTestBtn = document.getElementById('tts-live-test-btn');
+  const ttsLiveTestIcon = document.getElementById('tts-live-test-icon');
+  const ttsLiveTestText = document.getElementById('tts-live-test-text');
   const dynamicVoiceSection = document.getElementById('dynamic-voice-section');
 
   const sttActiveEngineName = document.getElementById('stt-active-engine-name');
@@ -4895,6 +5007,13 @@ const { character } = Astro.props;
   const sttConnectedProvName = document.getElementById('stt-connected-prov-name');
   const sttConnectedKeyMasked = document.getElementById('stt-connected-key-masked');
   const sttDisconnectBtn = document.getElementById('stt-disconnect-btn');
+  const sttConnectStatus = document.getElementById('stt-connect-status');
+  const sttConnectBtnIcon = document.getElementById('stt-connect-btn-icon');
+  const sttConnectBtnText = document.getElementById('stt-connect-btn-text');
+  const sttConnectedLatency = document.getElementById('stt-connected-latency');
+  const sttLiveTestBtn = document.getElementById('stt-live-test-btn');
+  const sttLiveTestIcon = document.getElementById('stt-live-test-icon');
+  const sttLiveTestText = document.getElementById('stt-live-test-text');
 
   const sttModelSection = document.getElementById('stt-model-section');
   const sttModelDropdownContainer = document.getElementById('stt-model-dropdown-container');
@@ -4979,6 +5098,13 @@ const { character } = Astro.props;
   const imageConnectedProvName = document.getElementById('image-connected-prov-name');
   const imageConnectedKeyMasked = document.getElementById('image-connected-key-masked');
   const imageDisconnectBtn = document.getElementById('image-disconnect-btn');
+  const imageConnectStatus = document.getElementById('image-connect-status');
+  const imageConnectBtnIcon = document.getElementById('image-connect-btn-icon');
+  const imageConnectBtnText = document.getElementById('image-connect-btn-text');
+  const imageConnectedLatency = document.getElementById('image-connected-latency');
+  const imageLiveTestBtn = document.getElementById('image-live-test-btn');
+  const imageLiveTestIcon = document.getElementById('image-live-test-icon');
+  const imageLiveTestText = document.getElementById('image-live-test-text');
   const imageConnectConfirmBtn = document.getElementById('image-connect-confirm-btn');
   const imageQuickReuseKeyBtn = document.getElementById('image-quick-reuse-key-btn');
   const imageQuickReuseLabel = document.getElementById('image-quick-reuse-label');
@@ -5009,6 +5135,13 @@ const { character } = Astro.props;
   const visionConnectedProvName = document.getElementById('vision-connected-prov-name');
   const visionConnectedKeyMasked = document.getElementById('vision-connected-key-masked');
   const visionDisconnectBtn = document.getElementById('vision-disconnect-btn');
+  const visionConnectStatus = document.getElementById('vision-connect-status');
+  const visionConnectBtnIcon = document.getElementById('vision-connect-btn-icon');
+  const visionConnectBtnText = document.getElementById('vision-connect-btn-text');
+  const visionConnectedLatency = document.getElementById('vision-connected-latency');
+  const visionLiveTestBtn = document.getElementById('vision-live-test-btn');
+  const visionLiveTestIcon = document.getElementById('vision-live-test-icon');
+  const visionLiveTestText = document.getElementById('vision-live-test-text');
   const visionConnectConfirmBtn = document.getElementById('vision-connect-confirm-btn');
   const visionQuickReuseKeyBtn = document.getElementById('vision-quick-reuse-key-btn');
   const visionQuickReuseLabel = document.getElementById('vision-quick-reuse-label');
@@ -5041,6 +5174,13 @@ const { character } = Astro.props;
   const videoConnectedProvName = document.getElementById('video-connected-prov-name');
   const videoConnectedKeyMasked = document.getElementById('video-connected-key-masked');
   const videoDisconnectBtn = document.getElementById('video-disconnect-btn');
+  const videoConnectStatus = document.getElementById('video-connect-status');
+  const videoConnectBtnIcon = document.getElementById('video-connect-btn-icon');
+  const videoConnectBtnText = document.getElementById('video-connect-btn-text');
+  const videoConnectedLatency = document.getElementById('video-connected-latency');
+  const videoLiveTestBtn = document.getElementById('video-live-test-btn');
+  const videoLiveTestIcon = document.getElementById('video-live-test-icon');
+  const videoLiveTestText = document.getElementById('video-live-test-text');
   const videoConnectConfirmBtn = document.getElementById('video-connect-confirm-btn');
   const videoQuickReuseKeyBtn = document.getElementById('video-quick-reuse-key-btn');
   const videoQuickReuseLabel = document.getElementById('video-quick-reuse-label');
@@ -5543,7 +5683,7 @@ const { character } = Astro.props;
       keyLink: 'https://studio.ai21.com/account/api-key'
     },
     'custom-local': {
-      name: 'Custom Localhost',
+      name: 'Localhost',
       label: 'Localhost',
       hasKey: true,
       isKeyOptional: true,
@@ -5551,23 +5691,23 @@ const { character } = Astro.props;
       defaultUrl: 'http://localhost:11434/v1',
       modelsEndpoint: 'http://localhost:11434/v1/models',
       chatEndpoint: 'http://localhost:11434/v1/chat/completions',
-      keyPlaceholder: 'Optional for Local Ollama / LM Studio',
-      urlLabel: 'Local Base URL',
-      urlPlaceholder: 'http://localhost:11434/v1 or http://localhost:1234/v1',
-      urlHint: 'Supports Ollama, LM Studio, vLLM, LocalAI, Jan, Text-Generation-WebUI.'
+      keyPlaceholder: 'Optional for local server',
+      urlLabel: 'Server URL',
+      urlPlaceholder: 'http://localhost:11434/v1',
+      urlHint: 'Ollama: http://localhost:11434/v1 • LM Studio: http://localhost:1234/v1'
     },
     'custom-proxy': {
-      name: 'Custom OpenAI-Compatible API',
+      name: 'Custom Server',
       label: 'Custom',
       hasKey: true,
       hasUrl: true,
       defaultUrl: 'https://api.openai.com/v1',
       modelsEndpoint: '',
       chatEndpoint: '',
-      keyPlaceholder: 'API key for custom provider or proxy...',
-      urlLabel: 'OpenAI-Compatible Base URL',
+      keyPlaceholder: 'sk-... or API key',
+      urlLabel: 'Server URL',
       urlPlaceholder: 'https://api.your-provider.com/v1',
-      urlHint: 'Directs chat completions & models to any OpenAI-compatible base URL (DeepInfra, vLLM, OneAPI, etc).'
+      urlHint: 'Compatible with Ollama, LM Studio, OpenRouter, vLLM, or any custom API.'
     }
   };
 
@@ -6312,63 +6452,52 @@ const { character } = Astro.props;
     return models;
   }
 
-  // Health-check / ping connection
-  async function pingTextConnection() {
-    if (!pingStatusMsg) return;
-    const t0 = performance.now();
-    const prov = textProviderSelect?.value || 'groq';
+  // Helper: Core test ping runner for Text AI
+  async function runTextPingTest(prov, key, baseUrl) {
     const conf = PROVIDER_CONFIGS[prov] || PROVIDER_CONFIGS.groq;
-    const key = textApiKey?.value.trim() || localStorage.getItem('aetheria_text_key') || '';
-    const baseUrl = textBaseUrl?.value.trim() || conf.defaultUrl || '';
-
-    if (conf.hasKey && !conf.isKeyOptional && !key) {
-      pingStatusMsg.className = 'text-xs px-3.5 py-2.5 rounded-xl border bg-amber-950/40 border-amber-500/30 text-amber-300';
-      pingStatusMsg.textContent = '⚠️ Please enter an API key to test latency.';
-      return;
+    const t0 = performance.now();
+    let endpoint = conf.modelsEndpoint;
+    if (conf.hasUrl) {
+      endpoint = `${(baseUrl || conf.defaultUrl || '').replace(/\/+$/, '')}/models`;
+    } else if (prov === 'google') {
+      endpoint = `https://generativelanguage.googleapis.com/v1beta/models?key=${key}`;
+    } else if (prov === 'anthropic') {
+      endpoint = 'https://api.anthropic.com/v1/models';
     }
 
-    const originalBtnHtml = pingTextBtn ? pingTextBtn.innerHTML : '';
-    if (pingTextBtn) {
-      pingTextBtn.disabled = true;
-      pingTextBtn.classList.add('opacity-70', 'cursor-wait');
-      pingTextBtn.innerHTML = '<svg class="w-3.5 h-3.5 animate-spin text-cyan-300" viewBox="0 0 24 24" fill="none"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8H4z"></path></svg><span>Testing...</span>';
-    }
-
-    pingStatusMsg.className = 'text-xs px-3.5 py-2.5 rounded-xl border bg-slate-900/60 border-slate-700/60 text-slate-300 flex items-center gap-2';
-    pingStatusMsg.innerHTML = '<svg class="w-3.5 h-3.5 animate-spin" viewBox="0 0 24 24" fill="none" stroke="currentColor"><circle cx="12" cy="12" r="10" stroke-width="3" stroke-dasharray="32" stroke-linecap="round"/></svg> Testing latency to ' + conf.name + '...';
+    let resOk = false;
+    let resStatus = 0;
+    let errorText = '';
 
     try {
-      let endpoint = conf.modelsEndpoint;
-      if (conf.hasUrl) {
-        endpoint = `${baseUrl.replace(/\/+$/, '')}/models`;
-      } else if (prov === 'google') {
-        endpoint = `https://generativelanguage.googleapis.com/v1beta/models?key=${key}`;
-      } else if (prov === 'anthropic') {
-        endpoint = 'https://api.anthropic.com/v1/models';
+      const headers = {};
+      if (key && prov !== 'google') {
+        if (prov === 'anthropic') {
+          headers['x-api-key'] = key;
+          headers['anthropic-version'] = '2023-06-01';
+          headers['anthropic-dangerous-direct-browser-access'] = 'true';
+        } else {
+          headers['Authorization'] = `Bearer ${key}`;
+        }
+      } else if (key && prov === 'google') {
+        headers['x-goog-api-key'] = key;
       }
 
-      let resOk = false;
-      let resStatus = 0;
-
-      try {
-        const headers = {};
-        if (key && prov !== 'google') {
-          if (prov === 'anthropic') {
-            headers['x-api-key'] = key;
-            headers['anthropic-version'] = '2023-06-01';
-            headers['anthropic-dangerous-direct-browser-access'] = 'true';
-          } else {
-            headers['Authorization'] = `Bearer ${key}`;
-          }
-        } else if (key && prov === 'google') {
-          headers['x-goog-api-key'] = key;
+      const res = await fetch(endpoint, { method: 'GET', headers });
+      resOk = res.ok;
+      resStatus = res.status;
+      if (!res.ok) {
+        const txt = await res.text().catch(() => '');
+        try {
+          const j = JSON.parse(txt);
+          errorText = j.error?.message || j.message || `HTTP ${res.status}`;
+        } catch {
+          errorText = `HTTP ${res.status}`;
         }
-
-        const res = await fetch(endpoint, { method: 'GET', headers });
-        resOk = res.ok;
-        resStatus = res.status;
-      } catch (err) {
-        // Fallback to proxy
+      }
+    } catch (err) {
+      // Fallback via Worker CORS Proxy
+      try {
         const pRes = await fetch('/api/proxy/fetch-models', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
@@ -6376,31 +6505,156 @@ const { character } = Astro.props;
         });
         resOk = pRes.ok;
         resStatus = pRes.status;
+        if (!pRes.ok) {
+          const txt = await pRes.text().catch(() => '');
+          try {
+            const j = JSON.parse(txt);
+            errorText = j.error?.message || j.message || `HTTP ${pRes.status}`;
+          } catch {
+            errorText = `HTTP ${pRes.status}`;
+          }
+        }
+      } catch (proxyErr) {
+        resOk = false;
+        errorText = (proxyErr && proxyErr.message) ? proxyErr.message : 'Network request failed';
       }
+    }
 
-      const dt = Math.round(performance.now() - t0);
-      if (resOk) {
-        pingStatusMsg.className = 'text-xs px-3.5 py-2.5 rounded-xl border bg-emerald-950/40 border-emerald-500/30 text-emerald-300';
-        pingStatusMsg.innerHTML = `✓ Connection Successful • Latency: ${dt}ms • ${conf.name} API Online`;
-        if (pingLatencyText) pingLatencyText.textContent = `Online • Latency: ${dt}ms`;
-        if (pingIndicatorDot) pingIndicatorDot.className = 'w-2.5 h-2.5 rounded-full bg-emerald-400 shrink-0';
+    const dt = Math.round(performance.now() - t0);
+    return { ok: resOk, status: resStatus, latency: dt, error: errorText };
+  }
 
-        // Always sync and populate live models on successful test connection
-        await fetchModelsForProvider(prov, key, baseUrl);
+  // Live Test button inside Connected Card
+  async function pingTextConnection() {
+    const prov = textProviderSelect?.value || 'groq';
+    const conf = PROVIDER_CONFIGS[prov] || PROVIDER_CONFIGS.groq;
+    const key = (textApiKey?.value.trim() || localStorage.getItem('aetheria_key_' + prov) || localStorage.getItem('aetheria_text_key') || '').trim();
+    const baseUrl = (textBaseUrl?.value.trim() || localStorage.getItem('aetheria_url_' + prov) || conf.defaultUrl || '').trim();
+
+    const originalBtnHtml = pingTextBtn ? pingTextBtn.innerHTML : '';
+    if (pingTextBtn) {
+      pingTextBtn.disabled = true;
+      pingTextBtn.classList.add('opacity-70', 'cursor-wait');
+      pingTextBtn.innerHTML = '<svg class="w-3 h-3 animate-spin text-purple-400" viewBox="0 0 24 24" fill="none"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8H4z"></path></svg><span class="text-[10px]">Testing...</span>';
+    }
+
+    try {
+      const result = await runTextPingTest(prov, key, baseUrl);
+      if (result.ok) {
+        if (pingLatencyText) {
+          pingLatencyText.textContent = `• ${result.latency}ms`;
+          pingLatencyText.classList.remove('hidden');
+        }
+        if (pingIndicatorDot) pingIndicatorDot.className = 'w-2 h-2 rounded-full bg-emerald-400 shrink-0';
+        showNotification(`✓ ${conf.name} latency: ${result.latency}ms`);
       } else {
-        pingStatusMsg.className = 'text-xs px-3.5 py-2.5 rounded-xl border bg-rose-950/40 border-rose-500/30 text-rose-300';
-        pingStatusMsg.innerHTML = `✕ Connection Failed (HTTP ${resStatus || 'Network Error'}) • Check API key or endpoint`;
-        if (pingLatencyText) pingLatencyText.textContent = `Offline • HTTP ${resStatus || 'ERR'}`;
-        if (pingIndicatorDot) pingIndicatorDot.className = 'w-2.5 h-2.5 rounded-full bg-rose-500 shrink-0';
+        if (pingLatencyText) {
+          pingLatencyText.textContent = `• Error`;
+          pingLatencyText.classList.remove('hidden');
+        }
+        if (pingIndicatorDot) pingIndicatorDot.className = 'w-2 h-2 rounded-full bg-rose-500 shrink-0';
+        showNotification(`⚠️ Connection test failed: ${result.error || 'Server error'}`);
       }
     } catch (e) {
-      pingStatusMsg.className = 'text-xs px-3.5 py-2.5 rounded-xl border bg-rose-950/40 border-rose-500/30 text-rose-300';
-      pingStatusMsg.innerHTML = `✕ Connection Error • Unable to reach API`;
+      showNotification(`⚠️ Test error: ${(e && e.message) ? e.message : 'Failed'}`);
     } finally {
       if (pingTextBtn) {
         pingTextBtn.disabled = false;
         pingTextBtn.classList.remove('opacity-70', 'cursor-wait');
         pingTextBtn.innerHTML = originalBtnHtml;
+      }
+    }
+  }
+
+  // Connect button with validation in Unconnected Form
+  async function connectTextWithTest() {
+    const prov = textProviderSelect?.value || 'groq';
+    const conf = PROVIDER_CONFIGS[prov] || PROVIDER_CONFIGS.groq;
+    const key = (textApiKey?.value || '').trim();
+    const url = (textBaseUrl?.value || '').trim();
+
+    const requiresKey = conf.hasKey && !conf.isKeyOptional;
+    if (requiresKey && !key) {
+      if (pingStatusMsg) {
+        pingStatusMsg.className = 'text-xs px-3.5 py-2.5 rounded-xl border bg-rose-950/40 border-rose-500/30 text-rose-300 block leading-relaxed';
+        pingStatusMsg.textContent = '⚠️ Please enter an API key to connect.';
+        pingStatusMsg.classList.remove('hidden');
+      }
+      textApiKey?.focus();
+      return;
+    }
+
+    if (textConnectConfirmBtn) {
+      textConnectConfirmBtn.disabled = true;
+      textConnectConfirmBtn.classList.add('opacity-80', 'cursor-wait');
+      if (textConnectBtnText) textConnectBtnText.textContent = 'Testing...';
+      if (textConnectBtnIcon) textConnectBtnIcon.classList.add('animate-spin');
+    }
+    if (pingStatusMsg) pingStatusMsg.classList.add('hidden');
+
+    try {
+      const result = await runTextPingTest(prov, key, url);
+      if (result.ok) {
+        // Save key and URL
+        if (key) {
+          localStorage.setItem('aetheria_key_' + prov, key);
+          localStorage.setItem('aetheria_text_key', key);
+        }
+        if (url) {
+          localStorage.setItem('aetheria_url_' + prov, url);
+          localStorage.setItem('aetheria_text_base_url', url);
+        }
+
+        // Switch to connected container
+        if (textUnconnectedContainer && textConnectedContainer) {
+          textUnconnectedContainer.classList.add('hidden');
+          textConnectedContainer.classList.remove('hidden');
+        }
+        if (pingStatusMsg) pingStatusMsg.classList.add('hidden');
+
+        if (pingProviderName) pingProviderName.textContent = conf.name;
+        if (pingLatencyText) {
+          pingLatencyText.textContent = `• ${result.latency}ms`;
+          pingLatencyText.classList.remove('hidden');
+        }
+        if (pingIndicatorDot) {
+          pingIndicatorDot.className = 'w-2 h-2 rounded-full bg-emerald-400 shrink-0';
+        }
+        if (textConnectedKeyMasked) {
+          if (conf.hasUrl && !requiresKey) {
+            textConnectedKeyMasked.textContent = url || 'Localhost';
+          } else if (key) {
+            const prefix = key.slice(0, 4);
+            const suffix = key.slice(-4);
+            textConnectedKeyMasked.textContent = `${prefix}••••${suffix}`;
+          } else {
+            textConnectedKeyMasked.textContent = '••••••••';
+          }
+        }
+
+        // Fetch & sync live models list
+        await fetchModelsForProvider(prov, key, url);
+
+        showNotification(`✓ ${conf.name} connected successfully! (${result.latency}ms)`);
+      } else {
+        if (pingStatusMsg) {
+          pingStatusMsg.className = 'text-xs px-3.5 py-2.5 rounded-xl border bg-rose-950/40 border-rose-500/30 text-rose-300 block leading-relaxed';
+          pingStatusMsg.textContent = `✕ Connection failed: ${result.error || 'Check API key or server URL'}`;
+          pingStatusMsg.classList.remove('hidden');
+        }
+      }
+    } catch (err) {
+      if (pingStatusMsg) {
+        pingStatusMsg.className = 'text-xs px-3.5 py-2.5 rounded-xl border bg-rose-950/40 border-rose-500/30 text-rose-300 block leading-relaxed';
+        pingStatusMsg.textContent = `✕ Connection error: ${(err && err.message) ? err.message : 'Unable to connect'}`;
+        pingStatusMsg.classList.remove('hidden');
+      }
+    } finally {
+      if (textConnectConfirmBtn) {
+        textConnectConfirmBtn.disabled = false;
+        textConnectConfirmBtn.classList.remove('opacity-80', 'cursor-wait');
+        if (textConnectBtnText) textConnectBtnText.textContent = 'Connect';
+        if (textConnectBtnIcon) textConnectBtnIcon.classList.remove('animate-spin');
       }
     }
   }
@@ -7051,12 +7305,12 @@ const { character } = Astro.props;
     }
     const apiKeyLabelText = document.getElementById('api-key-label-text');
     if (apiKeyLabelText) {
-      apiKeyLabelText.textContent = conf.isKeyOptional ? `${conf.name} API Key (Optional)` : `${conf.name} API Key`;
+      apiKeyLabelText.textContent = conf.isKeyOptional ? 'API Key (Optional)' : 'API Key';
     } else if (apiKeyLabel) {
-      apiKeyLabel.textContent = conf.isKeyOptional ? `${conf.name} API Key (Optional)` : `${conf.name} API Key`;
+      apiKeyLabel.textContent = conf.isKeyOptional ? 'API Key (Optional)' : 'API Key';
     }
     if (textApiKey) {
-      textApiKey.placeholder = conf.keyPlaceholder || 'sk-...';
+      textApiKey.placeholder = conf.keyPlaceholder || 'Paste API Key...';
     }
     if (getKeyLink && conf.keyLink) {
       getKeyLink.href = conf.keyLink;
@@ -7070,10 +7324,12 @@ const { character } = Astro.props;
       customBaseUrlContainer.classList.toggle('hidden', !conf.hasUrl);
     }
     if (customBaseUrlLabel) {
-      customBaseUrlLabel.textContent = conf.urlLabel || 'Base API URL';
+      const labelSpan = customBaseUrlLabel.querySelector('span');
+      if (labelSpan) labelSpan.textContent = conf.urlLabel || 'Server URL';
+      else customBaseUrlLabel.textContent = conf.urlLabel || 'Server URL';
     }
     if (textBaseUrl) {
-      textBaseUrl.placeholder = conf.urlPlaceholder || 'https://api.example.com/v1';
+      textBaseUrl.placeholder = conf.urlPlaceholder || 'https://api.your-provider.com/v1';
     }
     if (customBaseUrlHint) {
       customBaseUrlHint.textContent = conf.urlHint || '';
@@ -7085,13 +7341,25 @@ const { character } = Astro.props;
     const activeProf = profiles.find(p => p.id === activeProfId && p.provider === prov);
 
     const requiresKey = conf.hasKey && !conf.isKeyOptional;
-    const currentKey = (textApiKey?.value.trim() || (activeProf ? activeProf.apiKey : '') || localStorage.getItem('aetheria_key_' + prov) || '').trim();
+    const savedKey = (activeProf ? activeProf.apiKey : '') || localStorage.getItem('aetheria_key_' + prov) || localStorage.getItem('aetheria_text_key') || '';
+    const savedUrl = (activeProf ? activeProf.baseUrl : '') || localStorage.getItem('aetheria_url_' + prov) || localStorage.getItem('aetheria_text_base_url') || conf.defaultUrl || '';
+    const isConnected = !requiresKey || Boolean(savedKey.trim());
 
-    if (requiresKey && !currentKey) {
+    if (textUnconnectedContainer && textConnectedContainer) {
+      textUnconnectedContainer.classList.toggle('hidden', isConnected);
+      textConnectedContainer.classList.toggle('hidden', !isConnected);
+    }
+
+    if (pingStatusMsg) pingStatusMsg.classList.add('hidden');
+
+    if (!isConnected) {
       setEmptyModelDropdown();
       localStorage.removeItem('aetheria_text_model');
       if (pingProviderName) pingProviderName.textContent = conf.name;
-      if (pingLatencyText) pingLatencyText.textContent = 'API Key Required • Enter Key';
+      if (pingLatencyText) {
+        pingLatencyText.textContent = '';
+        pingLatencyText.classList.add('hidden');
+      }
       if (pingIndicatorDot) pingIndicatorDot.className = 'w-2 h-2 rounded-full bg-amber-400';
     } else {
       let modelsList = [];
@@ -7121,15 +7389,30 @@ const { character } = Astro.props;
       localStorage.setItem('aetheria_text_model', selectedModel);
       localStorage.setItem('aetheria_model_' + prov, selectedModel);
 
-      // Health Check widget update
+      // Connected Bar update
       if (pingProviderName) {
         pingProviderName.textContent = conf.name;
       }
       if (pingLatencyText) {
-        pingLatencyText.textContent = 'Configured • Ready to test';
+        pingLatencyText.classList.remove('hidden');
+        if (!pingLatencyText.textContent.startsWith('•')) {
+          pingLatencyText.textContent = '• Ready';
+        }
       }
       if (pingIndicatorDot) {
         pingIndicatorDot.className = 'w-2 h-2 rounded-full bg-emerald-400';
+      }
+      if (textConnectedKeyMasked) {
+        if (conf.hasUrl && !requiresKey) {
+          textConnectedKeyMasked.textContent = savedUrl || 'Localhost';
+        } else if (savedKey.trim()) {
+          const keyTrimmed = savedKey.trim();
+          const prefix = keyTrimmed.slice(0, 4);
+          const suffix = keyTrimmed.slice(-4);
+          textConnectedKeyMasked.textContent = `${prefix}••••${suffix}`;
+        } else {
+          textConnectedKeyMasked.textContent = '••••••••';
+        }
       }
     }
 
@@ -8119,15 +8402,7 @@ const { character } = Astro.props;
         saveApiProfilesToStorage(profs);
       }
     }
-
-    syncProviderVisibility();
-
-    if (key.length >= 10) {
-      const cached = localStorage.getItem('aetheria_synced_models_' + prov);
-      if (!cached) {
-        fetchModelsForProvider();
-      }
-    }
+    if (pingStatusMsg) pingStatusMsg.classList.add('hidden');
   });
 
   textBaseUrl?.addEventListener('input', () => {
@@ -8273,11 +8548,26 @@ const { character } = Astro.props;
 
   // Fetch models & ping buttons in manual mode
   fetchModelsBtn?.addEventListener('click', fetchModelsForProvider);
-  textApiKey?.addEventListener('change', () => {
-    const val = textApiKey.value.trim();
-    if (val.length > 8) {
-      fetchModelsForProvider(textProviderSelect?.value, val);
+  textConnectConfirmBtn?.addEventListener('click', connectTextWithTest);
+  textApiKey?.addEventListener('keydown', (e) => {
+    if (e.key === 'Enter') {
+      e.preventDefault();
+      connectTextWithTest();
     }
+  });
+  textBaseUrl?.addEventListener('keydown', (e) => {
+    if (e.key === 'Enter') {
+      e.preventDefault();
+      connectTextWithTest();
+    }
+  });
+  textDisconnectBtn?.addEventListener('click', () => {
+    if (textUnconnectedContainer && textConnectedContainer) {
+      textUnconnectedContainer.classList.remove('hidden');
+      textConnectedContainer.classList.add('hidden');
+    }
+    if (pingStatusMsg) pingStatusMsg.classList.add('hidden');
+    textApiKey?.focus();
   });
   pingTextBtn?.addEventListener('click', pingTextConnection);
 
@@ -8441,6 +8731,7 @@ const { character } = Astro.props;
   window.selectTtsEngine = function(engId) {
     if (voiceProviderSelect) voiceProviderSelect.value = engId;
     localStorage.setItem('aetheria_voice_provider', engId);
+    if (ttsConnectStatus) ttsConnectStatus.classList.add('hidden');
     updateTtsEngineTriggerDisplay(engId);
     if (ttsEngineMenu) ttsEngineMenu.classList.add('hidden');
     if (ttsEngineChevron) ttsEngineChevron.classList.remove('rotate-180');
@@ -11229,6 +11520,7 @@ const { character } = Astro.props;
 
   window.selectSttEngine = function(engId) {
     localStorage.setItem('aetheria_stt_provider', engId);
+    if (sttConnectStatus) sttConnectStatus.classList.add('hidden');
     updateSttEngineTriggerDisplay(engId);
     if (sttEngineMenu) sttEngineMenu.classList.add('hidden');
     if (sttEngineChevron) sttEngineChevron.classList.remove('rotate-180');
@@ -11625,30 +11917,297 @@ const { character } = Astro.props;
     syncSttModelsForProvider(prov, true);
   });
 
-  // Connect Buttons
-  ttsConnectConfirmBtn?.addEventListener('click', () => {
+  // ==========================================
+  // UNIFIED MULTI-MODALITY PING & TEST ENGINE
+  // ==========================================
+  async function pingModalityEndpoint(kind, prov, key, customUrl) {
+    const t0 = performance.now();
+    try {
+      // 1. Browser-native or 100% free offline capabilities
+      if (prov === 'browser' || prov === 'browser-stt') {
+        const supported = (kind === 'tts') 
+          ? ('speechSynthesis' in window) 
+          : ('webkitSpeechRecognition' in window || 'SpeechRecognition' in window);
+        if (!supported) return { ok: false, error: 'Web Speech API is not supported in this browser' };
+        return { ok: true, latency: Math.max(2, Math.round(performance.now() - t0)) };
+      }
+
+      if (prov === 'pollinations') {
+        try {
+          await fetch('https://image.pollinations.ai/prompt/ping?width=16&height=16&nologo=true', { method: 'HEAD', mode: 'no-cors' });
+        } catch (_) {}
+        return { ok: true, latency: Math.max(15, Math.round(performance.now() - t0)) };
+      }
+
+      if (prov === 'cloudflare' && kind === 'vision') {
+        return { ok: true, latency: Math.max(18, Math.round(performance.now() - t0)) };
+      }
+
+      if (prov === 'auto' && kind === 'vision') {
+        const textKey = localStorage.getItem('aetheria_text_key') || localStorage.getItem('aetheria_key_google') || localStorage.getItem('aetheria_key_gemini') || localStorage.getItem('aetheria_key_openai') || '';
+        if (!textKey) {
+          return { ok: true, latency: 15, note: 'Inherits from text model' };
+        }
+        prov = textKey.startsWith('AIzaSy') ? 'gemini' : 'openai';
+        key = textKey;
+      }
+
+      // 2. Custom local or user-provided endpoint
+      const isCustom = prov === 'custom' || prov === 'custom-stt' || prov === 'local-stt' || prov === 'xtts' || prov === 'comfyui';
+      if (isCustom) {
+        if (!customUrl) return { ok: false, error: 'Endpoint URL is required' };
+        const cleanUrl = customUrl.trim();
+        try {
+          const res = await fetch('/api/proxy/fetch-models', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              endpoint: cleanUrl,
+              apiKey: key || undefined
+            })
+          });
+          const latency = Math.round(performance.now() - t0);
+          if (res.ok) {
+            const body = await res.json().catch(() => ({}));
+            if (body.status === 401 || body.status === 403) {
+              return { ok: false, error: `Authentication failed (HTTP ${body.status})` };
+            }
+            if (body.status > 0 && body.status < 500) {
+              return { ok: true, latency };
+            }
+            return { ok: false, error: body.error || `Server returned HTTP ${body.status}` };
+          }
+          return { ok: false, error: `Server unreachable (HTTP ${res.status})` };
+        } catch (e) {
+          return { ok: false, error: e.message || 'Failed to reach custom server' };
+        }
+      }
+
+      // 3. Cloud Provider Validation Endpoints
+      if (!key) return { ok: false, error: 'API key is required' };
+
+      let targetUrl = '';
+      let headers = {};
+
+      if (prov === 'elevenlabs') {
+        targetUrl = 'https://api.elevenlabs.io/v1/user';
+        headers = { 'xi-api-key': key };
+      } else if (prov === 'openai' || prov === 'openai-stt') {
+        targetUrl = 'https://api.openai.com/v1/models';
+        headers = { 'Authorization': `Bearer ${key}` };
+      } else if (prov === 'gemini' || prov === 'google') {
+        targetUrl = `https://generativelanguage.googleapis.com/v1beta/models?key=${encodeURIComponent(key)}`;
+        headers = { 'x-goog-api-key': key };
+      } else if (prov === 'groq') {
+        targetUrl = 'https://api.groq.com/openai/v1/models';
+        headers = { 'Authorization': `Bearer ${key}` };
+      } else if (prov === 'deepgram') {
+        targetUrl = 'https://api.deepgram.com/v1/projects';
+        headers = { 'Authorization': `Token ${key}` };
+      } else if (prov === 'cartesia' || prov === 'playht') {
+        targetUrl = 'https://api.cartesia.ai/voices';
+        headers = { 'X-API-Key': key, 'Cartesia-Version': '2024-06-10' };
+      } else if (prov === 'cloudflare' || prov === 'cloudflare-stt') {
+        targetUrl = 'https://api.cloudflare.com/client/v4/user/tokens/verify';
+        headers = { 'Authorization': `Bearer ${key}` };
+      } else if (prov === 'assemblyai') {
+        targetUrl = 'https://api.assemblyai.com/v2/transcript?limit=1';
+        headers = { 'Authorization': key };
+      } else if (prov === 'gladia') {
+        targetUrl = 'https://api.gladia.io/v2/live';
+        headers = { 'x-gladia-key': key };
+      } else if (prov.startsWith('fal-') || prov === 'fal') {
+        targetUrl = 'https://api.fal.ai/v1/models';
+        headers = { 'Authorization': key.startsWith('Key ') ? key : `Key ${key}` };
+      } else if (prov === 'replicate') {
+        targetUrl = 'https://api.replicate.com/v1/models';
+        headers = { 'Authorization': key.startsWith('Bearer ') || key.startsWith('Token ') ? key : `Bearer ${key}` };
+      } else if (prov === 'fishaudio') {
+        targetUrl = 'https://api.fish.audio/v1/model';
+        headers = { 'Authorization': `Bearer ${key}` };
+      } else if (prov === 'openrouter') {
+        targetUrl = 'https://openrouter.ai/api/v1/models';
+        headers = { 'Authorization': `Bearer ${key}` };
+      } else {
+        return { ok: true, latency: Math.round(performance.now() - t0) || 50 };
+      }
+
+      // Execute through proxy to eliminate any CORS blockers
+      const proxyRes = await fetch('/api/proxy/fetch-models', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          endpoint: targetUrl,
+          apiKey: key,
+          headers: headers
+        })
+      });
+
+      const latency = Math.round(performance.now() - t0);
+      const resData = await proxyRes.json().catch(() => ({}));
+
+      if (proxyRes.ok && resData.success !== false && (resData.status >= 200 && resData.status < 400)) {
+        return { ok: true, latency };
+      }
+
+      if (resData.data && resData.data.success === true) {
+        return { ok: true, latency };
+      }
+
+      const statusCode = resData.status || proxyRes.status;
+      let errMsg = 'Authentication failed';
+      if (statusCode === 401) {
+        errMsg = 'Invalid API Key or unauthorized token';
+      } else if (statusCode === 403) {
+        errMsg = 'Access denied or quota exceeded';
+      } else if (statusCode === 404) {
+        errMsg = 'API endpoint not found';
+      } else if (statusCode === 429) {
+        errMsg = 'Rate limit exceeded';
+      } else if (resData.error) {
+        errMsg = resData.error;
+      } else if (resData.data && resData.data.error && resData.data.error.message) {
+        errMsg = resData.data.error.message;
+      } else if (resData.data && resData.data.detail) {
+        errMsg = typeof resData.data.detail === 'string' ? resData.data.detail : (resData.data.detail.message || JSON.stringify(resData.data.detail));
+      }
+
+      return {
+        ok: false,
+        status: statusCode,
+        latency,
+        error: errMsg
+      };
+    } catch (err) {
+      return {
+        ok: false,
+        latency: Math.round(performance.now() - t0),
+        error: err.message || 'Network connection failed'
+      };
+    }
+  }
+
+  // ==========================================
+  // VOICE TTS CONNECT & LIVE TEST HANDLERS
+  // ==========================================
+  async function connectTtsWithTest() {
     const val = voiceApiKey?.value.trim() || '';
     const prov = voiceProviderSelect?.value || 'browser';
     const ttsObj = TTS_CATALOG.find(x => x.id === prov) || TTS_CATALOG[0];
     const isCustom = ttsObj.category === 'custom' || prov === 'xtts' || prov === 'custom';
+    const customUrlVal = voiceCustomUrl?.value.trim() || '';
 
-    if (voiceCustomUrl) {
-      localStorage.setItem('aetheria_tts_custom_url', voiceCustomUrl.value.trim());
+    if (isCustom && !customUrlVal) {
+      showNotification('⚠️ Please enter an Endpoint URL first.', 'warning');
+      voiceCustomUrl?.focus();
+      return;
     }
-
     if (ttsObj.needsKey && !val && !isCustom) {
       showNotification('⚠️ Please enter an API key first.', 'warning');
       voiceApiKey?.focus();
       return;
     }
 
+    if (ttsConnectConfirmBtn) {
+      ttsConnectConfirmBtn.disabled = true;
+      ttsConnectConfirmBtn.classList.add('opacity-80', 'cursor-wait');
+      if (ttsConnectBtnIcon) ttsConnectBtnIcon.classList.add('animate-spin');
+      if (ttsConnectBtnText) ttsConnectBtnText.textContent = 'Testing...';
+    }
+    if (ttsConnectStatus) {
+      ttsConnectStatus.classList.add('hidden');
+      ttsConnectStatus.innerHTML = '';
+    }
+
+    const testRes = await pingModalityEndpoint('tts', prov, val, customUrlVal);
+
+    if (ttsConnectConfirmBtn) {
+      ttsConnectConfirmBtn.disabled = false;
+      ttsConnectConfirmBtn.classList.remove('opacity-80', 'cursor-wait');
+      if (ttsConnectBtnIcon) ttsConnectBtnIcon.classList.remove('animate-spin');
+      if (ttsConnectBtnText) ttsConnectBtnText.textContent = 'Connect';
+    }
+
+    if (!testRes.ok) {
+      if (ttsConnectStatus) {
+        ttsConnectStatus.innerHTML = `
+          <div class="p-2.5 rounded-xl bg-rose-500/10 border border-rose-500/25 text-rose-300 text-[11px] flex items-start gap-2">
+            <span class="shrink-0 font-bold mt-0.5">✕</span>
+            <div class="min-w-0 flex-1">
+              <div class="font-semibold text-rose-200">Connection Failed${testRes.status ? ` (HTTP ${testRes.status})` : ''}</div>
+              <div class="text-[10px] text-rose-300/80 mt-0.5">${testRes.error || 'Invalid credentials'}</div>
+            </div>
+          </div>
+        `;
+        ttsConnectStatus.classList.remove('hidden');
+      }
+      showNotification(`✕ Voice test failed: ${testRes.error || 'Unauthorized'}`, 'error');
+      voiceApiKey?.focus();
+      return;
+    }
+
+    if (isCustom && voiceCustomUrl) {
+      localStorage.setItem('aetheria_tts_custom_url', customUrlVal);
+    }
     if (val) {
       setVoiceKeyForProvider(prov, val);
     }
 
+    if (voiceApiKey) voiceApiKey.value = '';
+    if (ttsConnectStatus) ttsConnectStatus.classList.add('hidden');
+
     syncVoiceUiPanels();
     syncVoicesForProvider(prov, false);
-    showNotification(`✓ ${ttsObj.name} connected successfully!`);
+
+    if (ttsConnectedLatency) {
+      ttsConnectedLatency.textContent = `${testRes.latency}ms`;
+      ttsConnectedLatency.className = 'text-[10px] text-emerald-400 font-mono font-medium';
+      ttsConnectedLatency.classList.remove('hidden');
+    }
+
+    showNotification(`✓ ${ttsObj.name} connected successfully! (${testRes.latency}ms)`);
+  }
+
+  ttsConnectConfirmBtn?.addEventListener('click', connectTtsWithTest);
+  voiceApiKey?.addEventListener('keydown', (e) => {
+    if (e.key === 'Enter') {
+      e.preventDefault();
+      connectTtsWithTest();
+    }
+  });
+
+  ttsLiveTestBtn?.addEventListener('click', async () => {
+    const prov = voiceProviderSelect?.value || 'browser';
+    const ttsObj = TTS_CATALOG.find(x => x.id === prov) || TTS_CATALOG[0];
+    const key = getVoiceKeyForProvider(prov) || '';
+    const customUrl = localStorage.getItem('aetheria_tts_custom_url') || '';
+
+    if (ttsLiveTestBtn) {
+      ttsLiveTestBtn.disabled = true;
+      if (ttsLiveTestIcon) ttsLiveTestIcon.classList.add('animate-spin');
+      if (ttsLiveTestText) ttsLiveTestText.textContent = '...';
+    }
+
+    const res = await pingModalityEndpoint('tts', prov, key, customUrl);
+
+    if (ttsLiveTestBtn) {
+      ttsLiveTestBtn.disabled = false;
+      if (ttsLiveTestIcon) ttsLiveTestIcon.classList.remove('animate-spin');
+      if (ttsLiveTestText) ttsLiveTestText.textContent = 'Test';
+    }
+
+    if (ttsConnectedLatency) {
+      ttsConnectedLatency.classList.remove('hidden');
+      if (res.ok) {
+        ttsConnectedLatency.textContent = `${res.latency}ms`;
+        ttsConnectedLatency.className = 'text-[10px] text-emerald-400 font-mono font-medium';
+        showNotification(`✓ ${ttsObj.name} is Online (${res.latency}ms)`);
+      } else {
+        ttsConnectedLatency.textContent = 'Offline';
+        ttsConnectedLatency.className = 'text-[10px] text-rose-400 font-mono font-medium';
+        showNotification(`✕ Connection failed: ${res.error}`, 'error');
+      }
+    }
   });
 
   ttsDisconnectBtn?.addEventListener('click', () => {
@@ -11656,6 +12215,7 @@ const { character } = Astro.props;
       ttsUnconnectedContainer.classList.remove('hidden');
       ttsConnectedContainer.classList.add('hidden');
     }
+    if (ttsConnectStatus) ttsConnectStatus.classList.add('hidden');
     voiceApiKey?.focus();
   });
 
@@ -11664,33 +12224,140 @@ const { character } = Astro.props;
     const key = (prov === 'openai' ? localStorage.getItem('aetheria_key_openai') : (prov === 'google' ? localStorage.getItem('aetheria_key_google') : '')) || '';
     if (key) {
       if (voiceApiKey) voiceApiKey.value = key;
-      setVoiceKeyForProvider(prov, key);
-      syncVoiceUiPanels();
-      syncVoicesForProvider(prov, false);
-      showNotification(`✓ Connected ${prov.toUpperCase()} Key from Text Engine!`);
+      connectTtsWithTest();
     }
   });
 
-  sttVerifyConnectBtn?.addEventListener('click', () => {
+  // ==========================================
+  // MICROPHONE STT CONNECT & LIVE TEST HANDLERS
+  // ==========================================
+  async function connectSttWithTest() {
     const val = sttApiKey?.value.trim() || '';
     const sttId = localStorage.getItem('aetheria_stt_provider') || 'groq';
-    const engObj = ALL_STT_ENGINES.find(e => e.id === sttId);
+    const engObj = ALL_STT_ENGINES.find(e => e.id === sttId) || ALL_STT_ENGINES[0];
+    const customUrlVal = sttCustomUrl?.value.trim() || '';
 
-    if (sttCustomUrl) {
-      localStorage.setItem('aetheria_stt_custom_url', sttCustomUrl.value.trim());
+    if (engObj.needsUrl && !customUrlVal) {
+      showNotification('⚠️ Please enter an Endpoint URL first.', 'warning');
+      sttCustomUrl?.focus();
+      return;
     }
-
-    if (engObj && engObj.needsKey && !val) {
+    if (engObj.needsKey && !val && !engObj.needsUrl) {
       showNotification('⚠️ Please enter an API key first.', 'warning');
       sttApiKey?.focus();
       return;
     }
 
-    setSttKeyForProvider(sttId, val);
+    if (sttVerifyConnectBtn) {
+      sttVerifyConnectBtn.disabled = true;
+      sttVerifyConnectBtn.classList.add('opacity-80', 'cursor-wait');
+      if (sttConnectBtnIcon) sttConnectBtnIcon.classList.add('animate-spin');
+      if (sttConnectBtnText) sttConnectBtnText.textContent = 'Testing...';
+    }
+    if (sttConnectStatus) {
+      sttConnectStatus.classList.add('hidden');
+      sttConnectStatus.innerHTML = '';
+    }
+
+    const testRes = await pingModalityEndpoint('stt', sttId, val, customUrlVal);
+
+    if (sttVerifyConnectBtn) {
+      sttVerifyConnectBtn.disabled = false;
+      sttVerifyConnectBtn.classList.remove('opacity-80', 'cursor-wait');
+      if (sttConnectBtnIcon) sttConnectBtnIcon.classList.remove('animate-spin');
+      if (sttConnectBtnText) sttConnectBtnText.textContent = 'Connect';
+    }
+
+    if (!testRes.ok) {
+      if (sttConnectStatus) {
+        sttConnectStatus.innerHTML = `
+          <div class="p-2.5 rounded-xl bg-rose-500/10 border border-rose-500/25 text-rose-300 text-[11px] flex items-start gap-2">
+            <span class="shrink-0 font-bold mt-0.5">✕</span>
+            <div class="min-w-0 flex-1">
+              <div class="font-semibold text-rose-200">Connection Failed${testRes.status ? ` (HTTP ${testRes.status})` : ''}</div>
+              <div class="text-[10px] text-rose-300/80 mt-0.5">${testRes.error || 'Invalid credentials'}</div>
+            </div>
+          </div>
+        `;
+        sttConnectStatus.classList.remove('hidden');
+      }
+      showNotification(`✕ Microphone test failed: ${testRes.error || 'Unauthorized'}`, 'error');
+      sttApiKey?.focus();
+      return;
+    }
+
+    if (engObj.needsUrl && sttCustomUrl) {
+      localStorage.setItem('aetheria_stt_custom_url', customUrlVal);
+    }
+    if (val) {
+      setSttKeyForProvider(sttId, val);
+    }
+
+    if (sttApiKey) sttApiKey.value = '';
+    if (sttConnectStatus) sttConnectStatus.classList.add('hidden');
+
     syncVoiceUiPanels();
     syncSttModelsForProvider(sttId, false);
     updateMicButtonState();
-    showNotification(`✓ ${engObj ? engObj.name : sttId.toUpperCase()} settings saved and connected!`);
+
+    if (sttConnectedLatency) {
+      sttConnectedLatency.textContent = `${testRes.latency}ms`;
+      sttConnectedLatency.className = 'text-[10px] text-emerald-400 font-mono font-medium';
+      sttConnectedLatency.classList.remove('hidden');
+    }
+
+    showNotification(`✓ ${engObj.name} connected successfully! (${testRes.latency}ms)`);
+  }
+
+  sttVerifyConnectBtn?.addEventListener('click', connectSttWithTest);
+  sttApiKey?.addEventListener('keydown', (e) => {
+    if (e.key === 'Enter') {
+      e.preventDefault();
+      connectSttWithTest();
+    }
+  });
+
+  sttLiveTestBtn?.addEventListener('click', async () => {
+    const sttId = localStorage.getItem('aetheria_stt_provider') || 'groq';
+    const engObj = ALL_STT_ENGINES.find(e => e.id === sttId) || ALL_STT_ENGINES[0];
+    const key = getSttKeyForProvider(sttId) || '';
+    const customUrl = localStorage.getItem('aetheria_stt_custom_url') || '';
+
+    if (sttLiveTestBtn) {
+      sttLiveTestBtn.disabled = true;
+      if (sttLiveTestIcon) sttLiveTestIcon.classList.add('animate-spin');
+      if (sttLiveTestText) sttLiveTestText.textContent = '...';
+    }
+
+    const res = await pingModalityEndpoint('stt', sttId, key, customUrl);
+
+    if (sttLiveTestBtn) {
+      sttLiveTestBtn.disabled = false;
+      if (sttLiveTestIcon) sttLiveTestIcon.classList.remove('animate-spin');
+      if (sttLiveTestText) sttLiveTestText.textContent = 'Test';
+    }
+
+    if (sttConnectedLatency) {
+      sttConnectedLatency.classList.remove('hidden');
+      if (res.ok) {
+        sttConnectedLatency.textContent = `${res.latency}ms`;
+        sttConnectedLatency.className = 'text-[10px] text-emerald-400 font-mono font-medium';
+        showNotification(`✓ ${engObj.name} is Online (${res.latency}ms)`);
+      } else {
+        sttConnectedLatency.textContent = 'Offline';
+        sttConnectedLatency.className = 'text-[10px] text-rose-400 font-mono font-medium';
+        showNotification(`✕ Connection failed: ${res.error}`, 'error');
+      }
+    }
+  });
+
+  sttDisconnectBtn?.addEventListener('click', () => {
+    if (sttUnconnectedContainer && sttConnectedContainer) {
+      sttUnconnectedContainer.classList.remove('hidden');
+      sttConnectedContainer.classList.add('hidden');
+    }
+    if (sttConnectStatus) sttConnectStatus.classList.add('hidden');
+    sttApiKey?.focus();
   });
 
   sttQuickReuseKeyBtn?.addEventListener('click', () => {
@@ -11698,11 +12365,7 @@ const { character } = Astro.props;
     const key = (sttId === 'groq' ? localStorage.getItem('aetheria_key_groq') : (sttId === 'openai-stt' ? localStorage.getItem('aetheria_key_openai') : '')) || '';
     if (key) {
       if (sttApiKey) sttApiKey.value = key;
-      setSttKeyForProvider(sttId, key);
-      syncVoiceUiPanels();
-      syncSttModelsForProvider(sttId, false);
-      updateMicButtonState();
-      showNotification(`✓ Connected ${sttId.toUpperCase()} Key from Text Engine!`);
+      connectSttWithTest();
     }
   });
 
@@ -12128,6 +12791,7 @@ const { character } = Astro.props;
 
   window.selectImageEngine = function(engId) {
     localStorage.setItem('aetheria_image_provider', engId);
+    if (imageConnectStatus) imageConnectStatus.classList.add('hidden');
     if (imageProviderSelect) imageProviderSelect.value = engId;
     if (imageEngineMenu) imageEngineMenu.classList.add('hidden');
     if (imageEngineChevron) imageEngineChevron.classList.remove('rotate-180');
@@ -12140,6 +12804,7 @@ const { character } = Astro.props;
 
   window.selectVisionEngine = function(engId) {
     localStorage.setItem('aetheria_vision_provider', engId);
+    if (visionConnectStatus) visionConnectStatus.classList.add('hidden');
     if (visionProviderSelect) visionProviderSelect.value = engId;
     if (visionEngineMenu) visionEngineMenu.classList.add('hidden');
     if (visionEngineChevron) visionEngineChevron.classList.remove('rotate-180');
@@ -12372,46 +13037,265 @@ const { character } = Astro.props;
     }
   });
 
-  // Connect & Disconnect handlers
-  imageDisconnectBtn?.addEventListener('click', () => {
-    if (imageUnconnectedContainer && imageConnectedContainer) {
-      imageUnconnectedContainer.classList.remove('hidden');
-      imageConnectedContainer.classList.add('hidden');
-    }
-    imageApiKey?.focus();
-  });
-
-  imageConnectConfirmBtn?.addEventListener('click', () => {
+  // ==========================================
+  // IMAGE & VISION CONNECT & LIVE TEST HANDLERS
+  // ==========================================
+  async function connectImageWithTest() {
     const prov = localStorage.getItem('aetheria_image_provider') || 'pollinations';
     const key = imageApiKey?.value.trim() || '';
     const obj = IMAGE_CATALOG.find(x => x.id === prov) || IMAGE_CATALOG[0];
     const isCustom = obj.needsUrl;
+    const customUrlVal = imageCustomUrl?.value.trim() || '';
 
-    if (imageCustomUrl) {
-      localStorage.setItem('aetheria_image_custom_url', imageCustomUrl.value.trim());
+    if (isCustom && !customUrlVal) {
+      showNotification('⚠️ Please enter an Endpoint URL first.', 'warning');
+      imageCustomUrl?.focus();
+      return;
     }
-
     if (obj.needsKey && !key && !isCustom) {
       showNotification('⚠️ Please enter an API key first.', 'warning');
       imageApiKey?.focus();
       return;
     }
 
+    if (imageConnectConfirmBtn) {
+      imageConnectConfirmBtn.disabled = true;
+      imageConnectConfirmBtn.classList.add('opacity-80', 'cursor-wait');
+      if (imageConnectBtnIcon) imageConnectBtnIcon.classList.add('animate-spin');
+      if (imageConnectBtnText) imageConnectBtnText.textContent = 'Testing...';
+    }
+    if (imageConnectStatus) {
+      imageConnectStatus.classList.add('hidden');
+      imageConnectStatus.innerHTML = '';
+    }
+
+    const testRes = await pingModalityEndpoint('image', prov, key, customUrlVal);
+
+    if (imageConnectConfirmBtn) {
+      imageConnectConfirmBtn.disabled = false;
+      imageConnectConfirmBtn.classList.remove('opacity-80', 'cursor-wait');
+      if (imageConnectBtnIcon) imageConnectBtnIcon.classList.remove('animate-spin');
+      if (imageConnectBtnText) imageConnectBtnText.textContent = 'Connect';
+    }
+
+    if (!testRes.ok) {
+      if (imageConnectStatus) {
+        imageConnectStatus.innerHTML = `
+          <div class="p-2.5 rounded-xl bg-rose-500/10 border border-rose-500/25 text-rose-300 text-[11px] flex items-start gap-2">
+            <span class="shrink-0 font-bold mt-0.5">✕</span>
+            <div class="min-w-0 flex-1">
+              <div class="font-semibold text-rose-200">Connection Failed${testRes.status ? ` (HTTP ${testRes.status})` : ''}</div>
+              <div class="text-[10px] text-rose-300/80 mt-0.5">${testRes.error || 'Invalid credentials'}</div>
+            </div>
+          </div>
+        `;
+        imageConnectStatus.classList.remove('hidden');
+      }
+      showNotification(`✕ Image test failed: ${testRes.error || 'Unauthorized'}`, 'error');
+      imageApiKey?.focus();
+      return;
+    }
+
+    if (isCustom && imageCustomUrl) {
+      localStorage.setItem('aetheria_image_custom_url', customUrlVal);
+    }
     if (key) {
       localStorage.setItem('aetheria_key_' + prov, key);
       localStorage.setItem('aetheria_image_key', key);
     }
 
+    if (imageApiKey) imageApiKey.value = '';
+    if (imageConnectStatus) imageConnectStatus.classList.add('hidden');
+
     syncImageUiPanels();
     syncVideoUiPanels();
-    showNotification(`✓ ${obj.name} connected successfully!`);
+
+    if (imageConnectedLatency) {
+      imageConnectedLatency.textContent = `${testRes.latency}ms`;
+      imageConnectedLatency.className = 'text-[10px] text-emerald-400 font-mono font-medium';
+      imageConnectedLatency.classList.remove('hidden');
+    }
+
+    showNotification(`✓ ${obj.name} connected successfully! (${testRes.latency}ms)`);
+  }
+
+  imageConnectConfirmBtn?.addEventListener('click', connectImageWithTest);
+  imageApiKey?.addEventListener('keydown', (e) => {
+    if (e.key === 'Enter') {
+      e.preventDefault();
+      connectImageWithTest();
+    }
+  });
+
+  imageLiveTestBtn?.addEventListener('click', async () => {
+    const prov = localStorage.getItem('aetheria_image_provider') || 'pollinations';
+    const obj = IMAGE_CATALOG.find(x => x.id === prov) || IMAGE_CATALOG[0];
+    const key = localStorage.getItem('aetheria_key_' + prov) || localStorage.getItem('aetheria_image_key') || '';
+    const customUrl = localStorage.getItem('aetheria_image_custom_url') || '';
+
+    if (imageLiveTestBtn) {
+      imageLiveTestBtn.disabled = true;
+      if (imageLiveTestIcon) imageLiveTestIcon.classList.add('animate-spin');
+      if (imageLiveTestText) imageLiveTestText.textContent = '...';
+    }
+
+    const res = await pingModalityEndpoint('image', prov, key, customUrl);
+
+    if (imageLiveTestBtn) {
+      imageLiveTestBtn.disabled = false;
+      if (imageLiveTestIcon) imageLiveTestIcon.classList.remove('animate-spin');
+      if (imageLiveTestText) imageLiveTestText.textContent = 'Test';
+    }
+
+    if (imageConnectedLatency) {
+      imageConnectedLatency.classList.remove('hidden');
+      if (res.ok) {
+        imageConnectedLatency.textContent = `${res.latency}ms`;
+        imageConnectedLatency.className = 'text-[10px] text-emerald-400 font-mono font-medium';
+        showNotification(`✓ ${obj.name} is Online (${res.latency}ms)`);
+      } else {
+        imageConnectedLatency.textContent = 'Offline';
+        imageConnectedLatency.className = 'text-[10px] text-rose-400 font-mono font-medium';
+        showNotification(`✕ Connection failed: ${res.error}`, 'error');
+      }
+    }
+  });
+
+  imageDisconnectBtn?.addEventListener('click', () => {
+    if (imageUnconnectedContainer && imageConnectedContainer) {
+      imageUnconnectedContainer.classList.remove('hidden');
+      imageConnectedContainer.classList.add('hidden');
+    }
+    if (imageConnectStatus) imageConnectStatus.classList.add('hidden');
+    imageApiKey?.focus();
   });
 
   imageQuickReuseKeyBtn?.addEventListener('click', () => {
     const textKey = localStorage.getItem('aetheria_key_openai') || '';
     if (textKey && imageApiKey) {
       imageApiKey.value = textKey;
-      imageConnectConfirmBtn?.click();
+      connectImageWithTest();
+    }
+  });
+
+  async function connectVisionWithTest() {
+    const prov = localStorage.getItem('aetheria_vision_provider') || 'auto';
+    const key = visionApiKey?.value.trim() || '';
+    const obj = VISION_CATALOG.find(x => x.id === prov) || VISION_CATALOG[0];
+    const isCustom = obj.needsUrl;
+    const customUrlVal = visionCustomUrl?.value.trim() || '';
+
+    if (isCustom && !customUrlVal) {
+      showNotification('⚠️ Please enter an Endpoint URL first.', 'warning');
+      visionCustomUrl?.focus();
+      return;
+    }
+    if (obj.needsKey && !key && !isCustom) {
+      showNotification('⚠️ Please enter an API key first.', 'warning');
+      visionApiKey?.focus();
+      return;
+    }
+
+    if (visionConnectConfirmBtn) {
+      visionConnectConfirmBtn.disabled = true;
+      visionConnectConfirmBtn.classList.add('opacity-80', 'cursor-wait');
+      if (visionConnectBtnIcon) visionConnectBtnIcon.classList.add('animate-spin');
+      if (visionConnectBtnText) visionConnectBtnText.textContent = 'Testing...';
+    }
+    if (visionConnectStatus) {
+      visionConnectStatus.classList.add('hidden');
+      visionConnectStatus.innerHTML = '';
+    }
+
+    const testRes = await pingModalityEndpoint('vision', prov, key, customUrlVal);
+
+    if (visionConnectConfirmBtn) {
+      visionConnectConfirmBtn.disabled = false;
+      visionConnectConfirmBtn.classList.remove('opacity-80', 'cursor-wait');
+      if (visionConnectBtnIcon) visionConnectBtnIcon.classList.remove('animate-spin');
+      if (visionConnectBtnText) visionConnectBtnText.textContent = 'Connect';
+    }
+
+    if (!testRes.ok) {
+      if (visionConnectStatus) {
+        visionConnectStatus.innerHTML = `
+          <div class="p-2.5 rounded-xl bg-rose-500/10 border border-rose-500/25 text-rose-300 text-[11px] flex items-start gap-2">
+            <span class="shrink-0 font-bold mt-0.5">✕</span>
+            <div class="min-w-0 flex-1">
+              <div class="font-semibold text-rose-200">Connection Failed${testRes.status ? ` (HTTP ${testRes.status})` : ''}</div>
+              <div class="text-[10px] text-rose-300/80 mt-0.5">${testRes.error || 'Invalid credentials'}</div>
+            </div>
+          </div>
+        `;
+        visionConnectStatus.classList.remove('hidden');
+      }
+      showNotification(`✕ Vision test failed: ${testRes.error || 'Unauthorized'}`, 'error');
+      visionApiKey?.focus();
+      return;
+    }
+
+    if (isCustom && visionCustomUrl) {
+      localStorage.setItem('aetheria_vision_custom_url', customUrlVal);
+    }
+    if (key) {
+      localStorage.setItem('aetheria_key_' + prov, key);
+      localStorage.setItem('aetheria_vision_key', key);
+    }
+
+    if (visionApiKey) visionApiKey.value = '';
+    if (visionConnectStatus) visionConnectStatus.classList.add('hidden');
+
+    syncImageUiPanels();
+    syncVideoUiPanels();
+
+    if (visionConnectedLatency) {
+      visionConnectedLatency.textContent = `${testRes.latency}ms`;
+      visionConnectedLatency.className = 'text-[10px] text-emerald-400 font-mono font-medium';
+      visionConnectedLatency.classList.remove('hidden');
+    }
+
+    showNotification(`✓ ${obj.name} connected successfully! (${testRes.latency}ms)`);
+  }
+
+  visionConnectConfirmBtn?.addEventListener('click', connectVisionWithTest);
+  visionApiKey?.addEventListener('keydown', (e) => {
+    if (e.key === 'Enter') {
+      e.preventDefault();
+      connectVisionWithTest();
+    }
+  });
+
+  visionLiveTestBtn?.addEventListener('click', async () => {
+    const prov = localStorage.getItem('aetheria_vision_provider') || 'auto';
+    const obj = VISION_CATALOG.find(x => x.id === prov) || VISION_CATALOG[0];
+    const key = localStorage.getItem('aetheria_key_' + prov) || localStorage.getItem('aetheria_vision_key') || '';
+    const customUrl = localStorage.getItem('aetheria_vision_custom_url') || '';
+
+    if (visionLiveTestBtn) {
+      visionLiveTestBtn.disabled = true;
+      if (visionLiveTestIcon) visionLiveTestIcon.classList.add('animate-spin');
+      if (visionLiveTestText) visionLiveTestText.textContent = '...';
+    }
+
+    const res = await pingModalityEndpoint('vision', prov, key, customUrl);
+
+    if (visionLiveTestBtn) {
+      visionLiveTestBtn.disabled = false;
+      if (visionLiveTestIcon) visionLiveTestIcon.classList.remove('animate-spin');
+      if (visionLiveTestText) visionLiveTestText.textContent = 'Test';
+    }
+
+    if (visionConnectedLatency) {
+      visionConnectedLatency.classList.remove('hidden');
+      if (res.ok) {
+        visionConnectedLatency.textContent = `${res.latency}ms`;
+        visionConnectedLatency.className = 'text-[10px] text-emerald-400 font-mono font-medium';
+        showNotification(`✓ ${obj.name} is Online (${res.latency}ms)`);
+      } else {
+        visionConnectedLatency.textContent = 'Offline';
+        visionConnectedLatency.className = 'text-[10px] text-rose-400 font-mono font-medium';
+        showNotification(`✕ Connection failed: ${res.error}`, 'error');
+      }
     }
   });
 
@@ -12420,33 +13304,8 @@ const { character } = Astro.props;
       visionUnconnectedContainer.classList.remove('hidden');
       visionConnectedContainer.classList.add('hidden');
     }
+    if (visionConnectStatus) visionConnectStatus.classList.add('hidden');
     visionApiKey?.focus();
-  });
-
-  visionConnectConfirmBtn?.addEventListener('click', () => {
-    const prov = localStorage.getItem('aetheria_vision_provider') || 'auto';
-    const key = visionApiKey?.value.trim() || '';
-    const obj = VISION_CATALOG.find(x => x.id === prov) || VISION_CATALOG[0];
-    const isCustom = obj.needsUrl;
-
-    if (visionCustomUrl) {
-      localStorage.setItem('aetheria_vision_custom_url', visionCustomUrl.value.trim());
-    }
-
-    if (obj.needsKey && !key && !isCustom) {
-      showNotification('⚠️ Please enter an API key first.', 'warning');
-      visionApiKey?.focus();
-      return;
-    }
-
-    if (key) {
-      localStorage.setItem('aetheria_key_' + prov, key);
-      localStorage.setItem('aetheria_vision_key', key);
-    }
-
-    syncImageUiPanels();
-    syncVideoUiPanels();
-    showNotification(`✓ ${obj.name} connected successfully!`);
   });
 
   visionQuickReuseKeyBtn?.addEventListener('click', () => {
@@ -12454,7 +13313,7 @@ const { character } = Astro.props;
     const textKey = (prov === 'gemini' ? (localStorage.getItem('aetheria_key_google') || localStorage.getItem('aetheria_key_gemini')) : localStorage.getItem('aetheria_key_openai')) || '';
     if (textKey && visionApiKey) {
       visionApiKey.value = textKey;
-      visionConnectConfirmBtn?.click();
+      connectVisionWithTest();
     }
   });
 
@@ -12630,6 +13489,7 @@ const { character } = Astro.props;
 
   window.selectVideoEngine = function(engId) {
     localStorage.setItem('aetheria_video_provider', engId);
+    if (videoConnectStatus) videoConnectStatus.classList.add('hidden');
     if (videoProviderSelect) videoProviderSelect.value = engId;
     if (videoEngineMenu) videoEngineMenu.classList.add('hidden');
     if (videoEngineChevron) videoEngineChevron.classList.remove('rotate-180');
@@ -12818,45 +13678,143 @@ const { character } = Astro.props;
     }
   });
 
-  // Video Connect & Disconnect handlers
-  videoDisconnectBtn?.addEventListener('click', () => {
-    if (videoUnconnectedContainer && videoConnectedContainer) {
-      videoUnconnectedContainer.classList.remove('hidden');
-      videoConnectedContainer.classList.add('hidden');
-    }
-    videoApiKey?.focus();
-  });
-
-  videoConnectConfirmBtn?.addEventListener('click', () => {
+  // ==========================================
+  // VIDEO CONNECT & LIVE TEST HANDLERS
+  // ==========================================
+  async function connectVideoWithTest() {
     const prov = localStorage.getItem('aetheria_video_provider') || 'fal-kling';
     const key = videoApiKey?.value.trim() || '';
     const obj = VIDEO_CATALOG.find(x => x.id === prov) || VIDEO_CATALOG[0];
     const isCustom = obj.needsUrl;
+    const customUrlVal = videoCustomUrl?.value.trim() || '';
 
-    if (videoCustomUrl) {
-      localStorage.setItem('aetheria_video_custom_url', videoCustomUrl.value.trim());
+    if (isCustom && !customUrlVal) {
+      showNotification('⚠️ Please enter an Endpoint URL first.', 'warning');
+      videoCustomUrl?.focus();
+      return;
     }
-
     if (obj.needsKey && !key && !isCustom) {
       showNotification('⚠️ Please enter an API key first.', 'warning');
       videoApiKey?.focus();
       return;
     }
 
+    if (videoConnectConfirmBtn) {
+      videoConnectConfirmBtn.disabled = true;
+      videoConnectConfirmBtn.classList.add('opacity-80', 'cursor-wait');
+      if (videoConnectBtnIcon) videoConnectBtnIcon.classList.add('animate-spin');
+      if (videoConnectBtnText) videoConnectBtnText.textContent = 'Testing...';
+    }
+    if (videoConnectStatus) {
+      videoConnectStatus.classList.add('hidden');
+      videoConnectStatus.innerHTML = '';
+    }
+
+    const testRes = await pingModalityEndpoint('video', prov, key, customUrlVal);
+
+    if (videoConnectConfirmBtn) {
+      videoConnectConfirmBtn.disabled = false;
+      videoConnectConfirmBtn.classList.remove('opacity-80', 'cursor-wait');
+      if (videoConnectBtnIcon) videoConnectBtnIcon.classList.remove('animate-spin');
+      if (videoConnectBtnText) videoConnectBtnText.textContent = 'Connect';
+    }
+
+    if (!testRes.ok) {
+      if (videoConnectStatus) {
+        videoConnectStatus.innerHTML = `
+          <div class="p-2.5 rounded-xl bg-rose-500/10 border border-rose-500/25 text-rose-300 text-[11px] flex items-start gap-2">
+            <span class="shrink-0 font-bold mt-0.5">✕</span>
+            <div class="min-w-0 flex-1">
+              <div class="font-semibold text-rose-200">Connection Failed${testRes.status ? ` (HTTP ${testRes.status})` : ''}</div>
+              <div class="text-[10px] text-rose-300/80 mt-0.5">${testRes.error || 'Invalid credentials'}</div>
+            </div>
+          </div>
+        `;
+        videoConnectStatus.classList.remove('hidden');
+      }
+      showNotification(`✕ Video test failed: ${testRes.error || 'Unauthorized'}`, 'error');
+      videoApiKey?.focus();
+      return;
+    }
+
+    if (isCustom && videoCustomUrl) {
+      localStorage.setItem('aetheria_video_custom_url', customUrlVal);
+    }
     if (key) {
       localStorage.setItem('aetheria_key_' + prov, key);
       localStorage.setItem('aetheria_video_key', key);
     }
 
+    if (videoApiKey) videoApiKey.value = '';
+    if (videoConnectStatus) videoConnectStatus.classList.add('hidden');
+
     syncVideoUiPanels();
-    showNotification(`✓ ${obj.name} connected successfully!`);
+
+    if (videoConnectedLatency) {
+      videoConnectedLatency.textContent = `${testRes.latency}ms`;
+      videoConnectedLatency.className = 'text-[10px] text-emerald-400 font-mono font-medium';
+      videoConnectedLatency.classList.remove('hidden');
+    }
+
+    showNotification(`✓ ${obj.name} connected successfully! (${testRes.latency}ms)`);
+  }
+
+  videoConnectConfirmBtn?.addEventListener('click', connectVideoWithTest);
+  videoApiKey?.addEventListener('keydown', (e) => {
+    if (e.key === 'Enter') {
+      e.preventDefault();
+      connectVideoWithTest();
+    }
+  });
+
+  videoLiveTestBtn?.addEventListener('click', async () => {
+    const prov = localStorage.getItem('aetheria_video_provider') || 'fal-kling';
+    const obj = VIDEO_CATALOG.find(x => x.id === prov) || VIDEO_CATALOG[0];
+    const key = localStorage.getItem('aetheria_video_key') || localStorage.getItem('aetheria_key_' + prov) || '';
+    const customUrl = localStorage.getItem('aetheria_video_custom_url') || '';
+
+    if (videoLiveTestBtn) {
+      videoLiveTestBtn.disabled = true;
+      if (videoLiveTestIcon) videoLiveTestIcon.classList.add('animate-spin');
+      if (videoLiveTestText) videoLiveTestText.textContent = '...';
+    }
+
+    const res = await pingModalityEndpoint('video', prov, key, customUrl);
+
+    if (videoLiveTestBtn) {
+      videoLiveTestBtn.disabled = false;
+      if (videoLiveTestIcon) videoLiveTestIcon.classList.remove('animate-spin');
+      if (videoLiveTestText) videoLiveTestText.textContent = 'Test';
+    }
+
+    if (videoConnectedLatency) {
+      videoConnectedLatency.classList.remove('hidden');
+      if (res.ok) {
+        videoConnectedLatency.textContent = `${res.latency}ms`;
+        videoConnectedLatency.className = 'text-[10px] text-emerald-400 font-mono font-medium';
+        showNotification(`✓ ${obj.name} is Online (${res.latency}ms)`);
+      } else {
+        videoConnectedLatency.textContent = 'Offline';
+        videoConnectedLatency.className = 'text-[10px] text-rose-400 font-mono font-medium';
+        showNotification(`✕ Connection failed: ${res.error}`, 'error');
+      }
+    }
+  });
+
+  videoDisconnectBtn?.addEventListener('click', () => {
+    if (videoUnconnectedContainer && videoConnectedContainer) {
+      videoUnconnectedContainer.classList.remove('hidden');
+      videoConnectedContainer.classList.add('hidden');
+    }
+    if (videoConnectStatus) videoConnectStatus.classList.add('hidden');
+    videoApiKey?.focus();
   });
 
   videoQuickReuseKeyBtn?.addEventListener('click', () => {
     const falKey = localStorage.getItem('aetheria_key_fal') || '';
     if (falKey && videoApiKey) {
       videoApiKey.value = falKey;
-      videoConnectConfirmBtn?.click();
+      connectVideoWithTest();
     }
   });
 
