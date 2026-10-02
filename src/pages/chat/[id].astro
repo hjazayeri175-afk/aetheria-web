@@ -1353,30 +1353,43 @@ const { character } = Astro.props;
                     </div>
                   </div>
 
-                  <!-- 2. Active Speech Engine Hero Card -->
-                  <div class="p-3.5 sm:p-4 rounded-2xl bg-gradient-to-r from-purple-950/40 via-purple-900/20 to-indigo-950/40 border border-purple-500/30 flex items-center justify-between gap-3 shadow-lg shadow-purple-950/40">
-                    <div class="flex items-center gap-3 min-w-0">
-                      <div id="tts-active-icon-box" class="w-11 h-11 rounded-2xl bg-purple-500/20 border border-purple-500/30 flex items-center justify-center text-purple-300 shrink-0 shadow-inner">
-                        <Volume2 class="w-5 h-5 text-purple-400" />
-                      </div>
-                      <div class="min-w-0">
-                        <div class="flex items-center gap-2 flex-wrap mb-0.5">
-                          <h4 id="tts-active-engine-name" class="text-sm font-bold text-white truncate">Built-in Device Voice</h4>
-                          <span id="tts-connection-badge" class="px-2 py-0.5 rounded-full text-[10px] font-mono font-semibold bg-emerald-500/20 text-emerald-300 border border-emerald-500/30">
-                            100% Free • Ready
-                          </span>
-                        </div>
-                        <p id="tts-active-engine-desc" class="text-[11px] text-slate-400 truncate">Device speech synthesizer • Offline & Private</p>
-                      </div>
-                    </div>
+                  <!-- 2. Sleek Custom Dropdown for Speech Synthesis Engine (Identical to STT Architecture) -->
+                  <div class="space-y-1.5 relative" id="tts-engine-dropdown-container">
+                    <label class="block text-xs font-semibold text-slate-300">Speech Synthesis Engine (TTS)</label>
+
+                    <!-- Trigger Button (Compact, Elegant, Single Row) -->
                     <button 
                       type="button" 
-                      id="open-tts-catalog-btn" 
-                      class="px-3 py-2 rounded-xl bg-purple-600 hover:bg-purple-500 text-white border border-purple-400/30 text-xs font-semibold flex items-center gap-1.5 transition cursor-pointer shrink-0 active:scale-95 shadow-md shadow-purple-900/40"
+                      id="tts-engine-trigger" 
+                      class="w-full px-3.5 py-2.5 rounded-xl bg-black/60 hover:bg-black/80 border border-purple-500/30 hover:border-purple-500/50 flex items-center justify-between text-xs text-white transition cursor-pointer text-left group"
+                      aria-haspopup="listbox"
+                      aria-expanded="false"
                     >
-                      <SlidersHorizontal class="w-3.5 h-3.5" />
-                      <span>Switch Engine</span>
+                      <div class="flex items-center gap-2.5 min-w-0 pr-2">
+                        <div id="tts-engine-trigger-icon" class="w-7 h-7 rounded-lg bg-purple-500/20 border border-purple-500/30 flex items-center justify-center text-sm shrink-0">
+                          🎙️
+                        </div>
+                        <div class="min-w-0">
+                          <div id="tts-engine-trigger-title" class="font-bold text-xs text-white truncate">Built-in Device Voice</div>
+                          <div id="tts-engine-trigger-desc" class="text-[10px] text-slate-400 truncate">Device speech synthesizer • Offline & Private</div>
+                        </div>
+                      </div>
+                      <div class="flex items-center gap-2 shrink-0">
+                        <span id="tts-engine-trigger-badge" class="px-2 py-0.5 rounded-full text-[9px] font-mono font-bold bg-emerald-500/20 text-emerald-300 border border-emerald-500/30">
+                          100% FREE
+                        </span>
+                        <ChevronDown class="w-4 h-4 text-slate-400 group-hover:text-purple-400 transition-transform duration-200" id="tts-engine-chevron" />
+                      </div>
                     </button>
+
+                    <!-- Custom Dropdown Menu with ALL Available TTS Engines -->
+                    <div 
+                      id="tts-engine-menu" 
+                      class="hidden absolute left-0 right-0 top-full mt-1.5 z-50 bg-[#0d1026]/95 backdrop-blur-xl border border-purple-500/30 rounded-2xl p-1.5 shadow-2xl shadow-purple-950/80 space-y-1 max-h-64 overflow-y-auto no-scrollbar"
+                      role="listbox"
+                    >
+                      <!-- Rendered dynamically by renderTtsEngineMenu() -->
+                    </div>
                   </div>
 
                   <!-- 3. Free Device Voice Informative Banner (Shown when browser voice is active) -->
@@ -3976,6 +3989,13 @@ const { character } = Astro.props;
   const sttModelSelect = document.getElementById('stt-model-select');
   const sttLangSelect = document.getElementById('stt-lang-select');
 
+  const ttsEngineTrigger = document.getElementById('tts-engine-trigger');
+  const ttsEngineMenu = document.getElementById('tts-engine-menu');
+  const ttsEngineChevron = document.getElementById('tts-engine-chevron');
+  const ttsEngineTriggerIcon = document.getElementById('tts-engine-trigger-icon');
+  const ttsEngineTriggerTitle = document.getElementById('tts-engine-trigger-title');
+  const ttsEngineTriggerDesc = document.getElementById('tts-engine-trigger-desc');
+  const ttsEngineTriggerBadge = document.getElementById('tts-engine-trigger-badge');
   const openTtsCatalogBtn = document.getElementById('open-tts-catalog-btn');
   const ttsActiveEngineName = document.getElementById('tts-active-engine-name');
   const ttsActiveEngineDesc = document.getElementById('tts-active-engine-desc');
@@ -7622,6 +7642,101 @@ const { character } = Astro.props;
     }
   ];
 
+
+  const TTS_ENGINE_ICONS = {
+    'browser': '🎙️',
+    'elevenlabs': '🎭',
+    'openai': '✨',
+    'google': '🌐',
+    'deepgram': '⚡',
+    'playht': '🌊',
+    'fishaudio': '🐟',
+    'kokoro': '🍃',
+    'xtts': '💻',
+    'openrouter': '🔀',
+    'custom': '⚙️'
+  };
+
+  function renderTtsEngineMenu() {
+    if (!ttsEngineMenu) return;
+    const currentTtsId = voiceProviderSelect?.value || localStorage.getItem('aetheria_voice_provider') || 'browser';
+
+    ttsEngineMenu.innerHTML = TTS_CATALOG.map(eng => {
+      const isSelected = eng.id === currentTtsId;
+      const icon = TTS_ENGINE_ICONS[eng.id] || '🎙️';
+      return `
+        <button 
+          type="button" 
+          class="w-full p-2.5 rounded-xl text-left transition flex items-center justify-between gap-2.5 cursor-pointer ${
+            isSelected 
+              ? 'bg-purple-600/20 text-white border border-purple-500/40 shadow-sm' 
+              : 'hover:bg-white/[0.06] text-slate-300 hover:text-white border border-transparent'
+          }"
+          onclick="selectTtsEngine('${eng.id}')"
+          role="option"
+          aria-selected="${isSelected}"
+        >
+          <div class="flex items-center gap-2.5 min-w-0">
+            <span class="text-base shrink-0">${icon}</span>
+            <div class="min-w-0">
+              <div class="font-bold text-xs truncate">${eng.name}</div>
+              <div class="text-[10px] text-slate-400 truncate">${eng.desc}</div>
+            </div>
+          </div>
+          <span class="px-2 py-0.5 rounded-full text-[9px] font-mono font-bold shrink-0 ${
+            eng.badge.includes('Free') ? 'bg-emerald-500/20 text-emerald-300 border border-emerald-500/30' : 'bg-white/10 text-slate-300'
+          }">
+            ${eng.badge}
+          </span>
+        </button>
+      `;
+    }).join('');
+  }
+
+  function updateTtsEngineTriggerDisplay(engId) {
+    const eng = TTS_CATALOG.find(e => e.id === engId) || TTS_CATALOG[0];
+    const icon = TTS_ENGINE_ICONS[eng.id] || '🎙️';
+    if (ttsEngineTriggerIcon) ttsEngineTriggerIcon.textContent = icon;
+    if (ttsEngineTriggerTitle) ttsEngineTriggerTitle.textContent = eng.name;
+    if (ttsEngineTriggerDesc) ttsEngineTriggerDesc.textContent = eng.desc;
+    if (ttsEngineTriggerBadge) {
+      ttsEngineTriggerBadge.textContent = eng.badge;
+      ttsEngineTriggerBadge.className = `px-2 py-0.5 rounded-full text-[9px] font-mono font-bold ${
+        eng.badge.includes('Free') ? 'bg-emerald-500/20 text-emerald-300 border border-emerald-500/30' : 'bg-purple-500/20 text-purple-300 border border-purple-500/30'
+      }`;
+    }
+  }
+
+  window.selectTtsEngine = function(engId) {
+    if (voiceProviderSelect) voiceProviderSelect.value = engId;
+    localStorage.setItem('aetheria_voice_provider', engId);
+    updateTtsEngineTriggerDisplay(engId);
+    if (ttsEngineMenu) ttsEngineMenu.classList.add('hidden');
+    if (ttsEngineChevron) ttsEngineChevron.classList.remove('rotate-180');
+    renderTtsEngineMenu();
+    syncVoiceUiPanels();
+    if (typeof renderVoiceCards === 'function') renderVoiceCards();
+    showNotification(`✓ Voice Engine set to "${(TTS_CATALOG.find(e => e.id === engId) || {}).name || engId}"`);
+  };
+
+  ttsEngineTrigger?.addEventListener('click', (e) => {
+    e.stopPropagation();
+    if (!ttsEngineMenu) return;
+    const isHidden = ttsEngineMenu.classList.contains('hidden');
+    if (isHidden) {
+      renderTtsEngineMenu();
+      ttsEngineMenu.classList.remove('hidden');
+      if (ttsEngineChevron) ttsEngineChevron.classList.add('rotate-180');
+      if (typeof sttEngineMenu !== 'undefined' && sttEngineMenu) sttEngineMenu.classList.add('hidden');
+      if (typeof sttEngineChevron !== 'undefined' && sttEngineChevron) sttEngineChevron.classList.remove('rotate-180');
+      if (typeof sttLangMenu !== 'undefined' && sttLangMenu) sttLangMenu.classList.add('hidden');
+      if (typeof sttLangChevron !== 'undefined' && sttLangChevron) sttLangChevron.classList.remove('rotate-180');
+    } else {
+      ttsEngineMenu.classList.add('hidden');
+      if (ttsEngineChevron) ttsEngineChevron.classList.remove('rotate-180');
+    }
+  });
+
   const STT_CATALOG = [
     {
       id: 'groq',
@@ -9086,6 +9201,7 @@ const { character } = Astro.props;
   function syncVoiceUiPanels() {
     // 1. TTS Progressive Disclosure
     const ttsId = voiceProviderSelect?.value || localStorage.getItem('aetheria_voice_provider') || 'browser';
+    updateTtsEngineTriggerDisplay(ttsId);
     const ttsObj = TTS_CATALOG.find(x => x.id === ttsId) || TTS_CATALOG[0];
     const savedTtsKey = getVoiceKeyForProvider(ttsId);
     const isTtsConnected = (!ttsObj.needsKey) || Boolean(savedTtsKey);
@@ -9387,6 +9503,12 @@ const { character } = Astro.props;
 
   // Global Click-Outside Handler to close custom dropdowns
   document.addEventListener('click', (e) => {
+    const ttsContainer = document.getElementById('tts-engine-dropdown-container');
+    if (ttsContainer && !ttsContainer.contains(e.target)) {
+      if (ttsEngineMenu) ttsEngineMenu.classList.add('hidden');
+      if (ttsEngineChevron) ttsEngineChevron.classList.remove('rotate-180');
+    }
+
     const engContainer = document.getElementById('stt-engine-dropdown-container');
     if (engContainer && !engContainer.contains(e.target)) {
       if (sttEngineMenu) sttEngineMenu.classList.add('hidden');
