@@ -883,7 +883,7 @@ const { character } = Astro.props;
                       <input 
                         type="text" 
                         id="new-profile-name-input" 
-                        placeholder="e.g. Work Groq, Personal DeepSeek, Local Ollama..." 
+                        placeholder="Enter profile name..." 
                         class="flex-1 px-3 py-1.5 rounded-lg bg-black/60 border border-purple-500/30 text-xs text-white placeholder:text-slate-500 outline-none focus:border-purple-400 font-medium"
                         dir="ltr"
                         lang="en"
@@ -1340,13 +1340,13 @@ const { character } = Astro.props;
                       <input 
                         type="text" 
                         id="new-voice-profile-name-input" 
-                        placeholder="e.g. Rachel Expressive, Nova Studio, Custom Cloned" 
+                        placeholder="Enter profile name..." 
                         class="flex-1 px-3 py-1.5 rounded-lg bg-black/60 border border-white/10 text-xs text-white placeholder:text-slate-500 outline-none focus:border-purple-500"
                       />
                       <button 
                         type="button" 
                         id="btn-confirm-save-voice-profile" 
-                        class="px-3 py-1.5 rounded-lg bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-semibold shrink-0 cursor-pointer transition active:scale-95"
+                        class="px-3.5 py-1.5 rounded-lg bg-purple-600 hover:bg-purple-500 text-white text-xs font-semibold shrink-0 cursor-pointer transition active:scale-95 shadow-sm shadow-purple-950/40"
                       >
                         Save
                       </button>
@@ -1737,7 +1737,7 @@ const { character } = Astro.props;
                       <input 
                         type="text" 
                         id="new-stt-profile-name-input" 
-                        placeholder="e.g. Cloudflare Edge, Fast Fal GPU, Local Whisper" 
+                        placeholder="Enter profile name..." 
                         class="flex-1 px-3 py-1.5 rounded-lg bg-black/60 border border-white/10 text-xs text-white placeholder:text-slate-500 outline-none focus:border-rose-500"
                       />
                       <button 
@@ -2127,13 +2127,13 @@ const { character } = Astro.props;
                       <input 
                         type="text" 
                         id="new-image-profile-name-input" 
-                        placeholder="e.g. Flux Ultra-HD, Anime Portrait, DALL-E Expressive" 
+                        placeholder="Enter profile name..." 
                         class="flex-1 px-3 py-1.5 rounded-lg bg-black/60 border border-white/10 text-xs text-white placeholder:text-slate-500 outline-none focus:border-amber-500"
                       />
                       <button 
                         type="button" 
                         id="btn-confirm-save-image-profile" 
-                        class="px-3 py-1.5 rounded-lg bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-semibold shrink-0 cursor-pointer transition active:scale-95"
+                        class="px-3.5 py-1.5 rounded-lg bg-amber-600 hover:bg-amber-500 text-white text-xs font-semibold shrink-0 cursor-pointer transition active:scale-95 shadow-sm shadow-amber-950/40"
                       >
                         Save
                       </button>
@@ -2420,13 +2420,13 @@ const { character } = Astro.props;
                       <input 
                         type="text" 
                         id="new-vision-profile-name-input" 
-                        placeholder="e.g. Gemini 2.0 Flash Vision, OpenAI 4o Vision" 
+                        placeholder="Enter profile name..." 
                         class="flex-1 px-3 py-1.5 rounded-lg bg-black/60 border border-white/10 text-xs text-white placeholder:text-slate-500 outline-none focus:border-cyan-500"
                       />
                       <button 
                         type="button" 
                         id="btn-confirm-save-vision-profile" 
-                        class="px-3 py-1.5 rounded-lg bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-semibold shrink-0 cursor-pointer transition active:scale-95"
+                        class="px-3.5 py-1.5 rounded-lg bg-cyan-600 hover:bg-cyan-500 text-white text-xs font-semibold shrink-0 cursor-pointer transition active:scale-95 shadow-sm shadow-cyan-950/40"
                       >
                         Save
                       </button>
@@ -2662,13 +2662,13 @@ const { character } = Astro.props;
                     <input 
                       type="text" 
                       id="new-video-profile-name-input" 
-                      placeholder="e.g. Kling Cinematic 1080p, Luma Push-in, Action 60fps" 
+                      placeholder="Enter profile name..." 
                       class="flex-1 px-3 py-1.5 rounded-lg bg-black/60 border border-white/10 text-xs text-white placeholder:text-slate-500 outline-none focus:border-cyan-500"
                     />
                     <button 
                       type="button" 
                       id="btn-confirm-save-video-profile" 
-                      class="px-3 py-1.5 rounded-lg bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-semibold shrink-0 cursor-pointer transition active:scale-95"
+                      class="px-3.5 py-1.5 rounded-lg bg-cyan-600 hover:bg-cyan-500 text-white text-xs font-semibold shrink-0 cursor-pointer transition active:scale-95 shadow-sm shadow-cyan-950/40"
                     >
                       Save
                     </button>
@@ -8484,11 +8484,8 @@ const { character } = Astro.props;
     if (newProfileForm) {
       newProfileForm.classList.toggle('hidden');
       if (!newProfileForm.classList.contains('hidden') && newProfileNameInput) {
-        const prov = textProviderSelect?.value || 'groq';
-        const provName = PROVIDER_CONFIGS[prov]?.name || prov;
-        newProfileNameInput.value = `${provName} Profile`;
+        newProfileNameInput.value = '';
         newProfileNameInput.focus();
-        newProfileNameInput.select();
       }
     }
   });
