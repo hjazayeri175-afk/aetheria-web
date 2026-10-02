@@ -241,6 +241,24 @@ const { character } = Astro.props;
               <span id="overflow-tts-status-pill" class="px-2 py-0.5 rounded-full text-[10px] font-mono bg-white/[0.06] text-slate-400">OFF</span>
             </button>
 
+            <!-- User Persona Switcher -->
+            <button 
+              id="overflow-item-persona"
+              type="button"
+              class="w-full px-3 py-2.5 rounded-xl hover:bg-white/[0.06] text-left flex items-center justify-between gap-2.5 text-xs text-slate-200 hover:text-white transition cursor-pointer"
+            >
+              <div class="flex items-center gap-2.5 min-w-0">
+                <div class="w-7 h-7 rounded-lg bg-indigo-500/15 border border-indigo-500/25 text-indigo-400 flex items-center justify-center shrink-0">
+                  <User class="w-3.5 h-3.5" />
+                </div>
+                <div>
+                  <div class="font-medium">User Persona</div>
+                  <div id="overflow-persona-name" class="text-[10px] text-slate-400">Switch or edit persona</div>
+                </div>
+              </div>
+              <span id="overflow-persona-badge" class="px-2 py-0.5 rounded-full text-[10px] font-mono bg-purple-500/20 text-purple-300">You</span>
+            </button>
+
             <div class="my-1 border-t border-white/[0.08]"></div>
 
             <!-- 4. Export Conversation -->
@@ -3415,98 +3433,150 @@ const { character } = Astro.props;
             </div>
           </div>
 
+          <!-- Hidden File Inputs for Multimodal & Document Attachments -->
+          <input type="file" id="chat-file-photo-input" accept="image/*" class="hidden" />
+          <input type="file" id="chat-file-camera-input" accept="image/*" capture="environment" class="hidden" />
+          <input type="file" id="chat-file-doc-input" accept=".txt,.json,.md,.pdf,.csv" class="hidden" />
+
           <!-- Bottom Input Form (Google Gemini Capsule) -->
           <form id="room-input-form" class="w-full max-w-4xl mx-auto relative">
             <!-- Gemini-Style Floating Tools Popover (Triggered by + button) -->
             <div 
               id="chat-plus-menu" 
-              class="hidden absolute bottom-full left-0 mb-3 w-72 bg-[#1e1f24] border border-white/[0.12] rounded-2xl p-1.5 shadow-2xl shadow-black/90 backdrop-blur-2xl z-50 flex flex-col gap-1 select-none"
+              class="hidden absolute bottom-full left-0 mb-3 w-[calc(100vw-2rem)] max-w-[340px] sm:max-w-sm bg-[#181920]/95 border border-white/[0.12] rounded-3xl p-3 shadow-2xl shadow-black/95 backdrop-blur-2xl z-50 flex flex-col gap-2 select-none"
             >
-              <div class="px-3 py-1.5 text-[10px] font-semibold uppercase tracking-wider text-slate-400 border-b border-white/[0.06] mb-0.5">Roleplay & Media Tools</div>
-              
-              <!-- 1. Request Selfie Photo -->
-              <button 
-                type="button" 
-                id="plus-action-selfie"
-                class="w-full px-2.5 py-2 rounded-xl hover:bg-white/[0.06] text-left flex items-center gap-2.5 text-xs text-slate-200 hover:text-white transition cursor-pointer"
-              >
-                <div class="w-7 h-7 rounded-lg bg-pink-500/15 border border-pink-500/25 text-pink-400 flex items-center justify-center shrink-0">
-                  <Camera class="w-3.5 h-3.5" />
-                </div>
-                <div class="flex-1 min-w-0">
-                  <div class="font-medium">Request Selfie</div>
-                  <div class="text-[10px] text-slate-400">Generate character portrait photo</div>
-                </div>
-              </button>
+              <!-- Drag Handle Bar -->
+              <div class="w-10 h-1 bg-white/20 rounded-full mx-auto my-0.5"></div>
 
-              <!-- 2. Request Living Video Clip -->
-              <button 
-                type="button" 
-                id="plus-action-video"
-                class="w-full px-2.5 py-2 rounded-xl hover:bg-white/[0.06] text-left flex items-center gap-2.5 text-xs text-slate-200 hover:text-white transition cursor-pointer"
-              >
-                <div class="w-7 h-7 rounded-lg bg-purple-500/15 border border-purple-500/25 text-purple-400 flex items-center justify-center shrink-0">
-                  <Video class="w-3.5 h-3.5" />
-                </div>
-                <div class="flex-1 min-w-0">
-                  <div class="font-medium">Generate Video</div>
-                  <div class="text-[10px] text-slate-400">Living motion character clip</div>
-                </div>
-              </button>
-
-              <!-- 3. Active Persona Switcher -->
-              <button 
-                type="button" 
-                id="plus-action-persona"
-                class="w-full px-2.5 py-2 rounded-xl hover:bg-white/[0.06] text-left flex items-center gap-2.5 text-xs text-slate-200 hover:text-white transition cursor-pointer"
-              >
-                <div class="w-7 h-7 rounded-lg bg-indigo-500/15 border border-indigo-500/25 text-indigo-400 flex items-center justify-center shrink-0">
-                  <User class="w-3.5 h-3.5" />
-                </div>
-                <div class="flex-1 min-w-0">
-                  <div class="font-medium flex items-center gap-1.5">
-                    <span>User Persona</span>
-                    <span id="plus-active-persona-badge" class="px-1.5 py-0.2 rounded-md bg-purple-500/20 text-purple-300 text-[10px] font-mono">You</span>
+              <!-- Top Row: Quick Input Actions (Photos, Camera, Files) -->
+              <div class="grid grid-cols-3 gap-2 px-1 pt-1">
+                <!-- 1. Photos / Gallery -->
+                <button 
+                  type="button" 
+                  id="plus-action-photos"
+                  class="flex flex-col items-center gap-1.5 p-2 rounded-2xl bg-white/[0.04] hover:bg-white/[0.09] active:scale-95 border border-white/[0.08] transition cursor-pointer group"
+                  title="Attach Photo from Gallery (Vision AI & Reference)"
+                >
+                  <div class="w-11 h-11 rounded-full bg-purple-500/15 border border-purple-500/25 text-purple-300 flex items-center justify-center group-hover:scale-105 transition">
+                    <svg class="w-5 h-5 text-purple-300" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                      <rect width="18" height="18" x="3" y="3" rx="2" ry="2"/>
+                      <circle cx="9" cy="9" r="2"/>
+                      <path d="m21 15-3.086-3.086a2 2 0 0 0-2.828 0L6 21"/>
+                    </svg>
                   </div>
-                  <div class="text-[10px] text-slate-400">Switch or customize persona</div>
-                </div>
-              </button>
+                  <span class="text-[11px] font-medium text-slate-200">Photos</span>
+                </button>
 
-              <!-- 4. Regenerate Reply -->
-              <button 
-                type="button" 
-                id="plus-action-retry"
-                class="w-full px-2.5 py-2 rounded-xl hover:bg-white/[0.06] text-left flex items-center gap-2.5 text-xs text-slate-200 hover:text-white transition cursor-pointer"
-              >
-                <div class="w-7 h-7 rounded-lg bg-cyan-500/15 border border-cyan-500/25 text-cyan-400 flex items-center justify-center shrink-0">
-                  <RefreshCw class="w-3.5 h-3.5" />
-                </div>
-                <div class="flex-1 min-w-0">
-                  <div class="font-medium">Regenerate Reply</div>
-                  <div class="text-[10px] text-slate-400">Reroll latest character response</div>
-                </div>
-              </button>
+                <!-- 2. Camera Snapshot -->
+                <button 
+                  type="button" 
+                  id="plus-action-camera"
+                  class="flex flex-col items-center gap-1.5 p-2 rounded-2xl bg-white/[0.04] hover:bg-white/[0.09] active:scale-95 border border-white/[0.08] transition cursor-pointer group"
+                  title="Take Camera Photo"
+                >
+                  <div class="w-11 h-11 rounded-full bg-sky-500/15 border border-sky-500/25 text-sky-300 flex items-center justify-center group-hover:scale-105 transition">
+                    <svg class="w-5 h-5 text-sky-300" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                      <path d="M14.5 4h-5L7 7H4a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-3l-2.5-3z"/>
+                      <circle cx="12" cy="13" r="3"/>
+                    </svg>
+                  </div>
+                  <span class="text-[11px] font-medium text-slate-200">Camera</span>
+                </button>
 
-              <!-- 5. Rewind Last Turn -->
-              <button 
-                type="button" 
-                id="plus-action-rewind"
-                class="w-full px-2.5 py-2 rounded-xl hover:bg-white/[0.06] text-left flex items-center gap-2.5 text-xs text-slate-200 hover:text-white transition cursor-pointer"
-              >
-                <div class="w-7 h-7 rounded-lg bg-amber-500/15 border border-amber-500/25 text-amber-400 flex items-center justify-center shrink-0">
-                  <Rewind class="w-3.5 h-3.5" />
-                </div>
-                <div class="flex-1 min-w-0">
-                  <div class="font-medium">Rewind Turn</div>
-                  <div class="text-[10px] text-slate-400">Undo and step back one turn</div>
-                </div>
-              </button>
+                <!-- 3. Attach Files / Docs -->
+                <button 
+                  type="button" 
+                  id="plus-action-files"
+                  class="flex flex-col items-center gap-1.5 p-2 rounded-2xl bg-white/[0.04] hover:bg-white/[0.09] active:scale-95 border border-white/[0.08] transition cursor-pointer group"
+                  title="Upload Text or Document File"
+                >
+                  <div class="w-11 h-11 rounded-full bg-amber-500/15 border border-amber-500/25 text-amber-300 flex items-center justify-center group-hover:scale-105 transition">
+                    <svg class="w-5 h-5 text-amber-300" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                      <path d="m21.44 11.05-9.19 9.19a6 6 0 0 1-8.49-8.49l8.57-8.57A4 4 0 1 1 18 8.84l-8.59 8.57a2 2 0 0 1-2.83-2.83l8.49-8.48"/>
+                    </svg>
+                  </div>
+                  <span class="text-[11px] font-medium text-slate-200">Files</span>
+                </button>
+              </div>
+
+              <!-- Subtle Divider -->
+              <div class="border-t border-white/[0.08] my-1 mx-1"></div>
+
+              <!-- Bottom Section: Generative Multimodal AI Modes (Gemini list style) -->
+              <div class="flex flex-col gap-1 px-1">
+                <div class="px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wider text-slate-400">Creation & Multimodal</div>
+
+                <!-- 1. Images Mode -->
+                <button 
+                  type="button" 
+                  id="plus-mode-images"
+                  class="w-full px-2.5 py-2.5 rounded-2xl hover:bg-white/[0.06] text-left flex items-center gap-3 text-xs text-slate-200 hover:text-white transition cursor-pointer group active:scale-[0.99]"
+                >
+                  <div class="w-9 h-9 rounded-xl bg-purple-500/15 border border-purple-500/30 text-purple-300 flex items-center justify-center shrink-0 group-hover:scale-105 transition">
+                    <svg class="w-4.5 h-4.5 text-purple-300" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                      <rect width="18" height="18" x="3" y="3" rx="2" ry="2"/>
+                      <circle cx="9" cy="9" r="2"/>
+                      <path d="m21 15-3.086-3.086a2 2 0 0 0-2.828 0L6 21"/>
+                    </svg>
+                  </div>
+                  <div class="flex-1 min-w-0">
+                    <div class="font-medium text-white flex items-center gap-1.5">
+                      <span>Images</span>
+                      <span class="text-[9px] px-1.5 py-0.2 rounded-md bg-purple-500/20 text-purple-300 font-mono">Create</span>
+                    </div>
+                    <div class="text-[10px] text-slate-400 truncate">Create character selfies & scenes</div>
+                  </div>
+                </button>
+
+                <!-- 2. Videos Mode -->
+                <button 
+                  type="button" 
+                  id="plus-mode-videos"
+                  class="w-full px-2.5 py-2.5 rounded-2xl hover:bg-white/[0.06] text-left flex items-center gap-3 text-xs text-slate-200 hover:text-white transition cursor-pointer group active:scale-[0.99]"
+                >
+                  <div class="w-9 h-9 rounded-xl bg-sky-500/15 border border-sky-500/30 text-sky-300 flex items-center justify-center shrink-0 group-hover:scale-105 transition">
+                    <svg class="w-4.5 h-4.5 text-sky-300" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                      <path d="m22 8-6 4 6 4V8Z"/>
+                      <rect width="14" height="12" x="2" y="6" rx="2" ry="2"/>
+                    </svg>
+                  </div>
+                  <div class="flex-1 min-w-0">
+                    <div class="font-medium text-white flex items-center gap-1.5">
+                      <span>Videos</span>
+                      <span class="text-[9px] px-1.5 py-0.2 rounded-md bg-sky-500/20 text-sky-300 font-mono">Motion</span>
+                    </div>
+                    <div class="text-[10px] text-slate-400 truncate">Bring character or scene to life</div>
+                  </div>
+                </button>
+
+                <!-- 3. Voice & Audio Mode -->
+                <button 
+                  type="button" 
+                  id="plus-mode-voice"
+                  class="w-full px-2.5 py-2.5 rounded-2xl hover:bg-white/[0.06] text-left flex items-center gap-3 text-xs text-slate-200 hover:text-white transition cursor-pointer group active:scale-[0.99]"
+                >
+                  <div class="w-9 h-9 rounded-xl bg-emerald-500/15 border border-emerald-500/30 text-emerald-300 flex items-center justify-center shrink-0 group-hover:scale-105 transition">
+                    <svg class="w-4.5 h-4.5 text-emerald-300" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                      <path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3Z"/>
+                      <path d="M19 10v2a7 7 0 0 1-14 0v-2"/>
+                      <line x1="12" x2="12" y1="19" y2="22"/>
+                    </svg>
+                  </div>
+                  <div class="flex-1 min-w-0">
+                    <div class="font-medium text-white flex items-center gap-1.5">
+                      <span>Voice & Audio</span>
+                      <span class="text-[9px] px-1.5 py-0.2 rounded-md bg-emerald-500/20 text-emerald-300 font-mono">Spoken</span>
+                    </div>
+                    <div class="text-[10px] text-slate-400 truncate">Generate voice memo or narration</div>
+                  </div>
+                </button>
+              </div>
             </div>
 
             <!-- Unified Gemini Pill Input Bar -->
             <div 
               id="room-input-container" 
-              class="relative flex items-end gap-1.5 sm:gap-2 px-2.5 py-1.5 sm:px-3 sm:py-2 rounded-[28px] bg-[#1e1f24] hover:bg-[#212329] focus-within:bg-[#1e1f24] border border-white/[0.08] focus-within:border-white/20 transition-all duration-200 shadow-xl shadow-black/40 overflow-hidden"
+              class="relative flex flex-col px-2.5 py-1.5 sm:px-3 sm:py-2 rounded-[28px] bg-[#1e1f24] hover:bg-[#212329] focus-within:bg-[#1e1f24] border border-white/[0.08] focus-within:border-white/20 transition-all duration-200 shadow-xl shadow-black/40"
             >
               <!-- Floating Push-to-Talk / Recording Overlay Bar -->
               <div 
@@ -3536,45 +3606,92 @@ const { character } = Astro.props;
                 </button>
               </div>
 
-              <!-- Left Action Button (+) -->
-              <button 
-                type="button" 
-                id="chat-input-plus-btn"
-                class="w-8 h-8 sm:w-9 sm:h-9 rounded-full flex items-center justify-center text-neutral-400 hover:text-white hover:bg-white/[0.08] transition-all active:scale-95 shrink-0 self-end mb-0.5 cursor-pointer"
-                title="Quick Tools & Actions"
-              >
-                <Plus class="w-4 h-4 sm:w-5 sm:h-5 transition-transform duration-200" />
-              </button>
+              <!-- Top Multimodal Active Mode Chip (Gemini style) -->
+              <div id="multimodal-active-chip" class="hidden flex items-center justify-between w-full pb-1.5 mb-1 px-1 border-b border-white/[0.06]">
+                <div class="inline-flex items-center gap-2 px-2.5 py-0.5 rounded-full bg-white/[0.08] border border-white/10 text-white text-xs font-medium">
+                  <span id="multimodal-chip-icon" class="flex items-center"></span>
+                  <span id="multimodal-chip-label" class="font-medium text-white">Images</span>
+                  <button type="button" id="multimodal-chip-close-btn" class="w-4 h-4 ml-1 rounded-full hover:bg-white/20 flex items-center justify-center text-slate-300 hover:text-white transition cursor-pointer" title="Cancel generation mode">
+                    ✕
+                  </button>
+                </div>
+                <span id="multimodal-chip-hint" class="text-[10px] text-slate-400 font-mono hidden xs:inline">Generates media in next response</span>
+              </div>
 
-              <!-- Dynamic Auto-Growing Textarea -->
-              <textarea 
-                id="room-input" 
-                rows="1" 
-                dir="auto"
-                placeholder={`Message ${character.name}...`}
-                class="flex-1 min-w-0 py-1.5 sm:py-2 px-1.5 bg-transparent text-sm sm:text-[15px] text-white placeholder:text-neutral-500 outline-none resize-none leading-relaxed transition-[height] duration-75"
-                style="min-height: 24px; max-height: 120px; height: 24px; overflow-y: hidden; scrollbar-width: thin;"
-              ></textarea>
+              <!-- Attached Reference/Sample Image Preview (Thumbnail with close button) -->
+              <div id="chat-attached-image-container" class="hidden relative self-start my-1 ml-1">
+                <div class="relative group inline-block">
+                  <img id="chat-attached-image-preview" src="" class="h-14 w-14 object-cover rounded-xl border border-white/20 shadow-md" alt="Attached Preview" />
+                  <button type="button" id="chat-remove-attached-image-btn" class="absolute -top-1.5 -right-1.5 w-5 h-5 rounded-full bg-rose-600 border border-white text-white hover:bg-rose-700 flex items-center justify-center text-[10px] font-bold shadow transition cursor-pointer" title="Remove image">
+                    ✕
+                  </button>
+                </div>
+              </div>
 
-              <!-- Right Actions: Mic + Send Button -->
-              <div class="flex items-center gap-1 shrink-0 self-end mb-0.5">
+              <!-- Input Row: Plus Button + Textarea + Aspect Ratio (optional) + Mic + Send -->
+              <div class="flex items-end gap-1.5 sm:gap-2 w-full">
+                <!-- Left Action Button (+) -->
                 <button 
                   type="button" 
-                  id="chat-input-mic-btn"
-                  class="w-8 h-8 sm:w-9 sm:h-9 rounded-full flex items-center justify-center text-neutral-400 hover:text-white hover:bg-white/[0.08] transition-all active:scale-95 cursor-pointer"
-                  title="Voice Input (Speech to Text)"
+                  id="chat-input-plus-btn"
+                  class="w-8 h-8 sm:w-9 sm:h-9 rounded-full flex items-center justify-center text-neutral-400 hover:text-white hover:bg-white/[0.08] transition-all active:scale-95 shrink-0 self-end mb-0.5 cursor-pointer"
+                  title="Quick Tools & Actions"
                 >
-                  <Mic class="w-4 h-4 sm:w-[18px] sm:h-[18px]" />
+                  <Plus class="w-4 h-4 sm:w-5 sm:h-5 transition-transform duration-200" />
                 </button>
 
-                <button 
-                  type="submit" 
-                  id="room-send-btn"
-                  class="w-8 h-8 sm:w-9 sm:h-9 rounded-full bg-gradient-to-tr from-purple-600 to-indigo-600 hover:from-purple-500 hover:to-indigo-500 text-white flex items-center justify-center transition-all duration-200 cursor-pointer active:scale-95 shadow-md shadow-indigo-950/40 opacity-40 scale-95"
-                  title="Send Message"
-                >
-                  <ArrowUp class="w-4 h-4 sm:w-[18px] sm:h-[18px] stroke-[2.5]" />
-                </button>
+                <!-- Dynamic Auto-Growing Textarea -->
+                <textarea 
+                  id="room-input" 
+                  rows="1" 
+                  dir="auto"
+                  placeholder={`Message ${character.name}...`}
+                  class="flex-1 min-w-0 py-1.5 sm:py-2 px-1.5 bg-transparent text-sm sm:text-[15px] text-white placeholder:text-neutral-500 outline-none resize-none leading-relaxed transition-[height] duration-75"
+                  style="min-height: 24px; max-height: 120px; height: 24px; overflow-y: hidden; scrollbar-width: thin;"
+                ></textarea>
+
+                <!-- Aspect Ratio Selector (shown only in Images mode) -->
+                <div id="multimodal-aspect-pill-container" class="hidden relative self-end mb-0.5 shrink-0">
+                  <button type="button" id="multimodal-aspect-trigger" class="flex items-center gap-1 px-2.5 py-1.5 rounded-full bg-white/[0.06] hover:bg-white/[0.12] border border-white/10 text-slate-300 hover:text-white text-[11px] font-mono transition cursor-pointer" title="Aspect Ratio">
+                    <span id="multimodal-aspect-label">9:16</span>
+                    <ChevronDown class="w-3 h-3 text-slate-400" />
+                  </button>
+                  <div id="multimodal-aspect-menu" class="hidden absolute bottom-full right-0 mb-2 w-36 bg-[#181920] border border-white/15 rounded-xl p-1 shadow-2xl z-50 flex flex-col gap-0.5">
+                    <button type="button" class="aspect-option-btn w-full px-2.5 py-1.5 rounded-lg text-left text-xs text-slate-200 hover:text-white hover:bg-white/[0.08] transition flex items-center justify-between" data-aspect="9:16" data-label="9:16">
+                      <span>9:16 Portrait</span>
+                      <span class="text-[10px] text-slate-500 font-mono">Mobile</span>
+                    </button>
+                    <button type="button" class="aspect-option-btn w-full px-2.5 py-1.5 rounded-lg text-left text-xs text-slate-200 hover:text-white hover:bg-white/[0.08] transition flex items-center justify-between" data-aspect="1:1" data-label="1:1">
+                      <span>1:1 Square</span>
+                      <span class="text-[10px] text-slate-500 font-mono">Avatar</span>
+                    </button>
+                    <button type="button" class="aspect-option-btn w-full px-2.5 py-1.5 rounded-lg text-left text-xs text-slate-200 hover:text-white hover:bg-white/[0.08] transition flex items-center justify-between" data-aspect="16:9" data-label="16:9">
+                      <span>16:9 Cinema</span>
+                      <span class="text-[10px] text-slate-500 font-mono">Wide</span>
+                    </button>
+                  </div>
+                </div>
+
+                <!-- Right Actions: Mic + Send Button -->
+                <div class="flex items-center gap-1 shrink-0 self-end mb-0.5">
+                  <button 
+                    type="button" 
+                    id="chat-input-mic-btn"
+                    class="w-8 h-8 sm:w-9 sm:h-9 rounded-full flex items-center justify-center text-neutral-400 hover:text-white hover:bg-white/[0.08] transition-all active:scale-95 cursor-pointer"
+                    title="Voice Input (Speech to Text)"
+                  >
+                    <Mic class="w-4 h-4 sm:w-[18px] sm:h-[18px]" />
+                  </button>
+
+                  <button 
+                    type="submit" 
+                    id="room-send-btn"
+                    class="w-8 h-8 sm:w-9 sm:h-9 rounded-full bg-gradient-to-tr from-purple-600 to-indigo-600 hover:from-purple-500 hover:to-indigo-500 text-white flex items-center justify-center transition-all duration-200 cursor-pointer active:scale-95 shadow-md shadow-indigo-950/40 opacity-40 scale-95"
+                    title="Send Message"
+                  >
+                    <ArrowUp class="w-4 h-4 sm:w-[18px] sm:h-[18px] stroke-[2.5]" />
+                  </button>
+                </div>
               </div>
             </div>
           </form>
@@ -4006,6 +4123,12 @@ const { character } = Astro.props;
 
     return historySlice
       .map(m => {
+        if (Array.isArray(m.content)) {
+          return {
+            role: m.role || (m.sender === 'user' ? 'user' : 'assistant'),
+            content: m.content
+          };
+        }
         let content = m.content || m.text || '';
         // Always strip internal thoughts and UI markup from history sent to API
         content = stripInternalArtifactsForLLM(content);
@@ -4623,11 +4746,17 @@ const { character } = Astro.props;
     );
   };
 
+  // Multimodal state (Google Gemini style)
+  let currentMultimodalMode = null; // null | 'image' | 'video' | 'voice'
+  let selectedAspectRatio = '9:16';
+  let attachedImageBase64 = null;
+
   function updateSendBtnState() {
     const sendBtn = document.getElementById('room-send-btn');
     if (!sendBtn || !input) return;
     const hasText = input.value.trim().length > 0;
-    if (hasText) {
+    const canSend = hasText || currentMultimodalMode !== null || attachedImageBase64 !== null;
+    if (canSend) {
       sendBtn.classList.remove('opacity-40', 'scale-95');
       sendBtn.classList.add('opacity-100', 'scale-100');
     } else {
@@ -14594,10 +14723,13 @@ const { character } = Astro.props;
             <span class="text-[10px] text-slate-500">${msg.timestamp || 'Just now'}</span>
           </div>
           ${contentHtml}
-          <div class="flex items-center gap-0.5 sm:gap-1 pt-1 opacity-75 group-hover/msg:opacity-100 hover:opacity-100 transition-opacity">
+          <div class="flex items-center gap-0.5 sm:gap-1 pt-1 opacity-80 sm:opacity-0 sm:group-hover/msg:opacity-100 hover:opacity-100 transition-opacity">
             ${swipesHtml}
-            <button class="msg-regenerate-btn w-7 h-7 sm:w-8 sm:h-8 rounded-lg flex items-center justify-center text-slate-400 hover:text-cyan-400 hover:bg-white/[0.08] active:scale-95 transition cursor-pointer" data-idx="${idx}" title="Modify response / Try again">
+            <button class="msg-regenerate-btn w-7 h-7 sm:w-8 sm:h-8 rounded-lg flex items-center justify-center text-slate-400 hover:text-cyan-400 hover:bg-white/[0.08] active:scale-95 transition cursor-pointer" data-idx="${idx}" title="Modify response / Reroll">
               ${TOOLBAR_ICONS.retry}
+            </button>
+            <button class="msg-rewind-btn w-7 h-7 sm:w-8 sm:h-8 rounded-lg flex items-center justify-center text-slate-400 hover:text-amber-400 hover:bg-white/[0.08] active:scale-95 transition cursor-pointer" data-idx="${idx}" title="Rewind / Step back to here">
+              ${TOOLBAR_ICONS.rewind}
             </button>
             <button class="msg-speak-btn w-7 h-7 sm:w-8 sm:h-8 rounded-lg flex items-center justify-center text-slate-400 hover:text-purple-300 hover:bg-white/[0.08] active:scale-95 transition cursor-pointer" data-idx="${idx}" title="Listen (Read aloud)">
               ${TOOLBAR_ICONS.speaker}
@@ -14623,9 +14755,17 @@ const { character } = Astro.props;
             <span class="text-xs font-bold text-purple-300">${displayName}</span>
           </div>
           <div id="msg-bubble-${idx}" class="p-3.5 sm:p-4 rounded-2xl rounded-tr-sm bg-gradient-to-r from-purple-700 to-indigo-600 text-white text-xs sm:text-sm leading-relaxed shadow-lg shadow-purple-950/40 text-left select-text">
+            ${msg.mediaUrl ? `
+              <div class="mb-2 rounded-xl overflow-hidden max-h-60 max-w-xs">
+                <img src="${msg.mediaUrl}" class="w-full h-auto object-cover cursor-pointer lightbox-img-trigger rounded-xl border border-white/20" data-img-url="${msg.mediaUrl}" data-img-title="Attached Photo" alt="Attached Photo" />
+              </div>
+            ` : ''}
             ${msg.text}
           </div>
-          <div class="flex items-center justify-end gap-0.5 sm:gap-1 pt-1 opacity-75 group-hover/msg:opacity-100 hover:opacity-100 transition-opacity">
+          <div class="flex items-center justify-end gap-0.5 sm:gap-1 pt-1 opacity-80 sm:opacity-0 sm:group-hover/msg:opacity-100 hover:opacity-100 transition-opacity">
+            <button class="msg-rewind-btn w-7 h-7 sm:w-8 sm:h-8 rounded-lg flex items-center justify-center text-slate-400 hover:text-amber-400 hover:bg-white/[0.08] active:scale-95 transition cursor-pointer" data-idx="${idx}" title="Rewind / Step back here">
+              ${TOOLBAR_ICONS.rewind}
+            </button>
             <button class="msg-copy-btn w-7 h-7 sm:w-8 sm:h-8 rounded-lg flex items-center justify-center text-slate-400 hover:text-slate-200 hover:bg-white/[0.08] active:scale-95 transition cursor-pointer" data-text="${encodeURIComponent(msg.text)}" title="Copy text">
               ${TOOLBAR_ICONS.copy}
             </button>
@@ -15012,12 +15152,13 @@ const { character } = Astro.props;
     }
   };
 
-  async function handleSendMessage(userText) {
-    if (!userText.trim()) return;
+  async function handleSendMessage(userText, attachedImage = null) {
+    if (!userText.trim() && !attachedImage) return;
 
     const userMsg = {
       sender: 'user',
       text: userText.trim(),
+      mediaUrl: attachedImage || undefined,
       timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
     };
 
@@ -15108,11 +15249,22 @@ const { character } = Astro.props;
         const contextLimit = Math.round(toAsciiNumber(localStorage.getItem('aetheria_text_context'), 16));
         const historySlice = conversation
           .slice(-contextLimit)
-          .filter(m => m.text && !isPoisonedOrErrorMessage(m.text))
-          .map(m => ({
-            role: m.sender === 'user' ? 'user' : 'assistant',
-            content: m.text
-          }));
+          .filter(m => (m.text || m.mediaUrl) && !isPoisonedOrErrorMessage(m.text || ''))
+          .map(m => {
+            if (m.mediaUrl && m.sender === 'user') {
+              return {
+                role: 'user',
+                content: [
+                  { type: 'text', text: m.text || 'Look at this photo.' },
+                  { type: 'image_url', image_url: { url: m.mediaUrl } }
+                ]
+              };
+            }
+            return {
+              role: m.sender === 'user' ? 'user' : 'assistant',
+              content: m.text
+            };
+          });
 
         // Send clean user and assistant conversation history (strictly sanitized of persona when disabled)
         const payloadMessages = getSanitizedHistoryForAPI(historySlice);
@@ -16253,14 +16405,20 @@ const { character } = Astro.props;
   }
 
   // Selfie / Photo Generation
-  async function handleGenerateSelfie() {
-    const prompt = buildContextualSelfiePrompt();
+  async function handleGenerateSelfie(customPrompt = '', referenceImg = null, aspectRatio = '9:16') {
+    let prompt = '';
+    if (customPrompt && customPrompt.trim()) {
+      prompt = `${activeChar.name}, ${activeChar.title || ''}, ${customPrompt.trim()}, masterpiece, ultra detailed, photorealistic`;
+    } else {
+      prompt = buildContextualSelfiePrompt();
+    }
+
     const imageProvider = localStorage.getItem('aetheria_image_provider') || 'pollinations';
-    const falKey = localStorage.getItem('aetheria_fal_key') || localStorage.getItem('aetheria_api_key_fal');
+    const falKey = localStorage.getItem('aetheria_image_key') || localStorage.getItem('aetheria_fal_key') || localStorage.getItem('aetheria_api_key_fal');
     const openaiKey = localStorage.getItem('aetheria_api_key_openai');
 
     if (imageProvider === 'fal' && !falKey) {
-      showNotification('⚠️ Fal Flux requires an API Key. Opening settings...');
+      showNotification('⚠️ Character Selfies requires a Fal.ai API Key. Opening settings...');
       byokTray?.classList.remove('hidden');
       document.querySelector('[data-engine-tab="image"]')?.click();
       return;
@@ -16272,12 +16430,12 @@ const { character } = Astro.props;
       return;
     }
 
-    showNotification('📷 Capturing scene selfie...');
+    showNotification('📷 Generating character image...');
 
     const pendingId = 'selfie_' + Date.now();
     const placeholderMsg = {
       sender: 'character',
-      text: `*Snaps a candid selfie:* "${activeChar.name}"`,
+      text: customPrompt ? `*Shares a photo:* "${customPrompt.trim()}"` : `*Snaps a candid selfie:* "${activeChar.name}"`,
       timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
       mediaType: 'image_generating',
       mediaPrompt: prompt,
@@ -16289,9 +16447,23 @@ const { character } = Astro.props;
 
     try {
       let finalUrl = '';
+      let width = 768;
+      let height = 1365;
+      let falSize = "portrait_16_9";
+
+      if (aspectRatio === '1:1') {
+        width = 1024;
+        height = 1024;
+        falSize = "square_hd";
+      } else if (aspectRatio === '16:9') {
+        width = 1365;
+        height = 768;
+        falSize = "landscape_16_9";
+      }
+
       if (imageProvider === 'pollinations' || !falKey) {
         const encoded = encodeURIComponent(prompt);
-        finalUrl = `https://image.pollinations.ai/prompt/${encoded}?width=768&height=1024&nologo=true&seed=${Date.now()}`;
+        finalUrl = `https://image.pollinations.ai/prompt/${encoded}?width=${width}&height=${height}&nologo=true&seed=${Date.now()}`;
       } else if (imageProvider === 'fal' && falKey) {
         const res = await fetch('https://queue.fal.run/fal-ai/flux/schnell', {
           method: 'POST',
@@ -16299,7 +16471,7 @@ const { character } = Astro.props;
             'Authorization': `Key ${falKey}`,
             'Content-Type': 'application/json'
           },
-          body: JSON.stringify({ prompt: prompt, image_size: "portrait_4_3" })
+          body: JSON.stringify({ prompt: prompt, image_size: falSize })
         });
         const data = await res.json();
         finalUrl = data.images?.[0]?.url || '';
@@ -16324,8 +16496,8 @@ const { character } = Astro.props;
   }
 
   // Living Video Generation (BYOK Protected)
-  async function handleGenerateVideo() {
-    const falKey = localStorage.getItem('aetheria_fal_key') || localStorage.getItem('aetheria_api_key_fal');
+  async function handleGenerateVideo(customPrompt = '', referenceImg = null) {
+    const falKey = localStorage.getItem('aetheria_video_key') || localStorage.getItem('aetheria_fal_key') || localStorage.getItem('aetheria_api_key_fal');
     const lumaKey = localStorage.getItem('aetheria_luma_key');
 
     // Strict Gatekeeper: Only available for users who provided API Key
@@ -16336,13 +16508,19 @@ const { character } = Astro.props;
       return;
     }
 
-    const prompt = buildContextualVideoPrompt();
+    let prompt = '';
+    if (customPrompt && customPrompt.trim()) {
+      prompt = `${activeChar.name}, ${customPrompt.trim()}, cinematic lighting, highly detailed`;
+    } else {
+      prompt = buildContextualVideoPrompt();
+    }
+
     showNotification('🎬 Requesting Living Video render...');
 
     const pendingId = 'video_' + Date.now();
     const placeholderMsg = {
       sender: 'character',
-      text: `*Sends living video clip:* "${activeChar.name} in motion"`,
+      text: customPrompt ? `*Sends video clip:* "${customPrompt.trim()}"` : `*Sends living video clip:* "${activeChar.name} in motion"`,
       timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
       mediaType: 'video_generating',
       mediaPrompt: prompt,
@@ -16358,6 +16536,8 @@ const { character } = Astro.props;
           ? activeChar.avatarUrl 
           : `${window.location.origin}${activeChar.avatarUrl}`;
 
+        const sourceImageUrl = referenceImg || avatarFullUrl;
+
         const res = await fetch('https://queue.fal.run/fal-ai/kling-video/v1.5/pro/image-to-video', {
           method: 'POST',
           headers: {
@@ -16366,7 +16546,7 @@ const { character } = Astro.props;
           },
           body: JSON.stringify({
             prompt: prompt,
-            image_url: avatarFullUrl,
+            image_url: sourceImageUrl,
             duration: "5",
             aspect_ratio: "16:9"
           })
@@ -16434,6 +16614,14 @@ const { character } = Astro.props;
     const plusPersonaBadge = document.getElementById('plus-active-persona-badge');
     if (plusPersonaBadge) {
       plusPersonaBadge.textContent = isEnabled ? (activeUserPersona.name || 'You') : 'Off';
+    }
+    const overflowPersonaBadge = document.getElementById('overflow-persona-badge');
+    const overflowPersonaName = document.getElementById('overflow-persona-name');
+    if (overflowPersonaBadge) {
+      overflowPersonaBadge.textContent = isEnabled ? (activeUserPersona.name || 'You') : 'Off';
+    }
+    if (overflowPersonaName) {
+      overflowPersonaName.textContent = isEnabled ? (activeUserPersona.name || 'You') : 'Persona Off';
     }
     if (chatMaskLabel) {
       if (!isEnabled) {
@@ -16822,11 +17010,157 @@ const { character } = Astro.props;
   // -------------------------------------------------------------
   // EVENT LISTENERS: GEMINI INPUT, DYNAMIC RESIZING, & CONTROLS
   // -------------------------------------------------------------
+  const plusBtn = document.getElementById('chat-input-plus-btn');
+  const plusMenu = document.getElementById('chat-plus-menu');
+  const micBtn = document.getElementById('chat-input-mic-btn');
+
+  // Multimodal & Input DOM Elements
+  const multimodalActiveChip = document.getElementById('multimodal-active-chip');
+  const multimodalChipIcon = document.getElementById('multimodal-chip-icon');
+  const multimodalChipLabel = document.getElementById('multimodal-chip-label');
+  const multimodalChipCloseBtn = document.getElementById('multimodal-chip-close-btn');
+  const multimodalAspectPillContainer = document.getElementById('multimodal-aspect-pill-container');
+  const multimodalAspectTrigger = document.getElementById('multimodal-aspect-trigger');
+  const multimodalAspectMenu = document.getElementById('multimodal-aspect-menu');
+  const multimodalAspectLabel = document.getElementById('multimodal-aspect-label');
+  const chatAttachedImageContainer = document.getElementById('chat-attached-image-container');
+  const chatAttachedImagePreview = document.getElementById('chat-attached-image-preview');
+  const chatRemoveAttachedImageBtn = document.getElementById('chat-remove-attached-image-btn');
+
+  const filePhotoInput = document.getElementById('chat-file-photo-input');
+  const fileCameraInput = document.getElementById('chat-file-camera-input');
+  const fileDocInput = document.getElementById('chat-file-doc-input');
+
+  function setMultimodalMode(mode) {
+    currentMultimodalMode = mode;
+    plusMenu?.classList.add('hidden');
+    plusBtn?.classList.remove('rotate-45', 'text-purple-400');
+
+    if (!mode) {
+      multimodalActiveChip?.classList.add('hidden');
+      multimodalAspectPillContainer?.classList.add('hidden');
+      multimodalAspectMenu?.classList.add('hidden');
+      if (input) input.placeholder = `Message ${activeChar.name}...`;
+      updateSendBtnState();
+      return;
+    }
+
+    multimodalActiveChip?.classList.remove('hidden');
+
+    if (mode === 'image') {
+      if (multimodalChipIcon) {
+        multimodalChipIcon.innerHTML = `<svg class="w-3.5 h-3.5 text-purple-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect width="18" height="18" x="3" y="3" rx="2" ry="2"/><circle cx="9" cy="9" r="2"/><path d="m21 15-3.086-3.086a2 2 0 0 0-2.828 0L6 21"/></svg>`;
+      }
+      if (multimodalChipLabel) multimodalChipLabel.textContent = 'Images';
+      multimodalAspectPillContainer?.classList.remove('hidden');
+      if (input) input.placeholder = 'Describe your image or character selfie...';
+    } else if (mode === 'video') {
+      if (multimodalChipIcon) {
+        multimodalChipIcon.innerHTML = `<svg class="w-3.5 h-3.5 text-sky-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m22 8-6 4 6 4V8Z"/><rect width="14" height="12" x="2" y="6" rx="2" ry="2"/></svg>`;
+      }
+      if (multimodalChipLabel) multimodalChipLabel.textContent = 'Videos';
+      multimodalAspectPillContainer?.classList.add('hidden');
+      if (input) input.placeholder = 'Describe motion or scene to animate...';
+    } else if (mode === 'voice') {
+      if (multimodalChipIcon) {
+        multimodalChipIcon.innerHTML = `<svg class="w-3.5 h-3.5 text-emerald-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3Z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" x2="12" y1="19" y2="22"/></svg>`;
+      }
+      if (multimodalChipLabel) multimodalChipLabel.textContent = 'Voice & Audio';
+      multimodalAspectPillContainer?.classList.add('hidden');
+      if (input) input.placeholder = 'Enter text for character voice memo...';
+    }
+
+    updateSendBtnState();
+    input?.focus();
+  }
+
+  function clearAttachedImage() {
+    attachedImageBase64 = null;
+    chatAttachedImageContainer?.classList.add('hidden');
+    if (chatAttachedImagePreview) chatAttachedImagePreview.src = '';
+    if (filePhotoInput) filePhotoInput.value = '';
+    if (fileCameraInput) fileCameraInput.value = '';
+    updateSendBtnState();
+  }
+
+  function handleImageFileSelected(file) {
+    if (!file || !file.type.startsWith('image/')) {
+      showNotification('Please select a valid image file');
+      return;
+    }
+    if (file.size > 10 * 1024 * 1024) {
+      showNotification('Image size exceeds 10MB limit');
+      return;
+    }
+    const reader = new FileReader();
+    reader.onload = (e) => {
+      attachedImageBase64 = e.target.result;
+      if (chatAttachedImagePreview) chatAttachedImagePreview.src = attachedImageBase64;
+      chatAttachedImageContainer?.classList.remove('hidden');
+      updateSendBtnState();
+      showNotification('📷 Photo attached as reference / visual input');
+    };
+    reader.readAsDataURL(file);
+  }
+
+  async function handleUnifiedSubmit() {
+    const text = input ? input.value.trim() : '';
+
+    if (currentMultimodalMode === 'image') {
+      const currentPrompt = text;
+      const currentImg = attachedImageBase64;
+      const currentAspect = selectedAspectRatio;
+      if (input) {
+        input.value = '';
+        adjustInputHeight();
+      }
+      setMultimodalMode(null);
+      clearAttachedImage();
+      await handleGenerateSelfie(currentPrompt, currentImg, currentAspect);
+      return;
+    }
+
+    if (currentMultimodalMode === 'video') {
+      const currentPrompt = text;
+      const currentImg = attachedImageBase64;
+      if (input) {
+        input.value = '';
+        adjustInputHeight();
+      }
+      setMultimodalMode(null);
+      clearAttachedImage();
+      await handleGenerateVideo(currentPrompt, currentImg);
+      return;
+    }
+
+    if (currentMultimodalMode === 'voice') {
+      const currentText = text;
+      if (input) {
+        input.value = '';
+        adjustInputHeight();
+      }
+      setMultimodalMode(null);
+      if (currentText) {
+        speak(currentText);
+      }
+      return;
+    }
+
+    // Normal chat message
+    if (!text && !attachedImageBase64) return;
+    const userMsgText = text;
+    const userAttachedImg = attachedImageBase64;
+    if (input) {
+      input.value = '';
+      adjustInputHeight();
+    }
+    clearAttachedImage();
+    await handleSendMessage(userMsgText, userAttachedImg);
+  }
+
   inputForm?.addEventListener('submit', (e) => {
     e.preventDefault();
-    if (input && input.value.trim().length > 0) {
-      handleSendMessage(input.value);
-    }
+    handleUnifiedSubmit();
   });
 
   input?.addEventListener('keydown', (e) => {
@@ -16845,11 +17179,9 @@ const { character } = Astro.props;
         return;
       }
 
-      // Desktop: Enter sends the message
+      // Desktop: Enter sends the message or generates media
       e.preventDefault();
-      if (input.value.trim().length > 0) {
-        handleSendMessage(input.value);
-      }
+      handleUnifiedSubmit();
     }
   });
 
@@ -16867,10 +17199,6 @@ const { character } = Astro.props;
   });
 
   // Gemini-style Plus Menu (+) Controls
-  const plusBtn = document.getElementById('chat-input-plus-btn');
-  const plusMenu = document.getElementById('chat-plus-menu');
-  const micBtn = document.getElementById('chat-input-mic-btn');
-
   plusBtn?.addEventListener('click', (e) => {
     e.stopPropagation();
     if (!plusMenu) return;
@@ -16893,31 +17221,96 @@ const { character } = Astro.props;
     }
   });
 
-  // Plus menu quick actions
-  document.getElementById('plus-action-selfie')?.addEventListener('click', () => {
+  // Gemini Plus Menu Quick Actions
+  document.getElementById('plus-action-photos')?.addEventListener('click', () => {
     plusMenu?.classList.add('hidden');
     plusBtn?.classList.remove('rotate-45', 'text-purple-400');
-    document.getElementById('chat-action-selfie-btn')?.click();
+    filePhotoInput?.click();
   });
-  document.getElementById('plus-action-video')?.addEventListener('click', () => {
+
+  document.getElementById('plus-action-camera')?.addEventListener('click', () => {
     plusMenu?.classList.add('hidden');
     plusBtn?.classList.remove('rotate-45', 'text-purple-400');
-    document.getElementById('chat-action-video-btn')?.click();
+    fileCameraInput?.click();
   });
-  document.getElementById('plus-action-persona')?.addEventListener('click', () => {
+
+  document.getElementById('plus-action-files')?.addEventListener('click', () => {
     plusMenu?.classList.add('hidden');
     plusBtn?.classList.remove('rotate-45', 'text-purple-400');
+    fileDocInput?.click();
+  });
+
+  document.getElementById('plus-mode-images')?.addEventListener('click', () => {
+    setMultimodalMode('image');
+  });
+
+  document.getElementById('plus-mode-videos')?.addEventListener('click', () => {
+    setMultimodalMode('video');
+  });
+
+  document.getElementById('plus-mode-voice')?.addEventListener('click', () => {
+    setMultimodalMode('voice');
+  });
+
+  multimodalChipCloseBtn?.addEventListener('click', () => {
+    setMultimodalMode(null);
+  });
+
+  chatRemoveAttachedImageBtn?.addEventListener('click', () => {
+    clearAttachedImage();
+  });
+
+  filePhotoInput?.addEventListener('change', (e) => {
+    const file = e.target.files?.[0];
+    if (file) handleImageFileSelected(file);
+  });
+
+  fileCameraInput?.addEventListener('change', (e) => {
+    const file = e.target.files?.[0];
+    if (file) handleImageFileSelected(file);
+  });
+
+  fileDocInput?.addEventListener('change', async (e) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    try {
+      const text = await file.text();
+      if (input) {
+        input.value += (input.value ? "\n" : "") + "[Attached File: " + file.name + "]\n" + text.slice(0, 3000);
+        adjustInputHeight();
+        updateSendBtnState();
+      }
+      showNotification(`Loaded content from ${file.name}`);
+    } catch {
+      showNotification('Error reading file content');
+    }
+    fileDocInput.value = '';
+  });
+
+  multimodalAspectTrigger?.addEventListener('click', (e) => {
+    e.stopPropagation();
+    multimodalAspectMenu?.classList.toggle('hidden');
+  });
+
+  document.querySelectorAll('.aspect-option-btn').forEach(btn => {
+    btn.addEventListener('click', (e) => {
+      const aspect = btn.getAttribute('data-aspect') || '9:16';
+      selectedAspectRatio = aspect;
+      if (multimodalAspectLabel) multimodalAspectLabel.textContent = aspect;
+      multimodalAspectMenu?.classList.add('hidden');
+    });
+  });
+
+  document.addEventListener('click', (e) => {
+    if (multimodalAspectMenu && !multimodalAspectMenu.contains(e.target) && !multimodalAspectTrigger?.contains(e.target)) {
+      multimodalAspectMenu.classList.add('hidden');
+    }
+  });
+
+  // Header overflow Persona button
+  document.getElementById('overflow-item-persona')?.addEventListener('click', () => {
+    closeHeaderOverflowMenu();
     document.getElementById('chat-action-mask-btn')?.click();
-  });
-  document.getElementById('plus-action-rewind')?.addEventListener('click', () => {
-    plusMenu?.classList.add('hidden');
-    plusBtn?.classList.remove('rotate-45', 'text-purple-400');
-    document.getElementById('chat-action-rewind-btn')?.click();
-  });
-  document.getElementById('plus-action-retry')?.addEventListener('click', () => {
-    plusMenu?.classList.add('hidden');
-    plusBtn?.classList.remove('rotate-45', 'text-purple-400');
-    document.getElementById('chat-action-regenerate-btn')?.click();
   });
 
   // Speech-to-Text via Web Speech API
