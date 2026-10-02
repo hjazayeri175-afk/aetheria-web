@@ -3299,98 +3299,52 @@ const { character } = Astro.props;
           </div>
         </div>
 
-        <!-- Fullscreen Long-Text Composer Modal (Gemini Dark Zen Mode) -->
+        <!-- Ultra-Minimal Fullscreen Composer (Pure AMOLED Black, ChatGPT Zen Style) -->
         <div 
           id="fullscreen-composer-modal" 
-          class="hidden fixed inset-0 z-50 bg-[#131314] text-[#f1f3f4] flex flex-col transition-all duration-300 opacity-0 pointer-events-none select-text"
+          class="hidden fixed inset-0 z-50 bg-[#000000] text-[#f1f3f4] flex flex-col justify-between transition-opacity duration-200 opacity-0 pointer-events-none select-text"
+          style="height: 100dvh; max-height: 100dvh;"
         >
-          <!-- Top Navigation / Collapse Bar (علامت جمع شدن بالا) -->
-          <div class="w-full border-b border-white/[0.08] bg-[#1e1f20]/90 backdrop-blur-md px-3 sm:px-6 py-2.5 sm:py-3 flex items-center justify-between shrink-0 z-10">
-            <div class="flex items-center gap-3 min-w-0">
-              <!-- Collapse / Minimize Button (علامت جمع شدن) -->
-              <button 
-                type="button" 
-                id="fullscreen-composer-close-btn"
-                class="w-9 h-9 sm:w-10 sm:h-10 rounded-full bg-white/[0.06] hover:bg-white/[0.12] text-[#c4c7c5] hover:text-white flex items-center justify-center transition-all cursor-pointer active:scale-95 shrink-0"
-                title="Collapse editor (جمع شدن)"
-              >
-                <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
-                  <path d="M4 14h6v6"></path>
-                  <path d="M20 10h-6V4"></path>
-                  <path d="M14 10l7-7"></path>
-                  <path d="M3 21l7-7"></path>
-                </svg>
-              </button>
-
-              <div class="flex items-center gap-2.5 min-w-0">
-                <img 
-                  id="fullscreen-char-avatar"
-                  src={character.avatarUrl} 
-                  alt={character.name} 
-                  class="w-7 h-7 sm:w-8 sm:h-8 rounded-full object-cover border border-white/20 shrink-0" 
-                />
-                <div class="flex flex-col min-w-0">
-                  <span id="fullscreen-char-name" class="text-xs sm:text-sm font-semibold text-white truncate">{character.name}</span>
-                  <span class="text-[10px] sm:text-xs text-[#8e918f] truncate font-normal">Full-screen Composer • متن طولانی</span>
-                </div>
-              </div>
-            </div>
-
-            <!-- Right Controls: Live Word & Character Counter + Clear Button -->
-            <div class="flex items-center gap-2 sm:gap-3 shrink-0">
-              <div id="fullscreen-char-counter" class="text-[11px] sm:text-xs font-mono text-[#8e918f] bg-white/[0.05] px-2.5 py-1 sm:px-3 sm:py-1 rounded-full border border-white/[0.08] select-none">
-                0 words • 0 chars
-              </div>
-              <button 
-                type="button" 
-                id="fullscreen-clear-btn" 
-                class="px-2.5 py-1 rounded-lg text-xs text-[#8e918f] hover:text-rose-400 hover:bg-rose-500/10 transition cursor-pointer active:scale-95"
-                title="Clear text (پاک کردن)"
-              >
-                Clear
-              </button>
-            </div>
+          <!-- Top Row: Minimal Collapse Trigger (Inward diagonal arrows, LTR placed top-right) -->
+          <div class="w-full pt-[max(env(safe-area-inset-top),16px)] px-4 sm:px-6 flex items-center justify-end shrink-0 z-10">
+            <button 
+              type="button" 
+              id="fullscreen-composer-close-btn"
+              class="w-10 h-10 rounded-full flex items-center justify-center text-white/70 hover:text-white hover:bg-white/10 active:scale-90 transition cursor-pointer"
+              title="Collapse"
+            >
+              <svg class="w-6 h-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M4 14h6v6"></path>
+                <path d="M20 10h-6V4"></path>
+                <path d="M14 10l7-7"></path>
+                <path d="M3 21l7-7"></path>
+              </svg>
+            </button>
           </div>
 
-          <!-- Main Writing Canvas (صفحه تایپ متن کامل) -->
-          <div class="flex-1 w-full max-w-4xl mx-auto px-4 sm:px-8 py-4 sm:py-6 flex flex-col min-h-0">
+          <!-- Main Writing Area: Seamless Full-Screen Textarea -->
+          <div class="flex-1 w-full max-w-4xl mx-auto px-4 sm:px-8 py-2 flex flex-col min-h-0">
             <textarea 
               id="fullscreen-composer-textarea"
               dir="auto"
-              placeholder={`Write your detailed message, story, or prompt for ${character.name}...`}
-              class="w-full flex-1 bg-transparent text-[#f1f3f4] text-[16px] sm:text-[18px] md:text-[19px] leading-[1.8] placeholder:text-[#6e7170] outline-none resize-none overflow-y-auto selection:bg-blue-500/30 font-normal focus:ring-0"
+              placeholder="Message..."
+              class="w-full flex-1 bg-transparent text-[#f1f3f4] text-[17px] sm:text-[19px] leading-[1.7] placeholder:text-white/30 outline-none resize-none overflow-y-auto selection:bg-blue-500/30 font-normal focus:ring-0 text-left border-none"
               style="scrollbar-width: thin;"
             ></textarea>
           </div>
 
-          <!-- Bottom Action Bar (ارسال پایین) -->
-          <div class="w-full border-t border-white/[0.08] bg-[#1e1f20]/95 backdrop-blur-md px-4 sm:px-8 py-3 sm:py-3.5 flex items-center justify-between shrink-0 z-10">
-            <div class="flex items-center gap-2 text-[11px] sm:text-xs text-[#8e918f] select-none">
-              <span class="hidden sm:inline">Press <kbd class="px-1.5 py-0.5 rounded bg-white/10 font-mono text-[10px] text-slate-300">Ctrl</kbd> + <kbd class="px-1.5 py-0.5 rounded bg-white/10 font-mono text-[10px] text-slate-300">Enter</kbd> to send</span>
-              <span class="sm:hidden font-mono text-[11px]">Enter for new line</span>
-            </div>
-
-            <div class="flex items-center gap-2 sm:gap-3">
-              <button 
-                type="button" 
-                id="fullscreen-composer-cancel-btn"
-                class="px-3.5 sm:px-4 py-2 rounded-full text-xs sm:text-sm font-medium text-[#c4c7c5] hover:text-white hover:bg-white/[0.08] transition active:scale-95 cursor-pointer"
-              >
-                Collapse
-              </button>
-
-              <button 
-                type="button" 
-                id="fullscreen-composer-send-btn"
-                class="inline-flex items-center gap-2 px-5 sm:px-6 py-2 sm:py-2.5 rounded-full bg-blue-600 hover:bg-blue-500 text-white font-medium text-xs sm:text-sm shadow-lg shadow-blue-900/40 transition-all duration-200 active:scale-95 cursor-pointer"
-                title="Send Message (ارسال)"
-              >
-                <span class="font-semibold">Send</span>
-                <svg class="w-4 h-4 stroke-[2.5]" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round">
-                  <path d="M12 19V5M5 12l7-7 7 7"/>
-                </svg>
-              </button>
-            </div>
+          <!-- Bottom Row: Floating Circular Send Button (LTR: placed on the right, above keyboard) -->
+          <div class="w-full pb-[max(env(safe-area-inset-bottom),16px)] px-4 sm:px-6 flex items-center justify-end shrink-0 z-10">
+            <button 
+              type="button" 
+              id="fullscreen-composer-send-btn"
+              class="w-11 h-11 sm:w-12 sm:h-12 rounded-full flex items-center justify-center transition-all duration-200 shadow-sm cursor-not-allowed bg-[#2a2b2e] text-white/30"
+              title="Send message"
+            >
+              <svg class="w-5 h-5 sm:w-6 sm:h-6 stroke-[2.5]" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M12 19V5M5 12l7-7 7 7"/>
+              </svg>
+            </button>
           </div>
         </div>
 
@@ -5050,38 +5004,28 @@ const { character } = Astro.props;
     }
   });
 
-  // Full-screen Long-Text Composer logic (Google Gemini style)
+  // Full-screen Long-Text Composer logic (Ultra-minimal AMOLED style)
   const fullscreenComposerModal = document.getElementById('fullscreen-composer-modal');
   const fullscreenTextarea = document.getElementById('fullscreen-composer-textarea');
   const fullscreenCloseBtn = document.getElementById('fullscreen-composer-close-btn');
-  const fullscreenCancelBtn = document.getElementById('fullscreen-composer-cancel-btn');
   const fullscreenSendBtn = document.getElementById('fullscreen-composer-send-btn');
-  const fullscreenClearBtn = document.getElementById('fullscreen-clear-btn');
-  const fullscreenCharCounter = document.getElementById('fullscreen-char-counter');
   const chatInputExpandBtn = document.getElementById('chat-input-expand-btn');
-  const fullscreenCharName = document.getElementById('fullscreen-char-name');
-  const fullscreenCharAvatar = document.getElementById('fullscreen-char-avatar');
 
-  function updateFullscreenCounter() {
-    if (!fullscreenCharCounter || !fullscreenTextarea) return;
-    const text = fullscreenTextarea.value || '';
-    const chars = text.length;
-    const words = text.trim() ? text.trim().split(/\s+/).length : 0;
-    fullscreenCharCounter.textContent = `${words} words • ${chars} chars`;
+  function updateFullscreenSendBtnState() {
+    if (!fullscreenSendBtn || !fullscreenTextarea) return;
+    const hasText = !!fullscreenTextarea.value.trim();
+    if (hasText) {
+      fullscreenSendBtn.className = "w-11 h-11 sm:w-12 sm:h-12 rounded-full flex items-center justify-center transition-all duration-200 active:scale-95 shadow-lg cursor-pointer bg-white text-black hover:bg-slate-200";
+    } else {
+      fullscreenSendBtn.className = "w-11 h-11 sm:w-12 sm:h-12 rounded-full flex items-center justify-center transition-all duration-200 shadow-sm cursor-not-allowed bg-[#2a2b2e] text-white/30";
+    }
   }
 
   function openFullscreenComposer() {
     if (!fullscreenComposerModal || !fullscreenTextarea || !input) return;
 
-    if (fullscreenCharName) fullscreenCharName.textContent = activeChar.name;
-    if (fullscreenCharAvatar) {
-      fullscreenCharAvatar.src = activeChar.avatarUrl;
-      fullscreenCharAvatar.alt = activeChar.name;
-    }
-    fullscreenTextarea.placeholder = `Write your detailed message, story, or prompt for ${activeChar.name}...`;
-
     fullscreenTextarea.value = input.value;
-    updateFullscreenCounter();
+    updateFullscreenSendBtnState();
 
     fullscreenComposerModal.classList.remove('hidden');
     requestAnimationFrame(() => {
@@ -5104,7 +5048,7 @@ const { character } = Astro.props;
     fullscreenComposerModal.classList.add('opacity-0', 'pointer-events-none');
     setTimeout(() => {
       fullscreenComposerModal.classList.add('hidden');
-    }, 250);
+    }, 200);
   }
 
   function submitFromFullscreen() {
@@ -5126,23 +5070,9 @@ const { character } = Astro.props;
 
   chatInputExpandBtn?.addEventListener('click', openFullscreenComposer);
   fullscreenCloseBtn?.addEventListener('click', () => closeFullscreenComposer(true));
-  fullscreenCancelBtn?.addEventListener('click', () => closeFullscreenComposer(true));
-
-  fullscreenClearBtn?.addEventListener('click', () => {
-    if (fullscreenTextarea) {
-      fullscreenTextarea.value = '';
-      updateFullscreenCounter();
-      if (input) {
-        input.value = '';
-        adjustInputHeight();
-        updateSendBtnState();
-      }
-      fullscreenTextarea.focus();
-    }
-  });
 
   fullscreenTextarea?.addEventListener('input', () => {
-    updateFullscreenCounter();
+    updateFullscreenSendBtnState();
     if (input) {
       input.value = fullscreenTextarea.value;
       adjustInputHeight();
@@ -5150,7 +5080,11 @@ const { character } = Astro.props;
     }
   });
 
-  fullscreenSendBtn?.addEventListener('click', submitFromFullscreen);
+  fullscreenSendBtn?.addEventListener('click', () => {
+    if (fullscreenTextarea && fullscreenTextarea.value.trim()) {
+      submitFromFullscreen();
+    }
+  });
 
   fullscreenTextarea?.addEventListener('keydown', (e) => {
     if (e.key === 'Escape') {
