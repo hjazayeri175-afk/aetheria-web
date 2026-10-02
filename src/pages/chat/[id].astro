@@ -968,10 +968,6 @@ const { character } = Astro.props;
                     
                     <!-- 1. NOT Connected State (Clean Input Form) -->
                     <div id="text-unconnected-container" class="space-y-3">
-                      <div>
-                        <h5 id="text-connect-title" class="text-xs font-semibold text-white">Connect API</h5>
-                        <p id="text-connect-desc" class="text-[11px] text-slate-400">Enter your credentials to enable AI chat.</p>
-                      </div>
 
                       <!-- Server / Endpoint URL (Visible for custom-proxy & custom-local) -->
                       <div id="custom-base-url-container" class="hidden space-y-1.5">
@@ -1028,37 +1024,40 @@ const { character } = Astro.props;
                       <div id="ping-status-msg" class="hidden text-xs px-3.5 py-2.5 rounded-xl border leading-relaxed"></div>
                     </div>
 
-                    <!-- 2. Connected State Bar (Sleek, Clean 1-Row matching Voice/STT/Vision/Image/Video) -->
-                    <div id="text-connected-container" class="hidden space-y-3">
-                      <div class="p-3 rounded-xl bg-white/[0.03] border border-white/[0.08] flex items-center justify-between gap-2">
-                        <div class="flex items-center gap-2.5 min-w-0">
-                          <span id="ping-indicator-dot" class="w-2 h-2 rounded-full bg-emerald-400 shrink-0"></span>
-                          <div class="min-w-0">
-                            <div class="text-xs font-semibold text-white flex items-center gap-1.5">
-                              <span id="ping-provider-name">Groq</span>
-                              <span class="text-[9px] px-1.5 py-0.5 rounded-full bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 font-medium">Connected</span>
-                              <span id="ping-latency-text" class="hidden text-[10px] text-emerald-400 font-mono font-medium"></span>
-                            </div>
-                            <div class="text-[10px] text-slate-400 font-mono truncate" id="text-connected-key-masked">••••••••</div>
+                    <!-- 2. Connected State Bar (Clean, Responsive 2-Row Architecture) -->
+                    <div id="text-connected-container" class="hidden">
+                      <div class="p-3 sm:p-3.5 rounded-xl bg-white/[0.03] border border-white/[0.08] space-y-2.5">
+                        <!-- Row 1: Provider Identity & Status Badge -->
+                        <div class="flex items-center justify-between gap-2">
+                          <div class="flex items-center gap-2 min-w-0">
+                            <span id="ping-indicator-dot" class="w-2 h-2 rounded-full bg-emerald-400 shrink-0"></span>
+                            <span id="ping-provider-name" class="text-xs font-semibold text-white truncate">Groq</span>
                           </div>
+                          <!-- Single Clean Status / Latency Chip -->
+                          <span id="ping-latency-text" class="text-[10px] px-2 py-0.5 rounded-full bg-emerald-500/15 border border-emerald-500/30 text-emerald-400 font-mono font-medium shrink-0">Connected</span>
                         </div>
-                        <div class="flex items-center gap-1.5 shrink-0">
-                          <button 
-                            type="button" 
-                            id="ping-text-btn" 
-                            title="Test connection and latency"
-                            class="px-2.5 py-1 rounded-lg bg-white/[0.05] hover:bg-white/[0.1] text-slate-300 hover:text-white border border-white/10 text-[11px] font-medium transition cursor-pointer flex items-center gap-1"
-                          >
-                            <Zap class="w-3 h-3 text-purple-400" id="ping-text-icon" />
-                            <span id="ping-text-btn-text">Test</span>
-                          </button>
-                          <button 
-                            type="button" 
-                            id="text-disconnect-btn" 
-                            class="px-2.5 py-1 rounded-lg bg-white/[0.05] hover:bg-white/[0.1] text-slate-300 hover:text-white border border-white/10 text-[11px] font-medium transition cursor-pointer"
-                          >
-                            Change Key
-                          </button>
+
+                        <!-- Row 2: Masked Key / URL & Action Buttons -->
+                        <div class="flex items-center justify-between gap-2 pt-2 border-t border-white/[0.04]">
+                          <div class="text-[11px] text-slate-400 font-mono truncate min-w-0" id="text-connected-key-masked">••••••••</div>
+                          <div class="flex items-center gap-1.5 shrink-0">
+                            <button 
+                              type="button" 
+                              id="ping-text-btn" 
+                              title="Test connection and latency"
+                              class="px-2.5 py-1 rounded-lg bg-white/[0.05] hover:bg-white/[0.1] active:scale-95 text-slate-300 hover:text-white border border-white/10 text-[11px] font-medium transition cursor-pointer flex items-center gap-1"
+                            >
+                              <Zap class="w-3 h-3 text-purple-400" id="ping-text-icon" />
+                              <span id="ping-text-btn-text">Test</span>
+                            </button>
+                            <button 
+                              type="button" 
+                              id="text-disconnect-btn" 
+                              class="px-2.5 py-1 rounded-lg bg-white/[0.05] hover:bg-white/[0.1] active:scale-95 text-slate-300 hover:text-white border border-white/10 text-[11px] font-medium transition cursor-pointer"
+                            >
+                              Change Key
+                            </button>
+                          </div>
                         </div>
                       </div>
                     </div>
@@ -6542,14 +6541,16 @@ const { character } = Astro.props;
       const result = await runTextPingTest(prov, key, baseUrl);
       if (result.ok) {
         if (pingLatencyText) {
-          pingLatencyText.textContent = `• ${result.latency}ms`;
+          pingLatencyText.textContent = `${result.latency}ms`;
+          pingLatencyText.className = 'text-[10px] px-2 py-0.5 rounded-full bg-emerald-500/15 border border-emerald-500/30 text-emerald-400 font-mono font-medium shrink-0';
           pingLatencyText.classList.remove('hidden');
         }
         if (pingIndicatorDot) pingIndicatorDot.className = 'w-2 h-2 rounded-full bg-emerald-400 shrink-0';
         showNotification(`✓ ${conf.name} latency: ${result.latency}ms`);
       } else {
         if (pingLatencyText) {
-          pingLatencyText.textContent = `• Error`;
+          pingLatencyText.textContent = 'Offline';
+          pingLatencyText.className = 'text-[10px] px-2 py-0.5 rounded-full bg-rose-500/15 border border-rose-500/30 text-rose-400 font-mono font-medium shrink-0';
           pingLatencyText.classList.remove('hidden');
         }
         if (pingIndicatorDot) pingIndicatorDot.className = 'w-2 h-2 rounded-full bg-rose-500 shrink-0';
@@ -6614,7 +6615,8 @@ const { character } = Astro.props;
 
         if (pingProviderName) pingProviderName.textContent = conf.name;
         if (pingLatencyText) {
-          pingLatencyText.textContent = `• ${result.latency}ms`;
+          pingLatencyText.textContent = `${result.latency}ms`;
+          pingLatencyText.className = 'text-[10px] px-2 py-0.5 rounded-full bg-emerald-500/15 border border-emerald-500/30 text-emerald-400 font-mono font-medium shrink-0';
           pingLatencyText.classList.remove('hidden');
         }
         if (pingIndicatorDot) {
@@ -7395,12 +7397,13 @@ const { character } = Astro.props;
       }
       if (pingLatencyText) {
         pingLatencyText.classList.remove('hidden');
-        if (!pingLatencyText.textContent.startsWith('•')) {
-          pingLatencyText.textContent = '• Ready';
+        pingLatencyText.className = 'text-[10px] px-2 py-0.5 rounded-full bg-emerald-500/15 border border-emerald-500/30 text-emerald-400 font-mono font-medium shrink-0';
+        if (!pingLatencyText.textContent || pingLatencyText.textContent.includes('•') || pingLatencyText.textContent === 'Offline') {
+          pingLatencyText.textContent = 'Connected';
         }
       }
       if (pingIndicatorDot) {
-        pingIndicatorDot.className = 'w-2 h-2 rounded-full bg-emerald-400';
+        pingIndicatorDot.className = 'w-2 h-2 rounded-full bg-emerald-400 shrink-0';
       }
       if (textConnectedKeyMasked) {
         if (conf.hasUrl && !requiresKey) {
