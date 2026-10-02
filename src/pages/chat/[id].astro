@@ -1401,65 +1401,78 @@ const { character } = Astro.props;
                     </div>
                   </div>
 
-                  <!-- 4. Cloud API Key Connection Card (Progressive Disclosure - Clean, No Duplicate Badges) -->
-                  <div id="tts-connection-card" class="hidden p-3.5 sm:p-4 rounded-2xl bg-purple-950/20 border border-purple-500/30 space-y-3">
-                    <div class="flex items-start justify-between gap-2">
-                      <div class="flex items-center gap-2.5">
-                        <div class="w-7 h-7 rounded-xl bg-purple-500/20 border border-purple-500/30 flex items-center justify-center text-purple-300 shrink-0">
-                          <KeyRound class="w-3.5 h-3.5" />
-                        </div>
-                        <div>
-                          <h5 id="tts-connect-title" class="text-xs font-bold text-white">Connect ElevenLabs API Key</h5>
-                          <p id="tts-connect-desc" class="text-[10px] text-slate-400">Keys are stored locally in your browser (BYOK).</p>
-                        </div>
+                  <!-- 4. Cloud API Key Connection Card (Matching STT Clean Architecture) -->
+                  <div id="tts-connection-card" class="hidden p-3.5 sm:p-4 rounded-2xl bg-white/[0.02] border border-white/[0.08] space-y-3">
+                    
+                    <!-- 1. NOT Connected State (Input Form) -->
+                    <div id="tts-unconnected-container" class="space-y-3">
+                      <div>
+                        <h5 id="tts-connect-title" class="text-xs font-semibold text-white">Connect API Key</h5>
+                        <p id="tts-connect-desc" class="text-[11px] text-slate-400">Enter your key to enable voice playback.</p>
                       </div>
-                      <span id="tts-key-status-badge" class="px-2 py-0.5 rounded-full text-[9px] font-mono font-bold bg-amber-500/20 text-amber-300 border border-amber-500/30">
-                        Key Required
-                      </span>
-                    </div>
 
-                    <!-- Quick Reuse Button -->
-                    <button 
-                      type="button" 
-                      id="tts-quick-reuse-key-btn" 
-                      class="hidden w-full py-2 px-3 rounded-xl bg-purple-600/20 hover:bg-purple-600/30 border border-purple-500/40 text-purple-300 text-xs font-semibold flex items-center justify-center gap-2 transition cursor-pointer active:scale-95"
-                    >
-                      <Sparkles class="w-3.5 h-3.5 text-purple-400" />
-                      <span id="tts-quick-reuse-label">Connect with saved OpenAI Key</span>
-                    </button>
+                      <!-- Custom Server / Endpoint URL Input (Shown for custom / xtts) -->
+                      <div id="voice-custom-url-container" class="hidden space-y-1">
+                        <label class="block text-[11px] font-semibold text-slate-300">Endpoint URL</label>
+                        <input 
+                          id="voice-custom-url" 
+                          type="url" 
+                          placeholder="http://localhost:8880/v1/audio/speech" 
+                          class="w-full px-3.5 py-2 rounded-xl bg-black/60 border border-white/10 text-xs text-white placeholder:text-slate-500 outline-none focus:border-purple-500/60 font-mono"
+                        />
+                      </div>
 
-                    <div class="relative">
-                      <input 
-                        id="voice-api-key" 
-                        type="password" 
-                        placeholder="Enter API Key (xi-api-key or sk-...)" 
-                        class="w-full px-3.5 py-2.5 rounded-xl bg-black/60 border border-white/10 text-xs text-white placeholder:text-slate-500 outline-none focus:border-purple-500/60 font-mono pr-16"
-                      />
-                      <button type="button" id="toggle-voice-key-visibility-btn" class="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-white text-xs cursor-pointer p-1">
-                        Show
-                      </button>
-                    </div>
-
-                    <div id="voice-custom-url-container" class="hidden space-y-1">
-                      <label class="block text-[11px] font-semibold text-slate-300">Custom Audio Endpoint URL</label>
-                      <input 
-                        id="voice-custom-url" 
-                        type="url" 
-                        placeholder="http://localhost:8880/v1/audio/speech" 
-                        class="w-full px-3.5 py-2 rounded-xl bg-black/60 border border-white/10 text-xs text-white placeholder:text-slate-500 outline-none focus:border-purple-500/60 font-mono"
-                      />
-                    </div>
-
-                    <div class="flex items-center justify-end gap-2 pt-1">
+                      <!-- 1-Click Quick Reuse Button from Text Engine -->
                       <button 
                         type="button" 
-                        id="tts-connect-confirm-btn" 
-                        class="px-4 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-semibold flex items-center gap-1.5 transition cursor-pointer active:scale-95 shadow-md shadow-emerald-950"
+                        id="tts-quick-reuse-key-btn" 
+                        class="hidden w-full py-2 px-3 rounded-xl bg-purple-600/15 hover:bg-purple-600/25 border border-purple-500/30 text-purple-300 text-xs font-medium flex items-center justify-center gap-1.5 transition cursor-pointer"
                       >
-                        <Check class="w-3.5 h-3.5" />
-                        <span>Save & Verify Key</span>
+                        <Sparkles class="w-3.5 h-3.5 text-purple-400" />
+                        <span id="tts-quick-reuse-label">Connect with saved OpenAI Key</span>
                       </button>
+
+                      <div class="flex gap-2">
+                        <input 
+                          id="voice-api-key" 
+                          type="password" 
+                          placeholder="Paste API Key..." 
+                          class="flex-1 px-3.5 py-2.5 rounded-xl bg-black/60 border border-white/10 text-xs text-white placeholder:text-slate-500 outline-none focus:border-purple-500/60 font-mono"
+                        />
+                        <button 
+                          type="button" 
+                          id="tts-connect-confirm-btn" 
+                          class="px-4 py-2.5 rounded-xl bg-purple-600 hover:bg-purple-500 text-white text-xs font-semibold flex items-center justify-center gap-1.5 transition cursor-pointer active:scale-95 shadow-md shadow-purple-950 shrink-0"
+                        >
+                          <Check class="w-3.5 h-3.5" />
+                          <span>Connect</span>
+                        </button>
+                      </div>
                     </div>
+
+                    <!-- 2. Connected State Bar (Sleek, Clean 1-Row) -->
+                    <div id="tts-connected-container" class="hidden space-y-3">
+                      <div class="p-3 rounded-xl bg-white/[0.03] border border-white/[0.08] flex items-center justify-between gap-2">
+                        <div class="flex items-center gap-2.5 min-w-0">
+                          <span class="w-2 h-2 rounded-full bg-emerald-400 shrink-0"></span>
+                          <div class="min-w-0">
+                            <div class="text-xs font-semibold text-white flex items-center gap-1.5">
+                              <span id="tts-connected-prov-name">ElevenLabs</span>
+                              <span class="text-[9px] px-1.5 py-0.5 rounded-full bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 font-medium">Connected</span>
+                            </div>
+                            <div class="text-[10px] text-slate-400 font-mono truncate" id="tts-connected-key-masked">••••••••</div>
+                          </div>
+                        </div>
+                        <button 
+                          type="button" 
+                          id="tts-disconnect-btn" 
+                          class="px-2.5 py-1 rounded-lg bg-white/[0.05] hover:bg-white/[0.1] text-slate-300 hover:text-white border border-white/10 text-[11px] font-medium transition cursor-pointer"
+                        >
+                          Change Key
+                        </button>
+                      </div>
+                    </div>
+
                   </div>
 
                   <!-- 5. Dynamic Voice Selector & API Sync -->
@@ -4040,6 +4053,12 @@ const { character } = Astro.props;
   const ttsQuickReuseLabel = document.getElementById('tts-quick-reuse-label');
   const ttsConnectConfirmBtn = document.getElementById('tts-connect-confirm-btn');
   const ttsControlsUnlocked = document.getElementById('tts-controls-unlocked');
+  const ttsUnconnectedContainer = document.getElementById('tts-unconnected-container');
+  const ttsConnectedContainer = document.getElementById('tts-connected-container');
+  const ttsConnectedProvName = document.getElementById('tts-connected-prov-name');
+  const ttsConnectedKeyMasked = document.getElementById('tts-connected-key-masked');
+  const ttsDisconnectBtn = document.getElementById('tts-disconnect-btn');
+  const dynamicVoiceSection = document.getElementById('dynamic-voice-section');
 
   const sttActiveEngineName = document.getElementById('stt-active-engine-name');
   const sttActiveEngineDesc = document.getElementById('stt-active-engine-desc');
@@ -9235,33 +9254,69 @@ const { character } = Astro.props;
     }
 
     // Free device voice card vs Cloud connection card
+    const isCustomTtsUrl = ttsObj.category === 'custom' || ttsId === 'xtts' || ttsId === 'custom';
+    const customTtsUrlVal = localStorage.getItem('aetheria_tts_custom_url') || (ttsId === 'xtts' ? 'http://localhost:8020' : '');
+
     if (ttsId === 'browser') {
       if (ttsFreeDeviceCard) ttsFreeDeviceCard.classList.remove('hidden');
       if (ttsConnectionCard) ttsConnectionCard.classList.add('hidden');
+      if (dynamicVoiceSection) dynamicVoiceSection.classList.remove('hidden');
     } else {
       if (ttsFreeDeviceCard) ttsFreeDeviceCard.classList.add('hidden');
       if (ttsConnectionCard) {
         ttsConnectionCard.classList.remove('hidden');
-        if (ttsConnectTitle) ttsConnectTitle.textContent = `Connect ${ttsObj.name} API Key`;
+        if (ttsConnectTitle) ttsConnectTitle.textContent = `Connect ${ttsObj.name} API`;
         if (ttsConnectDesc) {
-          if (ttsId === 'elevenlabs') {
-            ttsConnectDesc.textContent = 'Enter your ElevenLabs xi-api-key. Fetches your personal and cloned voices in real time.';
-          } else if (ttsId === 'openai') {
-            ttsConnectDesc.textContent = 'Enter your OpenAI API key (sk-...). Used for natural studio voice playback.';
-          } else if (ttsId === 'google') {
-            ttsConnectDesc.textContent = 'Enter your Google Cloud or AI Studio API key (AIzaSy...).';
-          } else {
-            ttsConnectDesc.textContent = `Configure API credentials for ${ttsObj.name}.`;
-          }
+          ttsConnectDesc.textContent = isCustomTtsUrl 
+            ? 'Enter your custom endpoint URL to connect.' 
+            : 'Enter your API key to enable voice playback.';
         }
         if (voiceApiKey) {
-          voiceApiKey.placeholder = ttsId === 'elevenlabs' ? 'sk_... or xi-api-key' : (ttsId === 'openai' ? 'sk-...' : (ttsId === 'google' ? 'AIzaSy...' : 'Enter API Key'));
+          voiceApiKey.value = savedTtsKey;
+          voiceApiKey.placeholder = ttsId === 'elevenlabs' ? 'Paste xi-api-key...' : (ttsId === 'openai' ? 'Paste sk-...' : (ttsId === 'google' ? 'Paste AIzaSy...' : 'Paste API Key...'));
         }
-        if (ttsKeyStatusBadge) {
-          ttsKeyStatusBadge.textContent = isTtsConnected ? 'CONNECTED' : 'KEY REQUIRED';
-          ttsKeyStatusBadge.className = `px-2 py-0.5 rounded-full text-[9px] font-mono font-bold ${
-            isTtsConnected ? 'bg-emerald-500/20 text-emerald-300 border border-emerald-500/30' : 'bg-amber-500/20 text-amber-300 border border-amber-500/30'
-          }`;
+        if (voiceCustomUrlContainer) {
+          voiceCustomUrlContainer.classList.toggle('hidden', !isCustomTtsUrl);
+          if (isCustomTtsUrl && voiceCustomUrl) {
+            voiceCustomUrl.value = customTtsUrlVal;
+          }
+        }
+
+        // Toggle between Unconnected Form and Connected Bar
+        if (ttsUnconnectedContainer && ttsConnectedContainer) {
+          ttsUnconnectedContainer.classList.toggle('hidden', isTtsConnected);
+          ttsConnectedContainer.classList.toggle('hidden', !isTtsConnected);
+        }
+
+        if (isTtsConnected) {
+          if (ttsConnectedProvName) ttsConnectedProvName.textContent = ttsObj.name;
+          if (ttsConnectedKeyMasked) {
+            if (isCustomTtsUrl) {
+              ttsConnectedKeyMasked.textContent = customTtsUrlVal || 'Custom Endpoint';
+            } else if (savedTtsKey) {
+              const prefix = savedTtsKey.slice(0, 4);
+              const suffix = savedTtsKey.slice(-4);
+              ttsConnectedKeyMasked.textContent = `${prefix}••••${suffix}`;
+            } else {
+              ttsConnectedKeyMasked.textContent = '••••••••';
+            }
+          }
+        }
+
+        // Only show voice selection if connected (or if it doesn't need a key)
+        if (dynamicVoiceSection) {
+          dynamicVoiceSection.classList.toggle('hidden', ttsObj.needsKey && !isTtsConnected);
+        }
+
+        // Quick reuse from Text tab
+        const textKey = (ttsId === 'openai' ? localStorage.getItem('aetheria_key_openai') : (ttsId === 'google' ? localStorage.getItem('aetheria_key_google') : '')) || '';
+        if (ttsQuickReuseKeyBtn && ttsQuickReuseLabel) {
+          if (!savedTtsKey && textKey) {
+            ttsQuickReuseKeyBtn.classList.remove('hidden');
+            ttsQuickReuseLabel.textContent = `Connect with saved ${ttsId === 'openai' ? 'OpenAI' : 'Google'} Key from Text Engine`;
+          } else {
+            ttsQuickReuseKeyBtn.classList.add('hidden');
+          }
         }
       }
     }
@@ -9776,25 +9831,45 @@ const { character } = Astro.props;
   ttsConnectConfirmBtn?.addEventListener('click', () => {
     const val = voiceApiKey?.value.trim() || '';
     const prov = voiceProviderSelect?.value || 'browser';
-    if (!val) {
+    const ttsObj = TTS_CATALOG.find(x => x.id === prov) || TTS_CATALOG[0];
+    const isCustom = ttsObj.category === 'custom' || prov === 'xtts' || prov === 'custom';
+
+    if (voiceCustomUrl) {
+      localStorage.setItem('aetheria_tts_custom_url', voiceCustomUrl.value.trim());
+    }
+
+    if (ttsObj.needsKey && !val && !isCustom) {
       showNotification('⚠️ Please enter an API key first.', 'warning');
       voiceApiKey?.focus();
       return;
     }
-    setVoiceKeyForProvider(prov, val);
+
+    if (val) {
+      setVoiceKeyForProvider(prov, val);
+    }
+
     syncVoiceUiPanels();
     syncVoicesForProvider(prov, false);
-    showNotification(`✓ ${prov.toUpperCase()} API Key saved and verified!`);
+    showNotification(`✓ ${ttsObj.name} connected successfully!`);
+  });
+
+  ttsDisconnectBtn?.addEventListener('click', () => {
+    if (ttsUnconnectedContainer && ttsConnectedContainer) {
+      ttsUnconnectedContainer.classList.remove('hidden');
+      ttsConnectedContainer.classList.add('hidden');
+    }
+    voiceApiKey?.focus();
   });
 
   ttsQuickReuseKeyBtn?.addEventListener('click', () => {
-    const openaiKey = localStorage.getItem('aetheria_key_openai') || '';
-    if (openaiKey) {
-      if (voiceApiKey) voiceApiKey.value = openaiKey;
-      setVoiceKeyForProvider('openai', openaiKey);
+    const prov = voiceProviderSelect?.value || 'browser';
+    const key = (prov === 'openai' ? localStorage.getItem('aetheria_key_openai') : (prov === 'google' ? localStorage.getItem('aetheria_key_google') : '')) || '';
+    if (key) {
+      if (voiceApiKey) voiceApiKey.value = key;
+      setVoiceKeyForProvider(prov, key);
       syncVoiceUiPanels();
-      syncVoicesForProvider('openai', false);
-      showNotification('✓ Connected OpenAI Key from Text Engine!');
+      syncVoicesForProvider(prov, false);
+      showNotification(`✓ Connected ${prov.toUpperCase()} Key from Text Engine!`);
     }
   });
 
@@ -9833,12 +9908,7 @@ const { character } = Astro.props;
     }
   });
 
-  toggleVoiceKeyVisibilityBtn?.addEventListener('click', () => {
-    if (!voiceApiKey) return;
-    const isPass = voiceApiKey.type === 'password';
-    voiceApiKey.type = isPass ? 'text' : 'password';
-    toggleVoiceKeyVisibilityBtn.textContent = isPass ? 'Hide' : 'Show';
-  });
+
 
   // Comprehensive Live Voice Audition Button (Character Voice)
   testVoiceBtn?.addEventListener('click', async () => {
