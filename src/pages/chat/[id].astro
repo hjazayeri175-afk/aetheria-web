@@ -2288,94 +2288,229 @@ const { character } = Astro.props;
               </div>
 
               <!-- ================= 4. TAB: VIDEO ENGINE ================= -->
-              <div id="tab-video" class="engine-tab-pane hidden space-y-5">
-                <div class="flex items-center justify-between pb-2 border-b border-white/[0.06]">
+              <div id="tab-video" class="engine-tab-pane hidden space-y-4" dir="ltr" lang="en">
+                
+                <!-- Hidden inputs for backward compatibility -->
+                <input type="hidden" id="video-provider-select" value="fal-kling" />
+                <input type="hidden" id="video-camera-select" value="subtle" />
+                <input type="hidden" id="video-duration-select" value="5s" />
+                <input type="hidden" id="video-res-select" value="720p-24fps" />
+
+                <!-- Header -->
+                <div class="flex items-center justify-between pb-1 border-b border-white/[0.06]">
                   <div>
                     <h4 class="text-xs sm:text-sm font-bold text-white flex items-center gap-2">
                       <Video class="w-4 h-4 text-cyan-400" />
                       <span>Character Animation & Video Clips</span>
                     </h4>
-                    <p class="text-[11px] text-slate-400">Animates character moments into fluid cinematic video clips.</p>
+                    <p class="text-[11px] text-slate-400">Animates character portraits and scenes into fluid cinematic video clips.</p>
+                  </div>
+                  <span class="px-2.5 py-1 rounded-full text-[10px] font-mono font-bold bg-cyan-500/20 text-cyan-300 border border-cyan-500/30">
+                    MOTION AI
+                  </span>
+                </div>
+
+                <!-- Custom Dropdown: Video Engine -->
+                <div class="space-y-1.5">
+                  <label class="block text-xs font-semibold text-slate-300">Video Generation Engine</label>
+                  
+                  <div class="relative w-full" id="video-engine-dropdown-container">
+                    <button
+                      type="button"
+                      id="video-engine-trigger"
+                      class="w-full px-3.5 py-2.5 rounded-2xl bg-black/60 hover:bg-black/80 border border-cyan-500/30 hover:border-cyan-500/50 flex items-center justify-between text-xs text-white transition cursor-pointer text-left group"
+                      aria-haspopup="listbox"
+                      aria-expanded="false"
+                    >
+                      <div class="min-w-0 pr-2">
+                        <div id="video-engine-trigger-title" class="font-bold text-xs text-white truncate">Fal.ai Kling 1.5 Pro</div>
+                        <div id="video-engine-trigger-desc" class="text-[10px] text-slate-400 truncate">High-fidelity realistic human motions & expressions</div>
+                      </div>
+                      <div class="flex items-center gap-2 shrink-0">
+                        <span id="video-engine-trigger-badge" class="px-2 py-0.5 rounded-full text-[9px] font-mono font-bold bg-cyan-500/20 text-cyan-300 border border-cyan-500/30">PRO MOTION</span>
+                        <ChevronDown class="w-4 h-4 text-slate-400 group-hover:text-cyan-300 transition-transform duration-200" id="video-engine-chevron" />
+                      </div>
+                    </button>
+
+                    <div 
+                      id="video-engine-menu" 
+                      class="hidden absolute left-0 right-0 top-full mt-1.5 z-50 bg-[#0c0f24]/95 backdrop-blur-xl border border-cyan-500/30 rounded-2xl p-1.5 shadow-2xl shadow-black/90 space-y-1 max-h-60 overflow-y-auto no-scrollbar"
+                      role="listbox"
+                    >
+                      <!-- Populated dynamically via renderVideoEngineMenu() -->
+                    </div>
                   </div>
                 </div>
 
-                <div class="p-3.5 rounded-2xl bg-cyan-950/20 border border-cyan-500/20 text-xs text-slate-300 leading-relaxed">
-                  🎬 <strong>Cinematic Video Clips:</strong> Generate smooth motion animations of characters. Connect your personal Fal.ai or Replicate key below to enable video clips.
-                </div>
+                <!-- Cloud API Key Connection Card -->
+                <div id="video-connection-card" class="p-3.5 sm:p-4 rounded-2xl bg-white/[0.02] border border-white/[0.08] space-y-3">
+                  
+                  <!-- 1. NOT Connected State (Input Form) -->
+                  <div id="video-unconnected-container" class="space-y-3">
+                    <div>
+                      <h5 id="video-connect-title" class="text-xs font-semibold text-white">Connect Fal.ai API</h5>
+                      <p id="video-connect-desc" class="text-[11px] text-slate-400">Enter your key to enable Kling / Luma video generation.</p>
+                    </div>
 
-                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                  <div>
-                    <label class="block text-xs font-semibold text-slate-300 mb-1.5">Video Model</label>
-                    <select id="video-provider-select" class="w-full px-3.5 py-2.5 rounded-xl bg-white/[0.05] border border-white/10 text-xs text-white outline-none focus:border-cyan-500/60">
-                      <option value="fal-kling">Fal.ai (Kling 1.5 Pro — Realistic Motion)</option>
-                      <option value="fal-luma">Fal.ai (Luma Dream Machine — Cinematic Camera)</option>
-                      <option value="fal-minimax">Fal.ai (MiniMax Hailuo-01 — Lifelike Expressions)</option>
-                      <option value="replicate">Replicate (Runway Gen-3)</option>
-                      <option value="custom">Custom Video Endpoint</option>
-                    </select>
+                    <!-- Custom Endpoint URL (For ComfyUI / AnimateDiff) -->
+                    <div id="video-custom-url-container" class="hidden space-y-1">
+                      <label class="block text-[11px] font-semibold text-slate-300">Endpoint URL</label>
+                      <input 
+                        id="video-custom-url" 
+                        type="url" 
+                        placeholder="http://localhost:8188/prompt" 
+                        class="w-full px-3.5 py-2 rounded-xl bg-black/60 border border-white/10 text-xs text-white placeholder:text-slate-500 outline-none focus:border-cyan-500/60 font-mono"
+                      />
+                    </div>
+
+                    <!-- 1-Click Quick Reuse Button from Visuals / Fal.ai Key -->
+                    <button 
+                      type="button" 
+                      id="video-quick-reuse-key-btn" 
+                      class="hidden w-full py-2 px-3 rounded-xl bg-cyan-600/15 hover:bg-cyan-600/25 border border-cyan-500/30 text-cyan-300 text-xs font-medium flex items-center justify-center gap-1.5 transition cursor-pointer"
+                    >
+                      <Sparkles class="w-3.5 h-3.5 text-cyan-400" />
+                      <span id="video-quick-reuse-label">Connect with saved Fal.ai Key from Visuals Engine</span>
+                    </button>
+
+                    <div class="flex gap-2">
+                      <input 
+                        id="video-api-key" 
+                        type="password" 
+                        placeholder="Paste API Key (fal_... or r8_...)..." 
+                        class="flex-1 px-3.5 py-2.5 rounded-xl bg-black/60 border border-white/10 text-xs text-white placeholder:text-slate-500 outline-none focus:border-cyan-500/60 font-mono"
+                      />
+                      <button 
+                        type="button" 
+                        id="video-connect-confirm-btn" 
+                        class="px-4 py-2.5 rounded-xl bg-cyan-600 hover:bg-cyan-500 text-white text-xs font-semibold flex items-center justify-center gap-1.5 transition cursor-pointer active:scale-95 shadow-md shadow-cyan-950 shrink-0"
+                      >
+                        <Check class="w-3.5 h-3.5" />
+                        <span>Connect</span>
+                      </button>
+                    </div>
                   </div>
 
-                  <div>
-                    <label class="block text-xs font-semibold text-slate-300 mb-1.5">Video API Key</label>
-                    <input 
-                      id="video-api-key" 
-                      type="password" 
-                      placeholder="fal_... or r8_..." 
-                      class="w-full px-3.5 py-2.5 rounded-xl bg-white/[0.05] border border-white/10 text-xs text-white placeholder:text-slate-500 outline-none focus:border-cyan-500/60 font-mono"
-                    />
+                  <!-- 2. Connected State Bar -->
+                  <div id="video-connected-container" class="hidden space-y-3">
+                    <div class="p-3 rounded-xl bg-white/[0.03] border border-white/[0.08] flex items-center justify-between gap-2">
+                      <div class="flex items-center gap-2.5 min-w-0">
+                        <span class="w-2 h-2 rounded-full bg-emerald-400 shrink-0"></span>
+                        <div class="min-w-0">
+                          <div class="text-xs font-semibold text-white flex items-center gap-1.5">
+                            <span id="video-connected-prov-name">Fal.ai Kling</span>
+                            <span class="text-[9px] px-1.5 py-0.5 rounded-full bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 font-medium">Connected</span>
+                          </div>
+                          <div class="text-[10px] text-slate-400 font-mono truncate" id="video-connected-key-masked">••••••••</div>
+                        </div>
+                      </div>
+                      <button 
+                        type="button" 
+                        id="video-disconnect-btn" 
+                        class="px-2.5 py-1 rounded-lg bg-white/[0.05] hover:bg-white/[0.1] text-slate-300 hover:text-white border border-white/10 text-[11px] font-medium transition cursor-pointer"
+                      >
+                        Change Key
+                      </button>
+                    </div>
                   </div>
+
                 </div>
 
-                <!-- Video Parameters -->
+                <!-- Video Motion & Camera Controls Card -->
                 <div class="p-4 rounded-2xl bg-white/[0.02] border border-white/[0.06] space-y-4">
-                  <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                    <!-- Motion Strength -->
-                    <div class="space-y-1.5" dir="ltr">
-                      <div class="flex items-center justify-between text-xs">
-                        <label for="badge-motion" class="text-slate-300 font-medium cursor-pointer">Motion Intensity (1-100)</label>
-                        <input id="badge-motion" dir="ltr" lang="en" type="text" inputmode="numeric" autocomplete="off" spellcheck="false" value="50" title="Click or tap to type exact value" class="w-14 px-1.5 py-0.5 rounded-lg bg-cyan-950/80 hover:bg-cyan-900/80 focus:bg-cyan-900 border border-cyan-500/40 focus:border-cyan-400 text-cyan-300 font-mono font-bold text-xs text-center outline-none transition force-ltr-numeric" />
-                      </div>
-                      <input id="slider-motion" type="range" min="1" max="100" step="1" value="50" class="w-full accent-cyan-500 cursor-pointer" />
-                      <div class="flex justify-between text-[10px] text-slate-500">
-                        <span>Subtle Breathing (10)</span>
-                        <span>Natural (50)</span>
-                        <span>Dynamic Action (90)</span>
-                      </div>
+                  <!-- Motion Strength Slider -->
+                  <div class="space-y-1.5" dir="ltr">
+                    <div class="flex items-center justify-between text-xs">
+                      <label for="badge-motion" class="text-slate-300 font-medium cursor-pointer">Motion Intensity (1-100)</label>
+                      <input id="badge-motion" dir="ltr" lang="en" type="text" inputmode="numeric" autocomplete="off" spellcheck="false" value="50" title="Click or tap to type exact value" class="w-14 px-1.5 py-0.5 rounded-lg bg-cyan-950/80 hover:bg-cyan-900/80 focus:bg-cyan-900 border border-cyan-500/40 focus:border-cyan-400 text-cyan-300 font-mono font-bold text-xs text-center outline-none transition force-ltr-numeric" />
                     </div>
-
-                    <!-- Camera Movement Preset -->
-                    <div class="space-y-1.5">
-                      <label class="block text-xs font-semibold text-slate-300">Camera Movement Preset</label>
-                      <select id="video-camera-select" class="w-full px-3.5 py-2 rounded-xl bg-white/[0.05] border border-white/10 text-xs text-white outline-none">
-                        <option value="subtle">Living Avatar (Gentle Breathing & Eye Blink)</option>
-                        <option value="zoom-in">Slow Cinematic Push In</option>
-                        <option value="pan-left">Dolly Pan Left</option>
-                        <option value="pan-right">Dolly Pan Right</option>
-                        <option value="orbit">Gentle Orbit Arc</option>
-                      </select>
-                    </div>
-
-                    <!-- Duration -->
-                    <div class="space-y-1.5">
-                      <label class="block text-xs font-semibold text-slate-300">Video Duration</label>
-                      <select id="video-duration-select" class="w-full px-3.5 py-2 rounded-xl bg-white/[0.05] border border-white/10 text-xs text-white outline-none">
-                        <option value="5s">5 Seconds (Fast & Cost Efficient)</option>
-                        <option value="10s">10 Seconds (Extended Cinematic Sequence)</option>
-                      </select>
-                    </div>
-
-                    <!-- Resolution & FPS -->
-                    <div class="space-y-1.5">
-                      <label class="block text-xs font-semibold text-slate-300">Resolution & Frame Rate</label>
-                      <select id="video-res-select" class="w-full px-3.5 py-2 rounded-xl bg-white/[0.05] border border-white/10 text-xs text-white outline-none">
-                        <option value="720p-24fps">720p HD @ 24fps (Cinematic)</option>
-                        <option value="1080p-30fps">1080p Full HD @ 30fps (Fluid)</option>
-                      </select>
+                    <input id="slider-motion" type="range" min="1" max="100" step="1" value="50" class="w-full accent-cyan-500 cursor-pointer" />
+                    <div class="flex justify-between text-[10px] text-slate-500">
+                      <span>Subtle Breathing (10)</span>
+                      <span>Natural (50)</span>
+                      <span>Dynamic Action (90)</span>
                     </div>
                   </div>
-                </div>
-              </div>
 
+                  <!-- Camera Movement & Video Settings Grid -->
+                  <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                    
+                    <!-- Camera Movement Preset (Custom Dropdown) -->
+                    <div class="space-y-1.5">
+                      <label class="block text-xs font-semibold text-slate-300">Camera Movement</label>
+                      <div class="relative w-full" id="video-camera-dropdown-container">
+                        <button
+                          type="button"
+                          id="video-camera-trigger"
+                          class="w-full px-3 py-2 rounded-xl bg-black/60 hover:bg-black/80 border border-white/10 hover:border-cyan-500/40 flex items-center justify-between text-xs text-white transition cursor-pointer text-left group"
+                          aria-haspopup="listbox"
+                          aria-expanded="false"
+                        >
+                          <span id="video-camera-trigger-label" class="font-medium text-slate-200 truncate">Living Avatar (Breathing)</span>
+                          <ChevronDown class="w-4 h-4 text-slate-400 group-hover:text-cyan-300 transition-transform duration-200 shrink-0" id="video-camera-chevron" />
+                        </button>
+                        <div 
+                          id="video-camera-menu" 
+                          class="hidden absolute left-0 right-0 top-full mt-1.5 z-50 bg-[#0c0f24]/95 backdrop-blur-xl border border-white/10 rounded-2xl p-1.5 shadow-2xl shadow-black/90 space-y-1 text-xs"
+                          role="listbox"
+                        >
+                          <!-- Dynamic Camera Presets -->
+                        </div>
+                      </div>
+                    </div>
+
+                    <!-- Video Duration (Custom Dropdown) -->
+                    <div class="space-y-1.5">
+                      <label class="block text-xs font-semibold text-slate-300">Duration</label>
+                      <div class="relative w-full" id="video-duration-dropdown-container">
+                        <button
+                          type="button"
+                          id="video-duration-trigger"
+                          class="w-full px-3 py-2 rounded-xl bg-black/60 hover:bg-black/80 border border-white/10 hover:border-cyan-500/40 flex items-center justify-between text-xs text-white transition cursor-pointer text-left group"
+                          aria-haspopup="listbox"
+                          aria-expanded="false"
+                        >
+                          <span id="video-duration-trigger-label" class="font-medium text-slate-200 truncate">5 Seconds (Fast)</span>
+                          <ChevronDown class="w-4 h-4 text-slate-400 group-hover:text-cyan-300 transition-transform duration-200 shrink-0" id="video-duration-chevron" />
+                        </button>
+                        <div 
+                          id="video-duration-menu" 
+                          class="hidden absolute left-0 right-0 top-full mt-1.5 z-50 bg-[#0c0f24]/95 backdrop-blur-xl border border-white/10 rounded-2xl p-1.5 shadow-2xl shadow-black/90 space-y-1 text-xs font-mono"
+                          role="listbox"
+                        >
+                          <!-- Dynamic Durations -->
+                        </div>
+                      </div>
+                    </div>
+
+                    <!-- Resolution & FPS (Custom Dropdown) -->
+                    <div class="space-y-1.5">
+                      <label class="block text-xs font-semibold text-slate-300">Resolution & FPS</label>
+                      <div class="relative w-full" id="video-res-dropdown-container">
+                        <button
+                          type="button"
+                          id="video-res-trigger"
+                          class="w-full px-3 py-2 rounded-xl bg-black/60 hover:bg-black/80 border border-white/10 hover:border-cyan-500/40 flex items-center justify-between text-xs text-white transition cursor-pointer text-left group"
+                          aria-haspopup="listbox"
+                          aria-expanded="false"
+                        >
+                          <span id="video-res-trigger-label" class="font-medium text-slate-200 truncate">720p HD @ 24fps</span>
+                          <ChevronDown class="w-4 h-4 text-slate-400 group-hover:text-cyan-300 transition-transform duration-200 shrink-0" id="video-res-chevron" />
+                        </button>
+                        <div 
+                          id="video-res-menu" 
+                          class="hidden absolute left-0 right-0 top-full mt-1.5 z-50 bg-[#0c0f24]/95 backdrop-blur-xl border border-white/10 rounded-2xl p-1.5 shadow-2xl shadow-black/90 space-y-1 text-xs font-mono"
+                          role="listbox"
+                        >
+                          <!-- Dynamic Resolutions -->
+                        </div>
+                      </div>
+                    </div>
+
+                  </div>
+                </div>
+
+              </div>
             </div>
 
             <!-- Modal Footer (Actions) -->
@@ -4535,7 +4670,7 @@ const { character } = Astro.props;
   const visionCustomUrlContainer = document.getElementById('vision-custom-url-container');
   const visionCustomUrl = document.getElementById('vision-custom-url');
 
-  // Video Inputs
+  // Video Inputs & Custom UI
   const videoProviderSelect = document.getElementById('video-provider-select');
   const videoApiKey = document.getElementById('video-api-key');
   const sliderMotion = document.getElementById('slider-motion');
@@ -4543,6 +4678,43 @@ const { character } = Astro.props;
   const videoCameraSelect = document.getElementById('video-camera-select');
   const videoDurationSelect = document.getElementById('video-duration-select');
   const videoResSelect = document.getElementById('video-res-select');
+
+  // Video Custom Dropdowns & Connection State
+  const videoEngineTrigger = document.getElementById('video-engine-trigger');
+  const videoEngineTriggerTitle = document.getElementById('video-engine-trigger-title');
+  const videoEngineTriggerDesc = document.getElementById('video-engine-trigger-desc');
+  const videoEngineTriggerBadge = document.getElementById('video-engine-trigger-badge');
+  const videoEngineMenu = document.getElementById('video-engine-menu');
+  const videoEngineChevron = document.getElementById('video-engine-chevron');
+
+  const videoConnectionCard = document.getElementById('video-connection-card');
+  const videoUnconnectedContainer = document.getElementById('video-unconnected-container');
+  const videoConnectedContainer = document.getElementById('video-connected-container');
+  const videoConnectTitle = document.getElementById('video-connect-title');
+  const videoConnectDesc = document.getElementById('video-connect-desc');
+  const videoConnectedProvName = document.getElementById('video-connected-prov-name');
+  const videoConnectedKeyMasked = document.getElementById('video-connected-key-masked');
+  const videoDisconnectBtn = document.getElementById('video-disconnect-btn');
+  const videoConnectConfirmBtn = document.getElementById('video-connect-confirm-btn');
+  const videoQuickReuseKeyBtn = document.getElementById('video-quick-reuse-key-btn');
+  const videoQuickReuseLabel = document.getElementById('video-quick-reuse-label');
+  const videoCustomUrlContainer = document.getElementById('video-custom-url-container');
+  const videoCustomUrl = document.getElementById('video-custom-url');
+
+  const videoCameraTrigger = document.getElementById('video-camera-trigger');
+  const videoCameraTriggerLabel = document.getElementById('video-camera-trigger-label');
+  const videoCameraMenu = document.getElementById('video-camera-menu');
+  const videoCameraChevron = document.getElementById('video-camera-chevron');
+
+  const videoDurationTrigger = document.getElementById('video-duration-trigger');
+  const videoDurationTriggerLabel = document.getElementById('video-duration-trigger-label');
+  const videoDurationMenu = document.getElementById('video-duration-menu');
+  const videoDurationChevron = document.getElementById('video-duration-chevron');
+
+  const videoResTrigger = document.getElementById('video-res-trigger');
+  const videoResTriggerLabel = document.getElementById('video-res-trigger-label');
+  const videoResMenu = document.getElementById('video-res-menu');
+  const videoResChevron = document.getElementById('video-res-chevron');
 
   // Sanitize numeric inputs, converting any Persian / Arabic digits to standard ASCII 0-9
   function toAsciiNumber(val, fallback = 0) {
@@ -6502,6 +6674,7 @@ const { character } = Astro.props;
     // 6. Sync UI and populate models
     syncProviderVisibility();
     syncImageUiPanels();
+    syncVideoUiPanels();
   }
 
   // Adapt submenus & input fields dynamically based on selected provider
@@ -9958,6 +10131,30 @@ const { character } = Astro.props;
       if (visionEngineMenu) visionEngineMenu.classList.add('hidden');
       if (visionEngineChevron) visionEngineChevron.classList.remove('rotate-180');
     }
+
+    const vidEngContainer = document.getElementById('video-engine-dropdown-container');
+    if (vidEngContainer && !vidEngContainer.contains(e.target)) {
+      if (videoEngineMenu) videoEngineMenu.classList.add('hidden');
+      if (videoEngineChevron) videoEngineChevron.classList.remove('rotate-180');
+    }
+
+    const vidCamContainer = document.getElementById('video-camera-dropdown-container');
+    if (vidCamContainer && !vidCamContainer.contains(e.target)) {
+      if (videoCameraMenu) videoCameraMenu.classList.add('hidden');
+      if (videoCameraChevron) videoCameraChevron.classList.remove('rotate-180');
+    }
+
+    const vidDurContainer = document.getElementById('video-duration-dropdown-container');
+    if (vidDurContainer && !vidDurContainer.contains(e.target)) {
+      if (videoDurationMenu) videoDurationMenu.classList.add('hidden');
+      if (videoDurationChevron) videoDurationChevron.classList.remove('rotate-180');
+    }
+
+    const vidResContainer = document.getElementById('video-res-dropdown-container');
+    if (vidResContainer && !vidResContainer.contains(e.target)) {
+      if (videoResMenu) videoResMenu.classList.add('hidden');
+      if (videoResChevron) videoResChevron.classList.remove('rotate-180');
+    }
   });
 
   // Dynamic STT Models Fetch & Rendering
@@ -10687,6 +10884,7 @@ const { character } = Astro.props;
     if (imageEngineMenu) imageEngineMenu.classList.add('hidden');
     if (imageEngineChevron) imageEngineChevron.classList.remove('rotate-180');
     syncImageUiPanels();
+    syncVideoUiPanels();
     renderImageEngineMenu();
     const obj = IMAGE_CATALOG.find(e => e.id === engId);
     showNotification(`✓ Image Engine set to "${obj ? obj.name : engId}"`);
@@ -10698,6 +10896,7 @@ const { character } = Astro.props;
     if (visionEngineMenu) visionEngineMenu.classList.add('hidden');
     if (visionEngineChevron) visionEngineChevron.classList.remove('rotate-180');
     syncImageUiPanels();
+    syncVideoUiPanels();
     renderVisionEngineMenu();
     const obj = VISION_CATALOG.find(e => e.id === engId);
     showNotification(`✓ Vision AI set to "${obj ? obj.name : engId}"`);
@@ -10709,6 +10908,7 @@ const { character } = Astro.props;
     if (imageAspectMenu) imageAspectMenu.classList.add('hidden');
     if (imageAspectChevron) imageAspectChevron.classList.remove('rotate-180');
     syncImageUiPanels();
+    syncVideoUiPanels();
     renderImageAspectMenu();
   };
 
@@ -10955,6 +11155,7 @@ const { character } = Astro.props;
     }
 
     syncImageUiPanels();
+    syncVideoUiPanels();
     showNotification(`✓ ${obj.name} connected successfully!`);
   });
 
@@ -10996,6 +11197,7 @@ const { character } = Astro.props;
     }
 
     syncImageUiPanels();
+    syncVideoUiPanels();
     showNotification(`✓ ${obj.name} connected successfully!`);
   });
 
@@ -11005,6 +11207,408 @@ const { character } = Astro.props;
     if (textKey && visionApiKey) {
       visionApiKey.value = textKey;
       visionConnectConfirmBtn?.click();
+    }
+  });
+
+  // ================= VIDEO SYSTEM (MOTION & ANIMATION) =================
+  const VIDEO_CATALOG = [
+    {
+      id: 'fal-kling',
+      name: 'Fal.ai Kling 1.5 Pro',
+      desc: 'High-fidelity realistic human motions & expressions',
+      badge: 'PRO MOTION',
+      needsKey: true,
+      keyHint: 'Fal.ai API Key (fal_...)'
+    },
+    {
+      id: 'fal-luma',
+      name: 'Luma Dream Machine',
+      desc: 'Cinematic camera moves & smooth spatial continuity',
+      badge: 'CINEMATIC',
+      needsKey: true,
+      keyHint: 'Fal.ai / Luma API Key'
+    },
+    {
+      id: 'fal-minimax',
+      name: 'MiniMax Hailuo-01',
+      desc: 'Lifelike physical dynamics & expressive gestures',
+      badge: 'LIFELIKE',
+      needsKey: true,
+      keyHint: 'Fal.ai / MiniMax API Key'
+    },
+    {
+      id: 'replicate',
+      name: 'Replicate (Runway Gen-3)',
+      desc: 'Studio-grade video generation via Replicate Cloud',
+      badge: 'STUDIO',
+      needsKey: true,
+      keyHint: 'Replicate API Token (r8_...)'
+    },
+    {
+      id: 'custom',
+      name: 'Custom Video Endpoint',
+      desc: 'Self-hosted AnimateDiff, ComfyUI, or SwarmUI server',
+      badge: 'LOCAL / PROXY',
+      needsKey: false,
+      needsUrl: true
+    }
+  ];
+
+  const CAMERA_PRESETS = [
+    { id: 'subtle', label: 'Living Avatar (Subtle Breathing & Eye Blink)' },
+    { id: 'zoom-in', label: 'Slow Cinematic Push-in' },
+    { id: 'zoom-out', label: 'Slow Cinematic Pull-out' },
+    { id: 'pan-left', label: 'Dolly Pan Left' },
+    { id: 'pan-right', label: 'Dolly Pan Right' },
+    { id: 'orbit', label: 'Gentle Orbit Arc (3D Rotation)' }
+  ];
+
+  const VIDEO_DURATIONS = [
+    { id: '5s', label: '5 Seconds (Fast & Cost Efficient)' },
+    { id: '10s', label: '10 Seconds (Cinematic Sequence)' }
+  ];
+
+  const VIDEO_RESOLUTIONS = [
+    { id: '720p-24fps', label: '720p HD @ 24fps (Cinematic)' },
+    { id: '1080p-30fps', label: '1080p Full HD @ 30fps (Fluid)' }
+  ];
+
+  function renderVideoEngineMenu() {
+    if (!videoEngineMenu) return;
+    const currentId = localStorage.getItem('aetheria_video_provider') || 'fal-kling';
+
+    videoEngineMenu.innerHTML = VIDEO_CATALOG.map(eng => {
+      const isSelected = eng.id === currentId;
+      return `
+        <button 
+          type="button" 
+          class="w-full p-2.5 rounded-xl text-left transition flex items-center justify-between gap-2.5 cursor-pointer ${
+            isSelected 
+              ? 'bg-cyan-600/20 text-white border border-cyan-500/40 shadow-sm' 
+              : 'hover:bg-white/[0.06] text-slate-300 hover:text-white border border-transparent'
+          }"
+          onclick="selectVideoEngine('${eng.id}')"
+          role="option"
+          aria-selected="${isSelected}"
+        >
+          <div class="min-w-0">
+            <div class="font-bold text-xs truncate text-white">${eng.name}</div>
+            <div class="text-[10px] text-slate-400 truncate">${eng.desc}</div>
+          </div>
+          <span class="px-2 py-0.5 rounded-full text-[9px] font-mono font-bold shrink-0 ${
+            eng.badge.includes('PRO') ? 'bg-cyan-500/20 text-cyan-300 border border-cyan-500/30' : 'bg-white/10 text-slate-300'
+          }">
+            ${eng.badge}
+          </span>
+        </button>
+      `;
+    }).join('');
+  }
+
+  function renderVideoCameraMenu() {
+    if (!videoCameraMenu) return;
+    const currentCam = localStorage.getItem('aetheria_video_camera') || 'subtle';
+
+    videoCameraMenu.innerHTML = CAMERA_PRESETS.map(c => {
+      const isSelected = c.id === currentCam;
+      return `
+        <button 
+          type="button" 
+          class="w-full px-3 py-2 rounded-lg text-left transition flex items-center justify-between text-xs cursor-pointer ${
+            isSelected 
+              ? 'bg-cyan-600/20 text-white font-bold border border-cyan-500/30' 
+              : 'hover:bg-white/[0.06] text-slate-300 hover:text-white border border-transparent'
+          }"
+          onclick="selectVideoCamera('${c.id}')"
+          role="option"
+          aria-selected="${isSelected}"
+        >
+          <span class="truncate">${c.label}</span>
+          ${isSelected ? '<span class="text-cyan-400 font-bold">✓</span>' : ''}
+        </button>
+      `;
+    }).join('');
+  }
+
+  function renderVideoDurationMenu() {
+    if (!videoDurationMenu) return;
+    const currentDur = localStorage.getItem('aetheria_video_duration') || '5s';
+
+    videoDurationMenu.innerHTML = VIDEO_DURATIONS.map(d => {
+      const isSelected = d.id === currentDur;
+      return `
+        <button 
+          type="button" 
+          class="w-full px-3 py-2 rounded-lg text-left transition flex items-center justify-between text-xs cursor-pointer ${
+            isSelected 
+              ? 'bg-cyan-600/20 text-white font-bold border border-cyan-500/30' 
+              : 'hover:bg-white/[0.06] text-slate-300 hover:text-white border border-transparent'
+          }"
+          onclick="selectVideoDuration('${d.id}')"
+          role="option"
+          aria-selected="${isSelected}"
+        >
+          <span class="truncate">${d.label}</span>
+          ${isSelected ? '<span class="text-cyan-400 font-bold">✓</span>' : ''}
+        </button>
+      `;
+    }).join('');
+  }
+
+  function renderVideoResMenu() {
+    if (!videoResMenu) return;
+    const currentRes = localStorage.getItem('aetheria_video_res') || '720p-24fps';
+
+    videoResMenu.innerHTML = VIDEO_RESOLUTIONS.map(r => {
+      const isSelected = r.id === currentRes;
+      return `
+        <button 
+          type="button" 
+          class="w-full px-3 py-2 rounded-lg text-left transition flex items-center justify-between text-xs cursor-pointer ${
+            isSelected 
+              ? 'bg-cyan-600/20 text-white font-bold border border-cyan-500/30' 
+              : 'hover:bg-white/[0.06] text-slate-300 hover:text-white border border-transparent'
+          }"
+          onclick="selectVideoRes('${r.id}')"
+          role="option"
+          aria-selected="${isSelected}"
+        >
+          <span class="truncate">${r.label}</span>
+          ${isSelected ? '<span class="text-cyan-400 font-bold">✓</span>' : ''}
+        </button>
+      `;
+    }).join('');
+  }
+
+  window.selectVideoEngine = function(engId) {
+    localStorage.setItem('aetheria_video_provider', engId);
+    if (videoProviderSelect) videoProviderSelect.value = engId;
+    if (videoEngineMenu) videoEngineMenu.classList.add('hidden');
+    if (videoEngineChevron) videoEngineChevron.classList.remove('rotate-180');
+    syncVideoUiPanels();
+    renderVideoEngineMenu();
+    const obj = VIDEO_CATALOG.find(e => e.id === engId);
+    showNotification(`✓ Video Engine set to "${obj ? obj.name : engId}"`);
+  };
+
+  window.selectVideoCamera = function(camId) {
+    localStorage.setItem('aetheria_video_camera', camId);
+    if (videoCameraSelect) videoCameraSelect.value = camId;
+    if (videoCameraMenu) videoCameraMenu.classList.add('hidden');
+    if (videoCameraChevron) videoCameraChevron.classList.remove('rotate-180');
+    syncVideoUiPanels();
+    renderVideoCameraMenu();
+  };
+
+  window.selectVideoDuration = function(durId) {
+    localStorage.setItem('aetheria_video_duration', durId);
+    if (videoDurationSelect) videoDurationSelect.value = durId;
+    if (videoDurationMenu) videoDurationMenu.classList.add('hidden');
+    if (videoDurationChevron) videoDurationChevron.classList.remove('rotate-180');
+    syncVideoUiPanels();
+    renderVideoDurationMenu();
+  };
+
+  window.selectVideoRes = function(resId) {
+    localStorage.setItem('aetheria_video_res', resId);
+    if (videoResSelect) videoResSelect.value = resId;
+    if (videoResMenu) videoResMenu.classList.add('hidden');
+    if (videoResChevron) videoResChevron.classList.remove('rotate-180');
+    syncVideoUiPanels();
+    renderVideoResMenu();
+  };
+
+  function syncVideoUiPanels() {
+    const vidProv = localStorage.getItem('aetheria_video_provider') || 'fal-kling';
+    const vidObj = VIDEO_CATALOG.find(e => e.id === vidProv) || VIDEO_CATALOG[0];
+    const isCustomUrl = vidObj.needsUrl;
+    const savedVidKey = localStorage.getItem('aetheria_video_key') || localStorage.getItem('aetheria_key_' + vidProv) || '';
+    const customUrlVal = localStorage.getItem('aetheria_video_custom_url') || '';
+    const isVidConnected = isCustomUrl ? Boolean(customUrlVal) : Boolean(savedVidKey);
+
+    if (videoProviderSelect) videoProviderSelect.value = vidProv;
+    if (videoEngineTriggerTitle) videoEngineTriggerTitle.textContent = vidObj.name;
+    if (videoEngineTriggerDesc) videoEngineTriggerDesc.textContent = vidObj.desc;
+    if (videoEngineTriggerBadge) {
+      videoEngineTriggerBadge.textContent = vidObj.badge;
+      videoEngineTriggerBadge.className = `px-2 py-0.5 rounded-full text-[9px] font-mono font-bold shrink-0 ${
+        vidObj.badge.includes('PRO') ? 'bg-cyan-500/20 text-cyan-300 border border-cyan-500/30' : 'bg-white/10 text-slate-300'
+      }`;
+    }
+
+    if (videoConnectionCard) {
+      if (videoConnectTitle) videoConnectTitle.textContent = `Connect ${vidObj.name}`;
+      if (videoConnectDesc) videoConnectDesc.textContent = isCustomUrl
+        ? 'Enter your custom endpoint URL to connect.'
+        : 'Enter your API key to enable cinematic video generation.';
+      if (videoApiKey) {
+        videoApiKey.value = savedVidKey;
+        videoApiKey.placeholder = vidObj.keyHint || 'Paste API Key (fal_... or r8_...)...';
+      }
+      if (videoCustomUrlContainer) {
+        videoCustomUrlContainer.classList.toggle('hidden', !isCustomUrl);
+        if (isCustomUrl && videoCustomUrl) videoCustomUrl.value = customUrlVal;
+      }
+
+      if (videoUnconnectedContainer && videoConnectedContainer) {
+        videoUnconnectedContainer.classList.toggle('hidden', isVidConnected);
+        videoConnectedContainer.classList.toggle('hidden', !isVidConnected);
+      }
+
+      if (isVidConnected) {
+        if (videoConnectedProvName) videoConnectedProvName.textContent = vidObj.name;
+        if (videoConnectedKeyMasked) {
+          if (isCustomUrl) {
+            videoConnectedKeyMasked.textContent = customUrlVal || 'Custom Endpoint';
+          } else if (savedVidKey) {
+            const prefix = savedVidKey.slice(0, 4);
+            const suffix = savedVidKey.slice(-4);
+            videoConnectedKeyMasked.textContent = `${prefix}••••${suffix}`;
+          } else {
+            videoConnectedKeyMasked.textContent = '••••••••';
+          }
+        }
+      }
+
+      // Quick reuse button (from fal.ai key in Visuals tab or elsewhere)
+      const falKey = localStorage.getItem('aetheria_key_fal') || '';
+      if (videoQuickReuseKeyBtn && videoQuickReuseLabel) {
+        if (!savedVidKey && falKey && vidProv.startsWith('fal-')) {
+          videoQuickReuseKeyBtn.classList.remove('hidden');
+          videoQuickReuseLabel.textContent = 'Connect with saved Fal.ai Key from Visuals Engine';
+        } else {
+          videoQuickReuseKeyBtn.classList.add('hidden');
+        }
+      }
+    }
+
+    // Camera preset trigger display
+    const savedCamera = localStorage.getItem('aetheria_video_camera') || 'subtle';
+    const camObj = CAMERA_PRESETS.find(c => c.id === savedCamera) || CAMERA_PRESETS[0];
+    if (videoCameraSelect) videoCameraSelect.value = savedCamera;
+    if (videoCameraTriggerLabel) videoCameraTriggerLabel.textContent = camObj.label;
+
+    // Duration trigger display
+    const savedDuration = localStorage.getItem('aetheria_video_duration') || '5s';
+    const durObj = VIDEO_DURATIONS.find(d => d.id === savedDuration) || VIDEO_DURATIONS[0];
+    if (videoDurationSelect) videoDurationSelect.value = savedDuration;
+    if (videoDurationTriggerLabel) videoDurationTriggerLabel.textContent = durObj.label;
+
+    // Res/FPS trigger display
+    const savedRes = localStorage.getItem('aetheria_video_res') || '720p-24fps';
+    const resObj = VIDEO_RESOLUTIONS.find(r => r.id === savedRes) || VIDEO_RESOLUTIONS[0];
+    if (videoResSelect) videoResSelect.value = savedRes;
+    if (videoResTriggerLabel) videoResTriggerLabel.textContent = resObj.label;
+  }
+
+  // Video Dropdown Triggers
+  videoEngineTrigger?.addEventListener('click', (e) => {
+    e.stopPropagation();
+    if (!videoEngineMenu) return;
+    const isHidden = videoEngineMenu.classList.contains('hidden');
+    if (isHidden) {
+      renderVideoEngineMenu();
+      videoEngineMenu.classList.remove('hidden');
+      if (videoEngineChevron) videoEngineChevron.classList.add('rotate-180');
+      if (videoCameraMenu) videoCameraMenu.classList.add('hidden');
+      if (videoDurationMenu) videoDurationMenu.classList.add('hidden');
+      if (videoResMenu) videoResMenu.classList.add('hidden');
+    } else {
+      videoEngineMenu.classList.add('hidden');
+      if (videoEngineChevron) videoEngineChevron.classList.remove('rotate-180');
+    }
+  });
+
+  videoCameraTrigger?.addEventListener('click', (e) => {
+    e.stopPropagation();
+    if (!videoCameraMenu) return;
+    const isHidden = videoCameraMenu.classList.contains('hidden');
+    if (isHidden) {
+      renderVideoCameraMenu();
+      videoCameraMenu.classList.remove('hidden');
+      if (videoCameraChevron) videoCameraChevron.classList.add('rotate-180');
+      if (videoEngineMenu) videoEngineMenu.classList.add('hidden');
+      if (videoDurationMenu) videoDurationMenu.classList.add('hidden');
+      if (videoResMenu) videoResMenu.classList.add('hidden');
+    } else {
+      videoCameraMenu.classList.add('hidden');
+      if (videoCameraChevron) videoCameraChevron.classList.remove('rotate-180');
+    }
+  });
+
+  videoDurationTrigger?.addEventListener('click', (e) => {
+    e.stopPropagation();
+    if (!videoDurationMenu) return;
+    const isHidden = videoDurationMenu.classList.contains('hidden');
+    if (isHidden) {
+      renderVideoDurationMenu();
+      videoDurationMenu.classList.remove('hidden');
+      if (videoDurationChevron) videoDurationChevron.classList.add('rotate-180');
+      if (videoEngineMenu) videoEngineMenu.classList.add('hidden');
+      if (videoCameraMenu) videoCameraMenu.classList.add('hidden');
+      if (videoResMenu) videoResMenu.classList.add('hidden');
+    } else {
+      videoDurationMenu.classList.add('hidden');
+      if (videoDurationChevron) videoDurationChevron.classList.remove('rotate-180');
+    }
+  });
+
+  videoResTrigger?.addEventListener('click', (e) => {
+    e.stopPropagation();
+    if (!videoResMenu) return;
+    const isHidden = videoResMenu.classList.contains('hidden');
+    if (isHidden) {
+      renderVideoResMenu();
+      videoResMenu.classList.remove('hidden');
+      if (videoResChevron) videoResChevron.classList.add('rotate-180');
+      if (videoEngineMenu) videoEngineMenu.classList.add('hidden');
+      if (videoCameraMenu) videoCameraMenu.classList.add('hidden');
+      if (videoDurationMenu) videoDurationMenu.classList.add('hidden');
+    } else {
+      videoResMenu.classList.add('hidden');
+      if (videoResChevron) videoResChevron.classList.remove('rotate-180');
+    }
+  });
+
+  // Video Connect & Disconnect handlers
+  videoDisconnectBtn?.addEventListener('click', () => {
+    if (videoUnconnectedContainer && videoConnectedContainer) {
+      videoUnconnectedContainer.classList.remove('hidden');
+      videoConnectedContainer.classList.add('hidden');
+    }
+    videoApiKey?.focus();
+  });
+
+  videoConnectConfirmBtn?.addEventListener('click', () => {
+    const prov = localStorage.getItem('aetheria_video_provider') || 'fal-kling';
+    const key = videoApiKey?.value.trim() || '';
+    const obj = VIDEO_CATALOG.find(x => x.id === prov) || VIDEO_CATALOG[0];
+    const isCustom = obj.needsUrl;
+
+    if (videoCustomUrl) {
+      localStorage.setItem('aetheria_video_custom_url', videoCustomUrl.value.trim());
+    }
+
+    if (obj.needsKey && !key && !isCustom) {
+      showNotification('⚠️ Please enter an API key first.', 'warning');
+      videoApiKey?.focus();
+      return;
+    }
+
+    if (key) {
+      localStorage.setItem('aetheria_key_' + prov, key);
+      localStorage.setItem('aetheria_video_key', key);
+    }
+
+    syncVideoUiPanels();
+    showNotification(`✓ ${obj.name} connected successfully!`);
+  });
+
+  videoQuickReuseKeyBtn?.addEventListener('click', () => {
+    const falKey = localStorage.getItem('aetheria_key_fal') || '';
+    if (falKey && videoApiKey) {
+      videoApiKey.value = falKey;
+      videoConnectConfirmBtn?.click();
     }
   });
 
