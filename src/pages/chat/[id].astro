@@ -1928,18 +1928,18 @@ const { character } = Astro.props;
                   <button 
                     type="button" 
                     id="image-subtab-output-btn" 
-                    class="flex-1 py-2 px-3 rounded-xl bg-amber-600 text-white text-xs font-semibold flex items-center justify-center gap-2 transition cursor-pointer shadow-sm shadow-amber-900/40"
+                    class="flex-1 py-2 px-3 rounded-xl bg-amber-600 text-white text-xs font-semibold flex items-center justify-center gap-2 transition cursor-pointer shadow-sm shadow-amber-900/40 whitespace-nowrap"
                   >
-                    <Camera class="w-3.5 h-3.5" />
-                    <span>Character Selfies (Output)</span>
+                    <Camera class="w-3.5 h-3.5 shrink-0" />
+                    <span class="truncate">Character Selfies</span>
                   </button>
                   <button 
                     type="button" 
                     id="image-subtab-input-btn" 
-                    class="flex-1 py-2 px-3 rounded-xl text-slate-300 hover:text-white hover:bg-white/[0.04] text-xs font-semibold flex items-center justify-center gap-2 transition cursor-pointer"
+                    class="flex-1 py-2 px-3 rounded-xl text-slate-300 hover:text-white hover:bg-white/[0.04] text-xs font-semibold flex items-center justify-center gap-2 transition cursor-pointer whitespace-nowrap"
                   >
-                    <Eye class="w-3.5 h-3.5" />
-                    <span>Vision AI (Input)</span>
+                    <Eye class="w-3.5 h-3.5 shrink-0" />
+                    <span class="truncate">Vision AI</span>
                   </button>
                 </div>
 
@@ -11060,17 +11060,17 @@ const { character } = Astro.props;
     if (imageAspectTriggerLabel) imageAspectTriggerLabel.textContent = ratioObj.label;
   }
 
-  // Subtab switching (Selfies / Output vs Vision / Input)
+  // Subtab switching (Selfies vs Vision AI)
   imageSubtabOutputBtn?.addEventListener('click', () => {
-    imageSubtabOutputBtn.className = 'flex-1 py-2 px-3 rounded-xl bg-amber-600 text-white text-xs font-semibold flex items-center justify-center gap-2 transition cursor-pointer shadow-sm shadow-amber-900/40';
-    imageSubtabInputBtn.className = 'flex-1 py-2 px-3 rounded-xl text-slate-300 hover:text-white hover:bg-white/[0.04] text-xs font-semibold flex items-center justify-center gap-2 transition cursor-pointer';
+    imageSubtabOutputBtn.className = 'flex-1 py-2 px-3 rounded-xl bg-amber-600 text-white text-xs font-semibold flex items-center justify-center gap-2 transition cursor-pointer shadow-sm shadow-amber-900/40 whitespace-nowrap';
+    imageSubtabInputBtn.className = 'flex-1 py-2 px-3 rounded-xl text-slate-300 hover:text-white hover:bg-white/[0.04] text-xs font-semibold flex items-center justify-center gap-2 transition cursor-pointer whitespace-nowrap';
     imageOutputPane?.classList.remove('hidden');
     imageInputPane?.classList.add('hidden');
   });
 
   imageSubtabInputBtn?.addEventListener('click', () => {
-    imageSubtabInputBtn.className = 'flex-1 py-2 px-3 rounded-xl bg-cyan-600 text-white text-xs font-semibold flex items-center justify-center gap-2 transition cursor-pointer shadow-sm shadow-cyan-900/40';
-    imageSubtabOutputBtn.className = 'flex-1 py-2 px-3 rounded-xl text-slate-300 hover:text-white hover:bg-white/[0.04] text-xs font-semibold flex items-center justify-center gap-2 transition cursor-pointer';
+    imageSubtabInputBtn.className = 'flex-1 py-2 px-3 rounded-xl bg-cyan-600 text-white text-xs font-semibold flex items-center justify-center gap-2 transition cursor-pointer shadow-sm shadow-cyan-900/40 whitespace-nowrap';
+    imageSubtabOutputBtn.className = 'flex-1 py-2 px-3 rounded-xl text-slate-300 hover:text-white hover:bg-white/[0.04] text-xs font-semibold flex items-center justify-center gap-2 transition cursor-pointer whitespace-nowrap';
     imageInputPane?.classList.remove('hidden');
     imageOutputPane?.classList.add('hidden');
   });
