@@ -898,82 +898,69 @@ const { character } = Astro.props;
                     </div>
                   </div>
 
-                  <!-- 2. Unified AI Model Provider & Live Latency Card -->
+                  <!-- 2. AI Model Provider Dropdown -->
                   <div class="p-3.5 sm:p-4 rounded-2xl bg-white/[0.02] border border-white/[0.08] space-y-3" dir="ltr" lang="en">
-                    <div class="flex items-center justify-between flex-wrap gap-2">
-                      <label class="text-xs font-semibold text-slate-300 flex items-center gap-1.5">
+                    <div class="space-y-1.5 relative" id="text-provider-dropdown-container">
+                      <label class="block text-xs font-semibold text-slate-300 flex items-center gap-1.5">
                         <Cpu class="w-3.5 h-3.5 text-purple-400" />
                         <span>AI Model Provider</span>
                       </label>
 
-                      <!-- Integrated Live Latency Indicator & Test Ping -->
-                      <div class="flex items-center gap-2.5">
-                        <div class="flex items-center gap-1.5">
-                          <span id="ping-indicator-dot" class="w-2 h-2 rounded-full bg-emerald-400 shrink-0"></span>
-                          <span class="text-[11px] text-slate-400 font-mono truncate" id="ping-latency-text">Ready • Latency: ~85ms</span>
+                      <!-- Hidden underlying select for state compatibility -->
+                      <select id="text-provider-select" class="hidden">
+                        <option value="groq" selected>Groq (Ultra-Fast LPU)</option>
+                        <option value="google">Google Gemini 2.0 / 1.5</option>
+                        <option value="openrouter">OpenRouter (Unified Multi-Model)</option>
+                        <option value="deepseek">DeepSeek Official (V3 / R1)</option>
+                        <option value="openai">OpenAI (Official GPT-4o / o1)</option>
+                        <option value="anthropic">Anthropic Claude (3.7 Sonnet / Haiku)</option>
+                        <option value="custom-proxy">Custom OpenAI-Compatible API</option>
+                        <option value="custom-local">Localhost (Ollama / LM Studio / vLLM)</option>
+                        <option value="mistral">Mistral AI (Large / Codestral)</option>
+                        <option value="xai">xAI Grok (Grok-2 / Beta)</option>
+                        <option value="together">Together AI (100+ Open Models)</option>
+                        <option value="fireworks">Fireworks AI (High-Speed Function Calling)</option>
+                        <option value="cohere">Cohere Command R / R+</option>
+                        <option value="perplexity">Perplexity Sonar (Live Web Search)</option>
+                        <option value="novita">Novita AI (Fast Open-Source)</option>
+                        <option value="featherless">Featherless AI (1,000+ Models)</option>
+                        <option value="siliconflow">SiliconFlow (Multi-Model Cloud)</option>
+                        <option value="huggingface">Hugging Face (Serverless Inference)</option>
+                        <option value="cloudflare">Cloudflare Workers AI</option>
+                        <option value="cerebras">Cerebras (Wafer-Scale Engine)</option>
+                        <option value="sambanova">SambaNova Cloud (Fast Llama 3.3)</option>
+                        <option value="ai21">AI21 Labs (Jamba 1.5)</option>
+                      </select>
+
+                      <!-- Sleek Custom Dropdown Trigger (Matching TTS/STT style, NO icon) -->
+                      <button 
+                        type="button" 
+                        id="provider-custom-trigger" 
+                        class="w-full px-3.5 py-2.5 rounded-xl bg-black/60 hover:bg-black/80 border border-purple-500/30 hover:border-purple-500/50 flex items-center justify-between text-xs text-white transition cursor-pointer text-left group"
+                        aria-haspopup="listbox"
+                        aria-expanded="false"
+                      >
+                        <div class="min-w-0 pr-2">
+                          <div id="provider-trigger-name" class="font-bold text-xs text-white truncate">Groq</div>
+                          <div id="provider-trigger-desc" class="text-[10px] text-slate-400 truncate">Ultra-low latency LPU hardware</div>
                         </div>
-                        <span id="ping-provider-name" class="hidden"></span>
-                        <button 
-                          type="button" 
-                          id="ping-text-btn" 
-                          class="px-2.5 py-1 rounded-lg bg-purple-900/40 hover:bg-purple-800/60 border border-purple-500/30 text-purple-300 hover:text-white text-xs font-semibold flex items-center gap-1 transition cursor-pointer shrink-0 shadow-sm shadow-purple-950"
-                          title="Test connection and measure real network latency"
-                        >
-                          <Zap class="w-3 h-3 text-cyan-400" />
-                          <span>Test Latency</span>
-                        </button>
+                        <div class="flex items-center gap-2 shrink-0">
+                          <span id="provider-trigger-badge" class="px-2 py-0.5 rounded-full text-[9px] font-mono font-bold bg-amber-500/20 text-amber-300 border border-amber-500/30">
+                            Fastest
+                          </span>
+                          <ChevronDown class="w-4 h-4 text-slate-400 group-hover:text-purple-400 transition-transform duration-200" id="provider-trigger-chevron" />
+                        </div>
+                      </button>
+
+                      <!-- In-Place Dropdown List (No icon, simple and sleek) -->
+                      <div 
+                        id="text-provider-menu" 
+                        class="hidden absolute left-0 right-0 top-full mt-1.5 z-50 bg-[#0d1026]/95 backdrop-blur-xl border border-purple-500/30 rounded-2xl p-1.5 shadow-2xl shadow-purple-950/80 space-y-1 max-h-64 overflow-y-auto no-scrollbar"
+                        role="listbox"
+                      >
+                        <!-- Rendered dynamically by renderTextProviderMenu() -->
                       </div>
                     </div>
-
-                    <!-- Hidden underlying select for state compatibility -->
-                    <select id="text-provider-select" class="hidden">
-                      <option value="groq" selected>Groq (Ultra-Fast LPU)</option>
-                      <option value="google">Google Gemini 2.0 / 1.5</option>
-                      <option value="openrouter">OpenRouter (Unified Multi-Model)</option>
-                      <option value="openai">OpenAI (Official GPT-4o / o1)</option>
-                      <option value="anthropic">Anthropic Claude (3.7 Sonnet / Haiku)</option>
-                      <option value="deepseek">DeepSeek Official (V3 / R1)</option>
-                      <option value="mistral">Mistral AI (Large / Codestral)</option>
-                      <option value="xai">xAI Grok (Grok-2 / Beta)</option>
-                      <option value="cerebras">Cerebras (Ultra-Fast Wafer)</option>
-                      <option value="sambanova">SambaNova Cloud (Fast Llama 3.3)</option>
-                      <option value="together">Together AI (100+ Open Models)</option>
-                      <option value="fireworks">Fireworks AI (High-Speed Function Calling)</option>
-                      <option value="cohere">Cohere Command R / R+</option>
-                      <option value="perplexity">Perplexity Sonar (Live Web Search)</option>
-                      <option value="hyperbolic">Hyperbolic (Decentralized GPU)</option>
-                      <option value="novita">Novita AI (Fast Open-Source)</option>
-                      <option value="deepinfra">DeepInfra (Serverless Inference)</option>
-                      <option value="lepton">Lepton AI (Production AI Compute)</option>
-                      <option value="replicate">Replicate (Multi-modal & Language)</option>
-                      <option value="cloudflare">Cloudflare Workers AI</option>
-                      <option value="custom-proxy">Custom OpenAI-Compatible API</option>
-                      <option value="custom-local">Localhost (Ollama / LM Studio / vLLM)</option>
-                    </select>
-
-                    <!-- The Single Primary Provider Trigger -->
-                    <button 
-                      type="button" 
-                      id="provider-custom-trigger" 
-                      class="w-full flex items-center justify-between p-3 rounded-xl bg-purple-950/20 hover:bg-purple-900/30 border border-purple-500/30 hover:border-purple-400 text-left transition group cursor-pointer shadow-sm hover:shadow-purple-950/50"
-                    >
-                      <div class="flex items-center gap-3 min-w-0">
-                        <div id="provider-trigger-icon-box" class="w-8 h-8 rounded-lg bg-purple-500/20 border border-purple-500/30 flex items-center justify-center text-sm shrink-0">
-                          ⚡
-                        </div>
-                        <div class="min-w-0">
-                          <div id="provider-trigger-name" class="text-xs font-bold text-white truncate">Groq</div>
-                          <div id="provider-trigger-desc" class="text-[10px] text-purple-300/80 truncate">Ultra-Fast LPU Inference</div>
-                        </div>
-                      </div>
-                      <div class="flex items-center gap-1.5 shrink-0 text-slate-400 group-hover:text-white text-xs transition">
-                        <span class="font-medium hidden sm:inline text-purple-300/70">Change</span>
-                        <ChevronDown class="w-4 h-4" />
-                      </div>
-                    </button>
-
-                    <!-- Ping status message container -->
-                    <div id="ping-status-msg" class="hidden text-xs px-3.5 py-2.5 rounded-xl border leading-relaxed"></div>
                   </div>
 
                   <!-- 3. Unified Connection Credentials (API Key & Base URL) -->
@@ -1000,30 +987,50 @@ const { character } = Astro.props;
                       </p>
                     </div>
 
-                    <!-- API Key Container -->
+                    <!-- API Key Container with Test Button -->
                     <div id="api-key-container" class="space-y-1.5">
                       <div class="flex items-center justify-between text-xs">
                         <label class="block text-xs font-semibold text-slate-300 flex items-center justify-between w-full">
                           <span id="api-key-label" class="flex items-center gap-1.5">
                             <Key class="w-3.5 h-3.5 text-purple-400" />
-                            <span>API Key</span>
+                            <span id="api-key-label-text">API Key</span>
                           </span>
                           <div class="flex items-center gap-2">
+                            <!-- Live Connection Status Dot & Latency -->
+                            <div class="flex items-center gap-1.5 mr-1">
+                              <span id="ping-indicator-dot" class="w-2 h-2 rounded-full bg-emerald-400 shrink-0"></span>
+                              <span class="text-[10px] text-slate-400 font-mono truncate" id="ping-latency-text">Ready</span>
+                            </div>
+                            <span id="ping-provider-name" class="hidden"></span>
                             <a id="get-key-link" href="https://aistudio.google.com/app/apikey" target="_blank" rel="noopener noreferrer" class="hidden text-[10px] text-cyan-400 hover:text-cyan-300 underline underline-offset-2">Get Free Key</a>
                             <button type="button" id="toggle-key-visibility" class="text-[10px] text-purple-400 hover:text-purple-300 cursor-pointer">Show/Hide</button>
                           </div>
                         </label>
                       </div>
-                      <input 
-                        id="text-api-key" 
-                        type="password" 
-                        placeholder="sk-... or gsk_..." 
-                        class="w-full px-3.5 py-2.5 rounded-xl bg-white/[0.04] border border-white/10 text-xs text-white placeholder:text-slate-500 outline-none focus:border-purple-500/60 font-mono transition" 
-                        autocomplete="off"
-                        spellcheck="false"
-                        dir="ltr"
-                        lang="en"
-                      />
+                      <div class="flex gap-2">
+                        <input 
+                          id="text-api-key" 
+                          type="password" 
+                          placeholder="sk-... or gsk_..." 
+                          class="flex-1 min-w-0 px-3.5 py-2.5 rounded-xl bg-white/[0.04] border border-white/10 text-xs text-white placeholder:text-slate-500 outline-none focus:border-purple-500/60 font-mono transition" 
+                          autocomplete="off"
+                          spellcheck="false"
+                          dir="ltr"
+                          lang="en"
+                        />
+                        <button 
+                          type="button" 
+                          id="ping-text-btn" 
+                          class="px-3.5 py-2.5 rounded-xl bg-purple-600 hover:bg-purple-500 active:scale-95 text-white text-xs font-semibold flex items-center justify-center gap-1.5 transition cursor-pointer shrink-0 shadow-md shadow-purple-950/50"
+                          title="Test connection and measure real network latency"
+                        >
+                          <Zap class="w-3.5 h-3.5 text-cyan-300" />
+                          <span>Test</span>
+                        </button>
+                      </div>
+
+                      <!-- Ping status message container -->
+                      <div id="ping-status-msg" class="hidden text-xs px-3.5 py-2.5 rounded-xl border leading-relaxed"></div>
                     </div>
                   </div>
 
@@ -3688,111 +3695,6 @@ const { character } = Astro.props;
     </div>
   </div>
 
-  <!-- ======================================================== -->
-  <!-- 2026 ELITE AI PROVIDER PICKER MODAL (z-[75])             -->
-  <!-- ======================================================== -->
-  <div 
-    id="provider-select-modal" 
-    class="fixed inset-0 z-[75] hidden items-end sm:items-center justify-center bg-black/80 backdrop-blur-md p-0 sm:p-4 transition-all duration-300"
-  >
-    <div 
-      class="relative w-full max-w-xl bg-[#090c1f] border-t sm:border border-purple-500/30 rounded-t-3xl sm:rounded-3xl shadow-2xl shadow-purple-950/90 flex flex-col max-h-[90vh] sm:max-h-[85vh] overflow-hidden"
-    >
-      <!-- Mobile Pull Bar -->
-      <div class="sm:hidden pt-3 pb-1 flex justify-center shrink-0">
-        <div class="w-10 h-1 rounded-full bg-white/20"></div>
-      </div>
-
-      <!-- Modal Header -->
-      <div class="px-4 py-3.5 sm:px-6 sm:py-4 border-b border-white/[0.08] flex items-center justify-between shrink-0 bg-white/[0.01]">
-        <div class="flex items-center gap-3">
-          <div class="w-9 h-9 rounded-2xl bg-purple-500/15 border border-purple-500/25 flex items-center justify-center text-purple-300 shadow-inner">
-            <Cpu class="w-4 h-4 text-purple-400" />
-          </div>
-          <div>
-            <div class="flex items-center gap-2">
-              <h3 class="text-sm sm:text-base font-bold text-white tracking-wide">Select AI Engine</h3>
-              <span id="provider-modal-count-badge" class="px-2 py-0.5 rounded-full text-[10px] font-mono bg-purple-500/15 text-purple-300 border border-purple-500/25">
-                22 Engines
-              </span>
-            </div>
-            <p class="text-[11px] text-slate-400 hidden sm:block">Choose cloud endpoints or self-hosted hardware</p>
-          </div>
-        </div>
-        <button 
-          type="button" 
-          id="close-provider-modal-btn" 
-          class="w-8 h-8 rounded-full bg-white/[0.06] hover:bg-white/[0.12] text-slate-400 hover:text-white flex items-center justify-center transition cursor-pointer active:scale-95"
-          title="Close"
-        >
-          <X class="w-4 h-4" />
-        </button>
-      </div>
-
-      <!-- Search & Category Filter Bar -->
-      <div class="p-3 sm:px-6 sm:py-3.5 border-b border-white/[0.06] bg-black/20 shrink-0 space-y-2.5">
-        <!-- Google-style Search Input -->
-        <div class="relative">
-          <Search class="w-4 h-4 absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none" />
-          <input 
-            id="provider-modal-search" 
-            type="text" 
-            placeholder="Search AI providers (OpenAI, DeepSeek, Groq)..." 
-            class="w-full pl-10 pr-9 py-2 rounded-xl bg-white/[0.04] hover:bg-white/[0.06] focus:bg-white/[0.08] border border-white/[0.1] focus:border-purple-500/60 text-xs sm:text-sm text-white placeholder-slate-500 outline-none transition font-sans"
-          />
-          <button 
-            type="button" 
-            id="clear-provider-modal-search" 
-            class="hidden absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-white text-xs p-1"
-            title="Clear search"
-          >
-            <X class="w-3.5 h-3.5" />
-          </button>
-        </div>
-
-        <!-- Quick Filter Category Chips (Scrollbar Hidden) -->
-        <div class="flex items-center gap-1.5 overflow-x-auto no-scrollbar py-0.5 text-xs">
-          <button type="button" data-prov-filter="all" class="prov-cat-chip px-3 py-1 rounded-full bg-purple-600 text-white font-medium shrink-0 transition cursor-pointer">
-            All (22)
-          </button>
-          <button type="button" data-prov-filter="popular" class="prov-cat-chip px-3 py-1 rounded-full bg-white/[0.05] hover:bg-white/[0.1] text-slate-300 font-medium shrink-0 transition cursor-pointer">
-            Popular
-          </button>
-          <button type="button" data-prov-filter="localhost" class="prov-cat-chip px-3 py-1 rounded-full bg-white/[0.05] hover:bg-white/[0.1] text-cyan-300 font-medium shrink-0 transition cursor-pointer">
-            Localhost
-          </button>
-          <button type="button" data-prov-filter="cloud" class="prov-cat-chip px-3 py-1 rounded-full bg-white/[0.05] hover:bg-white/[0.1] text-slate-300 font-medium shrink-0 transition cursor-pointer">
-            Other Cloud
-          </button>
-          <button type="button" data-prov-filter="free" class="prov-cat-chip px-3 py-1 rounded-full bg-white/[0.05] hover:bg-white/[0.1] text-emerald-400 font-medium shrink-0 transition cursor-pointer">
-            Free Tier
-          </button>
-        </div>
-      </div>
-
-      <!-- Provider Cards List (Scrollable Area) -->
-      <div id="provider-modal-items" class="flex-1 overflow-y-auto p-3 sm:p-5 space-y-4 custom-scrollbar min-h-[280px]">
-        <!-- Rendered dynamically -->
-      </div>
-
-      <!-- Modal Footer Action Bar -->
-      <div class="p-3 sm:px-6 sm:py-3.5 border-t border-white/[0.08] bg-black/40 flex items-center justify-between text-xs text-slate-400 shrink-0">
-        <div class="flex items-center gap-2 min-w-0 pr-2">
-          <span class="w-2 h-2 rounded-full bg-emerald-400 shrink-0"></span>
-          <span id="active-selected-provider-text" class="font-semibold text-slate-200 truncate">Current: Groq</span>
-        </div>
-        <button 
-          type="button" 
-          id="quick-select-custom-engine-btn" 
-          class="px-3 py-1.5 rounded-xl bg-purple-600/20 hover:bg-purple-600/30 text-purple-300 hover:text-purple-200 border border-purple-500/30 transition flex items-center gap-1.5 cursor-pointer text-xs font-semibold shrink-0 active:scale-95"
-        >
-          <Globe class="w-3.5 h-3.5" />
-          <span>+ Custom / Localhost</span>
-        </button>
-      </div>
-    </div>
-  </div>
-
 </Layout>
 
 <script define:vars={{ character }}>
@@ -5643,7 +5545,7 @@ const { character } = Astro.props;
     'custom-local': {
       name: 'Custom Localhost',
       label: 'Localhost',
-      hasKey: false,
+      hasKey: true,
       isKeyOptional: true,
       hasUrl: true,
       defaultUrl: 'http://localhost:11434/v1',
@@ -6425,6 +6327,13 @@ const { character } = Astro.props;
       return;
     }
 
+    const originalBtnHtml = pingTextBtn ? pingTextBtn.innerHTML : '';
+    if (pingTextBtn) {
+      pingTextBtn.disabled = true;
+      pingTextBtn.classList.add('opacity-70', 'cursor-wait');
+      pingTextBtn.innerHTML = '<svg class="w-3.5 h-3.5 animate-spin text-cyan-300" viewBox="0 0 24 24" fill="none"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8H4z"></path></svg><span>Testing...</span>';
+    }
+
     pingStatusMsg.className = 'text-xs px-3.5 py-2.5 rounded-xl border bg-slate-900/60 border-slate-700/60 text-slate-300 flex items-center gap-2';
     pingStatusMsg.innerHTML = '<svg class="w-3.5 h-3.5 animate-spin" viewBox="0 0 24 24" fill="none" stroke="currentColor"><circle cx="12" cy="12" r="10" stroke-width="3" stroke-dasharray="32" stroke-linecap="round"/></svg> Testing latency to ' + conf.name + '...';
 
@@ -6487,6 +6396,12 @@ const { character } = Astro.props;
     } catch (e) {
       pingStatusMsg.className = 'text-xs px-3.5 py-2.5 rounded-xl border bg-rose-950/40 border-rose-500/30 text-rose-300';
       pingStatusMsg.innerHTML = `✕ Connection Error • Unable to reach API`;
+    } finally {
+      if (pingTextBtn) {
+        pingTextBtn.disabled = false;
+        pingTextBtn.classList.remove('opacity-70', 'cursor-wait');
+        pingTextBtn.innerHTML = originalBtnHtml;
+      }
     }
   }
 
@@ -7134,7 +7049,10 @@ const { character } = Astro.props;
     if (apiKeyContainer) {
       apiKeyContainer.classList.toggle('hidden', !conf.hasKey);
     }
-    if (apiKeyLabel) {
+    const apiKeyLabelText = document.getElementById('api-key-label-text');
+    if (apiKeyLabelText) {
+      apiKeyLabelText.textContent = conf.isKeyOptional ? `${conf.name} API Key (Optional)` : `${conf.name} API Key`;
+    } else if (apiKeyLabel) {
       apiKeyLabel.textContent = conf.isKeyOptional ? `${conf.name} API Key (Optional)` : `${conf.name} API Key`;
     }
     if (textApiKey) {
@@ -7360,287 +7278,107 @@ const { character } = Astro.props;
     { id: 'ai21', name: 'AI21 Labs', desc: 'Hybrid Jamba SSM-transformer architectures for ultra-long context windows', badge: 'Hybrid SSM', badgeClass: 'bg-indigo-500/20 text-indigo-300 border-indigo-500/30', category: 'Other Cloud Engines' }
   ];
 
-  function getProviderIconSvg(id) {
-    switch (id) {
-      case 'google':
-        return `<svg class="w-5 h-5" viewBox="0 0 24 24" fill="none"><path d="M12 2L14.5 9.5L22 12L14.5 14.5L12 22L9.5 14.5L2 12L9.5 9.5L12 2Z" fill="url(#p-gemini-grad)"/><defs><linearGradient id="p-gemini-grad" x1="2" y1="2" x2="22" y2="22" gradientUnits="userSpaceOnUse"><stop stop-color="#4285F4"/><stop offset="0.5" stop-color="#9B72CB"/><stop offset="1" stop-color="#D96570"/></linearGradient></defs></svg>`;
-      case 'openrouter':
-        return `<svg class="w-5 h-5 text-indigo-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="9"/><path d="M3.6 9h16.8M3.6 15h16.8M11.5 3a17 17 0 000 18M12.5 3a17 17 0 010 18"/></svg>`;
-      case 'groq':
-        return `<svg class="w-5 h-5 text-amber-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg>`;
-      case 'deepseek':
-        return `<svg class="w-5 h-5 text-cyan-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path stroke-linecap="round" stroke-linejoin="round" d="M19.5 14.25v-2.625a3.375 3.375 0 00-3.375-3.375h-1.5A1.125 1.125 0 0113.5 7.125v-1.5a3.375 3.375 0 00-3.375-3.375H8.25m0 12.75h7.5m-7.5 3H12M10.5 2.25H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 00-9-9z"/></svg>`;
-      case 'openai':
-        return `<svg class="w-5 h-5 text-emerald-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path stroke-linecap="round" stroke-linejoin="round" d="M12 2a10 10 0 0110 10c0 5.523-4.477 10-10 10S2 17.523 2 12A10 10 0 0112 2zm0 4a6 6 0 100 12 6 6 0 000-12z"/></svg>`;
-      case 'anthropic':
-        return `<svg class="w-5 h-5 text-amber-500" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2L13.5 8.5L20 7L15.5 12L20 17L13.5 15.5L12 22L10.5 15.5L4 17L8.5 12L4 7L10.5 8.5L12 2Z"/></svg>`;
-      case 'custom-proxy':
-        return `<svg class="w-5 h-5 text-purple-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path stroke-linecap="round" stroke-linejoin="round" d="M8 9l3 3-3 3m5 0h3M5 20h14a2 2 0 002-2V6a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>`;
-      case 'custom-local':
-        return `<svg class="w-5 h-5 text-cyan-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="2" y="3" width="20" height="14" rx="2" stroke-linecap="round" stroke-linejoin="round"/><path stroke-linecap="round" stroke-linejoin="round" d="M8 21h8m-4-4v4"/></svg>`;
-      case 'mistral':
-        return `<svg class="w-5 h-5 text-orange-500" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path stroke-linecap="round" stroke-linejoin="round" d="M17.657 18.657A8 8 0 016.343 7.343S7 9 9 10c0-2 .5-5 2.986-7C14 5 16.09 5.777 17.656 7.343a7.975 7.975 0 010 11.314z"/></svg>`;
-      case 'xai':
-        return `<svg class="w-5 h-5 text-slate-100" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/></svg>`;
-      case 'together':
-        return `<svg class="w-5 h-5 text-blue-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path stroke-linecap="round" stroke-linejoin="round" d="M3 15a4 4 0 004 4h9a5 5 0 10-.1-9.999 5.002 5.002 0 00-9.78 2.096A4.001 4.001 0 003 15z"/></svg>`;
-      case 'fireworks':
-        return `<svg class="w-5 h-5 text-pink-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path stroke-linecap="round" stroke-linejoin="round" d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-5.714 2.143L13 21l-2.286-6.857L5 12l5.714-2.143L13 3z"/></svg>`;
-      case 'cohere':
-        return `<svg class="w-5 h-5 text-teal-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="6" cy="6" r="3"/><circle cx="18" cy="6" r="3"/><circle cx="12" cy="18" r="3"/><path d="M8.5 7.5l7 0M7.5 8.5l3.5 7M16.5 8.5l-3.5 7"/></svg>`;
-      case 'perplexity':
-        return `<svg class="w-5 h-5 text-cyan-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.35-4.35M11 8v6M8 11h6"/></svg>`;
-      case 'cloudflare':
-        return `<svg class="w-5 h-5 text-orange-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path stroke-linecap="round" stroke-linejoin="round" d="M19 14.5a3.5 3.5 0 00-1.5-6.67 5.5 5.5 0 00-10.8 1.94A4.5 4.5 0 006.5 18.5H19a2.5 2.5 0 000-5z"/></svg>`;
-      case 'huggingface':
-        return `<svg class="w-5 h-5 text-yellow-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="9"/><path stroke-linecap="round" d="M9 10h.01M15 10h.01M9 15c1 1.5 5 1.5 6 0"/></svg>`;
-      case 'cerebras':
-        return `<svg class="w-5 h-5 text-rose-500" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="4" y="4" width="16" height="16" rx="2"/><path d="M9 4v16M15 4v16M4 9h16M4 15h16"/></svg>`;
-      case 'sambanova':
-        return `<svg class="w-5 h-5 text-red-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path stroke-linecap="round" stroke-linejoin="round" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>`;
-      case 'novita':
-        return `<svg class="w-5 h-5 text-purple-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path stroke-linecap="round" stroke-linejoin="round" d="M4 7v10c0 2 3 3 8 3s8-1 8-3V7M4 7c0 2 3 3 8 3s8-1 8-3M4 7c0-2 3-3 8-3s8 1 8 3m0 5c0 2-3 3-8 3s-8-1-8-3"/></svg>`;
-      case 'featherless':
-        return `<svg class="w-5 h-5 text-violet-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path stroke-linecap="round" stroke-linejoin="round" d="M20.24 12.24a6 6 0 00-8.49-8.49L5 10.5V19h8.5zM16 8L2 22M17.5 15H9"/></svg>`;
-      case 'siliconflow':
-        return `<svg class="w-5 h-5 text-sky-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path stroke-linecap="round" stroke-linejoin="round" d="M4 12c2.5-3 5.5-3 8 0s5.5 3 8 0M4 18c2.5-3 5.5-3 8 0s5.5 3 8 0M4 6c2.5-3 5.5-3 8 0s5.5 3 8 0"/></svg>`;
-      case 'ai21':
-        return `<svg class="w-5 h-5 text-indigo-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path stroke-linecap="round" stroke-linejoin="round" d="M7 21h10M12 3v18M3 7l9-4 9 4M6 12l6-2 6 2"/></svg>`;
-      default:
-        return `<svg class="w-5 h-5 text-purple-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path stroke-linecap="round" stroke-linejoin="round" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>`;
-    }
-  }
-
-  const providerSelectModal = document.getElementById('provider-select-modal');
-  const closeProviderModalBtn = document.getElementById('close-provider-modal-btn');
+  // ==========================================
+  // IN-PLACE AI MODEL PROVIDER DROPDOWN SYSTEM
+  // ==========================================
+  const textProviderDropdownContainer = document.getElementById('text-provider-dropdown-container');
+  const textProviderMenu = document.getElementById('text-provider-menu');
   const providerCustomTrigger = document.getElementById('provider-custom-trigger');
-  const providerModalSearch = document.getElementById('provider-modal-search');
-  const clearProviderModalSearch = document.getElementById('clear-provider-modal-search');
-  const providerModalItems = document.getElementById('provider-modal-items');
-  const providerTriggerIconBox = document.getElementById('provider-trigger-icon-box');
+  const providerTriggerChevron = document.getElementById('provider-trigger-chevron');
   const providerTriggerName = document.getElementById('provider-trigger-name');
   const providerTriggerDesc = document.getElementById('provider-trigger-desc');
-  const activeSelectedProviderText = document.getElementById('active-selected-provider-text');
-  const quickSelectCustomEngineBtn = document.getElementById('quick-select-custom-engine-btn');
+  const providerTriggerBadge = document.getElementById('provider-trigger-badge');
 
-  let currentProviderCategoryFilter = 'all';
+  function renderTextProviderMenu() {
+    if (!textProviderMenu) return;
+    const currentProv = textProviderSelect?.value || 'groq';
+
+    let html = '';
+    ALL_PROVIDERS.forEach(p => {
+      const isSelected = (p.id === currentProv);
+      html += `
+        <button
+          type="button"
+          data-provider-id="${p.id}"
+          class="w-full text-left px-3 py-2 rounded-xl flex items-center justify-between gap-2 transition cursor-pointer ${
+            isSelected 
+              ? 'bg-purple-600/20 text-white border border-purple-500/40 shadow-sm' 
+              : 'hover:bg-white/[0.05] text-slate-300 hover:text-white border border-transparent'
+          }"
+        >
+          <div class="min-w-0 pr-2">
+            <div class="font-bold text-xs truncate ${isSelected ? 'text-purple-300' : 'text-white'}">${p.name}</div>
+            <div class="text-[10px] text-slate-400 truncate">${p.desc}</div>
+          </div>
+          <span class="px-2 py-0.5 rounded-full text-[9px] font-mono font-bold shrink-0 ${p.badgeClass}">
+            ${p.badge}
+          </span>
+        </button>
+      `;
+    });
+
+    textProviderMenu.innerHTML = html;
+
+    textProviderMenu.querySelectorAll('button[data-provider-id]').forEach(btn => {
+      btn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        const id = btn.getAttribute('data-provider-id');
+        if (id && textProviderSelect) {
+          textProviderSelect.value = id;
+          handleProviderChange(id);
+          updateProviderTriggerDisplay(id);
+          renderTextProviderMenu();
+          closeTextProviderMenu();
+        }
+      });
+    });
+  }
 
   function updateProviderTriggerDisplay(provId) {
     const p = ALL_PROVIDERS.find(x => x.id === provId) || ALL_PROVIDERS[0];
-    if (providerTriggerIconBox) providerTriggerIconBox.innerHTML = getProviderIconSvg(p.id);
     if (providerTriggerName) providerTriggerName.textContent = p.name;
     if (providerTriggerDesc) providerTriggerDesc.textContent = p.desc;
-    if (activeSelectedProviderText) activeSelectedProviderText.textContent = `Current: ${p.name}`;
-  }
-
-  function openProviderModal() {
-    if (!providerSelectModal) return;
-    currentProviderCategoryFilter = 'all';
-    updateProviderCategoryChips();
-    if (providerModalSearch) {
-      providerModalSearch.value = '';
-      if (clearProviderModalSearch) clearProviderModalSearch.classList.add('hidden');
-    }
-    renderProviderModalList();
-    providerSelectModal.classList.remove('hidden');
-    providerSelectModal.classList.add('flex');
-    if (providerModalSearch) {
-      setTimeout(() => providerModalSearch.focus(), 60);
+    if (providerTriggerBadge) {
+      providerTriggerBadge.textContent = p.badge;
+      providerTriggerBadge.className = `px-2 py-0.5 rounded-full text-[9px] font-mono font-bold ${p.badgeClass}`;
     }
   }
 
-  function closeProviderModal() {
-    if (!providerSelectModal) return;
-    providerSelectModal.classList.add('hidden');
-    providerSelectModal.classList.remove('flex');
-  }
-
-  function selectProviderFromUI(provId) {
-    if (textProviderSelect) {
-      textProviderSelect.value = provId;
-      handleProviderChange(provId);
+  function toggleTextProviderMenu(e) {
+    e?.stopPropagation();
+    if (!textProviderMenu) return;
+    const isClosed = textProviderMenu.classList.contains('hidden');
+    if (isClosed) {
+      openTextProviderMenu();
+    } else {
+      closeTextProviderMenu();
     }
-    updateProviderTriggerDisplay(provId);
-    closeProviderModal();
   }
 
-  function updateProviderCategoryChips() {
-    document.querySelectorAll('.prov-cat-chip').forEach(btn => {
-      const f = btn.getAttribute('data-prov-filter');
-      if (f === currentProviderCategoryFilter) {
-        btn.className = 'prov-cat-chip px-3 py-1 rounded-full bg-purple-600 text-white font-medium shrink-0 transition cursor-pointer shadow-sm shadow-purple-900/40';
-      } else {
-        btn.className = 'prov-cat-chip px-3 py-1 rounded-full bg-white/[0.05] hover:bg-white/[0.1] text-slate-300 font-medium shrink-0 transition cursor-pointer';
-      }
-    });
+  function openTextProviderMenu() {
+    if (!textProviderMenu) return;
+    renderTextProviderMenu();
+    textProviderMenu.classList.remove('hidden');
+    providerCustomTrigger?.setAttribute('aria-expanded', 'true');
+    providerTriggerChevron?.classList.add('rotate-180');
   }
 
-  function renderProviderModalList(filter = '', categoryFilter = null) {
-    if (!providerModalItems) return;
-    if (categoryFilter !== null) currentProviderCategoryFilter = categoryFilter;
+  function closeTextProviderMenu() {
+    if (!textProviderMenu) return;
+    textProviderMenu.classList.add('hidden');
+    providerCustomTrigger?.setAttribute('aria-expanded', 'false');
+    providerTriggerChevron?.classList.remove('rotate-180');
+  }
 
-    const currentProv = textProviderSelect?.value || 'groq';
-    const query = filter.trim().toLowerCase();
-
-    const filtered = ALL_PROVIDERS.filter(p => {
-      // 1. Category Filter Check
-      if (currentProviderCategoryFilter === 'popular' && p.category !== 'Popular & Recommended') return false;
-      if (currentProviderCategoryFilter === 'localhost' && p.category !== 'Custom & Localhost') return false;
-      if (currentProviderCategoryFilter === 'cloud' && p.category !== 'Other Cloud Engines') return false;
-      if (currentProviderCategoryFilter === 'free' && !['google', 'openrouter', 'custom-local', 'cloudflare', 'groq'].includes(p.id)) return false;
-
-      // 2. Search Query Check
-      if (!query) return true;
-      return p.name.toLowerCase().includes(query) || 
-             p.desc.toLowerCase().includes(query) || 
-             p.id.toLowerCase().includes(query) ||
-             p.badge.toLowerCase().includes(query);
-    });
-
-    // Update count badge in header
-    const providerModalCountBadge = document.getElementById('provider-modal-count-badge');
-    if (providerModalCountBadge) {
-      if (filtered.length === ALL_PROVIDERS.length) {
-        providerModalCountBadge.textContent = `${ALL_PROVIDERS.length} Providers`;
-      } else {
-        providerModalCountBadge.textContent = `${filtered.length} of ${ALL_PROVIDERS.length}`;
-      }
+  providerCustomTrigger?.addEventListener('click', toggleTextProviderMenu);
+  document.addEventListener('click', (e) => {
+    if (textProviderDropdownContainer && !textProviderDropdownContainer.contains(e.target)) {
+      closeTextProviderMenu();
     }
-
-    if (filtered.length === 0) {
-      providerModalItems.innerHTML = `
-        <div class="py-12 text-center text-slate-400 flex flex-col items-center justify-center">
-          <div class="w-12 h-12 rounded-2xl bg-purple-500/10 border border-purple-500/20 text-purple-400 flex items-center justify-center mb-3 shadow-inner">
-            <svg class="w-5 h-5 stroke-[1.8]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-5.197-5.197m0 0A7.5 7.5 0 105.196 5.196a7.5 7.5 0 0010.607 10.607z"/></svg>
-          </div>
-          <div class="text-sm font-semibold text-white mb-1">No AI Engines Found</div>
-          <div class="text-xs text-slate-400 max-w-xs mb-4">No providers match your search or filter. Try a different keyword or category.</div>
-          <button type="button" id="clear-provider-empty-btn" class="px-3.5 py-1.5 rounded-xl bg-purple-600/80 hover:bg-purple-600 text-white text-xs font-semibold transition cursor-pointer active:scale-95">
-            Reset Filters
-          </button>
-        </div>
-      `;
-      document.getElementById('clear-provider-empty-btn')?.addEventListener('click', () => {
-        if (providerModalSearch) providerModalSearch.value = '';
-        if (clearProviderModalSearch) clearProviderModalSearch.classList.add('hidden');
-        currentProviderCategoryFilter = 'all';
-        updateProviderCategoryChips();
-        renderProviderModalList();
-      });
-      return;
-    }
-
-    const categories = ['Popular & Recommended', 'Custom & Localhost', 'Other Cloud Engines'];
-    let html = '';
-
-    categories.forEach(cat => {
-      const items = filtered.filter(p => p.category === cat);
-      if (items.length === 0) return;
-
-      html += '<div class="space-y-2">';
-      html += '<div class="text-[11px] font-bold uppercase tracking-wider text-purple-400/90 px-1 flex items-center justify-between">';
-      html += '<span>' + cat + '</span>';
-      html += '<span class="text-[10px] text-slate-500 font-mono font-normal">' + items.length + ' Available</span>';
-      html += '</div>';
-      html += '<div class="space-y-2">';
-
-      items.forEach(p => {
-        const isSelected = (p.id === currentProv);
-        html += `
-          <button
-            type="button"
-            data-prov-id="${p.id}"
-            class="prov-item-card w-full p-3 sm:p-3.5 rounded-2xl border text-left transition-all flex items-start justify-between gap-3 cursor-pointer group ${
-              isSelected 
-                ? 'bg-purple-950/40 border-purple-500/60 shadow-lg shadow-purple-950/50' 
-                : 'bg-white/[0.02] hover:bg-white/[0.06] border-white/[0.06] hover:border-purple-500/30'
-            }"
-          >
-            <div class="flex items-start gap-3 min-w-0 flex-1">
-              <!-- Brand Squircle Icon Container -->
-              <div class="w-10 h-10 rounded-xl ${
-                isSelected 
-                  ? 'bg-purple-500/30 border-purple-400/40' 
-                  : 'bg-white/[0.04] border-white/10 group-hover:border-purple-500/30'
-              } border flex items-center justify-center shrink-0 transition-transform group-hover:scale-105 shadow-sm">
-                ${getProviderIconSvg(p.id)}
-              </div>
-
-              <!-- Content -->
-              <div class="min-w-0 flex-1">
-                <div class="flex items-center gap-2 flex-wrap mb-1">
-                  <span class="font-bold text-xs sm:text-sm ${isSelected ? 'text-purple-200' : 'text-white group-hover:text-purple-200'} truncate">${p.name}</span>
-                  <span class="text-[9px] px-2 py-0.5 rounded-full font-semibold border ${p.badgeClass}">${p.badge}</span>
-                  ${isSelected ? '<span class="text-[9px] px-1.5 py-0.2 rounded bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 font-bold uppercase font-mono">ACTIVE</span>' : ''}
-                </div>
-                <!-- Relaxed 2-line description with NO mid-word truncation -->
-                <p class="text-[11px] sm:text-xs text-slate-400 leading-relaxed line-clamp-2">${p.desc}</p>
-              </div>
-            </div>
-
-            <!-- Selection Affordance -->
-            <div class="shrink-0 pt-0.5">
-              ${isSelected 
-                ? '<div class="w-6 h-6 rounded-full bg-purple-600 text-white flex items-center justify-center text-xs font-bold shadow-md shadow-purple-900"><svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"/></svg></div>'
-                : '<div class="w-6 h-6 rounded-full bg-white/[0.02] border border-white/10 group-hover:border-purple-400/40 flex items-center justify-center text-slate-500 group-hover:text-purple-300 text-xs transition">→</div>'
-              }
-            </div>
-          </button>
-        `;
-      });
-
-      html += '</div></div>';
-    });
-
-    providerModalItems.innerHTML = html;
-
-    providerModalItems.querySelectorAll('.prov-item-card').forEach(btn => {
-      btn.addEventListener('click', () => {
-        const id = btn.getAttribute('data-prov-id');
-        if (id) selectProviderFromUI(id);
-      });
-    });
-  }
-
-  providerCustomTrigger?.addEventListener('click', openProviderModal);
-  closeProviderModalBtn?.addEventListener('click', closeProviderModal);
-  providerSelectModal?.addEventListener('click', (e) => {
-    if (e.target === providerSelectModal) closeProviderModal();
   });
 
-  providerModalSearch?.addEventListener('input', () => {
-    const q = providerModalSearch.value;
-    if (clearProviderModalSearch) {
-      if (q.length > 0) {
-        clearProviderModalSearch.classList.remove('hidden');
-      } else {
-        clearProviderModalSearch.classList.add('hidden');
-      }
-    }
-    renderProviderModalList(q, currentProviderCategoryFilter);
-  });
-
-  clearProviderModalSearch?.addEventListener('click', () => {
-    if (providerModalSearch) {
-      providerModalSearch.value = '';
-      clearProviderModalSearch.classList.add('hidden');
-      providerModalSearch.focus();
-    }
-    renderProviderModalList('', currentProviderCategoryFilter);
-  });
-
-  document.querySelectorAll('.prov-cat-chip').forEach(btn => {
-    btn.addEventListener('click', () => {
-      const f = btn.getAttribute('data-prov-filter');
-      currentProviderCategoryFilter = f || 'all';
-      updateProviderCategoryChips();
-      renderProviderModalList(providerModalSearch?.value || '', currentProviderCategoryFilter);
-    });
-  });
-
-  quickSelectCustomEngineBtn?.addEventListener('click', () => {
-    selectProviderFromUI('custom-proxy');
-  });
+  // Initial trigger setup
+  updateProviderTriggerDisplay(textProviderSelect?.value || 'groq');
 
   function updateQuickProvChips(selectedProv) {
     const activeProv = selectedProv || (textProviderSelect ? textProviderSelect.value : '');
