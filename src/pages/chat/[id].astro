@@ -1656,6 +1656,101 @@ const { character } = Astro.props;
                                 <!-- ================= PANE 2: STT SPEECH INPUT (MICROPHONE) ================= -->
                 <div id="voice-stt-pane" class="space-y-4 hidden" dir="ltr" lang="en">
 
+                  <!-- 0. Microphone Profiles Toolbar -->
+                  <div class="p-3 rounded-2xl bg-white/[0.03] border border-white/[0.08] flex flex-col gap-2.5" dir="ltr" lang="en">
+                    <div class="flex items-center justify-between gap-2">
+                      <div class="flex items-center gap-2 min-w-0">
+                        <div class="w-6 h-6 rounded-lg bg-emerald-500/20 border border-emerald-500/30 flex items-center justify-center shrink-0">
+                          <Tag class="w-3.5 h-3.5 text-emerald-400" />
+                        </div>
+                        <span class="text-xs font-semibold text-slate-300 shrink-0">Microphone Profile</span>
+                        <span id="stt-active-profile-badge" class="hidden text-[10px] px-2 py-0.5 rounded-full bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 font-semibold font-mono truncate max-w-[120px]">Active</span>
+                      </div>
+                      <div class="flex items-center gap-1.5 shrink-0">
+                        <button 
+                          type="button" 
+                          id="btn-show-save-stt-profile" 
+                          class="px-2.5 py-1.5 rounded-lg bg-emerald-600/80 hover:bg-emerald-600 text-white text-xs font-semibold flex items-center gap-1 transition cursor-pointer active:scale-95"
+                          title="Save current STT engine & credentials as a named profile"
+                        >
+                          <Plus class="w-3.5 h-3.5" />
+                          <span>Save Profile</span>
+                        </button>
+                        <button 
+                          type="button" 
+                          id="btn-update-active-stt-profile" 
+                          class="hidden px-2.5 py-1.5 rounded-lg bg-emerald-950/40 hover:bg-emerald-900/60 text-emerald-300 hover:text-white text-xs font-medium border border-emerald-500/30 transition cursor-pointer" 
+                          title="Update active profile with latest changes"
+                        >
+                          <Check class="w-3.5 h-3.5 inline mr-0.5" />
+                          <span>Update</span>
+                        </button>
+                        <button 
+                          type="button" 
+                          id="btn-delete-active-stt-profile" 
+                          class="hidden px-2 py-1.5 rounded-lg bg-rose-500/10 hover:bg-rose-500/20 text-rose-300 border border-rose-500/20 text-xs font-medium transition cursor-pointer" 
+                          title="Delete this profile"
+                        >
+                          <Trash2 class="w-3.5 h-3.5 inline" />
+                        </button>
+                      </div>
+                    </div>
+
+                    <div class="relative w-full">
+                      <!-- Trigger Button -->
+                      <button
+                        type="button"
+                        id="custom-stt-profile-trigger"
+                        class="w-full px-3 py-2.5 rounded-xl bg-black/60 hover:bg-black/80 border border-emerald-500/30 hover:border-emerald-500/50 flex items-center justify-between text-xs text-white transition cursor-pointer text-left group"
+                        aria-haspopup="listbox"
+                        aria-expanded="false"
+                      >
+                        <div class="flex items-center gap-2 min-w-0 pr-2">
+                          <span class="w-2 h-2 rounded-full bg-slate-400 shrink-0" id="custom-stt-profile-status-dot"></span>
+                          <span id="custom-stt-profile-trigger-label" class="font-medium text-slate-200 truncate">Cloudflare Workers AI (Default)</span>
+                          <span id="custom-stt-profile-trigger-tag" class="hidden text-[9px] px-1.5 py-0.2 rounded bg-emerald-900/40 text-emerald-300 border border-emerald-500/30 uppercase font-mono shrink-0"></span>
+                        </div>
+                        <ChevronDown class="w-4 h-4 text-slate-400 group-hover:text-emerald-300 transition-transform duration-200 shrink-0" id="custom-stt-profile-chevron" />
+                      </button>
+
+                      <!-- Popover Menu -->
+                      <div 
+                        id="custom-stt-profile-menu" 
+                        class="hidden absolute left-0 right-0 top-full mt-1.5 z-50 bg-[#0c0f24]/95 backdrop-blur-xl border border-emerald-500/30 rounded-2xl p-1.5 shadow-2xl shadow-emerald-950/80 space-y-1 max-h-56 overflow-y-auto custom-scrollbar no-scrollbar"
+                        role="listbox"
+                      >
+                        <!-- Populated dynamically -->
+                      </div>
+                    </div>
+                  </div>
+
+                  <!-- Inline Form for Creating New STT Profile -->
+                  <div id="new-stt-profile-form" class="hidden p-3 rounded-xl bg-emerald-950/40 border border-emerald-500/30 space-y-2" dir="ltr" lang="en">
+                    <div class="flex items-center justify-between text-xs text-emerald-200 font-semibold">
+                      <span class="flex items-center gap-1.5">
+                        <Tag class="w-3.5 h-3.5 text-emerald-400" />
+                        <span>Save Microphone Profile</span>
+                      </span>
+                      <button type="button" id="btn-cancel-new-stt-profile" class="text-slate-400 hover:text-white text-xs cursor-pointer">✕ Cancel</button>
+                    </div>
+                    <div class="flex items-center gap-2">
+                      <input 
+                        type="text" 
+                        id="new-stt-profile-name-input" 
+                        placeholder="e.g. Cloudflare Edge, Fast Fal GPU, Local Whisper" 
+                        class="flex-1 px-3 py-1.5 rounded-lg bg-black/60 border border-white/10 text-xs text-white placeholder:text-slate-500 outline-none focus:border-emerald-500"
+                      />
+                      <button 
+                        type="button" 
+                        id="btn-confirm-save-stt-profile" 
+                        class="px-3 py-1.5 rounded-lg bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-semibold shrink-0 cursor-pointer transition active:scale-95"
+                      >
+                        Save
+                      </button>
+                    </div>
+                  </div>
+
+
                   <!-- 1. Sleek Custom Dropdown for Speech Recognition Engine -->
                   <div class="space-y-1.5 relative" id="stt-engine-dropdown-container">
                     <label class="block text-xs font-semibold text-slate-300">Speech Recognition Engine</label>
@@ -1950,6 +2045,101 @@ const { character } = Astro.props;
 
                 <!-- ================= PANE 1: IMAGE GENERATION (OUTPUT) ================= -->
                 <div id="image-output-pane" class="space-y-4">
+
+                  <!-- 0. Selfie / Image Profiles Toolbar -->
+                  <div class="p-3 rounded-2xl bg-white/[0.03] border border-white/[0.08] flex flex-col gap-2.5" dir="ltr" lang="en">
+                    <div class="flex items-center justify-between gap-2">
+                      <div class="flex items-center gap-2 min-w-0">
+                        <div class="w-6 h-6 rounded-lg bg-amber-500/20 border border-amber-500/30 flex items-center justify-center shrink-0">
+                          <Tag class="w-3.5 h-3.5 text-amber-400" />
+                        </div>
+                        <span class="text-xs font-semibold text-slate-300 shrink-0">Image Profile</span>
+                        <span id="image-active-profile-badge" class="hidden text-[10px] px-2 py-0.5 rounded-full bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 font-semibold font-mono truncate max-w-[120px]">Active</span>
+                      </div>
+                      <div class="flex items-center gap-1.5 shrink-0">
+                        <button 
+                          type="button" 
+                          id="btn-show-save-image-profile" 
+                          class="px-2.5 py-1.5 rounded-lg bg-amber-600/80 hover:bg-amber-600 text-white text-xs font-semibold flex items-center gap-1 transition cursor-pointer active:scale-95"
+                          title="Save current image engine & parameters as a named profile"
+                        >
+                          <Plus class="w-3.5 h-3.5" />
+                          <span>Save Profile</span>
+                        </button>
+                        <button 
+                          type="button" 
+                          id="btn-update-active-image-profile" 
+                          class="hidden px-2.5 py-1.5 rounded-lg bg-amber-950/40 hover:bg-amber-900/60 text-amber-300 hover:text-white text-xs font-medium border border-amber-500/30 transition cursor-pointer" 
+                          title="Update active profile with latest changes"
+                        >
+                          <Check class="w-3.5 h-3.5 inline mr-0.5" />
+                          <span>Update</span>
+                        </button>
+                        <button 
+                          type="button" 
+                          id="btn-delete-active-image-profile" 
+                          class="hidden px-2 py-1.5 rounded-lg bg-rose-500/10 hover:bg-rose-500/20 text-rose-300 border border-rose-500/20 text-xs font-medium transition cursor-pointer" 
+                          title="Delete this profile"
+                        >
+                          <Trash2 class="w-3.5 h-3.5 inline" />
+                        </button>
+                      </div>
+                    </div>
+
+                    <div class="relative w-full">
+                      <!-- Trigger Button -->
+                      <button
+                        type="button"
+                        id="custom-image-profile-trigger"
+                        class="w-full px-3 py-2.5 rounded-xl bg-black/60 hover:bg-black/80 border border-amber-500/30 hover:border-amber-500/50 flex items-center justify-between text-xs text-white transition cursor-pointer text-left group"
+                        aria-haspopup="listbox"
+                        aria-expanded="false"
+                      >
+                        <div class="flex items-center gap-2 min-w-0 pr-2">
+                          <span class="w-2 h-2 rounded-full bg-slate-400 shrink-0" id="custom-image-profile-status-dot"></span>
+                          <span id="custom-image-profile-trigger-label" class="font-medium text-slate-200 truncate">Free Flux AI (Default)</span>
+                          <span id="custom-image-profile-trigger-tag" class="hidden text-[9px] px-1.5 py-0.2 rounded bg-amber-900/40 text-amber-300 border border-amber-500/30 uppercase font-mono shrink-0"></span>
+                        </div>
+                        <ChevronDown class="w-4 h-4 text-slate-400 group-hover:text-amber-300 transition-transform duration-200 shrink-0" id="custom-image-profile-chevron" />
+                      </button>
+
+                      <!-- Popover Menu -->
+                      <div 
+                        id="custom-image-profile-menu" 
+                        class="hidden absolute left-0 right-0 top-full mt-1.5 z-50 bg-[#0c0f24]/95 backdrop-blur-xl border border-amber-500/30 rounded-2xl p-1.5 shadow-2xl shadow-amber-950/80 space-y-1 max-h-56 overflow-y-auto custom-scrollbar no-scrollbar"
+                        role="listbox"
+                      >
+                        <!-- Populated dynamically -->
+                      </div>
+                    </div>
+                  </div>
+
+                  <!-- Inline Form for Creating New Image Profile -->
+                  <div id="new-image-profile-form" class="hidden p-3 rounded-xl bg-amber-950/40 border border-amber-500/30 space-y-2" dir="ltr" lang="en">
+                    <div class="flex items-center justify-between text-xs text-amber-200 font-semibold">
+                      <span class="flex items-center gap-1.5">
+                        <Tag class="w-3.5 h-3.5 text-amber-400" />
+                        <span>Save Image Profile</span>
+                      </span>
+                      <button type="button" id="btn-cancel-new-image-profile" class="text-slate-400 hover:text-white text-xs cursor-pointer">✕ Cancel</button>
+                    </div>
+                    <div class="flex items-center gap-2">
+                      <input 
+                        type="text" 
+                        id="new-image-profile-name-input" 
+                        placeholder="e.g. Flux Ultra-HD, Anime Portrait, DALL-E Expressive" 
+                        class="flex-1 px-3 py-1.5 rounded-lg bg-black/60 border border-white/10 text-xs text-white placeholder:text-slate-500 outline-none focus:border-amber-500"
+                      />
+                      <button 
+                        type="button" 
+                        id="btn-confirm-save-image-profile" 
+                        class="px-3 py-1.5 rounded-lg bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-semibold shrink-0 cursor-pointer transition active:scale-95"
+                      >
+                        Save
+                      </button>
+                    </div>
+                  </div>
+
                   <!-- Header & Live Test Action -->
                   <div class="flex items-center justify-between pb-1 border-b border-white/[0.06]">
                     <div>
@@ -2148,6 +2338,101 @@ const { character } = Astro.props;
 
                 <!-- ================= PANE 2: VISION AI & IMAGE RECOGNITION (INPUT) ================= -->
                 <div id="image-input-pane" class="hidden space-y-4">
+
+                  <!-- 0. Vision AI Profiles Toolbar -->
+                  <div class="p-3 rounded-2xl bg-white/[0.03] border border-white/[0.08] flex flex-col gap-2.5" dir="ltr" lang="en">
+                    <div class="flex items-center justify-between gap-2">
+                      <div class="flex items-center gap-2 min-w-0">
+                        <div class="w-6 h-6 rounded-lg bg-cyan-500/20 border border-cyan-500/30 flex items-center justify-center shrink-0">
+                          <Tag class="w-3.5 h-3.5 text-cyan-400" />
+                        </div>
+                        <span class="text-xs font-semibold text-slate-300 shrink-0">Vision Profile</span>
+                        <span id="vision-active-profile-badge" class="hidden text-[10px] px-2 py-0.5 rounded-full bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 font-semibold font-mono truncate max-w-[120px]">Active</span>
+                      </div>
+                      <div class="flex items-center gap-1.5 shrink-0">
+                        <button 
+                          type="button" 
+                          id="btn-show-save-vision-profile" 
+                          class="px-2.5 py-1.5 rounded-lg bg-cyan-600/80 hover:bg-cyan-600 text-white text-xs font-semibold flex items-center gap-1 transition cursor-pointer active:scale-95"
+                          title="Save current vision engine & credentials as a named profile"
+                        >
+                          <Plus class="w-3.5 h-3.5" />
+                          <span>Save Profile</span>
+                        </button>
+                        <button 
+                          type="button" 
+                          id="btn-update-active-vision-profile" 
+                          class="hidden px-2.5 py-1.5 rounded-lg bg-cyan-950/40 hover:bg-cyan-900/60 text-cyan-300 hover:text-white text-xs font-medium border border-cyan-500/30 transition cursor-pointer" 
+                          title="Update active profile with latest changes"
+                        >
+                          <Check class="w-3.5 h-3.5 inline mr-0.5" />
+                          <span>Update</span>
+                        </button>
+                        <button 
+                          type="button" 
+                          id="btn-delete-active-vision-profile" 
+                          class="hidden px-2 py-1.5 rounded-lg bg-rose-500/10 hover:bg-rose-500/20 text-rose-300 border border-rose-500/20 text-xs font-medium transition cursor-pointer" 
+                          title="Delete this profile"
+                        >
+                          <Trash2 class="w-3.5 h-3.5 inline" />
+                        </button>
+                      </div>
+                    </div>
+
+                    <div class="relative w-full">
+                      <!-- Trigger Button -->
+                      <button
+                        type="button"
+                        id="custom-vision-profile-trigger"
+                        class="w-full px-3 py-2.5 rounded-xl bg-black/60 hover:bg-black/80 border border-cyan-500/30 hover:border-cyan-500/50 flex items-center justify-between text-xs text-white transition cursor-pointer text-left group"
+                        aria-haspopup="listbox"
+                        aria-expanded="false"
+                      >
+                        <div class="flex items-center gap-2 min-w-0 pr-2">
+                          <span class="w-2 h-2 rounded-full bg-slate-400 shrink-0" id="custom-vision-profile-status-dot"></span>
+                          <span id="custom-vision-profile-trigger-label" class="font-medium text-slate-200 truncate">Auto (Active Story Model)</span>
+                          <span id="custom-vision-profile-trigger-tag" class="hidden text-[9px] px-1.5 py-0.2 rounded bg-cyan-900/40 text-cyan-300 border border-cyan-500/30 uppercase font-mono shrink-0"></span>
+                        </div>
+                        <ChevronDown class="w-4 h-4 text-slate-400 group-hover:text-cyan-300 transition-transform duration-200 shrink-0" id="custom-vision-profile-chevron" />
+                      </button>
+
+                      <!-- Popover Menu -->
+                      <div 
+                        id="custom-vision-profile-menu" 
+                        class="hidden absolute left-0 right-0 top-full mt-1.5 z-50 bg-[#0c0f24]/95 backdrop-blur-xl border border-cyan-500/30 rounded-2xl p-1.5 shadow-2xl shadow-cyan-950/80 space-y-1 max-h-56 overflow-y-auto custom-scrollbar no-scrollbar"
+                        role="listbox"
+                      >
+                        <!-- Populated dynamically -->
+                      </div>
+                    </div>
+                  </div>
+
+                  <!-- Inline Form for Creating New Vision Profile -->
+                  <div id="new-vision-profile-form" class="hidden p-3 rounded-xl bg-cyan-950/40 border border-cyan-500/30 space-y-2" dir="ltr" lang="en">
+                    <div class="flex items-center justify-between text-xs text-cyan-200 font-semibold">
+                      <span class="flex items-center gap-1.5">
+                        <Tag class="w-3.5 h-3.5 text-cyan-400" />
+                        <span>Save Vision Profile</span>
+                      </span>
+                      <button type="button" id="btn-cancel-new-vision-profile" class="text-slate-400 hover:text-white text-xs cursor-pointer">✕ Cancel</button>
+                    </div>
+                    <div class="flex items-center gap-2">
+                      <input 
+                        type="text" 
+                        id="new-vision-profile-name-input" 
+                        placeholder="e.g. Gemini 2.0 Flash Vision, OpenAI 4o Vision" 
+                        class="flex-1 px-3 py-1.5 rounded-lg bg-black/60 border border-white/10 text-xs text-white placeholder:text-slate-500 outline-none focus:border-cyan-500"
+                      />
+                      <button 
+                        type="button" 
+                        id="btn-confirm-save-vision-profile" 
+                        class="px-3 py-1.5 rounded-lg bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-semibold shrink-0 cursor-pointer transition active:scale-95"
+                      >
+                        Save
+                      </button>
+                    </div>
+                  </div>
+
                   <!-- Header -->
                   <div class="flex items-center justify-between gap-3 pb-1 border-b border-white/[0.06]">
                     <div class="min-w-0 pr-1">
@@ -2295,6 +2580,101 @@ const { character } = Astro.props;
                 <input type="hidden" id="video-camera-select" value="subtle" />
                 <input type="hidden" id="video-duration-select" value="5s" />
                 <input type="hidden" id="video-res-select" value="720p-24fps" />
+
+                <!-- 0. Video Profiles Toolbar -->
+                <div class="p-3 rounded-2xl bg-white/[0.03] border border-white/[0.08] flex flex-col gap-2.5" dir="ltr" lang="en">
+                  <div class="flex items-center justify-between gap-2">
+                    <div class="flex items-center gap-2 min-w-0">
+                      <div class="w-6 h-6 rounded-lg bg-cyan-500/20 border border-cyan-500/30 flex items-center justify-center shrink-0">
+                        <Tag class="w-3.5 h-3.5 text-cyan-400" />
+                      </div>
+                      <span class="text-xs font-semibold text-slate-300 shrink-0">Video Profile</span>
+                      <span id="video-active-profile-badge" class="hidden text-[10px] px-2 py-0.5 rounded-full bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 font-semibold font-mono truncate max-w-[120px]">Active</span>
+                    </div>
+                    <div class="flex items-center gap-1.5 shrink-0">
+                      <button 
+                        type="button" 
+                        id="btn-show-save-video-profile" 
+                        class="px-2.5 py-1.5 rounded-lg bg-cyan-600/80 hover:bg-cyan-600 text-white text-xs font-semibold flex items-center gap-1 transition cursor-pointer active:scale-95"
+                        title="Save current video engine & camera settings as a named profile"
+                      >
+                        <Plus class="w-3.5 h-3.5" />
+                        <span>Save Profile</span>
+                      </button>
+                      <button 
+                        type="button" 
+                        id="btn-update-active-video-profile" 
+                        class="hidden px-2.5 py-1.5 rounded-lg bg-cyan-950/40 hover:bg-cyan-900/60 text-cyan-300 hover:text-white text-xs font-medium border border-cyan-500/30 transition cursor-pointer" 
+                        title="Update active profile with latest changes"
+                      >
+                        <Check class="w-3.5 h-3.5 inline mr-0.5" />
+                        <span>Update</span>
+                      </button>
+                      <button 
+                        type="button" 
+                        id="btn-delete-active-video-profile" 
+                        class="hidden px-2 py-1.5 rounded-lg bg-rose-500/10 hover:bg-rose-500/20 text-rose-300 border border-rose-500/20 text-xs font-medium transition cursor-pointer" 
+                        title="Delete this profile"
+                      >
+                        <Trash2 class="w-3.5 h-3.5 inline" />
+                      </button>
+                    </div>
+                  </div>
+
+                  <div class="relative w-full">
+                    <!-- Trigger Button -->
+                    <button
+                      type="button"
+                      id="custom-video-profile-trigger"
+                      class="w-full px-3 py-2.5 rounded-xl bg-black/60 hover:bg-black/80 border border-cyan-500/30 hover:border-cyan-500/50 flex items-center justify-between text-xs text-white transition cursor-pointer text-left group"
+                      aria-haspopup="listbox"
+                      aria-expanded="false"
+                    >
+                      <div class="flex items-center gap-2 min-w-0 pr-2">
+                        <span class="w-2 h-2 rounded-full bg-slate-400 shrink-0" id="custom-video-profile-status-dot"></span>
+                        <span id="custom-video-profile-trigger-label" class="font-medium text-slate-200 truncate">Fal.ai Kling 1.5 Pro (Default)</span>
+                        <span id="custom-video-profile-trigger-tag" class="hidden text-[9px] px-1.5 py-0.2 rounded bg-cyan-900/40 text-cyan-300 border border-cyan-500/30 uppercase font-mono shrink-0"></span>
+                      </div>
+                      <ChevronDown class="w-4 h-4 text-slate-400 group-hover:text-cyan-300 transition-transform duration-200 shrink-0" id="custom-video-profile-chevron" />
+                    </button>
+
+                    <!-- Popover Menu -->
+                    <div 
+                      id="custom-video-profile-menu" 
+                      class="hidden absolute left-0 right-0 top-full mt-1.5 z-50 bg-[#0c0f24]/95 backdrop-blur-xl border border-cyan-500/30 rounded-2xl p-1.5 shadow-2xl shadow-cyan-950/80 space-y-1 max-h-56 overflow-y-auto custom-scrollbar no-scrollbar"
+                      role="listbox"
+                    >
+                      <!-- Populated dynamically -->
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Inline Form for Creating New Video Profile -->
+                <div id="new-video-profile-form" class="hidden p-3 rounded-xl bg-cyan-950/40 border border-cyan-500/30 space-y-2" dir="ltr" lang="en">
+                  <div class="flex items-center justify-between text-xs text-cyan-200 font-semibold">
+                    <span class="flex items-center gap-1.5">
+                      <Tag class="w-3.5 h-3.5 text-cyan-400" />
+                      <span>Save Video Profile</span>
+                    </span>
+                    <button type="button" id="btn-cancel-new-video-profile" class="text-slate-400 hover:text-white text-xs cursor-pointer">✕ Cancel</button>
+                  </div>
+                  <div class="flex items-center gap-2">
+                    <input 
+                      type="text" 
+                      id="new-video-profile-name-input" 
+                      placeholder="e.g. Kling Cinematic 1080p, Luma Push-in, Action 60fps" 
+                      class="flex-1 px-3 py-1.5 rounded-lg bg-black/60 border border-white/10 text-xs text-white placeholder:text-slate-500 outline-none focus:border-cyan-500"
+                    />
+                    <button 
+                      type="button" 
+                      id="btn-confirm-save-video-profile" 
+                      class="px-3 py-1.5 rounded-lg bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-semibold shrink-0 cursor-pointer transition active:scale-95"
+                    >
+                      Save
+                    </button>
+                  </div>
+                </div>
+
 
                 <!-- Header -->
                 <div class="flex items-center justify-between gap-3 pb-1 border-b border-white/[0.06]">
@@ -4539,6 +4919,70 @@ const { character } = Astro.props;
   const voiceActiveProfileBadge = document.getElementById('voice-active-profile-badge');
   const voiceSyncStatusText = document.getElementById('voice-sync-status-text');
 
+  // STT Profile Elements
+  const customSttProfileTrigger = document.getElementById('custom-stt-profile-trigger');
+  const customSttProfileMenu = document.getElementById('custom-stt-profile-menu');
+  const customSttProfileTriggerLabel = document.getElementById('custom-stt-profile-trigger-label');
+  const customSttProfileTriggerTag = document.getElementById('custom-stt-profile-trigger-tag');
+  const customSttProfileStatusDot = document.getElementById('custom-stt-profile-status-dot');
+  const customSttProfileChevron = document.getElementById('custom-stt-profile-chevron');
+  const btnShowSaveSttProfile = document.getElementById('btn-show-save-stt-profile');
+  const btnUpdateActiveSttProfile = document.getElementById('btn-update-active-stt-profile');
+  const btnDeleteActiveSttProfile = document.getElementById('btn-delete-active-stt-profile');
+  const newSttProfileForm = document.getElementById('new-stt-profile-form');
+  const newSttProfileNameInput = document.getElementById('new-stt-profile-name-input');
+  const btnConfirmSaveSttProfile = document.getElementById('btn-confirm-save-stt-profile');
+  const btnCancelNewSttProfile = document.getElementById('btn-cancel-new-stt-profile');
+  const sttActiveProfileBadge = document.getElementById('stt-active-profile-badge');
+
+  // Image Profile Elements
+  const customImageProfileTrigger = document.getElementById('custom-image-profile-trigger');
+  const customImageProfileMenu = document.getElementById('custom-image-profile-menu');
+  const customImageProfileTriggerLabel = document.getElementById('custom-image-profile-trigger-label');
+  const customImageProfileTriggerTag = document.getElementById('custom-image-profile-trigger-tag');
+  const customImageProfileStatusDot = document.getElementById('custom-image-profile-status-dot');
+  const customImageProfileChevron = document.getElementById('custom-image-profile-chevron');
+  const btnShowSaveImageProfile = document.getElementById('btn-show-save-image-profile');
+  const btnUpdateActiveImageProfile = document.getElementById('btn-update-active-image-profile');
+  const btnDeleteActiveImageProfile = document.getElementById('btn-delete-active-image-profile');
+  const newImageProfileForm = document.getElementById('new-image-profile-form');
+  const newImageProfileNameInput = document.getElementById('new-image-profile-name-input');
+  const btnConfirmSaveImageProfile = document.getElementById('btn-confirm-save-image-profile');
+  const btnCancelNewImageProfile = document.getElementById('btn-cancel-new-image-profile');
+  const imageActiveProfileBadge = document.getElementById('image-active-profile-badge');
+
+  // Vision Profile Elements
+  const customVisionProfileTrigger = document.getElementById('custom-vision-profile-trigger');
+  const customVisionProfileMenu = document.getElementById('custom-vision-profile-menu');
+  const customVisionProfileTriggerLabel = document.getElementById('custom-vision-profile-trigger-label');
+  const customVisionProfileTriggerTag = document.getElementById('custom-vision-profile-trigger-tag');
+  const customVisionProfileStatusDot = document.getElementById('custom-vision-profile-status-dot');
+  const customVisionProfileChevron = document.getElementById('custom-vision-profile-chevron');
+  const btnShowSaveVisionProfile = document.getElementById('btn-show-save-vision-profile');
+  const btnUpdateActiveVisionProfile = document.getElementById('btn-update-active-vision-profile');
+  const btnDeleteActiveVisionProfile = document.getElementById('btn-delete-active-vision-profile');
+  const newVisionProfileForm = document.getElementById('new-vision-profile-form');
+  const newVisionProfileNameInput = document.getElementById('new-vision-profile-name-input');
+  const btnConfirmSaveVisionProfile = document.getElementById('btn-confirm-save-vision-profile');
+  const btnCancelNewVisionProfile = document.getElementById('btn-cancel-new-vision-profile');
+  const visionActiveProfileBadge = document.getElementById('vision-active-profile-badge');
+
+  // Video Profile Elements
+  const customVideoProfileTrigger = document.getElementById('custom-video-profile-trigger');
+  const customVideoProfileMenu = document.getElementById('custom-video-profile-menu');
+  const customVideoProfileTriggerLabel = document.getElementById('custom-video-profile-trigger-label');
+  const customVideoProfileTriggerTag = document.getElementById('custom-video-profile-trigger-tag');
+  const customVideoProfileStatusDot = document.getElementById('custom-video-profile-status-dot');
+  const customVideoProfileChevron = document.getElementById('custom-video-profile-chevron');
+  const btnShowSaveVideoProfile = document.getElementById('btn-show-save-video-profile');
+  const btnUpdateActiveVideoProfile = document.getElementById('btn-update-active-video-profile');
+  const btnDeleteActiveVideoProfile = document.getElementById('btn-delete-active-video-profile');
+  const newVideoProfileForm = document.getElementById('new-video-profile-form');
+  const newVideoProfileNameInput = document.getElementById('new-video-profile-name-input');
+  const btnConfirmSaveVideoProfile = document.getElementById('btn-confirm-save-video-profile');
+  const btnCancelNewVideoProfile = document.getElementById('btn-cancel-new-video-profile');
+  const videoActiveProfileBadge = document.getElementById('video-active-profile-badge');
+
   const sttApiKey = document.getElementById('stt-api-key');
   const sttCustomUrlContainer = document.getElementById('stt-custom-url-container');
   const sttCustomUrl = document.getElementById('stt-custom-url');
@@ -6642,6 +7086,10 @@ const { character } = Astro.props;
     if (typeof updateSttLangTriggerDisplay === 'function') updateSttLangTriggerDisplay(sttLang);
 
     if (typeof renderVoiceProfileMenu === 'function') renderVoiceProfileMenu();
+    if (typeof renderSttProfileMenu === 'function') renderSttProfileMenu();
+    if (typeof renderImageProfileMenu === 'function') renderImageProfileMenu();
+    if (typeof renderVisionProfileMenu === 'function') renderVisionProfileMenu();
+    if (typeof renderVideoProfileMenu === 'function') renderVideoProfileMenu();
     if (typeof updateSpeedPillsAndLabel === 'function') updateSpeedPillsAndLabel(voiceRate);
     if (typeof updatePitchPillsAndLabel === 'function') updatePitchPillsAndLabel(voicePitch);
     syncVoiceUiPanels();
@@ -8967,6 +9415,18 @@ const { character } = Astro.props;
     if (customVoiceProfileMenu && !customVoiceProfileMenu.contains(e.target) && !customVoiceProfileTrigger?.contains(e.target)) {
       closeVoiceProfileMenu();
     }
+    if (customSttProfileMenu && !customSttProfileMenu.contains(e.target) && !customSttProfileTrigger?.contains(e.target)) {
+      closeSttProfileMenu();
+    }
+    if (customImageProfileMenu && !customImageProfileMenu.contains(e.target) && !customImageProfileTrigger?.contains(e.target)) {
+      closeImageProfileMenu();
+    }
+    if (customVisionProfileMenu && !customVisionProfileMenu.contains(e.target) && !customVisionProfileTrigger?.contains(e.target)) {
+      closeVisionProfileMenu();
+    }
+    if (customVideoProfileMenu && !customVideoProfileMenu.contains(e.target) && !customVideoProfileTrigger?.contains(e.target)) {
+      closeVideoProfileMenu();
+    }
   });
 
   btnShowSaveVoiceProfile?.addEventListener('click', () => {
@@ -8995,6 +9455,1059 @@ const { character } = Astro.props;
 
   btnUpdateActiveVoiceProfile?.addEventListener('click', updateActiveVoiceProfile);
   btnDeleteActiveVoiceProfile?.addEventListener('click', deleteActiveVoiceProfile);
+
+  // ==========================================
+  // 1. MICROPHONE (STT) PROFILES MANAGEMENT
+  // ==========================================
+  const STT_PROFILES_STORAGE_KEY = 'aetheria_stt_profiles';
+  const ACTIVE_STT_PROFILE_KEY = 'aetheria_active_stt_profile_id';
+
+  function getSavedSttProfiles() {
+    try {
+      const raw = localStorage.getItem(STT_PROFILES_STORAGE_KEY);
+      return raw ? JSON.parse(raw) : [];
+    } catch (e) {
+      return [];
+    }
+  }
+
+  function saveSttProfiles(profiles) {
+    try {
+      localStorage.setItem(STT_PROFILES_STORAGE_KEY, JSON.stringify(profiles));
+    } catch (e) {
+      console.error(e);
+    }
+  }
+
+  function renderSttProfileMenu() {
+    if (!customSttProfileMenu) return;
+    const profiles = getSavedSttProfiles();
+    const activeId = localStorage.getItem(ACTIVE_STT_PROFILE_KEY) || '';
+
+    let html = `
+      <button 
+        type="button" 
+        class="stt-profile-item w-full px-3 py-2 rounded-xl text-left transition flex items-center justify-between text-xs cursor-pointer ${
+          !activeId ? 'bg-emerald-600/30 text-white font-semibold border border-emerald-500/40' : 'text-slate-300 hover:bg-white/[0.06] hover:text-white'
+        }" 
+        data-profile-id=""
+      >
+        <div class="flex items-center gap-2 min-w-0">
+          <span class="w-2 h-2 rounded-full ${!activeId ? 'bg-emerald-400' : 'bg-slate-500'}"></span>
+          <span class="truncate">Cloudflare Workers AI (Default)</span>
+        </div>
+        ${!activeId ? '<span class="text-[10px] text-emerald-300 font-mono">Active</span>' : ''}
+      </button>
+    `;
+
+    profiles.forEach(p => {
+      const isSel = p.id === activeId;
+      html += `
+        <button 
+          type="button" 
+          class="stt-profile-item w-full px-3 py-2 rounded-xl text-left transition flex items-center justify-between text-xs cursor-pointer ${
+            isSel ? 'bg-emerald-600/30 text-white font-semibold border border-emerald-500/40' : 'text-slate-300 hover:bg-white/[0.06] hover:text-white'
+          }" 
+          data-profile-id="${p.id}"
+        >
+          <div class="flex items-center gap-2 min-w-0">
+            <span class="w-2 h-2 rounded-full ${isSel ? 'bg-emerald-400' : 'bg-emerald-500'}"></span>
+            <span class="truncate">${p.name}</span>
+          </div>
+          <span class="text-[9px] px-1.5 py-0.5 rounded bg-white/10 text-slate-300 font-mono uppercase">${p.engine}</span>
+        </button>
+      `;
+    });
+
+    customSttProfileMenu.innerHTML = html;
+
+    if (activeId) {
+      const activeProf = profiles.find(p => p.id === activeId);
+      if (activeProf) {
+        if (customSttProfileTriggerLabel) customSttProfileTriggerLabel.textContent = activeProf.name;
+        if (customSttProfileTriggerTag) {
+          customSttProfileTriggerTag.textContent = activeProf.engine;
+          customSttProfileTriggerTag.classList.remove('hidden');
+        }
+        if (customSttProfileStatusDot) customSttProfileStatusDot.className = 'w-2 h-2 rounded-full bg-emerald-400 shrink-0';
+        if (btnUpdateActiveSttProfile) btnUpdateActiveSttProfile.classList.remove('hidden');
+        if (btnDeleteActiveSttProfile) btnDeleteActiveSttProfile.classList.remove('hidden');
+        if (sttActiveProfileBadge) {
+          sttActiveProfileBadge.textContent = activeProf.name;
+          sttActiveProfileBadge.classList.remove('hidden');
+        }
+      } else {
+        localStorage.removeItem(ACTIVE_STT_PROFILE_KEY);
+        renderSttProfileMenu();
+      }
+    } else {
+      if (customSttProfileTriggerLabel) customSttProfileTriggerLabel.textContent = 'Cloudflare Workers AI (Default)';
+      if (customSttProfileTriggerTag) customSttProfileTriggerTag.classList.add('hidden');
+      if (customSttProfileStatusDot) customSttProfileStatusDot.className = 'w-2 h-2 rounded-full bg-slate-400 shrink-0';
+      if (btnUpdateActiveSttProfile) btnUpdateActiveSttProfile.classList.add('hidden');
+      if (btnDeleteActiveSttProfile) btnDeleteActiveSttProfile.classList.add('hidden');
+      if (sttActiveProfileBadge) sttActiveProfileBadge.classList.add('hidden');
+    }
+
+    customSttProfileMenu.querySelectorAll('.stt-profile-item').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const id = btn.getAttribute('data-profile-id');
+        if (id) {
+          applySttProfile(id);
+        } else {
+          localStorage.removeItem(ACTIVE_STT_PROFILE_KEY);
+          if (typeof window.selectSttEngine === 'function') {
+            window.selectSttEngine('cloudflare');
+          }
+          renderSttProfileMenu();
+          showNotification('✓ Switched to default STT profile');
+        }
+        closeSttProfileMenu();
+      });
+    });
+  }
+
+  function applySttProfile(id) {
+    const profiles = getSavedSttProfiles();
+    const prof = profiles.find(p => p.id === id);
+    if (!prof) return;
+
+    localStorage.setItem(ACTIVE_STT_PROFILE_KEY, prof.id);
+    if (prof.engine && typeof window.selectSttEngine === 'function') {
+      window.selectSttEngine(prof.engine);
+    }
+    if (prof.apiKey) {
+      localStorage.setItem('aetheria_stt_key_' + prof.engine, prof.apiKey);
+      localStorage.setItem('aetheria_stt_key', prof.apiKey);
+    }
+    if (prof.customUrl) {
+      localStorage.setItem('aetheria_stt_custom_url', prof.customUrl);
+    }
+    if (typeof syncVoiceUiPanels === 'function') syncVoiceUiPanels();
+    renderSttProfileMenu();
+    showNotification(`✓ Loaded microphone profile: ${prof.name}`);
+  }
+
+  function saveCurrentAsSttProfile(name) {
+    if (!name || !name.trim()) {
+      showNotification('⚠️ Please enter a profile name', 'warning');
+      return;
+    }
+    const currentEngine = localStorage.getItem('aetheria_stt_engine') || 'cloudflare';
+    const profiles = getSavedSttProfiles();
+    const newProf = {
+      id: 'sttp_' + Date.now(),
+      name: name.trim(),
+      engine: currentEngine,
+      apiKey: localStorage.getItem('aetheria_stt_key_' + currentEngine) || localStorage.getItem('aetheria_stt_key') || '',
+      customUrl: localStorage.getItem('aetheria_stt_custom_url') || '',
+      updatedAt: Date.now()
+    };
+    profiles.push(newProf);
+    saveSttProfiles(profiles);
+    localStorage.setItem(ACTIVE_STT_PROFILE_KEY, newProf.id);
+    renderSttProfileMenu();
+    if (newSttProfileForm) newSttProfileForm.classList.add('hidden');
+    if (newSttProfileNameInput) newSttProfileNameInput.value = '';
+    showNotification(`✓ Microphone profile "${newProf.name}" saved!`);
+  }
+
+  function updateActiveSttProfile() {
+    const activeId = localStorage.getItem(ACTIVE_STT_PROFILE_KEY);
+    if (!activeId) return;
+    const profiles = getSavedSttProfiles();
+    const idx = profiles.findIndex(p => p.id === activeId);
+    if (idx === -1) return;
+
+    const currentEngine = localStorage.getItem('aetheria_stt_engine') || 'cloudflare';
+    profiles[idx] = {
+      ...profiles[idx],
+      engine: currentEngine,
+      apiKey: localStorage.getItem('aetheria_stt_key_' + currentEngine) || localStorage.getItem('aetheria_stt_key') || '',
+      customUrl: localStorage.getItem('aetheria_stt_custom_url') || '',
+      updatedAt: Date.now()
+    };
+    saveSttProfiles(profiles);
+    renderSttProfileMenu();
+    showNotification(`✓ Updated microphone profile "${profiles[idx].name}"!`);
+  }
+
+  async function deleteActiveSttProfile() {
+    const activeId = localStorage.getItem(ACTIVE_STT_PROFILE_KEY);
+    if (!activeId) return;
+    const profiles = getSavedSttProfiles();
+    const prof = profiles.find(p => p.id === activeId);
+    if (!prof) return;
+
+    const confirmed = await showConfirmModal({
+      title: 'Delete Microphone Profile?',
+      message: `Are you sure you want to delete "${prof.name}"?`,
+      confirmText: 'Delete',
+      cancelText: 'Cancel',
+      type: 'danger'
+    });
+    if (confirmed) {
+      const remaining = profiles.filter(p => p.id !== activeId);
+      saveSttProfiles(remaining);
+      localStorage.removeItem(ACTIVE_STT_PROFILE_KEY);
+      renderSttProfileMenu();
+      showNotification(`✓ Profile "${prof.name}" deleted.`);
+    }
+  }
+
+  function openSttProfileMenu() {
+    if (!customSttProfileMenu) return;
+    customSttProfileMenu.classList.remove('hidden');
+    if (customSttProfileChevron) customSttProfileChevron.classList.add('rotate-180');
+  }
+
+  function closeSttProfileMenu() {
+    if (!customSttProfileMenu) return;
+    customSttProfileMenu.classList.add('hidden');
+    if (customSttProfileChevron) customSttProfileChevron.classList.remove('rotate-180');
+  }
+
+  customSttProfileTrigger?.addEventListener('click', (e) => {
+    e.stopPropagation();
+    if (customSttProfileMenu?.classList.contains('hidden')) {
+      openSttProfileMenu();
+    } else {
+      closeSttProfileMenu();
+    }
+  });
+
+  btnShowSaveSttProfile?.addEventListener('click', () => {
+    if (newSttProfileForm) {
+      newSttProfileForm.classList.remove('hidden');
+      if (newSttProfileNameInput) {
+        newSttProfileNameInput.value = '';
+        newSttProfileNameInput.focus();
+      }
+    }
+  });
+
+  btnCancelNewSttProfile?.addEventListener('click', () => {
+    if (newSttProfileForm) newSttProfileForm.classList.add('hidden');
+  });
+
+  btnConfirmSaveSttProfile?.addEventListener('click', () => {
+    saveCurrentAsSttProfile(newSttProfileNameInput?.value || '');
+  });
+
+  newSttProfileNameInput?.addEventListener('keydown', (e) => {
+    if (e.key === 'Enter') {
+      saveCurrentAsSttProfile(newSttProfileNameInput.value);
+    }
+  });
+
+  btnUpdateActiveSttProfile?.addEventListener('click', updateActiveSttProfile);
+  btnDeleteActiveSttProfile?.addEventListener('click', deleteActiveSttProfile);
+
+  // ==========================================
+  // 2. CHARACTER SELFIES & IMAGE PROFILES
+  // ==========================================
+  const IMAGE_PROFILES_STORAGE_KEY = 'aetheria_image_profiles';
+  const ACTIVE_IMAGE_PROFILE_KEY = 'aetheria_active_image_profile_id';
+
+  function getSavedImageProfiles() {
+    try {
+      const raw = localStorage.getItem(IMAGE_PROFILES_STORAGE_KEY);
+      return raw ? JSON.parse(raw) : [];
+    } catch (e) {
+      return [];
+    }
+  }
+
+  function saveImageProfiles(profiles) {
+    try {
+      localStorage.setItem(IMAGE_PROFILES_STORAGE_KEY, JSON.stringify(profiles));
+    } catch (e) {
+      console.error(e);
+    }
+  }
+
+  function renderImageProfileMenu() {
+    if (!customImageProfileMenu) return;
+    const profiles = getSavedImageProfiles();
+    const activeId = localStorage.getItem(ACTIVE_IMAGE_PROFILE_KEY) || '';
+
+    let html = `
+      <button 
+        type="button" 
+        class="image-profile-item w-full px-3 py-2 rounded-xl text-left transition flex items-center justify-between text-xs cursor-pointer ${
+          !activeId ? 'bg-amber-600/30 text-white font-semibold border border-amber-500/40' : 'text-slate-300 hover:bg-white/[0.06] hover:text-white'
+        }" 
+        data-profile-id=""
+      >
+        <div class="flex items-center gap-2 min-w-0">
+          <span class="w-2 h-2 rounded-full ${!activeId ? 'bg-emerald-400' : 'bg-slate-500'}"></span>
+          <span class="truncate">Free Flux AI (Default)</span>
+        </div>
+        ${!activeId ? '<span class="text-[10px] text-amber-300 font-mono">Active</span>' : ''}
+      </button>
+    `;
+
+    profiles.forEach(p => {
+      const isSel = p.id === activeId;
+      html += `
+        <button 
+          type="button" 
+          class="image-profile-item w-full px-3 py-2 rounded-xl text-left transition flex items-center justify-between text-xs cursor-pointer ${
+            isSel ? 'bg-amber-600/30 text-white font-semibold border border-amber-500/40' : 'text-slate-300 hover:bg-white/[0.06] hover:text-white'
+          }" 
+          data-profile-id="${p.id}"
+        >
+          <div class="flex items-center gap-2 min-w-0">
+            <span class="w-2 h-2 rounded-full ${isSel ? 'bg-emerald-400' : 'bg-amber-500'}"></span>
+            <span class="truncate">${p.name}</span>
+          </div>
+          <span class="text-[9px] px-1.5 py-0.5 rounded bg-white/10 text-slate-300 font-mono uppercase">${p.provider}</span>
+        </button>
+      `;
+    });
+
+    customImageProfileMenu.innerHTML = html;
+
+    if (activeId) {
+      const activeProf = profiles.find(p => p.id === activeId);
+      if (activeProf) {
+        if (customImageProfileTriggerLabel) customImageProfileTriggerLabel.textContent = activeProf.name;
+        if (customImageProfileTriggerTag) {
+          customImageProfileTriggerTag.textContent = activeProf.provider;
+          customImageProfileTriggerTag.classList.remove('hidden');
+        }
+        if (customImageProfileStatusDot) customImageProfileStatusDot.className = 'w-2 h-2 rounded-full bg-emerald-400 shrink-0';
+        if (btnUpdateActiveImageProfile) btnUpdateActiveImageProfile.classList.remove('hidden');
+        if (btnDeleteActiveImageProfile) btnDeleteActiveImageProfile.classList.remove('hidden');
+        if (imageActiveProfileBadge) {
+          imageActiveProfileBadge.textContent = activeProf.name;
+          imageActiveProfileBadge.classList.remove('hidden');
+        }
+      } else {
+        localStorage.removeItem(ACTIVE_IMAGE_PROFILE_KEY);
+        renderImageProfileMenu();
+      }
+    } else {
+      if (customImageProfileTriggerLabel) customImageProfileTriggerLabel.textContent = 'Free Flux AI (Default)';
+      if (customImageProfileTriggerTag) customImageProfileTriggerTag.classList.add('hidden');
+      if (customImageProfileStatusDot) customImageProfileStatusDot.className = 'w-2 h-2 rounded-full bg-slate-400 shrink-0';
+      if (btnUpdateActiveImageProfile) btnUpdateActiveImageProfile.classList.add('hidden');
+      if (btnDeleteActiveImageProfile) btnDeleteActiveImageProfile.classList.add('hidden');
+      if (imageActiveProfileBadge) imageActiveProfileBadge.classList.add('hidden');
+    }
+
+    customImageProfileMenu.querySelectorAll('.image-profile-item').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const id = btn.getAttribute('data-profile-id');
+        if (id) {
+          applyImageProfile(id);
+        } else {
+          localStorage.removeItem(ACTIVE_IMAGE_PROFILE_KEY);
+          if (typeof window.selectImageEngine === 'function') {
+            window.selectImageEngine('pollinations');
+          }
+          if (typeof window.selectImageAspect === 'function') {
+            window.selectImageAspect('1:1');
+          }
+          renderImageProfileMenu();
+          showNotification('✓ Switched to default Image profile');
+        }
+        closeImageProfileMenu();
+      });
+    });
+  }
+
+  function applyImageProfile(id) {
+    const profiles = getSavedImageProfiles();
+    const prof = profiles.find(p => p.id === id);
+    if (!prof) return;
+
+    localStorage.setItem(ACTIVE_IMAGE_PROFILE_KEY, prof.id);
+    if (prof.provider && typeof window.selectImageEngine === 'function') {
+      window.selectImageEngine(prof.provider);
+    }
+    if (prof.apiKey) {
+      localStorage.setItem('aetheria_key_' + prof.provider, prof.apiKey);
+      localStorage.setItem('aetheria_image_key', prof.apiKey);
+    }
+    if (prof.customUrl) {
+      localStorage.setItem('aetheria_image_custom_url', prof.customUrl);
+    }
+    if (prof.aspect && typeof window.selectImageAspect === 'function') {
+      window.selectImageAspect(prof.aspect);
+    }
+    if (prof.steps !== undefined && imageStepsInput) {
+      imageStepsInput.value = prof.steps;
+      localStorage.setItem('aetheria_image_steps', prof.steps.toString());
+    }
+    if (prof.cfg !== undefined && imageCfgInput) {
+      imageCfgInput.value = prof.cfg;
+      localStorage.setItem('aetheria_image_cfg', prof.cfg.toString());
+    }
+    if (prof.anchor !== undefined && toggleImageAnchor) {
+      toggleImageAnchor.checked = Boolean(prof.anchor);
+      localStorage.setItem('aetheria_image_anchor', prof.anchor ? 'true' : 'false');
+    }
+    if (prof.negativePrompt !== undefined && imageNegativePrompt) {
+      imageNegativePrompt.value = prof.negativePrompt;
+      localStorage.setItem('aetheria_image_neg_prompt', prof.negativePrompt);
+    }
+
+    if (typeof syncImageUiPanels === 'function') syncImageUiPanels();
+    renderImageProfileMenu();
+    showNotification(`✓ Loaded image profile: ${prof.name}`);
+  }
+
+  function saveCurrentAsImageProfile(name) {
+    if (!name || !name.trim()) {
+      showNotification('⚠️ Please enter a profile name', 'warning');
+      return;
+    }
+    const currentProv = localStorage.getItem('aetheria_image_provider') || 'pollinations';
+    const profiles = getSavedImageProfiles();
+    const newProf = {
+      id: 'imgp_' + Date.now(),
+      name: name.trim(),
+      provider: currentProv,
+      apiKey: localStorage.getItem('aetheria_key_' + currentProv) || localStorage.getItem('aetheria_image_key') || '',
+      customUrl: localStorage.getItem('aetheria_image_custom_url') || '',
+      aspect: localStorage.getItem('aetheria_image_aspect') || '1:1',
+      steps: imageStepsInput?.value || '20',
+      cfg: imageCfgInput?.value || '3.5',
+      anchor: toggleImageAnchor ? toggleImageAnchor.checked : true,
+      negativePrompt: imageNegativePrompt?.value || '',
+      updatedAt: Date.now()
+    };
+    profiles.push(newProf);
+    saveImageProfiles(profiles);
+    localStorage.setItem(ACTIVE_IMAGE_PROFILE_KEY, newProf.id);
+    renderImageProfileMenu();
+    if (newImageProfileForm) newImageProfileForm.classList.add('hidden');
+    if (newImageProfileNameInput) newImageProfileNameInput.value = '';
+    showNotification(`✓ Image profile "${newProf.name}" saved!`);
+  }
+
+  function updateActiveImageProfile() {
+    const activeId = localStorage.getItem(ACTIVE_IMAGE_PROFILE_KEY);
+    if (!activeId) return;
+    const profiles = getSavedImageProfiles();
+    const idx = profiles.findIndex(p => p.id === activeId);
+    if (idx === -1) return;
+
+    const currentProv = localStorage.getItem('aetheria_image_provider') || 'pollinations';
+    profiles[idx] = {
+      ...profiles[idx],
+      provider: currentProv,
+      apiKey: localStorage.getItem('aetheria_key_' + currentProv) || localStorage.getItem('aetheria_image_key') || '',
+      customUrl: localStorage.getItem('aetheria_image_custom_url') || '',
+      aspect: localStorage.getItem('aetheria_image_aspect') || '1:1',
+      steps: imageStepsInput?.value || '20',
+      cfg: imageCfgInput?.value || '3.5',
+      anchor: toggleImageAnchor ? toggleImageAnchor.checked : true,
+      negativePrompt: imageNegativePrompt?.value || '',
+      updatedAt: Date.now()
+    };
+    saveImageProfiles(profiles);
+    renderImageProfileMenu();
+    showNotification(`✓ Updated image profile "${profiles[idx].name}"!`);
+  }
+
+  async function deleteActiveImageProfile() {
+    const activeId = localStorage.getItem(ACTIVE_IMAGE_PROFILE_KEY);
+    if (!activeId) return;
+    const profiles = getSavedImageProfiles();
+    const prof = profiles.find(p => p.id === activeId);
+    if (!prof) return;
+
+    const confirmed = await showConfirmModal({
+      title: 'Delete Image Profile?',
+      message: `Are you sure you want to delete "${prof.name}"?`,
+      confirmText: 'Delete',
+      cancelText: 'Cancel',
+      type: 'danger'
+    });
+    if (confirmed) {
+      const remaining = profiles.filter(p => p.id !== activeId);
+      saveImageProfiles(remaining);
+      localStorage.removeItem(ACTIVE_IMAGE_PROFILE_KEY);
+      renderImageProfileMenu();
+      showNotification(`✓ Profile "${prof.name}" deleted.`);
+    }
+  }
+
+  function openImageProfileMenu() {
+    if (!customImageProfileMenu) return;
+    customImageProfileMenu.classList.remove('hidden');
+    if (customImageProfileChevron) customImageProfileChevron.classList.add('rotate-180');
+  }
+
+  function closeImageProfileMenu() {
+    if (!customImageProfileMenu) return;
+    customImageProfileMenu.classList.add('hidden');
+    if (customImageProfileChevron) customImageProfileChevron.classList.remove('rotate-180');
+  }
+
+  customImageProfileTrigger?.addEventListener('click', (e) => {
+    e.stopPropagation();
+    if (customImageProfileMenu?.classList.contains('hidden')) {
+      openImageProfileMenu();
+    } else {
+      closeImageProfileMenu();
+    }
+  });
+
+  btnShowSaveImageProfile?.addEventListener('click', () => {
+    if (newImageProfileForm) {
+      newImageProfileForm.classList.remove('hidden');
+      if (newImageProfileNameInput) {
+        newImageProfileNameInput.value = '';
+        newImageProfileNameInput.focus();
+      }
+    }
+  });
+
+  btnCancelNewImageProfile?.addEventListener('click', () => {
+    if (newImageProfileForm) newImageProfileForm.classList.add('hidden');
+  });
+
+  btnConfirmSaveImageProfile?.addEventListener('click', () => {
+    saveCurrentAsImageProfile(newImageProfileNameInput?.value || '');
+  });
+
+  newImageProfileNameInput?.addEventListener('keydown', (e) => {
+    if (e.key === 'Enter') {
+      saveCurrentAsImageProfile(newImageProfileNameInput.value);
+    }
+  });
+
+  btnUpdateActiveImageProfile?.addEventListener('click', updateActiveImageProfile);
+  btnDeleteActiveImageProfile?.addEventListener('click', deleteActiveImageProfile);
+
+  // ==========================================
+  // 3. VISION AI PROFILES MANAGEMENT
+  // ==========================================
+  const VISION_PROFILES_STORAGE_KEY = 'aetheria_vision_profiles';
+  const ACTIVE_VISION_PROFILE_KEY = 'aetheria_active_vision_profile_id';
+
+  function getSavedVisionProfiles() {
+    try {
+      const raw = localStorage.getItem(VISION_PROFILES_STORAGE_KEY);
+      return raw ? JSON.parse(raw) : [];
+    } catch (e) {
+      return [];
+    }
+  }
+
+  function saveVisionProfiles(profiles) {
+    try {
+      localStorage.setItem(VISION_PROFILES_STORAGE_KEY, JSON.stringify(profiles));
+    } catch (e) {
+      console.error(e);
+    }
+  }
+
+  function renderVisionProfileMenu() {
+    if (!customVisionProfileMenu) return;
+    const profiles = getSavedVisionProfiles();
+    const activeId = localStorage.getItem(ACTIVE_VISION_PROFILE_KEY) || '';
+
+    let html = `
+      <button 
+        type="button" 
+        class="vision-profile-item w-full px-3 py-2 rounded-xl text-left transition flex items-center justify-between text-xs cursor-pointer ${
+          !activeId ? 'bg-cyan-600/30 text-white font-semibold border border-cyan-500/40' : 'text-slate-300 hover:bg-white/[0.06] hover:text-white'
+        }" 
+        data-profile-id=""
+      >
+        <div class="flex items-center gap-2 min-w-0">
+          <span class="w-2 h-2 rounded-full ${!activeId ? 'bg-emerald-400' : 'bg-slate-500'}"></span>
+          <span class="truncate">Auto Multimodal (Default)</span>
+        </div>
+        ${!activeId ? '<span class="text-[10px] text-cyan-300 font-mono">Active</span>' : ''}
+      </button>
+    `;
+
+    profiles.forEach(p => {
+      const isSel = p.id === activeId;
+      html += `
+        <button 
+          type="button" 
+          class="vision-profile-item w-full px-3 py-2 rounded-xl text-left transition flex items-center justify-between text-xs cursor-pointer ${
+            isSel ? 'bg-cyan-600/30 text-white font-semibold border border-cyan-500/40' : 'text-slate-300 hover:bg-white/[0.06] hover:text-white'
+          }" 
+          data-profile-id="${p.id}"
+        >
+          <div class="flex items-center gap-2 min-w-0">
+            <span class="w-2 h-2 rounded-full ${isSel ? 'bg-emerald-400' : 'bg-cyan-400'}"></span>
+            <span class="truncate">${p.name}</span>
+          </div>
+          <span class="text-[9px] px-1.5 py-0.5 rounded bg-white/10 text-slate-300 font-mono uppercase">${p.provider}</span>
+        </button>
+      `;
+    });
+
+    customVisionProfileMenu.innerHTML = html;
+
+    if (activeId) {
+      const activeProf = profiles.find(p => p.id === activeId);
+      if (activeProf) {
+        if (customVisionProfileTriggerLabel) customVisionProfileTriggerLabel.textContent = activeProf.name;
+        if (customVisionProfileTriggerTag) {
+          customVisionProfileTriggerTag.textContent = activeProf.provider;
+          customVisionProfileTriggerTag.classList.remove('hidden');
+        }
+        if (customVisionProfileStatusDot) customVisionProfileStatusDot.className = 'w-2 h-2 rounded-full bg-emerald-400 shrink-0';
+        if (btnUpdateActiveVisionProfile) btnUpdateActiveVisionProfile.classList.remove('hidden');
+        if (btnDeleteActiveVisionProfile) btnDeleteActiveVisionProfile.classList.remove('hidden');
+        if (visionActiveProfileBadge) {
+          visionActiveProfileBadge.textContent = activeProf.name;
+          visionActiveProfileBadge.classList.remove('hidden');
+        }
+      } else {
+        localStorage.removeItem(ACTIVE_VISION_PROFILE_KEY);
+        renderVisionProfileMenu();
+      }
+    } else {
+      if (customVisionProfileTriggerLabel) customVisionProfileTriggerLabel.textContent = 'Auto Multimodal (Default)';
+      if (customVisionProfileTriggerTag) customVisionProfileTriggerTag.classList.add('hidden');
+      if (customVisionProfileStatusDot) customVisionProfileStatusDot.className = 'w-2 h-2 rounded-full bg-slate-400 shrink-0';
+      if (btnUpdateActiveVisionProfile) btnUpdateActiveVisionProfile.classList.add('hidden');
+      if (btnDeleteActiveVisionProfile) btnDeleteActiveVisionProfile.classList.add('hidden');
+      if (visionActiveProfileBadge) visionActiveProfileBadge.classList.add('hidden');
+    }
+
+    customVisionProfileMenu.querySelectorAll('.vision-profile-item').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const id = btn.getAttribute('data-profile-id');
+        if (id) {
+          applyVisionProfile(id);
+        } else {
+          localStorage.removeItem(ACTIVE_VISION_PROFILE_KEY);
+          if (typeof window.selectVisionEngine === 'function') {
+            window.selectVisionEngine('auto');
+          }
+          renderVisionProfileMenu();
+          showNotification('✓ Switched to default Vision profile');
+        }
+        closeVisionProfileMenu();
+      });
+    });
+  }
+
+  function applyVisionProfile(id) {
+    const profiles = getSavedVisionProfiles();
+    const prof = profiles.find(p => p.id === id);
+    if (!prof) return;
+
+    localStorage.setItem(ACTIVE_VISION_PROFILE_KEY, prof.id);
+    if (prof.provider && typeof window.selectVisionEngine === 'function') {
+      window.selectVisionEngine(prof.provider);
+    }
+    if (prof.apiKey) {
+      localStorage.setItem('aetheria_key_' + prof.provider, prof.apiKey);
+      localStorage.setItem('aetheria_vision_key', prof.apiKey);
+    }
+    if (prof.customUrl) {
+      localStorage.setItem('aetheria_vision_custom_url', prof.customUrl);
+    }
+    if (typeof syncImageUiPanels === 'function') syncImageUiPanels();
+    renderVisionProfileMenu();
+    showNotification(`✓ Loaded vision profile: ${prof.name}`);
+  }
+
+  function saveCurrentAsVisionProfile(name) {
+    if (!name || !name.trim()) {
+      showNotification('⚠️ Please enter a profile name', 'warning');
+      return;
+    }
+    const currentProv = localStorage.getItem('aetheria_vision_provider') || 'auto';
+    const profiles = getSavedVisionProfiles();
+    const newProf = {
+      id: 'visp_' + Date.now(),
+      name: name.trim(),
+      provider: currentProv,
+      apiKey: localStorage.getItem('aetheria_key_' + currentProv) || localStorage.getItem('aetheria_vision_key') || '',
+      customUrl: localStorage.getItem('aetheria_vision_custom_url') || '',
+      updatedAt: Date.now()
+    };
+    profiles.push(newProf);
+    saveVisionProfiles(profiles);
+    localStorage.setItem(ACTIVE_VISION_PROFILE_KEY, newProf.id);
+    renderVisionProfileMenu();
+    if (newVisionProfileForm) newVisionProfileForm.classList.add('hidden');
+    if (newVisionProfileNameInput) newVisionProfileNameInput.value = '';
+    showNotification(`✓ Vision profile "${newProf.name}" saved!`);
+  }
+
+  function updateActiveVisionProfile() {
+    const activeId = localStorage.getItem(ACTIVE_VISION_PROFILE_KEY);
+    if (!activeId) return;
+    const profiles = getSavedVisionProfiles();
+    const idx = profiles.findIndex(p => p.id === activeId);
+    if (idx === -1) return;
+
+    const currentProv = localStorage.getItem('aetheria_vision_provider') || 'auto';
+    profiles[idx] = {
+      ...profiles[idx],
+      provider: currentProv,
+      apiKey: localStorage.getItem('aetheria_key_' + currentProv) || localStorage.getItem('aetheria_vision_key') || '',
+      customUrl: localStorage.getItem('aetheria_vision_custom_url') || '',
+      updatedAt: Date.now()
+    };
+    saveVisionProfiles(profiles);
+    renderVisionProfileMenu();
+    showNotification(`✓ Updated vision profile "${profiles[idx].name}"!`);
+  }
+
+  async function deleteActiveVisionProfile() {
+    const activeId = localStorage.getItem(ACTIVE_VISION_PROFILE_KEY);
+    if (!activeId) return;
+    const profiles = getSavedVisionProfiles();
+    const prof = profiles.find(p => p.id === activeId);
+    if (!prof) return;
+
+    const confirmed = await showConfirmModal({
+      title: 'Delete Vision Profile?',
+      message: `Are you sure you want to delete "${prof.name}"?`,
+      confirmText: 'Delete',
+      cancelText: 'Cancel',
+      type: 'danger'
+    });
+    if (confirmed) {
+      const remaining = profiles.filter(p => p.id !== activeId);
+      saveVisionProfiles(remaining);
+      localStorage.removeItem(ACTIVE_VISION_PROFILE_KEY);
+      renderVisionProfileMenu();
+      showNotification(`✓ Profile "${prof.name}" deleted.`);
+    }
+  }
+
+  function openVisionProfileMenu() {
+    if (!customVisionProfileMenu) return;
+    customVisionProfileMenu.classList.remove('hidden');
+    if (customVisionProfileChevron) customVisionProfileChevron.classList.add('rotate-180');
+  }
+
+  function closeVisionProfileMenu() {
+    if (!customVisionProfileMenu) return;
+    customVisionProfileMenu.classList.add('hidden');
+    if (customVisionProfileChevron) customVisionProfileChevron.classList.remove('rotate-180');
+  }
+
+  customVisionProfileTrigger?.addEventListener('click', (e) => {
+    e.stopPropagation();
+    if (customVisionProfileMenu?.classList.contains('hidden')) {
+      openVisionProfileMenu();
+    } else {
+      closeVisionProfileMenu();
+    }
+  });
+
+  btnShowSaveVisionProfile?.addEventListener('click', () => {
+    if (newVisionProfileForm) {
+      newVisionProfileForm.classList.remove('hidden');
+      if (newVisionProfileNameInput) {
+        newVisionProfileNameInput.value = '';
+        newVisionProfileNameInput.focus();
+      }
+    }
+  });
+
+  btnCancelNewVisionProfile?.addEventListener('click', () => {
+    if (newVisionProfileForm) newVisionProfileForm.classList.add('hidden');
+  });
+
+  btnConfirmSaveVisionProfile?.addEventListener('click', () => {
+    saveCurrentAsVisionProfile(newVisionProfileNameInput?.value || '');
+  });
+
+  newVisionProfileNameInput?.addEventListener('keydown', (e) => {
+    if (e.key === 'Enter') {
+      saveCurrentAsVisionProfile(newVisionProfileNameInput.value);
+    }
+  });
+
+  btnUpdateActiveVisionProfile?.addEventListener('click', updateActiveVisionProfile);
+  btnDeleteActiveVisionProfile?.addEventListener('click', deleteActiveVisionProfile);
+
+  // ==========================================
+  // 4. VIDEO PROFILES MANAGEMENT
+  // ==========================================
+  const VIDEO_PROFILES_STORAGE_KEY = 'aetheria_video_profiles';
+  const ACTIVE_VIDEO_PROFILE_KEY = 'aetheria_active_video_profile_id';
+
+  function getSavedVideoProfiles() {
+    try {
+      const raw = localStorage.getItem(VIDEO_PROFILES_STORAGE_KEY);
+      return raw ? JSON.parse(raw) : [];
+    } catch (e) {
+      return [];
+    }
+  }
+
+  function saveVideoProfiles(profiles) {
+    try {
+      localStorage.setItem(VIDEO_PROFILES_STORAGE_KEY, JSON.stringify(profiles));
+    } catch (e) {
+      console.error(e);
+    }
+  }
+
+  function renderVideoProfileMenu() {
+    if (!customVideoProfileMenu) return;
+    const profiles = getSavedVideoProfiles();
+    const activeId = localStorage.getItem(ACTIVE_VIDEO_PROFILE_KEY) || '';
+
+    let html = `
+      <button 
+        type="button" 
+        class="video-profile-item w-full px-3 py-2 rounded-xl text-left transition flex items-center justify-between text-xs cursor-pointer ${
+          !activeId ? 'bg-cyan-600/30 text-white font-semibold border border-cyan-500/40' : 'text-slate-300 hover:bg-white/[0.06] hover:text-white'
+        }" 
+        data-profile-id=""
+      >
+        <div class="flex items-center gap-2 min-w-0">
+          <span class="w-2 h-2 rounded-full ${!activeId ? 'bg-emerald-400' : 'bg-slate-500'}"></span>
+          <span class="truncate">Fal.ai Kling 1.5 Pro (Default)</span>
+        </div>
+        ${!activeId ? '<span class="text-[10px] text-cyan-300 font-mono">Active</span>' : ''}
+      </button>
+    `;
+
+    profiles.forEach(p => {
+      const isSel = p.id === activeId;
+      html += `
+        <button 
+          type="button" 
+          class="video-profile-item w-full px-3 py-2 rounded-xl text-left transition flex items-center justify-between text-xs cursor-pointer ${
+            isSel ? 'bg-cyan-600/30 text-white font-semibold border border-cyan-500/40' : 'text-slate-300 hover:bg-white/[0.06] hover:text-white'
+          }" 
+          data-profile-id="${p.id}"
+        >
+          <div class="flex items-center gap-2 min-w-0">
+            <span class="w-2 h-2 rounded-full ${isSel ? 'bg-emerald-400' : 'bg-cyan-400'}"></span>
+            <span class="truncate">${p.name}</span>
+          </div>
+          <span class="text-[9px] px-1.5 py-0.5 rounded bg-white/10 text-slate-300 font-mono uppercase">${p.provider}</span>
+        </button>
+      `;
+    });
+
+    customVideoProfileMenu.innerHTML = html;
+
+    if (activeId) {
+      const activeProf = profiles.find(p => p.id === activeId);
+      if (activeProf) {
+        if (customVideoProfileTriggerLabel) customVideoProfileTriggerLabel.textContent = activeProf.name;
+        if (customVideoProfileTriggerTag) {
+          customVideoProfileTriggerTag.textContent = activeProf.provider;
+          customVideoProfileTriggerTag.classList.remove('hidden');
+        }
+        if (customVideoProfileStatusDot) customVideoProfileStatusDot.className = 'w-2 h-2 rounded-full bg-emerald-400 shrink-0';
+        if (btnUpdateActiveVideoProfile) btnUpdateActiveVideoProfile.classList.remove('hidden');
+        if (btnDeleteActiveVideoProfile) btnDeleteActiveVideoProfile.classList.remove('hidden');
+        if (videoActiveProfileBadge) {
+          videoActiveProfileBadge.textContent = activeProf.name;
+          videoActiveProfileBadge.classList.remove('hidden');
+        }
+      } else {
+        localStorage.removeItem(ACTIVE_VIDEO_PROFILE_KEY);
+        renderVideoProfileMenu();
+      }
+    } else {
+      if (customVideoProfileTriggerLabel) customVideoProfileTriggerLabel.textContent = 'Fal.ai Kling 1.5 Pro (Default)';
+      if (customVideoProfileTriggerTag) customVideoProfileTriggerTag.classList.add('hidden');
+      if (customVideoProfileStatusDot) customVideoProfileStatusDot.className = 'w-2 h-2 rounded-full bg-slate-400 shrink-0';
+      if (btnUpdateActiveVideoProfile) btnUpdateActiveVideoProfile.classList.add('hidden');
+      if (btnDeleteActiveVideoProfile) btnDeleteActiveVideoProfile.classList.add('hidden');
+      if (videoActiveProfileBadge) videoActiveProfileBadge.classList.add('hidden');
+    }
+
+    customVideoProfileMenu.querySelectorAll('.video-profile-item').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const id = btn.getAttribute('data-profile-id');
+        if (id) {
+          applyVideoProfile(id);
+        } else {
+          localStorage.removeItem(ACTIVE_VIDEO_PROFILE_KEY);
+          if (typeof window.selectVideoEngine === 'function') {
+            window.selectVideoEngine('fal-kling');
+          }
+          if (typeof window.selectVideoCamera === 'function') {
+            window.selectVideoCamera('subtle');
+          }
+          if (typeof window.selectVideoDuration === 'function') {
+            window.selectVideoDuration('5s');
+          }
+          if (typeof window.selectVideoRes === 'function') {
+            window.selectVideoRes('720p-24fps');
+          }
+          renderVideoProfileMenu();
+          showNotification('✓ Switched to default Video profile');
+        }
+        closeVideoProfileMenu();
+      });
+    });
+  }
+
+  function applyVideoProfile(id) {
+    const profiles = getSavedVideoProfiles();
+    const prof = profiles.find(p => p.id === id);
+    if (!prof) return;
+
+    localStorage.setItem(ACTIVE_VIDEO_PROFILE_KEY, prof.id);
+    if (prof.provider && typeof window.selectVideoEngine === 'function') {
+      window.selectVideoEngine(prof.provider);
+    }
+    if (prof.apiKey) {
+      localStorage.setItem('aetheria_video_key', prof.apiKey);
+      localStorage.setItem('aetheria_key_' + prof.provider, prof.apiKey);
+    }
+    if (prof.customUrl) {
+      localStorage.setItem('aetheria_video_custom_url', prof.customUrl);
+    }
+    if (prof.camera && typeof window.selectVideoCamera === 'function') {
+      window.selectVideoCamera(prof.camera);
+    }
+    if (prof.duration && typeof window.selectVideoDuration === 'function') {
+      window.selectVideoDuration(prof.duration);
+    }
+    if (prof.resolution && typeof window.selectVideoRes === 'function') {
+      window.selectVideoRes(prof.resolution);
+    }
+    if (prof.motion !== undefined) {
+      if (sliderMotion) sliderMotion.value = prof.motion;
+      if (badgeMotion) badgeMotion.value = prof.motion;
+      localStorage.setItem('aetheria_video_motion', prof.motion.toString());
+    }
+
+    if (typeof syncVideoUiPanels === 'function') syncVideoUiPanels();
+    renderVideoProfileMenu();
+    showNotification(`✓ Loaded video profile: ${prof.name}`);
+  }
+
+  function saveCurrentAsVideoProfile(name) {
+    if (!name || !name.trim()) {
+      showNotification('⚠️ Please enter a profile name', 'warning');
+      return;
+    }
+    const currentProv = localStorage.getItem('aetheria_video_provider') || 'fal-kling';
+    const profiles = getSavedVideoProfiles();
+    const newProf = {
+      id: 'vidp_' + Date.now(),
+      name: name.trim(),
+      provider: currentProv,
+      apiKey: localStorage.getItem('aetheria_video_key') || localStorage.getItem('aetheria_key_' + currentProv) || '',
+      customUrl: localStorage.getItem('aetheria_video_custom_url') || '',
+      camera: localStorage.getItem('aetheria_video_camera') || 'subtle',
+      duration: localStorage.getItem('aetheria_video_duration') || '5s',
+      resolution: localStorage.getItem('aetheria_video_res') || '720p-24fps',
+      motion: sliderMotion?.value || '50',
+      updatedAt: Date.now()
+    };
+    profiles.push(newProf);
+    saveVideoProfiles(profiles);
+    localStorage.setItem(ACTIVE_VIDEO_PROFILE_KEY, newProf.id);
+    renderVideoProfileMenu();
+    if (newVideoProfileForm) newVideoProfileForm.classList.add('hidden');
+    if (newVideoProfileNameInput) newVideoProfileNameInput.value = '';
+    showNotification(`✓ Video profile "${newProf.name}" saved!`);
+  }
+
+  function updateActiveVideoProfile() {
+    const activeId = localStorage.getItem(ACTIVE_VIDEO_PROFILE_KEY);
+    if (!activeId) return;
+    const profiles = getSavedVideoProfiles();
+    const idx = profiles.findIndex(p => p.id === activeId);
+    if (idx === -1) return;
+
+    const currentProv = localStorage.getItem('aetheria_video_provider') || 'fal-kling';
+    profiles[idx] = {
+      ...profiles[idx],
+      provider: currentProv,
+      apiKey: localStorage.getItem('aetheria_video_key') || localStorage.getItem('aetheria_key_' + currentProv) || '',
+      customUrl: localStorage.getItem('aetheria_video_custom_url') || '',
+      camera: localStorage.getItem('aetheria_video_camera') || 'subtle',
+      duration: localStorage.getItem('aetheria_video_duration') || '5s',
+      resolution: localStorage.getItem('aetheria_video_res') || '720p-24fps',
+      motion: sliderMotion?.value || '50',
+      updatedAt: Date.now()
+    };
+    saveVideoProfiles(profiles);
+    renderVideoProfileMenu();
+    showNotification(`✓ Updated video profile "${profiles[idx].name}"!`);
+  }
+
+  async function deleteActiveVideoProfile() {
+    const activeId = localStorage.getItem(ACTIVE_VIDEO_PROFILE_KEY);
+    if (!activeId) return;
+    const profiles = getSavedVideoProfiles();
+    const prof = profiles.find(p => p.id === activeId);
+    if (!prof) return;
+
+    const confirmed = await showConfirmModal({
+      title: 'Delete Video Profile?',
+      message: `Are you sure you want to delete "${prof.name}"?`,
+      confirmText: 'Delete',
+      cancelText: 'Cancel',
+      type: 'danger'
+    });
+    if (confirmed) {
+      const remaining = profiles.filter(p => p.id !== activeId);
+      saveVideoProfiles(remaining);
+      localStorage.removeItem(ACTIVE_VIDEO_PROFILE_KEY);
+      renderVideoProfileMenu();
+      showNotification(`✓ Profile "${prof.name}" deleted.`);
+    }
+  }
+
+  function openVideoProfileMenu() {
+    if (!customVideoProfileMenu) return;
+    customVideoProfileMenu.classList.remove('hidden');
+    if (customVideoProfileChevron) customVideoProfileChevron.classList.add('rotate-180');
+  }
+
+  function closeVideoProfileMenu() {
+    if (!customVideoProfileMenu) return;
+    customVideoProfileMenu.classList.add('hidden');
+    if (customVideoProfileChevron) customVideoProfileChevron.classList.remove('rotate-180');
+  }
+
+  customVideoProfileTrigger?.addEventListener('click', (e) => {
+    e.stopPropagation();
+    if (customVideoProfileMenu?.classList.contains('hidden')) {
+      openVideoProfileMenu();
+    } else {
+      closeVideoProfileMenu();
+    }
+  });
+
+  btnShowSaveVideoProfile?.addEventListener('click', () => {
+    if (newVideoProfileForm) {
+      newVideoProfileForm.classList.remove('hidden');
+      if (newVideoProfileNameInput) {
+        newVideoProfileNameInput.value = '';
+        newVideoProfileNameInput.focus();
+      }
+    }
+  });
+
+  btnCancelNewVideoProfile?.addEventListener('click', () => {
+    if (newVideoProfileForm) newVideoProfileForm.classList.add('hidden');
+  });
+
+  btnConfirmSaveVideoProfile?.addEventListener('click', () => {
+    saveCurrentAsVideoProfile(newVideoProfileNameInput?.value || '');
+  });
+
+  newVideoProfileNameInput?.addEventListener('keydown', (e) => {
+    if (e.key === 'Enter') {
+      saveCurrentAsVideoProfile(newVideoProfileNameInput.value);
+    }
+  });
+
+  btnUpdateActiveVideoProfile?.addEventListener('click', updateActiveVideoProfile);
+  btnDeleteActiveVideoProfile?.addEventListener('click', deleteActiveVideoProfile);
 
   // ==========================================
   // HUMAN CONTROLS: SPEED & TONE PRESETS
