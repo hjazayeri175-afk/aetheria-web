@@ -54,7 +54,8 @@ import {
   Rewind,
   ArrowUp,
   Mic,
-  MoreVertical
+  MoreVertical,
+  Save
 } from '@lucide/astro';
 
 export function getStaticPaths() {
@@ -1632,9 +1633,99 @@ const { character } = Astro.props;
 
                 </div>
 
-                                <!-- ================= PANE 2: STT SPEECH INPUT ================= -->
-                <div id="voice-stt-pane" class="space-y-4 hidden">
-                  <!-- Active STT Engine Card -->
+                                <!-- ================= PANE 2: STT SPEECH INPUT (MICROPHONE) ================= -->
+                <div id="voice-stt-pane" class="space-y-4 hidden" dir="ltr" lang="en">
+
+                  <!-- 1. STT Profiles Vault Bar (like Voice & Text vaults) -->
+                  <div class="relative p-3 rounded-2xl bg-white/[0.03] border border-white/10 flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-2.5">
+                    <div class="flex items-center gap-2 min-w-0">
+                      <div class="w-7 h-7 rounded-lg bg-rose-500/20 border border-rose-500/30 flex items-center justify-center text-rose-300 shrink-0">
+                        <Mic class="w-3.5 h-3.5" />
+                      </div>
+                      <span class="text-xs font-semibold text-slate-300 shrink-0">Microphone Profile:</span>
+
+                      <!-- Custom STT Profile Dropdown Trigger -->
+                      <div class="relative flex-1 min-w-0">
+                        <button
+                          type="button"
+                          id="custom-stt-profile-trigger"
+                          class="w-full flex items-center justify-between gap-2 px-3 py-1.5 rounded-xl bg-black/40 hover:bg-black/60 border border-white/10 hover:border-rose-500/40 text-xs text-white transition cursor-pointer text-left"
+                        >
+                          <div class="flex items-center gap-2 truncate">
+                            <span id="custom-stt-profile-status-dot" class="w-2 h-2 rounded-full bg-emerald-400 shrink-0"></span>
+                            <span id="custom-stt-profile-trigger-label" class="font-semibold truncate">Default Device Mic</span>
+                            <span id="custom-stt-profile-trigger-tag" class="px-1.5 py-0.2 rounded bg-white/10 text-[10px] text-slate-300 font-mono">100% Free</span>
+                          </div>
+                          <ChevronDown class="w-3.5 h-3.5 text-slate-400 shrink-0" />
+                        </button>
+
+                        <!-- STT Profiles Dropdown Menu -->
+                        <div
+                          id="custom-stt-profile-menu"
+                          class="hidden absolute left-0 right-0 top-full mt-1 z-30 p-1.5 rounded-xl bg-slate-900 border border-rose-500/30 shadow-2xl space-y-1 max-h-56 overflow-y-auto"
+                        >
+                          <div id="stt-profile-items-list" class="space-y-0.5">
+                            <!-- Populated dynamically -->
+                          </div>
+                          <div class="pt-1 mt-1 border-t border-white/10">
+                            <button
+                              type="button"
+                              id="btn-show-save-stt-profile"
+                              class="w-full py-1.5 px-2.5 rounded-lg bg-rose-600/20 hover:bg-rose-600/30 text-rose-300 hover:text-white text-xs font-medium flex items-center justify-center gap-1.5 transition cursor-pointer"
+                            >
+                              <Plus class="w-3.5 h-3.5" />
+                              <span>Save Current Config as New Profile...</span>
+                            </button>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+
+                    <!-- Profile Quick Actions (Update / Delete) -->
+                    <div class="flex items-center gap-1.5 shrink-0 self-end sm:self-center">
+                      <button
+                        type="button"
+                        id="btn-update-active-stt-profile"
+                        class="p-1.5 rounded-lg bg-white/5 hover:bg-white/10 border border-white/10 text-slate-300 hover:text-white transition cursor-pointer"
+                        title="Update active profile with current settings"
+                      >
+                        <Save class="w-3.5 h-3.5" />
+                      </button>
+                      <button
+                        type="button"
+                        id="btn-delete-active-stt-profile"
+                        class="p-1.5 rounded-lg bg-white/5 hover:bg-rose-500/20 border border-white/10 hover:border-rose-500/30 text-slate-400 hover:text-rose-300 transition cursor-pointer"
+                        title="Delete active custom profile"
+                      >
+                        <Trash2 class="w-3.5 h-3.5" />
+                      </button>
+                    </div>
+                  </div>
+
+                  <!-- Inline Save Profile Form (Hidden by default) -->
+                  <div id="new-stt-profile-form" class="hidden p-3 rounded-2xl bg-rose-950/30 border border-rose-500/30 space-y-2.5">
+                    <div class="flex items-center justify-between">
+                      <span class="text-xs font-bold text-white">Save Microphone Preset</span>
+                      <button type="button" id="btn-cancel-save-stt-profile" class="text-slate-400 hover:text-white text-xs cursor-pointer">Cancel</button>
+                    </div>
+                    <div class="flex gap-2">
+                      <input
+                        type="text"
+                        id="new-stt-profile-name-input"
+                        placeholder="Preset Name (e.g. Groq Turbo, OpenAI Studio)..."
+                        class="flex-1 px-3 py-1.5 rounded-xl bg-black/60 border border-white/15 text-xs text-white placeholder:text-slate-500 outline-none focus:border-rose-500/60"
+                      />
+                      <button
+                        type="button"
+                        id="btn-confirm-save-stt-profile"
+                        class="px-3.5 py-1.5 rounded-xl bg-rose-600 hover:bg-rose-500 text-white text-xs font-semibold cursor-pointer shadow-md"
+                      >
+                        Save
+                      </button>
+                    </div>
+                  </div>
+
+                  <!-- 2. Active STT Engine Header Card -->
                   <div class="p-3.5 sm:p-4 rounded-2xl bg-gradient-to-r from-rose-950/40 via-purple-950/20 to-indigo-950/40 border border-rose-500/30 flex items-center justify-between gap-3 shadow-lg shadow-rose-950/40">
                     <div class="flex items-center gap-3 min-w-0">
                       <div id="stt-active-icon-box" class="w-11 h-11 rounded-2xl bg-rose-500/20 border border-rose-500/30 flex items-center justify-center text-rose-300 shrink-0 shadow-inner">
@@ -1642,12 +1733,12 @@ const { character } = Astro.props;
                       </div>
                       <div class="min-w-0">
                         <div class="flex items-center gap-2 flex-wrap mb-0.5">
-                          <h4 id="stt-active-engine-name" class="text-sm font-bold text-white truncate">Groq Whisper</h4>
-                          <span id="stt-connection-badge" class="px-2 py-0.5 rounded-full text-[10px] font-mono font-semibold bg-amber-500/20 text-amber-300 border border-amber-500/30">
-                            Disconnected • Key Required
+                          <h4 id="stt-active-engine-name" class="text-sm font-bold text-white truncate">Built-in Device Mic</h4>
+                          <span id="stt-connection-badge" class="px-2 py-0.5 rounded-full text-[10px] font-mono font-semibold bg-emerald-500/20 text-emerald-300 border border-emerald-500/30">
+                            100% Free • Ready
                           </span>
                         </div>
-                        <p id="stt-active-engine-desc" class="text-[11px] text-slate-400 truncate">Ultra-Fast LPU Hardware • whisper-large-v3-turbo</p>
+                        <p id="stt-active-engine-desc" class="text-[11px] text-slate-400 truncate">Browser Web Speech API • Instant Voice Input</p>
                       </div>
                     </div>
                     <button 
@@ -1660,8 +1751,44 @@ const { character } = Astro.props;
                     </button>
                   </div>
 
-                  <!-- STT Connection & Key Card -->
-                  <div id="stt-connection-card" class="p-3.5 sm:p-4 rounded-2xl bg-amber-950/20 border border-amber-500/30 space-y-3">
+                  <!-- Quick Engine Switcher Chips -->
+                  <div class="flex items-center gap-1.5 flex-wrap">
+                    <button type="button" data-stt-engine="browser-stt" class="stt-quick-engine-chip px-3 py-1.5 rounded-xl text-xs font-semibold transition cursor-pointer flex items-center gap-1.5 bg-rose-600 text-white shadow-sm">
+                      <span>🎙️</span>
+                      <span>Device Mic (Free)</span>
+                    </button>
+                    <button type="button" data-stt-engine="groq" class="stt-quick-engine-chip px-3 py-1.5 rounded-xl text-xs font-semibold transition cursor-pointer flex items-center gap-1.5 bg-white/[0.04] hover:bg-white/[0.08] text-slate-300 hover:text-white border border-white/10">
+                      <span>⚡</span>
+                      <span>Groq Whisper</span>
+                    </button>
+                    <button type="button" data-stt-engine="openai-stt" class="stt-quick-engine-chip px-3 py-1.5 rounded-xl text-xs font-semibold transition cursor-pointer flex items-center gap-1.5 bg-white/[0.04] hover:bg-white/[0.08] text-slate-300 hover:text-white border border-white/10">
+                      <span>✨</span>
+                      <span>OpenAI Whisper</span>
+                    </button>
+                    <button type="button" data-stt-engine="custom-stt" class="stt-quick-engine-chip px-3 py-1.5 rounded-xl text-xs font-semibold transition cursor-pointer flex items-center gap-1.5 bg-white/[0.04] hover:bg-white/[0.08] text-slate-300 hover:text-white border border-white/10">
+                      <span>⚙️</span>
+                      <span>Custom URL</span>
+                    </button>
+                  </div>
+
+                  <!-- 3. Free Device Mic Info Card (Shown when browser-stt is active) -->
+                  <div id="stt-free-device-card" class="p-3.5 sm:p-4 rounded-2xl bg-emerald-950/20 border border-emerald-500/30 flex items-start gap-3">
+                    <div class="w-8 h-8 rounded-xl bg-emerald-500/20 border border-emerald-500/30 flex items-center justify-center text-emerald-300 shrink-0 mt-0.5">
+                      <Zap class="w-4 h-4 text-emerald-400" />
+                    </div>
+                    <div class="space-y-1">
+                      <div class="flex items-center gap-2">
+                        <h5 class="text-xs font-bold text-white">Built-in Device Speech Recognition</h5>
+                        <span class="px-1.5 py-0.2 rounded bg-emerald-500/20 text-[9px] font-mono font-bold text-emerald-300">ACTIVE & READY</span>
+                      </div>
+                      <p class="text-[11px] text-slate-300 leading-relaxed">
+                        Uses your device's native browser speech engine (Web Speech API). Completely private, zero setup, no API keys, and 100% free. Works instantly on mobile and desktop.
+                      </p>
+                    </div>
+                  </div>
+
+                  <!-- 4. Cloud STT Connection & Key Card (Shown when cloud engine is selected) -->
+                  <div id="stt-connection-card" class="hidden p-3.5 sm:p-4 rounded-2xl bg-amber-950/20 border border-amber-500/30 space-y-3">
                     <div class="flex items-start justify-between gap-2">
                       <div class="flex items-center gap-2">
                         <div class="w-7 h-7 rounded-xl bg-amber-500/20 border border-amber-500/30 flex items-center justify-center text-amber-300 shrink-0">
@@ -1669,15 +1796,15 @@ const { character } = Astro.props;
                         </div>
                         <div>
                           <h5 id="stt-connect-title" class="text-xs font-bold text-white">Connect Groq Whisper API Key</h5>
-                          <p id="stt-connect-desc" class="text-[10px] text-slate-400">Enter your Groq key (console.groq.com) to activate voice input.</p>
+                          <p id="stt-connect-desc" class="text-[10px] text-slate-400">Enter your API key to activate cloud voice transcription.</p>
                         </div>
                       </div>
-                      <span class="px-2 py-0.5 rounded-full text-[9px] font-mono font-bold bg-amber-500/20 text-amber-300 border border-amber-500/30">
+                      <span id="stt-key-status-pill" class="px-2 py-0.5 rounded-full text-[9px] font-mono font-bold bg-amber-500/20 text-amber-300 border border-amber-500/30">
                         KEY REQUIRED
                       </span>
                     </div>
 
-                    <!-- Quick Reuse Button -->
+                    <!-- 1-Click Quick Reuse Button from Text Engine -->
                     <button 
                       type="button" 
                       id="stt-quick-reuse-key-btn" 
@@ -1691,7 +1818,7 @@ const { character } = Astro.props;
                       <input 
                         id="stt-api-key" 
                         type="password" 
-                        placeholder="gsk_... or sk-..." 
+                        placeholder="Enter API Key..." 
                         class="w-full px-3.5 py-2.5 rounded-xl bg-black/60 border border-white/10 text-xs text-white placeholder:text-slate-500 outline-none focus:border-rose-500/60 font-mono pr-16"
                       />
                       <button type="button" id="toggle-stt-key-visibility-btn" class="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-white text-xs cursor-pointer p-1">
@@ -1709,44 +1836,48 @@ const { character } = Astro.props;
                       />
                     </div>
 
-                    <div class="flex items-center justify-end gap-2 pt-1">
-                      <button 
-                        type="button" 
-                        id="stt-connect-confirm-btn" 
-                        class="px-4 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-semibold flex items-center gap-1.5 transition cursor-pointer active:scale-95 shadow-md shadow-emerald-950"
-                      >
-                        <Check class="w-3.5 h-3.5" />
-                        <span>Connect & Activate</span>
-                      </button>
-                    </div>
+                    <button 
+                      type="button" 
+                      id="stt-verify-connect-btn" 
+                      class="w-full py-2 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-semibold flex items-center justify-center gap-1.5 transition cursor-pointer active:scale-95 shadow-md shadow-emerald-950"
+                    >
+                      <Check class="w-3.5 h-3.5" />
+                      <span>Connect & Activate</span>
+                    </button>
                   </div>
 
-                  <!-- STT Controls (Unlocked when connected or free) -->
+                  <!-- 5. Controls Unlocked Section -->
                   <div id="stt-controls-unlocked" class="space-y-4">
-                    
-                    <!-- Whisper Model Selection (Interactive Cards - NO SELECT DROPDOWN) -->
-                    <div id="stt-models-box" class="space-y-2">
+                    <!-- Model Selection (Hidden for browser-stt) -->
+                    <div id="stt-model-section" class="space-y-2">
                       <label class="block text-xs font-semibold text-slate-300">Transcription Model</label>
                       <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
-                        <button type="button" class="stt-model-card p-3 rounded-xl border text-left transition cursor-pointer bg-white/[0.03] hover:bg-white/[0.06] border-white/10" data-stt-model="whisper-large-v3-turbo">
-                          <div class="flex items-center justify-between mb-1">
+                        <button 
+                          type="button" 
+                          data-stt-model="whisper-large-v3-turbo" 
+                          class="stt-model-card p-3 rounded-xl border text-left transition cursor-pointer flex flex-col justify-between gap-1 bg-rose-950/40 border-rose-500 shadow-md shadow-rose-950/50"
+                        >
+                          <div class="flex items-center justify-between">
                             <span class="font-bold text-xs text-white">whisper-large-v3-turbo</span>
-                            <span class="px-1.5 py-0.5 rounded text-[9px] font-bold bg-amber-500/20 text-amber-300 border border-amber-500/30">FASTEST</span>
+                            <span class="px-1.5 py-0.5 rounded bg-emerald-500/20 text-emerald-300 text-[9px] font-bold font-mono">FASTEST</span>
                           </div>
-                          <p class="text-[10px] text-slate-400">Ultra-low latency streaming transcription on Groq LPU</p>
+                          <p class="text-[10px] text-slate-400">Ultra-fast ~0.2s response time. Ideal for real-time mobile voice chat.</p>
                         </button>
-
-                        <button type="button" class="stt-model-card p-3 rounded-xl border text-left transition cursor-pointer bg-white/[0.03] hover:bg-white/[0.06] border-white/10" data-stt-model="whisper-large-v3">
-                          <div class="flex items-center justify-between mb-1">
+                        <button 
+                          type="button" 
+                          data-stt-model="whisper-large-v3" 
+                          class="stt-model-card p-3 rounded-xl border text-left transition cursor-pointer flex flex-col justify-between gap-1 bg-white/[0.03] hover:bg-white/[0.06] border-white/10"
+                        >
+                          <div class="flex items-center justify-between">
                             <span class="font-bold text-xs text-white">whisper-large-v3</span>
-                            <span class="px-1.5 py-0.5 rounded text-[9px] font-bold bg-purple-500/20 text-purple-300 border border-purple-500/30">MAX ACCURACY</span>
+                            <span class="px-1.5 py-0.5 rounded bg-purple-500/20 text-purple-300 text-[9px] font-bold font-mono">MAX ACCURACY</span>
                           </div>
-                          <p class="text-[10px] text-slate-400">Full precision multilingual weights for intricate accents</p>
+                          <p class="text-[10px] text-slate-400">Full parameter model. Highest accuracy for multi-speaker or technical audio.</p>
                         </button>
                       </div>
                     </div>
 
-                    <!-- Spoken Language Selection (Touch-Friendly Chips - NO SELECT DROPDOWN) -->
+                    <!-- Spoken Language Selection -->
                     <div class="space-y-2">
                       <label class="block text-xs font-semibold text-slate-300">Spoken Language</label>
                       <div class="flex items-center gap-2 flex-wrap">
@@ -1756,11 +1887,11 @@ const { character } = Astro.props;
                         </button>
                         <button type="button" data-lang="fa" class="stt-lang-chip px-3.5 py-2 rounded-xl text-xs font-semibold transition cursor-pointer bg-white/[0.04] hover:bg-white/[0.08] text-slate-300 hover:text-white border border-white/10 flex items-center gap-1.5">
                           <span>🇮🇷</span>
-                          <span>Persian (فارسی - fa)</span>
+                          <span>Persian (فارسی)</span>
                         </button>
                         <button type="button" data-lang="en" class="stt-lang-chip px-3.5 py-2 rounded-xl text-xs font-semibold transition cursor-pointer bg-white/[0.04] hover:bg-white/[0.08] text-slate-300 hover:text-white border border-white/10 flex items-center gap-1.5">
                           <span>🇺🇸</span>
-                          <span>English (en)</span>
+                          <span>English</span>
                         </button>
                       </div>
                     </div>
@@ -1769,8 +1900,11 @@ const { character } = Astro.props;
                     <div class="p-3.5 rounded-2xl bg-rose-950/20 border border-rose-500/30 space-y-2.5">
                       <div class="flex items-center justify-between">
                         <div>
-                          <div class="text-xs font-bold text-white">Live Microphone Test</div>
-                          <div class="text-[11px] text-slate-400">Speak into your mic to test transcription accuracy</div>
+                          <div class="text-xs font-bold text-white flex items-center gap-1.5">
+                            <span class="w-2 h-2 rounded-full bg-rose-400 animate-pulse"></span>
+                            <span>Live Microphone Test</span>
+                          </div>
+                          <div class="text-[11px] text-slate-400">Speak into your mic to test transcription live</div>
                         </div>
                         <button 
                           type="button" 
@@ -1782,8 +1916,12 @@ const { character } = Astro.props;
                         </button>
                       </div>
 
-                      <div id="stt-test-output-box" class="hidden p-3 rounded-xl bg-black/40 border border-rose-500/30 text-xs text-white font-medium italic">
-                        "..."
+                      <div id="stt-test-output-box" class="hidden p-3 rounded-xl bg-black/50 border border-rose-500/40 text-xs text-white font-medium">
+                        <div class="flex items-center gap-1.5 text-emerald-400 text-[11px] font-bold mb-1">
+                          <Check class="w-3.5 h-3.5" />
+                          <span>Voice Recognized:</span>
+                        </div>
+                        <div id="stt-test-output-text" class="italic text-slate-200">"..."</div>
                       </div>
                     </div>
 
@@ -4000,9 +4138,26 @@ const { character } = Astro.props;
   const toggleSttKeyVisibilityBtn = document.getElementById('toggle-stt-key-visibility-btn');
   const sttCustomUrlContainer = document.getElementById('stt-custom-url-container');
   const sttCustomUrl = document.getElementById('stt-custom-url');
+  const sttFreeDeviceCard = document.getElementById('stt-free-device-card');
+  const sttVerifyConnectBtn = document.getElementById('stt-verify-connect-btn');
+  const sttModelSection = document.getElementById('stt-model-section');
   const testSttBtn = document.getElementById('test-stt-btn');
   const testSttBtnLabel = document.getElementById('test-stt-btn-label');
   const sttTestOutputBox = document.getElementById('stt-test-output-box');
+  const sttTestOutputText = document.getElementById('stt-test-output-text');
+  const customSttProfileTrigger = document.getElementById('custom-stt-profile-trigger');
+  const customSttProfileMenu = document.getElementById('custom-stt-profile-menu');
+  const customSttProfileTriggerLabel = document.getElementById('custom-stt-profile-trigger-label');
+  const customSttProfileTriggerTag = document.getElementById('custom-stt-profile-trigger-tag');
+  const customSttProfileStatusDot = document.getElementById('custom-stt-profile-status-dot');
+  const sttProfileItemsList = document.getElementById('stt-profile-items-list');
+  const btnShowSaveSttProfile = document.getElementById('btn-show-save-stt-profile');
+  const btnCancelSaveSttProfile = document.getElementById('btn-cancel-save-stt-profile');
+  const btnConfirmSaveSttProfile = document.getElementById('btn-confirm-save-stt-profile');
+  const btnUpdateActiveSttProfile = document.getElementById('btn-update-active-stt-profile');
+  const btnDeleteActiveSttProfile = document.getElementById('btn-delete-active-stt-profile');
+  const newSttProfileForm = document.getElementById('new-stt-profile-form');
+  const newSttProfileNameInput = document.getElementById('new-stt-profile-name-input');
   const voiceRecordingOverlay = document.getElementById('voice-recording-overlay');
   const voiceRecordingTimer = document.getElementById('voice-recording-timer');
   const voiceRecordingHint = document.getElementById('voice-recording-hint');
@@ -5970,6 +6125,7 @@ const { character } = Astro.props;
     if (sttLangSelect) sttLangSelect.value = sttLang;
 
     if (typeof renderVoiceProfileMenu === 'function') renderVoiceProfileMenu();
+    if (typeof renderSttProfileMenu === 'function') renderSttProfileMenu();
     if (typeof updateSpeedPillsAndLabel === 'function') updateSpeedPillsAndLabel(voiceRate);
     if (typeof updatePitchPillsAndLabel === 'function') updatePitchPillsAndLabel(voicePitch);
     syncVoiceUiPanels();
@@ -8346,40 +8502,27 @@ const { character } = Astro.props;
   // ==========================================
   // DYNAMIC VOICE CATALOG & API SYNC
   // ==========================================
-  const DEFAULT_ELEVEN_VOICES = [
-    { id: '21m00Tcm4TlvDq8ikWAM', name: 'Rachel', gender: 'Female', accent: 'American', style: 'Calm & Narrative', preview_url: 'https://storage.googleapis.com/eleven-public-prod/database/user/premade/voices/21m00Tcm4TlvDq8ikWAM/67073289-4e5a-493e-8c34-eb163ff15e21.mp3' },
-    { id: 'pNInz6obpgDQGcFmaJgB', name: 'Adam', gender: 'Male', accent: 'American', style: 'Deep & Cinematic', preview_url: 'https://storage.googleapis.com/eleven-public-prod/database/user/premade/voices/pNInz6obpgDQGcFmaJgB/3f40f0c0-f38b-4a24-814d-16f5c5e88849.mp3' },
-    { id: 'EXAVITQu4vr4xnSDxMaL', name: 'Bella', gender: 'Female', accent: 'American', style: 'Expressive & Playful', preview_url: 'https://storage.googleapis.com/eleven-public-prod/database/user/premade/voices/EXAVITQu4vr4xnSDxMaL/0154817a-0d85-48b0-8f9f-72f1dc4442d7.mp3' },
-    { id: 'ErXwobaYiN019PkySvjV', name: 'Antoni', gender: 'Male', accent: 'American', style: 'Warm Storyteller', preview_url: 'https://storage.googleapis.com/eleven-public-prod/database/user/premade/voices/ErXwobaYiN019PkySvjV/38d8f8f2-53b6-455b-b9d5-71ee4a93f18e.mp3' },
-    { id: 'MF3mGyEYCl7XYWbV9V6O', name: 'Elli', gender: 'Female', accent: 'American', style: 'Gentle & Whispering', preview_url: 'https://storage.googleapis.com/eleven-public-prod/database/user/premade/voices/MF3mGyEYCl7XYWbV9V6O/2f1737e5-1a86-4f46-91e0-6395dc468c4d.mp3' },
-    { id: 'TxGEqnHWrfWFTfGW9XjX', name: 'Josh', gender: 'Male', accent: 'American', style: 'Natural & Confident', preview_url: 'https://storage.googleapis.com/eleven-public-prod/database/user/premade/voices/TxGEqnHWrfWFTfGW9XjX/3a9a1490-6429-45eb-92c9-601f2f81a7d6.mp3' },
-    { id: 'pMsXgVXv3BLzUgSXRplE', name: 'Serena', gender: 'Female', accent: 'American', style: 'Alluring & Soft', preview_url: 'https://storage.googleapis.com/eleven-public-prod/database/user/premade/voices/pMsXgVXv3BLzUgSXRplE/345b8fb3-4f05-4f4a-9ef1-4b13a77fcb88.mp3' },
-    { id: 'XB0fDUnXU5powFXDhCwa', name: 'Charlotte', gender: 'Female', accent: 'Swedish', style: 'Seductive & Elegant', preview_url: 'https://storage.googleapis.com/eleven-public-prod/database/user/premade/voices/XB0fDUnXU5powFXDhCwa/94235656-787a-4286-8c46-953e1a067ff3.mp3' }
-  ];
-
   const DEFAULT_OPENAI_VOICES = [
-    { id: 'nova', name: 'Nova', gender: 'Female', accent: 'Warm & Energetic', style: 'Natural Roleplay' },
-    { id: 'shimmer', name: 'Shimmer', gender: 'Female', accent: 'Clear & Expressive', style: 'Bright Dialogue' },
-    { id: 'onyx', name: 'Onyx', gender: 'Male', accent: 'Deep & Authoritative', style: 'Cinematic Voice' },
-    { id: 'alloy', name: 'Alloy', gender: 'Neutral', accent: 'Balanced & Smooth', style: 'Versatile' },
-    { id: 'echo', name: 'Echo', gender: 'Male', accent: 'Soft & Balanced', style: 'Conversational' },
-    { id: 'fable', name: 'Fable', gender: 'Male', accent: 'British Accent', style: 'Theatrical & Warm' },
-    { id: 'sage', name: 'Sage', gender: 'Female', accent: 'Calm & Reflective', style: 'Soothing Tone' },
-    { id: 'coral', name: 'Coral', gender: 'Female', accent: 'Friendly & Casual', style: 'Warm Tone' },
-    { id: 'ash', name: 'Ash', gender: 'Male', accent: 'Direct & Crisp', style: 'Modern' }
+    { id: 'nova', name: 'Nova', gender: 'Female', accent: 'Warm & Natural', style: 'OpenAI Studio Voice' },
+    { id: 'shimmer', name: 'Shimmer', gender: 'Female', accent: 'Expressive & Clear', style: 'OpenAI Studio Voice' },
+    { id: 'onyx', name: 'Onyx', gender: 'Male', accent: 'Deep & Authoritative', style: 'OpenAI Studio Voice' },
+    { id: 'alloy', name: 'Alloy', gender: 'Neutral', accent: 'Balanced & Direct', style: 'OpenAI Studio Voice' },
+    { id: 'echo', name: 'Echo', gender: 'Male', accent: 'Smooth & Dynamic', style: 'OpenAI Studio Voice' },
+    { id: 'fable', name: 'Fable', gender: 'Neutral', accent: 'Narrative & British', style: 'OpenAI Studio Voice' },
+    { id: 'sage', name: 'Sage', gender: 'Female', accent: 'Calm & Intellectual', style: 'OpenAI Studio Voice' },
+    { id: 'coral', name: 'Coral', gender: 'Female', accent: 'Bright & Friendly', style: 'OpenAI Studio Voice' },
+    { id: 'ash', name: 'Ash', gender: 'Male', accent: 'Casual & Relaxed', style: 'OpenAI Studio Voice' }
   ];
 
-  const DEFAULT_GOOGLE_VOICES = [
-    { id: 'en-US-Journey-F', name: 'Journey-F', gender: 'Female', accent: 'US English', style: 'Ultra Natural Neural' },
-    { id: 'en-US-Journey-D', name: 'Journey-D', gender: 'Male', accent: 'US English', style: 'Ultra Natural Neural' },
-    { id: 'en-US-Neural2-F', name: 'Neural2-F', gender: 'Female', accent: 'US English', style: 'Studio Neural Voice' },
-    { id: 'en-US-Neural2-D', name: 'Neural2-D', gender: 'Male', accent: 'US English', style: 'Studio Neural Voice' },
-    { id: 'fa-IR-Wavenet-A', name: 'Wavenet-A', gender: 'Female', accent: 'فارسی / Persian', style: 'Persian Neural ♀' },
-    { id: 'fa-IR-Wavenet-B', name: 'Wavenet-B', gender: 'Male', accent: 'فارسی / Persian', style: 'Persian Neural ♂' }
-  ];
-
+  // Helper to retrieve voices for the active provider
+  // Returns:
+  //   null -> Provider requires API key, but none is connected yet (show connection prompt, no fake defaults)
+  //   []   -> Key is present, but voices are currently fetching or empty (show loading spinner and trigger real-time fetch)
+  //   [..] -> Valid voices list to render
   function getAvailableVoicesForProvider(prov) {
     if (prov === 'elevenlabs') {
+      const key = getVoiceKeyForProvider('elevenlabs');
+      if (!key) return null; // No key -> show connect state
       try {
         const cached = localStorage.getItem('aetheria_cached_voices_elevenlabs');
         if (cached) {
@@ -8387,12 +8530,12 @@ const { character } = Astro.props;
           if (Array.isArray(parsed) && parsed.length > 0) return parsed;
         }
       } catch (e) {}
-      return DEFAULT_ELEVEN_VOICES;
+      return []; // Key exists but not fetched yet -> trigger real-time fetch!
     }
-    if (prov === 'openai') {
-      return DEFAULT_OPENAI_VOICES;
-    }
+
     if (prov === 'google') {
+      const key = getVoiceKeyForProvider('google');
+      if (!key) return null;
       try {
         const cached = localStorage.getItem('aetheria_cached_voices_google');
         if (cached) {
@@ -8400,17 +8543,22 @@ const { character } = Astro.props;
           if (Array.isArray(parsed) && parsed.length > 0) return parsed;
         }
       } catch (e) {}
-      return DEFAULT_GOOGLE_VOICES;
+      return [];
     }
+
+    if (prov === 'openai') {
+      return DEFAULT_OPENAI_VOICES;
+    }
+
     if (prov === 'browser') {
-      if (window.speechSynthesis) {
+      if (typeof window !== 'undefined' && window.speechSynthesis) {
         const nativeVoices = window.speechSynthesis.getVoices();
         if (nativeVoices && nativeVoices.length > 0) {
           return nativeVoices.map(nv => ({
             id: nv.voiceURI || nv.name,
             name: nv.name,
             gender: nv.name.toLowerCase().includes('female') ? 'Female' : nv.name.toLowerCase().includes('male') ? 'Male' : 'Natural',
-            accent: nv.lang || 'Device',
+            accent: nv.lang || 'Device Native',
             style: 'Local Native Voice'
           }));
         }
@@ -8419,25 +8567,84 @@ const { character } = Astro.props;
         { id: 'default', name: 'System Default Voice', gender: 'Natural', accent: 'Default', style: 'Offline Native' }
       ];
     }
+
     return [];
+  }
+
+  // Real-time listener for browser system voices initialization
+  if (typeof window !== 'undefined' && window.speechSynthesis) {
+    window.speechSynthesis.onvoiceschanged = () => {
+      const prov = voiceProviderSelect?.value || localStorage.getItem('aetheria_voice_provider') || 'browser';
+      if (prov === 'browser') {
+        renderDynamicVoiceCatalog(voiceSearchInput?.value || '');
+      }
+    };
   }
 
   function getSelectedVoiceDisplayName() {
     const prov = voiceProviderSelect?.value || 'browser';
     const vId = voiceIdInput?.value || localStorage.getItem('aetheria_voice_id');
     const voices = getAvailableVoicesForProvider(prov);
+    if (!voices || !Array.isArray(voices)) return vId || 'Default Voice';
     const found = voices.find(v => v.id === vId);
     return found ? found.name : (vId || 'Default Voice');
   }
 
+  // Real-time Dynamic Voice Catalog Renderer
   function renderDynamicVoiceCatalog(searchQuery = '') {
     if (!dynamicVoiceGrid) return;
     const prov = voiceProviderSelect?.value || localStorage.getItem('aetheria_voice_provider') || 'browser';
     const voices = getAvailableVoicesForProvider(prov);
     const currentVoiceId = voiceIdInput?.value || localStorage.getItem('aetheria_voice_id') || (prov === 'elevenlabs' ? '21m00Tcm4TlvDq8ikWAM' : prov === 'openai' ? 'nova' : 'en-US-Journey-F');
 
+    // Case 1: Provider needs API key but none is connected -> show clean connection prompt
+    if (voices === null) {
+      const provTitle = prov === 'elevenlabs' ? 'ElevenLabs' : prov === 'google' ? 'Google Cloud' : prov.toUpperCase();
+      dynamicVoiceGrid.innerHTML = `
+        <div class="col-span-full p-6 rounded-2xl bg-purple-950/20 border border-purple-500/30 text-center space-y-3">
+          <div class="w-10 h-10 rounded-xl bg-purple-500/20 border border-purple-500/30 text-purple-300 flex items-center justify-center mx-auto shadow-inner">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/></svg>
+          </div>
+          <div>
+            <h5 class="text-xs font-bold text-white mb-1">Live API Voices Required</h5>
+            <p class="text-[11px] text-slate-400 max-w-sm mx-auto leading-relaxed">
+              Connect your ${provTitle} API key above to load live voices (including your personal cloned voices and studio models) directly from your account.
+            </p>
+          </div>
+          <button 
+            type="button" 
+            class="px-4 py-1.5 rounded-xl bg-purple-600 hover:bg-purple-500 text-white text-xs font-semibold inline-flex items-center gap-1.5 cursor-pointer shadow-md transition active:scale-95" 
+            onclick="document.getElementById('voice-api-key')?.focus()"
+          >
+            <span>Enter API Key</span>
+          </button>
+        </div>
+      `;
+      if (voiceSyncStatusText) voiceSyncStatusText.textContent = `Connect ${provTitle} key to fetch live voices`;
+      return;
+    }
+
+    // Case 2: Key exists, but voices not yet fetched -> show real-time loading spinner and auto-fetch!
+    if (Array.isArray(voices) && voices.length === 0 && prov !== 'browser') {
+      const provTitle = prov === 'elevenlabs' ? 'ElevenLabs' : prov === 'google' ? 'Google Cloud' : prov.toUpperCase();
+      dynamicVoiceGrid.innerHTML = `
+        <div class="col-span-full p-8 rounded-2xl bg-purple-950/20 border border-purple-500/30 text-center space-y-3">
+          <div class="w-8 h-8 rounded-full border-2 border-purple-400 border-t-transparent animate-spin mx-auto"></div>
+          <div>
+            <p class="text-xs font-semibold text-purple-200">Fetching live voices from ${provTitle} API...</p>
+            <p class="text-[10px] text-slate-400 mt-0.5">Syncing your personal cloned and library voices in real time</p>
+          </div>
+        </div>
+      `;
+      // Trigger background sync automatically
+      setTimeout(() => {
+        syncVoicesForProvider(prov, false);
+      }, 50);
+      return;
+    }
+
     const q = (searchQuery || '').toLowerCase().trim();
-    const filtered = voices.filter(v => {
+    const filtered = (voices || []).filter(v => {
       if (!q) return true;
       return (v.name && v.name.toLowerCase().includes(q)) ||
              (v.style && v.style.toLowerCase().includes(q)) ||
@@ -8448,7 +8655,7 @@ const { character } = Astro.props;
 
     if (filtered.length === 0) {
       dynamicVoiceGrid.innerHTML = `
-        <div class="col-span-full p-4 rounded-xl bg-white/[0.02] border border-white/5 text-center text-xs text-slate-400">
+        <div class="col-span-full p-5 rounded-2xl bg-white/[0.02] border border-white/5 text-center text-xs text-slate-400">
           No voices match "${searchQuery}". Click "Sync Voices" to refresh from your API account.
         </div>
       `;
@@ -8457,6 +8664,7 @@ const { character } = Astro.props;
 
     dynamicVoiceGrid.innerHTML = filtered.map(v => {
       const isSel = v.id === currentVoiceId || (prov === 'openai' && (v.id === openaiVoiceSelect?.value || v.id === localStorage.getItem('aetheria_openai_voice')));
+      const isCloned = v.category === 'Cloned' || v.style?.includes('Cloned');
       return `
         <div 
           class="dynamic-voice-card p-2.5 rounded-xl border text-left transition cursor-pointer flex flex-col justify-between gap-1.5 relative group ${
@@ -8472,6 +8680,7 @@ const { character } = Astro.props;
             <div class="min-w-0 flex-1">
               <div class="flex items-center gap-1.5 flex-wrap">
                 <span class="font-bold text-xs ${isSel ? 'text-white' : 'text-slate-200 group-hover:text-purple-200'} truncate">${v.name}</span>
+                ${isCloned ? '<span class="px-1.5 py-0.2 rounded bg-rose-500/30 text-rose-300 text-[9px] font-bold font-mono">CLONED</span>' : ''}
                 ${isSel ? '<span class="px-1.5 py-0.2 rounded bg-purple-500/30 text-purple-300 text-[9px] font-bold font-mono">SELECTED</span>' : ''}
               </div>
               <p class="text-[10px] text-slate-400 truncate mt-0.5">${v.style || v.accent || ''}</p>
@@ -8489,7 +8698,7 @@ const { character } = Astro.props;
           <div class="flex items-center gap-1 flex-wrap pt-0.5">
             ${v.gender ? `<span class="px-1.5 py-0.5 rounded-md bg-white/[0.04] text-[9px] text-slate-300 border border-white/5 font-medium">${v.gender}</span>` : ''}
             ${v.accent ? `<span class="px-1.5 py-0.5 rounded-md bg-white/[0.04] text-[9px] text-slate-400 border border-white/5">${v.accent}</span>` : ''}
-            ${v.category ? `<span class="px-1.5 py-0.5 rounded-md bg-purple-900/30 text-[9px] text-purple-300 border border-purple-500/20">${v.category}</span>` : ''}
+            ${v.category && !isCloned ? `<span class="px-1.5 py-0.5 rounded-md bg-purple-900/30 text-[9px] text-purple-300 border border-purple-500/20">${v.category}</span>` : ''}
           </div>
         </div>
       `;
@@ -8507,24 +8716,28 @@ const { character } = Astro.props;
         if (voiceIdInput) voiceIdInput.value = vId;
         localStorage.setItem('aetheria_voice_id', vId);
 
-        if (prov === 'openai') {
-          if (openaiVoiceSelect) openaiVoiceSelect.value = vId;
+        if (prov === 'openai' && openaiVoiceSelect) {
+          openaiVoiceSelect.value = vId;
           localStorage.setItem('aetheria_openai_voice', vId);
         } else if (prov === 'google') {
           localStorage.setItem('aetheria_google_voice', vId);
         }
 
         renderDynamicVoiceCatalog(voiceSearchInput?.value || '');
-        showNotification(`✓ Voice selected: ${vName || vId}`);
+        if (voicePreviewStatusText) {
+          voicePreviewStatusText.textContent = `Selected voice: ${vName}`;
+        }
+        showNotification(`✓ Voice selected: ${vName}`);
       });
     });
 
-    // Attach preview button listeners
+    // Attach preview audition button listeners
     dynamicVoiceGrid.querySelectorAll('.preview-voice-card-btn').forEach(btn => {
       btn.addEventListener('click', (e) => {
         e.stopPropagation();
         const card = btn.closest('.dynamic-voice-card');
         if (!card) return;
+
         const vId = card.getAttribute('data-voice-id');
         const vName = card.getAttribute('data-voice-name');
         const previewUrl = card.getAttribute('data-preview-url');
@@ -8623,8 +8836,8 @@ const { character } = Astro.props;
           }));
           localStorage.setItem('aetheria_cached_voices_elevenlabs', JSON.stringify(mapped));
           renderDynamicVoiceCatalog(voiceSearchInput?.value || '');
-          if (voiceSyncStatusText) voiceSyncStatusText.textContent = `Synced ${mapped.length} voices from ElevenLabs account`;
-          if (isManual) showNotification(`✓ Synced ${mapped.length} ElevenLabs voices!`);
+          if (voiceSyncStatusText) voiceSyncStatusText.textContent = `Synced ${mapped.length} live voices from ElevenLabs`;
+          if (isManual) showNotification(`✓ Synced ${mapped.length} live ElevenLabs voices!`);
           return;
         } else {
           throw new Error('Could not fetch ElevenLabs voices list');
@@ -8633,7 +8846,7 @@ const { character } = Astro.props;
 
       if (prov === 'openai') {
         renderDynamicVoiceCatalog(voiceSearchInput?.value || '');
-        if (voiceSyncStatusText) voiceSyncStatusText.textContent = 'OpenAI Audio voice library active';
+        if (voiceSyncStatusText) voiceSyncStatusText.textContent = 'OpenAI Audio voice models active';
         if (isManual) showNotification('✓ OpenAI Audio voices synced.');
       }
 
@@ -8660,6 +8873,7 @@ const { character } = Astro.props;
               if (filtered.length > 0) {
                 localStorage.setItem('aetheria_cached_voices_google', JSON.stringify(filtered));
                 renderDynamicVoiceCatalog(voiceSearchInput?.value || '');
+                if (voiceSyncStatusText) voiceSyncStatusText.textContent = `Synced ${filtered.length} Google Cloud voices`;
                 if (isManual) showNotification(`✓ Synced ${filtered.length} Google voices!`);
                 return;
               }
@@ -8684,6 +8898,259 @@ const { character } = Astro.props;
   });
 
   // ==========================================
+  // STT KEYS & STORAGE (PER-PROVIDER)
+  // ==========================================
+  function getSttKeyForProvider(prov) {
+    if (prov === 'groq') return localStorage.getItem('aetheria_stt_key_groq') || localStorage.getItem('aetheria_stt_key') || localStorage.getItem('aetheria_key_groq') || '';
+    if (prov === 'openai' || prov === 'openai-stt') return localStorage.getItem('aetheria_stt_key_openai') || localStorage.getItem('aetheria_stt_key') || localStorage.getItem('aetheria_key_openai') || '';
+    if (prov === 'assemblyai') return localStorage.getItem('aetheria_stt_key_assemblyai') || localStorage.getItem('aetheria_stt_key') || '';
+    if (prov === 'google-stt') return localStorage.getItem('aetheria_stt_key_google') || localStorage.getItem('aetheria_stt_key') || '';
+    return localStorage.getItem('aetheria_stt_key') || '';
+  }
+
+  function setSttKeyForProvider(prov, key) {
+    localStorage.setItem('aetheria_stt_key', key);
+    if (prov === 'groq') localStorage.setItem('aetheria_stt_key_groq', key);
+    else if (prov === 'openai' || prov === 'openai-stt') localStorage.setItem('aetheria_stt_key_openai', key);
+    else if (prov === 'assemblyai') localStorage.setItem('aetheria_stt_key_assemblyai', key);
+    else if (prov === 'google-stt') localStorage.setItem('aetheria_stt_key_google', key);
+  }
+
+  // ==========================================
+  // STT PROFILES VAULT (MICROPHONE PRESETS)
+  // ==========================================
+  const DEFAULT_STT_PROFILES = [
+    {
+      id: 'default-browser-mic',
+      name: 'Built-in Device Mic',
+      provider: 'browser-stt',
+      model: 'web-speech',
+      language: 'auto',
+      isSystem: true
+    },
+    {
+      id: 'groq-whisper-turbo',
+      name: 'Groq Whisper Turbo',
+      provider: 'groq',
+      model: 'whisper-large-v3-turbo',
+      language: 'auto',
+      isSystem: false
+    },
+    {
+      id: 'openai-whisper-studio',
+      name: 'OpenAI Whisper Studio',
+      provider: 'openai-stt',
+      model: 'whisper-1',
+      language: 'auto',
+      isSystem: false
+    }
+  ];
+
+  function getSavedSttProfiles() {
+    try {
+      const raw = localStorage.getItem('aetheria_stt_profiles');
+      if (raw) {
+        const parsed = JSON.parse(raw);
+        if (Array.isArray(parsed) && parsed.length > 0) return parsed;
+      }
+    } catch (e) {}
+    return DEFAULT_STT_PROFILES;
+  }
+
+  function saveSttProfiles(profiles) {
+    localStorage.setItem('aetheria_stt_profiles', JSON.stringify(profiles));
+  }
+
+  function renderSttProfileMenu() {
+    if (!sttProfileItemsList) return;
+    const profiles = getSavedSttProfiles();
+    const activeId = localStorage.getItem('aetheria_active_stt_profile_id') || 'default-browser-mic';
+    const activeProf = profiles.find(p => p.id === activeId) || profiles[0];
+
+    if (customSttProfileTriggerLabel) {
+      customSttProfileTriggerLabel.textContent = activeProf ? activeProf.name : 'Device Mic';
+    }
+    if (customSttProfileTriggerTag) {
+      if (activeProf.provider === 'browser-stt') customSttProfileTriggerTag.textContent = '100% Free';
+      else if (activeProf.provider === 'groq') customSttProfileTriggerTag.textContent = 'Ultra-Fast';
+      else if (activeProf.provider === 'openai-stt') customSttProfileTriggerTag.textContent = 'Studio';
+      else customSttProfileTriggerTag.textContent = activeProf.provider.toUpperCase();
+    }
+    if (customSttProfileStatusDot) {
+      const ready = isSttReady();
+      customSttProfileStatusDot.className = `w-2 h-2 rounded-full shrink-0 ${ready ? 'bg-emerald-400' : 'bg-amber-400'}`;
+    }
+
+    sttProfileItemsList.innerHTML = profiles.map(p => {
+      const isCur = p.id === activeId;
+      const tagText = p.provider === 'browser-stt' ? '100% Free' : p.provider.toUpperCase();
+      return `
+        <button
+          type="button"
+          class="stt-profile-item w-full flex items-center justify-between gap-2 px-2.5 py-1.5 rounded-lg text-xs transition cursor-pointer text-left ${
+            isCur ? 'bg-rose-600/30 text-white font-semibold' : 'hover:bg-white/5 text-slate-300'
+          }"
+          data-profile-id="${p.id}"
+        >
+          <div class="flex items-center gap-2 truncate">
+            <span class="w-1.5 h-1.5 rounded-full ${isCur ? 'bg-rose-400' : 'bg-slate-500'}"></span>
+            <span class="truncate">${p.name}</span>
+          </div>
+          <span class="px-1.5 py-0.2 rounded bg-white/10 text-[9px] font-mono text-slate-300 shrink-0">${tagText}</span>
+        </button>
+      `;
+    }).join('');
+
+    sttProfileItemsList.querySelectorAll('.stt-profile-item').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const pId = btn.getAttribute('data-profile-id');
+        const prof = profiles.find(x => x.id === pId);
+        if (prof) {
+          applySttProfile(prof);
+          customSttProfileMenu?.classList.add('hidden');
+        }
+      });
+    });
+  }
+
+  function applySttProfile(prof) {
+    localStorage.setItem('aetheria_active_stt_profile_id', prof.id);
+    if (sttProviderSelect) sttProviderSelect.value = prof.provider;
+    localStorage.setItem('aetheria_stt_provider', prof.provider);
+
+    if (prof.model) {
+      if (sttModelSelect) sttModelSelect.value = prof.model;
+      localStorage.setItem('aetheria_stt_model', prof.model);
+    }
+    if (prof.language) {
+      if (sttLangSelect) sttLangSelect.value = prof.language;
+      localStorage.setItem('aetheria_stt_lang', prof.language);
+    }
+
+    if (sttApiKey) {
+      sttApiKey.value = getSttKeyForProvider(prof.provider);
+    }
+
+    syncVoiceUiPanels();
+    updateMicButtonState();
+    renderSttProfileMenu();
+    showNotification(`✓ Switched to mic preset "${prof.name}"`);
+  }
+
+  function saveCurrentAsSttProfile(name) {
+    const trimmed = (name || '').trim();
+    if (!trimmed) {
+      showNotification('⚠️ Please enter a preset name', 'warning');
+      return;
+    }
+
+    const profiles = getSavedSttProfiles();
+    const newId = 'stt-prof-' + Date.now();
+    const newProfile = {
+      id: newId,
+      name: trimmed,
+      provider: sttProviderSelect?.value || 'groq',
+      model: sttModelSelect?.value || 'whisper-large-v3-turbo',
+      language: sttLangSelect?.value || 'auto',
+      isSystem: false
+    };
+
+    profiles.push(newProfile);
+    saveSttProfiles(profiles);
+    localStorage.setItem('aetheria_active_stt_profile_id', newId);
+
+    if (newSttProfileForm) newSttProfileForm.classList.add('hidden');
+    if (newSttProfileNameInput) newSttProfileNameInput.value = '';
+
+    renderSttProfileMenu();
+    showNotification(`✓ Saved microphone preset "${trimmed}"`);
+  }
+
+  function updateActiveSttProfile() {
+    const activeId = localStorage.getItem('aetheria_active_stt_profile_id') || 'default-browser-mic';
+    const profiles = getSavedSttProfiles();
+    const idx = profiles.findIndex(p => p.id === activeId);
+    if (idx === -1) {
+      showNotification('⚠️ No active custom preset selected to update', 'warning');
+      return;
+    }
+
+    profiles[idx].provider = sttProviderSelect?.value || 'groq';
+    profiles[idx].model = sttModelSelect?.value || 'whisper-large-v3-turbo';
+    profiles[idx].language = sttLangSelect?.value || 'auto';
+
+    saveSttProfiles(profiles);
+    renderSttProfileMenu();
+    showNotification(`✓ Updated preset "${profiles[idx].name}"`);
+  }
+
+  function deleteActiveSttProfile() {
+    const activeId = localStorage.getItem('aetheria_active_stt_profile_id') || 'default-browser-mic';
+    if (activeId === 'default-browser-mic') {
+      showNotification('⚠️ Built-in device mic profile cannot be deleted', 'warning');
+      return;
+    }
+
+    let profiles = getSavedSttProfiles();
+    profiles = profiles.filter(p => p.id !== activeId);
+    saveSttProfiles(profiles);
+    localStorage.setItem('aetheria_active_stt_profile_id', 'default-browser-mic');
+
+    const defaultProf = profiles[0] || DEFAULT_STT_PROFILES[0];
+    applySttProfile(defaultProf);
+    showNotification('✓ Deleted custom preset');
+  }
+
+  // STT Profile UI event listeners
+  customSttProfileTrigger?.addEventListener('click', (e) => {
+    e.stopPropagation();
+    customSttProfileMenu?.classList.toggle('hidden');
+  });
+
+  document.addEventListener('click', (e) => {
+    if (!e.target.closest('#custom-stt-profile-trigger') && !e.target.closest('#custom-stt-profile-menu')) {
+      customSttProfileMenu?.classList.add('hidden');
+    }
+  });
+
+  btnShowSaveSttProfile?.addEventListener('click', () => {
+    customSttProfileMenu?.classList.add('hidden');
+    if (newSttProfileForm) newSttProfileForm.classList.remove('hidden');
+    newSttProfileNameInput?.focus();
+  });
+
+  btnCancelSaveSttProfile?.addEventListener('click', () => {
+    if (newSttProfileForm) newSttProfileForm.classList.add('hidden');
+  });
+
+  btnConfirmSaveSttProfile?.addEventListener('click', () => {
+    saveCurrentAsSttProfile(newSttProfileNameInput?.value || '');
+  });
+
+  newSttProfileNameInput?.addEventListener('keydown', (e) => {
+    if (e.key === 'Enter') {
+      saveCurrentAsSttProfile(newSttProfileNameInput.value);
+    }
+  });
+
+  btnUpdateActiveSttProfile?.addEventListener('click', updateActiveSttProfile);
+  btnDeleteActiveSttProfile?.addEventListener('click', deleteActiveSttProfile);
+
+  // Quick STT Engine Chips
+  document.querySelectorAll('.stt-quick-engine-chip').forEach(chip => {
+    chip.addEventListener('click', () => {
+      const eng = chip.getAttribute('data-stt-engine');
+      if (!eng) return;
+      if (sttProviderSelect) sttProviderSelect.value = eng;
+      localStorage.setItem('aetheria_stt_provider', eng);
+      if (sttApiKey) sttApiKey.value = getSttKeyForProvider(eng);
+      syncVoiceUiPanels();
+      updateMicButtonState();
+      renderSttProfileMenu();
+    });
+  });
+
+  // ==========================================
   // PROGRESSIVE DISCLOSURE UI CONTROLLER
   // ==========================================
   function syncVoiceUiPanels() {
@@ -8697,7 +9164,6 @@ const { character } = Astro.props;
     if (ttsActiveEngineDesc) ttsActiveEngineDesc.textContent = ttsObj.desc;
     if (ttsActiveIconBox) ttsActiveIconBox.innerHTML = getVoiceEngineIconSvg(ttsObj.id);
 
-    // Sync input field value to provider key
     if (voiceApiKey) {
       voiceApiKey.value = savedTtsKey;
     }
@@ -8726,7 +9192,7 @@ const { character } = Astro.props;
         if (ttsConnectTitle) ttsConnectTitle.textContent = `Connect ${ttsObj.name} API Key`;
         if (ttsConnectDesc) {
           if (ttsId === 'elevenlabs') {
-            ttsConnectDesc.textContent = 'Enter your ElevenLabs xi-api-key. Stored locally in your browser.';
+            ttsConnectDesc.textContent = 'Enter your ElevenLabs xi-api-key. Fetches your personal and cloned voices in real time.';
           } else if (ttsId === 'openai') {
             ttsConnectDesc.textContent = 'Enter your OpenAI API key (sk-...). Used for natural studio voice playback.';
           } else if (ttsId === 'google') {
@@ -8751,7 +9217,6 @@ const { character } = Astro.props;
           }
         }
 
-        // Check if OpenAI key exists in text tab
         const openaiTextKey = localStorage.getItem('aetheria_key_openai') || '';
         if (ttsQuickReuseKeyBtn) {
           if (ttsId === 'openai' && openaiTextKey && !savedTtsKey) {
@@ -8768,39 +9233,25 @@ const { character } = Astro.props;
       voiceCustomUrlContainer.classList.toggle('hidden', ttsId !== 'custom');
     }
 
-    // Tone & Pitch visibility: hide for ElevenLabs (it uses stability/clarity)
     if (voicePitchContainer) {
       voicePitchContainer.classList.toggle('hidden', ttsId === 'elevenlabs');
     }
 
-    // ElevenLabs specific options
     if (elevenExtraSettings) {
       elevenExtraSettings.classList.toggle('hidden', ttsId !== 'elevenlabs');
     }
 
-    // OpenAI specific options
     if (openaiModelToggleContainer) {
       openaiModelToggleContainer.classList.toggle('hidden', ttsId !== 'openai');
     }
-
-    // Sync OpenAI TTS Model toggle
-    const currentOpenaiModel = openaiTtsModelSelect?.value || localStorage.getItem('aetheria_openai_tts_model') || 'tts-1';
-    document.querySelectorAll('.openai-model-toggle-btn').forEach(btn => {
-      const m = btn.getAttribute('data-tts-model');
-      if (m === currentOpenaiModel) {
-        btn.className = 'openai-model-toggle-btn flex-1 py-1.5 px-3 rounded-lg text-xs font-semibold transition cursor-pointer bg-purple-600 text-white shadow-sm';
-      } else {
-        btn.className = 'openai-model-toggle-btn flex-1 py-1.5 px-3 rounded-lg text-xs font-semibold transition cursor-pointer text-slate-400 hover:text-white';
-      }
-    });
 
     // Render Dynamic Voice Catalog
     renderDynamicVoiceCatalog(voiceSearchInput?.value || '');
 
     // 2. STT Progressive Disclosure
-    const sttId = sttProviderSelect?.value || localStorage.getItem('aetheria_stt_provider') || 'groq';
+    const sttId = sttProviderSelect?.value || localStorage.getItem('aetheria_stt_provider') || 'browser-stt';
     const sttObj = STT_CATALOG.find(x => x.id === sttId) || STT_CATALOG[0];
-    const savedSttKey = (sttApiKey?.value || localStorage.getItem('aetheria_stt_key') || '').trim();
+    const savedSttKey = getSttKeyForProvider(sttId);
     const isSttConnected = (!sttObj.needsKey) || Boolean(savedSttKey);
 
     if (sttActiveEngineName) sttActiveEngineName.textContent = sttObj.name;
@@ -8810,54 +9261,83 @@ const { character } = Astro.props;
     if (sttConnectionBadge) {
       if (!sttObj.needsKey) {
         sttConnectionBadge.className = 'px-2 py-0.5 rounded-full text-[10px] font-mono font-semibold bg-emerald-500/20 text-emerald-300 border border-emerald-500/30';
-        sttConnectionBadge.textContent = '100% Free • Ready';
+        sttConnectionBadge.textContent = '100% Free • Offline Ready';
       } else if (!isSttConnected) {
         sttConnectionBadge.className = 'px-2 py-0.5 rounded-full text-[10px] font-mono font-semibold bg-amber-500/20 text-amber-300 border border-amber-500/30';
-        sttConnectionBadge.textContent = 'Disconnected • Key Required';
+        sttConnectionBadge.textContent = 'Key Required';
       } else {
         sttConnectionBadge.className = 'px-2 py-0.5 rounded-full text-[10px] font-mono font-semibold bg-emerald-500/20 text-emerald-300 border border-emerald-500/30';
         sttConnectionBadge.textContent = 'Connected & Active';
       }
     }
 
-    // STT Connection Card
-    if (sttConnectionCard) {
-      if (sttObj.needsKey && !isSttConnected) {
+    // Free device mic card vs Cloud STT connection card
+    if (sttId === 'browser-stt') {
+      if (sttFreeDeviceCard) sttFreeDeviceCard.classList.remove('hidden');
+      if (sttConnectionCard) sttConnectionCard.classList.add('hidden');
+      if (sttModelSection) sttModelSection.classList.add('hidden');
+    } else {
+      if (sttFreeDeviceCard) sttFreeDeviceCard.classList.add('hidden');
+      if (sttConnectionCard) {
         sttConnectionCard.classList.remove('hidden');
         if (sttConnectTitle) sttConnectTitle.textContent = `Connect ${sttObj.name} API Key`;
-        if (sttConnectDesc) sttConnectDesc.textContent = `Enter your ${sttObj.keyHint || 'API Key'} to activate instant voice transcription.`;
+        if (sttConnectDesc) sttConnectDesc.textContent = `Enter your API key to activate instant ${sttObj.name} voice transcription.`;
+        if (sttApiKey) {
+          sttApiKey.value = savedSttKey;
+          sttApiKey.placeholder = sttId === 'groq' ? 'Enter Groq API Key...' : sttId === 'openai-stt' ? 'Enter OpenAI Key (sk-...)...' : 'Enter API Key...';
+        }
 
-        // Check text keys
+        const keyStatusPill = document.getElementById('stt-key-status-pill');
+        if (keyStatusPill) {
+          if (isSttConnected) {
+            keyStatusPill.className = 'px-2 py-0.5 rounded-full text-[9px] font-mono font-bold bg-emerald-500/20 text-emerald-300 border border-emerald-500/30';
+            keyStatusPill.textContent = 'KEY CONNECTED';
+          } else {
+            keyStatusPill.className = 'px-2 py-0.5 rounded-full text-[9px] font-mono font-bold bg-amber-500/20 text-amber-300 border border-amber-500/30';
+            keyStatusPill.textContent = 'KEY REQUIRED';
+          }
+        }
+
+        // Quick reuse from Text engine
         const groqTextKey = localStorage.getItem('aetheria_key_groq') || '';
         const openaiTextKey = localStorage.getItem('aetheria_key_openai') || '';
         if (sttQuickReuseKeyBtn) {
-          if (sttId === 'groq' && groqTextKey) {
+          if (sttId === 'groq' && groqTextKey && !savedSttKey) {
             sttQuickReuseKeyBtn.classList.remove('hidden');
             if (sttQuickReuseLabel) sttQuickReuseLabel.textContent = '⚡ Connect using saved Groq Key from Text Engine';
-          } else if (sttId === 'openai' && openaiTextKey) {
+          } else if ((sttId === 'openai' || sttId === 'openai-stt') && openaiTextKey && !savedSttKey) {
             sttQuickReuseKeyBtn.classList.remove('hidden');
             if (sttQuickReuseLabel) sttQuickReuseLabel.textContent = '⚡ Connect using saved OpenAI Key from Text Engine';
           } else {
             sttQuickReuseKeyBtn.classList.add('hidden');
           }
         }
-      } else {
-        sttConnectionCard.classList.add('hidden');
       }
+      if (sttModelSection) sttModelSection.classList.remove('hidden');
     }
 
     if (sttCustomUrlContainer) {
       sttCustomUrlContainer.classList.toggle('hidden', sttId !== 'custom-stt');
     }
 
+    // Highlight active quick engine chips
+    document.querySelectorAll('.stt-quick-engine-chip').forEach(chip => {
+      const eng = chip.getAttribute('data-stt-engine');
+      if (eng === sttId) {
+        chip.className = 'stt-quick-engine-chip px-3 py-1.5 rounded-xl text-xs font-semibold transition cursor-pointer flex items-center gap-1.5 bg-rose-600 text-white shadow-sm';
+      } else {
+        chip.className = 'stt-quick-engine-chip px-3 py-1.5 rounded-xl text-xs font-semibold transition cursor-pointer flex items-center gap-1.5 bg-white/[0.04] hover:bg-white/[0.08] text-slate-300 hover:text-white border border-white/10';
+      }
+    });
+
     // Sync STT Model cards
     const currentSttModel = sttModelSelect?.value || localStorage.getItem('aetheria_stt_model') || 'whisper-large-v3-turbo';
     document.querySelectorAll('.stt-model-card').forEach(card => {
       const m = card.getAttribute('data-stt-model');
       if (m === currentSttModel) {
-        card.className = 'stt-model-card p-3 rounded-xl border text-left transition cursor-pointer bg-rose-950/60 border-rose-500/80 shadow-md shadow-rose-950/60';
+        card.className = 'stt-model-card p-3 rounded-xl border text-left transition cursor-pointer flex flex-col justify-between gap-1 bg-rose-950/60 border-rose-500/80 shadow-md shadow-rose-950/60';
       } else {
-        card.className = 'stt-model-card p-3 rounded-xl border text-left transition cursor-pointer bg-white/[0.03] hover:bg-white/[0.06] border-white/10';
+        card.className = 'stt-model-card p-3 rounded-xl border text-left transition cursor-pointer flex flex-col justify-between gap-1 bg-white/[0.03] hover:bg-white/[0.06] border-white/10';
       }
     });
 
@@ -8871,7 +9351,32 @@ const { character } = Astro.props;
         chip.className = 'stt-lang-chip px-3.5 py-2 rounded-xl text-xs font-semibold transition cursor-pointer bg-white/[0.04] hover:bg-white/[0.08] text-slate-300 hover:text-white border border-white/10 flex items-center gap-1.5';
       }
     });
+
+    renderSttProfileMenu();
   }
+
+  // Model & Language Chip Click Handlers
+  document.querySelectorAll('.stt-model-card').forEach(card => {
+    card.addEventListener('click', () => {
+      const m = card.getAttribute('data-stt-model');
+      if (m) {
+        if (sttModelSelect) sttModelSelect.value = m;
+        localStorage.setItem('aetheria_stt_model', m);
+        syncVoiceUiPanels();
+      }
+    });
+  });
+
+  document.querySelectorAll('.stt-lang-chip').forEach(chip => {
+    chip.addEventListener('click', () => {
+      const l = chip.getAttribute('data-lang');
+      if (l) {
+        if (sttLangSelect) sttLangSelect.value = l;
+        localStorage.setItem('aetheria_stt_lang', l);
+        syncVoiceUiPanels();
+      }
+    });
+  });
 
   // Connect Buttons
   ttsConnectConfirmBtn?.addEventListener('click', () => {
@@ -8899,16 +9404,33 @@ const { character } = Astro.props;
     }
   });
 
-  sttConnectConfirmBtn?.addEventListener('click', () => {
+  sttVerifyConnectBtn?.addEventListener('click', () => {
     const val = sttApiKey?.value.trim() || '';
+    const sttId = sttProviderSelect?.value || 'groq';
     if (!val) {
       showNotification('⚠️ Please enter an API key first.', 'warning');
       sttApiKey?.focus();
       return;
     }
-    localStorage.setItem('aetheria_stt_key', val);
+    setSttKeyForProvider(sttId, val);
     syncVoiceUiPanels();
     updateMicButtonState();
+    renderSttProfileMenu();
+    showNotification(`✓ ${sttId.toUpperCase()} API Key connected successfully!`);
+  });
+
+  sttConnectConfirmBtn?.addEventListener('click', () => {
+    const val = sttApiKey?.value.trim() || '';
+    const sttId = sttProviderSelect?.value || 'groq';
+    if (!val) {
+      showNotification('⚠️ Please enter an API key first.', 'warning');
+      sttApiKey?.focus();
+      return;
+    }
+    setSttKeyForProvider(sttId, val);
+    syncVoiceUiPanels();
+    updateMicButtonState();
+    renderSttProfileMenu();
     showNotification('✓ Voice input API Key connected successfully!');
   });
 
@@ -8917,9 +9439,10 @@ const { character } = Astro.props;
     const key = (sttId === 'groq' ? localStorage.getItem('aetheria_key_groq') : localStorage.getItem('aetheria_key_openai')) || '';
     if (key) {
       if (sttApiKey) sttApiKey.value = key;
-      localStorage.setItem('aetheria_stt_key', key);
+      setSttKeyForProvider(sttId, key);
       syncVoiceUiPanels();
       updateMicButtonState();
+      renderSttProfileMenu();
       showNotification(`✓ Connected ${sttId.toUpperCase()} Key from Text Engine!`);
     }
   });
@@ -8938,7 +9461,7 @@ const { character } = Astro.props;
     toggleSttKeyVisibilityBtn.textContent = isPass ? 'Hide' : 'Show';
   });
 
-  // Comprehensive Live Audition Button
+  // Comprehensive Live Voice Audition Button (Character Voice)
   testVoiceBtn?.addEventListener('click', async () => {
     const prov = voiceProviderSelect?.value || 'browser';
     const key = getVoiceKeyForProvider(prov);
@@ -8950,28 +9473,80 @@ const { character } = Astro.props;
       return;
     }
 
-    const testPhrase = `Greetings. I am ${activeChar.name}. This is a live voice preview. How do I sound to you?`;
-    
-    if (testVoiceLabel) testVoiceLabel.textContent = 'Playing...';
-    if (testVoiceIcon) testVoiceIcon.classList.add('animate-pulse');
-    if (voicePreviewStatusText) voicePreviewStatusText.textContent = `Auditioning voice for ${activeChar.name}...`;
+    const testPhrase = `Greetings. I am ${activeChar.name}. This is my real-time voice preview.`;
+    if (voicePreviewStatusText) voicePreviewStatusText.textContent = `Auditioning ${activeChar.name}...`;
 
-    showNotification('Playing live voice sample...');
     await speak(testPhrase, testVoiceBtn);
-
     setTimeout(() => {
-      if (testVoiceLabel) testVoiceLabel.textContent = 'Play Sample';
-      if (testVoiceIcon) testVoiceIcon.classList.remove('animate-pulse');
       if (voicePreviewStatusText) voicePreviewStatusText.textContent = `Listen to ${activeChar.name} speak with chosen voice`;
     }, 2500);
   });
 
-    // Live STT Test Button with Connection Verification
+  // Live STT Test Button (Microphone Audition)
   let sttTestMediaRecorder = null;
   let sttTestChunks = [];
   testSttBtn?.addEventListener('click', async () => {
+    const prov = sttProviderSelect?.value || localStorage.getItem('aetheria_stt_provider') || 'browser-stt';
+    const outputBox = document.getElementById('stt-test-output-box');
+    const outputText = document.getElementById('stt-test-output-text');
+
+    // 1. Built-in Browser Web Speech API
+    if (prov === 'browser-stt' || prov === 'browser') {
+      if (typeof window === 'undefined' || (!('webkitSpeechRecognition' in window) && !('SpeechRecognition' in window))) {
+        showNotification('⚠️ Built-in Web Speech API is not supported in this browser. Please switch to Groq Whisper.', 'warning');
+        return;
+      }
+
+      const SpeechAPI = window.SpeechRecognition || window.webkitSpeechRecognition;
+      try {
+        const recognizer = new SpeechAPI();
+        recognizer.continuous = false;
+        recognizer.interimResults = false;
+        const currentLang = sttLangSelect?.value || localStorage.getItem('aetheria_stt_lang') || 'auto';
+        recognizer.lang = currentLang === 'fa' ? 'fa-IR' : currentLang === 'en' ? 'en-US' : (navigator.language || 'en-US');
+
+        if (testSttBtnLabel) testSttBtnLabel.textContent = 'Listening (Speak now)...';
+        testSttBtn.disabled = true;
+
+        recognizer.onresult = (evt) => {
+          let heard = '';
+          for (let i = evt.resultIndex; i < evt.results.length; ++i) {
+            heard += evt.results[i][0].transcript;
+          }
+          if (outputBox && outputText) {
+            outputBox.classList.remove('hidden');
+            outputText.textContent = heard ? `"${heard}"` : '(No speech detected)';
+          }
+          showNotification('✓ Speech recognized successfully!');
+        };
+
+        recognizer.onerror = (err) => {
+          if (outputBox && outputText) {
+            outputBox.classList.remove('hidden');
+            outputText.textContent = `Notice: ${err.error || 'No speech detected'}`;
+          }
+        };
+
+        recognizer.onend = () => {
+          testSttBtn.disabled = false;
+          if (testSttBtnLabel) testSttBtnLabel.textContent = 'Test Mic (3s)';
+        };
+
+        recognizer.start();
+        setTimeout(() => {
+          try { recognizer.stop(); } catch(e) {}
+        }, 3500);
+      } catch (err) {
+        showNotification(`⚠️ Microphone error: ${err.message}`, 'error');
+        testSttBtn.disabled = false;
+        if (testSttBtnLabel) testSttBtnLabel.textContent = 'Test Mic (3s)';
+      }
+      return;
+    }
+
+    // 2. Cloud Whisper Recording & Transcription
     if (!isSttReady()) {
-      showNotification('🔒 Please connect your STT API key first to test recording.', 'warning');
+      showNotification('🔒 Please enter your STT API key first to test recording.', 'warning');
       sttApiKey?.focus();
       return;
     }
@@ -8995,15 +9570,15 @@ const { character } = Astro.props;
         if (testSttBtnLabel) testSttBtnLabel.textContent = 'Transcribing...';
         try {
           const text = await transcribeAudioBlob(audioBlob);
-          if (sttTestOutputBox) {
-            sttTestOutputBox.classList.remove('hidden');
-            sttTestOutputBox.textContent = text ? `"${text}"` : "(No speech detected or empty audio)";
+          if (outputBox && outputText) {
+            outputBox.classList.remove('hidden');
+            outputText.textContent = text ? `"${text}"` : "(No speech detected or empty audio)";
           }
           showNotification('✓ Voice input transcribed successfully!');
         } catch (err) {
-          if (sttTestOutputBox) {
-            sttTestOutputBox.classList.remove('hidden');
-            sttTestOutputBox.textContent = `Error: ${err.message || 'Transcription failed'}`;
+          if (outputBox && outputText) {
+            outputBox.classList.remove('hidden');
+            outputText.textContent = `Error: ${err.message || 'Transcription failed'}`;
           }
         } finally {
           testSttBtn.disabled = false;
@@ -9012,7 +9587,17 @@ const { character } = Astro.props;
       };
 
       testSttBtn.disabled = true;
-      if (testSttBtnLabel) testSttBtnLabel.textContent = 'Listening (3s)...';
+      let countdown = 3;
+      if (testSttBtnLabel) testSttBtnLabel.textContent = `Listening (${countdown}s)...`;
+      const cdInterval = setInterval(() => {
+        countdown--;
+        if (countdown > 0 && testSttBtnLabel) {
+          testSttBtnLabel.textContent = `Listening (${countdown}s)...`;
+        } else {
+          clearInterval(cdInterval);
+        }
+      }, 1000);
+
       sttTestMediaRecorder.start();
       setTimeout(() => {
         if (sttTestMediaRecorder && sttTestMediaRecorder.state === 'recording') {
@@ -9237,11 +9822,22 @@ const { character } = Astro.props;
         if (!ttsEnabled) stopSpeaking();
       }
 
-      if (sttProviderSelect) localStorage.setItem('aetheria_stt_provider', sttProviderSelect.value);
-      if (sttApiKey) localStorage.setItem('aetheria_stt_key', sttApiKey.value.trim());
+      if (sttProviderSelect) {
+        const sProv = sttProviderSelect.value;
+        localStorage.setItem('aetheria_stt_provider', sProv);
+        if (sttApiKey) {
+          const sKey = sttApiKey.value.trim();
+          if (typeof setSttKeyForProvider === 'function') {
+            setSttKeyForProvider(sProv, sKey);
+          } else {
+            localStorage.setItem('aetheria_stt_key', sKey);
+          }
+        }
+      }
       if (sttCustomUrl) localStorage.setItem('aetheria_stt_custom_url', sttCustomUrl.value.trim());
       if (sttModelSelect) localStorage.setItem('aetheria_stt_model', sttModelSelect.value);
       if (sttLangSelect) localStorage.setItem('aetheria_stt_lang', sttLangSelect.value);
+      if (typeof renderSttProfileMenu === 'function') renderSttProfileMenu();
       syncVoiceUiPanels();
       updateMicButtonState();
 
@@ -12330,6 +12926,26 @@ const { character } = Astro.props;
       promptConfigureStt();
       return;
     }
+
+    const prov = localStorage.getItem('aetheria_stt_provider') || 'browser-stt';
+    if (prov === 'browser-stt' || prov === 'browser') {
+      if (isListeningVoice) {
+        try { speechRec?.stop(); } catch(e) {}
+      } else if (speechRec) {
+        try {
+          const l = localStorage.getItem('aetheria_stt_lang') || 'auto';
+          speechRec.lang = l === 'fa' ? 'fa-IR' : l === 'en' ? 'en-US' : (navigator.language || 'fa-IR');
+          speechRec.start();
+          showNotification('Listening via device mic... Speak now');
+        } catch(e) {
+          console.warn('SpeechRecognition start error:', e);
+        }
+      } else {
+        showNotification('⚠️ Speech recognition not supported in this browser. Please use Groq Whisper.', 'warning');
+      }
+      return;
+    }
+
     if (isRecordingChatAudio) {
       stopChatAudioRecording(false);
     } else {
