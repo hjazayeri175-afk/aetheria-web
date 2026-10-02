@@ -3570,6 +3570,54 @@ const { character } = Astro.props;
                     <div class="text-[10px] text-slate-400 truncate">Generate voice memo or narration</div>
                   </div>
                 </button>
+
+                <!-- Divider -->
+                <div class="border-t border-white/[0.08] my-1 mx-1"></div>
+
+                <!-- Personal Intelligence / User Persona Row (Google Gemini Style) -->
+                <div 
+                  id="plus-persona-row"
+                  class="w-full px-2.5 py-2 rounded-2xl bg-white/[0.03] hover:bg-white/[0.06] border border-white/[0.08] transition flex items-center justify-between gap-2.5 text-left group"
+                >
+                  <!-- Left: Clickable Identity Area to Switch/Edit Persona -->
+                  <button 
+                    type="button" 
+                    id="plus-persona-select-btn" 
+                    class="flex items-center gap-3 min-w-0 flex-1 text-left cursor-pointer group-hover:opacity-95"
+                    title="Click to switch or edit persona"
+                  >
+                    <!-- Icon: Person Outline with AI Sparkle (Personal Intelligence) -->
+                    <div class="w-9 h-9 rounded-xl bg-gradient-to-tr from-indigo-500/20 to-purple-500/20 border border-indigo-500/30 text-indigo-300 flex items-center justify-center shrink-0 relative">
+                      <svg class="w-4.5 h-4.5 text-indigo-200" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/>
+                        <circle cx="12" cy="7" r="4"/>
+                      </svg>
+                      <!-- Sparkle in bottom-right corner -->
+                      <span class="absolute -bottom-0.5 -right-0.5 text-amber-300 text-[10px] leading-none drop-shadow">✦</span>
+                    </div>
+
+                    <div class="flex-1 min-w-0">
+                      <div class="flex items-center gap-1.5">
+                        <span class="text-xs font-semibold text-white tracking-tight">Personal Intelligence</span>
+                        <span class="text-[9px] px-1.5 py-0.2 rounded-md bg-white/10 text-slate-300 font-mono">Labs</span>
+                      </div>
+                      <div id="plus-persona-subtitle" class="text-[10px] text-slate-400 truncate">Personalize chat if helpful</div>
+                    </div>
+                  </button>
+
+                  <!-- Right: Material 3 Style Toggle Switch -->
+                  <button 
+                    type="button" 
+                    id="plus-persona-toggle-btn"
+                    class="relative inline-flex h-6 w-11 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none"
+                    role="switch" 
+                    aria-checked="true"
+                    title="Toggle persona personalization on/off"
+                  >
+                    <span id="plus-persona-toggle-track" class="pointer-events-none absolute inset-0 rounded-full bg-blue-600 transition-colors duration-200"></span>
+                    <span id="plus-persona-toggle-thumb" class="pointer-events-none relative inline-block h-5 w-5 transform rounded-full bg-white shadow-md ring-0 transition duration-200 ease-in-out translate-x-5"></span>
+                  </button>
+                </div>
               </div>
             </div>
 
@@ -16623,6 +16671,34 @@ const { character } = Astro.props;
     if (overflowPersonaName) {
       overflowPersonaName.textContent = isEnabled ? (activeUserPersona.name || 'You') : 'Persona Off';
     }
+    const plusPersonaToggleTrack = document.getElementById('plus-persona-toggle-track');
+    const plusPersonaToggleThumb = document.getElementById('plus-persona-toggle-thumb');
+    const plusPersonaSubtitle = document.getElementById('plus-persona-subtitle');
+    const plusPersonaToggleBtn = document.getElementById('plus-persona-toggle-btn');
+
+    if (plusPersonaToggleBtn) {
+      plusPersonaToggleBtn.setAttribute('aria-checked', isEnabled ? 'true' : 'false');
+    }
+    if (plusPersonaToggleTrack) {
+      plusPersonaToggleTrack.className = isEnabled
+        ? 'pointer-events-none absolute inset-0 rounded-full bg-blue-600 transition-colors duration-200'
+        : 'pointer-events-none absolute inset-0 rounded-full bg-white/20 transition-colors duration-200';
+    }
+    if (plusPersonaToggleThumb) {
+      plusPersonaToggleThumb.className = isEnabled
+        ? 'pointer-events-none relative inline-block h-5 w-5 transform rounded-full bg-white shadow-md ring-0 transition duration-200 ease-in-out translate-x-5'
+        : 'pointer-events-none relative inline-block h-5 w-5 transform rounded-full bg-slate-300 shadow-md ring-0 transition duration-200 ease-in-out translate-x-0';
+    }
+    if (plusPersonaSubtitle) {
+      if (isEnabled) {
+        const pName = activeUserPersona.name || 'You';
+        plusPersonaSubtitle.textContent = `Personalize chat (${pName})`;
+        plusPersonaSubtitle.className = 'text-[10px] text-blue-300 font-medium truncate';
+      } else {
+        plusPersonaSubtitle.textContent = 'Personalize chat if helpful (Off)';
+        plusPersonaSubtitle.className = 'text-[10px] text-slate-400 truncate';
+      }
+    }
     if (chatMaskLabel) {
       if (!isEnabled) {
         chatMaskLabel.textContent = 'Persona Off';
@@ -17311,6 +17387,31 @@ const { character } = Astro.props;
   document.getElementById('overflow-item-persona')?.addEventListener('click', () => {
     closeHeaderOverflowMenu();
     document.getElementById('chat-action-mask-btn')?.click();
+  });
+
+  // Personal Intelligence Toggle Switch (ON/OFF)
+  document.getElementById('plus-persona-toggle-btn')?.addEventListener('click', (e) => {
+    e.stopPropagation();
+    const currentlyActive = isPersonaGloballyActive();
+    if (currentlyActive) {
+      localStorage.setItem('aetheria_persona_enabled', 'false');
+      updateChatMaskLabel();
+      renderAllMessages();
+      showNotification('Personal Intelligence disabled (Off)');
+    } else {
+      localStorage.setItem('aetheria_persona_enabled', 'true');
+      updateChatMaskLabel();
+      renderAllMessages();
+      const pName = activeUserPersona.name || 'You';
+      showNotification(`Personal Intelligence active (${pName})`);
+    }
+  });
+
+  // Personal Intelligence Identity Click (Open Persona Modal to Switch)
+  document.getElementById('plus-persona-select-btn')?.addEventListener('click', () => {
+    plusMenu?.classList.add('hidden');
+    plusBtn?.classList.remove('rotate-45', 'text-purple-400');
+    maskBtn?.click();
   });
 
   // Speech-to-Text via Web Speech API
