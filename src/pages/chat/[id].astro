@@ -3417,7 +3417,7 @@ const { character } = Astro.props;
         </div>
 
         <!-- Bottom Chat Input Bar -->
-        <div class="px-2.5 py-1.5 sm:px-6 sm:py-2.5 border-t border-white/[0.08] bg-[#080a15]/95 backdrop-blur-xl shrink-0 w-full max-w-full">
+        <div class="px-2 py-1.5 sm:px-6 sm:py-2.5 border-t border-white/[0.08] bg-[#080a15]/95 backdrop-blur-xl shrink-0 w-full max-w-full">
           <!-- In-Chat Multi-Modal & Action Toolbar (Hidden: consolidated cleanly into the '+' menu) -->
           <div class="hidden max-w-4xl mx-auto mb-2 items-center justify-between gap-1.5 overflow-x-auto no-scrollbar">
             <!-- Left: Generative Creative Tools -->
@@ -3670,15 +3670,15 @@ const { character } = Astro.props;
               </div>
             </div>
 
-            <!-- Unified Gemini Pill Input Bar (Compact Single Row in Empty State) -->
+            <!-- Unified Gemini Pill Input Bar (Compact Single Row when empty, Full-Width Multi-Line when typing) -->
             <div 
               id="room-input-container" 
-              class="relative flex flex-col p-1 sm:p-1.5 rounded-[26px] sm:rounded-[28px] bg-[#1e1f20] hover:bg-[#222326] focus-within:bg-[#1e1f20] border border-white/[0.08] focus-within:border-white/20 transition-all duration-150 shadow-xl shadow-black/50"
+              class="relative flex flex-col p-1.5 sm:p-2 rounded-[24px] sm:rounded-[28px] bg-[#1e1f20] hover:bg-[#222326] focus-within:bg-[#1e1f20] border border-white/[0.08] focus-within:border-white/20 transition-all duration-150 shadow-xl shadow-black/50"
             >
               <!-- Floating Push-to-Talk / Recording Overlay Bar -->
               <div 
                 id="voice-recording-overlay" 
-                class="hidden absolute inset-0 bg-[#141624] rounded-[26px] sm:rounded-[28px] border border-rose-500/50 px-3 py-1.5 flex items-center justify-between z-20 backdrop-blur-md shadow-lg shadow-rose-950/40"
+                class="hidden absolute inset-0 bg-[#141624] rounded-[24px] sm:rounded-[28px] border border-rose-500/50 px-3 py-1.5 flex items-center justify-between z-20 backdrop-blur-md shadow-lg shadow-rose-950/40"
               >
                 <div class="flex items-center gap-2 min-w-0 flex-1">
                   <span class="w-2.5 h-2.5 rounded-full bg-rose-500 animate-ping shrink-0"></span>
@@ -3725,17 +3725,17 @@ const { character } = Astro.props;
                 </div>
               </div>
 
-              <!-- Single Horizontal Row: All tools, input, and actions aligned on 1 line -->
-              <div class="flex items-end gap-1 sm:gap-1.5 w-full">
+              <!-- Main Input Area Wrapper (Single Row when 1 line, Full-Width Multi-Row when 2+ lines) -->
+              <div id="input-composer-layout" class="w-full flex flex-row items-center gap-1 sm:gap-1.5 transition-all">
                 <!-- Left: Plus Button & Aspect Ratio Selector -->
-                <div class="flex items-center gap-1 shrink-0 self-end mb-0.5">
+                <div id="input-left-tools" class="order-1 flex items-center gap-1 shrink-0">
                   <button 
                     type="button" 
                     id="chat-input-plus-btn"
-                    class="w-8 h-8 sm:w-9 sm:h-9 rounded-full flex items-center justify-center text-[#c4c7c5] hover:text-white hover:bg-white/[0.08] transition-all active:scale-95 shrink-0 cursor-pointer"
+                    class="w-9 h-9 sm:w-10 sm:h-10 rounded-full flex items-center justify-center text-[#c4c7c5] hover:text-white hover:bg-white/[0.08] transition-all active:scale-95 shrink-0 cursor-pointer"
                     title="Quick Tools & Actions"
                   >
-                    <Plus class="w-4.5 h-4.5 transition-transform duration-200" />
+                    <Plus class="w-5 h-5 transition-transform duration-200" />
                   </button>
 
                   <!-- Aspect Ratio Selector (shown only in Images mode) -->
@@ -3761,28 +3761,28 @@ const { character } = Astro.props;
                   </div>
                 </div>
 
-                <!-- Center: Flexible Single-line Textarea -->
-                <div class="flex-1 min-w-0 flex items-center py-1 sm:py-1.5">
+                <!-- Center/Top: Textarea Container (Full width when multi-line) -->
+                <div id="input-textarea-container" class="order-2 flex-1 min-w-0 flex items-center px-1">
                   <textarea 
                     id="room-input" 
                     rows="1" 
                     dir="auto"
                     placeholder={`Message ${character.name}...`}
-                    class="w-full bg-transparent text-[15px] sm:text-[16px] text-[#f1f3f4] placeholder:text-[#8e918f] outline-none resize-none leading-[1.4] transition-[height] duration-75 block font-normal selection:bg-blue-500/30 px-1.5"
-                    style="min-height: 24px; max-height: 140px; height: 24px; overflow-y: hidden; scrollbar-width: thin;"
+                    class="w-full bg-transparent text-[17px] sm:text-[18px] text-[#f1f3f4] placeholder:text-[#9aa0a6] outline-none resize-none leading-[1.55] transition-[height] duration-75 block font-normal selection:bg-blue-500/30 px-1 border-none caret-blue-500"
+                    style="min-height: 28px; max-height: 160px; height: 28px; overflow-y: hidden; scrollbar-width: thin;"
                   ></textarea>
                 </div>
 
-                <!-- Right Actions: Expand + Mic + Send Button -->
-                <div class="flex items-center gap-1 sm:gap-1.5 shrink-0 self-end mb-0.5">
-                  <!-- Full-screen Long Text Composer Trigger -->
+                <!-- Right/Bottom: Expand + Mic + Send Actions -->
+                <div id="input-right-actions" class="order-3 flex items-center gap-1 sm:gap-1.5 shrink-0">
+                  <!-- Full-screen Long Text Composer Trigger (img_af6841fbbf8d.jpg) -->
                   <button 
                     type="button" 
                     id="chat-input-expand-btn"
-                    class="w-8 h-8 sm:w-9 sm:h-9 rounded-full flex items-center justify-center text-[#c4c7c5] hover:text-white hover:bg-white/[0.08] transition-all active:scale-95 cursor-pointer"
-                    title="Full-screen text editor"
+                    class="w-9 h-9 sm:w-10 sm:h-10 rounded-full flex items-center justify-center text-[#c4c7c5] hover:text-white hover:bg-white/[0.08] transition-all active:scale-95 cursor-pointer shrink-0"
+                    title="Full-screen text editor (صفحه کامل نوشتن متن طولانی)"
                   >
-                    <svg class="w-4.5 h-4.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                    <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
                       <path d="M15 3h6v6"></path>
                       <path d="M9 21H3v-6"></path>
                       <path d="M21 3l-7 7"></path>
@@ -3794,25 +3794,25 @@ const { character } = Astro.props;
                   <button 
                     type="button" 
                     id="chat-input-mic-btn"
-                    class="w-8 h-8 sm:w-9 sm:h-9 rounded-full flex items-center justify-center text-[#c4c7c5] hover:text-white hover:bg-white/[0.08] transition-all active:scale-95 cursor-pointer"
+                    class="w-9 h-9 sm:w-10 sm:h-10 rounded-full flex items-center justify-center text-[#c4c7c5] hover:text-white hover:bg-white/[0.08] transition-all active:scale-95 cursor-pointer shrink-0"
                     title="Voice Input (Speech to Text)"
                   >
-                    <Mic class="w-4.5 h-4.5" />
+                    <Mic class="w-5 h-5" />
                   </button>
 
                   <!-- Send Button -->
                   <button 
                     type="submit" 
                     id="room-send-btn"
-                    class="w-8 h-8 sm:w-9 sm:h-9 rounded-full bg-blue-600 hover:bg-blue-500 text-white flex items-center justify-center transition-all duration-200 cursor-pointer active:scale-95 shadow-md shadow-blue-950/40 opacity-40 scale-95"
+                    class="w-9 h-9 sm:w-10 sm:h-10 rounded-full bg-blue-600 hover:bg-blue-500 text-white flex items-center justify-center transition-all duration-200 cursor-pointer active:scale-95 shadow-md shadow-blue-950/40 opacity-40 scale-95 shrink-0"
                     title="Send Message"
                   >
-                    <ArrowUp class="w-4.5 h-4.5 stroke-[2.5]" />
+                    <ArrowUp class="w-5 h-5 stroke-[2.5]" />
                   </button>
                 </div>
               </div>
             </div>
-</form>
+          </form>
         </div>
 
       </section>
@@ -4883,33 +4883,54 @@ const { character } = Astro.props;
     }
   }
 
+  const inputComposerLayout = document.getElementById('input-composer-layout');
+  const inputTextareaContainer = document.getElementById('input-textarea-container');
+  const inputLeftTools = document.getElementById('input-left-tools');
+  const inputRightActions = document.getElementById('input-right-actions');
+
+  function updateComposerLayoutMode(isMultiLine) {
+    if (!inputComposerLayout || !inputTextareaContainer || !inputRightActions || !inputLeftTools) return;
+    if (isMultiLine) {
+      inputComposerLayout.className = 'w-full flex flex-wrap items-end justify-between gap-y-1.5 transition-all';
+      inputTextareaContainer.className = 'w-full order-1 px-1.5 pt-0.5 pb-1 flex flex-col min-w-0';
+      inputLeftTools.className = 'order-2 flex items-center gap-1 shrink-0';
+      inputRightActions.className = 'order-3 flex items-center gap-1 sm:gap-1.5 shrink-0 ml-auto';
+    } else {
+      inputComposerLayout.className = 'w-full flex flex-row items-center gap-1 sm:gap-1.5 transition-all';
+      inputTextareaContainer.className = 'order-2 flex-1 min-w-0 flex items-center px-1';
+      inputLeftTools.className = 'order-1 flex items-center gap-1 shrink-0';
+      inputRightActions.className = 'order-3 flex items-center gap-1 sm:gap-1.5 shrink-0';
+    }
+  }
+
   function adjustInputHeight() {
     if (!input) return;
     input.style.height = 'auto';
 
-    const computed = window.getComputedStyle(input);
-    const fontSize = parseFloat(computed.fontSize) || 16;
-    const lineHeight = parseFloat(computed.lineHeight) || (fontSize * 1.6);
-    const paddingTop = parseFloat(computed.paddingTop) || 0;
-    const paddingBottom = parseFloat(computed.paddingBottom) || 0;
+    const singleLineHeight = 28;
+    const lineHeight = 26; // 17px * 1.55 line-height
+    const maxLinesHeight = lineHeight * 6; // up to 6 lines max
 
-    const singleLineHeight = 24;
-    const maxLinesHeight = (lineHeight * 6) + paddingTop + paddingBottom;
-
+    const val = input.value;
+    const hasText = !!val.trim();
     const scrollHeight = input.scrollHeight;
 
-    if (!input.value.trim() || scrollHeight <= singleLineHeight + 6) {
-      // Line 1: Single line height (compact capsule)
+    // Check if multi-line: user entered newline or text wrapped beyond 1 line
+    const isMultiLine = hasText && (val.includes('\n') || scrollHeight > singleLineHeight + 6);
+
+    updateComposerLayoutMode(isMultiLine);
+
+    if (isMultiLine) {
+      if (scrollHeight > maxLinesHeight) {
+        input.style.height = `${maxLinesHeight}px`;
+        input.style.overflowY = 'auto';
+      } else {
+        input.style.height = `${scrollHeight}px`;
+        input.style.overflowY = 'hidden';
+      }
+    } else {
       input.style.height = `${singleLineHeight}px`;
       input.style.overflowY = 'hidden';
-    } else if (scrollHeight < maxLinesHeight + 4) {
-      // Lines 2 to 6: Expand line by line smoothly
-      input.style.height = `${scrollHeight}px`;
-      input.style.overflowY = 'hidden';
-    } else {
-      // Line 6+: Cap at 6 lines and enable smooth vertical scroll
-      input.style.height = `${maxLinesHeight}px`;
-      input.style.overflowY = 'auto';
     }
   }
   const toggleSidebarBtn = document.getElementById('toggle-sidebar-btn');
