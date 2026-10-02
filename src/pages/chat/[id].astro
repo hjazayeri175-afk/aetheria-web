@@ -558,8 +558,8 @@ const { character } = Astro.props;
               >
                 <Camera class="w-4 h-4 sm:w-4 sm:h-4 text-amber-400 shrink-0" />
                 <div class="flex flex-col sm:flex-row items-center sm:gap-1 min-w-0">
-                  <span class="text-[11px] sm:text-xs font-bold leading-tight truncate">Selfies</span>
-                  <span class="hidden md:inline text-[9px] text-amber-300/80 font-mono">(Photos)</span>
+                  <span class="text-[11px] sm:text-xs font-bold leading-tight truncate">Visuals</span>
+                  <span class="hidden md:inline text-[9px] text-amber-300/80 font-mono">(Art & Vision)</span>
                 </div>
               </button>
 
@@ -1920,91 +1920,371 @@ const { character } = Astro.props;
               </div>
 
 
-              <!-- ================= 3. TAB: IMAGE ENGINE ================= -->
-              <div id="tab-image" class="engine-tab-pane hidden space-y-5">
-                <div class="flex items-center justify-between pb-2 border-b border-white/[0.06]">
-                  <div>
-                    <h4 class="text-xs sm:text-sm font-bold text-white flex items-center gap-2">
-                      <Camera class="w-4 h-4 text-amber-400" />
-                      <span>Character Selfies & Photos</span>
-                    </h4>
-                    <p class="text-[11px] text-slate-400">Generates character selfies, location photos and scene artwork directly in chat.</p>
-                  </div>
-                  <button type="button" id="test-image-btn" class="px-3 py-1.5 rounded-xl bg-amber-950/40 hover:bg-amber-900/60 border border-amber-500/30 text-amber-300 text-xs font-semibold flex items-center gap-1.5 transition cursor-pointer">
-                    <Sparkles class="w-3.5 h-3.5 text-amber-400" />
-                    <span>Test Image</span>
+              <!-- ================= 3. TAB: IMAGE & VISUAL SYSTEMS ================= -->
+              <div id="tab-image" class="engine-tab-pane hidden space-y-4" dir="ltr" lang="en">
+                
+                <!-- Sub-tab Navigator (Selfies/Output vs Vision/Input) -->
+                <div class="flex items-center gap-1.5 p-1 rounded-2xl bg-white/[0.04] border border-white/[0.08]">
+                  <button 
+                    type="button" 
+                    id="image-subtab-output-btn" 
+                    class="flex-1 py-2 px-3 rounded-xl bg-amber-600 text-white text-xs font-semibold flex items-center justify-center gap-2 transition cursor-pointer shadow-sm shadow-amber-900/40"
+                  >
+                    <Camera class="w-3.5 h-3.5" />
+                    <span>Character Selfies (Output)</span>
+                  </button>
+                  <button 
+                    type="button" 
+                    id="image-subtab-input-btn" 
+                    class="flex-1 py-2 px-3 rounded-xl text-slate-300 hover:text-white hover:bg-white/[0.04] text-xs font-semibold flex items-center justify-center gap-2 transition cursor-pointer"
+                  >
+                    <Eye class="w-3.5 h-3.5" />
+                    <span>Vision AI (Input)</span>
                   </button>
                 </div>
 
-                <div id="test-image-preview-container" class="hidden p-3 rounded-2xl bg-black/50 border border-amber-500/30 flex items-center justify-center">
-                  <img id="test-image-preview" src="" alt="Test render" class="max-h-60 rounded-xl object-contain border border-white/10" />
-                </div>
+                <!-- Hidden inputs for backward compatibility -->
+                <input type="hidden" id="image-provider-select" value="pollinations" />
+                <input type="hidden" id="image-aspect-select" value="1:1" />
+                <input type="hidden" id="vision-provider-select" value="auto" />
 
-                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                  <div>
-                    <label class="block text-xs font-semibold text-slate-300 mb-1.5">Image Provider</label>
-                    <select id="image-provider-select" class="w-full px-3.5 py-2.5 rounded-xl bg-white/[0.05] border border-white/10 text-xs text-white outline-none focus:border-amber-500/60">
-                      <option value="pollinations">Free Flux AI (Fast & Keyless — Default)</option>
-                      <option value="fal">Fal.ai Flux 1.1 Pro (Ultra High Definition)</option>
-                      <option value="openai">OpenAI DALL-E 3 (Artistic & Expressive)</option>
-                      <option value="custom">Custom Endpoint (ComfyUI / SD)</option>
-                    </select>
-                  </div>
-
-                  <div id="image-key-container" class="hidden">
-                    <label class="block text-xs font-semibold text-slate-300 mb-1.5">Image API Key</label>
-                    <input 
-                      id="image-api-key" 
-                      type="password" 
-                      placeholder="Fal.ai or OpenAI key..." 
-                      class="w-full px-3.5 py-2.5 rounded-xl bg-white/[0.05] border border-white/10 text-xs text-white placeholder:text-slate-500 outline-none focus:border-amber-500/60 font-mono"
-                    />
-                  </div>
-                </div>
-
-                <!-- Aspect Ratio & Resolution Grid -->
-                <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
-                  <div>
-                    <label class="block text-xs font-semibold text-slate-300 mb-1.5">Aspect Ratio</label>
-                    <select id="image-aspect-select" class="w-full px-3.5 py-2.5 rounded-xl bg-white/[0.05] border border-white/10 text-xs text-white outline-none">
-                      <option value="1:1">1:1 Square (1024x1024)</option>
-                      <option value="9:16">9:16 Mobile Portrait (768x1344)</option>
-                      <option value="16:9">16:9 Cinematic (1344x768)</option>
-                      <option value="3:4">3:4 Classic Portrait</option>
-                    </select>
-                  </div>
-
-                  <div>
-                    <label class="block text-xs font-semibold text-slate-300 mb-1.5">Inference Steps</label>
-                    <input id="image-steps-input" dir="ltr" lang="en" type="text" inputmode="numeric" autocomplete="off" spellcheck="false" value="20" class="w-full px-3.5 py-2 rounded-xl bg-white/[0.05] border border-white/10 text-xs text-white outline-none font-mono force-ltr-numeric" />
-                  </div>
-
-                  <div>
-                    <label class="block text-xs font-semibold text-slate-300 mb-1.5">Guidance / CFG Scale</label>
-                    <input id="image-cfg-input" dir="ltr" lang="en" type="text" inputmode="decimal" autocomplete="off" spellcheck="false" value="3.5" class="w-full px-3.5 py-2 rounded-xl bg-white/[0.05] border border-white/10 text-xs text-white outline-none font-mono force-ltr-numeric" />
-                  </div>
-                </div>
-
-                <!-- Character Anchor & Negative Prompt -->
-                <div class="space-y-3">
-                  <label class="flex items-center justify-between p-3 rounded-xl bg-white/[0.03] border border-white/10 cursor-pointer">
+                <!-- ================= PANE 1: IMAGE GENERATION (OUTPUT) ================= -->
+                <div id="image-output-pane" class="space-y-4">
+                  <!-- Header & Live Test Action -->
+                  <div class="flex items-center justify-between pb-1 border-b border-white/[0.06]">
                     <div>
-                      <span class="text-xs font-semibold text-slate-200 block">Character Visual Consistency Anchor</span>
-                      <span class="text-[10px] text-slate-400">Automatically injects character hair, eye color & clothing tags into selfie prompts</span>
+                      <h4 class="text-xs sm:text-sm font-bold text-white flex items-center gap-2">
+                        <Camera class="w-4 h-4 text-amber-400" />
+                        <span>Character Selfies & Art</span>
+                      </h4>
+                      <p class="text-[11px] text-slate-400">Generates character selfies, location photos and scene artwork directly in chat.</p>
                     </div>
-                    <input id="toggle-image-anchor" type="checkbox" checked class="w-4 h-4 accent-amber-500 cursor-pointer" />
-                  </label>
+                    <button type="button" id="test-image-btn" class="px-3 py-1.5 rounded-xl bg-amber-950/40 hover:bg-amber-900/60 border border-amber-500/30 text-amber-300 text-xs font-semibold flex items-center gap-1.5 transition cursor-pointer">
+                      <Sparkles class="w-3.5 h-3.5 text-amber-400" />
+                      <span>Test Image</span>
+                    </button>
+                  </div>
 
-                  <div>
-                    <label class="block text-xs font-semibold text-slate-300 mb-1.5">Negative Prompt Filter</label>
-                    <input 
-                      id="image-negative-prompt" 
-                      type="text" 
-                      value="blurry, distorted, low quality, bad anatomy, deformed limbs, extra fingers, watermark"
-                      class="w-full px-3.5 py-2 rounded-xl bg-white/[0.05] border border-white/10 text-xs text-slate-300 outline-none"
-                    />
+                  <!-- Live Test Preview Box -->
+                  <div id="test-image-preview-container" class="hidden p-3 rounded-2xl bg-black/50 border border-amber-500/30 flex items-center justify-center">
+                    <img id="test-image-preview" src="" alt="Test render" class="max-h-60 rounded-xl object-contain border border-white/10" />
+                  </div>
+
+                  <!-- Custom Dropdown: Image Generator Engine -->
+                  <div class="space-y-1.5">
+                    <label class="block text-xs font-semibold text-slate-300">Image Generation Engine</label>
+                    
+                    <div class="relative w-full" id="image-engine-dropdown-container">
+                      <button
+                        type="button"
+                        id="image-engine-trigger"
+                        class="w-full px-3.5 py-2.5 rounded-2xl bg-black/60 hover:bg-black/80 border border-amber-500/30 hover:border-amber-500/50 flex items-center justify-between text-xs text-white transition cursor-pointer text-left group"
+                        aria-haspopup="listbox"
+                        aria-expanded="false"
+                      >
+                        <div class="min-w-0 pr-2">
+                          <div id="image-engine-trigger-title" class="font-bold text-xs text-white truncate">Free Flux AI</div>
+                          <div id="image-engine-trigger-desc" class="text-[10px] text-slate-400 truncate">Fast & Keyless • Unlimited Generations</div>
+                        </div>
+                        <div class="flex items-center gap-2 shrink-0">
+                          <span id="image-engine-trigger-badge" class="px-2 py-0.5 rounded-full text-[9px] font-mono font-bold bg-emerald-500/20 text-emerald-300 border border-emerald-500/30">100% FREE</span>
+                          <ChevronDown class="w-4 h-4 text-slate-400 group-hover:text-amber-300 transition-transform duration-200" id="image-engine-chevron" />
+                        </div>
+                      </button>
+
+                      <div 
+                        id="image-engine-menu" 
+                        class="hidden absolute left-0 right-0 top-full mt-1.5 z-50 bg-[#0c0f24]/95 backdrop-blur-xl border border-amber-500/30 rounded-2xl p-1.5 shadow-2xl shadow-black/90 space-y-1 max-h-60 overflow-y-auto no-scrollbar"
+                        role="listbox"
+                      >
+                        <!-- Populated dynamically via renderImageEngineMenu() -->
+                      </div>
+                    </div>
+                  </div>
+
+                  <!-- Free Engine Status Card (Shown when pollinations is active) -->
+                  <div id="image-free-card" class="p-3.5 rounded-2xl bg-emerald-950/20 border border-emerald-500/30 flex items-center justify-between gap-3">
+                    <div class="flex items-center gap-2.5 min-w-0">
+                      <span class="w-2.5 h-2.5 rounded-full bg-emerald-400 animate-pulse shrink-0"></span>
+                      <div class="min-w-0">
+                        <div class="text-xs font-semibold text-white">Free Flux AI Ready</div>
+                        <div class="text-[11px] text-slate-400">Generates character selfies and scene art without any API key or subscription.</div>
+                      </div>
+                    </div>
+                    <span class="text-[10px] px-2 py-0.5 rounded-full bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 font-medium font-mono shrink-0">Ready</span>
+                  </div>
+
+                  <!-- Cloud API Key Connection Card (For Fal, OpenAI, Custom) -->
+                  <div id="image-connection-card" class="hidden p-3.5 sm:p-4 rounded-2xl bg-white/[0.02] border border-white/[0.08] space-y-3">
+                    
+                    <!-- NOT Connected State (Input Form) -->
+                    <div id="image-unconnected-container" class="space-y-3">
+                      <div>
+                        <h5 id="image-connect-title" class="text-xs font-semibold text-white">Connect Fal.ai API</h5>
+                        <p id="image-connect-desc" class="text-[11px] text-slate-400">Enter your key to enable ultra-HD Flux generations.</p>
+                      </div>
+
+                      <!-- Custom Endpoint URL (For ComfyUI / SD) -->
+                      <div id="image-custom-url-container" class="hidden space-y-1">
+                        <label class="block text-[11px] font-semibold text-slate-300">Endpoint URL</label>
+                        <input 
+                          id="image-custom-url" 
+                          type="url" 
+                          placeholder="http://localhost:8188/prompt" 
+                          class="w-full px-3.5 py-2 rounded-xl bg-black/60 border border-white/10 text-xs text-white placeholder:text-slate-500 outline-none focus:border-amber-500/60 font-mono"
+                        />
+                      </div>
+
+                      <!-- 1-Click Reuse Button -->
+                      <button 
+                        type="button" 
+                        id="image-quick-reuse-key-btn" 
+                        class="hidden w-full py-2 px-3 rounded-xl bg-amber-600/15 hover:bg-amber-600/25 border border-amber-500/30 text-amber-300 text-xs font-medium flex items-center justify-center gap-1.5 transition cursor-pointer"
+                      >
+                        <Sparkles class="w-3.5 h-3.5 text-amber-400" />
+                        <span id="image-quick-reuse-label">Connect with saved OpenAI Key</span>
+                      </button>
+
+                      <div class="flex gap-2">
+                        <input 
+                          id="image-api-key" 
+                          type="password" 
+                          placeholder="Paste API Key..." 
+                          class="flex-1 px-3.5 py-2.5 rounded-xl bg-black/60 border border-white/10 text-xs text-white placeholder:text-slate-500 outline-none focus:border-amber-500/60 font-mono"
+                        />
+                        <button 
+                          type="button" 
+                          id="image-connect-confirm-btn" 
+                          class="px-4 py-2.5 rounded-xl bg-amber-600 hover:bg-amber-500 text-white text-xs font-semibold flex items-center justify-center gap-1.5 transition cursor-pointer active:scale-95 shadow-md shadow-amber-950 shrink-0"
+                        >
+                          <Check class="w-3.5 h-3.5" />
+                          <span>Connect</span>
+                        </button>
+                      </div>
+                    </div>
+
+                    <!-- Connected State Bar -->
+                    <div id="image-connected-container" class="hidden space-y-3">
+                      <div class="p-3 rounded-xl bg-white/[0.03] border border-white/[0.08] flex items-center justify-between gap-2">
+                        <div class="flex items-center gap-2.5 min-w-0">
+                          <span class="w-2 h-2 rounded-full bg-emerald-400 shrink-0"></span>
+                          <div class="min-w-0">
+                            <div class="text-xs font-semibold text-white flex items-center gap-1.5">
+                              <span id="image-connected-prov-name">Fal.ai Flux</span>
+                              <span class="text-[9px] px-1.5 py-0.5 rounded-full bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 font-medium">Connected</span>
+                            </div>
+                            <div class="text-[10px] text-slate-400 font-mono truncate" id="image-connected-key-masked">••••••••</div>
+                          </div>
+                        </div>
+                        <button 
+                          type="button" 
+                          id="image-disconnect-btn" 
+                          class="px-2.5 py-1 rounded-lg bg-white/[0.05] hover:bg-white/[0.1] text-slate-300 hover:text-white border border-white/10 text-[11px] font-medium transition cursor-pointer"
+                        >
+                          Change Key
+                        </button>
+                      </div>
+                    </div>
+
+                  </div>
+
+                  <!-- Custom Dropdown: Aspect Ratio & Resolution Grid -->
+                  <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                    <div class="space-y-1.5">
+                      <label class="block text-xs font-semibold text-slate-300">Aspect Ratio</label>
+                      <div class="relative w-full" id="image-aspect-dropdown-container">
+                        <button
+                          type="button"
+                          id="image-aspect-trigger"
+                          class="w-full px-3 py-2 rounded-xl bg-black/60 hover:bg-black/80 border border-white/10 hover:border-amber-500/40 flex items-center justify-between text-xs text-white transition cursor-pointer text-left group"
+                          aria-haspopup="listbox"
+                          aria-expanded="false"
+                        >
+                          <span id="image-aspect-trigger-label" class="font-medium text-slate-200 truncate">1:1 Square (1024×1024)</span>
+                          <ChevronDown class="w-4 h-4 text-slate-400 group-hover:text-amber-300 transition-transform duration-200 shrink-0" id="image-aspect-chevron" />
+                        </button>
+                        <div 
+                          id="image-aspect-menu" 
+                          class="hidden absolute left-0 right-0 top-full mt-1.5 z-50 bg-[#0c0f24]/95 backdrop-blur-xl border border-white/10 rounded-2xl p-1.5 shadow-2xl shadow-black/90 space-y-1 font-mono text-xs"
+                          role="listbox"
+                        >
+                          <!-- Dynamic Aspect ratios -->
+                        </div>
+                      </div>
+                    </div>
+
+                    <div class="space-y-1.5">
+                      <label class="block text-xs font-semibold text-slate-300">Inference Steps</label>
+                      <input id="image-steps-input" dir="ltr" lang="en" type="text" inputmode="numeric" autocomplete="off" spellcheck="false" value="20" class="w-full px-3.5 py-2 rounded-xl bg-black/60 border border-white/10 text-xs text-white outline-none font-mono force-ltr-numeric focus:border-amber-500/50" />
+                    </div>
+
+                    <div class="space-y-1.5">
+                      <label class="block text-xs font-semibold text-slate-300">Guidance / CFG</label>
+                      <input id="image-cfg-input" dir="ltr" lang="en" type="text" inputmode="decimal" autocomplete="off" spellcheck="false" value="3.5" class="w-full px-3.5 py-2 rounded-xl bg-black/60 border border-white/10 text-xs text-white outline-none font-mono force-ltr-numeric focus:border-amber-500/50" />
+                    </div>
+                  </div>
+
+                  <!-- Character Consistency Anchor & Negative Prompt -->
+                  <div class="space-y-3">
+                    <label class="flex items-center justify-between p-3 rounded-xl bg-white/[0.03] border border-white/10 cursor-pointer">
+                      <div>
+                        <span class="text-xs font-semibold text-slate-200 block">Character Visual Consistency Anchor</span>
+                        <span class="text-[10px] text-slate-400">Automatically injects character hair, eye color & clothing tags into selfie prompts</span>
+                      </div>
+                      <input id="toggle-image-anchor" type="checkbox" checked class="w-4 h-4 accent-amber-500 cursor-pointer" />
+                    </label>
+
+                    <div>
+                      <label class="block text-xs font-semibold text-slate-300 mb-1.5">Negative Prompt Filter</label>
+                      <input 
+                        id="image-negative-prompt" 
+                        type="text" 
+                        value="blurry, distorted, low quality, bad anatomy, deformed limbs, extra fingers, watermark"
+                        class="w-full px-3.5 py-2 rounded-xl bg-black/60 border border-white/10 text-xs text-slate-300 outline-none focus:border-amber-500/50"
+                      />
+                    </div>
                   </div>
                 </div>
+
+                <!-- ================= PANE 2: VISION AI & IMAGE RECOGNITION (INPUT) ================= -->
+                <div id="image-input-pane" class="hidden space-y-4">
+                  <!-- Header -->
+                  <div class="flex items-center justify-between pb-1 border-b border-white/[0.06]">
+                    <div>
+                      <h4 class="text-xs sm:text-sm font-bold text-white flex items-center gap-2">
+                        <Eye class="w-4 h-4 text-cyan-400" />
+                        <span>Vision AI & Image Understanding</span>
+                      </h4>
+                      <p class="text-[11px] text-slate-400">Analyzes and comprehends images, screenshots, and visual photos sent in chat.</p>
+                    </div>
+                    <span class="px-2.5 py-1 rounded-full text-[10px] font-mono font-bold bg-cyan-500/20 text-cyan-300 border border-cyan-500/30">
+                      MULTIMODAL
+                    </span>
+                  </div>
+
+                  <!-- Custom Dropdown: Vision Engine -->
+                  <div class="space-y-1.5">
+                    <label class="block text-xs font-semibold text-slate-300">Vision Recognition Engine</label>
+                    
+                    <div class="relative w-full" id="vision-engine-dropdown-container">
+                      <button
+                        type="button"
+                        id="vision-engine-trigger"
+                        class="w-full px-3.5 py-2.5 rounded-2xl bg-black/60 hover:bg-black/80 border border-cyan-500/30 hover:border-cyan-500/50 flex items-center justify-between text-xs text-white transition cursor-pointer text-left group"
+                        aria-haspopup="listbox"
+                        aria-expanded="false"
+                      >
+                        <div class="min-w-0 pr-2">
+                          <div id="vision-engine-trigger-title" class="font-bold text-xs text-white truncate">Auto (Active Story Model)</div>
+                          <div id="vision-engine-trigger-desc" class="text-[10px] text-slate-400 truncate">Inherits multimodal vision from current chat model</div>
+                        </div>
+                        <div class="flex items-center gap-2 shrink-0">
+                          <span id="vision-engine-trigger-badge" class="px-2 py-0.5 rounded-full text-[9px] font-mono font-bold bg-cyan-500/20 text-cyan-300 border border-cyan-500/30">RECOMMENDED</span>
+                          <ChevronDown class="w-4 h-4 text-slate-400 group-hover:text-cyan-300 transition-transform duration-200" id="vision-engine-chevron" />
+                        </div>
+                      </button>
+
+                      <div 
+                        id="vision-engine-menu" 
+                        class="hidden absolute left-0 right-0 top-full mt-1.5 z-50 bg-[#0c0f24]/95 backdrop-blur-xl border border-cyan-500/30 rounded-2xl p-1.5 shadow-2xl shadow-black/90 space-y-1 max-h-60 overflow-y-auto no-scrollbar"
+                        role="listbox"
+                      >
+                        <!-- Populated dynamically via renderVisionEngineMenu() -->
+                      </div>
+                    </div>
+                  </div>
+
+                  <!-- Vision Status Card (Auto / Cloudflare) -->
+                  <div id="vision-auto-card" class="p-3.5 rounded-2xl bg-cyan-950/20 border border-cyan-500/30 flex items-center justify-between gap-3">
+                    <div class="flex items-center gap-2.5 min-w-0">
+                      <span class="w-2.5 h-2.5 rounded-full bg-cyan-400 animate-pulse shrink-0"></span>
+                      <div class="min-w-0">
+                        <div class="text-xs font-semibold text-white">Multimodal Vision Active</div>
+                        <div class="text-[11px] text-slate-400">When you send an image in chat, the AI character directly analyzes and responds to it.</div>
+                      </div>
+                    </div>
+                    <span class="text-[10px] px-2 py-0.5 rounded-full bg-cyan-500/20 text-cyan-300 border border-cyan-500/30 font-medium font-mono shrink-0">Active</span>
+                  </div>
+
+                  <!-- Vision API Key Connection Card (For Google, OpenAI, Custom) -->
+                  <div id="vision-connection-card" class="hidden p-3.5 sm:p-4 rounded-2xl bg-white/[0.02] border border-white/[0.08] space-y-3">
+                    
+                    <div id="vision-unconnected-container" class="space-y-3">
+                      <div>
+                        <h5 id="vision-connect-title" class="text-xs font-semibold text-white">Connect Vision API</h5>
+                        <p id="vision-connect-desc" class="text-[11px] text-slate-400">Enter your key to enable dedicated vision analysis.</p>
+                      </div>
+
+                      <div id="vision-custom-url-container" class="hidden space-y-1">
+                        <label class="block text-[11px] font-semibold text-slate-300">Endpoint URL</label>
+                        <input 
+                          id="vision-custom-url" 
+                          type="url" 
+                          placeholder="http://localhost:11434/v1/chat/completions" 
+                          class="w-full px-3.5 py-2 rounded-xl bg-black/60 border border-white/10 text-xs text-white placeholder:text-slate-500 outline-none focus:border-cyan-500/60 font-mono"
+                        />
+                      </div>
+
+                      <!-- 1-Click Reuse Button -->
+                      <button 
+                        type="button" 
+                        id="vision-quick-reuse-key-btn" 
+                        class="hidden w-full py-2 px-3 rounded-xl bg-cyan-600/15 hover:bg-cyan-600/25 border border-cyan-500/30 text-cyan-300 text-xs font-medium flex items-center justify-center gap-1.5 transition cursor-pointer"
+                      >
+                        <Sparkles class="w-3.5 h-3.5 text-cyan-400" />
+                        <span id="vision-quick-reuse-label">Connect with saved Gemini Key</span>
+                      </button>
+
+                      <div class="flex gap-2">
+                        <input 
+                          id="vision-api-key" 
+                          type="password" 
+                          placeholder="Paste API Key..." 
+                          class="flex-1 px-3.5 py-2.5 rounded-xl bg-black/60 border border-white/10 text-xs text-white placeholder:text-slate-500 outline-none focus:border-cyan-500/60 font-mono"
+                        />
+                        <button 
+                          type="button" 
+                          id="vision-connect-confirm-btn" 
+                          class="px-4 py-2.5 rounded-xl bg-cyan-600 hover:bg-cyan-500 text-white text-xs font-semibold flex items-center justify-center gap-1.5 transition cursor-pointer active:scale-95 shadow-md shadow-cyan-950 shrink-0"
+                        >
+                          <Check class="w-3.5 h-3.5" />
+                          <span>Connect</span>
+                        </button>
+                      </div>
+                    </div>
+
+                    <!-- Connected State Bar -->
+                    <div id="vision-connected-container" class="hidden space-y-3">
+                      <div class="p-3 rounded-xl bg-white/[0.03] border border-white/[0.08] flex items-center justify-between gap-2">
+                        <div class="flex items-center gap-2.5 min-w-0">
+                          <span class="w-2 h-2 rounded-full bg-cyan-400 shrink-0"></span>
+                          <div class="min-w-0">
+                            <div class="text-xs font-semibold text-white flex items-center gap-1.5">
+                              <span id="vision-connected-prov-name">Vision Engine</span>
+                              <span class="text-[9px] px-1.5 py-0.5 rounded-full bg-cyan-500/20 text-cyan-300 border border-cyan-500/30 font-medium">Connected</span>
+                            </div>
+                            <div class="text-[10px] text-slate-400 font-mono truncate" id="vision-connected-key-masked">••••••••</div>
+                          </div>
+                        </div>
+                        <button 
+                          type="button" 
+                          id="vision-disconnect-btn" 
+                          class="px-2.5 py-1 rounded-lg bg-white/[0.05] hover:bg-white/[0.1] text-slate-300 hover:text-white border border-white/10 text-[11px] font-medium transition cursor-pointer"
+                        >
+                          Change Key
+                        </button>
+                      </div>
+                    </div>
+
+                  </div>
+
+                  <!-- Vision Mode / Model Guidance Hint -->
+                  <div class="p-3 rounded-xl bg-white/[0.03] border border-white/[0.08] text-[11px] text-slate-400 leading-relaxed">
+                    💡 <strong>Multimodal Tip:</strong> When using Gemini 1.5/2.0, Claude 3.5, or GPT-4o in the Story Engine, the character automatically sees any photo you send with zero extra setup.
+                  </div>
+
+                </div>
+
               </div>
 
               <!-- ================= 4. TAB: VIDEO ENGINE ================= -->
@@ -4185,10 +4465,8 @@ const { character } = Astro.props;
   const voiceModalActiveFooterText = document.getElementById('voice-modal-active-footer-text');
   const quickSelectFreeVoiceBtn = document.getElementById('quick-select-free-voice-btn');
 
-  // Image Inputs
+  // Image & Vision DOM References
   const imageProviderSelect = document.getElementById('image-provider-select');
-  const imageApiKey = document.getElementById('image-api-key');
-  const imageKeyContainer = document.getElementById('image-key-container');
   const imageAspectSelect = document.getElementById('image-aspect-select');
   const imageStepsInput = document.getElementById('image-steps-input');
   const imageCfgInput = document.getElementById('image-cfg-input');
@@ -4197,6 +4475,65 @@ const { character } = Astro.props;
   const testImageBtn = document.getElementById('test-image-btn');
   const testImagePreviewContainer = document.getElementById('test-image-preview-container');
   const testImagePreview = document.getElementById('test-image-preview');
+
+  // Image Subtabs (Output vs Input)
+  const imageSubtabOutputBtn = document.getElementById('image-subtab-output-btn');
+  const imageSubtabInputBtn = document.getElementById('image-subtab-input-btn');
+  const imageOutputPane = document.getElementById('image-output-pane');
+  const imageInputPane = document.getElementById('image-input-pane');
+
+  // Image Output UI
+  const imageEngineTrigger = document.getElementById('image-engine-trigger');
+  const imageEngineTriggerTitle = document.getElementById('image-engine-trigger-title');
+  const imageEngineTriggerDesc = document.getElementById('image-engine-trigger-desc');
+  const imageEngineTriggerBadge = document.getElementById('image-engine-trigger-badge');
+  const imageEngineMenu = document.getElementById('image-engine-menu');
+  const imageEngineChevron = document.getElementById('image-engine-chevron');
+  const imageFreeCard = document.getElementById('image-free-card');
+  const imageConnectionCard = document.getElementById('image-connection-card');
+  const imageUnconnectedContainer = document.getElementById('image-unconnected-container');
+  const imageConnectedContainer = document.getElementById('image-connected-container');
+  const imageConnectTitle = document.getElementById('image-connect-title');
+  const imageConnectDesc = document.getElementById('image-connect-desc');
+  const imageConnectedProvName = document.getElementById('image-connected-prov-name');
+  const imageConnectedKeyMasked = document.getElementById('image-connected-key-masked');
+  const imageDisconnectBtn = document.getElementById('image-disconnect-btn');
+  const imageConnectConfirmBtn = document.getElementById('image-connect-confirm-btn');
+  const imageQuickReuseKeyBtn = document.getElementById('image-quick-reuse-key-btn');
+  const imageQuickReuseLabel = document.getElementById('image-quick-reuse-label');
+  const imageApiKey = document.getElementById('image-api-key');
+  const imageCustomUrlContainer = document.getElementById('image-custom-url-container');
+  const imageCustomUrl = document.getElementById('image-custom-url');
+
+  // Image Aspect Ratio Custom Dropdown
+  const imageAspectTrigger = document.getElementById('image-aspect-trigger');
+  const imageAspectTriggerLabel = document.getElementById('image-aspect-trigger-label');
+  const imageAspectMenu = document.getElementById('image-aspect-menu');
+  const imageAspectChevron = document.getElementById('image-aspect-chevron');
+
+  // Vision Input UI
+  const visionProviderSelect = document.getElementById('vision-provider-select');
+  const visionEngineTrigger = document.getElementById('vision-engine-trigger');
+  const visionEngineTriggerTitle = document.getElementById('vision-engine-trigger-title');
+  const visionEngineTriggerDesc = document.getElementById('vision-engine-trigger-desc');
+  const visionEngineTriggerBadge = document.getElementById('vision-engine-trigger-badge');
+  const visionEngineMenu = document.getElementById('vision-engine-menu');
+  const visionEngineChevron = document.getElementById('vision-engine-chevron');
+  const visionAutoCard = document.getElementById('vision-auto-card');
+  const visionConnectionCard = document.getElementById('vision-connection-card');
+  const visionUnconnectedContainer = document.getElementById('vision-unconnected-container');
+  const visionConnectedContainer = document.getElementById('vision-connected-container');
+  const visionConnectTitle = document.getElementById('vision-connect-title');
+  const visionConnectDesc = document.getElementById('vision-connect-desc');
+  const visionConnectedProvName = document.getElementById('vision-connected-prov-name');
+  const visionConnectedKeyMasked = document.getElementById('vision-connected-key-masked');
+  const visionDisconnectBtn = document.getElementById('vision-disconnect-btn');
+  const visionConnectConfirmBtn = document.getElementById('vision-connect-confirm-btn');
+  const visionQuickReuseKeyBtn = document.getElementById('vision-quick-reuse-key-btn');
+  const visionQuickReuseLabel = document.getElementById('vision-quick-reuse-label');
+  const visionApiKey = document.getElementById('vision-api-key');
+  const visionCustomUrlContainer = document.getElementById('vision-custom-url-container');
+  const visionCustomUrl = document.getElementById('vision-custom-url');
 
   // Video Inputs
   const videoProviderSelect = document.getElementById('video-provider-select');
@@ -6164,6 +6501,7 @@ const { character } = Astro.props;
 
     // 6. Sync UI and populate models
     syncProviderVisibility();
+    syncImageUiPanels();
   }
 
   // Adapt submenus & input fields dynamically based on selected provider
@@ -9602,6 +9940,24 @@ const { character } = Astro.props;
       if (sttLangMenu) sttLangMenu.classList.add('hidden');
       if (sttLangChevron) sttLangChevron.classList.remove('rotate-180');
     }
+
+    const imgEngContainer = document.getElementById('image-engine-dropdown-container');
+    if (imgEngContainer && !imgEngContainer.contains(e.target)) {
+      if (imageEngineMenu) imageEngineMenu.classList.add('hidden');
+      if (imageEngineChevron) imageEngineChevron.classList.remove('rotate-180');
+    }
+
+    const imgAspContainer = document.getElementById('image-aspect-dropdown-container');
+    if (imgAspContainer && !imgAspContainer.contains(e.target)) {
+      if (imageAspectMenu) imageAspectMenu.classList.add('hidden');
+      if (imageAspectChevron) imageAspectChevron.classList.remove('rotate-180');
+    }
+
+    const visEngContainer = document.getElementById('vision-engine-dropdown-container');
+    if (visEngContainer && !visEngContainer.contains(e.target)) {
+      if (visionEngineMenu) visionEngineMenu.classList.add('hidden');
+      if (visionEngineChevron) visionEngineChevron.classList.remove('rotate-180');
+    }
   });
 
   // Dynamic STT Models Fetch & Rendering
@@ -10152,9 +10508,504 @@ const { character } = Astro.props;
     }
   }
 
-  imageProviderSelect?.addEventListener('change', () => {
-    const val = imageProviderSelect.value;
-    if (imageKeyContainer) imageKeyContainer.classList.toggle('hidden', val === 'pollinations');
+  // ================= IMAGE & VISION SYSTEMS (OUTPUT & INPUT) =================
+  const IMAGE_CATALOG = [
+    {
+      id: 'pollinations',
+      name: 'Free Flux AI',
+      desc: 'Fast & keyless • Unlimited character selfies & scene art',
+      badge: '100% FREE',
+      needsKey: false
+    },
+    {
+      id: 'fal',
+      name: 'Fal.ai Flux',
+      desc: 'Ultra-HD Flux.1 [schnell/dev] with dedicated cloud GPU',
+      badge: 'GPU CLOUD',
+      needsKey: true,
+      keyHint: 'Fal.ai API Key (fal_...)'
+    },
+    {
+      id: 'openai',
+      name: 'OpenAI DALL-E 3',
+      desc: 'Expressive artistic character portraits & scenes',
+      badge: 'STUDIO',
+      needsKey: true,
+      keyHint: 'OpenAI API Key (sk-...)'
+    },
+    {
+      id: 'custom',
+      name: 'Custom Endpoint (ComfyUI / SD)',
+      desc: 'Self-hosted Stable Diffusion, ComfyUI, or SwarmUI server',
+      badge: 'LOCAL / PROXY',
+      needsKey: false,
+      needsUrl: true
+    }
+  ];
+
+  const VISION_CATALOG = [
+    {
+      id: 'auto',
+      name: 'Auto (Active Story Model)',
+      desc: 'Inherits multimodal vision from current text model (Gemini, GPT-4o, Claude)',
+      badge: 'RECOMMENDED',
+      needsKey: false
+    },
+    {
+      id: 'cloudflare',
+      name: 'Cloudflare Workers AI',
+      desc: 'Serverless LLaVA vision model running on Cloudflare Edge',
+      badge: '100% FREE',
+      needsKey: false
+    },
+    {
+      id: 'gemini',
+      name: 'Google Gemini Vision',
+      desc: 'Ultra-fast visual perception (Gemini 2.0 / 1.5 Flash)',
+      badge: 'HIGH SPEED',
+      needsKey: true,
+      keyHint: 'Google AI Studio Key (AIzaSy...)'
+    },
+    {
+      id: 'openai',
+      name: 'OpenAI GPT-4o Vision',
+      desc: 'High-detail visual recognition and deep scene understanding',
+      badge: 'PRO VISION',
+      needsKey: true,
+      keyHint: 'OpenAI API Key (sk-...)'
+    },
+    {
+      id: 'custom',
+      name: 'Custom Vision Endpoint',
+      desc: 'Self-hosted Ollama (llava, minicpm-v) or vLLM vision server',
+      badge: 'LOCAL / PROXY',
+      needsKey: false,
+      needsUrl: true
+    }
+  ];
+
+  const ASPECT_RATIOS = [
+    { id: '1:1', label: '1:1 Square (1024×1024)' },
+    { id: '9:16', label: '9:16 Mobile Portrait (768×1344)' },
+    { id: '16:9', label: '16:9 Cinematic Landscape (1344×768)' },
+    { id: '3:4', label: '3:4 Classic Portrait (768×1024)' },
+    { id: '4:3', label: '4:3 Classic Landscape (1024×768)' }
+  ];
+
+  function renderImageEngineMenu() {
+    if (!imageEngineMenu) return;
+    const currentId = localStorage.getItem('aetheria_image_provider') || 'pollinations';
+
+    imageEngineMenu.innerHTML = IMAGE_CATALOG.map(eng => {
+      const isSelected = eng.id === currentId;
+      return `
+        <button 
+          type="button" 
+          class="w-full p-2.5 rounded-xl text-left transition flex items-center justify-between gap-2.5 cursor-pointer ${
+            isSelected 
+              ? 'bg-amber-600/20 text-white border border-amber-500/40 shadow-sm' 
+              : 'hover:bg-white/[0.06] text-slate-300 hover:text-white border border-transparent'
+          }"
+          onclick="selectImageEngine('${eng.id}')"
+          role="option"
+          aria-selected="${isSelected}"
+        >
+          <div class="min-w-0">
+            <div class="font-bold text-xs truncate text-white">${eng.name}</div>
+            <div class="text-[10px] text-slate-400 truncate">${eng.desc}</div>
+          </div>
+          <span class="px-2 py-0.5 rounded-full text-[9px] font-mono font-bold shrink-0 ${
+            eng.badge.includes('FREE') ? 'bg-emerald-500/20 text-emerald-300 border border-emerald-500/30' : 'bg-white/10 text-slate-300'
+          }">
+            ${eng.badge}
+          </span>
+        </button>
+      `;
+    }).join('');
+  }
+
+  function renderVisionEngineMenu() {
+    if (!visionEngineMenu) return;
+    const currentId = localStorage.getItem('aetheria_vision_provider') || 'auto';
+
+    visionEngineMenu.innerHTML = VISION_CATALOG.map(eng => {
+      const isSelected = eng.id === currentId;
+      return `
+        <button 
+          type="button" 
+          class="w-full p-2.5 rounded-xl text-left transition flex items-center justify-between gap-2.5 cursor-pointer ${
+            isSelected 
+              ? 'bg-cyan-600/20 text-white border border-cyan-500/40 shadow-sm' 
+              : 'hover:bg-white/[0.06] text-slate-300 hover:text-white border border-transparent'
+          }"
+          onclick="selectVisionEngine('${eng.id}')"
+          role="option"
+          aria-selected="${isSelected}"
+        >
+          <div class="min-w-0">
+            <div class="font-bold text-xs truncate text-white">${eng.name}</div>
+            <div class="text-[10px] text-slate-400 truncate">${eng.desc}</div>
+          </div>
+          <span class="px-2 py-0.5 rounded-full text-[9px] font-mono font-bold shrink-0 ${
+            eng.badge.includes('RECOMMENDED') || eng.badge.includes('FREE') ? 'bg-cyan-500/20 text-cyan-300 border border-cyan-500/30' : 'bg-white/10 text-slate-300'
+          }">
+            ${eng.badge}
+          </span>
+        </button>
+      `;
+    }).join('');
+  }
+
+  function renderImageAspectMenu() {
+    if (!imageAspectMenu) return;
+    const currentRatio = localStorage.getItem('aetheria_image_aspect') || '1:1';
+
+    imageAspectMenu.innerHTML = ASPECT_RATIOS.map(r => {
+      const isSelected = r.id === currentRatio;
+      return `
+        <button 
+          type="button" 
+          class="w-full px-3 py-2 rounded-lg text-left transition flex items-center justify-between text-xs cursor-pointer ${
+            isSelected 
+              ? 'bg-amber-600/20 text-white font-bold border border-amber-500/30' 
+              : 'hover:bg-white/[0.06] text-slate-300 hover:text-white border border-transparent'
+          }"
+          onclick="selectImageAspect('${r.id}')"
+          role="option"
+          aria-selected="${isSelected}"
+        >
+          <span class="truncate">${r.label}</span>
+          ${isSelected ? '<span class="text-amber-400 font-bold">✓</span>' : ''}
+        </button>
+      `;
+    }).join('');
+  }
+
+  window.selectImageEngine = function(engId) {
+    localStorage.setItem('aetheria_image_provider', engId);
+    if (imageProviderSelect) imageProviderSelect.value = engId;
+    if (imageEngineMenu) imageEngineMenu.classList.add('hidden');
+    if (imageEngineChevron) imageEngineChevron.classList.remove('rotate-180');
+    syncImageUiPanels();
+    renderImageEngineMenu();
+    const obj = IMAGE_CATALOG.find(e => e.id === engId);
+    showNotification(`✓ Image Engine set to "${obj ? obj.name : engId}"`);
+  };
+
+  window.selectVisionEngine = function(engId) {
+    localStorage.setItem('aetheria_vision_provider', engId);
+    if (visionProviderSelect) visionProviderSelect.value = engId;
+    if (visionEngineMenu) visionEngineMenu.classList.add('hidden');
+    if (visionEngineChevron) visionEngineChevron.classList.remove('rotate-180');
+    syncImageUiPanels();
+    renderVisionEngineMenu();
+    const obj = VISION_CATALOG.find(e => e.id === engId);
+    showNotification(`✓ Vision AI set to "${obj ? obj.name : engId}"`);
+  };
+
+  window.selectImageAspect = function(ratioId) {
+    localStorage.setItem('aetheria_image_aspect', ratioId);
+    if (imageAspectSelect) imageAspectSelect.value = ratioId;
+    if (imageAspectMenu) imageAspectMenu.classList.add('hidden');
+    if (imageAspectChevron) imageAspectChevron.classList.remove('rotate-180');
+    syncImageUiPanels();
+    renderImageAspectMenu();
+  };
+
+  function syncImageUiPanels() {
+    // 1. Output Engine
+    const imgProv = localStorage.getItem('aetheria_image_provider') || 'pollinations';
+    const imgObj = IMAGE_CATALOG.find(e => e.id === imgProv) || IMAGE_CATALOG[0];
+    const isFreeImg = !imgObj.needsKey && !imgObj.needsUrl;
+    const savedImgKey = localStorage.getItem('aetheria_key_' + imgProv) || localStorage.getItem('aetheria_image_key') || '';
+    const isCustomUrl = imgObj.needsUrl;
+    const customUrlVal = localStorage.getItem('aetheria_image_custom_url') || '';
+    const isImgConnected = isFreeImg || (isCustomUrl ? Boolean(customUrlVal) : Boolean(savedImgKey));
+
+    if (imageProviderSelect) imageProviderSelect.value = imgProv;
+    if (imageEngineTriggerTitle) imageEngineTriggerTitle.textContent = imgObj.name;
+    if (imageEngineTriggerDesc) imageEngineTriggerDesc.textContent = imgObj.desc;
+    if (imageEngineTriggerBadge) {
+      imageEngineTriggerBadge.textContent = imgObj.badge;
+      imageEngineTriggerBadge.className = `px-2 py-0.5 rounded-full text-[9px] font-mono font-bold shrink-0 ${
+        imgObj.badge.includes('FREE') ? 'bg-emerald-500/20 text-emerald-300 border border-emerald-500/30' : 'bg-white/10 text-slate-300'
+      }`;
+    }
+
+    if (imageFreeCard) imageFreeCard.classList.toggle('hidden', !isFreeImg);
+    if (imageConnectionCard) {
+      imageConnectionCard.classList.toggle('hidden', isFreeImg);
+      if (!isFreeImg) {
+        if (imageConnectTitle) imageConnectTitle.textContent = `Connect ${imgObj.name}`;
+        if (imageConnectDesc) imageConnectDesc.textContent = isCustomUrl
+          ? 'Enter your custom endpoint URL to connect.'
+          : 'Enter your API key to enable high-definition image generation.';
+        if (imageApiKey) {
+          imageApiKey.value = savedImgKey;
+          imageApiKey.placeholder = imgObj.keyHint || 'Paste API Key...';
+        }
+        if (imageCustomUrlContainer) {
+          imageCustomUrlContainer.classList.toggle('hidden', !isCustomUrl);
+          if (isCustomUrl && imageCustomUrl) imageCustomUrl.value = customUrlVal;
+        }
+
+        if (imageUnconnectedContainer && imageConnectedContainer) {
+          imageUnconnectedContainer.classList.toggle('hidden', isImgConnected);
+          imageConnectedContainer.classList.toggle('hidden', !isImgConnected);
+        }
+
+        if (isImgConnected) {
+          if (imageConnectedProvName) imageConnectedProvName.textContent = imgObj.name;
+          if (imageConnectedKeyMasked) {
+            if (isCustomUrl) {
+              imageConnectedKeyMasked.textContent = customUrlVal || 'Custom Endpoint';
+            } else if (savedImgKey) {
+              const prefix = savedImgKey.slice(0, 4);
+              const suffix = savedImgKey.slice(-4);
+              imageConnectedKeyMasked.textContent = `${prefix}••••${suffix}`;
+            } else {
+              imageConnectedKeyMasked.textContent = '••••••••';
+            }
+          }
+        }
+
+        // Quick reuse from Text tab
+        const textKey = (imgProv === 'openai' ? localStorage.getItem('aetheria_key_openai') : '') || '';
+        if (imageQuickReuseKeyBtn && imageQuickReuseLabel) {
+          if (!savedImgKey && textKey) {
+            imageQuickReuseKeyBtn.classList.remove('hidden');
+            imageQuickReuseLabel.textContent = 'Connect with saved OpenAI Key from Story Engine';
+          } else {
+            imageQuickReuseKeyBtn.classList.add('hidden');
+          }
+        }
+      }
+    }
+
+    // 2. Vision Input Engine
+    const visProv = localStorage.getItem('aetheria_vision_provider') || 'auto';
+    const visObj = VISION_CATALOG.find(e => e.id === visProv) || VISION_CATALOG[0];
+    const isFreeVis = !visObj.needsKey && !visObj.needsUrl;
+    const savedVisKey = localStorage.getItem('aetheria_key_' + visProv) || localStorage.getItem('aetheria_vision_key') || '';
+    const isCustomVisUrl = visObj.needsUrl;
+    const customVisUrlVal = localStorage.getItem('aetheria_vision_custom_url') || '';
+    const isVisConnected = isFreeVis || (isCustomVisUrl ? Boolean(customVisUrlVal) : Boolean(savedVisKey));
+
+    if (visionProviderSelect) visionProviderSelect.value = visProv;
+    if (visionEngineTriggerTitle) visionEngineTriggerTitle.textContent = visObj.name;
+    if (visionEngineTriggerDesc) visionEngineTriggerDesc.textContent = visObj.desc;
+    if (visionEngineTriggerBadge) {
+      visionEngineTriggerBadge.textContent = visObj.badge;
+      visionEngineTriggerBadge.className = `px-2 py-0.5 rounded-full text-[9px] font-mono font-bold shrink-0 ${
+        visObj.badge.includes('RECOMMENDED') || visObj.badge.includes('FREE')
+          ? 'bg-cyan-500/20 text-cyan-300 border border-cyan-500/30'
+          : 'bg-white/10 text-slate-300'
+      }`;
+    }
+
+    if (visionAutoCard) visionAutoCard.classList.toggle('hidden', !isFreeVis);
+    if (visionConnectionCard) {
+      visionConnectionCard.classList.toggle('hidden', isFreeVis);
+      if (!isFreeVis) {
+        if (visionConnectTitle) visionConnectTitle.textContent = `Connect ${visObj.name}`;
+        if (visionConnectDesc) visionConnectDesc.textContent = isCustomVisUrl
+          ? 'Enter your custom endpoint URL to connect.'
+          : 'Enter your API key to enable visual perception.';
+        if (visionApiKey) {
+          visionApiKey.value = savedVisKey;
+          visionApiKey.placeholder = visObj.keyHint || 'Paste API Key...';
+        }
+        if (visionCustomUrlContainer) {
+          visionCustomUrlContainer.classList.toggle('hidden', !isCustomVisUrl);
+          if (isCustomVisUrl && visionCustomUrl) visionCustomUrl.value = customVisUrlVal;
+        }
+
+        if (visionUnconnectedContainer && visionConnectedContainer) {
+          visionUnconnectedContainer.classList.toggle('hidden', isVisConnected);
+          visionConnectedContainer.classList.toggle('hidden', !isVisConnected);
+        }
+
+        if (isVisConnected) {
+          if (visionConnectedProvName) visionConnectedProvName.textContent = visObj.name;
+          if (visionConnectedKeyMasked) {
+            if (isCustomVisUrl) {
+              visionConnectedKeyMasked.textContent = customVisUrlVal || 'Custom Endpoint';
+            } else if (savedVisKey) {
+              const prefix = savedVisKey.slice(0, 4);
+              const suffix = savedVisKey.slice(-4);
+              visionConnectedKeyMasked.textContent = `${prefix}••••${suffix}`;
+            } else {
+              visionConnectedKeyMasked.textContent = '••••••••';
+            }
+          }
+        }
+
+        // Quick reuse from Text tab
+        const textKey = (visProv === 'gemini' ? (localStorage.getItem('aetheria_key_google') || localStorage.getItem('aetheria_key_gemini')) : (visProv === 'openai' ? localStorage.getItem('aetheria_key_openai') : '')) || '';
+        if (visionQuickReuseKeyBtn && visionQuickReuseLabel) {
+          if (!savedVisKey && textKey) {
+            visionQuickReuseKeyBtn.classList.remove('hidden');
+            visionQuickReuseLabel.textContent = `Connect with saved ${visProv === 'gemini' ? 'Gemini' : 'OpenAI'} Key from Story Engine`;
+          } else {
+            visionQuickReuseKeyBtn.classList.add('hidden');
+          }
+        }
+      }
+    }
+
+    // 3. Aspect Ratio Trigger display
+    const savedRatio = localStorage.getItem('aetheria_image_aspect') || '1:1';
+    const ratioObj = ASPECT_RATIOS.find(r => r.id === savedRatio) || ASPECT_RATIOS[0];
+    if (imageAspectSelect) imageAspectSelect.value = savedRatio;
+    if (imageAspectTriggerLabel) imageAspectTriggerLabel.textContent = ratioObj.label;
+  }
+
+  // Subtab switching (Selfies / Output vs Vision / Input)
+  imageSubtabOutputBtn?.addEventListener('click', () => {
+    imageSubtabOutputBtn.className = 'flex-1 py-2 px-3 rounded-xl bg-amber-600 text-white text-xs font-semibold flex items-center justify-center gap-2 transition cursor-pointer shadow-sm shadow-amber-900/40';
+    imageSubtabInputBtn.className = 'flex-1 py-2 px-3 rounded-xl text-slate-300 hover:text-white hover:bg-white/[0.04] text-xs font-semibold flex items-center justify-center gap-2 transition cursor-pointer';
+    imageOutputPane?.classList.remove('hidden');
+    imageInputPane?.classList.add('hidden');
+  });
+
+  imageSubtabInputBtn?.addEventListener('click', () => {
+    imageSubtabInputBtn.className = 'flex-1 py-2 px-3 rounded-xl bg-cyan-600 text-white text-xs font-semibold flex items-center justify-center gap-2 transition cursor-pointer shadow-sm shadow-cyan-900/40';
+    imageSubtabOutputBtn.className = 'flex-1 py-2 px-3 rounded-xl text-slate-300 hover:text-white hover:bg-white/[0.04] text-xs font-semibold flex items-center justify-center gap-2 transition cursor-pointer';
+    imageInputPane?.classList.remove('hidden');
+    imageOutputPane?.classList.add('hidden');
+  });
+
+  // Dropdown Triggers
+  imageEngineTrigger?.addEventListener('click', (e) => {
+    e.stopPropagation();
+    if (!imageEngineMenu) return;
+    const isHidden = imageEngineMenu.classList.contains('hidden');
+    if (isHidden) {
+      renderImageEngineMenu();
+      imageEngineMenu.classList.remove('hidden');
+      if (imageEngineChevron) imageEngineChevron.classList.add('rotate-180');
+      if (imageAspectMenu) imageAspectMenu.classList.add('hidden');
+      if (visionEngineMenu) visionEngineMenu.classList.add('hidden');
+    } else {
+      imageEngineMenu.classList.add('hidden');
+      if (imageEngineChevron) imageEngineChevron.classList.remove('rotate-180');
+    }
+  });
+
+  imageAspectTrigger?.addEventListener('click', (e) => {
+    e.stopPropagation();
+    if (!imageAspectMenu) return;
+    const isHidden = imageAspectMenu.classList.contains('hidden');
+    if (isHidden) {
+      renderImageAspectMenu();
+      imageAspectMenu.classList.remove('hidden');
+      if (imageAspectChevron) imageAspectChevron.classList.add('rotate-180');
+      if (imageEngineMenu) imageEngineMenu.classList.add('hidden');
+      if (visionEngineMenu) visionEngineMenu.classList.add('hidden');
+    } else {
+      imageAspectMenu.classList.add('hidden');
+      if (imageAspectChevron) imageAspectChevron.classList.remove('rotate-180');
+    }
+  });
+
+  visionEngineTrigger?.addEventListener('click', (e) => {
+    e.stopPropagation();
+    if (!visionEngineMenu) return;
+    const isHidden = visionEngineMenu.classList.contains('hidden');
+    if (isHidden) {
+      renderVisionEngineMenu();
+      visionEngineMenu.classList.remove('hidden');
+      if (visionEngineChevron) visionEngineChevron.classList.add('rotate-180');
+      if (imageEngineMenu) imageEngineMenu.classList.add('hidden');
+      if (imageAspectMenu) imageAspectMenu.classList.add('hidden');
+    } else {
+      visionEngineMenu.classList.add('hidden');
+      if (visionEngineChevron) visionEngineChevron.classList.remove('rotate-180');
+    }
+  });
+
+  // Connect & Disconnect handlers
+  imageDisconnectBtn?.addEventListener('click', () => {
+    if (imageUnconnectedContainer && imageConnectedContainer) {
+      imageUnconnectedContainer.classList.remove('hidden');
+      imageConnectedContainer.classList.add('hidden');
+    }
+    imageApiKey?.focus();
+  });
+
+  imageConnectConfirmBtn?.addEventListener('click', () => {
+    const prov = localStorage.getItem('aetheria_image_provider') || 'pollinations';
+    const key = imageApiKey?.value.trim() || '';
+    const obj = IMAGE_CATALOG.find(x => x.id === prov) || IMAGE_CATALOG[0];
+    const isCustom = obj.needsUrl;
+
+    if (imageCustomUrl) {
+      localStorage.setItem('aetheria_image_custom_url', imageCustomUrl.value.trim());
+    }
+
+    if (obj.needsKey && !key && !isCustom) {
+      showNotification('⚠️ Please enter an API key first.', 'warning');
+      imageApiKey?.focus();
+      return;
+    }
+
+    if (key) {
+      localStorage.setItem('aetheria_key_' + prov, key);
+      localStorage.setItem('aetheria_image_key', key);
+    }
+
+    syncImageUiPanels();
+    showNotification(`✓ ${obj.name} connected successfully!`);
+  });
+
+  imageQuickReuseKeyBtn?.addEventListener('click', () => {
+    const textKey = localStorage.getItem('aetheria_key_openai') || '';
+    if (textKey && imageApiKey) {
+      imageApiKey.value = textKey;
+      imageConnectConfirmBtn?.click();
+    }
+  });
+
+  visionDisconnectBtn?.addEventListener('click', () => {
+    if (visionUnconnectedContainer && visionConnectedContainer) {
+      visionUnconnectedContainer.classList.remove('hidden');
+      visionConnectedContainer.classList.add('hidden');
+    }
+    visionApiKey?.focus();
+  });
+
+  visionConnectConfirmBtn?.addEventListener('click', () => {
+    const prov = localStorage.getItem('aetheria_vision_provider') || 'auto';
+    const key = visionApiKey?.value.trim() || '';
+    const obj = VISION_CATALOG.find(x => x.id === prov) || VISION_CATALOG[0];
+    const isCustom = obj.needsUrl;
+
+    if (visionCustomUrl) {
+      localStorage.setItem('aetheria_vision_custom_url', visionCustomUrl.value.trim());
+    }
+
+    if (obj.needsKey && !key && !isCustom) {
+      showNotification('⚠️ Please enter an API key first.', 'warning');
+      visionApiKey?.focus();
+      return;
+    }
+
+    if (key) {
+      localStorage.setItem('aetheria_key_' + prov, key);
+      localStorage.setItem('aetheria_vision_key', key);
+    }
+
+    syncImageUiPanels();
+    showNotification(`✓ ${obj.name} connected successfully!`);
+  });
+
+  visionQuickReuseKeyBtn?.addEventListener('click', () => {
+    const prov = localStorage.getItem('aetheria_vision_provider') || 'auto';
+    const textKey = (prov === 'gemini' ? (localStorage.getItem('aetheria_key_google') || localStorage.getItem('aetheria_key_gemini')) : localStorage.getItem('aetheria_key_openai')) || '';
+    if (textKey && visionApiKey) {
+      visionApiKey.value = textKey;
+      visionConnectConfirmBtn?.click();
+    }
   });
 
   // Modal Open/Close
