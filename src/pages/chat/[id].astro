@@ -1365,14 +1365,9 @@ const { character } = Astro.props;
                       aria-haspopup="listbox"
                       aria-expanded="false"
                     >
-                      <div class="flex items-center gap-2.5 min-w-0 pr-2">
-                        <div id="tts-engine-trigger-icon" class="w-7 h-7 rounded-lg bg-purple-500/20 border border-purple-500/30 flex items-center justify-center text-sm shrink-0">
-                          🎙️
-                        </div>
-                        <div class="min-w-0">
-                          <div id="tts-engine-trigger-title" class="font-bold text-xs text-white truncate">Built-in Device Voice</div>
-                          <div id="tts-engine-trigger-desc" class="text-[10px] text-slate-400 truncate">Device speech synthesizer • Offline & Private</div>
-                        </div>
+                      <div class="min-w-0 pr-2">
+                        <div id="tts-engine-trigger-title" class="font-bold text-xs text-white truncate">Built-in Device Voice</div>
+                        <div id="tts-engine-trigger-desc" class="text-[10px] text-slate-400 truncate">Device speech synthesizer • Offline & Private</div>
                       </div>
                       <div class="flex items-center gap-2 shrink-0">
                         <span id="tts-engine-trigger-badge" class="px-2 py-0.5 rounded-full text-[9px] font-mono font-bold bg-emerald-500/20 text-emerald-300 border border-emerald-500/30">
@@ -1660,14 +1655,9 @@ const { character } = Astro.props;
                       aria-haspopup="listbox"
                       aria-expanded="false"
                     >
-                      <div class="flex items-center gap-2.5 min-w-0 pr-2">
-                        <div id="stt-engine-trigger-icon" class="w-7 h-7 rounded-lg bg-rose-500/20 border border-rose-500/30 flex items-center justify-center text-sm shrink-0">
-                          ⚡
-                        </div>
-                        <div class="min-w-0">
-                          <div id="stt-engine-trigger-title" class="font-bold text-xs text-white truncate">Groq Whisper</div>
-                          <div id="stt-engine-trigger-desc" class="text-[10px] text-slate-400 truncate">Ultra-Fast LPU Inference (~0.2s)</div>
-                        </div>
+                      <div class="min-w-0 pr-2">
+                        <div id="stt-engine-trigger-title" class="font-bold text-xs text-white truncate">Groq Whisper</div>
+                        <div id="stt-engine-trigger-desc" class="text-[10px] text-slate-400 truncate">Ultra-Fast LPU Inference (~0.2s)</div>
                       </div>
                       <div class="flex items-center gap-2 shrink-0">
                         <span id="stt-engine-trigger-badge" class="px-2 py-0.5 rounded-full text-[9px] font-mono font-bold bg-rose-500/20 text-rose-300 border border-rose-500/30">
@@ -1804,8 +1794,7 @@ const { character } = Astro.props;
                       aria-haspopup="listbox"
                       aria-expanded="false"
                     >
-                      <div class="flex items-center gap-2 min-w-0 pr-2">
-                        <span class="text-sm">🌐</span>
+                      <div class="min-w-0 pr-2">
                         <span id="stt-lang-trigger-label" class="font-medium text-slate-200 truncate">Auto-Detect Language (Recommended)</span>
                       </div>
                       <ChevronDown class="w-4 h-4 text-slate-400 group-hover:text-rose-400 transition-transform duration-200 shrink-0" id="stt-lang-chevron" />
@@ -3992,7 +3981,6 @@ const { character } = Astro.props;
   const ttsEngineTrigger = document.getElementById('tts-engine-trigger');
   const ttsEngineMenu = document.getElementById('tts-engine-menu');
   const ttsEngineChevron = document.getElementById('tts-engine-chevron');
-  const ttsEngineTriggerIcon = document.getElementById('tts-engine-trigger-icon');
   const ttsEngineTriggerTitle = document.getElementById('tts-engine-trigger-title');
   const ttsEngineTriggerDesc = document.getElementById('tts-engine-trigger-desc');
   const ttsEngineTriggerBadge = document.getElementById('tts-engine-trigger-badge');
@@ -4090,7 +4078,6 @@ const { character } = Astro.props;
   const sttEngineTrigger = document.getElementById('stt-engine-trigger');
   const sttEngineMenu = document.getElementById('stt-engine-menu');
   const sttEngineChevron = document.getElementById('stt-engine-chevron');
-  const sttEngineTriggerIcon = document.getElementById('stt-engine-trigger-icon');
   const sttEngineTriggerTitle = document.getElementById('stt-engine-trigger-title');
   const sttEngineTriggerDesc = document.getElementById('stt-engine-trigger-desc');
   const sttEngineTriggerBadge = document.getElementById('stt-engine-trigger-badge');
@@ -6662,7 +6649,6 @@ const { character } = Astro.props;
       name: 'Google Gemini',
       tag: 'Recommended • Free',
       tagClass: 'bg-emerald-500/20 text-emerald-300 border-emerald-500/40',
-      icon: '💎',
       desc: 'Official high-speed Google API with generous free tiers and multilingual support.',
       keyUrl: 'https://aistudio.google.com/app/apikey',
       keyText: 'Get Free Key from Google AI Studio',
@@ -6673,7 +6659,6 @@ const { character } = Astro.props;
       name: 'Anthropic Claude',
       tag: 'Narrative & Prose',
       tagClass: 'bg-amber-500/20 text-amber-300 border-amber-500/40',
-      icon: '👑',
       desc: 'Industry-leading prose, emotional storytelling depth, and character immersion.',
       keyUrl: 'https://console.anthropic.com/settings/keys',
       keyText: 'Create Key in Anthropic Console',
@@ -6684,7 +6669,6 @@ const { character } = Astro.props;
       name: 'OpenAI',
       tag: 'High Intelligence',
       tagClass: 'bg-blue-500/20 text-blue-300 border-blue-500/40',
-      icon: '🧠',
       desc: 'Official OpenAI API platform offering sharp reasoning, world lore memory, and fast responses.',
       keyUrl: 'https://platform.openai.com/api-keys',
       keyText: 'Get Keys from OpenAI Platform',
@@ -6695,7 +6679,6 @@ const { character } = Astro.props;
       name: 'OpenRouter',
       tag: 'Multi-Model Gateway',
       tagClass: 'bg-purple-500/20 text-purple-300 border-purple-500/40',
-      icon: '🌐',
       desc: 'Unified gateway connecting to hundreds of open-source and specialized AI models.',
       keyUrl: 'https://openrouter.ai/keys',
       keyText: 'Generate Key on OpenRouter.ai',
@@ -6706,7 +6689,6 @@ const { character } = Astro.props;
       name: 'Groq',
       tag: 'Ultra-Low Latency',
       tagClass: 'bg-cyan-500/20 text-cyan-300 border-cyan-500/40',
-      icon: '🚀',
       desc: 'Instant zero-latency inference running on Groq specialized LPU silicon with generous free tiers.',
       keyUrl: 'https://console.groq.com/keys',
       keyText: 'Create Free Key in Groq Console',
@@ -7304,7 +7286,6 @@ const { character } = Astro.props;
       message: 'Restore all AI engine parameters to their default values.',
       confirmText: 'Reset',
       cancelText: 'Cancel',
-      icon: 'settings',
       type: 'warning'
     });
     if (confirmed) {
@@ -7643,28 +7624,13 @@ const { character } = Astro.props;
   ];
 
 
-  const TTS_ENGINE_ICONS = {
-    'browser': '🎙️',
-    'elevenlabs': '🎭',
-    'openai': '✨',
-    'google': '🌐',
-    'deepgram': '⚡',
-    'playht': '🌊',
-    'fishaudio': '🐟',
-    'kokoro': '🍃',
-    'xtts': '💻',
-    'openrouter': '🔀',
-    'custom': '⚙️'
-  };
-
   function renderTtsEngineMenu() {
     if (!ttsEngineMenu) return;
     const currentTtsId = voiceProviderSelect?.value || localStorage.getItem('aetheria_voice_provider') || 'browser';
 
     ttsEngineMenu.innerHTML = TTS_CATALOG.map(eng => {
       const isSelected = eng.id === currentTtsId;
-      const icon = TTS_ENGINE_ICONS[eng.id] || '🎙️';
-      return `
+        return `
         <button 
           type="button" 
           class="w-full p-2.5 rounded-xl text-left transition flex items-center justify-between gap-2.5 cursor-pointer ${
@@ -7676,12 +7642,9 @@ const { character } = Astro.props;
           role="option"
           aria-selected="${isSelected}"
         >
-          <div class="flex items-center gap-2.5 min-w-0">
-            <span class="text-base shrink-0">${icon}</span>
-            <div class="min-w-0">
-              <div class="font-bold text-xs truncate">${eng.name}</div>
-              <div class="text-[10px] text-slate-400 truncate">${eng.desc}</div>
-            </div>
+          <div class="min-w-0">
+            <div class="font-bold text-xs truncate">${eng.name}</div>
+            <div class="text-[10px] text-slate-400 truncate">${eng.desc}</div>
           </div>
           <span class="px-2 py-0.5 rounded-full text-[9px] font-mono font-bold shrink-0 ${
             eng.badge.includes('Free') ? 'bg-emerald-500/20 text-emerald-300 border border-emerald-500/30' : 'bg-white/10 text-slate-300'
@@ -7695,8 +7658,6 @@ const { character } = Astro.props;
 
   function updateTtsEngineTriggerDisplay(engId) {
     const eng = TTS_CATALOG.find(e => e.id === engId) || TTS_CATALOG[0];
-    const icon = TTS_ENGINE_ICONS[eng.id] || '🎙️';
-    if (ttsEngineTriggerIcon) ttsEngineTriggerIcon.textContent = icon;
     if (ttsEngineTriggerTitle) ttsEngineTriggerTitle.textContent = eng.name;
     if (ttsEngineTriggerDesc) ttsEngineTriggerDesc.textContent = eng.desc;
     if (ttsEngineTriggerBadge) {
@@ -8383,7 +8344,6 @@ const { character } = Astro.props;
       message: `Are you sure you want to delete "${prof.name}"?`,
       confirmText: 'Delete',
       cancelText: 'Cancel',
-      icon: 'trash',
       type: 'danger'
     });
     if (confirmed) {
@@ -9011,7 +8971,6 @@ const { character } = Astro.props;
       name: 'Device Native Mic',
       desc: 'Built-in browser recognition (100% Free & Offline)',
       badge: 'FREE',
-      icon: '🎙️',
       type: 'device'
     },
     {
@@ -9019,7 +8978,6 @@ const { character } = Astro.props;
       name: 'Groq Whisper',
       desc: 'Ultra-Fast LPU Inference (~0.2s latency)',
       badge: 'FASTEST',
-      icon: '⚡',
       type: 'cloud',
       needsKey: true,
       placeholder: 'Enter Groq API Key (gsk_...)',
@@ -9035,7 +8993,6 @@ const { character } = Astro.props;
       name: 'OpenAI Whisper',
       desc: 'Official OpenAI Whisper-1 Cloud API',
       badge: 'STUDIO',
-      icon: '✨',
       type: 'cloud',
       needsKey: true,
       placeholder: 'Enter OpenAI API Key (sk-...)',
@@ -9049,7 +9006,6 @@ const { character } = Astro.props;
       name: 'Deepgram Nova-2',
       desc: 'Real-time enterprise speech intelligence',
       badge: 'PRO',
-      icon: '🚀',
       type: 'cloud',
       needsKey: true,
       placeholder: 'Enter Deepgram API Key',
@@ -9064,7 +9020,6 @@ const { character } = Astro.props;
       name: 'Cloudflare Workers AI',
       desc: 'Serverless Whisper running on Cloudflare Edge',
       badge: 'EDGE',
-      icon: '☁️',
       type: 'cloud',
       needsKey: true,
       placeholder: 'Enter Cloudflare API Token',
@@ -9078,7 +9033,6 @@ const { character } = Astro.props;
       name: 'AssemblyAI Conformer',
       desc: 'Production speech-to-text with high accuracy',
       badge: 'ACCURATE',
-      icon: '🎯',
       type: 'cloud',
       needsKey: true,
       placeholder: 'Enter AssemblyAI API Key',
@@ -9093,7 +9047,6 @@ const { character } = Astro.props;
       name: 'Fal.ai Fast Whisper',
       desc: 'High-throughput GPU Whisper inference',
       badge: 'GPU',
-      icon: '🔮',
       type: 'cloud',
       needsKey: true,
       placeholder: 'Enter Fal.ai Key (fal_key_...)',
@@ -9107,7 +9060,6 @@ const { character } = Astro.props;
       name: 'Gladia Audio AI',
       desc: 'Multilingual Whisper audio intelligence',
       badge: 'MULTI',
-      icon: '🌐',
       type: 'cloud',
       needsKey: true,
       placeholder: 'Enter Gladia API Key',
@@ -9121,7 +9073,6 @@ const { character } = Astro.props;
       name: 'Local Whisper Server',
       desc: 'Self-hosted Whisper.cpp, Faster-Whisper, or Ollama',
       badge: 'LOCAL',
-      icon: '💻',
       type: 'custom',
       needsUrl: true,
       defaultUrl: 'http://localhost:8000/v1/audio/transcriptions',
@@ -9137,7 +9088,6 @@ const { character } = Astro.props;
       name: 'Custom Endpoint / Proxy',
       desc: 'Any OpenAI-compatible audio transcriptions URL',
       badge: 'CUSTOM',
-      icon: '⚙️',
       type: 'custom',
       needsUrl: true,
       defaultUrl: '',
@@ -9149,7 +9099,7 @@ const { character } = Astro.props;
   ];
 
   const ALL_STT_LANGUAGES = [
-    { code: 'auto', name: 'Auto-Detect Language (Recommended)', icon: '🌐' },
+    { code: 'auto', name: 'Auto-Detect Language (Recommended)' },
     { code: 'en', name: 'English' },
     { code: 'es', name: 'Spanish' },
     { code: 'fr', name: 'French' },
@@ -9380,7 +9330,6 @@ const { character } = Astro.props;
 
   function updateSttEngineTriggerDisplay(engId) {
     const eng = ALL_STT_ENGINES.find(e => e.id === engId) || ALL_STT_ENGINES[1];
-    if (sttEngineTriggerIcon) sttEngineTriggerIcon.textContent = eng.icon;
     if (sttEngineTriggerTitle) sttEngineTriggerTitle.textContent = eng.name;
     if (sttEngineTriggerDesc) sttEngineTriggerDesc.textContent = eng.desc;
     if (sttEngineTriggerBadge) {
@@ -9450,8 +9399,7 @@ const { character } = Astro.props;
           role="option"
           aria-selected="${isSelected}"
         >
-          <div class="flex items-center gap-2 truncate">
-            <span>${lang.icon || '•'}</span>
+          <div class="truncate">
             <span class="truncate">${lang.name}</span>
           </div>
           ${isSelected ? '<span class="text-rose-400 font-bold">✓</span>' : ''}
@@ -10357,7 +10305,6 @@ const { character } = Astro.props;
       message: 'This story branch and all its messages will be permanently deleted.',
       confirmText: 'Delete',
       cancelText: 'Cancel',
-      icon: 'danger',
       type: 'danger'
     });
     if (!confirmed) return;
@@ -11835,7 +11782,6 @@ const { character } = Astro.props;
             message: 'Remove this message from the conversation history?',
             confirmText: 'Delete',
             cancelText: 'Cancel',
-            icon: 'danger',
             type: 'danger'
           }).then(confirmed => {
             if (confirmed) {
@@ -12299,7 +12245,6 @@ const { character } = Astro.props;
       message: 'Subsequent messages will be deleted, and this prompt will be copied to the input box for editing.',
       confirmText: 'Rewind',
       cancelText: 'Cancel',
-      icon: 'rewind',
       type: 'warning'
     });
     if (!confirmed) return;
@@ -12846,7 +12791,6 @@ const { character } = Astro.props;
         message: 'Remove this message from the conversation history?',
         confirmText: 'Delete',
         cancelText: 'Cancel',
-        icon: 'danger',
         type: 'danger'
       }).then(confirmed => {
         if (confirmed) {
@@ -13632,7 +13576,6 @@ Requirements:
       message: `Delete all messages with ${activeChar.name} and start fresh?`,
       confirmText: 'Clear',
       cancelText: 'Cancel',
-      icon: 'rewind',
       type: 'danger'
     });
     if (confirmed) {
@@ -13888,7 +13831,6 @@ Requirements:
           message: `Remove "${entry.name}" from world memory?`,
           confirmText: 'Delete',
           cancelText: 'Cancel',
-          icon: 'book',
           type: 'danger'
         });
         if (confirmed) {
