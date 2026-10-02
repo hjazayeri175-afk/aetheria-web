@@ -1695,91 +1695,135 @@ const { character } = Astro.props;
                   </div>
 
                   <!-- State B: Cloud or Custom STT Engine -->
-                  <div id="stt-connection-card" class="hidden p-4 rounded-2xl bg-white/[0.03] border border-white/10 space-y-3">
-                    <div class="flex items-center justify-between gap-2">
-                      <div class="flex items-center gap-2.5">
-                        <div class="w-7 h-7 rounded-xl bg-rose-500/20 border border-rose-500/30 flex items-center justify-center text-rose-300 shrink-0">
-                          <KeyRound class="w-3.5 h-3.5" />
-                        </div>
-                        <div>
-                          <h5 id="stt-connect-title" class="text-xs font-bold text-white">Groq API Key</h5>
-                          <p id="stt-connect-desc" class="text-[10px] text-slate-400">Stored locally in your browser.</p>
-                        </div>
+                  <div id="stt-connection-card" class="hidden p-3.5 sm:p-4 rounded-2xl bg-white/[0.02] border border-white/[0.08] space-y-3">
+                    
+                    <!-- 1. NOT Connected State (Input Form) -->
+                    <div id="stt-unconnected-container" class="space-y-3">
+                      <div>
+                        <h5 id="stt-connect-title" class="text-xs font-semibold text-white">Connect API Key</h5>
+                        <p id="stt-connect-desc" class="text-[11px] text-slate-400">Enter your key to enable speech transcription.</p>
                       </div>
-                      <span id="stt-key-status-pill" class="px-2 py-0.5 rounded-full text-[9px] font-mono font-bold bg-amber-500/20 text-amber-300 border border-amber-500/30">
-                        KEY REQUIRED
-                      </span>
-                    </div>
 
-                    <!-- Custom Server / Endpoint URL Input (Shown for custom-stt / local-stt) -->
-                    <div id="stt-custom-url-container" class="hidden space-y-1">
-                      <label class="block text-[11px] font-semibold text-slate-300">Audio Transcriptions Endpoint URL</label>
-                      <input 
-                        id="stt-custom-url" 
-                        type="url" 
-                        placeholder="http://localhost:8000/v1/audio/transcriptions" 
-                        class="w-full px-3.5 py-2 rounded-xl bg-black/60 border border-white/10 text-xs text-white placeholder:text-slate-500 outline-none focus:border-rose-500/60 font-mono"
-                      />
-                    </div>
+                      <!-- Custom Server / Endpoint URL Input (Shown for custom-stt / local-stt) -->
+                      <div id="stt-custom-url-container" class="hidden space-y-1">
+                        <label class="block text-[11px] font-semibold text-slate-300">Endpoint URL</label>
+                        <input 
+                          id="stt-custom-url" 
+                          type="url" 
+                          placeholder="http://localhost:8000/v1/audio/transcriptions" 
+                          class="w-full px-3.5 py-2 rounded-xl bg-black/60 border border-white/10 text-xs text-white placeholder:text-slate-500 outline-none focus:border-rose-500/60 font-mono"
+                        />
+                      </div>
 
-                    <!-- 1-Click Quick Reuse Button from Text Engine -->
-                    <button 
-                      type="button" 
-                      id="stt-quick-reuse-key-btn" 
-                      class="hidden w-full py-2 px-3 rounded-xl bg-rose-600/20 hover:bg-rose-600/30 border border-rose-500/40 text-rose-300 text-xs font-semibold flex items-center justify-center gap-2 transition cursor-pointer active:scale-95"
-                    >
-                      <Sparkles class="w-3.5 h-3.5 text-rose-400" />
-                      <span id="stt-quick-reuse-label">Use saved key from Text Engine</span>
-                    </button>
+                      <!-- 1-Click Quick Reuse Button from Text Engine -->
+                      <button 
+                        type="button" 
+                        id="stt-quick-reuse-key-btn" 
+                        class="hidden w-full py-2 px-3 rounded-xl bg-rose-600/15 hover:bg-rose-600/25 border border-rose-500/30 text-rose-300 text-xs font-medium flex items-center justify-center gap-1.5 transition cursor-pointer"
+                      >
+                        <Sparkles class="w-3.5 h-3.5 text-rose-400" />
+                        <span id="stt-quick-reuse-label">Use saved key from Text Engine</span>
+                      </button>
 
-                    <div id="stt-api-key-container" class="flex gap-2">
-                      <div class="relative flex-1">
+                      <div id="stt-api-key-container" class="flex gap-2">
                         <input 
                           id="stt-api-key" 
                           type="password" 
                           placeholder="Paste API Key..." 
-                          class="w-full px-3.5 py-2.5 rounded-xl bg-black/60 border border-white/10 text-xs text-white placeholder:text-slate-500 outline-none focus:border-rose-500/60 font-mono pr-14"
+                          class="flex-1 px-3.5 py-2.5 rounded-xl bg-black/60 border border-white/10 text-xs text-white placeholder:text-slate-500 outline-none focus:border-rose-500/60 font-mono"
                         />
-                        <button type="button" id="toggle-stt-key-visibility-btn" class="absolute right-2.5 top-1/2 -translate-y-1/2 text-slate-400 hover:text-white text-xs cursor-pointer p-1">
-                          Show
-                        </button>
-                      </div>
-                      <button 
-                        type="button" 
-                        id="stt-verify-connect-btn" 
-                        class="px-4 py-2.5 rounded-xl bg-rose-600 hover:bg-rose-500 text-white text-xs font-semibold flex items-center justify-center gap-1.5 transition cursor-pointer active:scale-95 shadow-md shadow-rose-950 shrink-0"
-                      >
-                        <Check class="w-3.5 h-3.5" />
-                        <span>Connect</span>
-                      </button>
-                    </div>
-
-                    <!-- Model Selector inside the connected cloud card -->
-                    <div id="stt-model-section" class="pt-2 border-t border-white/[0.08] space-y-1.5">
-                      <div class="flex items-center justify-between">
-                        <label class="block text-xs font-semibold text-slate-300">Transcription Model</label>
                         <button 
                           type="button" 
-                          id="sync-stt-models-btn" 
-                          class="px-2 py-0.5 rounded-lg bg-white/5 hover:bg-white/10 text-slate-400 hover:text-white text-[10px] font-medium flex items-center gap-1 transition cursor-pointer"
-                          title="Refresh available models from API"
+                          id="stt-verify-connect-btn" 
+                          class="px-4 py-2.5 rounded-xl bg-rose-600 hover:bg-rose-500 text-white text-xs font-semibold flex items-center justify-center gap-1.5 transition cursor-pointer active:scale-95 shadow-md shadow-rose-950 shrink-0"
                         >
-                          <RefreshCw id="sync-stt-models-icon" class="w-3 h-3 text-rose-400" />
-                          <span>Sync Models</span>
+                          <Check class="w-3.5 h-3.5" />
+                          <span>Connect</span>
+                        </button>
+                      </div>
+                    </div>
+
+                    <!-- 2. Connected State Bar (Sleek, Clean 1-Row) -->
+                    <div id="stt-connected-container" class="hidden space-y-3">
+                      <div class="p-3 rounded-xl bg-white/[0.03] border border-white/[0.08] flex items-center justify-between gap-2">
+                        <div class="flex items-center gap-2.5 min-w-0">
+                          <span class="w-2 h-2 rounded-full bg-emerald-400 shrink-0"></span>
+                          <div class="min-w-0">
+                            <div class="text-xs font-semibold text-white flex items-center gap-1.5">
+                              <span id="stt-connected-prov-name">Groq Whisper</span>
+                              <span class="text-[9px] px-1.5 py-0.5 rounded-full bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 font-medium">Connected</span>
+                            </div>
+                            <div class="text-[10px] text-slate-400 font-mono truncate" id="stt-connected-key-masked">••••••••</div>
+                          </div>
+                        </div>
+                        <button 
+                          type="button" 
+                          id="stt-disconnect-btn" 
+                          class="px-2.5 py-1 rounded-lg bg-white/[0.05] hover:bg-white/[0.1] text-slate-300 hover:text-white border border-white/10 text-[11px] font-medium transition cursor-pointer"
+                        >
+                          Change Key
                         </button>
                       </div>
 
-                      <div class="relative">
-                        <select 
-                          id="stt-model-select" 
-                          class="w-full px-3.5 py-2.5 rounded-xl bg-black/60 border border-white/10 text-xs text-white outline-none focus:border-rose-500/60 appearance-none cursor-pointer pr-10 font-mono"
-                        >
-                          <option value="whisper-large-v3-turbo">whisper-large-v3-turbo (Fastest ~0.2s)</option>
-                          <option value="whisper-large-v3">whisper-large-v3 (Maximum Accuracy)</option>
-                        </select>
-                        <ChevronDown class="w-4 h-4 text-slate-400 absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none" />
+                      <!-- 3. Transcription Model Section (ONLY shown when connected!) -->
+                      <div id="stt-model-section" class="space-y-1.5 pt-1">
+                        <div class="flex items-center justify-between">
+                          <label class="text-xs font-semibold text-slate-300">Transcription Model</label>
+                          <div class="flex items-center gap-1.5">
+                            <button 
+                              type="button" 
+                              id="sync-stt-models-btn" 
+                              class="px-2 py-0.5 rounded-lg bg-white/[0.04] hover:bg-white/[0.08] text-slate-400 hover:text-white text-[10px] font-medium flex items-center gap-1 transition cursor-pointer"
+                              title="Sync live models from API"
+                            >
+                              <RefreshCw id="sync-stt-models-icon" class="w-3 h-3 text-rose-400" />
+                              <span>Sync</span>
+                            </button>
+                            <button 
+                              type="button" 
+                              id="toggle-stt-custom-model-btn" 
+                              class="px-2 py-0.5 rounded-lg bg-white/[0.04] hover:bg-white/[0.08] text-slate-400 hover:text-white text-[10px] font-medium transition cursor-pointer"
+                            >
+                              Custom ID
+                            </button>
+                          </div>
+                        </div>
+
+                        <!-- Sleek Custom Dropdown for Model (NO native select, NO Android radio modal!) -->
+                        <div class="relative" id="stt-model-dropdown-container">
+                          <button 
+                            type="button" 
+                            id="stt-model-trigger" 
+                            class="w-full px-3.5 py-2.5 rounded-xl bg-black/60 hover:bg-black/80 border border-white/10 hover:border-rose-500/40 flex items-center justify-between text-xs text-white transition cursor-pointer text-left group"
+                            aria-haspopup="listbox"
+                            aria-expanded="false"
+                          >
+                            <span id="stt-model-trigger-label" class="font-mono text-slate-200 truncate">Select model...</span>
+                            <ChevronDown class="w-4 h-4 text-slate-400 group-hover:text-rose-400 transition-transform duration-200 shrink-0" id="stt-model-chevron" />
+                          </button>
+
+                          <!-- Custom Dropdown Menu for Models -->
+                          <div 
+                            id="stt-model-menu" 
+                            class="hidden absolute left-0 right-0 top-full mt-1.5 z-50 bg-[#0d1026]/95 backdrop-blur-xl border border-white/10 rounded-2xl p-1.5 shadow-2xl shadow-black/80 space-y-1 max-h-52 overflow-y-auto no-scrollbar font-mono text-xs"
+                            role="listbox"
+                          >
+                            <!-- Populated dynamically via renderDynamicSttModels() -->
+                          </div>
+                        </div>
+
+                        <!-- Direct Model Input (When user toggles Custom ID) -->
+                        <div id="stt-custom-model-input-container" class="hidden">
+                          <input 
+                            id="stt-custom-model-input" 
+                            type="text" 
+                            placeholder="Type model ID (e.g. whisper-large-v3)" 
+                            class="w-full px-3.5 py-2 rounded-xl bg-black/60 border border-white/10 text-xs text-white placeholder:text-slate-500 outline-none focus:border-rose-500/60 font-mono"
+                          />
+                        </div>
                       </div>
                     </div>
+
                   </div>
 
                   <!-- 3. Sleek Custom Dropdown for Spoken Language (کشویی مدرن بدون پرچم) -->
@@ -4062,13 +4106,26 @@ const { character } = Astro.props;
   const voiceSyncStatusText = document.getElementById('voice-sync-status-text');
 
   const sttApiKey = document.getElementById('stt-api-key');
-  const toggleSttKeyVisibilityBtn = document.getElementById('toggle-stt-key-visibility-btn');
   const sttCustomUrlContainer = document.getElementById('stt-custom-url-container');
   const sttCustomUrl = document.getElementById('stt-custom-url');
   const sttFreeDeviceCard = document.getElementById('stt-free-device-card');
   const sttVerifyConnectBtn = document.getElementById('stt-verify-connect-btn');
+  const sttUnconnectedContainer = document.getElementById('stt-unconnected-container');
+  const sttConnectedContainer = document.getElementById('stt-connected-container');
+  const sttConnectedProvName = document.getElementById('stt-connected-prov-name');
+  const sttConnectedKeyMasked = document.getElementById('stt-connected-key-masked');
+  const sttDisconnectBtn = document.getElementById('stt-disconnect-btn');
+
   const sttModelSection = document.getElementById('stt-model-section');
-  const sttModelsGrid = document.getElementById('stt-models-grid');
+  const sttModelDropdownContainer = document.getElementById('stt-model-dropdown-container');
+  const sttModelTrigger = document.getElementById('stt-model-trigger');
+  const sttModelTriggerLabel = document.getElementById('stt-model-trigger-label');
+  const sttModelMenu = document.getElementById('stt-model-menu');
+  const sttModelChevron = document.getElementById('stt-model-chevron');
+  const toggleSttCustomModelBtn = document.getElementById('toggle-stt-custom-model-btn');
+  const sttCustomModelInputContainer = document.getElementById('stt-custom-model-input-container');
+  const sttCustomModelInput = document.getElementById('stt-custom-model-input');
+
   const syncSttModelsBtn = document.getElementById('sync-stt-models-btn');
   const syncSttModelsIcon = document.getElementById('sync-stt-models-icon');
   const testSttBtn = document.getElementById('test-stt-btn');
@@ -9247,29 +9304,50 @@ const { character } = Astro.props;
       sttConnectionCard.classList.toggle('hidden', isBrowserStt);
       if (!isBrowserStt) {
         if (sttConnectTitle) {
-          sttConnectTitle.textContent = `${engObj.name} Settings`;
+          sttConnectTitle.textContent = `Connect ${engObj.name}`;
         }
         if (sttConnectDesc) {
           sttConnectDesc.textContent = isCustomUrl 
-            ? 'Connect your local server or custom proxy endpoint.' 
-            : 'Stored locally in your browser. Encrypted and safe.';
+            ? 'Enter your endpoint URL to connect.' 
+            : 'Enter your API key to enable speech transcription.';
         }
         if (sttApiKey) {
           sttApiKey.value = savedSttKey;
           sttApiKey.placeholder = engObj.placeholder || 'Enter API Key...';
         }
-        if (sttKeyStatusPill) {
-          sttKeyStatusPill.textContent = isSttConnected ? 'CONNECTED' : (isCustomUrl ? 'URL REQUIRED' : 'KEY REQUIRED');
-          sttKeyStatusPill.className = `px-2 py-0.5 rounded-full text-[9px] font-mono font-bold ${
-            isSttConnected ? 'bg-emerald-500/20 text-emerald-300 border border-emerald-500/30' : 'bg-amber-500/20 text-amber-300 border border-amber-500/30'
-          }`;
-        }
+
         if (sttCustomUrlContainer) {
           sttCustomUrlContainer.classList.toggle('hidden', !isCustomUrl);
           if (isCustomUrl && sttCustomUrl) {
             sttCustomUrl.value = customUrlVal;
             sttCustomUrl.placeholder = engObj.defaultUrl || 'http://localhost:8000/v1/audio/transcriptions';
           }
+        }
+
+        // Toggle between Unconnected Form and Connected Bar
+        if (sttUnconnectedContainer && sttConnectedContainer) {
+          sttUnconnectedContainer.classList.toggle('hidden', isSttConnected);
+          sttConnectedContainer.classList.toggle('hidden', !isSttConnected);
+        }
+
+        if (isSttConnected) {
+          if (sttConnectedProvName) sttConnectedProvName.textContent = engObj.name;
+          if (sttConnectedKeyMasked) {
+            if (isCustomUrl) {
+              sttConnectedKeyMasked.textContent = customUrlVal || 'Custom Endpoint';
+            } else if (savedSttKey) {
+              const prefix = savedSttKey.slice(0, 4);
+              const suffix = savedSttKey.slice(-4);
+              sttConnectedKeyMasked.textContent = `${prefix}••••${suffix}`;
+            } else {
+              sttConnectedKeyMasked.textContent = '••••••••';
+            }
+          }
+          // ONLY render models when key is connected!
+          renderDynamicSttModels();
+        } else {
+          // When NOT connected: clear models menu so NO pre-filled dummy options appear!
+          if (sttModelMenu) sttModelMenu.innerHTML = '';
         }
 
         // Quick reuse from Text tab
@@ -9282,8 +9360,6 @@ const { character } = Astro.props;
             sttQuickReuseKeyBtn.classList.add('hidden');
           }
         }
-
-        renderDynamicSttModels();
       }
     }
 
@@ -9463,6 +9539,12 @@ const { character } = Astro.props;
       if (sttEngineChevron) sttEngineChevron.classList.remove('rotate-180');
     }
 
+    const modelContainer = document.getElementById('stt-model-dropdown-container');
+    if (modelContainer && !modelContainer.contains(e.target)) {
+      if (sttModelMenu) sttModelMenu.classList.add('hidden');
+      if (sttModelChevron) sttModelChevron.classList.remove('rotate-180');
+    }
+
     const langContainer = document.getElementById('stt-lang-dropdown-container');
     if (langContainer && !langContainer.contains(e.target)) {
       if (sttLangMenu) sttLangMenu.classList.add('hidden');
@@ -9474,12 +9556,21 @@ const { character } = Astro.props;
   let isFetchingSttModels = false;
 
   function renderDynamicSttModels() {
-    if (!sttModelSelect) return;
+    if (!sttModelMenu) return;
     const prov = localStorage.getItem('aetheria_stt_provider') || 'groq';
     if (prov === 'browser-stt') return;
 
+    // Do NOT render models if key is missing!
+    const key = getSttKeyForProvider(prov);
+    const customUrl = localStorage.getItem('aetheria_stt_custom_url');
+    if (!key && !customUrl) {
+      sttModelMenu.innerHTML = '';
+      if (sttModelTriggerLabel) sttModelTriggerLabel.textContent = 'Connect key first';
+      return;
+    }
+
     const engObj = ALL_STT_ENGINES.find(e => e.id === prov) || ALL_STT_ENGINES[1];
-    const currentModel = localStorage.getItem('aetheria_stt_model') || engObj.defaultModel || 'whisper-1';
+    const currentModel = localStorage.getItem('aetheria_stt_model') || engObj.defaultModel || 'whisper-large-v3-turbo';
 
     let models = [];
     try {
@@ -9491,14 +9582,94 @@ const { character } = Astro.props;
       models = engObj.models || [{ id: currentModel, label: currentModel }];
     }
 
-    sttModelSelect.innerHTML = models.map(m => {
+    if (sttModelTriggerLabel) {
+      const activeObj = models.find(m => (typeof m === 'string' ? m : m.id) === currentModel);
+      sttModelTriggerLabel.textContent = activeObj ? (typeof activeObj === 'string' ? activeObj : (activeObj.label || activeObj.id)) : currentModel;
+    }
+
+    sttModelMenu.innerHTML = models.map(m => {
       const id = typeof m === 'string' ? m : m.id;
       const label = typeof m === 'string' ? m : (m.label || m.id);
-      return `<option value="${id}">${label}</option>`;
+      const isSelected = id === currentModel;
+      return `
+        <button 
+          type="button" 
+          class="w-full px-3 py-2 rounded-lg text-left transition flex items-center justify-between text-xs cursor-pointer ${
+            isSelected 
+              ? 'bg-rose-600/20 text-white font-bold border border-rose-500/30' 
+              : 'hover:bg-white/[0.06] text-slate-300 hover:text-white border border-transparent'
+          }"
+          onclick="selectSttModel('${id}')"
+          role="option"
+          aria-selected="${isSelected}"
+        >
+          <span class="truncate">${label}</span>
+          ${isSelected ? '<span class="text-rose-400 font-bold">✓</span>' : ''}
+        </button>
+      `;
     }).join('');
-
-    sttModelSelect.value = currentModel;
   }
+
+  window.selectSttModel = function(modelId) {
+    localStorage.setItem('aetheria_stt_model', modelId);
+    if (sttModelTriggerLabel) sttModelTriggerLabel.textContent = modelId;
+    if (sttModelMenu) sttModelMenu.classList.add('hidden');
+    if (sttModelChevron) sttModelChevron.classList.remove('rotate-180');
+    renderDynamicSttModels();
+    showNotification(`✓ Model set to "${modelId}"`);
+  };
+
+  sttModelTrigger?.addEventListener('click', (e) => {
+    e.stopPropagation();
+    if (!sttModelMenu) return;
+    const isHidden = sttModelMenu.classList.contains('hidden');
+    if (isHidden) {
+      renderDynamicSttModels();
+      sttModelMenu.classList.remove('hidden');
+      if (sttModelChevron) sttModelChevron.classList.add('rotate-180');
+      if (sttEngineMenu) sttEngineMenu.classList.add('hidden');
+      if (sttEngineChevron) sttEngineChevron.classList.remove('rotate-180');
+      if (sttLangMenu) sttLangMenu.classList.add('hidden');
+      if (sttLangChevron) sttLangChevron.classList.remove('rotate-180');
+    } else {
+      sttModelMenu.classList.add('hidden');
+      if (sttModelChevron) sttModelChevron.classList.remove('rotate-180');
+    }
+  });
+
+  toggleSttCustomModelBtn?.addEventListener('click', () => {
+    if (!sttCustomModelInputContainer || !sttModelDropdownContainer) return;
+    const isCustom = !sttCustomModelInputContainer.classList.contains('hidden');
+    if (isCustom) {
+      sttCustomModelInputContainer.classList.add('hidden');
+      sttModelDropdownContainer.classList.remove('hidden');
+      toggleSttCustomModelBtn.textContent = 'Custom ID';
+    } else {
+      sttCustomModelInputContainer.classList.remove('hidden');
+      sttModelDropdownContainer.classList.add('hidden');
+      toggleSttCustomModelBtn.textContent = 'Catalog';
+      if (sttCustomModelInput) {
+        sttCustomModelInput.value = localStorage.getItem('aetheria_stt_model') || '';
+        sttCustomModelInput.focus();
+      }
+    }
+  });
+
+  sttCustomModelInput?.addEventListener('input', () => {
+    const val = sttCustomModelInput.value.trim();
+    if (val) {
+      localStorage.setItem('aetheria_stt_model', val);
+      if (sttModelTriggerLabel) sttModelTriggerLabel.textContent = val;
+    }
+  });
+
+  sttDisconnectBtn?.addEventListener('click', () => {
+    if (sttUnconnectedContainer && sttConnectedContainer) {
+      sttUnconnectedContainer.classList.remove('hidden');
+      sttConnectedContainer.classList.add('hidden');
+    }
+    sttApiKey?.focus();
+  });
 
   async function syncSttModelsForProvider(prov, isManual = false) {
     if (isFetchingSttModels || prov === 'browser-stt') return;
