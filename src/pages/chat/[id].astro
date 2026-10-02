@@ -229,24 +229,53 @@ const { character } = Astro.props;
               <span>Settings</span>
             </button>
 
-            <!-- 4. Voice Narration -->
+            <!-- 4. Voice Narration with Toggle -->
             <button 
               id="overflow-item-tts"
               type="button"
-              class="w-full px-3.5 py-2.5 rounded-2xl hover:bg-white/[0.08] active:bg-white/[0.12] text-left flex items-center gap-3.5 text-sm font-normal text-[#e3e3e3] hover:text-white transition-colors cursor-pointer group"
+              class="w-full px-3.5 py-2.5 rounded-2xl hover:bg-white/[0.08] active:bg-white/[0.12] text-left flex items-center justify-between gap-3 text-sm font-normal text-[#e3e3e3] hover:text-white transition-colors cursor-pointer group"
+              role="switch"
+              aria-checked="false"
+              title="Toggle voice narration on/off"
             >
-              <Volume2 class="w-5 h-5 text-[#c4c7c5] group-hover:text-white shrink-0 stroke-[1.8]" />
-              <span id="overflow-tts-label">Voice narration</span>
+              <div class="flex items-center gap-3.5 min-w-0">
+                <Volume2 class="w-5 h-5 text-[#c4c7c5] group-hover:text-white shrink-0 stroke-[1.8]" />
+                <span>Voice narration</span>
+              </div>
+
+              <!-- Mini Material 3 Toggle Switch -->
+              <div class="relative inline-flex h-5 w-9 shrink-0 items-center rounded-full border-2 border-transparent transition-colors duration-200 pointer-events-none">
+                <span id="overflow-tts-track" class="absolute inset-0 rounded-full bg-white/20 transition-colors duration-200"></span>
+                <span id="overflow-tts-thumb" class="relative inline-block h-4 w-4 transform rounded-full bg-slate-300 shadow ring-0 transition duration-200 ease-in-out translate-x-0"></span>
+              </div>
             </button>
 
-            <!-- 5. User Persona -->
+            <!-- 5. Help (Google Gemini style) -->
             <button 
-              id="overflow-item-persona"
+              id="overflow-item-help"
               type="button"
               class="w-full px-3.5 py-2.5 rounded-2xl hover:bg-white/[0.08] active:bg-white/[0.12] text-left flex items-center gap-3.5 text-sm font-normal text-[#e3e3e3] hover:text-white transition-colors cursor-pointer group"
             >
-              <User class="w-5 h-5 text-[#c4c7c5] group-hover:text-white shrink-0 stroke-[1.8]" />
-              <span>User persona</span>
+              <svg class="w-5 h-5 text-[#c4c7c5] group-hover:text-white shrink-0 stroke-[1.8]" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round">
+                <circle cx="12" cy="12" r="10"/>
+                <path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/>
+                <line x1="12" y1="17" x2="12.01" y2="17"/>
+              </svg>
+              <span>Help</span>
+            </button>
+
+            <!-- 6. Feedback (Google Gemini style) -->
+            <button 
+              id="overflow-item-feedback"
+              type="button"
+              class="w-full px-3.5 py-2.5 rounded-2xl hover:bg-white/[0.08] active:bg-white/[0.12] text-left flex items-center gap-3.5 text-sm font-normal text-[#e3e3e3] hover:text-white transition-colors cursor-pointer group"
+            >
+              <svg class="w-5 h-5 text-[#c4c7c5] group-hover:text-white shrink-0 stroke-[1.8]" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
+                <line x1="12" y1="8" x2="12" y2="12"/>
+                <line x1="12" y1="16" x2="12.01" y2="16"/>
+              </svg>
+              <span>Feedback</span>
             </button>
 
             <!-- Subtle Divider -->
@@ -14842,16 +14871,21 @@ const { character } = Astro.props;
     if (toggleAutoplayVoice) {
       toggleAutoplayVoice.checked = ttsEnabled;
     }
-    const overflowTtsStatusPill = document.getElementById('overflow-tts-status-pill');
-    const overflowTtsStatusText = document.getElementById('overflow-tts-status-text');
-    if (overflowTtsStatusPill) {
-      overflowTtsStatusPill.textContent = ttsEnabled ? 'ON' : 'OFF';
-      overflowTtsStatusPill.className = ttsEnabled 
-        ? 'px-2 py-0.5 rounded-full text-[10px] font-mono bg-emerald-500/20 text-emerald-300 border border-emerald-500/30'
-        : 'px-2 py-0.5 rounded-full text-[10px] font-mono bg-white/[0.06] text-slate-400';
+    const overflowTtsTrack = document.getElementById('overflow-tts-track');
+    const overflowTtsThumb = document.getElementById('overflow-tts-thumb');
+    const overflowTtsBtn = document.getElementById('overflow-item-tts');
+    if (overflowTtsBtn) {
+      overflowTtsBtn.setAttribute('aria-checked', ttsEnabled ? 'true' : 'false');
     }
-    if (overflowTtsStatusText) {
-      overflowTtsStatusText.textContent = ttsEnabled ? 'Auto-read active' : 'Narration muted';
+    if (overflowTtsTrack) {
+      overflowTtsTrack.className = ttsEnabled
+        ? 'absolute inset-0 rounded-full bg-blue-600 transition-colors duration-200'
+        : 'absolute inset-0 rounded-full bg-white/20 transition-colors duration-200';
+    }
+    if (overflowTtsThumb) {
+      overflowTtsThumb.className = ttsEnabled
+        ? 'relative inline-block h-4 w-4 transform rounded-full bg-white shadow ring-0 transition duration-200 ease-in-out translate-x-4'
+        : 'relative inline-block h-4 w-4 transform rounded-full bg-slate-300 shadow ring-0 transition duration-200 ease-in-out translate-x-0';
     }
   }
 
@@ -17400,11 +17434,7 @@ const { character } = Astro.props;
     }
   });
 
-  // Header overflow Persona button
-  document.getElementById('overflow-item-persona')?.addEventListener('click', () => {
-    closeHeaderOverflowMenu();
-    document.getElementById('chat-action-mask-btn')?.click();
-  });
+
 
   // Personal Intelligence Toggle Switch (ON/OFF)
   document.getElementById('plus-persona-toggle-btn')?.addEventListener('click', (e) => {
@@ -18115,6 +18145,16 @@ Requirements:
   document.getElementById('overflow-item-export')?.addEventListener('click', () => {
     closeHeaderOverflowMenu();
     exportChatBtn?.click();
+  });
+
+  document.getElementById('overflow-item-help')?.addEventListener('click', () => {
+    closeHeaderOverflowMenu();
+    showNotification('Help & Documentation center coming soon!');
+  });
+
+  document.getElementById('overflow-item-feedback')?.addEventListener('click', () => {
+    closeHeaderOverflowMenu();
+    showNotification('Feedback & Bug Report module coming soon!');
   });
 
   document.getElementById('overflow-item-clear')?.addEventListener('click', () => {
