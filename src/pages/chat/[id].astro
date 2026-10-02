@@ -4105,6 +4105,7 @@ const { character } = Astro.props;
   const voiceCustomUrlContainer = document.getElementById('voice-custom-url-container');
   const voiceCustomUrl = document.getElementById('voice-custom-url');
   const voiceIdInput = document.getElementById('voice-id-input');
+  const customVoiceIdBox = document.getElementById('custom-voice-id-box');
   const elevenVoiceContainer = document.getElementById('eleven-voice-container');
   const elevenStabilityBox = document.getElementById('eleven-stability-box');
   const elevenClarityBox = document.getElementById('eleven-clarity-box');
@@ -8534,15 +8535,54 @@ const { character } = Astro.props;
     { id: 'ash', name: 'Ash', gender: 'Male', accent: 'Casual & Relaxed', style: 'OpenAI Studio Voice' }
   ];
 
+  const langDisplayNames = (typeof Intl !== 'undefined' && Intl.DisplayNames) 
+    ? new Intl.DisplayNames(['en'], { type: 'language' }) 
+    : null;
+  const regionDisplayNames = (typeof Intl !== 'undefined' && Intl.DisplayNames) 
+    ? new Intl.DisplayNames(['en'], { type: 'region' }) 
+    : null;
+
+  function formatNativeVoice(nv) {
+    const rawLang = (nv.lang || 'en-US').replace(/_/g, '-');
+    const parts = rawLang.split('-');
+    const langCode = parts[0]?.toLowerCase() || 'en';
+    const regionCode = parts[1]?.toUpperCase() || '';
+
+    let langName = 'English';
+    let regionName = '';
+
+    try {
+      if (langDisplayNames && langCode) {
+        langName = langDisplayNames.of(langCode) || langCode;
+      }
+      if (regionDisplayNames && regionCode) {
+        regionName = regionDisplayNames.of(regionCode) || regionCode;
+      }
+    } catch (e) {}
+
+    const hasNonEnglish = /[^ -~]/.test(nv.name || '');
+
+    let cleanName = '';
+    if (!hasNonEnglish && nv.name && !nv.name.toLowerCase().includes('default') && !nv.name.toLowerCase().startsWith('en-') && !nv.name.toLowerCase().startsWith('en_')) {
+      cleanName = nv.name;
+    } else {
+      const regionSuffix = regionName ? ` (${regionName})` : '';
+      cleanName = `${langName}${regionSuffix}`;
+    }
+
+    const cleanAccent = regionName ? `${regionName} Accent` : `${langName} Voice`;
+
+    return {
+      name: cleanName,
+      accent: cleanAccent
+    };
+  }
+
   // Helper to retrieve voices for the active provider
-  // Returns:
-  //   null -> Provider requires API key, but none is connected yet (show connection prompt, no fake defaults)
-  //   []   -> Key is present, but voices are currently fetching or empty (show loading spinner and trigger real-time fetch)
-  //   [..] -> Valid voices list to render
   function getAvailableVoicesForProvider(prov) {
     if (prov === 'elevenlabs') {
       const key = getVoiceKeyForProvider('elevenlabs');
-      if (!key) return null; // No key -> show connect state
+      if (!key) return null; // No key connected -> return null so renderDynamicVoiceCatalog shows the connect state!
       try {
         const cached = localStorage.getItem('aetheria_cached_voices_elevenlabs');
         if (cached) {
@@ -8574,17 +8614,25 @@ const { character } = Astro.props;
       if (typeof window !== 'undefined' && window.speechSynthesis) {
         const nativeVoices = window.speechSynthesis.getVoices();
         if (nativeVoices && nativeVoices.length > 0) {
-          return nativeVoices.map(nv => ({
-            id: nv.voiceURI || nv.name,
-            name: nv.name,
-            gender: nv.name.toLowerCase().includes('female') ? 'Female' : nv.name.toLowerCase().includes('male') ? 'Male' : 'Natural',
-            accent: nv.lang || 'Device Native',
-            style: 'Local Native Voice'
-          }));
+          const nameCounts = {};
+          return nativeVoices.map(nv => {
+            const formatted = formatNativeVoice(nv);
+            const baseName = formatted.name;
+            nameCounts[baseName] = (nameCounts[baseName] || 0) + 1;
+            const finalName = nameCounts[baseName] > 1 ? `${baseName} #${nameCounts[baseName]}` : baseName;
+
+            return {
+              id: nv.voiceURI || nv.name,
+              name: finalName,
+              gender: nv.name.toLowerCase().includes('female') ? 'Female' : nv.name.toLowerCase().includes('male') ? 'Male' : 'Natural',
+              accent: formatted.accent,
+              style: 'Local Device Voice'
+            };
+          });
         }
       }
       return [
-        { id: 'default', name: 'System Default Voice', gender: 'Natural', accent: 'Default', style: 'Offline Native' }
+        { id: 'default', name: 'System Default Voice', gender: 'Natural', accent: 'Device Native', style: 'Offline Native' }
       ];
     }
 
@@ -8605,9 +8653,10 @@ const { character } = Astro.props;
     const prov = voiceProviderSelect?.value || 'browser';
     const vId = voiceIdInput?.value || localStorage.getItem('aetheria_voice_id');
     const voices = getAvailableVoicesForProvider(prov);
-    if (!voices || !Array.isArray(voices)) return vId || 'Default Voice';
+    if (!voices || !Array.isArray(voices) || voices.length === 0) return 'Default Voice';
     const found = voices.find(v => v.id === vId);
-    return found ? found.name : (vId || 'Default Voice');
+    if (found) return found.name;
+    return voices[0]?.name || 'Default Voice';
   }
 
   // Real-time Dynamic Voice Catalog Renderer
@@ -8615,7 +8664,7 @@ const { character } = Astro.props;
     if (!dynamicVoiceGrid) return;
     const prov = voiceProviderSelect?.value || localStorage.getItem('aetheria_voice_provider') || 'browser';
     const voices = getAvailableVoicesForProvider(prov);
-    const currentVoiceId = voiceIdInput?.value || localStorage.getItem('aetheria_voice_id') || (prov === 'elevenlabs' ? '21m00Tcm4TlvDq8ikWAM' : prov === 'openai' ? 'nova' : 'en-US-Journey-F');
+    const currentVoiceId = voiceIdInput?.value || localStorage.getItem('aetheria_voice_id') || (prov === 'elevenlabs' ? '21m00Tcm4TlvDq8ikWAM' : prov === 'openai' ? 'nova' : 'default');
 
     // Case 1: Provider needs API key but none is connected -> show clean connection prompt
     if (voices === null) {
@@ -9263,6 +9312,10 @@ const { character } = Astro.props;
 
     if (openaiModelToggleContainer) {
       openaiModelToggleContainer.classList.toggle('hidden', ttsId !== 'openai');
+    }
+
+    if (customVoiceIdBox) {
+      customVoiceIdBox.classList.toggle('hidden', ttsId !== 'elevenlabs');
     }
 
     // Render Dynamic Voice Catalog
