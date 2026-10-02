@@ -1635,167 +1635,99 @@ const { character } = Astro.props;
                                 <!-- ================= PANE 2: STT SPEECH INPUT (MICROPHONE) ================= -->
                 <div id="voice-stt-pane" class="space-y-4 hidden" dir="ltr" lang="en">
 
-                  <!-- 1. STT Profiles Vault Bar (like Voice & Text vaults) -->
-                  <div class="relative p-3 rounded-2xl bg-white/[0.03] border border-white/10 flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-2.5">
-                    <div class="flex items-center gap-2 min-w-0">
-                      <div class="w-7 h-7 rounded-lg bg-rose-500/20 border border-rose-500/30 flex items-center justify-center text-rose-300 shrink-0">
-                        <Mic class="w-3.5 h-3.5" />
-                      </div>
-                      <span class="text-xs font-semibold text-slate-300 shrink-0">Microphone Profile:</span>
-
-                      <!-- Custom STT Profile Dropdown Trigger -->
-                      <div class="relative flex-1 min-w-0">
-                        <button
-                          type="button"
-                          id="custom-stt-profile-trigger"
-                          class="w-full flex items-center justify-between gap-2 px-3 py-1.5 rounded-xl bg-black/40 hover:bg-black/60 border border-white/10 hover:border-rose-500/40 text-xs text-white transition cursor-pointer text-left"
-                        >
-                          <div class="flex items-center gap-2 truncate">
-                            <span id="custom-stt-profile-status-dot" class="w-2 h-2 rounded-full bg-emerald-400 shrink-0"></span>
-                            <span id="custom-stt-profile-trigger-label" class="font-semibold truncate">Default Device Mic</span>
-                            <span id="custom-stt-profile-trigger-tag" class="px-1.5 py-0.2 rounded bg-white/10 text-[10px] text-slate-300 font-mono">100% Free</span>
-                          </div>
-                          <ChevronDown class="w-3.5 h-3.5 text-slate-400 shrink-0" />
-                        </button>
-
-                        <!-- STT Profiles Dropdown Menu -->
-                        <div
-                          id="custom-stt-profile-menu"
-                          class="hidden absolute left-0 right-0 top-full mt-1 z-30 p-1.5 rounded-xl bg-slate-900 border border-rose-500/30 shadow-2xl space-y-1 max-h-56 overflow-y-auto"
-                        >
-                          <div id="stt-profile-items-list" class="space-y-0.5">
-                            <!-- Populated dynamically -->
-                          </div>
-                          <div class="pt-1 mt-1 border-t border-white/10">
-                            <button
-                              type="button"
-                              id="btn-show-save-stt-profile"
-                              class="w-full py-1.5 px-2.5 rounded-lg bg-rose-600/20 hover:bg-rose-600/30 text-rose-300 hover:text-white text-xs font-medium flex items-center justify-center gap-1.5 transition cursor-pointer"
-                            >
-                              <Plus class="w-3.5 h-3.5" />
-                              <span>Save Current Config as New Profile...</span>
-                            </button>
-                          </div>
+                  <!-- 1. Single Unified Engine Selector (Consumer Grade) -->
+                  <div class="space-y-1.5">
+                    <label class="block text-xs font-semibold text-slate-300">Speech Recognition Engine</label>
+                    <div class="grid grid-cols-2 sm:grid-cols-4 gap-2">
+                      <button 
+                        type="button" 
+                        data-stt-engine="browser-stt" 
+                        class="stt-engine-tab p-3 rounded-2xl border text-left transition cursor-pointer flex flex-col justify-between gap-1.5 bg-rose-600/20 border-rose-500 shadow-md shadow-rose-950/40"
+                      >
+                        <div class="flex items-center justify-between">
+                          <span class="text-base">🎙️</span>
+                          <span class="px-1.5 py-0.5 rounded bg-emerald-500/20 text-emerald-300 text-[9px] font-bold font-mono">FREE</span>
                         </div>
-                      </div>
-                    </div>
-
-                    <!-- Profile Quick Actions (Update / Delete) -->
-                    <div class="flex items-center gap-1.5 shrink-0 self-end sm:self-center">
-                      <button
-                        type="button"
-                        id="btn-update-active-stt-profile"
-                        class="p-1.5 rounded-lg bg-white/5 hover:bg-white/10 border border-white/10 text-slate-300 hover:text-white transition cursor-pointer"
-                        title="Update active profile with current settings"
-                      >
-                        <Save class="w-3.5 h-3.5" />
-                      </button>
-                      <button
-                        type="button"
-                        id="btn-delete-active-stt-profile"
-                        class="p-1.5 rounded-lg bg-white/5 hover:bg-rose-500/20 border border-white/10 hover:border-rose-500/30 text-slate-400 hover:text-rose-300 transition cursor-pointer"
-                        title="Delete active custom profile"
-                      >
-                        <Trash2 class="w-3.5 h-3.5" />
-                      </button>
-                    </div>
-                  </div>
-
-                  <!-- Inline Save Profile Form (Hidden by default) -->
-                  <div id="new-stt-profile-form" class="hidden p-3 rounded-2xl bg-rose-950/30 border border-rose-500/30 space-y-2.5">
-                    <div class="flex items-center justify-between">
-                      <span class="text-xs font-bold text-white">Save Microphone Preset</span>
-                      <button type="button" id="btn-cancel-save-stt-profile" class="text-slate-400 hover:text-white text-xs cursor-pointer">Cancel</button>
-                    </div>
-                    <div class="flex gap-2">
-                      <input
-                        type="text"
-                        id="new-stt-profile-name-input"
-                        placeholder="Preset Name (e.g. Groq Turbo, OpenAI Studio)..."
-                        class="flex-1 px-3 py-1.5 rounded-xl bg-black/60 border border-white/15 text-xs text-white placeholder:text-slate-500 outline-none focus:border-rose-500/60"
-                      />
-                      <button
-                        type="button"
-                        id="btn-confirm-save-stt-profile"
-                        class="px-3.5 py-1.5 rounded-xl bg-rose-600 hover:bg-rose-500 text-white text-xs font-semibold cursor-pointer shadow-md"
-                      >
-                        Save
-                      </button>
-                    </div>
-                  </div>
-
-                  <!-- 2. Active STT Engine Header Card -->
-                  <div class="p-3.5 sm:p-4 rounded-2xl bg-gradient-to-r from-rose-950/40 via-purple-950/20 to-indigo-950/40 border border-rose-500/30 flex items-center justify-between gap-3 shadow-lg shadow-rose-950/40">
-                    <div class="flex items-center gap-3 min-w-0">
-                      <div id="stt-active-icon-box" class="w-11 h-11 rounded-2xl bg-rose-500/20 border border-rose-500/30 flex items-center justify-center text-rose-300 shrink-0 shadow-inner">
-                        <Mic class="w-5 h-5 text-rose-400" />
-                      </div>
-                      <div class="min-w-0">
-                        <div class="flex items-center gap-2 flex-wrap mb-0.5">
-                          <h4 id="stt-active-engine-name" class="text-sm font-bold text-white truncate">Built-in Device Mic</h4>
-                          <span id="stt-connection-badge" class="px-2 py-0.5 rounded-full text-[10px] font-mono font-semibold bg-emerald-500/20 text-emerald-300 border border-emerald-500/30">
-                            100% Free • Ready
-                          </span>
+                        <div>
+                          <div class="font-bold text-xs text-white">Device Mic</div>
+                          <div class="text-[10px] text-slate-400">Offline & Private</div>
                         </div>
-                        <p id="stt-active-engine-desc" class="text-[11px] text-slate-400 truncate">Browser Web Speech API • Instant Voice Input</p>
-                      </div>
+                      </button>
+
+                      <button 
+                        type="button" 
+                        data-stt-engine="groq" 
+                        class="stt-engine-tab p-3 rounded-2xl border text-left transition cursor-pointer flex flex-col justify-between gap-1.5 bg-white/[0.03] hover:bg-white/[0.06] border-white/10"
+                      >
+                        <div class="flex items-center justify-between">
+                          <span class="text-base">⚡</span>
+                          <span class="px-1.5 py-0.5 rounded bg-rose-500/20 text-rose-300 text-[9px] font-bold font-mono">FAST</span>
+                        </div>
+                        <div>
+                          <div class="font-bold text-xs text-white">Groq Whisper</div>
+                          <div class="text-[10px] text-slate-400">~0.2s Ultra-Fast</div>
+                        </div>
+                      </button>
+
+                      <button 
+                        type="button" 
+                        data-stt-engine="openai-stt" 
+                        class="stt-engine-tab p-3 rounded-2xl border text-left transition cursor-pointer flex flex-col justify-between gap-1.5 bg-white/[0.03] hover:bg-white/[0.06] border-white/10"
+                      >
+                        <div class="flex items-center justify-between">
+                          <span class="text-base">✨</span>
+                          <span class="px-1.5 py-0.5 rounded bg-purple-500/20 text-purple-300 text-[9px] font-bold font-mono">STUDIO</span>
+                        </div>
+                        <div>
+                          <div class="font-bold text-xs text-white">OpenAI Whisper</div>
+                          <div class="text-[10px] text-slate-400">High Precision</div>
+                        </div>
+                      </button>
+
+                      <button 
+                        type="button" 
+                        data-stt-engine="custom-stt" 
+                        class="stt-engine-tab p-3 rounded-2xl border text-left transition cursor-pointer flex flex-col justify-between gap-1.5 bg-white/[0.03] hover:bg-white/[0.06] border-white/10"
+                      >
+                        <div class="flex items-center justify-between">
+                          <span class="text-base">⚙️</span>
+                          <span class="px-1.5 py-0.5 rounded bg-white/10 text-slate-300 text-[9px] font-bold font-mono">LOCAL</span>
+                        </div>
+                        <div>
+                          <div class="font-bold text-xs text-white">Custom Server</div>
+                          <div class="text-[10px] text-slate-400">Self-Hosted URL</div>
+                        </div>
+                      </button>
                     </div>
-                    <button 
-                      type="button" 
-                      id="open-stt-catalog-btn" 
-                      class="px-3 py-2 rounded-xl bg-rose-600 hover:bg-rose-500 text-white border border-rose-400/30 text-xs font-semibold flex items-center gap-1.5 transition cursor-pointer shrink-0 active:scale-95 shadow-md shadow-rose-900/40"
-                    >
-                      <SlidersHorizontal class="w-3.5 h-3.5" />
-                      <span>Switch Engine</span>
-                    </button>
                   </div>
 
-                  <!-- Quick Engine Switcher Chips -->
-                  <div class="flex items-center gap-1.5 flex-wrap">
-                    <button type="button" data-stt-engine="browser-stt" class="stt-quick-engine-chip px-3 py-1.5 rounded-xl text-xs font-semibold transition cursor-pointer flex items-center gap-1.5 bg-rose-600 text-white shadow-sm">
-                      <span>🎙️</span>
-                      <span>Device Mic (Free)</span>
-                    </button>
-                    <button type="button" data-stt-engine="groq" class="stt-quick-engine-chip px-3 py-1.5 rounded-xl text-xs font-semibold transition cursor-pointer flex items-center gap-1.5 bg-white/[0.04] hover:bg-white/[0.08] text-slate-300 hover:text-white border border-white/10">
-                      <span>⚡</span>
-                      <span>Groq Whisper</span>
-                    </button>
-                    <button type="button" data-stt-engine="openai-stt" class="stt-quick-engine-chip px-3 py-1.5 rounded-xl text-xs font-semibold transition cursor-pointer flex items-center gap-1.5 bg-white/[0.04] hover:bg-white/[0.08] text-slate-300 hover:text-white border border-white/10">
-                      <span>✨</span>
-                      <span>OpenAI Whisper</span>
-                    </button>
-                    <button type="button" data-stt-engine="custom-stt" class="stt-quick-engine-chip px-3 py-1.5 rounded-xl text-xs font-semibold transition cursor-pointer flex items-center gap-1.5 bg-white/[0.04] hover:bg-white/[0.08] text-slate-300 hover:text-white border border-white/10">
-                      <span>⚙️</span>
-                      <span>Custom URL</span>
-                    </button>
-                  </div>
-
-                  <!-- 3. Free Device Mic Info Card (Shown when browser-stt is active) -->
-                  <div id="stt-free-device-card" class="p-3.5 sm:p-4 rounded-2xl bg-emerald-950/20 border border-emerald-500/30 flex items-start gap-3">
-                    <div class="w-8 h-8 rounded-xl bg-emerald-500/20 border border-emerald-500/30 flex items-center justify-center text-emerald-300 shrink-0 mt-0.5">
-                      <Zap class="w-4 h-4 text-emerald-400" />
+                  <!-- 2. Active Engine State / Configuration Card -->
+                  <!-- State A: Built-in Device Mic (100% Free) -->
+                  <div id="stt-free-device-card" class="p-4 rounded-2xl bg-emerald-950/20 border border-emerald-500/30 flex items-center gap-3.5">
+                    <div class="w-10 h-10 rounded-xl bg-emerald-500/20 border border-emerald-500/30 flex items-center justify-center text-emerald-400 shrink-0">
+                      <Mic class="w-5 h-5" />
                     </div>
-                    <div class="space-y-1">
+                    <div class="space-y-0.5 flex-1 min-w-0">
                       <div class="flex items-center gap-2">
-                        <h5 class="text-xs font-bold text-white">Built-in Device Speech Recognition</h5>
-                        <span class="px-1.5 py-0.2 rounded bg-emerald-500/20 text-[9px] font-mono font-bold text-emerald-300">ACTIVE & READY</span>
+                        <h5 class="text-xs font-bold text-white">Device Speech Recognition Active</h5>
+                        <span class="px-2 py-0.5 rounded-full bg-emerald-500/20 text-emerald-300 text-[9px] font-mono font-bold">100% Free</span>
                       </div>
-                      <p class="text-[11px] text-slate-300 leading-relaxed">
-                        Uses your device's native browser speech engine (Web Speech API). Completely private, zero setup, no API keys, and 100% free. Works instantly on mobile and desktop.
+                      <p class="text-[11px] text-slate-400 leading-relaxed">
+                        Uses your device hardware directly. Zero setup, no API keys, and completely private.
                       </p>
                     </div>
                   </div>
 
-                  <!-- 4. Cloud STT Connection & Key Card (Shown when cloud engine is selected) -->
-                  <div id="stt-connection-card" class="hidden p-3.5 sm:p-4 rounded-2xl bg-amber-950/20 border border-amber-500/30 space-y-3">
-                    <div class="flex items-start justify-between gap-2">
-                      <div class="flex items-center gap-2">
-                        <div class="w-7 h-7 rounded-xl bg-amber-500/20 border border-amber-500/30 flex items-center justify-center text-amber-300 shrink-0">
+                  <!-- State B: Cloud STT (Groq / OpenAI / Custom) -->
+                  <div id="stt-connection-card" class="hidden p-4 rounded-2xl bg-white/[0.03] border border-white/10 space-y-3">
+                    <div class="flex items-center justify-between gap-2">
+                      <div class="flex items-center gap-2.5">
+                        <div class="w-7 h-7 rounded-xl bg-rose-500/20 border border-rose-500/30 flex items-center justify-center text-rose-300 shrink-0">
                           <KeyRound class="w-3.5 h-3.5" />
                         </div>
                         <div>
-                          <h5 id="stt-connect-title" class="text-xs font-bold text-white">Connect Groq Whisper API Key</h5>
-                          <p id="stt-connect-desc" class="text-[10px] text-slate-400">Enter your API key to activate cloud voice transcription.</p>
+                          <h5 id="stt-connect-title" class="text-xs font-bold text-white">Groq API Key</h5>
+                          <p id="stt-connect-desc" class="text-[10px] text-slate-400">Stored locally in your browser.</p>
                         </div>
                       </div>
                       <span id="stt-key-status-pill" class="px-2 py-0.5 rounded-full text-[9px] font-mono font-bold bg-amber-500/20 text-amber-300 border border-amber-500/30">
@@ -1810,22 +1742,32 @@ const { character } = Astro.props;
                       class="hidden w-full py-2 px-3 rounded-xl bg-rose-600/20 hover:bg-rose-600/30 border border-rose-500/40 text-rose-300 text-xs font-semibold flex items-center justify-center gap-2 transition cursor-pointer active:scale-95"
                     >
                       <Sparkles class="w-3.5 h-3.5 text-rose-400" />
-                      <span id="stt-quick-reuse-label">Connect with saved Groq Key from Text Engine</span>
+                      <span id="stt-quick-reuse-label">Use saved key from Text Engine</span>
                     </button>
 
-                    <div class="relative">
-                      <input 
-                        id="stt-api-key" 
-                        type="password" 
-                        placeholder="Enter API Key..." 
-                        class="w-full px-3.5 py-2.5 rounded-xl bg-black/60 border border-white/10 text-xs text-white placeholder:text-slate-500 outline-none focus:border-rose-500/60 font-mono pr-16"
-                      />
-                      <button type="button" id="toggle-stt-key-visibility-btn" class="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-white text-xs cursor-pointer p-1">
-                        Show
+                    <div class="flex gap-2">
+                      <div class="relative flex-1">
+                        <input 
+                          id="stt-api-key" 
+                          type="password" 
+                          placeholder="Paste API Key..." 
+                          class="w-full px-3.5 py-2.5 rounded-xl bg-black/60 border border-white/10 text-xs text-white placeholder:text-slate-500 outline-none focus:border-rose-500/60 font-mono pr-14"
+                        />
+                        <button type="button" id="toggle-stt-key-visibility-btn" class="absolute right-2.5 top-1/2 -translate-y-1/2 text-slate-400 hover:text-white text-xs cursor-pointer p-1">
+                          Show
+                        </button>
+                      </div>
+                      <button 
+                        type="button" 
+                        id="stt-verify-connect-btn" 
+                        class="px-4 py-2.5 rounded-xl bg-rose-600 hover:bg-rose-500 text-white text-xs font-semibold flex items-center justify-center gap-1.5 transition cursor-pointer active:scale-95 shadow-md shadow-rose-950 shrink-0"
+                      >
+                        <Check class="w-3.5 h-3.5" />
+                        <span>Connect</span>
                       </button>
                     </div>
 
-                    <div id="stt-custom-url-container" class="hidden space-y-1">
+                    <div id="stt-custom-url-container" class="hidden space-y-1 pt-1">
                       <label class="block text-[11px] font-semibold text-slate-300">Custom Whisper Endpoint URL</label>
                       <input 
                         id="stt-custom-url" 
@@ -1835,125 +1777,112 @@ const { character } = Astro.props;
                       />
                     </div>
 
-                    <button 
-                      type="button" 
-                      id="stt-verify-connect-btn" 
-                      class="w-full py-2 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-semibold flex items-center justify-center gap-1.5 transition cursor-pointer active:scale-95 shadow-md shadow-emerald-950"
-                    >
-                      <Check class="w-3.5 h-3.5" />
-                      <span>Connect & Activate</span>
-                    </button>
-                  </div>
-
-                  <!-- 5. Controls Unlocked Section -->
-                  <div id="stt-controls-unlocked" class="space-y-4">
-                    <!-- Model Selection (Hidden for browser-stt, Dynamically fetched from API) -->
-                    <div id="stt-model-section" class="space-y-2">
+                    <!-- Model Selector inside the connected cloud card -->
+                    <div id="stt-model-section" class="pt-2 border-t border-white/[0.08] space-y-1.5">
                       <div class="flex items-center justify-between">
                         <label class="block text-xs font-semibold text-slate-300">Transcription Model</label>
                         <button 
                           type="button" 
                           id="sync-stt-models-btn" 
-                          class="px-2 py-1 rounded-lg bg-white/5 hover:bg-white/10 text-slate-400 hover:text-white text-[11px] font-medium flex items-center gap-1 transition cursor-pointer"
-                          title="Refresh available transcription models from API"
+                          class="px-2 py-0.5 rounded-lg bg-white/5 hover:bg-white/10 text-slate-400 hover:text-white text-[10px] font-medium flex items-center gap-1 transition cursor-pointer"
+                          title="Refresh available models from API"
                         >
                           <RefreshCw id="sync-stt-models-icon" class="w-3 h-3 text-rose-400" />
                           <span>Sync Models</span>
                         </button>
                       </div>
 
-                      <div id="stt-models-grid" class="grid grid-cols-1 sm:grid-cols-2 gap-2">
-                        <!-- Populated dynamically via fetchSttModelsForProvider -->
-                      </div>
-                    </div>
-
-                    <!-- Spoken Language Selection (Comprehensive Global Selector) -->
-                    <div class="space-y-1.5">
-                      <label class="block text-xs font-semibold text-slate-300">Spoken Language</label>
                       <div class="relative">
                         <select 
-                          id="stt-lang-select" 
-                          class="w-full px-3.5 py-2.5 rounded-xl bg-black/60 border border-white/10 text-xs text-white outline-none focus:border-rose-500/60 appearance-none cursor-pointer pr-10 font-medium"
+                          id="stt-model-select" 
+                          class="w-full px-3.5 py-2.5 rounded-xl bg-black/60 border border-white/10 text-xs text-white outline-none focus:border-rose-500/60 appearance-none cursor-pointer pr-10 font-mono"
                         >
-                          <option value="auto">🌐 Auto-Detect Language (Recommended)</option>
-                          <option value="en">🇺🇸 English (US / UK / Global)</option>
-                          <option value="es">🇪🇸 Spanish (Español)</option>
-                          <option value="fr">🇫🇷 French (Français)</option>
-                          <option value="de">🇩🇪 German (Deutsch)</option>
-                          <option value="it">🇮🇹 Italian (Italiano)</option>
-                          <option value="pt">🇵🇹 Portuguese (Português)</option>
-                          <option value="ja">🇯🇵 Japanese (日本語)</option>
-                          <option value="ko">🇰🇷 Korean (한국어)</option>
-                          <option value="zh">🇨🇳 Chinese (中文 - Mandarin)</option>
-                          <option value="ar">🇸🇦 Arabic (العربية)</option>
-                          <option value="ru">🇷🇺 Russian (Русский)</option>
-                          <option value="hi">🇮🇳 Hindi (हिन्दी)</option>
-                          <option value="tr">🇹🇷 Turkish (Türkçe)</option>
-                          <option value="nl">🇳🇱 Dutch (Nederlands)</option>
-                          <option value="pl">🇵🇱 Polish (Polski)</option>
-                          <option value="sv">🇸🇪 Swedish (Svenska)</option>
-                          <option value="da">🇩🇰 Danish (Dansk)</option>
-                          <option value="no">🇳🇴 Norwegian (Norsk)</option>
-                          <option value="fi">🇫🇮 Finnish (Suomi)</option>
-                          <option value="id">🇮🇩 Indonesian (Bahasa Indonesia)</option>
-                          <option value="vi">🇻🇳 Vietnamese (Tiếng Việt)</option>
-                          <option value="th">🇹🇭 Thai (ไทย)</option>
-                          <option value="uk">🇺🇦 Ukrainian (Українська)</option>
-                          <option value="el">🇬🇷 Greek (Ελληνικά)</option>
-                          <option value="he">🇮🇱 Hebrew (עברית)</option>
-                          <option value="cs">🇨🇿 Czech (Čeština)</option>
-                          <option value="ro">🇷🇴 Romanian (Română)</option>
-                          <option value="hu">🇭🇺 Hungarian (Magyar)</option>
-                          <option value="fa">Persian (Farsi)</option>
+                          <option value="whisper-large-v3-turbo">whisper-large-v3-turbo (Fastest ~0.2s)</option>
+                          <option value="whisper-large-v3">whisper-large-v3 (Maximum Accuracy)</option>
                         </select>
                         <ChevronDown class="w-4 h-4 text-slate-400 absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none" />
                       </div>
-                      <p class="text-[10px] text-slate-500">
-                        Choose Auto-Detect for multi-lingual conversation or code-switching, or pin a specific input language.
-                      </p>
                     </div>
-
-                    <!-- Live Microphone Test Widget -->
-                    <div class="p-3.5 rounded-2xl bg-rose-950/20 border border-rose-500/30 space-y-2.5">
-                      <div class="flex items-center justify-between">
-                        <div>
-                          <div class="text-xs font-bold text-white flex items-center gap-1.5">
-                            <span class="w-2 h-2 rounded-full bg-rose-400 animate-pulse"></span>
-                            <span>Live Microphone Test</span>
-                          </div>
-                          <div class="text-[11px] text-slate-400">Speak into your mic to test transcription live</div>
-                        </div>
-                        <button 
-                          type="button" 
-                          id="test-stt-btn" 
-                          class="px-3.5 py-2 rounded-xl bg-rose-600 hover:bg-rose-500 text-white text-xs font-semibold flex items-center gap-1.5 transition cursor-pointer active:scale-95 shadow-md shadow-rose-950"
-                        >
-                          <Mic class="w-3.5 h-3.5" />
-                          <span id="test-stt-btn-label">Test Mic (3s)</span>
-                        </button>
-                      </div>
-
-                      <div id="stt-test-output-box" class="hidden p-3 rounded-xl bg-black/50 border border-rose-500/40 text-xs text-white font-medium">
-                        <div class="flex items-center gap-1.5 text-emerald-400 text-[11px] font-bold mb-1">
-                          <Check class="w-3.5 h-3.5" />
-                          <span>Voice Recognized:</span>
-                        </div>
-                        <div id="stt-test-output-text" class="italic text-slate-200">"..."</div>
-                      </div>
-                    </div>
-
-                    <!-- Push-to-Talk Feature Explanation -->
-                    <div class="p-3 rounded-2xl bg-white/[0.02] border border-white/[0.06] flex items-center gap-3">
-                      <div class="w-8 h-8 rounded-xl bg-rose-500/10 border border-rose-500/20 flex items-center justify-center text-rose-400 shrink-0">
-                        <Zap class="w-4 h-4" />
-                      </div>
-                      <div class="text-xs text-slate-300">
-                        <span class="font-semibold text-white">Push-to-Talk Enabled:</span>
-                        In chat, <span class="text-rose-300 font-semibold">hold down the Send button</span> to record voice. Release to send directly, or slide away to cancel.
-                      </div>
-                    </div>
-
                   </div>
+
+                  <!-- 3. Spoken Language (Standard Global Selector) -->
+                  <div class="space-y-1.5">
+                    <label class="block text-xs font-semibold text-slate-300">Spoken Language</label>
+                    <div class="relative">
+                      <select 
+                        id="stt-lang-select" 
+                        class="w-full px-3.5 py-2.5 rounded-xl bg-black/60 border border-white/10 text-xs text-white outline-none focus:border-rose-500/60 appearance-none cursor-pointer pr-10 font-medium"
+                      >
+                        <option value="auto">🌐 Auto-Detect Language (Recommended)</option>
+                        <option value="en">🇺🇸 English (US / UK / Global)</option>
+                        <option value="es">🇪🇸 Spanish (Español)</option>
+                        <option value="fr">🇫🇷 French (Français)</option>
+                        <option value="de">🇩🇪 German (Deutsch)</option>
+                        <option value="it">🇮🇹 Italian (Italiano)</option>
+                        <option value="pt">🇵🇹 Portuguese (Português)</option>
+                        <option value="ja">🇯🇵 Japanese (日本語)</option>
+                        <option value="ko">🇰🇷 Korean (한국어)</option>
+                        <option value="zh">🇨🇳 Chinese (中文)</option>
+                        <option value="ar">🇸🇦 Arabic (العربية)</option>
+                        <option value="ru">🇷🇺 Russian (Русский)</option>
+                        <option value="hi">🇮🇳 Hindi (हिन्दी)</option>
+                        <option value="tr">🇹🇷 Turkish (Türkçe)</option>
+                        <option value="nl">🇳🇱 Dutch (Nederlands)</option>
+                        <option value="pl">🇵🇱 Polish (Polski)</option>
+                        <option value="sv">🇸🇪 Swedish (Svenska)</option>
+                        <option value="da">🇩🇰 Danish (Dansk)</option>
+                        <option value="no">🇳🇴 Norwegian (Norsk)</option>
+                        <option value="fi">🇫🇮 Finnish (Suomi)</option>
+                        <option value="id">🇮🇩 Indonesian (Bahasa Indonesia)</option>
+                        <option value="vi">🇻🇳 Vietnamese (Tiếng Việt)</option>
+                        <option value="th">🇹🇭 Thai (ไทย)</option>
+                        <option value="uk">🇺🇦 Ukrainian (Українська)</option>
+                        <option value="el">🇬🇷 Greek (Ελληνικά)</option>
+                        <option value="he">🇮🇱 Hebrew (עברית)</option>
+                        <option value="cs">🇨🇿 Czech (Čeština)</option>
+                        <option value="ro">🇷🇴 Romanian (Română)</option>
+                        <option value="hu">🇭🇺 Hungarian (Magyar)</option>
+                        <option value="fa">Persian (Farsi)</option>
+                      </select>
+                      <ChevronDown class="w-4 h-4 text-slate-400 absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none" />
+                    </div>
+                  </div>
+
+                  <!-- 4. Live Microphone Test Widget -->
+                  <div class="p-3.5 rounded-2xl bg-white/[0.02] border border-white/[0.08] space-y-2.5">
+                    <div class="flex items-center justify-between">
+                      <div>
+                        <div class="text-xs font-bold text-white flex items-center gap-1.5">
+                          <span class="w-2 h-2 rounded-full bg-rose-400 animate-pulse"></span>
+                          <span>Test Microphone</span>
+                        </div>
+                        <div class="text-[11px] text-slate-400">Speak to test live speech recognition</div>
+                      </div>
+                      <button 
+                        type="button" 
+                        id="test-stt-btn" 
+                        class="px-3.5 py-2 rounded-xl bg-rose-600 hover:bg-rose-500 text-white text-xs font-semibold flex items-center gap-1.5 transition cursor-pointer active:scale-95 shadow-md shadow-rose-950"
+                      >
+                        <Mic class="w-3.5 h-3.5" />
+                        <span id="test-stt-btn-label">Test Mic (3s)</span>
+                      </button>
+                    </div>
+
+                    <div id="stt-test-output-box" class="hidden p-3 rounded-xl bg-black/50 border border-rose-500/40 text-xs text-white font-medium">
+                      <div class="flex items-center gap-1.5 text-emerald-400 text-[11px] font-bold mb-1">
+                        <Check class="w-3.5 h-3.5" />
+                        <span>Recognized Text:</span>
+                      </div>
+                      <div id="stt-test-output-text" class="italic text-slate-200">"..."</div>
+                    </div>
+                  </div>
+
+                  <!-- Push-to-Talk Hint -->
+                  <div class="text-[11px] text-slate-500 flex items-center gap-2 px-1">
+                    <span class="w-1.5 h-1.5 rounded-full bg-slate-600"></span>
+                    <span>In chat, hold the microphone button to talk, or release to send instantly.</span>
+                  </div>
+
                 </div>
 
               </div>
@@ -4075,7 +4004,6 @@ const { character } = Astro.props;
   const sttLangSelect = document.getElementById('stt-lang-select');
 
   const openTtsCatalogBtn = document.getElementById('open-tts-catalog-btn');
-  const openSttCatalogBtn = document.getElementById('open-stt-catalog-btn');
   const ttsActiveEngineName = document.getElementById('tts-active-engine-name');
   const ttsActiveEngineDesc = document.getElementById('tts-active-engine-desc');
   const ttsActiveIconBox = document.getElementById('tts-active-icon-box');
@@ -4166,19 +4094,6 @@ const { character } = Astro.props;
   const testSttBtnLabel = document.getElementById('test-stt-btn-label');
   const sttTestOutputBox = document.getElementById('stt-test-output-box');
   const sttTestOutputText = document.getElementById('stt-test-output-text');
-  const customSttProfileTrigger = document.getElementById('custom-stt-profile-trigger');
-  const customSttProfileMenu = document.getElementById('custom-stt-profile-menu');
-  const customSttProfileTriggerLabel = document.getElementById('custom-stt-profile-trigger-label');
-  const customSttProfileTriggerTag = document.getElementById('custom-stt-profile-trigger-tag');
-  const customSttProfileStatusDot = document.getElementById('custom-stt-profile-status-dot');
-  const sttProfileItemsList = document.getElementById('stt-profile-items-list');
-  const btnShowSaveSttProfile = document.getElementById('btn-show-save-stt-profile');
-  const btnCancelSaveSttProfile = document.getElementById('btn-cancel-save-stt-profile');
-  const btnConfirmSaveSttProfile = document.getElementById('btn-confirm-save-stt-profile');
-  const btnUpdateActiveSttProfile = document.getElementById('btn-update-active-stt-profile');
-  const btnDeleteActiveSttProfile = document.getElementById('btn-delete-active-stt-profile');
-  const newSttProfileForm = document.getElementById('new-stt-profile-form');
-  const newSttProfileNameInput = document.getElementById('new-stt-profile-name-input');
   const voiceRecordingOverlay = document.getElementById('voice-recording-overlay');
   const voiceRecordingTimer = document.getElementById('voice-recording-timer');
   const voiceRecordingHint = document.getElementById('voice-recording-hint');
@@ -6146,7 +6061,6 @@ const { character } = Astro.props;
     if (sttLangSelect) sttLangSelect.value = sttLang;
 
     if (typeof renderVoiceProfileMenu === 'function') renderVoiceProfileMenu();
-    if (typeof renderSttProfileMenu === 'function') renderSttProfileMenu();
     if (typeof updateSpeedPillsAndLabel === 'function') updateSpeedPillsAndLabel(voiceRate);
     if (typeof updatePitchPillsAndLabel === 'function') updatePitchPillsAndLabel(voicePitch);
     syncVoiceUiPanels();
@@ -7889,7 +7803,6 @@ const { character } = Astro.props;
   });
 
   openTtsCatalogBtn?.addEventListener('click', () => openVoiceEngineModal('tts'));
-  openSttCatalogBtn?.addEventListener('click', () => openVoiceEngineModal('stt'));
 
   function renderVoiceModalCategories() {
     if (!voiceModalCategoryChips) return;
@@ -8986,242 +8899,25 @@ const { character } = Astro.props;
   }
 
   // ==========================================
-  // STT PROFILES VAULT (MICROPHONE PRESETS)
+  // MICROPHONE (STT) ENGINE & KEY MANAGEMENT
   // ==========================================
-  const DEFAULT_STT_PROFILES = [
-    {
-      id: 'default-browser-mic',
-      name: 'Built-in Device Mic',
-      provider: 'browser-stt',
-      model: 'web-speech',
-      language: 'auto',
-      isSystem: true
-    },
-    {
-      id: 'groq-whisper-turbo',
-      name: 'Groq Whisper Turbo',
-      provider: 'groq',
-      model: 'whisper-large-v3-turbo',
-      language: 'auto',
-      isSystem: false
-    },
-    {
-      id: 'openai-whisper-studio',
-      name: 'OpenAI Whisper Studio',
-      provider: 'openai-stt',
-      model: 'whisper-1',
-      language: 'auto',
-      isSystem: false
+  function getSttKeyForProvider(prov) {
+    if (prov === 'groq') {
+      return localStorage.getItem('aetheria_stt_key_groq') || localStorage.getItem('aetheria_key_groq') || localStorage.getItem('aetheria_stt_key') || '';
     }
-  ];
-
-  function getSavedSttProfiles() {
-    try {
-      const raw = localStorage.getItem('aetheria_stt_profiles');
-      if (raw) {
-        const parsed = JSON.parse(raw);
-        if (Array.isArray(parsed) && parsed.length > 0) return parsed;
-      }
-    } catch (e) {}
-    return DEFAULT_STT_PROFILES;
+    if (prov === 'openai' || prov === 'openai-stt') {
+      return localStorage.getItem('aetheria_stt_key_openai') || localStorage.getItem('aetheria_key_openai') || localStorage.getItem('aetheria_stt_key') || '';
+    }
+    return localStorage.getItem('aetheria_stt_key_' + prov) || localStorage.getItem('aetheria_stt_key') || '';
   }
 
-  function saveSttProfiles(profiles) {
-    localStorage.setItem('aetheria_stt_profiles', JSON.stringify(profiles));
+  function setSttKeyForProvider(prov, key) {
+    localStorage.setItem('aetheria_stt_key', key);
+    if (prov === 'groq') localStorage.setItem('aetheria_stt_key_groq', key);
+    else if (prov === 'openai' || prov === 'openai-stt') localStorage.setItem('aetheria_stt_key_openai', key);
+    else localStorage.setItem('aetheria_stt_key_' + prov, key);
   }
 
-  function renderSttProfileMenu() {
-    if (!sttProfileItemsList) return;
-    const profiles = getSavedSttProfiles();
-    const activeId = localStorage.getItem('aetheria_active_stt_profile_id') || 'default-browser-mic';
-    const activeProf = profiles.find(p => p.id === activeId) || profiles[0];
-
-    if (customSttProfileTriggerLabel) {
-      customSttProfileTriggerLabel.textContent = activeProf ? activeProf.name : 'Device Mic';
-    }
-    if (customSttProfileTriggerTag) {
-      if (activeProf.provider === 'browser-stt') customSttProfileTriggerTag.textContent = '100% Free';
-      else if (activeProf.provider === 'groq') customSttProfileTriggerTag.textContent = 'Ultra-Fast';
-      else if (activeProf.provider === 'openai-stt') customSttProfileTriggerTag.textContent = 'Studio';
-      else customSttProfileTriggerTag.textContent = activeProf.provider.toUpperCase();
-    }
-    if (customSttProfileStatusDot) {
-      const ready = isSttReady();
-      customSttProfileStatusDot.className = `w-2 h-2 rounded-full shrink-0 ${ready ? 'bg-emerald-400' : 'bg-amber-400'}`;
-    }
-
-    sttProfileItemsList.innerHTML = profiles.map(p => {
-      const isCur = p.id === activeId;
-      const tagText = p.provider === 'browser-stt' ? '100% Free' : p.provider.toUpperCase();
-      return `
-        <button
-          type="button"
-          class="stt-profile-item w-full flex items-center justify-between gap-2 px-2.5 py-1.5 rounded-lg text-xs transition cursor-pointer text-left ${
-            isCur ? 'bg-rose-600/30 text-white font-semibold' : 'hover:bg-white/5 text-slate-300'
-          }"
-          data-profile-id="${p.id}"
-        >
-          <div class="flex items-center gap-2 truncate">
-            <span class="w-1.5 h-1.5 rounded-full ${isCur ? 'bg-rose-400' : 'bg-slate-500'}"></span>
-            <span class="truncate">${p.name}</span>
-          </div>
-          <span class="px-1.5 py-0.2 rounded bg-white/10 text-[9px] font-mono text-slate-300 shrink-0">${tagText}</span>
-        </button>
-      `;
-    }).join('');
-
-    sttProfileItemsList.querySelectorAll('.stt-profile-item').forEach(btn => {
-      btn.addEventListener('click', () => {
-        const pId = btn.getAttribute('data-profile-id');
-        const prof = profiles.find(x => x.id === pId);
-        if (prof) {
-          applySttProfile(prof);
-          customSttProfileMenu?.classList.add('hidden');
-        }
-      });
-    });
-  }
-
-  function applySttProfile(prof) {
-    localStorage.setItem('aetheria_active_stt_profile_id', prof.id);
-    if (sttProviderSelect) sttProviderSelect.value = prof.provider;
-    localStorage.setItem('aetheria_stt_provider', prof.provider);
-
-    if (prof.model) {
-      if (sttModelSelect) sttModelSelect.value = prof.model;
-      localStorage.setItem('aetheria_stt_model', prof.model);
-    }
-    if (prof.language) {
-      if (sttLangSelect) sttLangSelect.value = prof.language;
-      localStorage.setItem('aetheria_stt_lang', prof.language);
-    }
-
-    if (sttApiKey) {
-      sttApiKey.value = getSttKeyForProvider(prof.provider);
-    }
-
-    syncVoiceUiPanels();
-    updateMicButtonState();
-    renderSttProfileMenu();
-    showNotification(`✓ Switched to mic preset "${prof.name}"`);
-  }
-
-  function saveCurrentAsSttProfile(name) {
-    const trimmed = (name || '').trim();
-    if (!trimmed) {
-      showNotification('⚠️ Please enter a preset name', 'warning');
-      return;
-    }
-
-    const profiles = getSavedSttProfiles();
-    const newId = 'stt-prof-' + Date.now();
-    const newProfile = {
-      id: newId,
-      name: trimmed,
-      provider: sttProviderSelect?.value || 'groq',
-      model: sttModelSelect?.value || 'whisper-large-v3-turbo',
-      language: sttLangSelect?.value || 'auto',
-      isSystem: false
-    };
-
-    profiles.push(newProfile);
-    saveSttProfiles(profiles);
-    localStorage.setItem('aetheria_active_stt_profile_id', newId);
-
-    if (newSttProfileForm) newSttProfileForm.classList.add('hidden');
-    if (newSttProfileNameInput) newSttProfileNameInput.value = '';
-
-    renderSttProfileMenu();
-    showNotification(`✓ Saved microphone preset "${trimmed}"`);
-  }
-
-  function updateActiveSttProfile() {
-    const activeId = localStorage.getItem('aetheria_active_stt_profile_id') || 'default-browser-mic';
-    const profiles = getSavedSttProfiles();
-    const idx = profiles.findIndex(p => p.id === activeId);
-    if (idx === -1) {
-      showNotification('⚠️ No active custom preset selected to update', 'warning');
-      return;
-    }
-
-    profiles[idx].provider = sttProviderSelect?.value || 'groq';
-    profiles[idx].model = sttModelSelect?.value || 'whisper-large-v3-turbo';
-    profiles[idx].language = sttLangSelect?.value || 'auto';
-
-    saveSttProfiles(profiles);
-    renderSttProfileMenu();
-    showNotification(`✓ Updated preset "${profiles[idx].name}"`);
-  }
-
-  function deleteActiveSttProfile() {
-    const activeId = localStorage.getItem('aetheria_active_stt_profile_id') || 'default-browser-mic';
-    if (activeId === 'default-browser-mic') {
-      showNotification('⚠️ Built-in device mic profile cannot be deleted', 'warning');
-      return;
-    }
-
-    let profiles = getSavedSttProfiles();
-    profiles = profiles.filter(p => p.id !== activeId);
-    saveSttProfiles(profiles);
-    localStorage.setItem('aetheria_active_stt_profile_id', 'default-browser-mic');
-
-    const defaultProf = profiles[0] || DEFAULT_STT_PROFILES[0];
-    applySttProfile(defaultProf);
-    showNotification('✓ Deleted custom preset');
-  }
-
-  // STT Profile UI event listeners
-  customSttProfileTrigger?.addEventListener('click', (e) => {
-    e.stopPropagation();
-    customSttProfileMenu?.classList.toggle('hidden');
-  });
-
-  document.addEventListener('click', (e) => {
-    if (!e.target.closest('#custom-stt-profile-trigger') && !e.target.closest('#custom-stt-profile-menu')) {
-      customSttProfileMenu?.classList.add('hidden');
-    }
-  });
-
-  btnShowSaveSttProfile?.addEventListener('click', () => {
-    customSttProfileMenu?.classList.add('hidden');
-    if (newSttProfileForm) newSttProfileForm.classList.remove('hidden');
-    newSttProfileNameInput?.focus();
-  });
-
-  btnCancelSaveSttProfile?.addEventListener('click', () => {
-    if (newSttProfileForm) newSttProfileForm.classList.add('hidden');
-  });
-
-  btnConfirmSaveSttProfile?.addEventListener('click', () => {
-    saveCurrentAsSttProfile(newSttProfileNameInput?.value || '');
-  });
-
-  newSttProfileNameInput?.addEventListener('keydown', (e) => {
-    if (e.key === 'Enter') {
-      saveCurrentAsSttProfile(newSttProfileNameInput.value);
-    }
-  });
-
-  btnUpdateActiveSttProfile?.addEventListener('click', updateActiveSttProfile);
-  btnDeleteActiveSttProfile?.addEventListener('click', deleteActiveSttProfile);
-
-  // Quick STT Engine Chips
-  document.querySelectorAll('.stt-quick-engine-chip').forEach(chip => {
-    chip.addEventListener('click', () => {
-      const eng = chip.getAttribute('data-stt-engine');
-      if (!eng) return;
-      if (sttProviderSelect) sttProviderSelect.value = eng;
-      localStorage.setItem('aetheria_stt_provider', eng);
-      if (sttApiKey) sttApiKey.value = getSttKeyForProvider(eng);
-      syncVoiceUiPanels();
-      updateMicButtonState();
-      renderSttProfileMenu();
-    });
-  });
-
-  // ==========================================
-  // PROGRESSIVE DISCLOSURE UI CONTROLLER
-  // ==========================================
   function syncVoiceUiPanels() {
     // 1. TTS Progressive Disclosure
     const ttsId = voiceProviderSelect?.value || localStorage.getItem('aetheria_voice_provider') || 'browser';
@@ -9321,215 +9017,127 @@ const { character } = Astro.props;
     // Render Dynamic Voice Catalog
     renderDynamicVoiceCatalog(voiceSearchInput?.value || '');
 
-    // 2. STT Progressive Disclosure
-    const sttId = sttProviderSelect?.value || localStorage.getItem('aetheria_stt_provider') || 'browser-stt';
-    const sttObj = STT_CATALOG.find(x => x.id === sttId) || STT_CATALOG[0];
+    // 2. STT Engine Tabs & Configuration Card
+    const sttId = localStorage.getItem('aetheria_stt_provider') || 'browser-stt';
+    const isBrowserStt = sttId === 'browser-stt';
     const savedSttKey = getSttKeyForProvider(sttId);
-    const isSttConnected = (!sttObj.needsKey) || Boolean(savedSttKey);
+    const isSttConnected = isBrowserStt || Boolean(savedSttKey);
 
-    if (sttActiveEngineName) sttActiveEngineName.textContent = sttObj.name;
-    if (sttActiveEngineDesc) sttActiveEngineDesc.textContent = sttObj.desc;
-    if (sttActiveIconBox) sttActiveIconBox.innerHTML = getVoiceEngineIconSvg(sttObj.id);
-
-    if (sttConnectionBadge) {
-      if (!sttObj.needsKey) {
-        sttConnectionBadge.className = 'px-2 py-0.5 rounded-full text-[10px] font-mono font-semibold bg-emerald-500/20 text-emerald-300 border border-emerald-500/30';
-        sttConnectionBadge.textContent = '100% Free • Offline Ready';
-      } else if (!isSttConnected) {
-        sttConnectionBadge.className = 'px-2 py-0.5 rounded-full text-[10px] font-mono font-semibold bg-amber-500/20 text-amber-300 border border-amber-500/30';
-        sttConnectionBadge.textContent = 'Key Required';
+    // Update 4 engine tabs
+    document.querySelectorAll('.stt-engine-tab').forEach(tab => {
+      const eng = tab.getAttribute('data-stt-engine');
+      if (eng === sttId) {
+        tab.className = 'stt-engine-tab p-3 rounded-2xl border text-left transition cursor-pointer flex flex-col justify-between gap-1.5 bg-rose-600/20 border-rose-500 shadow-md shadow-rose-950/40 ring-1 ring-rose-500/50';
       } else {
-        sttConnectionBadge.className = 'px-2 py-0.5 rounded-full text-[10px] font-mono font-semibold bg-emerald-500/20 text-emerald-300 border border-emerald-500/30';
-        sttConnectionBadge.textContent = 'Connected & Active';
+        tab.className = 'stt-engine-tab p-3 rounded-2xl border text-left transition cursor-pointer flex flex-col justify-between gap-1.5 bg-white/[0.03] hover:bg-white/[0.06] border-white/10';
       }
+    });
+
+    if (sttFreeDeviceCard) {
+      sttFreeDeviceCard.classList.toggle('hidden', !isBrowserStt);
     }
 
-    // Free device mic card vs Cloud STT connection card
-    if (sttId === 'browser-stt') {
-      if (sttFreeDeviceCard) sttFreeDeviceCard.classList.remove('hidden');
-      if (sttConnectionCard) sttConnectionCard.classList.add('hidden');
-      if (sttModelSection) sttModelSection.classList.add('hidden');
-    } else {
-      if (sttFreeDeviceCard) sttFreeDeviceCard.classList.add('hidden');
-      if (sttConnectionCard) {
-        sttConnectionCard.classList.remove('hidden');
-        if (sttConnectTitle) sttConnectTitle.textContent = `Connect ${sttObj.name} API Key`;
-        if (sttConnectDesc) sttConnectDesc.textContent = `Enter your API key to activate instant ${sttObj.name} voice transcription.`;
+    if (sttConnectionCard) {
+      sttConnectionCard.classList.toggle('hidden', isBrowserStt);
+      if (!isBrowserStt) {
+        if (sttConnectTitle) {
+          sttConnectTitle.textContent = sttId === 'groq' ? 'Groq Whisper API Key' : (sttId === 'openai-stt' ? 'OpenAI API Key' : 'Custom Server');
+        }
         if (sttApiKey) {
           sttApiKey.value = savedSttKey;
-          sttApiKey.placeholder = sttId === 'groq' ? 'Enter Groq API Key...' : sttId === 'openai-stt' ? 'Enter OpenAI Key (sk-...)...' : 'Enter API Key...';
+          sttApiKey.placeholder = sttId === 'groq' ? 'Enter Groq API Key (gsk_...)' : 'Enter OpenAI API Key (sk-...)';
+        }
+        if (sttKeyStatusPill) {
+          sttKeyStatusPill.textContent = isSttConnected ? 'CONNECTED' : 'KEY REQUIRED';
+          sttKeyStatusPill.className = `px-2 py-0.5 rounded-full text-[9px] font-mono font-bold ${
+            isSttConnected ? 'bg-emerald-500/20 text-emerald-300 border border-emerald-500/30' : 'bg-amber-500/20 text-amber-300 border border-amber-500/30'
+          }`;
+        }
+        if (sttCustomUrlContainer) {
+          sttCustomUrlContainer.classList.toggle('hidden', sttId !== 'custom-stt');
         }
 
-        const keyStatusPill = document.getElementById('stt-key-status-pill');
-        if (keyStatusPill) {
-          if (isSttConnected) {
-            keyStatusPill.className = 'px-2 py-0.5 rounded-full text-[9px] font-mono font-bold bg-emerald-500/20 text-emerald-300 border border-emerald-500/30';
-            keyStatusPill.textContent = 'KEY CONNECTED';
-          } else {
-            keyStatusPill.className = 'px-2 py-0.5 rounded-full text-[9px] font-mono font-bold bg-amber-500/20 text-amber-300 border border-amber-500/30';
-            keyStatusPill.textContent = 'KEY REQUIRED';
-          }
-        }
-
-        // Quick reuse from Text engine
-        const groqTextKey = localStorage.getItem('aetheria_key_groq') || '';
-        const openaiTextKey = localStorage.getItem('aetheria_key_openai') || '';
-        if (sttQuickReuseKeyBtn) {
-          if (sttId === 'groq' && groqTextKey && !savedSttKey) {
+        // Quick reuse from Text tab
+        const textKey = (sttId === 'groq' ? localStorage.getItem('aetheria_key_groq') : localStorage.getItem('aetheria_key_openai')) || '';
+        if (sttQuickReuseKeyBtn && sttQuickReuseLabel) {
+          if (!savedSttKey && textKey) {
             sttQuickReuseKeyBtn.classList.remove('hidden');
-            if (sttQuickReuseLabel) sttQuickReuseLabel.textContent = '⚡ Connect using saved Groq Key from Text Engine';
-          } else if ((sttId === 'openai' || sttId === 'openai-stt') && openaiTextKey && !savedSttKey) {
-            sttQuickReuseKeyBtn.classList.remove('hidden');
-            if (sttQuickReuseLabel) sttQuickReuseLabel.textContent = '⚡ Connect using saved OpenAI Key from Text Engine';
+            sttQuickReuseLabel.textContent = `Use saved ${sttId === 'groq' ? 'Groq' : 'OpenAI'} Key from Text Engine`;
           } else {
             sttQuickReuseKeyBtn.classList.add('hidden');
           }
         }
+
+        renderDynamicSttModels();
       }
-      if (sttModelSection) sttModelSection.classList.remove('hidden');
     }
 
-    if (sttCustomUrlContainer) {
-      sttCustomUrlContainer.classList.toggle('hidden', sttId !== 'custom-stt');
-    }
-
-    // Highlight active quick engine chips
-    document.querySelectorAll('.stt-quick-engine-chip').forEach(chip => {
-      const eng = chip.getAttribute('data-stt-engine');
-      if (eng === sttId) {
-        chip.className = 'stt-quick-engine-chip px-3 py-1.5 rounded-xl text-xs font-semibold transition cursor-pointer flex items-center gap-1.5 bg-rose-600 text-white shadow-sm';
-      } else {
-        chip.className = 'stt-quick-engine-chip px-3 py-1.5 rounded-xl text-xs font-semibold transition cursor-pointer flex items-center gap-1.5 bg-white/[0.04] hover:bg-white/[0.08] text-slate-300 hover:text-white border border-white/10';
-      }
-    });
-
-    // Sync STT Language dropdown
+    // Sync Spoken Language select
     const currentSttLang = localStorage.getItem('aetheria_stt_lang') || 'auto';
     if (sttLangSelect && sttLangSelect.value !== currentSttLang) {
       sttLangSelect.value = currentSttLang;
     }
-
-    renderSttProfileMenu();
-    renderDynamicSttModels();
   }
 
-  // STT Language Change Handler
-  sttLangSelect?.addEventListener('change', () => {
-    const l = sttLangSelect.value || 'auto';
-    localStorage.setItem('aetheria_stt_lang', l);
-    if (speechRec) {
-      speechRec.lang = l === 'auto' ? (navigator.language || 'en-US') : (l === 'fa' ? 'fa-IR' : (l === 'en' ? 'en-US' : l));
-    }
-    showNotification(`Language set to ${sttLangSelect.options[sttLangSelect.selectedIndex]?.text || l}`);
+  // Engine Tab Switcher
+  document.querySelectorAll('.stt-engine-tab').forEach(tab => {
+    tab.addEventListener('click', () => {
+      const eng = tab.getAttribute('data-stt-engine');
+      if (!eng) return;
+      localStorage.setItem('aetheria_stt_provider', eng);
+      syncVoiceUiPanels();
+      updateMicButtonState();
+      if (eng !== 'browser-stt') {
+        syncSttModelsForProvider(eng, false);
+      }
+    });
   });
 
-  // Dynamic STT Models logic
+  // Dynamic STT Models Fetch & Rendering
   let isFetchingSttModels = false;
 
-  function getAvailableSttModelsForProvider(prov) {
-    if (prov === 'browser-stt') return [];
-    const key = getSttKeyForProvider(prov);
-    if (!key && prov !== 'custom-stt') return null;
+  function renderDynamicSttModels() {
+    if (!sttModelSelect) return;
+    const prov = localStorage.getItem('aetheria_stt_provider') || 'groq';
+    if (prov === 'browser-stt') return;
 
+    const currentModel = localStorage.getItem('aetheria_stt_model') || (prov === 'groq' ? 'whisper-large-v3-turbo' : 'whisper-1');
+
+    let models = [];
     try {
       const cached = localStorage.getItem('aetheria_cached_stt_models_' + prov);
-      if (cached) {
-        const parsed = JSON.parse(cached);
-        if (Array.isArray(parsed) && parsed.length > 0) return parsed;
-      }
+      if (cached) models = JSON.parse(cached);
     } catch (e) {}
 
-    return [];
-  }
-
-  function renderDynamicSttModels() {
-    if (!sttModelsGrid) return;
-    const prov = sttProviderSelect?.value || localStorage.getItem('aetheria_stt_provider') || 'groq';
-
-    if (prov === 'browser-stt') {
-      sttModelsGrid.innerHTML = '';
-      return;
+    if (!Array.isArray(models) || models.length === 0) {
+      if (prov === 'groq') {
+        models = [
+          { id: 'whisper-large-v3-turbo', label: 'whisper-large-v3-turbo (Fastest ~0.2s)' },
+          { id: 'whisper-large-v3', label: 'whisper-large-v3 (Maximum Accuracy)' },
+          { id: 'distil-whisper-large-v3-en', label: 'distil-whisper-large-v3-en (English Optimized)' }
+        ];
+      } else if (prov === 'openai' || prov === 'openai-stt') {
+        models = [
+          { id: 'whisper-1', label: 'whisper-1 (Official OpenAI Studio)' }
+        ];
+      }
     }
 
-    const models = getAvailableSttModelsForProvider(prov);
-    const currentModel = sttModelSelect?.value || localStorage.getItem('aetheria_stt_model') || (prov === 'groq' ? 'whisper-large-v3-turbo' : 'whisper-1');
-
-    if (models === null) {
-      sttModelsGrid.innerHTML = `
-        <div class="col-span-full p-4 rounded-xl bg-rose-950/20 border border-rose-500/30 text-center space-y-2">
-          <div class="w-8 h-8 rounded-lg bg-rose-500/20 border border-rose-500/30 text-rose-300 flex items-center justify-center mx-auto">
-            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/></svg>
-          </div>
-          <div>
-            <h5 class="text-xs font-bold text-white mb-0.5">API Key Required</h5>
-            <p class="text-[10px] text-slate-400">Connect your ${prov.toUpperCase()} API key above to load live models from your account.</p>
-          </div>
-          <button type="button" class="px-3 py-1 rounded-lg bg-rose-600 hover:bg-rose-500 text-white text-xs font-semibold inline-flex items-center gap-1 cursor-pointer shadow-sm" onclick="document.getElementById('stt-api-key')?.focus()">
-            <span>Enter API Key</span>
-          </button>
-        </div>
-      `;
-      return;
-    }
-
-    if (models.length === 0) {
-      sttModelsGrid.innerHTML = `
-        <div class="col-span-full p-6 rounded-xl bg-rose-950/20 border border-rose-500/30 text-center space-y-2">
-          <div class="w-6 h-6 rounded-full border-2 border-rose-400 border-t-transparent animate-spin mx-auto"></div>
-          <p class="text-xs font-semibold text-rose-300">Fetching live models from ${prov.toUpperCase()} API...</p>
-        </div>
-      `;
-      syncSttModelsForProvider(prov, false);
-      return;
-    }
-
-    sttModelsGrid.innerHTML = models.map(m => {
-      const isSelected = m.id === currentModel;
-      const isTurbo = m.id.includes('turbo') || m.id.includes('distil');
-      const badgeText = isTurbo ? 'FASTEST' : (m.id.includes('large') ? 'MAX ACCURACY' : 'STUDIO');
-      const badgeColor = isTurbo ? 'bg-emerald-500/20 text-emerald-300' : 'bg-purple-500/20 text-purple-300';
-      const desc = m.desc || (isTurbo ? 'Ultra-fast low-latency transcription. Ideal for mobile voice chat.' : 'Full parameter model for maximum accuracy.');
-
-      return `
-        <button
-          type="button"
-          data-stt-model-id="${m.id}"
-          class="stt-dynamic-model-card p-3 rounded-xl border text-left transition cursor-pointer flex flex-col justify-between gap-1 ${
-            isSelected
-              ? 'bg-rose-950/60 border-rose-500 shadow-md shadow-rose-950/60 ring-1 ring-rose-500/50'
-              : 'bg-white/[0.03] hover:bg-white/[0.06] border-white/10'
-          }"
-        >
-          <div class="flex items-center justify-between gap-2">
-            <span class="font-bold text-xs text-white truncate font-mono">${m.id}</span>
-            <span class="px-1.5 py-0.5 rounded ${badgeColor} text-[9px] font-bold font-mono shrink-0">${badgeText}</span>
-          </div>
-          <p class="text-[10px] text-slate-400 line-clamp-2">${desc}</p>
-        </button>
-      `;
+    sttModelSelect.innerHTML = models.map(m => {
+      const id = typeof m === 'string' ? m : m.id;
+      const label = typeof m === 'string' ? m : (m.label || m.id);
+      return `<option value="${id}">${label}</option>`;
     }).join('');
 
-    sttModelsGrid.querySelectorAll('.stt-dynamic-model-card').forEach(btn => {
-      btn.addEventListener('click', () => {
-        const mId = btn.getAttribute('data-stt-model-id');
-        if (mId) {
-          if (sttModelSelect) sttModelSelect.value = mId;
-          localStorage.setItem('aetheria_stt_model', mId);
-          renderDynamicSttModels();
-          showNotification(`✓ Transcription model set to "${mId}"`);
-        }
-      });
-    });
+    sttModelSelect.value = currentModel;
   }
 
   async function syncSttModelsForProvider(prov, isManual = false) {
-    if (isFetchingSttModels) return;
-    if (prov === 'browser-stt') return;
+    if (isFetchingSttModels || prov === 'browser-stt') return;
 
     const key = getSttKeyForProvider(prov);
     if (!key && prov !== 'custom-stt') {
       if (isManual) showNotification('⚠️ Please enter an API key first.', 'warning');
-      renderDynamicSttModels();
       return;
     }
 
@@ -9558,12 +9166,8 @@ const { character } = Astro.props;
             'Accept': 'application/json'
           }
         });
-        if (directRes.ok) {
-          modelsData = await directRes.json();
-        }
-      } catch (directErr) {
-        console.warn('Direct fetch failed, falling back to proxy...', directErr);
-      }
+        if (directRes.ok) modelsData = await directRes.json();
+      } catch (e) {}
 
       if (!modelsData) {
         const proxyRes = await fetch('/api/proxy/fetch-models', {
@@ -9577,37 +9181,32 @@ const { character } = Astro.props;
         }
       }
 
-      let parsedModels = [];
       const rawList = modelsData?.data || (Array.isArray(modelsData) ? modelsData : []);
+      let parsed = [];
 
       if (prov === 'groq') {
-        parsedModels = rawList
+        parsed = rawList
           .filter(m => typeof m.id === 'string' && m.id.toLowerCase().includes('whisper'))
           .map(m => ({
             id: m.id,
-            desc: m.id.includes('turbo') ? 'Fastest ~0.2s LPU inference. Best for real-time mobile voice chat.' : 'Max accuracy parameter Whisper model.'
+            label: `${m.id} ${m.id.includes('turbo') ? '(Fastest ~0.2s)' : '(Max Accuracy)'}`
           }));
       } else if (prov === 'openai' || prov === 'openai-stt') {
-        parsedModels = rawList
+        parsed = rawList
           .filter(m => typeof m.id === 'string' && m.id.toLowerCase().includes('whisper'))
           .map(m => ({
             id: m.id,
-            desc: 'Official OpenAI Whisper audio transcription model.'
+            label: `${m.id} (Studio Accuracy)`
           }));
-        if (parsedModels.length === 0) {
-          parsedModels = [{ id: 'whisper-1', desc: 'Official OpenAI Whisper audio transcription model.' }];
-        }
+        if (parsed.length === 0) parsed = [{ id: 'whisper-1', label: 'whisper-1 (Official OpenAI Studio)' }];
       }
 
-      if (parsedModels.length > 0) {
-        localStorage.setItem('aetheria_cached_stt_models_' + prov, JSON.stringify(parsedModels));
+      if (parsed.length > 0) {
+        localStorage.setItem('aetheria_cached_stt_models_' + prov, JSON.stringify(parsed));
         renderDynamicSttModels();
-        if (isManual) showNotification(`✓ Synced ${parsedModels.length} models from ${prov.toUpperCase()} API!`);
-      } else {
-        if (isManual) showNotification('⚠️ No compatible Whisper models found in response.', 'warning');
+        if (isManual) showNotification(`✓ Synced ${parsed.length} models from ${prov.toUpperCase()} API!`);
       }
     } catch (err) {
-      console.error('Failed to sync STT models:', err);
       if (isManual) showNotification(`⚠️ Failed to sync models: ${err.message}`, 'error');
     } finally {
       isFetchingSttModels = false;
@@ -9615,8 +9214,25 @@ const { character } = Astro.props;
     }
   }
 
+  // Model Selection Change Handler
+  sttModelSelect?.addEventListener('change', () => {
+    localStorage.setItem('aetheria_stt_model', sttModelSelect.value);
+    showNotification(`✓ Model set to "${sttModelSelect.value}"`);
+  });
+
+  // Language Selection Change Handler
+  sttLangSelect?.addEventListener('change', () => {
+    const val = sttLangSelect.value || 'auto';
+    localStorage.setItem('aetheria_stt_lang', val);
+    if (speechRec) {
+      speechRec.lang = val === 'auto' ? (navigator.language || 'en-US') : (val === 'fa' ? 'fa-IR' : (val === 'en' ? 'en-US' : val));
+    }
+    showNotification(`✓ Spoken language updated`);
+  });
+
+  // Sync Models Button
   syncSttModelsBtn?.addEventListener('click', () => {
-    const prov = sttProviderSelect?.value || localStorage.getItem('aetheria_stt_provider') || 'groq';
+    const prov = localStorage.getItem('aetheria_stt_provider') || 'groq';
     syncSttModelsForProvider(prov, true);
   });
 
@@ -9648,7 +9264,7 @@ const { character } = Astro.props;
 
   sttVerifyConnectBtn?.addEventListener('click', () => {
     const val = sttApiKey?.value.trim() || '';
-    const sttId = sttProviderSelect?.value || 'groq';
+    const sttId = localStorage.getItem('aetheria_stt_provider') || 'groq';
     if (!val) {
       showNotification('⚠️ Please enter an API key first.', 'warning');
       sttApiKey?.focus();
@@ -9658,28 +9274,11 @@ const { character } = Astro.props;
     syncVoiceUiPanels();
     syncSttModelsForProvider(sttId, false);
     updateMicButtonState();
-    renderSttProfileMenu();
     showNotification(`✓ ${sttId.toUpperCase()} API Key connected successfully!`);
   });
 
-  sttConnectConfirmBtn?.addEventListener('click', () => {
-    const val = sttApiKey?.value.trim() || '';
-    const sttId = sttProviderSelect?.value || 'groq';
-    if (!val) {
-      showNotification('⚠️ Please enter an API key first.', 'warning');
-      sttApiKey?.focus();
-      return;
-    }
-    setSttKeyForProvider(sttId, val);
-    syncVoiceUiPanels();
-    syncSttModelsForProvider(sttId, false);
-    updateMicButtonState();
-    renderSttProfileMenu();
-    showNotification('✓ Voice input API Key connected successfully!');
-  });
-
   sttQuickReuseKeyBtn?.addEventListener('click', () => {
-    const sttId = sttProviderSelect?.value || 'groq';
+    const sttId = localStorage.getItem('aetheria_stt_provider') || 'groq';
     const key = (sttId === 'groq' ? localStorage.getItem('aetheria_key_groq') : localStorage.getItem('aetheria_key_openai')) || '';
     if (key) {
       if (sttApiKey) sttApiKey.value = key;
@@ -9687,7 +9286,6 @@ const { character } = Astro.props;
       syncVoiceUiPanels();
       syncSttModelsForProvider(sttId, false);
       updateMicButtonState();
-      renderSttProfileMenu();
       showNotification(`✓ Connected ${sttId.toUpperCase()} Key from Text Engine!`);
     }
   });
@@ -9731,11 +9329,10 @@ const { character } = Astro.props;
   let sttTestMediaRecorder = null;
   let sttTestChunks = [];
   testSttBtn?.addEventListener('click', async () => {
-    const prov = sttProviderSelect?.value || localStorage.getItem('aetheria_stt_provider') || 'browser-stt';
+    const prov = localStorage.getItem('aetheria_stt_provider') || 'browser-stt';
     const outputBox = document.getElementById('stt-test-output-box');
     const outputText = document.getElementById('stt-test-output-text');
 
-    // 1. Built-in Browser Web Speech API
     if (prov === 'browser-stt' || prov === 'browser') {
       if (typeof window === 'undefined' || (!('webkitSpeechRecognition' in window) && !('SpeechRecognition' in window))) {
         showNotification('⚠️ Built-in Web Speech API is not supported in this browser. Please switch to Groq Whisper.', 'warning');
@@ -9789,7 +9386,6 @@ const { character } = Astro.props;
       return;
     }
 
-    // 2. Cloud Whisper Recording & Transcription
     if (!isSttReady()) {
       showNotification('🔒 Please enter your STT API key first to test recording.', 'warning');
       sttApiKey?.focus();
@@ -10082,7 +9678,6 @@ const { character } = Astro.props;
       if (sttCustomUrl) localStorage.setItem('aetheria_stt_custom_url', sttCustomUrl.value.trim());
       if (sttModelSelect) localStorage.setItem('aetheria_stt_model', sttModelSelect.value);
       if (sttLangSelect) localStorage.setItem('aetheria_stt_lang', sttLangSelect.value);
-      if (typeof renderSttProfileMenu === 'function') renderSttProfileMenu();
       syncVoiceUiPanels();
       updateMicButtonState();
 
