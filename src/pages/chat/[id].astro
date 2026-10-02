@@ -1255,7 +1255,6 @@ const { character } = Astro.props;
                 <input type="hidden" id="openai-voice-select" value="nova" />
                 <input type="hidden" id="openai-tts-model-select" value="tts-1" />
                 <input type="hidden" id="stt-model-select" value="whisper-large-v3-turbo" />
-                <input type="hidden" id="stt-lang-select" value="auto" />
 
                 <!-- ================= PANE 1: TTS SPEECH OUTPUT ================= -->
                 <div id="voice-tts-pane" class="space-y-4">
@@ -1848,52 +1847,70 @@ const { character } = Astro.props;
 
                   <!-- 5. Controls Unlocked Section -->
                   <div id="stt-controls-unlocked" class="space-y-4">
-                    <!-- Model Selection (Hidden for browser-stt) -->
+                    <!-- Model Selection (Hidden for browser-stt, Dynamically fetched from API) -->
                     <div id="stt-model-section" class="space-y-2">
-                      <label class="block text-xs font-semibold text-slate-300">Transcription Model</label>
-                      <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                      <div class="flex items-center justify-between">
+                        <label class="block text-xs font-semibold text-slate-300">Transcription Model</label>
                         <button 
                           type="button" 
-                          data-stt-model="whisper-large-v3-turbo" 
-                          class="stt-model-card p-3 rounded-xl border text-left transition cursor-pointer flex flex-col justify-between gap-1 bg-rose-950/40 border-rose-500 shadow-md shadow-rose-950/50"
+                          id="sync-stt-models-btn" 
+                          class="px-2 py-1 rounded-lg bg-white/5 hover:bg-white/10 text-slate-400 hover:text-white text-[11px] font-medium flex items-center gap-1 transition cursor-pointer"
+                          title="Refresh available transcription models from API"
                         >
-                          <div class="flex items-center justify-between">
-                            <span class="font-bold text-xs text-white">whisper-large-v3-turbo</span>
-                            <span class="px-1.5 py-0.5 rounded bg-emerald-500/20 text-emerald-300 text-[9px] font-bold font-mono">FASTEST</span>
-                          </div>
-                          <p class="text-[10px] text-slate-400">Ultra-fast ~0.2s response time. Ideal for real-time mobile voice chat.</p>
+                          <RefreshCw id="sync-stt-models-icon" class="w-3 h-3 text-rose-400" />
+                          <span>Sync Models</span>
                         </button>
-                        <button 
-                          type="button" 
-                          data-stt-model="whisper-large-v3" 
-                          class="stt-model-card p-3 rounded-xl border text-left transition cursor-pointer flex flex-col justify-between gap-1 bg-white/[0.03] hover:bg-white/[0.06] border-white/10"
-                        >
-                          <div class="flex items-center justify-between">
-                            <span class="font-bold text-xs text-white">whisper-large-v3</span>
-                            <span class="px-1.5 py-0.5 rounded bg-purple-500/20 text-purple-300 text-[9px] font-bold font-mono">MAX ACCURACY</span>
-                          </div>
-                          <p class="text-[10px] text-slate-400">Full parameter model. Highest accuracy for multi-speaker or technical audio.</p>
-                        </button>
+                      </div>
+
+                      <div id="stt-models-grid" class="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                        <!-- Populated dynamically via fetchSttModelsForProvider -->
                       </div>
                     </div>
 
-                    <!-- Spoken Language Selection -->
-                    <div class="space-y-2">
+                    <!-- Spoken Language Selection (Comprehensive Global Selector) -->
+                    <div class="space-y-1.5">
                       <label class="block text-xs font-semibold text-slate-300">Spoken Language</label>
-                      <div class="flex items-center gap-2 flex-wrap">
-                        <button type="button" data-lang="auto" class="stt-lang-chip px-3.5 py-2 rounded-xl text-xs font-semibold transition cursor-pointer bg-rose-600 text-white shadow-sm flex items-center gap-1.5">
-                          <span>🌐</span>
-                          <span>Auto-Detect Language</span>
-                        </button>
-                        <button type="button" data-lang="fa" class="stt-lang-chip px-3.5 py-2 rounded-xl text-xs font-semibold transition cursor-pointer bg-white/[0.04] hover:bg-white/[0.08] text-slate-300 hover:text-white border border-white/10 flex items-center gap-1.5">
-                          <span>🇮🇷</span>
-                          <span>Persian (فارسی)</span>
-                        </button>
-                        <button type="button" data-lang="en" class="stt-lang-chip px-3.5 py-2 rounded-xl text-xs font-semibold transition cursor-pointer bg-white/[0.04] hover:bg-white/[0.08] text-slate-300 hover:text-white border border-white/10 flex items-center gap-1.5">
-                          <span>🇺🇸</span>
-                          <span>English</span>
-                        </button>
+                      <div class="relative">
+                        <select 
+                          id="stt-lang-select" 
+                          class="w-full px-3.5 py-2.5 rounded-xl bg-black/60 border border-white/10 text-xs text-white outline-none focus:border-rose-500/60 appearance-none cursor-pointer pr-10 font-medium"
+                        >
+                          <option value="auto">🌐 Auto-Detect Language (Recommended)</option>
+                          <option value="en">🇺🇸 English (US / UK / Global)</option>
+                          <option value="es">🇪🇸 Spanish (Español)</option>
+                          <option value="fr">🇫🇷 French (Français)</option>
+                          <option value="de">🇩🇪 German (Deutsch)</option>
+                          <option value="it">🇮🇹 Italian (Italiano)</option>
+                          <option value="pt">🇵🇹 Portuguese (Português)</option>
+                          <option value="ja">🇯🇵 Japanese (日本語)</option>
+                          <option value="ko">🇰🇷 Korean (한국어)</option>
+                          <option value="zh">🇨🇳 Chinese (中文 - Mandarin)</option>
+                          <option value="ar">🇸🇦 Arabic (العربية)</option>
+                          <option value="ru">🇷🇺 Russian (Русский)</option>
+                          <option value="hi">🇮🇳 Hindi (हिन्दी)</option>
+                          <option value="tr">🇹🇷 Turkish (Türkçe)</option>
+                          <option value="nl">🇳🇱 Dutch (Nederlands)</option>
+                          <option value="pl">🇵🇱 Polish (Polski)</option>
+                          <option value="sv">🇸🇪 Swedish (Svenska)</option>
+                          <option value="da">🇩🇰 Danish (Dansk)</option>
+                          <option value="no">🇳🇴 Norwegian (Norsk)</option>
+                          <option value="fi">🇫🇮 Finnish (Suomi)</option>
+                          <option value="id">🇮🇩 Indonesian (Bahasa Indonesia)</option>
+                          <option value="vi">🇻🇳 Vietnamese (Tiếng Việt)</option>
+                          <option value="th">🇹🇭 Thai (ไทย)</option>
+                          <option value="uk">🇺🇦 Ukrainian (Українська)</option>
+                          <option value="el">🇬🇷 Greek (Ελληνικά)</option>
+                          <option value="he">🇮🇱 Hebrew (עברית)</option>
+                          <option value="cs">🇨🇿 Czech (Čeština)</option>
+                          <option value="ro">🇷🇴 Romanian (Română)</option>
+                          <option value="hu">🇭🇺 Hungarian (Magyar)</option>
+                          <option value="fa">Persian (Farsi)</option>
+                        </select>
+                        <ChevronDown class="w-4 h-4 text-slate-400 absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none" />
                       </div>
+                      <p class="text-[10px] text-slate-500">
+                        Choose Auto-Detect for multi-lingual conversation or code-switching, or pin a specific input language.
+                      </p>
                     </div>
 
                     <!-- Live Microphone Test Widget -->
@@ -4141,6 +4158,9 @@ const { character } = Astro.props;
   const sttFreeDeviceCard = document.getElementById('stt-free-device-card');
   const sttVerifyConnectBtn = document.getElementById('stt-verify-connect-btn');
   const sttModelSection = document.getElementById('stt-model-section');
+  const sttModelsGrid = document.getElementById('stt-models-grid');
+  const syncSttModelsBtn = document.getElementById('sync-stt-models-btn');
+  const syncSttModelsIcon = document.getElementById('sync-stt-models-icon');
   const testSttBtn = document.getElementById('test-stt-btn');
   const testSttBtnLabel = document.getElementById('test-stt-btn-label');
   const sttTestOutputBox = document.getElementById('stt-test-output-box');
@@ -9330,52 +9350,221 @@ const { character } = Astro.props;
       }
     });
 
-    // Sync STT Model cards
-    const currentSttModel = sttModelSelect?.value || localStorage.getItem('aetheria_stt_model') || 'whisper-large-v3-turbo';
-    document.querySelectorAll('.stt-model-card').forEach(card => {
-      const m = card.getAttribute('data-stt-model');
-      if (m === currentSttModel) {
-        card.className = 'stt-model-card p-3 rounded-xl border text-left transition cursor-pointer flex flex-col justify-between gap-1 bg-rose-950/60 border-rose-500/80 shadow-md shadow-rose-950/60';
-      } else {
-        card.className = 'stt-model-card p-3 rounded-xl border text-left transition cursor-pointer flex flex-col justify-between gap-1 bg-white/[0.03] hover:bg-white/[0.06] border-white/10';
-      }
-    });
-
-    // Sync STT Language chips
-    const currentSttLang = sttLangSelect?.value || localStorage.getItem('aetheria_stt_lang') || 'auto';
-    document.querySelectorAll('.stt-lang-chip').forEach(chip => {
-      const l = chip.getAttribute('data-lang');
-      if (l === currentSttLang) {
-        chip.className = 'stt-lang-chip px-3.5 py-2 rounded-xl text-xs font-semibold transition cursor-pointer bg-rose-600 text-white shadow-sm flex items-center gap-1.5';
-      } else {
-        chip.className = 'stt-lang-chip px-3.5 py-2 rounded-xl text-xs font-semibold transition cursor-pointer bg-white/[0.04] hover:bg-white/[0.08] text-slate-300 hover:text-white border border-white/10 flex items-center gap-1.5';
-      }
-    });
+    // Sync STT Language dropdown
+    const currentSttLang = localStorage.getItem('aetheria_stt_lang') || 'auto';
+    if (sttLangSelect && sttLangSelect.value !== currentSttLang) {
+      sttLangSelect.value = currentSttLang;
+    }
 
     renderSttProfileMenu();
+    renderDynamicSttModels();
   }
 
-  // Model & Language Chip Click Handlers
-  document.querySelectorAll('.stt-model-card').forEach(card => {
-    card.addEventListener('click', () => {
-      const m = card.getAttribute('data-stt-model');
-      if (m) {
-        if (sttModelSelect) sttModelSelect.value = m;
-        localStorage.setItem('aetheria_stt_model', m);
-        syncVoiceUiPanels();
-      }
-    });
+  // STT Language Change Handler
+  sttLangSelect?.addEventListener('change', () => {
+    const l = sttLangSelect.value || 'auto';
+    localStorage.setItem('aetheria_stt_lang', l);
+    if (speechRec) {
+      speechRec.lang = l === 'auto' ? (navigator.language || 'en-US') : (l === 'fa' ? 'fa-IR' : (l === 'en' ? 'en-US' : l));
+    }
+    showNotification(`Language set to ${sttLangSelect.options[sttLangSelect.selectedIndex]?.text || l}`);
   });
 
-  document.querySelectorAll('.stt-lang-chip').forEach(chip => {
-    chip.addEventListener('click', () => {
-      const l = chip.getAttribute('data-lang');
-      if (l) {
-        if (sttLangSelect) sttLangSelect.value = l;
-        localStorage.setItem('aetheria_stt_lang', l);
-        syncVoiceUiPanels();
+  // Dynamic STT Models logic
+  let isFetchingSttModels = false;
+
+  function getAvailableSttModelsForProvider(prov) {
+    if (prov === 'browser-stt') return [];
+    const key = getSttKeyForProvider(prov);
+    if (!key && prov !== 'custom-stt') return null;
+
+    try {
+      const cached = localStorage.getItem('aetheria_cached_stt_models_' + prov);
+      if (cached) {
+        const parsed = JSON.parse(cached);
+        if (Array.isArray(parsed) && parsed.length > 0) return parsed;
       }
+    } catch (e) {}
+
+    return [];
+  }
+
+  function renderDynamicSttModels() {
+    if (!sttModelsGrid) return;
+    const prov = sttProviderSelect?.value || localStorage.getItem('aetheria_stt_provider') || 'groq';
+
+    if (prov === 'browser-stt') {
+      sttModelsGrid.innerHTML = '';
+      return;
+    }
+
+    const models = getAvailableSttModelsForProvider(prov);
+    const currentModel = sttModelSelect?.value || localStorage.getItem('aetheria_stt_model') || (prov === 'groq' ? 'whisper-large-v3-turbo' : 'whisper-1');
+
+    if (models === null) {
+      sttModelsGrid.innerHTML = `
+        <div class="col-span-full p-4 rounded-xl bg-rose-950/20 border border-rose-500/30 text-center space-y-2">
+          <div class="w-8 h-8 rounded-lg bg-rose-500/20 border border-rose-500/30 text-rose-300 flex items-center justify-center mx-auto">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/></svg>
+          </div>
+          <div>
+            <h5 class="text-xs font-bold text-white mb-0.5">API Key Required</h5>
+            <p class="text-[10px] text-slate-400">Connect your ${prov.toUpperCase()} API key above to load live models from your account.</p>
+          </div>
+          <button type="button" class="px-3 py-1 rounded-lg bg-rose-600 hover:bg-rose-500 text-white text-xs font-semibold inline-flex items-center gap-1 cursor-pointer shadow-sm" onclick="document.getElementById('stt-api-key')?.focus()">
+            <span>Enter API Key</span>
+          </button>
+        </div>
+      `;
+      return;
+    }
+
+    if (models.length === 0) {
+      sttModelsGrid.innerHTML = `
+        <div class="col-span-full p-6 rounded-xl bg-rose-950/20 border border-rose-500/30 text-center space-y-2">
+          <div class="w-6 h-6 rounded-full border-2 border-rose-400 border-t-transparent animate-spin mx-auto"></div>
+          <p class="text-xs font-semibold text-rose-300">Fetching live models from ${prov.toUpperCase()} API...</p>
+        </div>
+      `;
+      syncSttModelsForProvider(prov, false);
+      return;
+    }
+
+    sttModelsGrid.innerHTML = models.map(m => {
+      const isSelected = m.id === currentModel;
+      const isTurbo = m.id.includes('turbo') || m.id.includes('distil');
+      const badgeText = isTurbo ? 'FASTEST' : (m.id.includes('large') ? 'MAX ACCURACY' : 'STUDIO');
+      const badgeColor = isTurbo ? 'bg-emerald-500/20 text-emerald-300' : 'bg-purple-500/20 text-purple-300';
+      const desc = m.desc || (isTurbo ? 'Ultra-fast low-latency transcription. Ideal for mobile voice chat.' : 'Full parameter model for maximum accuracy.');
+
+      return `
+        <button
+          type="button"
+          data-stt-model-id="${m.id}"
+          class="stt-dynamic-model-card p-3 rounded-xl border text-left transition cursor-pointer flex flex-col justify-between gap-1 ${
+            isSelected
+              ? 'bg-rose-950/60 border-rose-500 shadow-md shadow-rose-950/60 ring-1 ring-rose-500/50'
+              : 'bg-white/[0.03] hover:bg-white/[0.06] border-white/10'
+          }"
+        >
+          <div class="flex items-center justify-between gap-2">
+            <span class="font-bold text-xs text-white truncate font-mono">${m.id}</span>
+            <span class="px-1.5 py-0.5 rounded ${badgeColor} text-[9px] font-bold font-mono shrink-0">${badgeText}</span>
+          </div>
+          <p class="text-[10px] text-slate-400 line-clamp-2">${desc}</p>
+        </button>
+      `;
+    }).join('');
+
+    sttModelsGrid.querySelectorAll('.stt-dynamic-model-card').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const mId = btn.getAttribute('data-stt-model-id');
+        if (mId) {
+          if (sttModelSelect) sttModelSelect.value = mId;
+          localStorage.setItem('aetheria_stt_model', mId);
+          renderDynamicSttModels();
+          showNotification(`✓ Transcription model set to "${mId}"`);
+        }
+      });
     });
+  }
+
+  async function syncSttModelsForProvider(prov, isManual = false) {
+    if (isFetchingSttModels) return;
+    if (prov === 'browser-stt') return;
+
+    const key = getSttKeyForProvider(prov);
+    if (!key && prov !== 'custom-stt') {
+      if (isManual) showNotification('⚠️ Please enter an API key first.', 'warning');
+      renderDynamicSttModels();
+      return;
+    }
+
+    isFetchingSttModels = true;
+    if (syncSttModelsIcon) syncSttModelsIcon.classList.add('animate-spin');
+
+    try {
+      let endpoint = '';
+      if (prov === 'groq') {
+        endpoint = 'https://api.groq.com/openai/v1/models';
+      } else if (prov === 'openai' || prov === 'openai-stt') {
+        endpoint = 'https://api.openai.com/v1/models';
+      } else if (prov === 'custom-stt') {
+        const customUrl = localStorage.getItem('aetheria_stt_custom_url') || '';
+        endpoint = customUrl ? customUrl.replace(/\/transcriptions.*/, '/models') : '';
+      }
+
+      if (!endpoint) throw new Error('No models endpoint available for this provider.');
+
+      let modelsData = null;
+      try {
+        const directRes = await fetch(endpoint, {
+          method: 'GET',
+          headers: {
+            'Authorization': `Bearer ${key}`,
+            'Accept': 'application/json'
+          }
+        });
+        if (directRes.ok) {
+          modelsData = await directRes.json();
+        }
+      } catch (directErr) {
+        console.warn('Direct fetch failed, falling back to proxy...', directErr);
+      }
+
+      if (!modelsData) {
+        const proxyRes = await fetch('/api/proxy/fetch-models', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ endpoint, apiKey: key })
+        });
+        if (proxyRes.ok) {
+          const pJson = await proxyRes.json();
+          modelsData = pJson.data || pJson;
+        }
+      }
+
+      let parsedModels = [];
+      const rawList = modelsData?.data || (Array.isArray(modelsData) ? modelsData : []);
+
+      if (prov === 'groq') {
+        parsedModels = rawList
+          .filter(m => typeof m.id === 'string' && m.id.toLowerCase().includes('whisper'))
+          .map(m => ({
+            id: m.id,
+            desc: m.id.includes('turbo') ? 'Fastest ~0.2s LPU inference. Best for real-time mobile voice chat.' : 'Max accuracy parameter Whisper model.'
+          }));
+      } else if (prov === 'openai' || prov === 'openai-stt') {
+        parsedModels = rawList
+          .filter(m => typeof m.id === 'string' && m.id.toLowerCase().includes('whisper'))
+          .map(m => ({
+            id: m.id,
+            desc: 'Official OpenAI Whisper audio transcription model.'
+          }));
+        if (parsedModels.length === 0) {
+          parsedModels = [{ id: 'whisper-1', desc: 'Official OpenAI Whisper audio transcription model.' }];
+        }
+      }
+
+      if (parsedModels.length > 0) {
+        localStorage.setItem('aetheria_cached_stt_models_' + prov, JSON.stringify(parsedModels));
+        renderDynamicSttModels();
+        if (isManual) showNotification(`✓ Synced ${parsedModels.length} models from ${prov.toUpperCase()} API!`);
+      } else {
+        if (isManual) showNotification('⚠️ No compatible Whisper models found in response.', 'warning');
+      }
+    } catch (err) {
+      console.error('Failed to sync STT models:', err);
+      if (isManual) showNotification(`⚠️ Failed to sync models: ${err.message}`, 'error');
+    } finally {
+      isFetchingSttModels = false;
+      if (syncSttModelsIcon) syncSttModelsIcon.classList.remove('animate-spin');
+    }
+  }
+
+  syncSttModelsBtn?.addEventListener('click', () => {
+    const prov = sttProviderSelect?.value || localStorage.getItem('aetheria_stt_provider') || 'groq';
+    syncSttModelsForProvider(prov, true);
   });
 
   // Connect Buttons
@@ -9414,6 +9603,7 @@ const { character } = Astro.props;
     }
     setSttKeyForProvider(sttId, val);
     syncVoiceUiPanels();
+    syncSttModelsForProvider(sttId, false);
     updateMicButtonState();
     renderSttProfileMenu();
     showNotification(`✓ ${sttId.toUpperCase()} API Key connected successfully!`);
@@ -9429,6 +9619,7 @@ const { character } = Astro.props;
     }
     setSttKeyForProvider(sttId, val);
     syncVoiceUiPanels();
+    syncSttModelsForProvider(sttId, false);
     updateMicButtonState();
     renderSttProfileMenu();
     showNotification('✓ Voice input API Key connected successfully!');
@@ -9441,6 +9632,7 @@ const { character } = Astro.props;
       if (sttApiKey) sttApiKey.value = key;
       setSttKeyForProvider(sttId, key);
       syncVoiceUiPanels();
+      syncSttModelsForProvider(sttId, false);
       updateMicButtonState();
       renderSttProfileMenu();
       showNotification(`✓ Connected ${sttId.toUpperCase()} Key from Text Engine!`);
@@ -9503,7 +9695,7 @@ const { character } = Astro.props;
         recognizer.continuous = false;
         recognizer.interimResults = false;
         const currentLang = sttLangSelect?.value || localStorage.getItem('aetheria_stt_lang') || 'auto';
-        recognizer.lang = currentLang === 'fa' ? 'fa-IR' : currentLang === 'en' ? 'en-US' : (navigator.language || 'en-US');
+        recognizer.lang = currentLang === 'auto' ? (navigator.language || 'en-US') : (currentLang === 'fa' ? 'fa-IR' : (currentLang === 'en' ? 'en-US' : currentLang));
 
         if (testSttBtnLabel) testSttBtnLabel.textContent = 'Listening (Speak now)...';
         testSttBtn.disabled = true;
@@ -12777,7 +12969,8 @@ const { character } = Astro.props;
       speechRec = new SpeechAPI();
       speechRec.continuous = false;
       speechRec.interimResults = true;
-      speechRec.lang = 'fa-IR';
+      const savedSttLang = localStorage.getItem('aetheria_stt_lang') || 'auto';
+      speechRec.lang = savedSttLang === 'auto' ? (navigator.language || 'en-US') : savedSttLang;
 
       speechRec.onstart = () => {
         isListeningVoice = true;
@@ -12934,7 +13127,7 @@ const { character } = Astro.props;
       } else if (speechRec) {
         try {
           const l = localStorage.getItem('aetheria_stt_lang') || 'auto';
-          speechRec.lang = l === 'fa' ? 'fa-IR' : l === 'en' ? 'en-US' : (navigator.language || 'fa-IR');
+          speechRec.lang = l === 'auto' ? (navigator.language || 'en-US') : (l === 'fa' ? 'fa-IR' : (l === 'en' ? 'en-US' : l));
           speechRec.start();
           showNotification('Listening via device mic... Speak now');
         } catch(e) {
@@ -13148,7 +13341,7 @@ Generate 3 or 4 diverse roleplay avenues:
 
 Requirements:
 - Length: Short and punchy (under 12 words per option).
-- Language: Strictly match the dialogue language (${hasPersian ? 'Persian / فارسی' : 'English'}).
+- Language: Strictly match the dialogue language (${hasPersian ? 'Persian' : 'English'}).
 - Output format: Return ONLY a valid JSON array of strings, e.g. ["Option 1", "Option 2", "Option 3", "Option 4"].
 - No markdown wrappers, no backticks, no introductory text.`;
 
