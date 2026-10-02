@@ -1660,17 +1660,17 @@ const { character } = Astro.props;
                   <div class="p-3 rounded-2xl bg-white/[0.03] border border-white/[0.08] flex flex-col gap-2.5" dir="ltr" lang="en">
                     <div class="flex items-center justify-between gap-2">
                       <div class="flex items-center gap-2 min-w-0">
-                        <div class="w-6 h-6 rounded-lg bg-emerald-500/20 border border-emerald-500/30 flex items-center justify-center shrink-0">
-                          <Tag class="w-3.5 h-3.5 text-emerald-400" />
+                        <div class="w-6 h-6 rounded-lg bg-rose-500/20 border border-rose-500/30 flex items-center justify-center shrink-0">
+                          <Tag class="w-3.5 h-3.5 text-rose-400" />
                         </div>
                         <span class="text-xs font-semibold text-slate-300 shrink-0">Microphone Profile</span>
-                        <span id="stt-active-profile-badge" class="hidden text-[10px] px-2 py-0.5 rounded-full bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 font-semibold font-mono truncate max-w-[120px]">Active</span>
+                        <span id="stt-active-profile-badge" class="hidden text-[10px] px-2 py-0.5 rounded-full bg-rose-500/20 text-rose-300 border border-rose-500/30 font-semibold font-mono truncate max-w-[120px]">Active</span>
                       </div>
                       <div class="flex items-center gap-1.5 shrink-0">
                         <button 
                           type="button" 
                           id="btn-show-save-stt-profile" 
-                          class="px-2.5 py-1.5 rounded-lg bg-emerald-600/80 hover:bg-emerald-600 text-white text-xs font-semibold flex items-center gap-1 transition cursor-pointer active:scale-95"
+                          class="px-2.5 py-1.5 rounded-lg bg-rose-600/80 hover:bg-rose-600 text-white text-xs font-semibold flex items-center gap-1 transition cursor-pointer active:scale-95 shadow-sm shadow-rose-950/40"
                           title="Save current STT engine & credentials as a named profile"
                         >
                           <Plus class="w-3.5 h-3.5" />
@@ -1679,7 +1679,7 @@ const { character } = Astro.props;
                         <button 
                           type="button" 
                           id="btn-update-active-stt-profile" 
-                          class="hidden px-2.5 py-1.5 rounded-lg bg-emerald-950/40 hover:bg-emerald-900/60 text-emerald-300 hover:text-white text-xs font-medium border border-emerald-500/30 transition cursor-pointer" 
+                          class="hidden px-2.5 py-1.5 rounded-lg bg-rose-950/40 hover:bg-rose-900/60 text-rose-300 hover:text-white text-xs font-medium border border-rose-500/30 transition cursor-pointer" 
                           title="Update active profile with latest changes"
                         >
                           <Check class="w-3.5 h-3.5 inline mr-0.5" />
@@ -1701,22 +1701,22 @@ const { character } = Astro.props;
                       <button
                         type="button"
                         id="custom-stt-profile-trigger"
-                        class="w-full px-3 py-2.5 rounded-xl bg-black/60 hover:bg-black/80 border border-emerald-500/30 hover:border-emerald-500/50 flex items-center justify-between text-xs text-white transition cursor-pointer text-left group"
+                        class="w-full px-3 py-2.5 rounded-xl bg-black/60 hover:bg-black/80 border border-rose-500/30 hover:border-rose-500/50 flex items-center justify-between text-xs text-white transition cursor-pointer text-left group"
                         aria-haspopup="listbox"
                         aria-expanded="false"
                       >
                         <div class="flex items-center gap-2 min-w-0 pr-2">
                           <span class="w-2 h-2 rounded-full bg-slate-400 shrink-0" id="custom-stt-profile-status-dot"></span>
                           <span id="custom-stt-profile-trigger-label" class="font-medium text-slate-200 truncate">Cloudflare Workers AI (Default)</span>
-                          <span id="custom-stt-profile-trigger-tag" class="hidden text-[9px] px-1.5 py-0.2 rounded bg-emerald-900/40 text-emerald-300 border border-emerald-500/30 uppercase font-mono shrink-0"></span>
+                          <span id="custom-stt-profile-trigger-tag" class="hidden text-[9px] px-1.5 py-0.2 rounded bg-rose-900/40 text-rose-300 border border-rose-500/30 uppercase font-mono shrink-0"></span>
                         </div>
-                        <ChevronDown class="w-4 h-4 text-slate-400 group-hover:text-emerald-300 transition-transform duration-200 shrink-0" id="custom-stt-profile-chevron" />
+                        <ChevronDown class="w-4 h-4 text-slate-400 group-hover:text-rose-300 transition-transform duration-200 shrink-0" id="custom-stt-profile-chevron" />
                       </button>
 
                       <!-- Popover Menu -->
                       <div 
                         id="custom-stt-profile-menu" 
-                        class="hidden absolute left-0 right-0 top-full mt-1.5 z-50 bg-[#0c0f24]/95 backdrop-blur-xl border border-emerald-500/30 rounded-2xl p-1.5 shadow-2xl shadow-emerald-950/80 space-y-1 max-h-56 overflow-y-auto custom-scrollbar no-scrollbar"
+                        class="hidden absolute left-0 right-0 top-full mt-1.5 z-50 bg-[#0c0f24]/95 backdrop-blur-xl border border-rose-500/30 rounded-2xl p-1.5 shadow-2xl shadow-rose-950/80 space-y-1 max-h-56 overflow-y-auto custom-scrollbar no-scrollbar"
                         role="listbox"
                       >
                         <!-- Populated dynamically -->
@@ -1725,10 +1725,10 @@ const { character } = Astro.props;
                   </div>
 
                   <!-- Inline Form for Creating New STT Profile -->
-                  <div id="new-stt-profile-form" class="hidden p-3 rounded-xl bg-emerald-950/40 border border-emerald-500/30 space-y-2" dir="ltr" lang="en">
-                    <div class="flex items-center justify-between text-xs text-emerald-200 font-semibold">
+                  <div id="new-stt-profile-form" class="hidden p-3 rounded-xl bg-rose-950/40 border border-rose-500/30 space-y-2" dir="ltr" lang="en">
+                    <div class="flex items-center justify-between text-xs text-rose-200 font-semibold">
                       <span class="flex items-center gap-1.5">
-                        <Tag class="w-3.5 h-3.5 text-emerald-400" />
+                        <Tag class="w-3.5 h-3.5 text-rose-400" />
                         <span>Save Microphone Profile</span>
                       </span>
                       <button type="button" id="btn-cancel-new-stt-profile" class="text-slate-400 hover:text-white text-xs cursor-pointer">✕ Cancel</button>
@@ -1738,12 +1738,12 @@ const { character } = Astro.props;
                         type="text" 
                         id="new-stt-profile-name-input" 
                         placeholder="e.g. Cloudflare Edge, Fast Fal GPU, Local Whisper" 
-                        class="flex-1 px-3 py-1.5 rounded-lg bg-black/60 border border-white/10 text-xs text-white placeholder:text-slate-500 outline-none focus:border-emerald-500"
+                        class="flex-1 px-3 py-1.5 rounded-lg bg-black/60 border border-white/10 text-xs text-white placeholder:text-slate-500 outline-none focus:border-rose-500"
                       />
                       <button 
                         type="button" 
                         id="btn-confirm-save-stt-profile" 
-                        class="px-3 py-1.5 rounded-lg bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-semibold shrink-0 cursor-pointer transition active:scale-95"
+                        class="px-3 py-1.5 rounded-lg bg-rose-600 hover:bg-rose-500 text-white text-xs font-semibold shrink-0 cursor-pointer transition active:scale-95 shadow-sm shadow-rose-950/40"
                       >
                         Save
                       </button>
@@ -9488,15 +9488,15 @@ const { character } = Astro.props;
       <button 
         type="button" 
         class="stt-profile-item w-full px-3 py-2 rounded-xl text-left transition flex items-center justify-between text-xs cursor-pointer ${
-          !activeId ? 'bg-emerald-600/30 text-white font-semibold border border-emerald-500/40' : 'text-slate-300 hover:bg-white/[0.06] hover:text-white'
+          !activeId ? 'bg-rose-600/30 text-white font-semibold border border-rose-500/40' : 'text-slate-300 hover:bg-white/[0.06] hover:text-white'
         }" 
         data-profile-id=""
       >
         <div class="flex items-center gap-2 min-w-0">
-          <span class="w-2 h-2 rounded-full ${!activeId ? 'bg-emerald-400' : 'bg-slate-500'}"></span>
+          <span class="w-2 h-2 rounded-full ${!activeId ? 'bg-rose-400' : 'bg-slate-500'}"></span>
           <span class="truncate">Cloudflare Workers AI (Default)</span>
         </div>
-        ${!activeId ? '<span class="text-[10px] text-emerald-300 font-mono">Active</span>' : ''}
+        ${!activeId ? '<span class="text-[10px] text-rose-300 font-mono">Active</span>' : ''}
       </button>
     `;
 
@@ -9506,12 +9506,12 @@ const { character } = Astro.props;
         <button 
           type="button" 
           class="stt-profile-item w-full px-3 py-2 rounded-xl text-left transition flex items-center justify-between text-xs cursor-pointer ${
-            isSel ? 'bg-emerald-600/30 text-white font-semibold border border-emerald-500/40' : 'text-slate-300 hover:bg-white/[0.06] hover:text-white'
+            isSel ? 'bg-rose-600/30 text-white font-semibold border border-rose-500/40' : 'text-slate-300 hover:bg-white/[0.06] hover:text-white'
           }" 
           data-profile-id="${p.id}"
         >
           <div class="flex items-center gap-2 min-w-0">
-            <span class="w-2 h-2 rounded-full ${isSel ? 'bg-emerald-400' : 'bg-emerald-500'}"></span>
+            <span class="w-2 h-2 rounded-full ${isSel ? 'bg-rose-400' : 'bg-rose-500'}"></span>
             <span class="truncate">${p.name}</span>
           </div>
           <span class="text-[9px] px-1.5 py-0.5 rounded bg-white/10 text-slate-300 font-mono uppercase">${p.engine}</span>
@@ -9529,7 +9529,7 @@ const { character } = Astro.props;
           customSttProfileTriggerTag.textContent = activeProf.engine;
           customSttProfileTriggerTag.classList.remove('hidden');
         }
-        if (customSttProfileStatusDot) customSttProfileStatusDot.className = 'w-2 h-2 rounded-full bg-emerald-400 shrink-0';
+        if (customSttProfileStatusDot) customSttProfileStatusDot.className = 'w-2 h-2 rounded-full bg-rose-400 shrink-0';
         if (btnUpdateActiveSttProfile) btnUpdateActiveSttProfile.classList.remove('hidden');
         if (btnDeleteActiveSttProfile) btnDeleteActiveSttProfile.classList.remove('hidden');
         if (sttActiveProfileBadge) {
