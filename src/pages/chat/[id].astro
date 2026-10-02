@@ -9840,13 +9840,6 @@ const { character } = Astro.props;
     toggleVoiceKeyVisibilityBtn.textContent = isPass ? 'Hide' : 'Show';
   });
 
-  toggleSttKeyVisibilityBtn?.addEventListener('click', () => {
-    if (!sttApiKey) return;
-    const isPass = sttApiKey.type === 'password';
-    sttApiKey.type = isPass ? 'text' : 'password';
-    toggleSttKeyVisibilityBtn.textContent = isPass ? 'Hide' : 'Show';
-  });
-
   // Comprehensive Live Voice Audition Button (Character Voice)
   testVoiceBtn?.addEventListener('click', async () => {
     const prov = voiceProviderSelect?.value || 'browser';
