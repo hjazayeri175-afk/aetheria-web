@@ -9442,12 +9442,9 @@ const { character } = Astro.props;
           role="option"
           aria-selected="${isSelected}"
         >
-          <div class="flex items-center gap-2.5 min-w-0">
-            <span class="text-base shrink-0">${eng.icon}</span>
-            <div class="min-w-0">
-              <div class="font-bold text-xs truncate text-white">${eng.name}</div>
-              <div class="text-[10px] text-slate-400 truncate">${eng.desc}</div>
-            </div>
+          <div class="min-w-0">
+            <div class="font-bold text-xs truncate text-white">${eng.name}</div>
+            <div class="text-[10px] text-slate-400 truncate">${eng.desc}</div>
           </div>
           <span class="px-2 py-0.5 rounded-full text-[9px] font-mono font-bold shrink-0 ${
             eng.badge === 'FREE' ? 'bg-emerald-500/20 text-emerald-300 border border-emerald-500/30' : 'bg-white/10 text-slate-300'
