@@ -188,107 +188,78 @@ const { character } = Astro.props;
             <MoreVertical class="w-4 h-4 text-slate-300" />
           </button>
 
-          <!-- Overflow Dropdown Menu Popover -->
+          <!-- Overflow Dropdown Menu Popover (Google Gemini Minimalist Context Menu) -->
           <div 
             id="chat-header-overflow-menu" 
-            class="hidden absolute right-0 top-full mt-2 w-64 rounded-2xl bg-[#1e1f24] border border-white/[0.12] shadow-2xl shadow-black/90 p-1.5 z-50 backdrop-blur-2xl transition-all select-none text-left"
+            class="hidden absolute right-0 top-full mt-2 w-56 rounded-[24px] bg-[#222328] border border-white/[0.08] shadow-2xl shadow-black/90 p-2 z-50 backdrop-blur-2xl transition-all select-none text-left flex flex-col gap-0.5"
           >
-            <!-- 1. Settings & Model Configuration -->
-            <button 
-              id="overflow-item-settings"
-              type="button"
-              class="w-full px-3 py-2.5 rounded-xl hover:bg-white/[0.06] text-left flex items-center gap-2.5 text-xs text-slate-200 hover:text-white transition cursor-pointer"
-            >
-              <div class="w-7 h-7 rounded-lg bg-purple-500/15 border border-purple-500/25 text-purple-400 flex items-center justify-center shrink-0">
-                <SlidersHorizontal class="w-3.5 h-3.5" />
-              </div>
-              <div class="flex-1 min-w-0">
-                <div class="font-medium">Settings & AI Models</div>
-                <div class="text-[10px] text-slate-400">BYOK, model, prompt parameters</div>
-              </div>
-            </button>
-
-            <!-- 2. Character Details / Lore Sidebar -->
-            <button 
-              id="overflow-item-lore"
-              type="button"
-              class="w-full px-3 py-2.5 rounded-xl hover:bg-white/[0.06] text-left flex items-center gap-2.5 text-xs text-slate-200 hover:text-white transition cursor-pointer"
-            >
-              <div class="w-7 h-7 rounded-lg bg-indigo-500/15 border border-indigo-500/25 text-indigo-400 flex items-center justify-center shrink-0">
-                <PanelLeft class="w-3.5 h-3.5" />
-              </div>
-              <div class="flex-1 min-w-0">
-                <div class="font-medium">Character Profile</div>
-                <div class="text-[10px] text-slate-400">View lorebook, traits & scenario</div>
-              </div>
-            </button>
-
-            <!-- 3. Voice Read Aloud Toggle -->
-            <button 
-              id="overflow-item-tts"
-              type="button"
-              class="w-full px-3 py-2.5 rounded-xl hover:bg-white/[0.06] text-left flex items-center justify-between gap-2.5 text-xs text-slate-200 hover:text-white transition cursor-pointer"
-            >
-              <div class="flex items-center gap-2.5 min-w-0">
-                <div class="w-7 h-7 rounded-lg bg-emerald-500/15 border border-emerald-500/25 text-emerald-400 flex items-center justify-center shrink-0">
-                  <Volume2 class="w-3.5 h-3.5" />
-                </div>
-                <div>
-                  <div class="font-medium">Voice Narration</div>
-                  <div id="overflow-tts-status-text" class="text-[10px] text-slate-400">Auto-read speech</div>
-                </div>
-              </div>
-              <span id="overflow-tts-status-pill" class="px-2 py-0.5 rounded-full text-[10px] font-mono bg-white/[0.06] text-slate-400">OFF</span>
-            </button>
-
-            <!-- User Persona Switcher -->
-            <button 
-              id="overflow-item-persona"
-              type="button"
-              class="w-full px-3 py-2.5 rounded-xl hover:bg-white/[0.06] text-left flex items-center justify-between gap-2.5 text-xs text-slate-200 hover:text-white transition cursor-pointer"
-            >
-              <div class="flex items-center gap-2.5 min-w-0">
-                <div class="w-7 h-7 rounded-lg bg-indigo-500/15 border border-indigo-500/25 text-indigo-400 flex items-center justify-center shrink-0">
-                  <User class="w-3.5 h-3.5" />
-                </div>
-                <div>
-                  <div class="font-medium">User Persona</div>
-                  <div id="overflow-persona-name" class="text-[10px] text-slate-400">Switch or edit persona</div>
-                </div>
-              </div>
-              <span id="overflow-persona-badge" class="px-2 py-0.5 rounded-full text-[10px] font-mono bg-purple-500/20 text-purple-300">You</span>
-            </button>
-
-            <div class="my-1 border-t border-white/[0.08]"></div>
-
-            <!-- 4. Export Conversation -->
+            <!-- 1. Share conversation -->
             <button 
               id="overflow-item-export"
               type="button"
-              class="w-full px-3 py-2.5 rounded-xl hover:bg-white/[0.06] text-left flex items-center gap-2.5 text-xs text-slate-200 hover:text-white transition cursor-pointer"
+              class="w-full px-3.5 py-2.5 rounded-2xl hover:bg-white/[0.08] active:bg-white/[0.12] text-left flex items-center gap-3.5 text-sm font-normal text-[#e3e3e3] hover:text-white transition-colors cursor-pointer group"
             >
-              <div class="w-7 h-7 rounded-lg bg-sky-500/15 border border-sky-500/25 text-sky-400 flex items-center justify-center shrink-0">
-                <Download class="w-3.5 h-3.5" />
-              </div>
-              <div class="flex-1 min-w-0">
-                <div class="font-medium">Export Chat</div>
-                <div class="text-[10px] text-slate-400">Download Markdown file</div>
-              </div>
+              <svg class="w-5 h-5 text-[#c4c7c5] group-hover:text-white shrink-0 stroke-[1.8]" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round">
+                <circle cx="18" cy="5" r="3"/>
+                <circle cx="6" cy="12" r="3"/>
+                <circle cx="18" cy="19" r="3"/>
+                <line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/>
+                <line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/>
+              </svg>
+              <span>Share conversation</span>
             </button>
 
-            <!-- 5. Clear Chat History -->
+            <!-- 2. Character Profile -->
+            <button 
+              id="overflow-item-lore"
+              type="button"
+              class="w-full px-3.5 py-2.5 rounded-2xl hover:bg-white/[0.08] active:bg-white/[0.12] text-left flex items-center gap-3.5 text-sm font-normal text-[#e3e3e3] hover:text-white transition-colors cursor-pointer group"
+            >
+              <BookOpen class="w-5 h-5 text-[#c4c7c5] group-hover:text-white shrink-0 stroke-[1.8]" />
+              <span>Character profile</span>
+            </button>
+
+            <!-- 3. Settings -->
+            <button 
+              id="overflow-item-settings"
+              type="button"
+              class="w-full px-3.5 py-2.5 rounded-2xl hover:bg-white/[0.08] active:bg-white/[0.12] text-left flex items-center gap-3.5 text-sm font-normal text-[#e3e3e3] hover:text-white transition-colors cursor-pointer group"
+            >
+              <SlidersHorizontal class="w-5 h-5 text-[#c4c7c5] group-hover:text-white shrink-0 stroke-[1.8]" />
+              <span>Settings</span>
+            </button>
+
+            <!-- 4. Voice Narration -->
+            <button 
+              id="overflow-item-tts"
+              type="button"
+              class="w-full px-3.5 py-2.5 rounded-2xl hover:bg-white/[0.08] active:bg-white/[0.12] text-left flex items-center gap-3.5 text-sm font-normal text-[#e3e3e3] hover:text-white transition-colors cursor-pointer group"
+            >
+              <Volume2 class="w-5 h-5 text-[#c4c7c5] group-hover:text-white shrink-0 stroke-[1.8]" />
+              <span id="overflow-tts-label">Voice narration</span>
+            </button>
+
+            <!-- 5. User Persona -->
+            <button 
+              id="overflow-item-persona"
+              type="button"
+              class="w-full px-3.5 py-2.5 rounded-2xl hover:bg-white/[0.08] active:bg-white/[0.12] text-left flex items-center gap-3.5 text-sm font-normal text-[#e3e3e3] hover:text-white transition-colors cursor-pointer group"
+            >
+              <User class="w-5 h-5 text-[#c4c7c5] group-hover:text-white shrink-0 stroke-[1.8]" />
+              <span>User persona</span>
+            </button>
+
+            <!-- Subtle Divider -->
+            <div class="my-1 border-t border-white/[0.08] mx-2"></div>
+
+            <!-- 6. Delete / Clear Chat -->
             <button 
               id="overflow-item-clear"
               type="button"
-              class="w-full px-3 py-2.5 rounded-xl hover:bg-red-500/15 text-left flex items-center gap-2.5 text-xs text-rose-300 hover:text-rose-200 transition cursor-pointer group"
+              class="w-full px-3.5 py-2.5 rounded-2xl hover:bg-white/[0.08] active:bg-white/[0.12] text-left flex items-center gap-3.5 text-sm font-normal text-[#e3e3e3] hover:text-white transition-colors cursor-pointer group"
             >
-              <div class="w-7 h-7 rounded-lg bg-red-500/15 border border-red-500/25 text-red-400 flex items-center justify-center shrink-0 group-hover:bg-red-500/30">
-                <Trash2 class="w-3.5 h-3.5" />
-              </div>
-              <div class="flex-1 min-w-0">
-                <div class="font-medium text-rose-300">Clear Chat</div>
-                <div class="text-[10px] text-rose-400/70">Reset timeline to start</div>
-              </div>
+              <Trash2 class="w-5 h-5 text-[#c4c7c5] group-hover:text-white shrink-0 stroke-[1.8]" />
+              <span>Delete chat</span>
             </button>
           </div>
         </div>
