@@ -58,6 +58,8 @@ import {
   Save,
   Palette,
   Image as ImageIcon,
+  Sun,
+  Moon,
   Share2,
   CornerDownLeft
 } from '@lucide/astro';
@@ -80,26 +82,90 @@ interface Props {
 
 const { character } = Astro.props;
 
+
 const TELEGRAM_THEMES = [
-  { id: 'aetheria-purple', name: 'Neon', emoji: '💎', baseMode: 'dark', bg: '#090a12', bubble: 'linear-gradient(135deg, #9333ea, #6366f1)', accent: '#9333ea' },
-  { id: 'classic-dark', name: 'Classic', emoji: '✈️', baseMode: 'dark', bg: '#0e1621', bubble: 'linear-gradient(135deg, #2b5278, #17212b)', accent: '#2b5278' },
-  { id: 'glacier-arctic', name: 'Arctic', emoji: '❄️', baseMode: 'dark', bg: '#08131d', bubble: 'linear-gradient(135deg, #0284c7, #06b6d4)', accent: '#06b6d4' },
-  { id: 'cyberpunk-amber', name: 'Amber', emoji: '⚡', baseMode: 'dark', bg: '#100b04', bubble: 'linear-gradient(135deg, #ea580c, #f59e0b)', accent: '#f59e0b' },
-  { id: 'emerald-matrix', name: 'Matrix', emoji: '🌲', baseMode: 'dark', bg: '#05120a', bubble: 'linear-gradient(135deg, #059669, #10b981)', accent: '#10b981' },
-  { id: 'midnight-amoled', name: 'AMOLED', emoji: '🌙', baseMode: 'amoled', bg: '#000000', bubble: 'linear-gradient(135deg, #27272a, #18181b)', accent: '#06b6d4' },
-  { id: 'telegram-day', name: 'Day', emoji: '☀️', baseMode: 'day', bg: '#f1f5f9', bubble: 'linear-gradient(135deg, #3b82f6, #60a5fa)', accent: '#3b82f6' },
-  { id: 'sunset-horizon', name: 'Sunset', emoji: '🌅', baseMode: 'dark', bg: '#140810', bubble: 'linear-gradient(135deg, #db2777, #f97316)', accent: '#db2777' },
-  { id: 'crimson-dynasty', name: 'Crimson', emoji: '🔥', baseMode: 'dark', bg: '#130508', bubble: 'linear-gradient(135deg, #991b1b, #ef4444)', accent: '#ef4444' }
+  { 
+    id: 'tulip-sunset', 
+    name: 'Day Sunset', 
+    emoji: '🌷', 
+    cardBg: '#0C0E14', 
+    bubble: 'linear-gradient(135deg, #E8537A 0%, #FF9E4A 100%)', 
+    accent: '#FF9E4A',
+    patternSvg: "url(\"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='60' height='60' fill='none' stroke='rgba(255,255,255,0.4)' stroke-width='1.2'%3E%3Cpath d='M10 10 L20 15 L15 20 Z'/%3E%3Ccircle cx='45' cy='15' r='4'/%3E%3Crect x='10' y='40' width='10' height='8' rx='2'/%3E%3C/svg%3E\")"
+  },
+  { 
+    id: 'violet-heart', 
+    name: 'Purple Heart', 
+    emoji: '💜', 
+    cardBg: '#0E0C17', 
+    bubble: 'linear-gradient(135deg, #EC4899 0%, #8B5CF6 100%)', 
+    accent: '#8B5CF6',
+    patternSvg: "url(\"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='60' height='60' fill='none' stroke='rgba(255,255,255,0.4)' stroke-width='1.2'%3E%3Cpath d='M10 10 L20 15 L15 20 Z'/%3E%3Ccircle cx='45' cy='15' r='4'/%3E%3Crect x='10' y='40' width='10' height='8' rx='2'/%3E%3C/svg%3E\")"
+  },
+  { 
+    id: 'tree-gold', 
+    name: 'Amber Pine', 
+    emoji: '🎄', 
+    cardBg: '#0D0C07', 
+    bubble: 'linear-gradient(135deg, #F59E0B 0%, #EA580C 100%)', 
+    accent: '#F59E0B',
+    patternSvg: "url(\"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='60' height='60' fill='none' stroke='rgba(255,255,255,0.4)' stroke-width='1.2'%3E%3Cpath d='M10 10 L20 15 L15 20 Z'/%3E%3Ccircle cx='45' cy='15' r='4'/%3E%3Crect x='10' y='40' width='10' height='8' rx='2'/%3E%3C/svg%3E\")"
+  },
+  { 
+    id: 'arcade-retro', 
+    name: 'Arcade Retro', 
+    emoji: '🎮', 
+    cardBg: '#0B0813', 
+    bubble: 'linear-gradient(135deg, #9333EA 0%, #F97316 100%)', 
+    accent: '#9333EA',
+    patternSvg: "url(\"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='60' height='60' fill='none' stroke='rgba(255,255,255,0.4)' stroke-width='1.2'%3E%3Cpath d='M5 30 H20 L25 20 H40 L45 30 H55'/%3E%3C/svg%3E\")"
+  },
+  { 
+    id: 'cyan-palette', 
+    name: 'Teal Matrix', 
+    emoji: '🎨', 
+    cardBg: 'linear-gradient(to bottom, #081B1E, #050E12)', 
+    bubble: 'linear-gradient(135deg, #06B6D4 0%, #0D9488 100%)', 
+    accent: '#06B6D4',
+    patternSvg: "url(\"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='60' height='60' fill='none' stroke='rgba(255,255,255,0.4)' stroke-width='1.2'%3E%3Cpolygon points='30,5 50,15 50,35 30,45 10,35 10,15'/%3E%3C/svg%3E\")"
+  },
+  { 
+    id: 'classic-tg', 
+    name: 'Classic Telegram', 
+    emoji: '✈️', 
+    cardBg: '#0E1621', 
+    bubble: 'linear-gradient(135deg, #2AABEE 0%, #229ED9 100%)', 
+    accent: '#229ED9',
+    patternSvg: "url(\"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='60' height='60' fill='none' stroke='rgba(255,255,255,0.4)' stroke-width='1.2'%3E%3Cpath d='M10 10 L20 15 L15 20 Z'/%3E%3Ccircle cx='45' cy='15' r='4'/%3E%3C/svg%3E\")"
+  },
+  { 
+    id: 'night-amoled', 
+    name: 'Midnight AMOLED', 
+    emoji: '🌙', 
+    cardBg: '#000000', 
+    bubble: 'linear-gradient(135deg, #27272A 0%, #18181B 100%)', 
+    accent: '#7385FF',
+    patternSvg: 'none'
+  },
+  { 
+    id: 'day-light', 
+    name: 'Day Crisp', 
+    emoji: '☀️', 
+    cardBg: '#E2E8F0', 
+    bubble: 'linear-gradient(135deg, #3B82F6 0%, #60A5FA 100%)', 
+    accent: '#3B82F6',
+    patternSvg: "url(\"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='60' height='60' fill='none' stroke='rgba(0,0,0,0.15)' stroke-width='1.2'%3E%3Cpath d='M10 10 L20 15 L15 20 Z'/%3E%3C/svg%3E\")"
+  }
 ];
 
 const TELEGRAM_NAME_COLORS = [
-  { name: 'Red', hex: '#f43f5e' },
-  { name: 'Orange', hex: '#f97316' },
-  { name: 'Violet', hex: '#a855f7' },
-  { name: 'Green', hex: '#10b981' },
-  { name: 'Cyan', hex: '#06b6d4' },
-  { name: 'Blue', hex: '#3b82f6' },
-  { name: 'Pink', hex: '#ec4899' }
+  { name: 'Red', hex: '#F43F5E' },
+  { name: 'Orange', hex: '#F97316' },
+  { name: 'Violet', hex: '#A393FF' },
+  { name: 'Green', hex: '#10B981' },
+  { name: 'Cyan', hex: '#06B6D4' },
+  { name: 'Blue', hex: '#3B82F6' },
+  { name: 'Pink', hex: '#EC4899' }
 ];
 ---
 
@@ -3305,35 +3371,34 @@ const TELEGRAM_NAME_COLORS = [
                 <!-- ========================================== -->
 <!-- TELEGRAM CHAT APPEARANCE MODAL (EXACT TELEGRAM LAYOUT) -->
 <!-- ========================================== -->
+<!-- TELEGRAM CHAT SETTINGS MODAL (EXACT 1:1 TELEGRAM UI FROM SCREENSHOT 1 & 2) -->
+<!-- ========================================== -->
 <div id="chat-appearance-modal" class="fixed inset-0 z-50 hidden bg-black/80 backdrop-blur-md flex items-center justify-center p-3 sm:p-5 opacity-0 transition-opacity duration-200">
-  <div class="relative w-full max-w-xl bg-[#0e101a] border border-white/[0.12] rounded-3xl shadow-2xl shadow-purple-950/40 flex flex-col max-h-[92vh] overflow-hidden transform scale-95 transition-transform duration-200" id="chat-appearance-panel">
+  <div class="relative w-full max-w-xl bg-[#12151C] border border-[#2A3040] rounded-3xl shadow-2xl flex flex-col max-h-[92vh] overflow-hidden transform scale-95 transition-transform duration-200" id="chat-appearance-panel">
     
-    <!-- Modal Header -->
-    <div class="px-5 py-4 border-b border-white/[0.08] flex items-center justify-between bg-white/[0.02] shrink-0">
+    <!-- Modal Header (Telegram App Bar Style) -->
+    <div class="px-5 py-4 border-b border-[#2A3040] flex items-center justify-between bg-[#161922] shrink-0">
       <div class="flex items-center gap-3">
-        <div class="w-9 h-9 rounded-2xl bg-purple-500/10 border border-purple-500/20 flex items-center justify-center text-purple-400">
-          <Palette class="w-4 h-4" />
-        </div>
-        <div>
-          <h2 class="text-base font-bold text-white tracking-tight">Chat Settings</h2>
-          <p class="text-xs text-slate-400">Appearance, themes & message styling</p>
-        </div>
+        <button type="button" id="appearance-btn-back" class="w-8 h-8 rounded-full flex items-center justify-center text-white hover:bg-white/10 transition cursor-pointer">
+          <ArrowLeft class="w-5 h-5" />
+        </button>
+        <h2 class="text-lg font-bold text-white tracking-tight">Chat Settings</h2>
       </div>
       <button type="button" id="appearance-btn-close-x" class="w-8 h-8 rounded-full bg-white/[0.04] hover:bg-white/[0.1] border border-white/[0.08] flex items-center justify-center text-slate-300 hover:text-white transition cursor-pointer">
         <X class="w-4 h-4" />
       </button>
     </div>
 
-    <!-- Modal Body (Scrollable) -->
-    <div class="p-4 sm:p-6 overflow-y-auto space-y-4 flex-1">
+    <!-- Modal Body (Scrollable Telegram Cards) -->
+    <div class="p-4 sm:p-5 overflow-y-auto space-y-4 flex-1">
       
-      <!-- Card 1: Text Size + Live Preview + Wallpaper & Name Color Links -->
-      <div class="rounded-2xl bg-white/[0.02] border border-white/[0.08] p-4 sm:p-5 space-y-4">
-        <!-- Message text size slider -->
+      <!-- Card 1: Message Text Size & Interactive Chat Preview -->
+      <div class="rounded-2xl bg-[#1D212C] p-4 sm:p-5 space-y-4 border border-[#2A3040]">
+        <!-- Message text size header and slider -->
         <div class="space-y-2">
-          <div class="flex items-center justify-between text-xs">
-            <span class="font-medium text-slate-300">Message text size</span>
-            <span id="chat-modal-font-val" class="font-mono text-purple-400 font-bold bg-purple-500/10 px-2 py-0.5 rounded-lg border border-purple-500/20 text-xs">16</span>
+          <div class="flex items-center justify-between text-sm">
+            <span class="font-medium text-[#8A96B2]">Message text size</span>
+            <span id="chat-modal-font-val" class="font-normal text-[#8A96B2]">16</span>
           </div>
           <input 
             type="range" 
@@ -3342,110 +3407,92 @@ const TELEGRAM_NAME_COLORS = [
             max="24" 
             step="1" 
             value="16" 
-            class="w-full h-1.5 bg-white/10 rounded-lg appearance-none cursor-pointer accent-purple-500" 
+            class="tg-slider" 
           />
         </div>
 
-        <!-- Live Telegram Chat Preview (Identical to Screenshot 3) -->
-        <div id="chat-modal-preview-viewport" class="relative min-h-[160px] rounded-2xl overflow-hidden border border-white/10 flex flex-col justify-end p-4 select-none shadow-inner" style="background-color: #090a12;">
-          <div id="chat-modal-preview-bg" class="absolute inset-0 transition-all duration-300" style="background: linear-gradient(to bottom, #090a12, #0e1122, #07080f);"></div>
-          <div id="chat-modal-preview-dimmer" class="absolute inset-0 bg-black/20 pointer-events-none transition-opacity duration-200"></div>
-          <div id="chat-modal-preview-pattern" class="absolute inset-0 pointer-events-none transition-opacity duration-300" style="background-image: none; opacity: 0.18;"></div>
+        <!-- Inset Interactive Telegram Chat Preview Box (Exact Telegram Screenshot 1) -->
+        <div id="chat-modal-preview-container" class="relative min-h-[175px] rounded-xl overflow-hidden p-3.5 select-none shadow-inner flex flex-col justify-end" style="background-color: #000000;">
+          <!-- Doodle Pattern Overlay -->
+          <div id="chat-modal-preview-doodle" class="absolute inset-0 pointer-events-none opacity-20" style="background-image: url(&quot;data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='90' height='90' viewBox='0 0 90 90' fill='none' stroke='rgba(255,255,255,0.45)' stroke-width='1.2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M15 15 L28 20 L20 28 Z'/%3E%3Cpath d='M65 18 A 6 6 0 0 1 77 18 A 6 6 0 0 1 65 18'/%3E%3Cpolygon points='45,12 47,17 52,17 48,20 50,25 45,22 40,25 42,20 38,17 43,17'/%3E%3Crect x='16' y='60' width='14' height='10' rx='3'/%3E%3Ccircle cx='70' cy='65' r='6'/%3E%3Cpath d='M42 62 Q 48 55 54 62 T 66 62'/%3E%3C/svg%3E&quot;); background-size: 90px 90px;"></div>
 
           <div class="relative z-10 space-y-3 max-w-full">
-            <!-- Incoming message (Left) -->
-            <div class="flex items-start gap-2.5 max-w-[85%]">
-              <div class="w-7 h-7 rounded-full bg-purple-600/30 border border-purple-500/30 flex items-center justify-center text-purple-200 text-xs font-bold shrink-0 mt-0.5">
-                A
-              </div>
-              <div class="space-y-1 min-w-0">
-                <span id="chat-modal-preview-char-name" class="text-xs font-semibold block truncate" style="color: #a855f7;">Lyra Vance</span>
-                <div id="chat-modal-preview-char-bubble" class="px-3.5 py-2 rounded-2xl rounded-tl-xs shadow-md transition-all duration-200" style="background: #101426; border: 1px solid rgba(255, 255, 255, 0.08); font-size: 16px; color: #f1f5f9;">
-                  <p class="leading-relaxed text-sm">Good morning! Already on my way to the office.</p>
-                  <span class="text-[10px] text-slate-400 mt-1 block">10:42</span>
+            <!-- Incoming Message Bubble (Top Left) -->
+            <div class="flex items-start gap-2 max-w-[88%]">
+              <div id="chat-modal-incoming-bubble" class="px-3.5 py-2.5 rounded-2xl rounded-bl-sm shadow-md transition-all duration-200" style="background-color: #232834; font-size: 16px;">
+                <!-- Quoted / Reply Container (Exact Telegram Screenshot 1) -->
+                <div class="pl-2.5 py-0.5 mb-1.5 border-l-2 bg-black/20 rounded-r-md transition-colors" id="chat-modal-reply-box" style="border-left-color: #A393FF;">
+                  <span id="chat-modal-reply-name" class="text-xs font-semibold block transition-colors" style="color: #A393FF;">Hossein</span>
+                  <span class="text-xs text-white/80 block">Good morning! 👋</span>
                 </div>
+                <p class="text-white leading-snug">Do you know what time it is?</p>
+                <div class="text-[10px] text-[#8A96B2] text-right mt-1">13:24</div>
               </div>
             </div>
 
-            <!-- Outgoing message from User (Right) with Double Checks -->
-            <div class="flex items-end justify-end max-w-[85%] ml-auto">
-              <div id="chat-modal-preview-user-bubble" class="px-3.5 py-2 rounded-2xl rounded-tr-xs shadow-lg transition-all duration-200 text-white" style="background: linear-gradient(135deg, #9333ea, #6366f1); font-size: 16px;">
-                <p class="leading-relaxed text-sm">Hello! Me too, just left home. See you there!</p>
-                <div class="text-[10px] text-white/70 mt-1 flex items-center justify-end gap-1">
-                  <span>10:43</span>
-                  <svg class="w-3.5 h-3.5 text-cyan-300" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"></polyline></svg>
+            <!-- Outgoing Message Bubble (Bottom Right) -->
+            <div class="flex items-end justify-end max-w-[88%] ml-auto">
+              <div id="chat-modal-outgoing-bubble" class="px-3.5 py-2.5 rounded-2xl rounded-br-sm shadow-md transition-all duration-200 text-white" style="background: linear-gradient(135deg, #06B6D4 0%, #0D9488 100%); font-size: 16px;">
+                <p class="leading-snug font-medium">It's morning in Tokyo 😎</p>
+                <div class="text-[10px] text-white/80 mt-1 flex items-center justify-end gap-1">
+                  <span>13:39</span>
+                  <svg class="w-3.5 h-3.5 text-white/90" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"></polyline></svg>
                 </div>
               </div>
             </div>
           </div>
         </div>
 
-        <!-- List Menu Items: Change Wallpaper & Change Name Color -->
-        <div class="divide-y divide-white/[0.06] pt-1">
-          <!-- Change Chat Wallpaper Button -->
-          <button 
-            type="button" 
-            id="chat-modal-btn-open-wallpapers" 
-            class="w-full py-2.5 flex items-center justify-between text-left hover:text-purple-400 transition cursor-pointer group"
-          >
-            <div class="flex items-center gap-3">
-              <div class="w-8 h-8 rounded-xl bg-purple-500/10 border border-purple-500/20 flex items-center justify-center text-purple-400 group-hover:scale-105 transition">
-                <Palette class="w-4 h-4" />
-              </div>
-              <span class="text-xs sm:text-sm font-medium text-slate-200 group-hover:text-purple-300 transition">Change Chat Wallpaper</span>
-            </div>
-            <div class="flex items-center gap-2">
-              <span class="text-xs text-slate-400 hidden sm:inline" id="chat-modal-current-wp-name">Default</span>
-              <span class="text-slate-400 text-sm">›</span>
+        <!-- Action Items Below Preview (Exact Telegram Screenshot 1) -->
+        <div class="divide-y divide-[#2A3040] pt-1">
+          <!-- Change Chat Wallpaper -->
+          <button type="button" id="chat-modal-btn-change-wallpaper" class="w-full py-3 flex items-center justify-between text-left hover:opacity-80 transition cursor-pointer group">
+            <div class="flex items-center gap-3.5">
+              <ImageIcon class="w-5 h-5 text-[#8E9DFE]" />
+              <span class="text-sm font-normal text-[#8E9DFE]">Change Chat Wallpaper</span>
             </div>
           </button>
 
           <!-- Collapsible Wallpaper Picker Drawer -->
-          <div id="chat-modal-wallpaper-drawer" class="hidden py-3 space-y-3">
-            <div class="flex items-center justify-between">
-              <span class="text-xs text-slate-400">Choose a background</span>
-              <div class="flex items-center gap-2">
-                <input type="file" id="chat-modal-photo-file-input" accept="image/*" class="hidden" />
-                <button type="button" id="chat-modal-btn-upload-photo" class="px-2.5 py-1 rounded-lg bg-purple-600/20 border border-purple-500/30 text-xs text-purple-300 hover:bg-purple-600/30 transition flex items-center gap-1 cursor-pointer">
-                  <Upload class="w-3 h-3" />
-                  <span>Upload Photo</span>
-                </button>
-              </div>
+          <div id="chat-modal-wp-drawer" class="hidden py-3 space-y-3">
+            <div class="flex items-center justify-between text-xs text-[#8A96B2]">
+              <span>Choose background or photo</span>
+              <label class="px-2.5 py-1 rounded-lg bg-[#8E9DFE]/15 text-[#8E9DFE] font-medium hover:bg-[#8E9DFE]/25 transition cursor-pointer flex items-center gap-1.5">
+                <Upload class="w-3.5 h-3.5" />
+                <span>Upload</span>
+                <input type="file" id="chat-modal-wp-file-input" accept="image/*" class="hidden" />
+              </label>
             </div>
-            <div class="grid grid-cols-3 sm:grid-cols-6 gap-2" id="chat-modal-wallpaper-grid"></div>
+            <div class="grid grid-cols-3 sm:grid-cols-6 gap-2" id="chat-modal-wp-grid"></div>
           </div>
 
-          <!-- Change Name Color Button -->
-          <button 
-            type="button" 
-            id="chat-modal-btn-open-name-colors" 
-            class="w-full py-2.5 flex items-center justify-between text-left hover:text-purple-400 transition cursor-pointer group"
-          >
-            <div class="flex items-center gap-3">
-              <div class="w-8 h-8 rounded-xl bg-purple-500/10 border border-purple-500/20 flex items-center justify-center text-purple-400 group-hover:scale-105 transition">
-                <Sparkles class="w-4 h-4" />
-              </div>
-              <span class="text-xs sm:text-sm font-medium text-slate-200 group-hover:text-purple-300 transition">Change Name Color</span>
+          <!-- Change Name Color -->
+          <button type="button" id="chat-modal-btn-change-name" class="w-full py-3 flex items-center justify-between text-left hover:opacity-80 transition cursor-pointer group">
+            <div class="flex items-center gap-3.5">
+              <Palette class="w-5 h-5 text-[#8E9DFE]" />
+              <span class="text-sm font-normal text-[#8E9DFE]">Change Name Color</span>
             </div>
             <div class="flex items-center gap-2">
-              <div id="chat-modal-name-color-dot" class="w-4 h-4 rounded-full border border-white/20 shadow-sm" style="background: #a855f7;"></div>
-              <span class="text-slate-400 text-sm">›</span>
+              <div id="chat-modal-name-color-pill" class="px-3 py-1 rounded-full text-xs font-semibold transition-all shadow-sm" style="background-color: #29233B; color: #A393FF;">
+                Hossein
+              </div>
             </div>
           </button>
 
-          <!-- Collapsible Name Color Drawer (SSR Rendered!) -->
-          <div id="chat-modal-name-color-drawer" class="hidden py-3 space-y-2">
-            <div class="flex items-center justify-between text-xs text-slate-400 mb-1">
-              <span>Telegram Signature Colors</span>
-              <span id="chat-modal-name-hex-label" class="font-mono text-purple-300 font-bold uppercase">#A855F7</span>
+          <!-- Collapsible Name Color Drawer -->
+          <div id="chat-modal-name-drawer" class="hidden py-3 space-y-2.5">
+            <div class="flex items-center justify-between text-xs text-[#8A96B2]">
+              <span>Name & Reply Color</span>
+              <span id="chat-modal-name-color-hex" class="font-mono text-[#8E9DFE] font-bold">#A393FF</span>
             </div>
-            <div class="flex items-center gap-3 overflow-x-auto pb-1" id="chat-modal-name-colors-container">
+            <div class="flex items-center gap-2.5 overflow-x-auto pb-1" id="chat-modal-name-colors-row">
               {TELEGRAM_NAME_COLORS.map(c => (
                 <button 
                   type="button" 
-                  class="chat-modal-name-col-btn w-9 h-9 rounded-full transition-transform hover:scale-110 active:scale-95 flex items-center justify-center shrink-0 border-2 border-white/10 cursor-pointer shadow-md relative"
+                  class="chat-modal-name-color-dot w-8 h-8 rounded-full transition-transform hover:scale-110 active:scale-95 flex items-center justify-center shrink-0 border border-white/20 cursor-pointer shadow-sm relative"
                   data-hex={c.hex}
-                  style={`background: ${c.hex};`}
+                  data-name={c.name}
+                  style={`background-color: ${c.hex};`}
                   title={c.name}
                 >
                   <div class="chat-modal-name-check hidden w-3.5 h-3.5 text-white">
@@ -3458,127 +3505,111 @@ const TELEGRAM_NAME_COLORS = [
         </div>
       </div>
 
-      <!-- Card 2: Color theme (Exact Telegram Carousel from Screenshot 3 & 4) -->
-      <div class="rounded-2xl bg-white/[0.02] border border-white/[0.08] p-4 sm:p-5 space-y-3">
-        <div class="flex items-center justify-between">
-          <h3 class="text-xs font-bold text-slate-400 uppercase tracking-wider">Color theme</h3>
-          <span class="text-[11px] text-purple-400 font-medium" id="chat-modal-selected-theme-name">Neon</span>
-        </div>
+      <!-- Card 2: Color theme (Exact Telegram Phone Mockups from Screenshot 1 & 2) -->
+      <div class="rounded-2xl bg-[#1D212C] p-4 sm:p-5 space-y-4 border border-[#2A3040]">
+        <div class="text-sm font-medium text-[#8A96B2]">Color theme</div>
 
-        <!-- SSR RENDERED THEME CAROUSEL (Never Invisible!) -->
-        <div class="flex items-center gap-3 overflow-x-auto pb-2 pt-1 scrollbar-none" id="chat-modal-theme-carousel">
+        <!-- The 1:1 Telegram Phone Mockup Theme Carousel -->
+        <div class="flex items-center gap-3 overflow-x-auto pb-2 scrollbar-none" id="chat-modal-theme-mockup-carousel">
           {TELEGRAM_THEMES.map(theme => (
             <button 
               type="button" 
-              class="chat-modal-theme-capsule flex flex-col items-center gap-2 p-2.5 rounded-2xl bg-white/[0.03] hover:bg-white/[0.07] border border-white/[0.08] transition-all cursor-pointer shrink-0 w-[82px] group"
+              class="chat-modal-theme-mockup-card relative shrink-0 w-[68px] h-[104px] rounded-2xl overflow-hidden cursor-pointer transition-all duration-200 border-2 select-none group"
               data-theme-id={theme.id}
-              title={theme.name}
+              data-theme-name={theme.name}
+              style={`background: ${theme.cardBg}; border-color: ${theme.id === 'cyan-palette' ? '#6B7CFF' : 'transparent'};`}
             >
-              <div class="relative w-12 h-12 rounded-full overflow-hidden shadow-lg flex items-center justify-center border-2 border-white/20 group-hover:scale-105 transition-transform" style={`background: ${theme.bubble};`}>
-                <span class="text-lg select-none drop-shadow">{theme.emoji}</span>
-                <div class="chat-modal-theme-active-ring absolute inset-0 bg-black/40 hidden items-center justify-center">
-                  <svg class="w-5 h-5 text-white" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"></polyline></svg>
-                </div>
+              <!-- Subtle Doodle Pattern in the card -->
+              <div class="absolute inset-0 pointer-events-none opacity-20" style={`background-image: ${theme.patternSvg}; background-size: 60px 60px;`}></div>
+
+              <!-- Miniature Chat Bubble at the top right -->
+              <div class="absolute top-2.5 right-2 w-[46px] h-[16px] rounded-lg shadow-sm" style={`background: ${theme.bubble};`}></div>
+
+              <!-- Centered Emoji Badge at the bottom -->
+              <div class="absolute bottom-2 inset-x-0 flex items-center justify-center">
+                <span class="text-xl filter drop-shadow-md group-hover:scale-110 transition-transform">{theme.emoji}</span>
               </div>
-              <span class="text-[11px] font-semibold text-slate-200 truncate max-w-full">{theme.name}</span>
+
+              <!-- Selection Border / Ring -->
+              <div class="chat-modal-theme-selected-indicator absolute inset-0 rounded-2xl border-2 border-[#6B7CFF] pointer-events-none hidden"></div>
             </button>
           ))}
         </div>
 
-        <!-- Day / Night Mode Switcher row (like Screenshot 3) -->
-        <div class="pt-3 border-t border-white/[0.06] flex items-center justify-between">
-          <div class="flex items-center gap-2.5">
-            <span id="chat-modal-mode-icon" class="text-base">🌙</span>
-            <span id="chat-modal-mode-text" class="text-xs font-medium text-slate-200">Switch to Day Mode</span>
-          </div>
-          <button 
-            type="button" 
-            id="chat-modal-btn-toggle-day-night" 
-            class="px-3 py-1.5 rounded-xl bg-white/[0.06] hover:bg-white/[0.12] text-xs font-semibold text-white transition cursor-pointer flex items-center gap-1.5"
-          >
-            <span>Switch</span>
+        <!-- Action items below carousel -->
+        <div class="divide-y divide-[#2A3040] pt-1">
+          <button type="button" id="chat-modal-btn-switch-day-night" class="w-full py-3 flex items-center gap-3.5 text-left hover:opacity-80 transition cursor-pointer">
+            <Sun class="w-5 h-5 text-[#8E9DFE]" id="chat-modal-icon-day-night" />
+            <span class="text-sm font-normal text-[#8E9DFE]" id="chat-modal-text-day-night">Switch to Day Mode</span>
+          </button>
+
+          <button type="button" id="chat-modal-btn-browse-themes" class="w-full py-3 flex items-center gap-3.5 text-left hover:opacity-80 transition cursor-pointer">
+            <Sparkles class="w-5 h-5 text-[#8E9DFE]" />
+            <span class="text-sm font-normal text-[#8E9DFE]">Browse Themes</span>
           </button>
         </div>
       </div>
 
-      <!-- Card 3: Message corners slider (Exact Telegram Screenshot 3 & 4) -->
-      <div class="rounded-2xl bg-white/[0.02] border border-white/[0.08] p-4 sm:p-5 space-y-3">
-        <div class="flex items-center justify-between text-xs">
-          <span class="font-bold text-slate-400 uppercase tracking-wider">Message corners</span>
-          <span id="chat-modal-radius-val" class="font-mono text-purple-400 font-bold bg-purple-500/10 px-2.5 py-0.5 rounded-lg border border-purple-500/20 text-xs">16</span>
+      <!-- Card 3: Message corners (Exact Telegram Screenshot 1) -->
+      <div class="rounded-2xl bg-[#1D212C] p-4 sm:p-5 space-y-3 border border-[#2A3040]">
+        <div class="flex items-center justify-between text-sm">
+          <span class="font-medium text-[#8A96B2]">Message corners</span>
+          <span id="chat-modal-corners-val" class="font-normal text-[#8A96B2]">17</span>
         </div>
         <input 
           type="range" 
-          id="chat-modal-radius-slider" 
+          id="chat-modal-corners-slider" 
           min="0" 
           max="24" 
           step="1" 
-          value="16" 
-          class="w-full h-1.5 bg-white/10 rounded-lg appearance-none cursor-pointer accent-purple-500" 
+          value="17" 
+          class="tg-slider" 
         />
       </div>
 
-      <!-- Card 4: Sound, Send Key & Theme Scope -->
-      <div class="rounded-2xl bg-white/[0.02] border border-white/[0.08] p-4 sm:p-5 divide-y divide-white/[0.06]">
-        <!-- Sound Effects -->
+      <!-- Card 4: Chat list view (Telegram Screenshot 2) -->
+      <div class="rounded-2xl bg-[#1D212C] p-4 sm:p-5 space-y-3 border border-[#2A3040]">
+        <div class="text-sm font-medium text-[#8A96B2]">Chat list view</div>
+        <div class="flex items-center gap-6">
+          <label class="flex items-center gap-2.5 text-sm text-white cursor-pointer">
+            <input type="radio" name="chat-modal-chat-list-view" value="two" checked class="w-4 h-4 accent-[#7385FF] cursor-pointer" />
+            <span>Two lines</span>
+          </label>
+          <label class="flex items-center gap-2.5 text-sm text-white cursor-pointer">
+            <input type="radio" name="chat-modal-chat-list-view" value="three" class="w-4 h-4 accent-[#7385FF] cursor-pointer" />
+            <span>Three lines</span>
+          </label>
+        </div>
+      </div>
+
+      <!-- Card 5: Media and Sound (Telegram Screenshot 3) -->
+      <div class="rounded-2xl bg-[#1D212C] p-4 sm:p-5 divide-y divide-[#2A3040] border border-[#2A3040]">
         <div class="pb-3 flex items-center justify-between">
-          <div class="space-y-0.5">
-            <span class="text-xs font-medium text-slate-200 block">Sound Effects</span>
-            <span class="text-[10px] text-slate-400">Telegram pop on message send/receive</span>
+          <div>
+            <span class="text-sm font-normal text-white block">Sound Effects</span>
+            <span class="text-xs text-[#8A96B2] block">Telegram pop on message send/receive</span>
           </div>
-          <button 
-            type="button" 
-            id="chat-modal-sound-btn" 
-            class="px-3 py-1 rounded-xl text-xs font-semibold transition cursor-pointer bg-purple-500/20 border border-purple-500/30 text-purple-300"
-          >
+          <button type="button" id="chat-modal-sound-toggle-btn" class="px-3 py-1 rounded-xl text-xs font-semibold bg-[#7385FF]/20 text-[#8E9DFE] border border-[#7385FF]/30 transition cursor-pointer">
             Enabled
           </button>
         </div>
-
-        <!-- Send Shortcut -->
-        <div class="py-3 flex items-center justify-between">
-          <div class="space-y-0.5">
-            <span class="text-xs font-medium text-slate-200 block">Send Shortcut</span>
-            <span class="text-[10px] text-slate-400">Enter to send</span>
-          </div>
-          <div class="flex items-center gap-2">
-            <label class="text-xs text-slate-300 flex items-center gap-1 cursor-pointer">
-              <input type="radio" name="chat-modal-send-radio" value="enter" id="chat-modal-send-radio-enter" checked class="w-3.5 h-3.5 text-purple-600" />
-              <span>Enter</span>
-            </label>
-            <label class="text-xs text-slate-300 flex items-center gap-1 cursor-pointer ml-1">
-              <input type="radio" name="chat-modal-send-radio" value="ctrl_enter" id="chat-modal-send-radio-ctrl" class="w-3.5 h-3.5 text-purple-600" />
-              <span>Ctrl+Enter</span>
-            </label>
-          </div>
-        </div>
-
-        <!-- Theme Scope -->
         <div class="pt-3 flex items-center justify-between">
-          <div class="space-y-0.5">
-            <span class="text-xs font-medium text-slate-200 block">Theme Scope</span>
-            <span class="text-[10px] text-slate-400">Apply to this character or all</span>
-          </div>
-          <div class="flex items-center gap-1 bg-white/[0.04] p-1 rounded-xl border border-white/[0.08]" id="chat-modal-scope-group">
-            <button type="button" data-scope="char" class="chat-modal-scope-btn px-2.5 py-1 rounded-lg text-xs font-medium bg-purple-600 text-white transition cursor-pointer">This Chat</button>
-            <button type="button" data-scope="global" class="chat-modal-scope-btn px-2.5 py-1 rounded-lg text-xs font-medium text-slate-300 hover:text-white transition cursor-pointer">All Chats</button>
-          </div>
+          <span class="text-sm font-normal text-white">Send by Enter</span>
+          <input type="checkbox" id="chat-modal-send-enter-toggle" checked class="w-4 h-4 accent-[#7385FF] cursor-pointer" />
         </div>
       </div>
 
     </div>
 
     <!-- Modal Footer -->
-    <div class="px-5 py-3.5 border-t border-white/[0.08] flex items-center justify-between bg-white/[0.02] shrink-0">
-      <button type="button" id="appearance-btn-reset-factory" class="text-xs text-slate-400 hover:text-rose-400 transition cursor-pointer flex items-center gap-1.5">
+    <div class="px-5 py-3 border-t border-[#2A3040] flex items-center justify-between bg-[#161922] shrink-0">
+      <button type="button" id="chat-modal-btn-reset-default" class="text-xs text-[#8A96B2] hover:text-[#8E9DFE] transition cursor-pointer flex items-center gap-1.5">
         <RotateCcw class="w-3.5 h-3.5" />
-        <span>Reset Default</span>
+        <span>Reset to Default</span>
       </button>
-      <div class="flex items-center gap-2">
-        <button type="button" id="appearance-btn-cancel-bottom" class="px-4 py-2 rounded-xl text-xs font-semibold text-slate-300 hover:text-white hover:bg-white/[0.06] transition cursor-pointer">
-          Done
-        </button>
-      </div>
+      <button type="button" id="chat-modal-btn-done" class="px-4 py-1.5 rounded-xl text-xs font-semibold text-white bg-[#7385FF] hover:bg-[#6073FA] transition cursor-pointer">
+        Done
+      </button>
     </div>
 
   </div>
@@ -19239,59 +19270,50 @@ Requirements:
 
 
   // ==========================================
-  // TELEGRAM CHAT SETTINGS CONTROLLER (EXACT TELEGRAM INTERACTION)
+  // TELEGRAM CHAT SETTINGS CONTROLLER (EXACT 1:1 TELEGRAM UI)
   // ==========================================
   function initChatSettingsEngine() {
     const modal = document.getElementById('chat-appearance-modal');
     const panel = document.getElementById('chat-appearance-panel');
     const btnOpenInMenu = document.getElementById('menu-action-appearance');
     const btnCloseX = document.getElementById('appearance-btn-close-x');
-    const btnCancelBottom = document.getElementById('appearance-btn-cancel-bottom');
-    const btnReset = document.getElementById('appearance-btn-reset-factory');
+    const btnBack = document.getElementById('appearance-btn-back');
+    const btnDone = document.getElementById('chat-modal-btn-done');
+    const btnReset = document.getElementById('chat-modal-btn-reset-default');
 
     const activeCharId = (window as any).AetheriaTheme?.getActiveCharId?.() || 'lyra-vance';
-    let currentScope = (window as any).AetheriaTheme?.hasCharSettings?.(activeCharId) ? 'char' : 'global';
-    let settings = { ...((window as any).AetheriaTheme?.getSettings?.(currentScope === 'char' ? activeCharId : null) || {}) };
+    let settings = { ...((window as any).AetheriaTheme?.getSettings?.(null) || {}) };
 
     const fontSlider = document.getElementById('chat-modal-font-slider') as HTMLInputElement | null;
     const fontVal = document.getElementById('chat-modal-font-val');
-    const radiusSlider = document.getElementById('chat-modal-radius-slider') as HTMLInputElement | null;
-    const radiusVal = document.getElementById('chat-modal-radius-val');
+    const cornersSlider = document.getElementById('chat-modal-corners-slider') as HTMLInputElement | null;
+    const cornersVal = document.getElementById('chat-modal-corners-val');
 
-    const previewBg = document.getElementById('chat-modal-preview-bg');
-    const previewDimmer = document.getElementById('chat-modal-preview-dimmer');
-    const previewPattern = document.getElementById('chat-modal-preview-pattern');
-    const previewCharBubble = document.getElementById('chat-modal-preview-char-bubble');
-    const previewUserBubble = document.getElementById('chat-modal-preview-user-bubble');
-    const previewCharName = document.getElementById('chat-modal-preview-char-name');
-    const previewViewport = document.getElementById('chat-modal-preview-viewport');
+    const previewContainer = document.getElementById('chat-modal-preview-container');
+    const incomingBubble = document.getElementById('chat-modal-incoming-bubble');
+    const outgoingBubble = document.getElementById('chat-modal-outgoing-bubble');
+    const replyBox = document.getElementById('chat-modal-reply-box');
+    const replyName = document.getElementById('chat-modal-reply-name');
 
-    const wpDrawer = document.getElementById('chat-modal-wallpaper-drawer');
-    const btnOpenWp = document.getElementById('chat-modal-btn-open-wallpapers');
-    const wpGrid = document.getElementById('chat-modal-wallpaper-grid');
-    const photoFileInput = document.getElementById('chat-modal-photo-file-input') as HTMLInputElement | null;
-    const btnUploadPhoto = document.getElementById('chat-modal-btn-upload-photo');
+    const btnChangeWp = document.getElementById('chat-modal-btn-change-wallpaper');
+    const wpDrawer = document.getElementById('chat-modal-wp-drawer');
+    const wpGrid = document.getElementById('chat-modal-wp-grid');
+    const wpFileInput = document.getElementById('chat-modal-wp-file-input') as HTMLInputElement | null;
 
-    const nameDrawer = document.getElementById('chat-modal-name-color-drawer');
-    const btnOpenName = document.getElementById('chat-modal-btn-open-name-colors');
-    const nameColorDot = document.getElementById('chat-modal-name-color-dot');
-    const nameHexLabel = document.getElementById('chat-modal-name-hex-label');
+    const btnChangeName = document.getElementById('chat-modal-btn-change-name');
+    const nameDrawer = document.getElementById('chat-modal-name-drawer');
+    const namePill = document.getElementById('chat-modal-name-color-pill');
+    const nameHexLabel = document.getElementById('chat-modal-name-color-hex');
 
-    const themeNameLabel = document.getElementById('chat-modal-selected-theme-name');
-    const btnToggleDayNight = document.getElementById('chat-modal-btn-toggle-day-night');
-    const modeIcon = document.getElementById('chat-modal-mode-icon');
-    const modeText = document.getElementById('chat-modal-mode-text');
+    const btnSwitchDayNight = document.getElementById('chat-modal-btn-switch-day-night');
+    const textDayNight = document.getElementById('chat-modal-text-day-night');
 
-    const soundBtn = document.getElementById('chat-modal-sound-btn');
-    const radioEnter = document.getElementById('chat-modal-send-radio-enter') as HTMLInputElement | null;
-    const radioCtrl = document.getElementById('chat-modal-send-radio-ctrl') as HTMLInputElement | null;
-    const scopeButtons = document.querySelectorAll('#chat-modal-scope-group .chat-modal-scope-btn');
+    const soundBtn = document.getElementById('chat-modal-sound-toggle-btn');
+    const sendEnterToggle = document.getElementById('chat-modal-send-enter-toggle') as HTMLInputElement | null;
 
     function openModal() {
       if (!modal) return;
-      currentScope = (window as any).AetheriaTheme?.hasCharSettings?.(activeCharId) ? 'char' : 'global';
-      settings = { ...((window as any).AetheriaTheme?.getSettings?.(currentScope === 'char' ? activeCharId : null) || {}) };
-      syncScopeButtons();
+      settings = { ...((window as any).AetheriaTheme?.getSettings?.(null) || {}) };
       syncInputs();
       updatePreview();
       modal.classList.remove('hidden');
@@ -19312,144 +19334,105 @@ Requirements:
 
     btnOpenInMenu?.addEventListener('click', openModal);
     btnCloseX?.addEventListener('click', closeModal);
-    btnCancelBottom?.addEventListener('click', closeModal);
+    btnBack?.addEventListener('click', closeModal);
+    btnDone?.addEventListener('click', closeModal);
+
+    function updateSliderFill(slider: HTMLInputElement | null) {
+      if (!slider) return;
+      const val = parseFloat(slider.value);
+      const min = parseFloat(slider.min) || 0;
+      const max = parseFloat(slider.max) || 100;
+      const pct = ((val - min) / (max - min)) * 100;
+      slider.style.background = `linear-gradient(to right, #7385FF 0%, #7385FF ${pct}%, #343A4A ${pct}%, #343A4A 100%)`;
+    }
 
     function updatePreview() {
-      if (!previewViewport) return;
+      const fontSize = settings.fontSize || 16;
+      const radius = settings.bubbleRadius !== undefined ? settings.bubbleRadius : 17;
+      const nameColor = settings.nameColor || '#A393FF';
       const baseMode = settings.baseMode || 'dark';
 
-      if (baseMode === 'amoled') {
-        previewViewport.style.backgroundColor = '#000000';
-        if (previewCharBubble) {
-          previewCharBubble.style.background = '#09090b';
-          previewCharBubble.style.borderColor = 'rgba(255, 255, 255, 0.08)';
-          previewCharBubble.style.color = '#f1f5f9';
-        }
-      } else if (baseMode === 'day') {
-        previewViewport.style.backgroundColor = '#e2e8f0';
-        if (previewCharBubble) {
-          previewCharBubble.style.background = '#ffffff';
-          previewCharBubble.style.borderColor = '#cbd5e1';
-          previewCharBubble.style.color = '#0f172a';
-        }
-      } else {
-        previewViewport.style.backgroundColor = '#090a12';
-        if (previewCharBubble) {
-          previewCharBubble.style.background = settings.charBubbleBg || '#101426';
-          previewCharBubble.style.borderColor = 'rgba(255, 255, 255, 0.08)';
-          previewCharBubble.style.color = '#f1f5f9';
-        }
+      if (fontVal) fontVal.textContent = String(fontSize);
+      if (cornersVal) cornersVal.textContent = String(radius);
+
+      if (incomingBubble) {
+        incomingBubble.style.fontSize = `${fontSize}px`;
+        incomingBubble.style.borderRadius = `${radius}px`;
+        incomingBubble.style.borderBottomLeftRadius = '4px';
+      }
+      if (outgoingBubble) {
+        outgoingBubble.style.fontSize = `${fontSize}px`;
+        outgoingBubble.style.borderRadius = `${radius}px`;
+        outgoingBubble.style.borderBottomRightRadius = '4px';
+        if (settings.userBubbleBg) outgoingBubble.style.background = settings.userBubbleBg;
       }
 
-      if (previewBg) {
-        previewBg.style.background = settings.chatWallpaper || 'linear-gradient(to bottom, #090a12, #0e1122, #07080f)';
-        previewBg.style.filter = settings.chatBlur ? 'blur(14px)' : 'none';
+      if (replyBox) replyBox.style.borderLeftColor = nameColor;
+      if (replyName) replyName.style.color = nameColor;
+      if (namePill) {
+        namePill.style.color = nameColor;
+        namePill.style.backgroundColor = nameColor + '25';
       }
-      if (previewDimmer) {
-        previewDimmer.style.opacity = String(settings.chatDim !== undefined ? settings.chatDim : 0.20);
-      }
-      if (previewPattern) {
-        const patId = settings.chatPatternId || 'telegram-doodles';
-        const patObj = (window as any).AetheriaTheme?.DOODLE_PATTERNS?.[patId];
-        if (patObj && patObj.pattern !== 'none') {
-          previewPattern.style.backgroundImage = patObj.pattern;
-          previewPattern.style.backgroundSize = patObj.patternSize;
-          previewPattern.style.opacity = String(settings.chatPatternOpacity !== undefined ? settings.chatPatternOpacity : 0.18);
-        } else {
-          previewPattern.style.backgroundImage = 'none';
-          previewPattern.style.opacity = '0';
-        }
-      }
-
-      const nameColor = settings.nameColor || '#a855f7';
-      if (previewCharName) previewCharName.style.color = nameColor;
-      if (nameColorDot) nameColorDot.style.background = nameColor;
       if (nameHexLabel) nameHexLabel.textContent = nameColor.toUpperCase();
 
-      const fontSize = settings.fontSize || 16;
-      const radius = settings.bubbleRadius !== undefined ? settings.bubbleRadius : 16;
-
-      if (previewCharBubble) {
-        previewCharBubble.style.fontSize = `${fontSize}px`;
-        previewCharBubble.style.borderRadius = `${radius}px`;
-      }
-      if (previewUserBubble) {
-        previewUserBubble.style.fontSize = `${fontSize}px`;
-        previewUserBubble.style.borderRadius = `${radius}px`;
-        if (settings.userBubbleBg) previewUserBubble.style.background = settings.userBubbleBg;
-      }
-
-      if (fontVal) fontVal.textContent = String(fontSize);
-      if (radiusVal) radiusVal.textContent = String(radius);
-
-      // Day/Night button state
-      if (baseMode === 'day') {
-        if (modeIcon) modeIcon.textContent = '🌙';
-        if (modeText) modeText.textContent = 'Switch to Night Mode';
-      } else {
-        if (modeIcon) modeIcon.textContent = '☀️';
-        if (modeText) modeText.textContent = 'Switch to Day Mode';
-      }
-
-      // Active state on theme capsules
-      document.querySelectorAll('#chat-modal-theme-carousel .chat-modal-theme-capsule').forEach((cap: any) => {
-        const tid = cap.dataset.themeId;
-        const checkIcon = cap.querySelector('.chat-modal-theme-active-ring');
-        if (tid === (settings.presetId || 'aetheria-purple')) {
-          cap.classList.add('border-purple-500', 'bg-white/[0.08]');
-          if (checkIcon) {
-            checkIcon.classList.remove('hidden');
-            checkIcon.classList.add('flex');
+      if (previewContainer) {
+        if (baseMode === 'day') {
+          previewContainer.style.backgroundColor = '#E2E8F0';
+          if (incomingBubble) {
+            incomingBubble.style.backgroundColor = '#FFFFFF';
+            incomingBubble.style.color = '#0F172A';
           }
-          if (themeNameLabel) themeNameLabel.textContent = cap.title;
         } else {
-          cap.classList.remove('border-purple-500', 'bg-white/[0.08]');
-          if (checkIcon) {
-            checkIcon.classList.add('hidden');
-            checkIcon.classList.remove('flex');
+          previewContainer.style.backgroundColor = '#000000';
+          if (incomingBubble) {
+            incomingBubble.style.backgroundColor = '#232834';
+            incomingBubble.style.color = '#FFFFFF';
           }
+        }
+      }
+
+      if (textDayNight) {
+        textDayNight.textContent = baseMode === 'day' ? 'Switch to Night Mode' : 'Switch to Day Mode';
+      }
+
+      updateSliderFill(fontSlider);
+      updateSliderFill(cornersSlider);
+
+      // Highlight selected theme card
+      const currentThemeId = settings.presetId || 'cyan-palette';
+      document.querySelectorAll('#chat-modal-theme-mockup-carousel .chat-modal-theme-mockup-card').forEach((card: any) => {
+        const tid = card.dataset.themeId;
+        const isSelected = (tid === currentThemeId) || 
+          (currentThemeId === 'glacier-arctic' && tid === 'cyan-palette') ||
+          (currentThemeId === 'aetheria-purple' && tid === 'arcade-retro');
+        
+        if (isSelected) {
+          card.style.borderColor = '#6B7CFF';
+          card.classList.add('shadow-lg', 'shadow-[#6B7CFF]/30');
+        } else {
+          card.style.borderColor = 'transparent';
+          card.classList.remove('shadow-lg', 'shadow-[#6B7CFF]/30');
         }
       });
 
-      // Active check on name colors
-      document.querySelectorAll('#chat-modal-name-colors-container .chat-modal-name-col-btn').forEach((btn: any) => {
-        const hex = btn.dataset.hex;
-        const check = btn.querySelector('.chat-modal-name-check');
+      // Highlight selected name color
+      document.querySelectorAll('#chat-modal-name-colors-row .chat-modal-name-color-dot').forEach((dot: any) => {
+        const hex = dot.dataset.hex;
+        const check = dot.querySelector('.chat-modal-name-check');
         if (hex && hex.toLowerCase() === nameColor.toLowerCase()) {
-          btn.classList.add('ring-2', 'ring-white', 'scale-110');
+          dot.classList.add('ring-2', 'ring-white', 'scale-110');
           if (check) check.classList.remove('hidden');
         } else {
-          btn.classList.remove('ring-2', 'ring-white', 'scale-110');
+          dot.classList.remove('ring-2', 'ring-white', 'scale-110');
           if (check) check.classList.add('hidden');
         }
       });
     }
 
     function saveAndApply() {
-      const scopeKey = currentScope === 'char' ? activeCharId : null;
-      (window as any).AetheriaTheme?.saveSettings?.(settings, scopeKey);
+      (window as any).AetheriaTheme?.saveSettings?.(settings, null);
       (window as any).AetheriaTheme?.apply?.(settings);
     }
-
-    function syncScopeButtons() {
-      scopeButtons.forEach((btn: any) => {
-        if (btn.dataset.scope === currentScope) {
-          btn.classList.add('bg-purple-600', 'text-white');
-          btn.classList.remove('text-slate-300');
-        } else {
-          btn.classList.remove('bg-purple-600', 'text-white');
-          btn.classList.add('text-slate-300');
-        }
-      });
-    }
-
-    scopeButtons.forEach((btn: any) => {
-      btn.addEventListener('click', () => {
-        currentScope = btn.dataset.scope;
-        syncScopeButtons();
-        saveAndApply();
-      });
-    });
 
     // Sliders
     fontSlider?.addEventListener('input', (e: any) => {
@@ -19458,66 +19441,87 @@ Requirements:
       saveAndApply();
     });
 
-    radiusSlider?.addEventListener('input', (e: any) => {
+    cornersSlider?.addEventListener('input', (e: any) => {
       settings.bubbleRadius = parseInt(e.target.value, 10);
       updatePreview();
       saveAndApply();
     });
 
-    // Drawers toggle
-    btnOpenWp?.addEventListener('click', () => {
-      wpDrawer?.classList.toggle('hidden');
-    });
-    btnOpenName?.addEventListener('click', () => {
-      nameDrawer?.classList.toggle('hidden');
-    });
+    // Drawers
+    btnChangeWp?.addEventListener('click', () => wpDrawer?.classList.toggle('hidden'));
+    btnChangeName?.addEventListener('click', () => nameDrawer?.classList.toggle('hidden'));
 
-    // Theme Capsules Click
-    document.querySelectorAll('#chat-modal-theme-carousel .chat-modal-theme-capsule').forEach((cap: any) => {
-      cap.addEventListener('click', () => {
-        const tid = cap.dataset.themeId;
-        const presets = (window as any).AetheriaTheme?.PRESETS || [];
-        const found = presets.find((p: any) => p.id === tid);
-        if (found) {
-          settings = { ...settings, ...found, presetId: tid };
-        } else {
-          settings.presetId = tid;
+    // Theme mockups click
+    document.querySelectorAll('#chat-modal-theme-mockup-carousel .chat-modal-theme-mockup-card').forEach((card: any) => {
+      card.addEventListener('click', () => {
+        const tid = card.dataset.themeId;
+        settings.presetId = tid;
+        
+        if (tid === 'tulip-sunset') {
+          settings.userBubbleBg = 'linear-gradient(135deg, #E8537A 0%, #FF9E4A 100%)';
+          settings.accent = '#FF9E4A';
+          settings.baseMode = 'dark';
+        } else if (tid === 'violet-heart') {
+          settings.userBubbleBg = 'linear-gradient(135deg, #EC4899 0%, #8B5CF6 100%)';
+          settings.accent = '#8B5CF6';
+          settings.baseMode = 'dark';
+        } else if (tid === 'tree-gold') {
+          settings.userBubbleBg = 'linear-gradient(135deg, #F59E0B 0%, #EA580C 100%)';
+          settings.accent = '#F59E0B';
+          settings.baseMode = 'dark';
+        } else if (tid === 'arcade-retro') {
+          settings.userBubbleBg = 'linear-gradient(135deg, #9333EA 0%, #F97316 100%)';
+          settings.accent = '#9333EA';
+          settings.baseMode = 'dark';
+        } else if (tid === 'cyan-palette') {
+          settings.userBubbleBg = 'linear-gradient(135deg, #06B6D4 0%, #0D9488 100%)';
+          settings.accent = '#06B6D4';
+          settings.baseMode = 'dark';
+        } else if (tid === 'classic-tg') {
+          settings.userBubbleBg = 'linear-gradient(135deg, #2AABEE 0%, #229ED9 100%)';
+          settings.accent = '#229ED9';
+          settings.baseMode = 'dark';
+        } else if (tid === 'night-amoled') {
+          settings.userBubbleBg = 'linear-gradient(135deg, #27272A 0%, #18181B 100%)';
+          settings.accent = '#7385FF';
+          settings.baseMode = 'amoled';
+        } else if (tid === 'day-light') {
+          settings.userBubbleBg = 'linear-gradient(135deg, #3B82F6 0%, #60A5FA 100%)';
+          settings.accent = '#3B82F6';
+          settings.baseMode = 'day';
         }
-        if (fontSlider) fontSlider.value = String(settings.fontSize || 16);
-        if (radiusSlider) radiusSlider.value = String(settings.bubbleRadius !== undefined ? settings.bubbleRadius : 16);
+        
         updatePreview();
         saveAndApply();
       });
     });
 
-    // Name Colors Click
-    document.querySelectorAll('#chat-modal-name-colors-container .chat-modal-name-col-btn').forEach((btn: any) => {
-      btn.addEventListener('click', () => {
-        settings.nameColor = btn.dataset.hex;
+    // Name colors click
+    document.querySelectorAll('#chat-modal-name-colors-row .chat-modal-name-color-dot').forEach((dot: any) => {
+      dot.addEventListener('click', () => {
+        settings.nameColor = dot.dataset.hex;
         updatePreview();
         saveAndApply();
       });
     });
 
-    // Day/Night Toggle
-    btnToggleDayNight?.addEventListener('click', () => {
+    // Day / Night Switch
+    btnSwitchDayNight?.addEventListener('click', () => {
       if (settings.baseMode === 'day') {
         settings.baseMode = 'dark';
-        settings.chatWallpaper = 'linear-gradient(to bottom, #090a12, #0e1122, #07080f)';
       } else {
         settings.baseMode = 'day';
-        settings.chatWallpaper = 'linear-gradient(to bottom, #e2e8f0, #cbd5e1, #94a3b8)';
       }
       updatePreview();
       saveAndApply();
     });
 
-    // Wallpapers rendering
+    // Wallpaper items
     function renderWps() {
       if (!wpGrid) return;
       const wps = (window as any).AetheriaTheme?.WALLPAPERS || [];
       wpGrid.innerHTML = wps.slice(0, 6).map((w: any) => `
-        <div class="chat-modal-wp-tile relative h-16 rounded-xl overflow-hidden border border-white/10 hover:border-purple-500 transition cursor-pointer select-none" data-css="${(w.cssValue || '').replace(/"/g, '&quot;')}">
+        <div class="chat-modal-wp-tile relative h-16 rounded-xl overflow-hidden border border-[#2A3040] hover:border-[#7385FF] transition cursor-pointer select-none" data-css="${(w.cssValue || '').replace(/"/g, '&quot;')}">
           <div class="absolute inset-0" style="background: ${w.thumb.startsWith('http') ? `url('${w.thumb}') center/cover` : w.thumb};"></div>
           <div class="absolute inset-0 bg-black/20 hover:bg-transparent transition"></div>
           <span class="absolute bottom-1 left-1.5 text-[9px] font-medium text-white truncate max-w-[90%] drop-shadow">${w.name}</span>
@@ -19533,8 +19537,7 @@ Requirements:
       });
     }
 
-    btnUploadPhoto?.addEventListener('click', () => photoFileInput?.click());
-    photoFileInput?.addEventListener('change', (e: any) => {
+    wpFileInput?.addEventListener('change', (e: any) => {
       const file = e.target?.files?.[0];
       if (!file) return;
       const reader = new FileReader();
@@ -19552,8 +19555,8 @@ Requirements:
       if (soundBtn) {
         soundBtn.textContent = enabled ? 'Enabled' : 'Muted';
         soundBtn.className = enabled
-          ? 'px-3 py-1 rounded-xl text-xs font-semibold transition cursor-pointer bg-purple-500/20 border border-purple-500/30 text-purple-300'
-          : 'px-3 py-1 rounded-xl text-xs font-semibold transition cursor-pointer bg-white/5 border border-white/10 text-slate-400';
+          ? 'px-3 py-1 rounded-xl text-xs font-semibold bg-[#7385FF]/20 text-[#8E9DFE] border border-[#7385FF]/30 transition cursor-pointer'
+          : 'px-3 py-1 rounded-xl text-xs font-semibold bg-white/5 text-[#8A96B2] border border-white/10 transition cursor-pointer';
       }
     }
     soundBtn?.addEventListener('click', () => {
@@ -19562,8 +19565,9 @@ Requirements:
       syncSound();
     });
 
-    radioEnter?.addEventListener('change', () => localStorage.setItem('aetheria_chat_send_key', 'enter'));
-    radioCtrl?.addEventListener('change', () => localStorage.setItem('aetheria_chat_send_key', 'ctrl_enter'));
+    sendEnterToggle?.addEventListener('change', (e: any) => {
+      localStorage.setItem('aetheria_chat_send_key', e.target.checked ? 'enter' : 'ctrl_enter');
+    });
 
     btnReset?.addEventListener('click', () => {
       (window as any).AetheriaTheme?.resetToDefault?.();
@@ -19575,13 +19579,9 @@ Requirements:
 
     function syncInputs() {
       if (fontSlider) fontSlider.value = String(settings.fontSize || 16);
-      if (radiusSlider) radiusSlider.value = String(settings.bubbleRadius !== undefined ? settings.bubbleRadius : 16);
+      if (cornersSlider) cornersSlider.value = String(settings.bubbleRadius !== undefined ? settings.bubbleRadius : 17);
       const sendPref = localStorage.getItem('aetheria_chat_send_key') || 'enter';
-      if (sendPref === 'ctrl_enter') {
-        if (radioCtrl) radioCtrl.checked = true;
-      } else {
-        if (radioEnter) radioEnter.checked = true;
-      }
+      if (sendEnterToggle) sendEnterToggle.checked = (sendPref === 'enter');
       syncSound();
     }
 
