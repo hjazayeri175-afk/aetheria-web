@@ -216,3 +216,16 @@ input[type="checkbox"], input[type="radio"] {
   border: 1px solid var(--theme-bubble-char-border, rgba(255, 255, 255, 0.08)) !important;
   color: var(--theme-bubble-char-text, #f1f5f9) !important;
 }
+
+
+/* Telegram-Style Chat Density & Spacing */
+[data-chat-density="compact"] .chat-msg-row {
+  margin-bottom: 0.35rem !important;
+}
+[data-chat-density="compact"] .chat-msg-bubble {
+  padding: 0.45rem 0.75rem !important;
+}
+[data-chat-density="compact"] .chat-msg-bubble-user,
+[data-chat-density="compact"] .chat-msg-bubble-char {
+  font-size: calc(var(--theme-msg-font-size, 16px) - 1.5px) !important;
+}
