@@ -3968,12 +3968,12 @@ const { character } = Astro.props;
               return (
                 <button 
                   type="button" 
-                  class="room-starter-pill group flex items-center gap-1.5 shrink-0 px-3 py-1.5 text-xs transition cursor-pointer active:scale-95 whitespace-nowrap shadow-sm"
+                  class="room-starter-pill group flex items-center gap-1.5 shrink-0 px-3 py-1.5 text-xs transition cursor-pointer active:scale-95 whitespace-nowrap shadow-sm select-none"
                   data-prompt={cleanPrompt}
-                  title="Click to fill reply"
+                  title="Click to send reply directly"
                 >
-                  <span class="room-starter-pill-dot w-1.5 h-1.5 rounded-full"></span>
-                  <span class="room-starter-pill-text">{displayLabel}</span>
+                  <span class="room-starter-pill-dot w-1.5 h-1.5 rounded-full pointer-events-none"></span>
+                  <span class="room-starter-pill-text pointer-events-none">{displayLabel}</span>
                 </button>
               );
             })}
@@ -16000,7 +16000,7 @@ const { character } = Astro.props;
     }
   };
 
-  async function handleSendMessage(userText, attachedImage = null) {
+  async function handleSendMessage(userText, attachedImage = null, options = {}) {
     if (!userText.trim() && !attachedImage) return;
 
     const userMsg = {
@@ -16016,7 +16016,7 @@ const { character } = Astro.props;
     playChatChime('send');
     if (chatStream) chatStream.scrollTop = chatStream.scrollHeight;
 
-    if (input) {
+    if (input && !options?.preserveInputDraft) {
       input.value = '';
       adjustInputHeight();
       updateSendBtnState();
@@ -18601,12 +18601,12 @@ const { character } = Astro.props;
       return `
         <button 
           type="button" 
-          class="room-starter-pill group flex items-center gap-1.5 shrink-0 px-3 py-1.5 text-xs transition cursor-pointer active:scale-95 whitespace-nowrap shadow-sm"
+          class="room-starter-pill group flex items-center gap-1.5 shrink-0 px-3 py-1.5 text-xs transition cursor-pointer active:scale-95 whitespace-nowrap shadow-sm select-none"
           data-prompt="${escapedVal}"
-          title="Click to fill reply"
+          title="Click to send reply directly"
         >
-          <span class="room-starter-pill-dot w-1.5 h-1.5 rounded-full"></span>
-          <span class="room-starter-pill-text">${escapedDisplay}</span>
+          <span class="room-starter-pill-dot w-1.5 h-1.5 rounded-full pointer-events-none"></span>
+          <span class="room-starter-pill-text pointer-events-none">${escapedDisplay}</span>
         </button>
       `;
     }).join('');
@@ -18614,19 +18614,30 @@ const { character } = Astro.props;
     if (smartPromptsBar) {
       smartPromptsBar.style.display = '';
     }
-
-    smartPromptsContainer.querySelectorAll('.room-starter-pill').forEach((btn) => {
-      btn.addEventListener('click', () => {
-        const prompt = btn.getAttribute('data-prompt');
-        if (prompt && input) {
-          input.value = prompt;
-          input.focus();
-          adjustInputHeight();
-          updateSendBtnState();
-        }
-      });
-    });
   }
+
+  // Character.ai-Style 1-Tap Direct Send for Suggested Prompts
+  smartPromptsContainer?.addEventListener('click', async (e) => {
+    const btn = e.target.closest('.room-starter-pill');
+    if (!btn) return;
+    e.preventDefault();
+    e.stopPropagation();
+
+    // Prevent duplicate sending while in-flight or if bot is generating
+    if (btn.classList.contains('pointer-events-none')) return;
+    if (typingIndicator && !typingIndicator.classList.contains('hidden')) return;
+
+    const prompt = btn.getAttribute('data-prompt');
+    if (!prompt) return;
+
+    // Visual feedback: dim and disable pills during send
+    smartPromptsContainer.querySelectorAll('.room-starter-pill').forEach(b => {
+      b.classList.add('pointer-events-none', 'opacity-40');
+    });
+
+    // Directly dispatch to handleSendMessage without touching input or opening mobile keyboard!
+    await handleSendMessage(prompt, null, { preserveInputDraft: true });
+  });
 
   function extractSuggestionsFromText(rawText) {
     if (!rawText || typeof rawText !== 'string') return [];
