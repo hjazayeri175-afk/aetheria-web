@@ -18034,7 +18034,7 @@ const { character } = Astro.props;
   function playChatChime(type = 'send') {
     if (localStorage.getItem('aetheria_sound_effects') !== 'true') return;
     try {
-      const ctx = new (window.AudioContext || (window as any).webkitAudioContext)();
+      const ctx = new (window.AudioContext || window.webkitAudioContext)();
       const osc = ctx.createOscillator();
       const gain = ctx.createGain();
       osc.connect(gain);
