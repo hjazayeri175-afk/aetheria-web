@@ -3978,7 +3978,7 @@ const { character } = Astro.props;
         </div>
 
         <!-- Bottom Chat Input Bar -->
-        <div class="px-2 py-1.5 sm:px-6 sm:py-2.5 border-t border-white/[0.08] bg-[#080a15]/95 backdrop-blur-xl shrink-0 w-full max-w-full">
+        <div class="relative z-40 px-2 py-1.5 sm:px-6 sm:py-2.5 border-t border-white/[0.08] bg-[#080a15]/95 backdrop-blur-xl shrink-0 w-full max-w-full">
           <!-- In-Chat Multi-Modal & Action Toolbar (Hidden: consolidated cleanly into the '+' menu) -->
           <div class="hidden max-w-4xl mx-auto mb-2 items-center justify-between gap-1.5 overflow-x-auto no-scrollbar">
             <!-- Left: Generative Creative Tools -->
@@ -4049,11 +4049,17 @@ const { character } = Astro.props;
           <input type="file" id="chat-file-doc-input" accept=".txt,.json,.md,.pdf,.csv" class="hidden" />
 
           <!-- Bottom Input Form (Google Gemini Capsule) -->
-          <form id="room-input-form" class="w-full max-w-4xl mx-auto relative">
-            <!-- Gemini-Style Floating Tools Popover (Triggered by + button) -->
+          <form id="room-input-form" class="w-full max-w-4xl mx-auto relative z-40">
+            <!-- Plus Menu Floating Backdrop (Ensures menu floats cleanly ON TOP of all message text) -->
+            <div 
+              id="chat-plus-backdrop" 
+              class="hidden fixed inset-0 bg-black/50 backdrop-blur-xs z-[90] transition-opacity duration-200"
+            ></div>
+
+            <!-- Gemini-Style Floating Tools Popover (Triggered by + button, renders ON TOP of chat stream) -->
             <div 
               id="chat-plus-menu" 
-              class="hidden absolute bottom-full left-0 mb-3 w-[calc(100vw-2rem)] max-w-[340px] sm:max-w-sm bg-[#181920]/95 border border-white/[0.12] rounded-3xl p-3 shadow-2xl shadow-black/95 backdrop-blur-2xl z-50 flex flex-col gap-2 select-none"
+              class="hidden absolute bottom-full left-0 mb-3 w-[calc(100vw-2rem)] max-w-[340px] sm:max-w-sm bg-[#161822]/98 border border-white/[0.15] rounded-3xl p-3 shadow-2xl shadow-black/95 backdrop-blur-2xl z-[100] flex flex-col gap-2 select-none ring-1 ring-white/10"
             >
               <!-- Drag Handle Bar -->
               <div class="w-10 h-1 bg-white/20 rounded-full mx-auto my-0.5"></div>
@@ -4305,7 +4311,7 @@ const { character } = Astro.props;
                       <span id="multimodal-aspect-label">9:16</span>
                       <ChevronDown class="w-2.5 h-2.5 text-slate-400" />
                     </button>
-                    <div id="multimodal-aspect-menu" class="hidden absolute bottom-full left-0 mb-2 w-36 bg-[#181920] border border-white/15 rounded-xl p-1 shadow-2xl z-50 flex flex-col gap-0.5">
+                    <div id="multimodal-aspect-menu" class="hidden absolute bottom-full left-0 mb-2 w-36 bg-[#181920] border border-white/15 rounded-xl p-1 shadow-2xl z-[100] flex flex-col gap-0.5">
                       <button type="button" class="aspect-option-btn w-full px-2.5 py-1.5 rounded-lg text-left text-xs text-slate-200 hover:text-white hover:bg-white/[0.08] transition flex items-center justify-between" data-aspect="9:16" data-label="9:16">
                         <span>9:16 Portrait</span>
                         <span class="text-[10px] text-slate-500 font-mono">Mobile</span>
@@ -17889,6 +17895,19 @@ const { character } = Astro.props;
   // -------------------------------------------------------------
   const plusBtn = document.getElementById('chat-input-plus-btn');
   const plusMenu = document.getElementById('chat-plus-menu');
+  const plusBackdrop = document.getElementById('chat-plus-backdrop');
+
+  function openPlusMenu() {
+    plusMenu?.classList.remove('hidden');
+    plusBackdrop?.classList.remove('hidden');
+    plusBtn?.classList.add('rotate-45', 'text-purple-400');
+  }
+
+  function closePlusMenu() {
+    plusMenu?.classList.add('hidden');
+    plusBackdrop?.classList.add('hidden');
+    plusBtn?.classList.remove('rotate-45', 'text-purple-400');
+  }
   const micBtn = document.getElementById('chat-input-mic-btn');
 
   // Multimodal & Input DOM Elements
@@ -17910,8 +17929,7 @@ const { character } = Astro.props;
 
   function setMultimodalMode(mode) {
     currentMultimodalMode = mode;
-    plusMenu?.classList.add('hidden');
-    plusBtn?.classList.remove('rotate-45', 'text-purple-400');
+    closePlusMenu();
 
     if (!mode) {
       multimodalActiveChip?.classList.add('hidden');
@@ -18105,39 +18123,37 @@ const { character } = Astro.props;
     if (!plusMenu) return;
     const isHidden = plusMenu.classList.contains('hidden');
     if (isHidden) {
-      plusMenu.classList.remove('hidden');
-      plusBtn.classList.add('rotate-45', 'text-purple-400');
+      openPlusMenu();
     } else {
-      plusMenu.classList.add('hidden');
-      plusBtn.classList.remove('rotate-45', 'text-purple-400');
+      closePlusMenu();
     }
+  });
+
+  plusBackdrop?.addEventListener('click', () => {
+    closePlusMenu();
   });
 
   document.addEventListener('click', (e) => {
     if (plusMenu && !plusMenu.classList.contains('hidden')) {
       if (!plusMenu.contains(e.target) && e.target !== plusBtn) {
-        plusMenu.classList.add('hidden');
-        plusBtn?.classList.remove('rotate-45', 'text-purple-400');
+        closePlusMenu();
       }
     }
   });
 
   // Gemini Plus Menu Quick Actions
   document.getElementById('plus-action-photos')?.addEventListener('click', () => {
-    plusMenu?.classList.add('hidden');
-    plusBtn?.classList.remove('rotate-45', 'text-purple-400');
+    closePlusMenu();
     filePhotoInput?.click();
   });
 
   document.getElementById('plus-action-camera')?.addEventListener('click', () => {
-    plusMenu?.classList.add('hidden');
-    plusBtn?.classList.remove('rotate-45', 'text-purple-400');
+    closePlusMenu();
     fileCameraInput?.click();
   });
 
   document.getElementById('plus-action-files')?.addEventListener('click', () => {
-    plusMenu?.classList.add('hidden');
-    plusBtn?.classList.remove('rotate-45', 'text-purple-400');
+    closePlusMenu();
     fileDocInput?.click();
   });
 
@@ -18230,8 +18246,7 @@ const { character } = Astro.props;
 
   // Personal Intelligence Identity Click (Open Persona Modal to Switch)
   document.getElementById('plus-persona-select-btn')?.addEventListener('click', () => {
-    plusMenu?.classList.add('hidden');
-    plusBtn?.classList.remove('rotate-45', 'text-purple-400');
+    closePlusMenu();
     maskBtn?.click();
   });
 
@@ -18890,8 +18905,7 @@ Requirements:
   headerOverflowBtn?.addEventListener('click', (e) => {
     e.stopPropagation();
     sessionsDropdown?.classList.add('hidden');
-    plusMenu?.classList.add('hidden');
-    plusBtn?.classList.remove('rotate-45', 'text-purple-400');
+    closePlusMenu();
     const isHidden = headerOverflowMenu?.classList.toggle('hidden');
     if (!isHidden) {
       headerOverflowBtn.classList.add('bg-white/[0.12]', 'text-white');
