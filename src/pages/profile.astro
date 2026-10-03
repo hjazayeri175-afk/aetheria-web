@@ -6,7 +6,7 @@ import {
   User, 
   Sparkles, 
   Save, 
-  Trash2, 
+  Trash, 
   Plus, 
   Check, 
   Eye, 
@@ -21,57 +21,248 @@ import {
   ChevronDown,
   Palette,
   RotateCcw,
-  Copy
+  Copy,
+  ArrowLeft,
+  Key,
+  Cpu,
+  Mic,
+  Database,
+  Smartphone,
+  Zap,
+  Globe
 } from '@lucide/astro';
 ---
 
-<Layout title="Profile & Personas | Aetheria">
+<Layout title="Settings - Aetheria" activeNav="persona">
   <Header />
 
-  <main class="min-h-screen bg-[#060813] text-slate-100 pb-28 pt-4 sm:pt-8 px-4">
+  <main class="min-h-screen bg-[#07080d] text-slate-100 pb-28 pt-4 sm:pt-6 px-3 sm:px-4">
     <div class="max-w-xl mx-auto">
-      
-      <!-- Top Navigation Tabs -->
-      <div class="flex items-center gap-1 p-1 rounded-2xl bg-white/[0.04] border border-white/[0.08] mb-8">
-        <button 
-          id="tab-btn-personas" 
-          type="button" 
-          class="flex-1 py-2.5 px-4 rounded-xl text-sm font-semibold transition cursor-pointer bg-purple-600 text-white shadow-lg shadow-purple-900/40"
-        >
-          Personas
-        </button>
-        <button 
-          id="tab-btn-settings" 
-          type="button" 
-          class="flex-1 py-2.5 px-4 rounded-xl text-sm font-semibold transition cursor-pointer text-slate-400 hover:text-white hover:bg-white/[0.04]"
-        >
+
+      <!-- ========================================== -->
+      <!-- VIEW 1: TELEGRAM SETTINGS HUB (MAIN MENU)  -->
+      <!-- ========================================== -->
+      <div id="view-hub" class="space-y-4">
+        
+        <!-- Telegram Profile Header Card -->
+        <div class="rounded-3xl bg-[#141824] border border-white/[0.06] p-5 shadow-xl relative overflow-hidden">
+          <div class="absolute -right-12 -top-12 w-44 h-44 rounded-full bg-purple-500/10 blur-3xl pointer-events-none"></div>
+          
+          <div class="flex items-center gap-4 relative z-10">
+            <!-- User Avatar with Camera / Edit badge -->
+            <div class="relative group cursor-pointer" id="hub-avatar-trigger" title="Edit active persona">
+              <div class="w-16 h-16 sm:w-18 sm:h-18 rounded-full overflow-hidden border-2 border-purple-500/40 bg-purple-950/40 flex items-center justify-center shadow-lg shadow-purple-950/50">
+                <img id="hub-avatar-img" src="" alt="Avatar" class="w-full h-full object-cover hidden" />
+                <div id="hub-avatar-placeholder" class="flex items-center justify-center text-purple-300 font-bold text-xl sm:text-2xl">
+                  H
+                </div>
+              </div>
+              <div class="absolute -bottom-1 -right-1 w-6 h-6 rounded-full bg-purple-600 border-2 border-[#141824] flex items-center justify-center text-white shadow-sm">
+                <Camera class="w-3 h-3" />
+              </div>
+            </div>
+
+            <!-- User Info -->
+            <div class="min-w-0 flex-1">
+              <div class="flex items-center gap-2">
+                <h1 id="hub-user-name" class="text-lg sm:text-xl font-bold text-white truncate">Hossein</h1>
+                <span class="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-semibold bg-emerald-500/15 text-emerald-400 border border-emerald-500/30">
+                  Online
+                </span>
+              </div>
+              <p id="hub-user-handle" class="text-xs text-[#8e98a8] mt-0.5 truncate">@hossein • Active Persona</p>
+              <div class="flex items-center gap-2 mt-2">
+                <span id="hub-persona-status-badge" class="text-[11px] font-medium text-purple-300 bg-purple-500/15 px-2.5 py-0.5 rounded-lg border border-purple-500/20">
+                  4 Personas Configured
+                </span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Section Label -->
+        <div class="px-2 pt-1 text-xs font-bold uppercase tracking-wider text-[#8e98a8]">
           Settings
-        </button>
+        </div>
+
+        <!-- Telegram 9-Item Settings Menu (Exact 1:1 Parity) -->
+        <div class="rounded-3xl bg-[#141824] border border-white/[0.06] p-1.5 sm:p-2 space-y-0.5 shadow-2xl">
+          
+          <!-- 1. My Personas -->
+          <button 
+            type="button" 
+            id="hub-item-personas"
+            class="w-full px-3.5 py-3 rounded-2xl flex items-center gap-3.5 hover:bg-white/[0.05] active:bg-white/[0.08] transition text-left cursor-pointer group"
+          >
+            <div class="w-10 h-10 rounded-2xl bg-[#0284c7] flex items-center justify-center text-white shrink-0 shadow-md">
+              <User class="w-5 h-5 stroke-[2.2]" />
+            </div>
+            <div class="min-w-0 flex-1">
+              <div class="text-[15px] font-semibold text-white tracking-wide">My Personas</div>
+              <div id="hub-persona-subtitle" class="text-[13px] text-[#8e98a8] truncate">Active: Hossein • Switch & Edit Profiles</div>
+            </div>
+            <span id="hub-personas-count-pill" class="text-xs font-semibold px-2 py-0.5 rounded-full bg-white/[0.08] text-slate-300">
+              4
+            </span>
+          </button>
+
+          <!-- 2. Chat Settings -->
+          <button 
+            type="button" 
+            id="hub-item-appearance"
+            class="w-full px-3.5 py-3 rounded-2xl flex items-center gap-3.5 hover:bg-white/[0.05] active:bg-white/[0.08] transition text-left cursor-pointer group"
+          >
+            <div class="w-10 h-10 rounded-2xl bg-[#d97706] flex items-center justify-center text-white shrink-0 shadow-md">
+              <Palette class="w-5 h-5 stroke-[2.2]" />
+            </div>
+            <div class="min-w-0 flex-1">
+              <div class="text-[15px] font-semibold text-white tracking-wide">Chat Settings</div>
+              <div class="text-[13px] text-[#8e98a8] truncate">Themes, Wallpapers, Message text size</div>
+            </div>
+          </button>
+
+          <!-- 3. AI Engine & Models -->
+          <button 
+            type="button" 
+            id="hub-item-ai"
+            class="w-full px-3.5 py-3 rounded-2xl flex items-center gap-3.5 hover:bg-white/[0.05] active:bg-white/[0.08] transition text-left cursor-pointer group"
+          >
+            <div class="w-10 h-10 rounded-2xl bg-[#2563eb] flex items-center justify-center text-white shrink-0 shadow-md">
+              <Cpu class="w-5 h-5 stroke-[2.2]" />
+            </div>
+            <div class="min-w-0 flex-1">
+              <div class="text-[15px] font-semibold text-white tracking-wide">AI Engine & Models</div>
+              <div class="text-[13px] text-[#8e98a8] truncate">custom-proxy • qwen3.8-max • Parameters</div>
+            </div>
+          </button>
+
+          <!-- 4. Privacy & Security -->
+          <button 
+            type="button" 
+            id="hub-item-privacy"
+            class="w-full px-3.5 py-3 rounded-2xl flex items-center gap-3.5 hover:bg-white/[0.05] active:bg-white/[0.08] transition text-left cursor-pointer group"
+          >
+            <div class="w-10 h-10 rounded-2xl bg-[#16a34a] flex items-center justify-center text-white shrink-0 shadow-md">
+              <Key class="w-5 h-5 stroke-[2.2]" />
+            </div>
+            <div class="min-w-0 flex-1">
+              <div class="text-[15px] font-semibold text-white tracking-wide">Privacy & Security</div>
+              <div class="text-[13px] text-[#8e98a8] truncate">Local storage, API tokens, safe mode</div>
+            </div>
+          </button>
+
+          <!-- 5. Voice & Speech -->
+          <button 
+            type="button" 
+            id="hub-item-voice"
+            class="w-full px-3.5 py-3 rounded-2xl flex items-center gap-3.5 hover:bg-white/[0.05] active:bg-white/[0.08] transition text-left cursor-pointer group"
+          >
+            <div class="w-10 h-10 rounded-2xl bg-[#e11d48] flex items-center justify-center text-white shrink-0 shadow-md">
+              <Mic class="w-5 h-5 stroke-[2.2]" />
+            </div>
+            <div class="min-w-0 flex-1">
+              <div class="text-[15px] font-semibold text-white tracking-wide">Voice & Speech</div>
+              <div class="text-[13px] text-[#8e98a8] truncate">Cloudflare Workers AI, ElevenLabs, Whisper</div>
+            </div>
+          </button>
+
+          <!-- 6. Data and Storage -->
+          <button 
+            type="button" 
+            id="hub-item-data"
+            class="w-full px-3.5 py-3 rounded-2xl flex items-center gap-3.5 hover:bg-white/[0.05] active:bg-white/[0.08] transition text-left cursor-pointer group"
+          >
+            <div class="w-10 h-10 rounded-2xl bg-[#3b82f6] flex items-center justify-center text-white shrink-0 shadow-md">
+              <Database class="w-5 h-5 stroke-[2.2]" />
+            </div>
+            <div class="min-w-0 flex-1">
+              <div class="text-[15px] font-semibold text-white tracking-wide">Data and Storage</div>
+              <div class="text-[13px] text-[#8e98a8] truncate">Backup export, import, cache reset</div>
+            </div>
+          </button>
+
+          <!-- 7. Devices -->
+          <button 
+            type="button" 
+            id="hub-item-devices"
+            class="w-full px-3.5 py-3 rounded-2xl flex items-center gap-3.5 hover:bg-white/[0.05] active:bg-white/[0.08] transition text-left cursor-pointer group"
+          >
+            <div class="w-10 h-10 rounded-2xl bg-[#0d9488] flex items-center justify-center text-white shrink-0 shadow-md">
+              <Smartphone class="w-5 h-5 stroke-[2.2]" />
+            </div>
+            <div class="min-w-0 flex-1">
+              <div class="text-[15px] font-semibold text-white tracking-wide">Devices</div>
+              <div class="text-[13px] text-[#8e98a8] truncate">Active Web Session • Cloudflare Workers Edge</div>
+            </div>
+          </button>
+
+          <!-- 8. Power Saving -->
+          <button 
+            type="button" 
+            id="hub-item-power"
+            class="w-full px-3.5 py-3 rounded-2xl flex items-center gap-3.5 hover:bg-white/[0.05] active:bg-white/[0.08] transition text-left cursor-pointer group"
+          >
+            <div class="w-10 h-10 rounded-2xl bg-[#ea580c] flex items-center justify-center text-white shrink-0 shadow-md">
+              <Zap class="w-5 h-5 stroke-[2.2]" />
+            </div>
+            <div class="min-w-0 flex-1">
+              <div class="text-[15px] font-semibold text-white tracking-wide">Power Saving</div>
+              <div class="text-[13px] text-[#8e98a8] truncate">Animations, vector doodles, sound effects</div>
+            </div>
+          </button>
+
+          <!-- 9. Language -->
+          <button 
+            type="button" 
+            id="hub-item-language"
+            class="w-full px-3.5 py-3 rounded-2xl flex items-center gap-3.5 hover:bg-white/[0.05] active:bg-white/[0.08] transition text-left cursor-pointer group"
+          >
+            <div class="w-10 h-10 rounded-2xl bg-[#8b5cf6] flex items-center justify-center text-white shrink-0 shadow-md">
+              <Globe class="w-5 h-5 stroke-[2.2]" />
+            </div>
+            <div class="min-w-0 flex-1">
+              <div class="text-[15px] font-semibold text-white tracking-wide">Language</div>
+              <div class="text-[13px] text-[#8e98a8] truncate">English</div>
+            </div>
+          </button>
+
+        </div>
+
       </div>
 
       <!-- ========================================== -->
-      <!-- TAB 1: PERSONAS (Clean, Simple, User-first) -->
+      <!-- VIEW 2: PERSONAS SUB-PAGE (DEDICATED)     -->
       <!-- ========================================== -->
-      <div id="tab-view-personas" class="space-y-6">
+      <div id="view-personas" class="hidden space-y-5">
         
-        <!-- Header & Action -->
-        <div class="flex items-center justify-between">
-          <div>
-            <h1 class="text-xl font-bold text-white tracking-tight">Personas</h1>
-            <p class="text-xs text-slate-400 mt-0.5">Customize how characters perceive you in chat</p>
-          </div>
+        <!-- Header with Back Button -->
+        <div class="flex items-center justify-between pb-1 border-b border-white/[0.06]">
+          <button 
+            type="button" 
+            id="btn-back-from-personas"
+            class="flex items-center gap-2 text-white/90 hover:text-white font-medium text-sm py-1.5 px-2 rounded-xl hover:bg-white/[0.05] transition cursor-pointer"
+          >
+            <ArrowLeft class="w-5 h-5" />
+            <span>Settings</span>
+          </button>
+
           <button 
             type="button" 
             id="btn-new-persona"
-            class="px-3.5 py-1.5 rounded-xl bg-purple-600/20 hover:bg-purple-600/30 border border-purple-500/40 text-purple-300 hover:text-white text-xs font-semibold flex items-center gap-1.5 transition active:scale-95 cursor-pointer shadow-sm"
+            class="px-3.5 py-1.5 rounded-xl bg-purple-600 hover:bg-purple-500 text-white text-xs font-semibold flex items-center gap-1.5 transition active:scale-95 cursor-pointer shadow-md shadow-purple-900/40"
           >
             <Plus class="w-3.5 h-3.5" />
             <span>New Persona</span>
           </button>
         </div>
 
+        <div>
+          <h1 class="text-xl font-bold text-white tracking-tight">Personas</h1>
+          <p class="text-xs text-slate-400 mt-0.5">Customize how characters perceive you in chat</p>
+        </div>
+
         <!-- Master Enable / Disable Toggle -->
-        <div class="flex items-center justify-between p-4 rounded-2xl bg-white/[0.02] border border-white/[0.08] transition">
+        <div class="flex items-center justify-between p-4 rounded-2xl bg-[#141824] border border-white/[0.06] transition">
           <div class="flex items-center gap-3">
             <div id="persona-toggle-icon" class="w-9 h-9 rounded-xl bg-purple-600/20 border border-purple-500/30 flex items-center justify-center text-purple-300 transition">
               <User class="w-4 h-4" />
@@ -87,7 +278,7 @@ import {
           </label>
         </div>
 
-        <!-- Modern Persona Carousel Bar -->
+        <!-- Persona Carousel Bar -->
         <div class="space-y-2">
           <div class="flex items-center justify-between text-xs text-slate-400 px-1">
             <span>Your Personas</span>
@@ -98,289 +289,619 @@ import {
           </div>
         </div>
 
-        <!-- Persona Editor Card -->
-        <!-- Appearance & Global Theming Engine (Step 3: Cohesive Presets, Gradient Bubbles, Telegram Extras) -->
-        <div class="rounded-3xl bg-white/[0.02] border border-white/[0.08] p-5 sm:p-7 space-y-6">
-          <div class="flex items-center justify-between pb-4 border-b border-white/[0.08]">
-            <div>
-              <h2 class="text-sm font-bold text-white uppercase tracking-wider flex items-center gap-2">
-                <Palette class="w-4 h-4 text-purple-400" />
-                Chat Appearance & Global Theming
-              </h2>
-              <p class="text-xs text-slate-400 mt-0.5">Telegram-style cohesive themes, wallpapers, gradient bubbles & density settings</p>
-            </div>
-            <button 
-              id="profile-theme-reset-btn" 
-              type="button" 
-              class="flex items-center gap-1 px-3 py-1.5 rounded-xl text-xs font-medium text-slate-400 hover:text-rose-400 hover:bg-rose-500/10 border border-white/10 hover:border-rose-500/20 transition-all"
-            >
-              <RotateCcw class="w-3.5 h-3.5" />
-              <span>Reset</span>
-            </button>
-          </div>
-
-          <!-- PINNED LIVE PREVIEW -->
-          <div class="space-y-2">
-            <span class="text-xs font-semibold text-slate-300 uppercase tracking-wider flex items-center gap-1.5">
-              <Sparkles class="w-3.5 h-3.5 text-purple-400" />
-              Live Interactive Preview
-            </span>
-            <div 
-              id="profile-preview-viewport" 
-              class="relative h-44 rounded-2xl border border-white/10 overflow-hidden flex flex-col justify-between p-4 shadow-inner transition-all duration-300"
-            >
-              <div id="profile-preview-image" class="absolute inset-0 z-0 bg-cover bg-center transition-all duration-300"></div>
-              <div id="profile-preview-dimmer" class="absolute inset-0 z-0 bg-black pointer-events-none transition-opacity duration-200"></div>
-              <div id="profile-preview-pattern" class="absolute inset-0 z-0 pointer-events-none transition-opacity duration-200"></div>
-
-              <!-- Character Mock Bubble -->
-              <div class="relative z-10 flex items-start gap-2.5 max-w-[85%]">
-                <div class="w-7 h-7 rounded-full bg-purple-600/30 border border-purple-400/40 flex items-center justify-center text-xs font-bold text-purple-200 shrink-0 shadow-md">
-                  A
+        <!-- Full Persona Editor Card -->
+        <div class="rounded-3xl bg-[#141824] border border-white/[0.06] p-5 sm:p-6 space-y-5 shadow-xl">
+          
+          <!-- Avatar + Basic Info Row -->
+          <div class="flex flex-col sm:flex-row items-center sm:items-start gap-5">
+            
+            <!-- Click-to-Change Avatar -->
+            <div class="flex flex-col items-center gap-2 shrink-0">
+              <div class="relative group cursor-pointer" id="avatar-click-zone" title="Click to change photo">
+                <div class="w-20 h-20 sm:w-22 sm:h-22 rounded-full overflow-hidden border-2 border-purple-500/40 bg-purple-950/30 flex items-center justify-center shadow-lg shadow-purple-950/50 transition group-hover:border-purple-400">
+                  <img 
+                    id="persona-avatar-img" 
+                    src="" 
+                    alt="Persona Avatar" 
+                    class="w-full h-full object-cover hidden" 
+                  />
+                  <div id="persona-avatar-placeholder" class="flex flex-col items-center justify-center text-purple-400">
+                    <User class="w-8 h-8 opacity-70" />
+                  </div>
                 </div>
-                <div 
-                  id="profile-preview-char-bubble" 
-                  class="px-3.5 py-2 rounded-2xl bg-[#101426] border border-white/10 text-slate-100 shadow-md backdrop-blur-sm transition-all duration-200"
-                >
-                  <p class="text-[11px] font-semibold text-purple-300 mb-0.5">Aetheria Companion</p>
-                  <p class="text-xs leading-relaxed">Customize full themes, gradient bubbles and chat density across all devices ✨</p>
-                  <div class="text-[10px] text-slate-400/60 mt-1 text-right">10:42 PM</div>
+                <!-- Camera Badge Overlay -->
+                <div class="absolute inset-0 rounded-full bg-black/50 backdrop-blur-[2px] opacity-0 group-hover:opacity-100 flex flex-col items-center justify-center text-white text-[10px] font-medium transition duration-200">
+                  <Camera class="w-5 h-5 mb-0.5 text-purple-300" />
+                  <span>Change</span>
                 </div>
               </div>
 
-              <!-- User Mock Bubble -->
-              <div class="relative z-10 flex items-end justify-end max-w-[85%] self-end">
-                <div 
-                  id="profile-preview-user-bubble" 
-                  class="px-3.5 py-2 rounded-2xl bg-gradient-to-r from-purple-600 to-indigo-600 text-white shadow-lg shadow-purple-950/30 transition-all duration-200"
-                >
-                  <p class="text-xs leading-relaxed">Everything changes in real-time, just like Telegram! 🚀</p>
-                  <div class="text-[10px] text-white/70 mt-1 text-right flex items-center justify-end gap-1 font-mono">
+              <!-- Hidden File Input -->
+              <input type="file" id="avatar-file-input" accept="image/png,image/jpeg,image/webp,image/gif" class="hidden" />
+
+              <!-- Remove Photo Link -->
+              <button 
+                type="button" 
+                id="btn-remove-avatar" 
+                class="hidden text-[11px] text-red-400/80 hover:text-red-300 transition cursor-pointer"
+              >
+                Remove photo
+              </button>
+            </div>
+
+            <!-- Name, Age, Pronouns -->
+            <div class="flex-1 w-full space-y-3">
+              <div>
+                <label for="persona-name" class="block text-xs font-semibold text-slate-300 mb-1">
+                  Name
+                </label>
+                <input 
+                  type="text" 
+                  id="persona-name" 
+                  placeholder="Name" 
+                  class="w-full px-3.5 py-2.5 rounded-xl bg-white/[0.04] border border-white/10 focus:border-purple-500/60 text-sm font-medium text-white placeholder:text-slate-600 outline-none transition"
+                />
+              </div>
+
+              <div class="grid grid-cols-2 gap-3">
+                <div>
+                  <label for="persona-age" class="block text-xs font-semibold text-slate-300 mb-1">
+                    Age
+                  </label>
+                  <input 
+                    type="text" 
+                    id="persona-age" 
+                    placeholder="Age" 
+                    class="w-full px-3.5 py-2 rounded-xl bg-white/[0.04] border border-white/10 focus:border-purple-500/60 text-sm font-medium text-white placeholder:text-slate-600 outline-none transition"
+                  />
+                </div>
+                <div>
+                  <label for="persona-pronouns" class="block text-xs font-semibold text-slate-300 mb-1">
+                    Pronouns
+                  </label>
+                  <input 
+                    type="text" 
+                    id="persona-pronouns" 
+                    placeholder="Pronouns" 
+                    class="w-full px-3.5 py-2 rounded-xl bg-white/[0.04] border border-white/10 focus:border-purple-500/60 text-sm font-medium text-white placeholder:text-slate-600 outline-none transition"
+                  />
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- About You / Description -->
+          <div>
+            <label for="persona-about" class="block text-xs font-semibold text-slate-300 mb-1">
+              About Persona
+            </label>
+            <textarea 
+              id="persona-about" 
+              rows="4" 
+              placeholder="Describe your appearance, personality, or background..." 
+              class="w-full px-3.5 py-2.5 rounded-xl bg-white/[0.04] border border-white/10 focus:border-purple-500/60 text-sm text-slate-200 placeholder:text-slate-600 outline-none transition resize-y leading-relaxed"
+            ></textarea>
+          </div>
+
+          <!-- Optional Advanced Instructions -->
+          <details class="group border border-white/5 rounded-2xl bg-white/[0.01] px-4 py-3 text-xs">
+            <summary class="cursor-pointer text-slate-400 hover:text-slate-200 font-medium flex items-center justify-between select-none">
+              <span>Additional instructions (optional)</span>
+              <ChevronDown class="w-3.5 h-3.5 transition-transform group-open:rotate-180 opacity-60" />
+            </summary>
+            <div class="pt-3">
+              <textarea 
+                id="persona-directives" 
+                rows="2" 
+                placeholder="Optional formatting or character guidelines..." 
+                class="w-full px-3 py-2 rounded-xl bg-white/[0.03] border border-white/10 focus:border-purple-500/50 text-xs text-slate-300 placeholder:text-slate-600 outline-none transition"
+              ></textarea>
+            </div>
+          </details>
+
+          <!-- Action Buttons -->
+          <div class="flex items-center justify-between pt-2 border-t border-white/[0.06]">
+            <div>
+              <button 
+                type="button" 
+                id="btn-delete-persona" 
+                class="text-xs text-red-400/80 hover:text-red-300 transition flex items-center gap-1 cursor-pointer py-1.5 px-2 rounded-lg hover:bg-red-500/10"
+              >
+                <Trash class="w-3.5 h-3.5" />
+                <span>Delete</span>
+              </button>
+            </div>
+
+            <div class="flex items-center gap-2.5">
+              <!-- Active Status Badge -->
+              <div 
+                id="persona-status-badge" 
+                class="px-3 py-1.5 rounded-xl bg-purple-500/15 border border-purple-500/30 text-purple-300 text-xs font-semibold flex items-center gap-1.5 select-none"
+              >
+                <Check class="w-3.5 h-3.5 text-purple-400" />
+                <span id="persona-status-badge-text">Active for Chat</span>
+              </div>
+
+              <button 
+                type="button" 
+                id="btn-save-persona" 
+                class="px-4 py-2 rounded-xl bg-purple-600 hover:bg-purple-500 text-white text-xs font-semibold transition active:scale-95 cursor-pointer shadow-md shadow-purple-900/40 flex items-center gap-1.5"
+              >
+                <Save class="w-3.5 h-3.5" />
+                <span>Save</span>
+              </button>
+            </div>
+          </div>
+
+        </div>
+
+      </div>
+
+      <!-- ========================================== -->
+      <!-- VIEW 3: CHAT APPEARANCE SUB-PAGE          -->
+      <!-- ========================================== -->
+      <div id="view-appearance" class="hidden space-y-5">
+        
+        <!-- Header with Back Button -->
+        <div class="flex items-center justify-between pb-1 border-b border-white/[0.06]">
+          <button 
+            type="button" 
+            id="btn-back-from-appearance"
+            class="flex items-center gap-2 text-white/90 hover:text-white font-medium text-sm py-1.5 px-2 rounded-xl hover:bg-white/[0.05] transition cursor-pointer"
+          >
+            <ArrowLeft class="w-5 h-5" />
+            <span>Settings</span>
+          </button>
+
+          <!-- Base Mode Switcher (Dark / AMOLED / Day) -->
+          <div class="flex items-center p-1 rounded-xl bg-white/[0.04] border border-white/[0.08]" id="profile-base-mode-group">
+            <button type="button" data-mode="dark" class="profile-mode-btn px-2.5 py-1 rounded-lg text-xs font-medium text-white bg-purple-600 transition flex items-center gap-1 cursor-pointer">
+              <span>🌙</span>
+              <span>Dark</span>
+            </button>
+            <button type="button" data-mode="amoled" class="profile-mode-btn px-2.5 py-1 rounded-lg text-xs font-medium text-slate-300 hover:text-white transition flex items-center gap-1 cursor-pointer">
+              <span>⚡</span>
+              <span>AMOLED</span>
+            </button>
+            <button type="button" data-mode="day" class="profile-mode-btn px-2.5 py-1 rounded-lg text-xs font-medium text-slate-300 hover:text-white transition flex items-center gap-1 cursor-pointer">
+              <span>☀️</span>
+              <span>Day</span>
+            </button>
+          </div>
+        </div>
+
+        <div>
+          <h1 class="text-xl font-bold text-white tracking-tight">Chat Settings</h1>
+          <p class="text-xs text-slate-400 mt-0.5">Themes, wallpapers, message styling and animations</p>
+        </div>
+
+        <!-- Telegram Chat Live Preview (Clean & Realistic) -->
+        <div class="rounded-3xl bg-[#141824] border border-white/[0.06] p-4 shadow-xl space-y-3">
+          <div class="flex items-center justify-between text-xs text-slate-400 px-1">
+            <span>Live Chat Preview</span>
+            <span class="text-[11px] text-purple-400">Updates in real-time</span>
+          </div>
+
+          <div id="profile-preview-viewport" class="relative h-48 rounded-2xl overflow-hidden border border-white/10 flex flex-col justify-end p-4 select-none shadow-inner" style="background-color: #090a12;">
+            <div id="profile-preview-image" class="absolute inset-0 transition-all duration-300" style="background: linear-gradient(to bottom, #090a12, #0e1122, #07080f);"></div>
+            <div id="profile-preview-dimmer" class="absolute inset-0 bg-black/20 pointer-events-none transition-opacity duration-200"></div>
+            <div id="profile-preview-pattern" class="absolute inset-0 pointer-events-none transition-opacity duration-300" style="background-image: none; opacity: 0.18;"></div>
+
+            <div class="relative z-10 space-y-2.5 max-w-full">
+              <!-- Incoming message from Character -->
+              <div class="flex items-start gap-2.5 max-w-[85%]">
+                <div class="w-7 h-7 rounded-full bg-purple-600/40 border border-purple-500/40 flex items-center justify-center text-purple-200 text-xs font-bold shrink-0 mt-0.5">
+                  A
+                </div>
+                <div class="space-y-1 min-w-0">
+                  <span id="profile-preview-char-name" class="text-[11px] font-semibold text-purple-300 block truncate">Aetheria AI</span>
+                  <div id="profile-preview-char-bubble" class="px-3.5 py-2 rounded-2xl rounded-tl-xs shadow-md transition-all duration-200" style="background: #101426; border: 1px solid rgba(255, 255, 255, 0.08); font-size: 15px; color: #f1f5f9;">
+                    <p class="leading-relaxed">Good morning! How does this theme look?</p>
+                    <span class="text-[9px] text-slate-400 mt-1 block">10:42 PM</span>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Outgoing message from User -->
+              <div class="flex items-end justify-end max-w-[85%] ml-auto">
+                <div id="profile-preview-user-bubble" class="px-3.5 py-2 rounded-2xl rounded-tr-xs shadow-lg transition-all duration-200 text-white" style="background: linear-gradient(135deg, #9333ea, #6366f1); font-size: 15px;">
+                  <p class="leading-relaxed">Looks stunning! Just like Telegram.</p>
+                  <div class="text-[9px] text-white/70 mt-1 flex items-center justify-end gap-1">
                     <span>10:43 PM</span>
-                    <svg class="w-3 h-3 inline text-white/90" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
-                      <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" />
-                      <path stroke-linecap="round" stroke-linejoin="round" d="M9 13l2 2L19 7" />
-                    </svg>
+                    <svg class="w-3 h-3 text-cyan-300" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"></polyline></svg>
                   </div>
                 </div>
               </div>
             </div>
           </div>
+        </div>
 
-          <!-- SECTION 1: FULL COHESIVE THEME PRESETS -->
-          <div class="space-y-3">
-            <h3 class="text-xs font-semibold text-slate-300 uppercase tracking-wider">Full Theme Presets (One-Tap Cohesive Styles)</h3>
-            <div id="profile-theme-presets-grid" class="grid grid-cols-2 sm:grid-cols-4 gap-2.5">
-              <!-- Populated via JS -->
-            </div>
+        <!-- Color Themes Grid -->
+        <div class="rounded-3xl bg-[#141824] border border-white/[0.06] p-5 shadow-xl space-y-3">
+          <div class="flex items-center justify-between">
+            <label class="block text-xs font-bold text-white uppercase tracking-wider">Color Themes</label>
+            <span class="text-[11px] text-slate-400">One-tap cohesive palettes</span>
           </div>
+          <div class="grid grid-cols-2 sm:grid-cols-4 gap-2.5" id="profile-presets-grid"></div>
+        </div>
 
-          <!-- SECTION 2: BUBBLES & TYPOGRAPHY -->
+        <!-- Sliders: Message Text Size & Corner Roundness -->
+        <div class="rounded-3xl bg-[#141824] border border-white/[0.06] p-5 shadow-xl space-y-4">
+          <div class="text-xs font-bold text-white uppercase tracking-wider">Typography & Bubbles</div>
+          
           <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-            <!-- Font Size -->
-            <div class="p-3.5 rounded-2xl bg-white/[0.02] border border-white/[0.06] space-y-2.5">
-              <div class="flex items-center justify-between">
-                <span class="text-xs font-medium text-slate-200">Message Text Size</span>
-                <span id="profile-font-size-badge" class="px-2 py-0.5 rounded bg-purple-500/20 border border-purple-500/30 text-xs font-mono text-purple-300 font-bold">16px</span>
+            <!-- Message Text Size -->
+            <div class="space-y-2 p-3.5 rounded-2xl bg-white/[0.02] border border-white/[0.06]">
+              <div class="flex items-center justify-between text-xs">
+                <span class="font-medium text-slate-200">Message Text Size</span>
+                <span id="profile-font-val" class="font-mono text-purple-300 font-bold bg-purple-500/20 px-2 py-0.5 rounded">16</span>
               </div>
-              <input 
-                type="range" 
-                id="profile-font-size-slider" 
-                min="13" 
-                max="22" 
-                step="1" 
-                value="16" 
-                class="w-full h-1.5 bg-white/10 rounded-lg appearance-none cursor-pointer accent-purple-500"
-              />
+              <input type="range" id="profile-font-slider" min="13" max="22" step="1" value="16" class="w-full h-1.5 bg-white/10 rounded-lg appearance-none cursor-pointer accent-purple-500" />
             </div>
 
-            <!-- Bubble Radius -->
-            <div class="p-3.5 rounded-2xl bg-white/[0.02] border border-white/[0.06] space-y-2.5">
-              <div class="flex items-center justify-between">
-                <span class="text-xs font-medium text-slate-200">Bubble Corner Roundness</span>
-                <span id="profile-radius-badge" class="px-2 py-0.5 rounded bg-purple-500/20 border border-purple-500/30 text-xs font-mono text-purple-300 font-bold">16px</span>
+            <!-- Corner Roundness -->
+            <div class="space-y-2 p-3.5 rounded-2xl bg-white/[0.02] border border-white/[0.06]">
+              <div class="flex items-center justify-between text-xs">
+                <span class="font-medium text-slate-200">Corner Roundness</span>
+                <span id="profile-radius-val" class="font-mono text-purple-300 font-bold bg-purple-500/20 px-2 py-0.5 rounded">16</span>
               </div>
-              <input 
-                type="range" 
-                id="profile-radius-slider" 
-                min="0" 
-                max="24" 
-                step="2" 
-                value="16" 
-                class="w-full h-1.5 bg-white/10 rounded-lg appearance-none cursor-pointer accent-purple-500"
-              />
+              <input type="range" id="profile-radius-slider" min="0" max="24" step="2" value="16" class="w-full h-1.5 bg-white/10 rounded-lg appearance-none cursor-pointer accent-purple-500" />
             </div>
           </div>
+        </div>
 
-          <!-- SECTION 3: OUTGOING BUBBLE GRADIENTS & CUSTOM COLORS -->
-          <div class="p-4 rounded-2xl bg-white/[0.02] border border-white/[0.06] space-y-4">
-            <span class="text-xs font-semibold text-slate-300 uppercase tracking-wider block">Outgoing Message Gradient</span>
-            
-            <div id="profile-bubble-gradients-grid" class="grid grid-cols-2 sm:grid-cols-4 gap-2">
-              <!-- Rendered via JS -->
-            </div>
+        <!-- Telegram 7 Signature Name Colors -->
+        <div class="rounded-3xl bg-[#141824] border border-white/[0.06] p-5 shadow-xl space-y-3">
+          <div class="flex items-center justify-between">
+            <label class="block text-xs font-bold text-white uppercase tracking-wider">Name & Accent Color</label>
+            <span id="profile-name-color-hex" class="text-xs font-mono text-purple-300 font-bold uppercase">#A855F7</span>
+          </div>
+          <div class="grid grid-cols-7 gap-2" id="profile-name-color-palette"></div>
+        </div>
 
-            <!-- Custom 2-Color Gradient Builder -->
-            <div class="pt-3 border-t border-white/[0.06] flex flex-col sm:flex-row items-center gap-3">
-              <span class="text-xs text-slate-400 shrink-0">Custom 2-Color Gradient:</span>
-              <div class="flex items-center gap-2">
-                <input type="color" id="profile-grad-color-a" value="#9333ea" class="w-7 h-7 rounded-lg bg-transparent cursor-pointer border-0" />
-                <span id="profile-grad-hex-a" class="text-[11px] font-mono text-slate-300">#9333EA</span>
-              </div>
-              <span class="text-slate-500 text-xs font-bold">→</span>
-              <div class="flex items-center gap-2">
-                <input type="color" id="profile-grad-color-b" value="#6366f1" class="w-7 h-7 rounded-lg bg-transparent cursor-pointer border-0" />
-                <span id="profile-grad-hex-b" class="text-[11px] font-mono text-slate-300">#6366F1</span>
-              </div>
+        <!-- Change Chat Wallpaper -->
+        <div class="rounded-3xl bg-[#141824] border border-white/[0.06] p-5 shadow-xl space-y-4">
+          <div class="flex items-center justify-between">
+            <label class="block text-xs font-bold text-white uppercase tracking-wider">Chat Wallpaper</label>
+            <div class="flex items-center gap-2">
+              <input type="file" id="profile-photo-file" accept="image/*" class="hidden" />
+              <button type="button" id="profile-photo-btn" class="px-3 py-1.5 rounded-xl bg-white/[0.06] hover:bg-white/[0.12] text-xs font-medium text-white transition cursor-pointer flex items-center gap-1.5">
+                <Upload class="w-3.5 h-3.5" />
+                <span>Choose from Photos</span>
+              </button>
             </div>
           </div>
+          <div class="grid grid-cols-3 sm:grid-cols-6 gap-2" id="profile-wallpapers-grid"></div>
+        </div>
 
-          <!-- SECTION 4: VISUAL EFFECTS & PATTERNS -->
-          <div class="p-4 rounded-2xl bg-white/[0.02] border border-white/[0.06] space-y-4">
-            <div class="flex items-center justify-between">
-              <span class="text-xs font-semibold text-slate-300 uppercase tracking-wider">Wallpaper Effects & Doodles</span>
-              <button 
-                id="profile-blur-toggle" 
-                type="button" 
-                class="px-3 py-1.5 rounded-xl text-xs font-medium border border-white/10 bg-white/5 text-slate-300 hover:text-white transition-all flex items-center gap-1.5"
-              >
-                <span id="profile-blur-dot" class="w-2 h-2 rounded-full bg-slate-500"></span>
-                <span>Blur Wallpaper</span>
+        <!-- Sound Effects & Shortcut -->
+        <div class="rounded-3xl bg-[#141824] border border-white/[0.06] p-5 shadow-xl space-y-4">
+          <div class="text-xs font-bold text-white uppercase tracking-wider">Sound & Interaction</div>
+
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <div class="flex items-center justify-between p-3.5 rounded-2xl bg-white/[0.02] border border-white/[0.06]">
+              <div class="space-y-0.5">
+                <span class="text-xs font-medium text-slate-200 block">Sound Effects</span>
+                <span class="text-[10px] text-slate-400">Telegram pop & chimes</span>
+              </div>
+              <button type="button" id="profile-sound-toggle" class="px-3 py-1 rounded-xl text-xs font-semibold transition cursor-pointer bg-purple-500/20 border border-purple-500/30 text-purple-300">
+                Enabled
               </button>
             </div>
 
-            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-              <!-- Dimmer Slider -->
-              <div>
-                <div class="flex items-center justify-between text-xs mb-1.5">
-                  <span class="text-slate-400">Darkness Dimmer</span>
-                  <span id="profile-dimmer-badge" class="font-mono text-purple-400 font-semibold">20%</span>
-                </div>
-                <input 
-                  type="range" 
-                  id="profile-dimmer-slider" 
-                  min="0" 
-                  max="70" 
-                  step="5" 
-                  value="20"
-                  class="w-full h-1.5 bg-white/10 rounded-lg appearance-none cursor-pointer accent-purple-500"
-                />
+            <div class="flex items-center justify-between p-3.5 rounded-2xl bg-white/[0.02] border border-white/[0.06]">
+              <div class="space-y-0.5">
+                <span class="text-xs font-medium text-slate-200 block">Send Shortcut</span>
+                <span class="text-[10px] text-slate-400">Message input trigger</span>
               </div>
-
-              <!-- Pattern Opacity Slider -->
-              <div>
-                <div class="flex items-center justify-between text-xs mb-1.5">
-                  <span class="text-slate-400">Pattern Opacity</span>
-                  <span id="profile-pattern-opacity-badge" class="font-mono text-purple-400 font-semibold">18%</span>
-                </div>
-                <input 
-                  type="range" 
-                  id="profile-pattern-opacity-slider" 
-                  min="5" 
-                  max="50" 
-                  step="1" 
-                  value="18"
-                  class="w-full h-1.5 bg-white/10 rounded-lg appearance-none cursor-pointer accent-purple-500"
-                />
-              </div>
-            </div>
-
-            <!-- Doodle Pills -->
-            <div id="profile-doodle-pills" class="grid grid-cols-3 sm:grid-cols-6 gap-1.5">
-              <button data-pat-id="none" class="profile-doodle-btn px-2 py-1.5 rounded-xl text-xs font-medium border border-white/10 bg-white/5 text-slate-300 text-center">None</button>
-              <button data-pat-id="telegram-doodles" class="profile-doodle-btn px-2 py-1.5 rounded-xl text-xs font-medium border border-purple-500/40 bg-purple-500/20 text-purple-300 text-center">Doodles</button>
-              <button data-pat-id="cyber-circuit" class="profile-doodle-btn px-2 py-1.5 rounded-xl text-xs font-medium border border-white/10 bg-white/5 text-slate-300 text-center">Circuit</button>
-              <button data-pat-id="constellation-stars" class="profile-doodle-btn px-2 py-1.5 rounded-xl text-xs font-medium border border-white/10 bg-white/5 text-slate-300 text-center">Stars</button>
-              <button data-pat-id="hex-mesh" class="profile-doodle-btn px-2 py-1.5 rounded-xl text-xs font-medium border border-white/10 bg-white/5 text-slate-300 text-center">Hex Grid</button>
-              <button data-pat-id="matrix-grid" class="profile-doodle-btn px-2 py-1.5 rounded-xl text-xs font-medium border border-white/10 bg-white/5 text-slate-300 text-center">Matrix</button>
-            </div>
-          </div>
-
-          <!-- SECTION 5: WALLPAPER GALLERY & UPLOAD -->
-          <div class="space-y-3">
-            <div class="flex items-center justify-between">
-              <span class="text-xs font-semibold text-slate-300 uppercase tracking-wider">Wallpaper Gallery</span>
-              <div class="flex items-center gap-1" id="profile-wp-cats">
-                <button data-cat="all" class="profile-cat-btn px-2.5 py-1 rounded-lg text-[11px] font-medium bg-purple-500/20 text-purple-300 border border-purple-500/30">All</button>
-                <button data-cat="gradients" class="profile-cat-btn px-2.5 py-1 rounded-lg text-[11px] font-medium text-slate-400 hover:text-slate-200 border border-transparent">Gradients</button>
-                <button data-cat="art" class="profile-cat-btn px-2.5 py-1 rounded-lg text-[11px] font-medium text-slate-400 hover:text-slate-200 border border-transparent">Art & Photos</button>
-              </div>
-            </div>
-
-            <div class="grid grid-cols-2 sm:grid-cols-4 gap-2.5" id="profile-wallpaper-grid">
-              <!-- Rendered via JS -->
-            </div>
-          </div>
-
-          <!-- SECTION 6: CHAT DENSITY & EXPORT/IMPORT -->
-          <div class="p-4 rounded-2xl bg-white/[0.02] border border-white/[0.06] space-y-4">
-            <span class="text-xs font-semibold text-slate-300 uppercase tracking-wider block">Chat Density & Theme Backup</span>
-            
-            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-              <!-- Density -->
-              <div class="flex items-center gap-4">
-                <label class="flex items-center gap-2 text-xs text-slate-300 cursor-pointer">
-                  <input type="radio" name="profile-density" value="comfortable" id="profile-density-comfortable" checked class="accent-purple-500" />
-                  <span>Comfortable Spacing</span>
+              <div class="flex items-center gap-2">
+                <label class="text-xs text-slate-300 flex items-center gap-1 cursor-pointer">
+                  <input type="radio" name="profile-send-radio" value="enter" id="profile-send-enter" checked class="w-3.5 h-3.5 text-purple-600" />
+                  <span>Enter</span>
                 </label>
-                <label class="flex items-center gap-2 text-xs text-slate-300 cursor-pointer">
-                  <input type="radio" name="profile-density" value="compact" id="profile-density-compact" class="accent-purple-500" />
-                  <span>Compact (Desktop)</span>
+                <label class="text-xs text-slate-300 flex items-center gap-1 cursor-pointer ml-1">
+                  <input type="radio" name="profile-send-radio" value="ctrl_enter" id="profile-send-ctrl-enter" class="w-3.5 h-3.5 text-purple-600" />
+                  <span>Ctrl+Enter</span>
                 </label>
-              </div>
-
-              <!-- Export / Import Buttons -->
-              <div class="flex items-center gap-2 justify-end">
-                <button 
-                  id="profile-export-theme-btn" 
-                  type="button" 
-                  class="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-white/5 hover:bg-white/10 border border-white/10 text-xs font-medium text-slate-200 transition-colors"
-                >
-                  <Copy class="w-3.5 h-3.5 text-purple-400" />
-                  <span>Copy Theme JSON</span>
-                </button>
-                <button 
-                  id="profile-import-theme-btn" 
-                  type="button" 
-                  class="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-white/5 hover:bg-white/10 border border-white/10 text-xs font-medium text-slate-200 transition-colors"
-                >
-                  <Download class="w-3.5 h-3.5 text-indigo-400" />
-                  <span>Import</span>
-                </button>
               </div>
             </div>
           </div>
         </div>
 
-        <!-- Data & Backup Section -->
-        <div class="rounded-3xl bg-white/[0.02] border border-white/[0.08] p-5 sm:p-6 space-y-4">
-          <h2 class="text-xs font-bold text-slate-400 uppercase tracking-wider">Data & Backup</h2>
+      </div>
 
+      <!-- ========================================== -->
+      <!-- VIEW 4: AI ENGINE & MODELS SUB-PAGE       -->
+      <!-- ========================================== -->
+      <div id="view-ai-engine" class="hidden space-y-5">
+        
+        <!-- Header with Back Button -->
+        <div class="flex items-center justify-between pb-1 border-b border-white/[0.06]">
+          <button 
+            type="button" 
+            id="btn-back-from-ai"
+            class="flex items-center gap-2 text-white/90 hover:text-white font-medium text-sm py-1.5 px-2 rounded-xl hover:bg-white/[0.05] transition cursor-pointer"
+          >
+            <ArrowLeft class="w-5 h-5" />
+            <span>Settings</span>
+          </button>
+        </div>
+
+        <div>
+          <h1 class="text-xl font-bold text-white tracking-tight">AI Engine & Models</h1>
+          <p class="text-xs text-slate-400 mt-0.5">Configure models, custom proxy endpoints and generation parameters</p>
+        </div>
+
+        <!-- Status Card -->
+        <div class="rounded-3xl bg-[#141824] border border-white/[0.06] p-5 shadow-xl space-y-4">
           <div class="flex items-center gap-3">
+            <div class="w-10 h-10 rounded-2xl bg-emerald-500/20 border border-emerald-500/30 flex items-center justify-center text-emerald-400 shrink-0">
+              <Sparkles class="w-5 h-5" />
+            </div>
+            <div>
+              <p class="text-sm font-bold text-white">AI Engine Connected & Ready</p>
+              <p class="text-xs text-slate-400">Low-latency streaming enabled via Cloudflare Workers</p>
+            </div>
+          </div>
+
+          <div class="grid grid-cols-2 gap-3 pt-2">
+            <div class="p-3 rounded-2xl bg-white/[0.02] border border-white/[0.06]">
+              <span class="text-[10px] text-slate-400 uppercase font-semibold block">Active Provider</span>
+              <span class="text-xs font-bold text-purple-300 mt-0.5 block truncate">custom-proxy</span>
+            </div>
+            <div class="p-3 rounded-2xl bg-white/[0.02] border border-white/[0.06]">
+              <span class="text-[10px] text-slate-400 uppercase font-semibold block">Active Model</span>
+              <span class="text-xs font-bold text-purple-300 mt-0.5 block truncate">qwen3.8-max</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Parameters Card -->
+        <div class="rounded-3xl bg-[#141824] border border-white/[0.06] p-5 shadow-xl space-y-4">
+          <div class="text-xs font-bold text-white uppercase tracking-wider">Engine Configuration</div>
+
+          <div>
+            <label class="block text-xs font-medium text-slate-300 mb-1.5">Custom Endpoint URL</label>
+            <input 
+              type="text" 
+              id="ai-cfg-endpoint"
+              placeholder="http://localhost:8000/v1" 
+              value="http://localhost:8000/v1"
+              class="w-full px-3.5 py-2.5 rounded-xl bg-white/[0.04] border border-white/10 text-xs font-mono text-white outline-none focus:border-purple-500"
+            />
+          </div>
+
+          <div class="grid grid-cols-2 gap-3">
+            <div>
+              <label class="block text-xs font-medium text-slate-300 mb-1.5">Model Name</label>
+              <input 
+                type="text" 
+                id="ai-cfg-model"
+                value="qwen3.8-max"
+                class="w-full px-3.5 py-2 rounded-xl bg-white/[0.04] border border-white/10 text-xs font-medium text-white outline-none focus:border-purple-500"
+              />
+            </div>
+            <div>
+              <label class="block text-xs font-medium text-slate-300 mb-1.5">Temperature</label>
+              <input 
+                type="number" 
+                id="ai-cfg-temp"
+                step="0.05"
+                min="0.1"
+                max="2.0"
+                value="0.85"
+                class="w-full px-3.5 py-2 rounded-xl bg-white/[0.04] border border-white/10 text-xs font-medium text-white outline-none focus:border-purple-500"
+              />
+            </div>
+          </div>
+
+          <div class="pt-2">
+            <button 
+              type="button" 
+              id="btn-save-ai-cfg"
+              class="w-full py-2.5 rounded-xl bg-purple-600 hover:bg-purple-500 text-white text-xs font-semibold transition active:scale-95 cursor-pointer shadow-md shadow-purple-900/40"
+            >
+              Save Engine Settings
+            </button>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- ========================================== -->
+      <!-- VIEW 5: VOICE & SPEECH SUB-PAGE           -->
+      <!-- ========================================== -->
+      <div id="view-voice" class="hidden space-y-5">
+        
+        <!-- Header with Back Button -->
+        <div class="flex items-center justify-between pb-1 border-b border-white/[0.06]">
+          <button 
+            type="button" 
+            id="btn-back-from-voice"
+            class="flex items-center gap-2 text-white/90 hover:text-white font-medium text-sm py-1.5 px-2 rounded-xl hover:bg-white/[0.05] transition cursor-pointer"
+          >
+            <ArrowLeft class="w-5 h-5" />
+            <span>Settings</span>
+          </button>
+        </div>
+
+        <div>
+          <h1 class="text-xl font-bold text-white tracking-tight">Voice & Speech</h1>
+          <p class="text-xs text-slate-400 mt-0.5">Microphone input, voice narration and speech models</p>
+        </div>
+
+        <div class="rounded-3xl bg-[#141824] border border-white/[0.06] p-5 shadow-xl space-y-4">
+          <div class="text-xs font-bold text-white uppercase tracking-wider">Speech-to-Text (STT)</div>
+          
+          <div class="p-3.5 rounded-2xl bg-white/[0.02] border border-white/[0.06] flex items-center justify-between">
+            <div class="space-y-0.5">
+              <span class="text-xs font-medium text-white block">Microphone Engine</span>
+              <span class="text-[11px] text-slate-400">Cloudflare Workers AI Whisper</span>
+            </div>
+            <span class="text-xs font-semibold text-emerald-400 bg-emerald-500/10 px-2.5 py-1 rounded-lg border border-emerald-500/20">
+              Active
+            </span>
+          </div>
+
+          <div>
+            <label class="block text-xs font-medium text-slate-300 mb-1.5">Custom STT Transcription URL</label>
+            <input 
+              type="text" 
+              placeholder="http://localhost:8000/v1/audio/transcriptions" 
+              value="http://localhost:8000/v1/audio/transcriptions"
+              class="w-full px-3.5 py-2.5 rounded-xl bg-white/[0.04] border border-white/10 text-xs font-mono text-white outline-none focus:border-purple-500"
+            />
+          </div>
+        </div>
+
+        <div class="rounded-3xl bg-[#141824] border border-white/[0.06] p-5 shadow-xl space-y-4">
+          <div class="text-xs font-bold text-white uppercase tracking-wider">Text-to-Speech (TTS)</div>
+
+          <div class="p-3.5 rounded-2xl bg-white/[0.02] border border-white/[0.06] flex items-center justify-between">
+            <div class="space-y-0.5">
+              <span class="text-xs font-medium text-white block">Voice Narration</span>
+              <span class="text-[11px] text-slate-400">Play spoken lines in character voices</span>
+            </div>
+            <span class="text-xs font-semibold text-purple-300 bg-purple-500/15 px-2.5 py-1 rounded-lg border border-purple-500/30">
+              Ready
+            </span>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- ========================================== -->
+      <!-- VIEW 6: PRIVACY & DATA STORAGE SUB-PAGE   -->
+      <!-- ========================================== -->
+      <div id="view-privacy" class="hidden space-y-5">
+        
+        <!-- Header with Back Button -->
+        <div class="flex items-center justify-between pb-1 border-b border-white/[0.06]">
+          <button 
+            type="button" 
+            id="btn-back-from-privacy"
+            class="flex items-center gap-2 text-white/90 hover:text-white font-medium text-sm py-1.5 px-2 rounded-xl hover:bg-white/[0.05] transition cursor-pointer"
+          >
+            <ArrowLeft class="w-5 h-5" />
+            <span>Settings</span>
+          </button>
+        </div>
+
+        <div>
+          <h1 class="text-xl font-bold text-white tracking-tight">Privacy & Data Storage</h1>
+          <p class="text-xs text-slate-400 mt-0.5">Manage local data, content preferences and backups</p>
+        </div>
+
+        <!-- Account Section -->
+        <div class="rounded-3xl bg-[#141824] border border-white/[0.06] p-5 shadow-xl space-y-3">
+          <h2 class="text-xs font-bold text-white uppercase tracking-wider">Account</h2>
+          
+          <div id="account-status-card" class="flex items-center justify-between p-3.5 rounded-2xl bg-white/[0.02] border border-white/5">
+            <div class="flex items-center gap-3">
+              <div id="account-avatar-pill" class="w-10 h-10 rounded-full bg-purple-600/30 border border-purple-500/40 flex items-center justify-center text-sm font-bold text-purple-200">
+                H
+              </div>
+              <div>
+                <p id="account-name-label" class="text-sm font-semibold text-white">Hossein</p>
+                <p id="account-email-label" class="text-xs text-slate-400">Local Browser Storage</p>
+              </div>
+            </div>
+
+            <div id="account-action-container">
+              <a 
+                href="/auth" 
+                id="btn-auth-link"
+                class="px-3.5 py-1.5 rounded-xl bg-purple-600 hover:bg-purple-500 text-white text-xs font-semibold transition cursor-pointer flex items-center gap-1.5"
+              >
+                <LogIn class="w-3.5 h-3.5" />
+                <span>Sign In</span>
+              </a>
+            </div>
+          </div>
+        </div>
+
+        <!-- Content Preferences Section -->
+        <div class="rounded-3xl bg-[#141824] border border-white/[0.06] p-5 shadow-xl space-y-3">
+          <h2 class="text-xs font-bold text-white uppercase tracking-wider">Content Preferences</h2>
+
+          <div>
+            <label class="block text-xs font-medium text-slate-300 mb-2">Mature Content (NSFW)</label>
+            <div class="grid grid-cols-3 gap-2">
+              <button 
+                type="button" 
+                class="nsfw-opt-btn py-2.5 px-2 rounded-xl border text-center transition cursor-pointer text-xs font-medium"
+                data-mode="show"
+              >
+                Unrestricted
+              </button>
+              <button 
+                type="button" 
+                class="nsfw-opt-btn py-2.5 px-2 rounded-xl border text-center transition cursor-pointer text-xs font-medium"
+                data-mode="blur"
+              >
+                Blur Images
+              </button>
+              <button 
+                type="button" 
+                class="nsfw-opt-btn py-2.5 px-2 rounded-xl border text-center transition cursor-pointer text-xs font-medium"
+                data-mode="hide"
+              >
+                Safe Mode
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Backup & Storage Management -->
+        <div class="rounded-3xl bg-[#141824] border border-white/[0.06] p-5 shadow-xl space-y-4">
+          <h2 class="text-xs font-bold text-white uppercase tracking-wider">Data & Backups</h2>
+
+          <div class="space-y-2">
             <button 
               type="button" 
               id="btn-export-backup"
-              class="flex-1 py-2.5 px-3 rounded-xl bg-white/[0.04] hover:bg-white/[0.08] border border-white/10 text-xs font-medium text-slate-200 hover:text-white transition flex items-center justify-center gap-2 cursor-pointer"
+              class="w-full p-3 rounded-2xl bg-white/[0.02] hover:bg-white/[0.06] border border-white/[0.06] flex items-center justify-between text-left transition cursor-pointer group"
             >
-              <Download class="w-3.5 h-3.5" />
-              <span>Export Backup</span>
+              <div class="flex items-center gap-3">
+                <div class="w-8 h-8 rounded-xl bg-purple-500/20 text-purple-300 flex items-center justify-center">
+                  <Download class="w-4 h-4" />
+                </div>
+                <div>
+                  <span class="text-xs font-semibold text-white block">Export Backup</span>
+                  <span class="text-[11px] text-slate-400">Download personas and chat settings (JSON)</span>
+                </div>
+              </div>
             </button>
+
             <label 
-              class="flex-1 py-2.5 px-3 rounded-xl bg-white/[0.04] hover:bg-white/[0.08] border border-white/10 text-xs font-medium text-slate-200 hover:text-white transition flex items-center justify-center gap-2 cursor-pointer"
+              class="w-full p-3 rounded-2xl bg-white/[0.02] hover:bg-white/[0.06] border border-white/[0.06] flex items-center justify-between text-left transition cursor-pointer group"
             >
-              <Upload class="w-3.5 h-3.5" />
-              <span>Restore Backup</span>
+              <div class="flex items-center gap-3">
+                <div class="w-8 h-8 rounded-xl bg-blue-500/20 text-blue-300 flex items-center justify-center">
+                  <Upload class="w-4 h-4" />
+                </div>
+                <div>
+                  <span class="text-xs font-semibold text-white block">Restore Backup</span>
+                  <span class="text-[11px] text-slate-400">Import saved JSON file</span>
+                </div>
+              </div>
               <input type="file" id="backup-file-input" accept=".json" class="hidden" />
             </label>
-          </div>
 
-          <div class="pt-2 border-t border-white/5 flex justify-end">
             <button 
               type="button" 
               id="btn-clear-cache"
-              class="text-xs text-red-400/80 hover:text-red-300 transition py-1 px-2 rounded-lg hover:bg-red-500/10 cursor-pointer"
+              class="w-full p-3 rounded-2xl bg-red-500/10 hover:bg-red-500/20 border border-red-500/20 flex items-center justify-between text-left transition cursor-pointer group"
             >
-              Clear Local Cache
+              <div class="flex items-center gap-3">
+                <div class="w-8 h-8 rounded-xl bg-red-500/20 text-red-400 flex items-center justify-center">
+                  <Trash class="w-4 h-4" />
+                </div>
+                <div>
+                  <span class="text-xs font-semibold text-red-300 block">Clear Local Cache</span>
+                  <span class="text-[11px] text-red-400/80">Wipe local browser data and restart</span>
+                </div>
+              </div>
             </button>
           </div>
         </div>
@@ -390,13 +911,28 @@ import {
     </div>
   </main>
 
-  <BottomNav />
+  <!-- Confirm Modal -->
+  <div id="confirm-modal" class="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm hidden items-center justify-center p-4">
+    <div class="w-full max-w-sm rounded-3xl bg-[#141824] border border-white/10 p-5 space-y-4 shadow-2xl">
+      <div>
+        <h3 id="confirm-title" class="text-base font-bold text-white">Confirm</h3>
+        <p id="confirm-message" class="text-xs text-slate-400 mt-1 leading-relaxed">Are you sure?</p>
+      </div>
+      <div class="flex items-center justify-end gap-2 pt-2">
+        <button id="confirm-cancel" type="button" class="px-4 py-2 rounded-xl bg-white/5 hover:bg-white/10 text-xs font-semibold text-slate-300 cursor-pointer transition">
+          Cancel
+        </button>
+        <button id="confirm-ok" type="button" class="px-4 py-2 rounded-xl bg-red-600 hover:bg-red-500 text-xs font-semibold text-white cursor-pointer transition shadow-md shadow-red-950/50">
+          Delete
+        </button>
+      </div>
+    </div>
+  </div>
 
   <!-- Toast Notification Container -->
-  <div id="toast-container" class="fixed bottom-20 left-1/2 -translate-x-1/2 z-50 flex flex-col gap-2 pointer-events-none"></div>
+  <div id="toast-container" class="fixed bottom-24 left-1/2 -translate-x-1/2 z-50 flex flex-col items-center gap-2 pointer-events-none w-full max-w-xs"></div>
 
-  <!-- Custom Confirmation Modal Container -->
-  <div id="modal-container" class="fixed inset-0 z-[10000] hidden items-center justify-center p-4 bg-black/75 backdrop-blur-md"></div>
+  <BottomNav activeNav="persona" />
 </Layout>
 
 <script>
@@ -424,10 +960,10 @@ import {
 
     const toast = document.createElement('div');
     const colorClass = type === 'success' 
-      ? 'border-emerald-500/40 text-emerald-300 bg-emerald-950/80' 
+      ? 'border-emerald-500/40 text-emerald-300 bg-emerald-950/90' 
       : type === 'warning'
-      ? 'border-amber-500/40 text-amber-300 bg-amber-950/80'
-      : 'border-purple-500/40 text-purple-200 bg-[#0e1224]/90';
+      ? 'border-amber-500/40 text-amber-300 bg-amber-950/90'
+      : 'border-purple-500/40 text-purple-200 bg-[#141824]/95';
 
     toast.className = `px-4 py-2 rounded-2xl border ${colorClass} backdrop-blur-lg text-xs font-semibold shadow-xl transition-all duration-300 opacity-0 translate-y-2 pointer-events-auto`;
     toast.textContent = message;
@@ -445,43 +981,37 @@ import {
 
   function showConfirm(title: string, message: string): Promise<boolean> {
     return new Promise((resolve) => {
-      const container = document.getElementById('modal-container');
-      if (!container) {
+      const modal = document.getElementById('confirm-modal');
+      const titleEl = document.getElementById('confirm-title');
+      const msgEl = document.getElementById('confirm-message');
+      const btnCancel = document.getElementById('confirm-cancel');
+      const btnOk = document.getElementById('confirm-ok');
+
+      if (!modal || !titleEl || !msgEl || !btnCancel || !btnOk) {
         resolve(false);
         return;
       }
 
-      container.innerHTML = `
-        <div class="w-full max-w-sm rounded-3xl bg-[#0e1224]/95 border border-white/10 p-6 shadow-2xl text-left">
-          <h3 class="text-sm font-bold text-white mb-2">${title}</h3>
-          <p class="text-xs text-slate-300 leading-relaxed mb-5">${message}</p>
-          <div class="flex items-center justify-end gap-2">
-            <button id="modal-cancel-btn" type="button" class="px-3.5 py-1.5 rounded-xl bg-white/5 hover:bg-white/10 text-xs text-slate-300 transition cursor-pointer">
-              Cancel
-            </button>
-            <button id="modal-confirm-btn" type="button" class="px-4 py-1.5 rounded-xl bg-red-600 hover:bg-red-500 text-xs font-semibold text-white transition cursor-pointer">
-              Confirm
-            </button>
-          </div>
-        </div>
-      `;
+      titleEl.textContent = title;
+      msgEl.textContent = message;
+      modal.classList.remove('hidden');
+      modal.classList.add('flex');
 
-      container.classList.remove('hidden');
-      container.classList.add('flex');
-
-      const cleanup = (val: boolean) => {
-        container.classList.add('hidden');
-        container.classList.remove('flex');
-        container.innerHTML = '';
-        resolve(val);
+      const cleanup = () => {
+        modal.classList.add('hidden');
+        modal.classList.remove('flex');
+        btnCancel.removeEventListener('click', onCancel);
+        btnOk.removeEventListener('click', onOk);
       };
 
-      container.querySelector('#modal-cancel-btn')?.addEventListener('click', () => cleanup(false));
-      container.querySelector('#modal-confirm-btn')?.addEventListener('click', () => cleanup(true));
+      const onCancel = () => { cleanup(); resolve(false); };
+      const onOk = () => { cleanup(); resolve(true); };
+
+      btnCancel.addEventListener('click', onCancel);
+      btnOk.addEventListener('click', onOk);
     });
   }
 
-  // Initial Load & Migration
   function loadPersonas() {
     try {
       const raw = localStorage.getItem(STORAGE_KEY_PERSONAS);
@@ -491,53 +1021,67 @@ import {
     } catch {}
 
     if (!Array.isArray(personas) || personas.length === 0) {
-      // Migrate from old single persona if present
-      let initialName = '';
-      let initialBio = '';
-      let initialAvatar = '';
-      try {
-        const oldRaw = localStorage.getItem(STORAGE_KEY_ACTIVE);
-        if (oldRaw) {
-          const old = JSON.parse(oldRaw);
-          if (old.name && old.name !== 'Traveler') initialName = old.name;
-          initialBio = old.bio || old.description || '';
-          initialAvatar = old.avatar || '';
+      personas = [
+        {
+          id: 'p_hossein_default',
+          name: 'Hossein',
+          age: '26',
+          pronouns: 'He/Him',
+          avatar: '',
+          bio: 'Lead system engineer, software designer, and tech enthusiast.',
+          directives: 'Speak naturally, keep descriptions immersive and grounded.',
+          isDefault: true
         }
-      } catch {}
-
-      personas = [{
-        id: 'p_' + Date.now(),
-        name: initialName,
-        age: '',
-        pronouns: '',
-        avatar: initialAvatar,
-        bio: initialBio,
-        directives: '',
-        isDefault: true
-      }];
+      ];
       savePersonas();
     }
 
-    // Ensure at least one default persona exists
-    if (!personas.some(p => p.isDefault)) {
-      personas[0].isDefault = true;
-    }
-
-    // Determine current persona from default
-    const activePersona = personas.find(p => p.isDefault) || personas[0];
-    currentPersonaId = activePersona.id;
+    const defaultPersona = personas.find(p => p.isDefault) || personas[0];
+    currentPersonaId = defaultPersona.id;
   }
 
   function savePersonas() {
     localStorage.setItem(STORAGE_KEY_PERSONAS, JSON.stringify(personas));
-    // Keep active persona synced
-    const active = personas.find(p => p.isDefault) || personas.find(p => p.id === currentPersonaId) || personas[0];
+    const active = personas.find(p => p.id === currentPersonaId) || personas.find(p => p.isDefault) || personas[0];
     if (active) {
       localStorage.setItem(STORAGE_KEY_ACTIVE, JSON.stringify(active));
     }
+    updateHubProfileSummary();
   }
 
-  // Render Carousel List
+  function updateHubProfileSummary() {
+    const active = personas.find(p => p.id === currentPersonaId) || personas.find(p => p.isDefault) || personas[0];
+    const hubName = document.getElementById('hub-user-name');
+    const hubHandle = document.getElementById('hub-user-handle');
+    const hubBadge = document.getElementById('hub-persona-status-badge');
+    const hubCountPill = document.getElementById('hub-personas-count-pill');
+    const hubSubtitle = document.getElementById('hub-persona-subtitle');
+    const hubAvatarImg = document.getElementById('hub-avatar-img') as HTMLImageElement;
+    const hubAvatarPlaceholder = document.getElementById('hub-avatar-placeholder');
+
+    if (active) {
+      if (hubName) hubName.textContent = active.name || 'Hossein';
+      if (hubHandle) hubHandle.textContent = `@${(active.name || 'user').toLowerCase().replace(/\s+/g, '')} • Active Persona`;
+      if (hubSubtitle) hubSubtitle.textContent = `Active: ${active.name || 'Hossein'} • ${personas.length} profiles`;
+      
+      if (hubAvatarImg && hubAvatarPlaceholder) {
+        if (active.avatar) {
+          hubAvatarImg.src = active.avatar;
+          hubAvatarImg.classList.remove('hidden');
+          hubAvatarPlaceholder.classList.add('hidden');
+        } else {
+          hubAvatarImg.src = '';
+          hubAvatarImg.classList.add('hidden');
+          hubAvatarPlaceholder.classList.remove('hidden');
+          hubAvatarPlaceholder.textContent = (active.name || 'H').charAt(0).toUpperCase();
+        }
+      }
+    }
+
+    if (hubBadge) hubBadge.textContent = `${personas.length} ${personas.length === 1 ? 'Persona' : 'Personas'} Configured`;
+    if (hubCountPill) hubCountPill.textContent = String(personas.length);
+  }
+
   function renderPillList() {
     const list = document.getElementById('personas-pill-list');
     const countLabel = document.getElementById('personas-count-label');
@@ -592,7 +1136,6 @@ import {
         const id = btn.getAttribute('data-id');
         if (id) {
           currentPersonaId = id;
-          // Instantly activate the selected persona!
           personas.forEach(x => {
             x.isDefault = (x.id === currentPersonaId);
           });
@@ -622,7 +1165,6 @@ import {
     const avatarImg = document.getElementById('persona-avatar-img') as HTMLImageElement;
     const avatarPlaceholder = document.getElementById('persona-avatar-placeholder');
     const removeBtn = document.getElementById('btn-remove-avatar');
-    const defaultBtn = document.getElementById('btn-set-default');
     const deleteBtn = document.getElementById('btn-delete-persona');
 
     if (nameInput) nameInput.value = p.name || '';
@@ -669,6 +1211,78 @@ import {
     loadPersonas();
     renderPillList();
     fillForm();
+    updateHubProfileSummary();
+
+    // ==========================================
+    // Telegram-Style View Switcher (SPA Hub)
+    // ==========================================
+    function showView(targetId: string) {
+      const views = ['view-hub', 'view-personas', 'view-appearance', 'view-ai-engine', 'view-voice', 'view-privacy'];
+      views.forEach(id => {
+        const el = document.getElementById(id);
+        if (!el) return;
+        if (id === targetId) {
+          el.classList.remove('hidden');
+          window.scrollTo({ top: 0, behavior: 'instant' });
+        } else {
+          el.classList.add('hidden');
+        }
+      });
+
+      const hashMap: Record<string, string> = {
+        'view-hub': '',
+        'view-personas': '#personas',
+        'view-appearance': '#appearance',
+        'view-ai-engine': '#ai-engine',
+        'view-voice': '#voice',
+        'view-privacy': '#privacy'
+      };
+      const targetHash = hashMap[targetId] || '';
+      if (window.location.hash !== targetHash) {
+        history.pushState(null, '', window.location.pathname + targetHash);
+      }
+    }
+
+    function syncFromHash() {
+      const h = window.location.hash;
+      if (h === '#personas') showView('view-personas');
+      else if (h === '#appearance' || h === '#chat-settings') showView('view-appearance');
+      else if (h === '#ai-engine') showView('view-ai-engine');
+      else if (h === '#voice') showView('view-voice');
+      else if (h === '#privacy' || h === '#data') showView('view-privacy');
+      else showView('view-hub');
+    }
+
+    window.addEventListener('popstate', syncFromHash);
+    syncFromHash();
+
+    // Hub Menu Item Clicks
+    document.getElementById('hub-item-personas')?.addEventListener('click', () => showView('view-personas'));
+    document.getElementById('hub-item-appearance')?.addEventListener('click', () => showView('view-appearance'));
+    document.getElementById('hub-item-ai')?.addEventListener('click', () => showView('view-ai-engine'));
+    document.getElementById('hub-item-voice')?.addEventListener('click', () => showView('view-voice'));
+    document.getElementById('hub-item-privacy')?.addEventListener('click', () => showView('view-privacy'));
+    document.getElementById('hub-item-data')?.addEventListener('click', () => showView('view-privacy'));
+    document.getElementById('hub-avatar-trigger')?.addEventListener('click', () => showView('view-personas'));
+
+    document.getElementById('hub-item-devices')?.addEventListener('click', () => {
+      showToast('Active device: Mobile Web Client (Cloudflare Edge)', 'info');
+    });
+
+    document.getElementById('hub-item-power')?.addEventListener('click', () => {
+      showToast('Power saving: Standard performance active', 'info');
+    });
+
+    document.getElementById('hub-item-language')?.addEventListener('click', () => {
+      showToast('Language: English (US)', 'info');
+    });
+
+    // Sub-Page Back Buttons
+    document.getElementById('btn-back-from-personas')?.addEventListener('click', () => showView('view-hub'));
+    document.getElementById('btn-back-from-appearance')?.addEventListener('click', () => showView('view-hub'));
+    document.getElementById('btn-back-from-ai')?.addEventListener('click', () => showView('view-hub'));
+    document.getElementById('btn-back-from-voice')?.addEventListener('click', () => showView('view-hub'));
+    document.getElementById('btn-back-from-privacy')?.addEventListener('click', () => showView('view-hub'));
 
     // Master Persona Enable/Disable Toggle
     const masterToggle = document.getElementById('persona-master-toggle') as HTMLInputElement;
@@ -703,26 +1317,6 @@ import {
         showToast(isEnabled ? 'Personas enabled in chats' : 'Personas disabled. Using scenario default', isEnabled ? 'success' : 'info');
       });
     }
-
-    // Tab Switcher
-    const tabPersonas = document.getElementById('tab-btn-personas');
-    const tabSettings = document.getElementById('tab-btn-settings');
-    const viewPersonas = document.getElementById('tab-view-personas');
-    const viewSettings = document.getElementById('tab-view-settings');
-
-    tabPersonas?.addEventListener('click', () => {
-      tabPersonas.className = 'flex-1 py-2.5 px-4 rounded-xl text-sm font-semibold transition cursor-pointer bg-purple-600 text-white shadow-lg shadow-purple-900/40';
-      tabSettings!.className = 'flex-1 py-2.5 px-4 rounded-xl text-sm font-semibold transition cursor-pointer text-slate-400 hover:text-white hover:bg-white/[0.04]';
-      viewPersonas?.classList.remove('hidden');
-      viewSettings?.classList.add('hidden');
-    });
-
-    tabSettings?.addEventListener('click', () => {
-      tabSettings.className = 'flex-1 py-2.5 px-4 rounded-xl text-sm font-semibold transition cursor-pointer bg-purple-600 text-white shadow-lg shadow-purple-900/40';
-      tabPersonas!.className = 'flex-1 py-2.5 px-4 rounded-xl text-sm font-semibold transition cursor-pointer text-slate-400 hover:text-white hover:bg-white/[0.04]';
-      viewSettings?.classList.remove('hidden');
-      viewPersonas?.classList.add('hidden');
-    });
 
     // Avatar Click Zone
     const avatarZone = document.getElementById('avatar-click-zone');
@@ -774,12 +1368,12 @@ import {
         if (pillText) {
           pillText.textContent = nameInput.value.trim() || 'Untitled';
         }
+        updateHubProfileSummary();
       }
     });
 
     // New Persona
     document.getElementById('btn-new-persona')?.addEventListener('click', () => {
-      // Deactivate others
       personas.forEach(x => { x.isDefault = false; });
       const newP: Persona = {
         id: 'p_' + Date.now(),
@@ -789,7 +1383,7 @@ import {
         avatar: '',
         bio: '',
         directives: '',
-        isDefault: true // Immediately active!
+        isDefault: true
       };
       personas.push(newP);
       currentPersonaId = newP.id;
@@ -818,7 +1412,6 @@ import {
       p.bio = aboutInput?.value.trim() || '';
       p.directives = directivesInput?.value.trim() || '';
 
-      // Ensure active
       personas.forEach(x => { x.isDefault = (x.id === currentPersonaId); });
 
       savePersonas();
@@ -953,378 +1546,278 @@ import {
       window.location.reload();
     });
 
+    // AI Engine settings save
+    document.getElementById('btn-save-ai-cfg')?.addEventListener('click', () => {
+      showToast('AI engine settings saved', 'success');
+    });
+
     // ==========================================
-    // PROFILE CHAT APPEARANCE & THEME CONTROLLER (STEP 2 ENGINE)
+    // Profile Chat Settings (Telegram Suite)
     // ==========================================
-    function initProfileThemeSection() {
-      if (!window.AetheriaTheme) return;
+    function initProfileChatSettings() {
+      let settings = { ...(window.AetheriaTheme?.getSettings?.(null) || {}) };
 
-      const pPreviewImg = document.getElementById('profile-preview-image');
-      const pPreviewDimmer = document.getElementById('profile-preview-dimmer');
-      const pPreviewPattern = document.getElementById('profile-preview-pattern');
-      const pPreviewChar = document.getElementById('profile-preview-char-bubble');
-      const pPreviewUser = document.getElementById('profile-preview-user-bubble');
+      const previewViewport = document.getElementById('profile-preview-viewport');
+      const previewImage = document.getElementById('profile-preview-image');
+      const previewDimmer = document.getElementById('profile-preview-dimmer');
+      const previewPattern = document.getElementById('profile-preview-pattern');
+      const previewCharBubble = document.getElementById('profile-preview-char-bubble');
+      const previewUserBubble = document.getElementById('profile-preview-user-bubble');
+      const previewCharName = document.getElementById('profile-preview-char-name');
 
-      const pFontSizeSlider = document.getElementById('profile-font-size-slider');
-      const pFontSizeBadge = document.getElementById('profile-font-size-badge');
-      const pRadiusSlider = document.getElementById('profile-radius-slider');
-      const pRadiusBadge = document.getElementById('profile-radius-badge');
+      const fontSlider = document.getElementById('profile-font-slider') as HTMLInputElement | null;
+      const fontVal = document.getElementById('profile-font-val');
+      const radiusSlider = document.getElementById('profile-radius-slider') as HTMLInputElement | null;
+      const radiusVal = document.getElementById('profile-radius-val');
 
-      const pBlurToggle = document.getElementById('profile-blur-toggle');
-      const pBlurDot = document.getElementById('profile-blur-dot');
-      const pDimmerSlider = document.getElementById('profile-dimmer-slider');
-      const pDimmerBadge = document.getElementById('profile-dimmer-badge');
+      const baseModeButtons = document.querySelectorAll('#profile-base-mode-group .profile-mode-btn');
+      const nameColorPalette = document.getElementById('profile-name-color-palette');
+      const nameColorHex = document.getElementById('profile-name-color-hex');
+      const presetsGrid = document.getElementById('profile-presets-grid');
+      const wallpapersGrid = document.getElementById('profile-wallpapers-grid');
 
-      const pPatOpacitySlider = document.getElementById('profile-pattern-opacity-slider');
-      const pPatOpacityBadge = document.getElementById('profile-pattern-opacity-badge');
+      const photoFileInput = document.getElementById('profile-photo-file') as HTMLInputElement | null;
+      const photoBtn = document.getElementById('profile-photo-btn');
+      const soundToggle = document.getElementById('profile-sound-toggle');
+      const sendEnter = document.getElementById('profile-send-enter') as HTMLInputElement | null;
+      const sendCtrlEnter = document.getElementById('profile-send-ctrl-enter') as HTMLInputElement | null;
 
-      const pPresetsGrid = document.getElementById('profile-theme-presets-grid');
-      const pGradGrid = document.getElementById('profile-bubble-gradients-grid');
-      const pWallpaperGrid = document.getElementById('profile-wallpaper-grid');
-      const pResetBtn = document.getElementById('profile-theme-reset-btn');
+      function updatePreview() {
+        if (!previewViewport) return;
+        const baseMode = settings.baseMode || 'dark';
 
-      let currentProfileTheme = { ...window.AetheriaTheme.getSettings() };
-
-      function updateProfilePreview(theme) {
-        if (!theme) return;
-        const wpVal = theme.chatWallpaper || theme.chatBg || 'linear-gradient(to bottom, #090a12, #0e1122, #07080f)';
-        if (pPreviewImg) {
-          if (wpVal.startsWith('http') || wpVal.startsWith('data:')) {
-            pPreviewImg.style.backgroundImage = `url("${wpVal}")`;
-            pPreviewImg.style.backgroundSize = 'cover';
-            pPreviewImg.style.backgroundPosition = 'center';
-          } else {
-            pPreviewImg.style.background = wpVal;
-            pPreviewImg.style.backgroundSize = '';
-            pPreviewImg.style.backgroundPosition = '';
+        if (baseMode === 'amoled') {
+          previewViewport.style.backgroundColor = '#000000';
+          if (previewCharBubble) {
+            previewCharBubble.style.background = '#09090b';
+            previewCharBubble.style.borderColor = 'rgba(255, 255, 255, 0.08)';
+            previewCharBubble.style.color = '#f1f5f9';
           }
-          pPreviewImg.style.filter = theme.chatBlur ? 'blur(12px)' : 'none';
-        }
-
-        if (pPreviewDimmer) {
-          pPreviewDimmer.style.opacity = (theme.chatDim !== undefined ? theme.chatDim : 0.20).toString();
-        }
-
-        if (pPreviewPattern) {
-          const patId = theme.chatPatternId || 'telegram-doodles';
-          const patObj = window.AetheriaTheme.DOODLE_PATTERNS[patId] || window.AetheriaTheme.DOODLE_PATTERNS['telegram-doodles'];
-          pPreviewPattern.style.backgroundImage = patObj.pattern;
-          pPreviewPattern.style.backgroundSize = patObj.patternSize;
-          pPreviewPattern.style.opacity = (theme.chatPatternOpacity !== undefined ? theme.chatPatternOpacity : 0.18).toString();
-        }
-
-        if (pPreviewChar) {
-          pPreviewChar.style.backgroundColor = theme.charBubbleBg || '#101426';
-          pPreviewChar.style.borderRadius = `${theme.bubbleRadius || 16}px`;
-          pPreviewChar.style.fontSize = `${theme.fontSize || 16}px`;
-        }
-
-        if (pPreviewUser) {
-          const userBg = theme.userBubbleBg || 'linear-gradient(135deg, #9333ea 0%, #6366f1 100%)';
-          if (userBg.startsWith('linear-gradient')) {
-            pPreviewUser.style.background = userBg;
-          } else {
-            pPreviewUser.style.backgroundColor = userBg;
+        } else if (baseMode === 'day') {
+          previewViewport.style.backgroundColor = '#e2e8f0';
+          if (previewCharBubble) {
+            previewCharBubble.style.background = '#ffffff';
+            previewCharBubble.style.borderColor = '#cbd5e1';
+            previewCharBubble.style.color = '#0f172a';
           }
-          pPreviewUser.style.borderRadius = `${theme.bubbleRadius || 16}px`;
-          pPreviewUser.style.fontSize = `${theme.fontSize || 16}px`;
-        }
-      }
-
-      function syncProfileInputs() {
-        currentProfileTheme = { ...window.AetheriaTheme.getSettings() };
-        updateProfilePreview(currentProfileTheme);
-
-        if (pFontSizeSlider) pFontSizeSlider.value = currentProfileTheme.fontSize || 16;
-        if (pFontSizeBadge) pFontSizeBadge.textContent = `${currentProfileTheme.fontSize || 16}px`;
-
-        if (pRadiusSlider) pRadiusSlider.value = currentProfileTheme.bubbleRadius !== undefined ? currentProfileTheme.bubbleRadius : 16;
-        if (pRadiusBadge) pRadiusBadge.textContent = `${currentProfileTheme.bubbleRadius !== undefined ? currentProfileTheme.bubbleRadius : 16}px`;
-
-        if (pBlurToggle && pBlurDot) {
-          if (currentProfileTheme.chatBlur) {
-            pBlurToggle.classList.add('bg-purple-500/20', 'border-purple-500/40', 'text-purple-200');
-            pBlurDot.classList.add('bg-purple-400');
-            pBlurDot.classList.remove('bg-slate-500');
-          } else {
-            pBlurToggle.classList.remove('bg-purple-500/20', 'border-purple-500/40', 'text-purple-200');
-            pBlurDot.classList.remove('bg-purple-400');
-            pBlurDot.classList.add('bg-slate-500');
-          }
-        }
-
-        if (pDimmerSlider && pDimmerBadge) {
-          const dimPct = Math.round((currentProfileTheme.chatDim !== undefined ? currentProfileTheme.chatDim : 0.20) * 100);
-          pDimmerSlider.value = dimPct;
-          pDimmerBadge.textContent = `${dimPct}%`;
-        }
-
-        if (pPatOpacitySlider && pPatOpacityBadge) {
-          const opPct = Math.round((currentProfileTheme.chatPatternOpacity !== undefined ? currentProfileTheme.chatPatternOpacity : 0.18) * 100);
-          pPatOpacitySlider.value = opPct;
-          pPatOpacityBadge.textContent = `${opPct}%`;
-        }
-
-        // Doodle pills
-        document.querySelectorAll('.profile-doodle-btn').forEach(btn => {
-          if (btn.getAttribute('data-pat-id') === (currentProfileTheme.chatPatternId || 'telegram-doodles')) {
-            btn.classList.add('bg-purple-500/20', 'border-purple-500/40', 'text-purple-300');
-          } else {
-            btn.classList.remove('bg-purple-500/20', 'border-purple-500/40', 'text-purple-300');
-          }
-        });
-
-        // Density radio
-        if (currentProfileTheme.chatDensity === 'compact') {
-          const rComp = document.getElementById('profile-density-compact');
-          if (rComp) rComp.checked = true;
         } else {
-          const rComf = document.getElementById('profile-density-comfortable');
-          if (rComf) rComf.checked = true;
+          previewViewport.style.backgroundColor = '#090a12';
+          if (previewCharBubble) {
+            previewCharBubble.style.background = settings.charBubbleBg || '#101426';
+            previewCharBubble.style.borderColor = 'rgba(255, 255, 255, 0.08)';
+            previewCharBubble.style.color = '#f1f5f9';
+          }
         }
 
-        renderProfilePresets();
-        renderProfileGradients();
-        renderProfileWallpapers('all');
-      }
+        if (previewImage) {
+          previewImage.style.background = settings.chatWallpaper || 'linear-gradient(to bottom, #090a12, #0e1122, #07080f)';
+          previewImage.style.filter = settings.chatBlur ? 'blur(14px)' : 'none';
+        }
 
-      function renderProfilePresets() {
-        if (!pPresetsGrid) return;
-        pPresetsGrid.innerHTML = '';
+        if (previewDimmer) {
+          previewDimmer.style.opacity = String(settings.chatDim !== undefined ? settings.chatDim : 0.20);
+        }
 
-        window.AetheriaTheme.PRESETS.forEach(preset => {
-          const isSelected = currentProfileTheme.themeId === preset.id;
-          const card = document.createElement('button');
-          card.type = 'button';
-          card.className = `relative p-2.5 rounded-2xl border text-left flex flex-col justify-between transition-all duration-200 group overflow-hidden ${
-            isSelected 
-              ? 'bg-purple-500/15 border-purple-500 shadow-md shadow-purple-950/30 ring-1 ring-purple-500/40' 
-              : 'bg-white/[0.02] border-white/10 hover:border-white/20 hover:bg-white/[0.04]'
-          }`;
+        if (previewPattern) {
+          const patId = settings.chatPatternId || 'telegram-doodles';
+          const patObj = (window as any).AetheriaTheme?.DOODLE_PATTERNS?.[patId];
+          if (patObj && patObj.pattern !== 'none') {
+            previewPattern.style.backgroundImage = patObj.pattern;
+            previewPattern.style.backgroundSize = patObj.patternSize;
+            previewPattern.style.opacity = String(settings.chatPatternOpacity !== undefined ? settings.chatPatternOpacity : 0.18);
+          } else {
+            previewPattern.style.backgroundImage = 'none';
+            previewPattern.style.opacity = '0';
+          }
+        }
 
-          card.innerHTML = `
-            <div class="h-14 w-full rounded-xl p-1.5 mb-2 relative overflow-hidden flex flex-col justify-between" style="background: ${preset.chatWallpaper};">
-              <div class="w-10 h-2.5 rounded-md shadow-sm" style="background: ${preset.charBubbleBg}; border: 1px solid rgba(255,255,255,0.1);"></div>
-              <div class="w-12 h-3 rounded-md shadow-sm self-end" style="background: ${preset.userBubbleBg};"></div>
-              ${isSelected ? `
-                <div class="absolute top-1 right-1 w-3.5 h-3.5 rounded-full bg-purple-500 text-white flex items-center justify-center shadow-md">
-                  <svg class="w-2 h-2" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="3"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg>
-                </div>
-              ` : ''}
-            </div>
-            <div>
-              <div class="flex items-center gap-1.5">
-                <span class="w-2 h-2 rounded-full" style="background-color: ${preset.accent};"></span>
-                <p class="text-xs font-semibold text-slate-100 truncate">${preset.name}</p>
-              </div>
-            </div>
-          `;
+        const nameColor = settings.nameColor || '#a855f7';
+        if (previewCharName) previewCharName.style.color = nameColor;
+        if (nameColorHex) nameColorHex.textContent = nameColor.toUpperCase();
 
-          card.addEventListener('click', () => {
-            window.AetheriaTheme.saveSettings({
-              themeId: preset.id,
-              accent: preset.accent,
-              accentRgb: preset.accentRgb,
-              userBubbleBg: preset.userBubbleBg,
-              charBubbleBg: preset.charBubbleBg,
-              chatWallpaper: preset.chatWallpaper,
-              chatPatternId: preset.chatPatternId,
-              chatPatternOpacity: preset.chatPatternOpacity,
-              chatBlur: preset.chatBlur,
-              chatDim: preset.chatDim,
-              bubbleRadius: preset.bubbleRadius,
-              fontSize: preset.fontSize,
-              chatDensity: preset.chatDensity
-            });
-            syncProfileInputs();
-          });
+        const radius = settings.bubbleRadius !== undefined ? settings.bubbleRadius : 16;
+        const fontSize = settings.fontSize !== undefined ? settings.fontSize : 16;
 
-          pPresetsGrid.appendChild(card);
+        if (previewCharBubble) {
+          previewCharBubble.style.borderRadius = `${radius}px`;
+          previewCharBubble.style.fontSize = `${fontSize}px`;
+        }
+        if (previewUserBubble) {
+          previewUserBubble.style.borderRadius = `${radius}px`;
+          previewUserBubble.style.fontSize = `${fontSize}px`;
+          if (settings.userBubbleBg) previewUserBubble.style.background = settings.userBubbleBg;
+        }
+
+        baseModeButtons.forEach((btn: any) => {
+          if (btn.dataset.mode === baseMode) {
+            btn.classList.add('bg-purple-600', 'text-white');
+            btn.classList.remove('text-slate-300');
+          } else {
+            btn.classList.remove('bg-purple-600', 'text-white');
+            btn.classList.add('text-slate-300');
+          }
         });
       }
 
-      function renderProfileGradients() {
-        if (!pGradGrid) return;
-        pGradGrid.innerHTML = '';
+      function saveAndApply() {
+        (window as any).AetheriaTheme?.saveSettings?.(settings, null);
+        (window as any).AetheriaTheme?.apply?.(settings);
+      }
 
-        window.AetheriaTheme.BUBBLE_GRADIENTS.forEach(grad => {
-          const isSelected = currentProfileTheme.userBubbleBg === grad.gradient;
-          const btn = document.createElement('button');
-          btn.type = 'button';
-          btn.className = `flex items-center gap-2 p-2 rounded-xl border text-left transition-all ${
-            isSelected ? 'border-purple-500 bg-purple-500/15 shadow-md shadow-purple-950/30' : 'border-white/10 hover:border-white/20 bg-white/[0.02]'
-          }`;
+      // Presets
+      function renderPresets() {
+        if (!presetsGrid) return;
+        const presets = (window as any).AetheriaTheme?.PRESETS || [];
+        presetsGrid.innerHTML = presets.map((p: any) => `
+          <button type="button" class="preset-btn p-2.5 rounded-2xl bg-white/[0.02] border border-white/[0.08] hover:border-purple-500/50 hover:bg-white/[0.04] transition flex items-center gap-2.5 text-left cursor-pointer" data-preset-id="${p.id}">
+            <div class="w-8 h-8 rounded-xl bg-gradient-to-br ${p.iconGradient || 'from-purple-600 to-indigo-600'} flex items-center justify-center text-white text-[10px] font-bold shrink-0 shadow-sm">
+              TG
+            </div>
+            <div class="min-w-0">
+              <span class="text-xs font-bold text-white block truncate">${p.name}</span>
+              <span class="text-[10px] text-slate-400 capitalize">${p.baseMode || 'dark'}</span>
+            </div>
+          </button>
+        `).join('');
 
-          btn.innerHTML = `
-            <span class="w-5 h-5 rounded-lg shrink-0 shadow-sm" style="background: ${grad.gradient};"></span>
-            <span class="text-xs font-medium text-slate-200 truncate">${grad.name}</span>
-          `;
-
+        presetsGrid.querySelectorAll('.preset-btn').forEach((btn: any) => {
           btn.addEventListener('click', () => {
-            window.AetheriaTheme.saveSettings({ userBubbleBg: grad.gradient });
-            syncProfileInputs();
+            const found = presets.find((p: any) => p.id === btn.dataset.presetId);
+            if (!found) return;
+            settings = { ...settings, ...found };
+            syncInputs();
+            updatePreview();
+            saveAndApply();
           });
-
-          pGradGrid.appendChild(btn);
         });
       }
 
-      function renderProfileWallpapers(filter = 'all') {
-        if (!pWallpaperGrid) return;
-        pWallpaperGrid.innerHTML = '';
+      // Name Colors
+      function renderNameColors() {
+        if (!nameColorPalette) return;
+        const colors = (window as any).AetheriaTheme?.NAME_COLORS || [];
+        nameColorPalette.innerHTML = colors.map((c: any) => `
+          <button type="button" class="name-col-btn p-1.5 rounded-xl bg-white/[0.02] border border-white/[0.08] hover:border-white/30 flex items-center justify-center cursor-pointer transition" data-col="${c.hex}" title="${c.name}">
+            <div class="w-6 h-6 rounded-full shadow-md" style="background: ${c.hex};"></div>
+          </button>
+        `).join('');
 
-        const list = window.AetheriaTheme.WALLPAPERS.filter(w => filter === 'all' || w.category === filter);
-        list.forEach(wp => {
-          const isSelected = currentProfileTheme.chatWallpaper === wp.val;
-          const card = document.createElement('button');
-          card.type = 'button';
-          card.className = `relative aspect-[3/4] rounded-xl border overflow-hidden transition-all group ${
-            isSelected ? 'border-purple-500 ring-2 ring-purple-500/40 shadow-lg shadow-purple-950/40' : 'border-white/10 hover:border-white/20'
-          }`;
+        nameColorPalette.querySelectorAll('.name-col-btn').forEach((btn: any) => {
+          btn.addEventListener('click', () => {
+            settings.nameColor = btn.dataset.col;
+            updatePreview();
+            saveAndApply();
+          });
+        });
+      }
 
-          if (wp.isImage) {
-            card.innerHTML = `
-              <img src="${wp.thumb}" alt="${wp.name}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" />
-              <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent flex items-end p-2">
-                <span class="text-[10px] text-white font-medium truncate">${wp.name}</span>
-              </div>
-            `;
-          } else {
-            card.innerHTML = `
-              <div class="w-full h-full group-hover:scale-105 transition-transform duration-300" style="background: ${wp.thumb};"></div>
-              <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent flex items-end p-2">
-                <span class="text-[10px] text-white font-medium truncate">${wp.name}</span>
-              </div>
-            `;
-          }
+      // Wallpapers
+      function renderWallpapers() {
+        if (!wallpapersGrid) return;
+        const wps = (window as any).AetheriaTheme?.WALLPAPERS || [];
+        wallpapersGrid.innerHTML = wps.slice(0, 6).map((w: any) => `
+          <div class="wp-card relative h-16 rounded-xl overflow-hidden border border-white/10 hover:border-purple-500 transition cursor-pointer select-none" data-css="${escapeHtml(w.cssValue)}">
+            <div class="absolute inset-0" style="background: ${w.thumb.startsWith('http') ? `url('${w.thumb}') center/cover` : w.thumb};"></div>
+            <div class="absolute inset-0 bg-black/30 hover:bg-black/10 transition"></div>
+            <span class="absolute bottom-1 left-1.5 text-[9px] font-medium text-white truncate max-w-[90%] drop-shadow">${w.name}</span>
+          </div>
+        `).join('');
 
+        wallpapersGrid.querySelectorAll('.wp-card').forEach((card: any) => {
           card.addEventListener('click', () => {
-            window.AetheriaTheme.saveSettings({ chatWallpaper: wp.val, chatWallpaperId: wp.id });
-            syncProfileInputs();
+            settings.chatWallpaper = card.dataset.css;
+            updatePreview();
+            saveAndApply();
           });
-
-          pWallpaperGrid.appendChild(card);
         });
       }
 
-      // Sliders & Toggles event wiring
-      pFontSizeSlider?.addEventListener('input', (e) => {
-        const val = parseInt(e.target.value, 10);
-        window.AetheriaTheme.saveSettings({ fontSize: val });
-        syncProfileInputs();
-      });
-
-      pRadiusSlider?.addEventListener('input', (e) => {
-        const val = parseInt(e.target.value, 10);
-        window.AetheriaTheme.saveSettings({ bubbleRadius: val });
-        syncProfileInputs();
-      });
-
-      pBlurToggle?.addEventListener('click', () => {
-        window.AetheriaTheme.saveSettings({ chatBlur: !currentProfileTheme.chatBlur });
-        syncProfileInputs();
-      });
-
-      pDimmerSlider?.addEventListener('input', (e) => {
-        const val = parseInt(e.target.value, 10);
-        window.AetheriaTheme.saveSettings({ chatDim: val / 100 });
-        syncProfileInputs();
-      });
-
-      pPatOpacitySlider?.addEventListener('input', (e) => {
-        const val = parseInt(e.target.value, 10);
-        window.AetheriaTheme.saveSettings({ chatPatternOpacity: val / 100 });
-        syncProfileInputs();
-      });
-
-      // Doodle Pills
-      document.querySelectorAll('.profile-doodle-btn').forEach(btn => {
-        btn.addEventListener('click', () => {
-          window.AetheriaTheme.saveSettings({ chatPatternId: btn.getAttribute('data-pat-id') });
-          syncProfileInputs();
-        });
-      });
-
-      // Category filters
-      document.querySelectorAll('.profile-cat-btn').forEach(btn => {
-        btn.addEventListener('click', () => {
-          document.querySelectorAll('.profile-cat-btn').forEach(b => {
-            b.classList.remove('bg-purple-500/20', 'text-purple-300', 'border-purple-500/30');
-            b.classList.add('text-slate-400', 'border-transparent');
-          });
-          btn.classList.add('bg-purple-500/20', 'text-purple-300', 'border-purple-500/30');
-          btn.classList.remove('text-slate-400', 'border-transparent');
-          renderProfileWallpapers(btn.getAttribute('data-cat') || 'all');
-        });
-      });
-
-      // 2-Color Gradient pickers
-      const pGradA = document.getElementById('profile-grad-color-a');
-      const pGradB = document.getElementById('profile-grad-color-b');
-      function updateProfileGrad() {
-        if (!pGradA || !pGradB) return;
-        const a = pGradA.value;
-        const b = pGradB.value;
-        document.getElementById('profile-grad-hex-a').textContent = a.toUpperCase();
-        document.getElementById('profile-grad-hex-b').textContent = b.toUpperCase();
-        window.AetheriaTheme.saveSettings({ userBubbleBg: `linear-gradient(135deg, ${a} 0%, ${b} 100%)` });
-        syncProfileInputs();
+      function escapeHtml(str: string) {
+        return (str || '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
       }
-      pGradA?.addEventListener('input', updateProfileGrad);
-      pGradB?.addEventListener('input', updateProfileGrad);
 
-      // Density radio
-      document.querySelectorAll('input[name="profile-density"]').forEach(radio => {
-        radio.addEventListener('change', (e) => {
-          window.AetheriaTheme.saveSettings({ chatDensity: e.target.value });
-          syncProfileInputs();
-        });
-      });
-
-      // Reset
-      pResetBtn?.addEventListener('click', () => {
-        if (confirm('Reset chat appearance to factory default settings?')) {
-          window.AetheriaTheme.resetToDefault();
-          syncProfileInputs();
-        }
-      });
-
-      // Export / Import
-      const pExportBtn = document.getElementById('profile-export-theme-btn');
-      pExportBtn?.addEventListener('click', () => {
-        const code = window.AetheriaTheme.exportTheme();
-        if (code) {
-          navigator.clipboard.writeText(code).then(() => {
-            alert('Theme code copied to clipboard!');
-          }).catch(() => {
-            prompt('Copy theme code:', code);
-          });
-        }
-      });
-
-      const pImportBtn = document.getElementById('profile-import-theme-btn');
-      pImportBtn?.addEventListener('click', () => {
-        const raw = prompt('Paste theme code:');
-        if (raw) {
-          const res = window.AetheriaTheme.importTheme(raw);
-          if (res) {
-            syncProfileInputs();
-            alert('Theme imported successfully!');
-          } else {
-            alert('Invalid theme code.');
+      baseModeButtons.forEach((btn: any) => {
+        btn.addEventListener('click', () => {
+          settings.baseMode = btn.dataset.mode;
+          if (settings.baseMode === 'amoled') {
+            settings.chatWallpaper = '#000000';
+            settings.chatPatternId = 'none';
+          } else if (settings.baseMode === 'day') {
+            settings.chatWallpaper = 'linear-gradient(to bottom, #e2e8f0, #cbd5e1, #94a3b8)';
           }
+          updatePreview();
+          saveAndApply();
+        });
+      });
+
+      fontSlider?.addEventListener('input', (e: any) => {
+        settings.fontSize = parseInt(e.target.value, 10);
+        if (fontVal) fontVal.textContent = String(settings.fontSize);
+        updatePreview();
+        saveAndApply();
+      });
+
+      radiusSlider?.addEventListener('input', (e: any) => {
+        settings.bubbleRadius = parseInt(e.target.value, 10);
+        if (radiusVal) radiusVal.textContent = String(settings.bubbleRadius);
+        updatePreview();
+        saveAndApply();
+      });
+
+      photoBtn?.addEventListener('click', () => photoFileInput?.click());
+      photoFileInput?.addEventListener('change', (e: any) => {
+        const file = e.target?.files?.[0];
+        if (!file) return;
+        const reader = new FileReader();
+        reader.onload = (event) => {
+          settings.chatWallpaper = `url("${event.target?.result}") center/cover no-repeat`;
+          updatePreview();
+          saveAndApply();
+        };
+        reader.readAsDataURL(file);
+      });
+
+      function syncSound() {
+        const enabled = (window as any).AetheriaTheme?.isSoundEnabled?.() !== false;
+        if (soundToggle) {
+          soundToggle.textContent = enabled ? 'Enabled' : 'Muted';
+          soundToggle.className = enabled
+            ? 'px-3 py-1 rounded-xl text-xs font-semibold transition cursor-pointer bg-purple-500/20 border border-purple-500/30 text-purple-300'
+            : 'px-3 py-1 rounded-xl text-xs font-semibold transition cursor-pointer bg-white/5 border border-white/10 text-slate-400';
         }
+      }
+
+      soundToggle?.addEventListener('click', () => {
+        const current = (window as any).AetheriaTheme?.isSoundEnabled?.() !== false;
+        (window as any).AetheriaTheme?.setSoundEnabled?.(!current);
+        syncSound();
       });
 
-      window.addEventListener('aetheria-theme-change', () => {
-        syncProfileInputs();
-      });
+      sendEnter?.addEventListener('change', () => localStorage.setItem('aetheria_chat_send_key', 'enter'));
+      sendCtrlEnter?.addEventListener('change', () => localStorage.setItem('aetheria_chat_send_key', 'ctrl_enter'));
 
-      syncProfileInputs();
+      function syncInputs() {
+        if (fontSlider) fontSlider.value = String(settings.fontSize || 16);
+        if (fontVal) fontVal.textContent = String(settings.fontSize || 16);
+        if (radiusSlider) radiusSlider.value = String(settings.bubbleRadius !== undefined ? settings.bubbleRadius : 16);
+        if (radiusVal) radiusVal.textContent = String(settings.bubbleRadius !== undefined ? settings.bubbleRadius : 16);
+
+        const sendPref = localStorage.getItem('aetheria_chat_send_key') || 'enter';
+        if (sendPref === 'ctrl_enter') {
+          if (sendCtrlEnter) sendCtrlEnter.checked = true;
+        } else {
+          if (sendEnter) sendEnter.checked = true;
+        }
+        syncSound();
+      }
+
+      renderPresets();
+      renderNameColors();
+      renderWallpapers();
+      syncInputs();
+      updatePreview();
     }
 
-    initProfileThemeSection();
-
-
+    initProfileChatSettings();
   });
 </script>
