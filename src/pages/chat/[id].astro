@@ -8398,6 +8398,7 @@ const { character } = Astro.props;
     }
 
     // Voice & Image tabs
+    const voiceKeyContainer = document.getElementById('voice-key-container');
     if (voiceKeyContainer && voiceProviderSelect) {
       voiceKeyContainer.classList.toggle('hidden', voiceProviderSelect.value === 'browser');
     }
@@ -8407,6 +8408,7 @@ const { character } = Astro.props;
     if (openaiVoiceContainer && voiceProviderSelect) {
       openaiVoiceContainer.classList.toggle('hidden', voiceProviderSelect.value !== 'openai');
     }
+    const imageKeyContainer = document.getElementById('image-key-container');
     if (imageKeyContainer && imageProviderSelect) {
       imageKeyContainer.classList.toggle('hidden', imageProviderSelect.value === 'pollinations');
     }
