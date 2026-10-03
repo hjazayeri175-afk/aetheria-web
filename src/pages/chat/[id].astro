@@ -3937,14 +3937,14 @@ const { character } = Astro.props;
         </div>
 
         <!-- Dynamic Smart Prompts / Contextual AI Suggestions Row -->
-        <div id="smart-prompts-bar" class="px-2.5 sm:px-6 py-1.5 flex items-center gap-2 overflow-x-auto no-scrollbar shrink-0 w-full max-w-full bg-[#080a17]/80 border-t border-white/[0.04]">
-          <div class="flex items-center gap-1.5 shrink-0 text-slate-400">
-            <Sparkles class="w-3.5 h-3.5 text-purple-400 animate-pulse" />
-            <span class="text-[10px] uppercase font-bold tracking-wider text-slate-300">Smart Ideas</span>
+        <div id="smart-prompts-bar" class="relative z-30 px-2 sm:px-4 py-1.5 flex items-center gap-1.5 sm:gap-2 shrink-0 w-full max-w-full bg-[#080a15]/95 backdrop-blur-md border-t border-white/[0.08] overflow-hidden">
+          <div class="flex items-center gap-1.5 shrink-0 text-slate-300">
+            <Sparkles class="w-3.5 h-3.5 text-cyan-400 animate-pulse" />
+            <span class="hidden sm:inline text-[10px] uppercase font-bold tracking-wider text-slate-200">Smart Ideas</span>
             <button 
               id="refresh-smart-prompts-btn" 
               type="button" 
-              class="p-1 rounded-md hover:bg-white/[0.08] text-slate-400 hover:text-purple-300 transition cursor-pointer active:scale-90"
+              class="p-1 rounded-md hover:bg-white/[0.08] text-slate-400 hover:text-cyan-300 transition cursor-pointer active:scale-90"
               title="Generate new contextual suggestions based on story"
             >
               <RefreshCw class="w-2.5 h-2.5" id="smart-prompts-refresh-icon" />
@@ -3952,13 +3952,13 @@ const { character } = Astro.props;
           </div>
 
           <!-- Loading indicator -->
-          <div id="smart-prompts-loading" class="hidden items-center gap-1.5 text-[11px] text-purple-300/80 font-mono animate-pulse shrink-0">
-            <span class="w-1.5 h-1.5 rounded-full bg-purple-400 animate-ping"></span>
-            <span>Thinking options...</span>
+          <div id="smart-prompts-loading" class="hidden items-center gap-1.5 text-[11px] text-cyan-300/80 font-mono animate-pulse shrink-0">
+            <span class="w-1.5 h-1.5 rounded-full bg-cyan-400 animate-ping"></span>
+            <span class="hidden sm:inline">Thinking options...</span>
           </div>
 
           <!-- Dynamic Prompts Container -->
-          <div id="smart-prompts-container" class="flex items-center gap-2 overflow-x-auto no-scrollbar scroll-smooth py-0.5">
+          <div id="smart-prompts-container" class="flex-1 min-w-0 flex items-center gap-2 overflow-x-auto no-scrollbar scroll-smooth py-0.5">
             {(character.starterPrompts && character.starterPrompts.length > 0 ? character.starterPrompts : [
               `*Looks at ${character.name}* "Tell me more."`,
               `*Smiles softly* "What should we do next?"`
@@ -3968,12 +3968,12 @@ const { character } = Astro.props;
               return (
                 <button 
                   type="button"
-                  class="room-starter-pill group flex items-center gap-1.5 shrink-0 px-3 py-1.5 rounded-xl bg-white/[0.04] hover:bg-purple-950/40 border border-white/[0.08] hover:border-purple-500/30 text-xs text-slate-300 hover:text-white transition duration-200 cursor-pointer active:scale-95 whitespace-nowrap shadow-sm"
+                  class="room-starter-pill group flex items-center gap-1.5 shrink-0 px-3 py-1.5 rounded-xl bg-slate-800/90 hover:bg-purple-900/60 border border-slate-700/80 hover:border-purple-500/50 text-xs text-slate-100 hover:text-white transition duration-200 cursor-pointer active:scale-95 whitespace-nowrap shadow-sm"
                   data-prompt={cleanPrompt}
                   title="Click to fill reply"
                 >
-                  <span class="w-1.5 h-1.5 rounded-full bg-purple-400/60 group-hover:bg-purple-400 group-hover:scale-125 transition"></span>
-                  <span>{displayLabel}</span>
+                  <span class="w-1.5 h-1.5 rounded-full bg-cyan-400/80 group-hover:bg-cyan-300 group-hover:scale-125 transition"></span>
+                  <span class="text-slate-100 group-hover:text-white">{displayLabel}</span>
                 </button>
               );
             })}
@@ -18585,12 +18585,12 @@ const { character } = Astro.props;
       return `
         <button 
           type="button"
-          class="room-starter-pill group flex items-center gap-1.5 shrink-0 px-3 py-1.5 rounded-xl bg-white/[0.04] hover:bg-purple-950/40 border border-white/[0.08] hover:border-purple-500/30 text-xs text-slate-300 hover:text-white transition duration-200 cursor-pointer active:scale-95 whitespace-nowrap shadow-sm"
+          class="room-starter-pill group flex items-center gap-1.5 shrink-0 px-3 py-1.5 rounded-xl bg-slate-800/90 hover:bg-purple-900/60 border border-slate-700/80 hover:border-purple-500/50 text-xs text-slate-100 hover:text-white transition duration-200 cursor-pointer active:scale-95 whitespace-nowrap shadow-sm"
           data-prompt="${escapedVal}"
           title="Click to fill reply"
         >
-          <span class="w-1.5 h-1.5 rounded-full bg-purple-400/60 group-hover:bg-purple-400 group-hover:scale-125 transition"></span>
-          <span>${escapedDisplay}</span>
+          <span class="w-1.5 h-1.5 rounded-full bg-cyan-400/80 group-hover:bg-cyan-300 group-hover:scale-125 transition"></span>
+          <span class="text-slate-100 group-hover:text-white">${escapedDisplay}</span>
         </button>
       `;
     }).join('');
@@ -18878,22 +18878,31 @@ Requirements:
           return;
         }
       }
+
+      // Guarantee fallback suggestions if cleanPills was empty
+      const charDisplayName = (activeChar && activeChar.name) || (character && character.name) || 'Character';
+      const guaranteePills = hasPersian ? [
+        `*با دقت به ${charDisplayName} نگاه می‌کنم* "بیشتر برام بگو."`,
+        `*لبخند می‌زنم* "قدم بعدی چیه؟"`
+      ] : [
+        `*Looks at ${charDisplayName}* "Tell me more."`,
+        `*Smiles softly* "What should we do next?"`
+      ];
+      renderSmartPrompts(guaranteePills);
     } catch (err) {
       if (err.name !== 'AbortError') {
         console.warn('Smart suggestions fetch error:', err);
       }
       // Guarantee fallback suggestions so bar never stays blank
-      if (smartPromptsContainer && smartPromptsContainer.children.length === 0) {
-        const charDisplayName = (activeChar && activeChar.name) || (character && character.name) || 'Character';
-        const guaranteePills = hasPersian ? [
-          `*با دقت به ${charDisplayName} نگاه می‌کنم* "بیشتر برام بگو."`,
-          `*لبخند می‌زنم* "قدم بعدی چیه؟"`
-        ] : [
-          `*Looks at ${charDisplayName}* "Tell me more."`,
-          `*Smiles softly* "What should we do next?"`
-        ];
-        renderSmartPrompts(guaranteePills);
-      }
+      const charDisplayName = (activeChar && activeChar.name) || (character && character.name) || 'Character';
+      const guaranteePills = hasPersian ? [
+        `*با دقت به ${charDisplayName} نگاه می‌کنم* "بیشتر برام بگو."`,
+        `*لبخند می‌زنم* "قدم بعدی چیه؟"`
+      ] : [
+        `*Looks at ${charDisplayName}* "Tell me more."`,
+        `*Smiles softly* "What should we do next?"`
+      ];
+      renderSmartPrompts(guaranteePills);
     } finally {
       clearTimeout(timeoutId);
       if (smartPromptsLoading) {
