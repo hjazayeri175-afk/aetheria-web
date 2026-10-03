@@ -248,271 +248,548 @@ const {
           { id: 'grad-twilight', name: 'Twilight Blue', gradient: 'linear-gradient(135deg, #4f46e5 0%, #06b6d4 100%)', colorA: '#4f46e5', colorB: '#06b6d4' }
         ];
 
+        
+
         const WALLPAPERS = [
           {
-            id: 'wp-default',
-            name: 'Aetheria Night',
+            id: 'wp-default-purple',
+            name: 'Neon Twilight',
             category: 'gradients',
-            thumb: 'linear-gradient(135deg, #090a12, #0e1122, #07080f)',
-            val: 'linear-gradient(to bottom, #090a12, #0e1122, #07080f)',
-            isImage: false
+            thumb: 'linear-gradient(to bottom, #090a12, #0e1122, #07080f)',
+            cssValue: 'linear-gradient(to bottom, #090a12, #0e1122, #07080f)'
           },
           {
-            id: 'wp-amoled-black',
-            name: 'AMOLED Pure Black',
+            id: 'wp-amoled-pitch',
+            name: 'AMOLED Pitch Black',
             category: 'gradients',
             thumb: '#000000',
-            val: '#000000',
-            isImage: false
+            cssValue: '#000000'
           },
           {
-            id: 'wp-deep-indigo',
-            name: 'Deep Cyber Indigo',
+            id: 'wp-cyberpunk-amber',
+            name: 'Cyberpunk Amber',
             category: 'gradients',
-            thumb: 'linear-gradient(135deg, #070814, #120e2e, #05060d)',
-            val: 'linear-gradient(to bottom, #070814, #120e2e, #05060d)',
-            isImage: false
+            thumb: 'linear-gradient(180deg, #130c04 0%, #241405 50%, #0d0802 100%)',
+            cssValue: 'linear-gradient(180deg, #130c04 0%, #241405 50%, #0d0802 100%)'
           },
           {
-            id: 'wp-cyber-circuit',
-            name: 'Matrix Cyber Grid',
-            category: 'patterns',
-            thumb: 'linear-gradient(135deg, #03140c, #072417, #020d08)',
-            val: 'linear-gradient(to bottom, #03140c, #072417, #020d08)',
-            isImage: false
-          },
-          {
-            id: 'wp-sunset-dusk',
-            name: 'Neon Sunset Dusk',
+            id: 'wp-matrix-dark',
+            name: 'Emerald Terminal',
             category: 'gradients',
-            thumb: 'linear-gradient(135deg, #180a14, #260f1b, #0f060d)',
-            val: 'linear-gradient(to bottom, #180a14, #260f1b, #0f060d)',
-            isImage: false
+            thumb: 'linear-gradient(180deg, #021208 0%, #052410 50%, #010a04 100%)',
+            cssValue: 'linear-gradient(180deg, #021208 0%, #052410 50%, #010a04 100%)'
           },
           {
-            id: 'wp-nebula-stars',
-            name: 'Cosmic Deep Space',
+            id: 'wp-ocean-deep',
+            name: 'Midnight Deep Sea',
+            category: 'gradients',
+            thumb: 'linear-gradient(180deg, #040e1d 0%, #081d38 50%, #02070e 100%)',
+            cssValue: 'linear-gradient(180deg, #040e1d 0%, #081d38 50%, #02070e 100%)'
+          },
+          {
+            id: 'wp-space-nebula',
+            name: 'Cosmic Orion Nebula',
             category: 'art',
-            thumb: 'https://images.unsplash.com/photo-1506703719100-a0f3a48c0f86?q=80&w=400&auto=format&fit=crop',
-            val: 'https://images.unsplash.com/photo-1506703719100-a0f3a48c0f86?q=80&w=1200&auto=format&fit=crop',
-            isImage: true
+            thumb: 'https://images.unsplash.com/photo-1506703719100-a0f3a48c0f86?auto=format&fit=crop&w=400&q=70',
+            cssValue: 'url("https://images.unsplash.com/photo-1506703719100-a0f3a48c0f86?auto=format&fit=crop&w=1920&q=85") center/cover no-repeat'
           },
           {
             id: 'wp-cyber-city',
-            name: 'Neon Cyberpunk Metropolis',
+            name: 'Cyberpunk Neon City',
             category: 'art',
-            thumb: 'https://images.unsplash.com/photo-1518709268805-4e9042af9f23?q=80&w=400&auto=format&fit=crop',
-            val: 'https://images.unsplash.com/photo-1518709268805-4e9042af9f23?q=80&w=1200&auto=format&fit=crop',
-            isImage: true
+            thumb: 'https://images.unsplash.com/photo-1519501025264-65ba15a82390?auto=format&fit=crop&w=400&q=70',
+            cssValue: 'url("https://images.unsplash.com/photo-1519501025264-65ba15a82390?auto=format&fit=crop&w=1920&q=85") center/cover no-repeat'
           },
           {
-            id: 'wp-aurora-borealis',
-            name: 'Mystic Northern Lights',
+            id: 'wp-pine-forest',
+            name: 'Mystic Pine Forest',
             category: 'art',
-            thumb: 'https://images.unsplash.com/photo-1531366936337-7c912a4589a7?q=80&w=400&auto=format&fit=crop',
-            val: 'https://images.unsplash.com/photo-1531366936337-7c912a4589a7?q=80&w=1200&auto=format&fit=crop',
-            isImage: true
+            thumb: 'https://images.unsplash.com/photo-1511497584788-87676104235f?auto=format&fit=crop&w=400&q=70',
+            cssValue: 'url("https://images.unsplash.com/photo-1511497584788-87676104235f?auto=format&fit=crop&w=1920&q=85") center/cover no-repeat'
           },
           {
-            id: 'wp-synthwave-grid',
-            name: 'Synthwave Retro Valley',
+            id: 'wp-anime-lofi',
+            name: 'Lofi Night Highway',
             category: 'art',
-            thumb: 'https://images.unsplash.com/photo-1509198397868-475647b2a1e5?q=80&w=400&auto=format&fit=crop',
-            val: 'https://images.unsplash.com/photo-1509198397868-475647b2a1e5?q=80&w=1200&auto=format&fit=crop',
-            isImage: true
+            thumb: 'https://images.unsplash.com/photo-1509198397868-475647b2a1e5?auto=format&fit=crop&w=400&q=70',
+            cssValue: 'url("https://images.unsplash.com/photo-1509198397868-475647b2a1e5?auto=format&fit=crop&w=1920&q=85") center/cover no-repeat'
+          }
+        ];
+
+        const BUBBLE_GRADIENTS = [
+          { id: 'electric-purple', name: 'Electric Purple', css: 'linear-gradient(135deg, #9333ea 0%, #6366f1 100%)', from: '#9333ea', to: '#6366f1' },
+          { id: 'sunset-flame', name: 'Sunset Flame', css: 'linear-gradient(135deg, #ea580c 0%, #f59e0b 100%)', from: '#ea580c', to: '#f59e0b' },
+          { id: 'emerald-jade', name: 'Emerald Jade', css: 'linear-gradient(135deg, #059669 0%, #10b981 100%)', from: '#059669', to: '#10b981' },
+          { id: 'ocean-cyan', name: 'Ocean Cyan', css: 'linear-gradient(135deg, #0284c7 0%, #06b6d4 100%)', from: '#0284c7', to: '#06b6d4' },
+          { id: 'cyber-neon', name: 'Cyber Neon', css: 'linear-gradient(135deg, #ec4899 0%, #8b5cf6 100%)', from: '#ec4899', to: '#8b5cf6' },
+          { id: 'ruby-romance', name: 'Ruby Romance', css: 'linear-gradient(135deg, #be123c 0%, #e11d48 100%)', from: '#be123c', to: '#e11d48' },
+          { id: 'graphite-metal', name: 'Graphite Metal', css: 'linear-gradient(135deg, #27272a 0%, #18181b 100%)', from: '#27272a', to: '#18181b' },
+          { id: 'twilight-blue', name: 'Twilight Blue', css: 'linear-gradient(135deg, #4f46e5 0%, #06b6d4 100%)', from: '#4f46e5', to: '#06b6d4' }
+        ];
+
+        // Telegram 7 Signature Name Colors
+        const NAME_COLORS = [
+          { id: 'ruby-red', name: 'Ruby Red', hex: '#f43f5e' },
+          { id: 'sunset-orange', name: 'Sunset Orange', hex: '#f97316' },
+          { id: 'cyber-violet', name: 'Cyber Violet', hex: '#a855f7' },
+          { id: 'matrix-green', name: 'Matrix Green', hex: '#10b981' },
+          { id: 'arctic-cyan', name: 'Arctic Cyan', hex: '#06b6d4' },
+          { id: 'sapphire-blue', name: 'Sapphire Blue', hex: '#3b82f6' },
+          { id: 'neon-pink', name: 'Neon Pink', hex: '#ec4899' }
+        ];
+
+        const BASE_MODES = [
+          { id: 'dark', name: 'Dark', label: 'Dark Mode (Standard)' },
+          { id: 'amoled', name: 'AMOLED', label: 'AMOLED (Pure Pitch Black #000)' },
+          { id: 'day', name: 'Day', label: 'Day Mode (Soft Light)' }
+        ];
+
+        const THEME_PRESETS = [
+          {
+            id: 'aetheria-purple',
+            name: 'Aetheria Neon',
+            description: 'Vibrant futuristic purple with telegram doodles',
+            baseMode: 'dark',
+            accent: '#9333ea',
+            accentRgb: '147, 51, 234',
+            nameColor: '#a855f7',
+            userBubbleBg: 'linear-gradient(135deg, #9333ea 0%, #6366f1 100%)',
+            charBubbleBg: '#101426',
+            chatWallpaper: 'linear-gradient(to bottom, #090a12, #0e1122, #07080f)',
+            chatPatternId: 'telegram-doodles',
+            chatPatternOpacity: 0.18,
+            chatBlur: false,
+            chatDim: 0.20,
+            bubbleRadius: 16,
+            fontSize: 16,
+            chatDensity: 'comfortable',
+            iconGradient: 'from-purple-600 to-indigo-600'
+          },
+          {
+            id: 'cyberpunk-amber',
+            name: 'Cyberpunk 2077',
+            description: 'High-tech amber glow with cyber circuits',
+            baseMode: 'dark',
+            accent: '#f59e0b',
+            accentRgb: '245, 158, 11',
+            nameColor: '#f97316',
+            userBubbleBg: 'linear-gradient(135deg, #ea580c 0%, #f59e0b 100%)',
+            charBubbleBg: '#18120a',
+            chatWallpaper: 'linear-gradient(180deg, #130c04 0%, #241405 50%, #0d0802 100%)',
+            chatPatternId: 'cyber-circuit',
+            chatPatternOpacity: 0.22,
+            chatBlur: false,
+            chatDim: 0.15,
+            bubbleRadius: 8,
+            fontSize: 16,
+            chatDensity: 'comfortable',
+            iconGradient: 'from-amber-500 to-orange-600'
+          },
+          {
+            id: 'midnight-amoled',
+            name: 'Midnight AMOLED',
+            description: 'Zero battery drain pure pitch black #000',
+            baseMode: 'amoled',
+            accent: '#06b6d4',
+            accentRgb: '6, 182, 212',
+            nameColor: '#06b6d4',
+            userBubbleBg: 'linear-gradient(135deg, #27272a 0%, #18181b 100%)',
+            charBubbleBg: '#09090b',
+            chatWallpaper: '#000000',
+            chatPatternId: 'none',
+            chatPatternOpacity: 0.1,
+            chatBlur: false,
+            chatDim: 0.0,
+            bubbleRadius: 18,
+            fontSize: 16,
+            chatDensity: 'compact',
+            iconGradient: 'from-cyan-500 to-slate-800'
+          },
+          {
+            id: 'emerald-matrix',
+            name: 'Emerald Matrix',
+            description: 'Terminal emerald green with matrix code rain',
+            baseMode: 'dark',
+            accent: '#10b981',
+            accentRgb: '16, 185, 129',
+            nameColor: '#10b981',
+            userBubbleBg: 'linear-gradient(135deg, #059669 0%, #10b981 100%)',
+            charBubbleBg: '#08160d',
+            chatWallpaper: 'linear-gradient(180deg, #021208 0%, #052410 50%, #010a04 100%)',
+            chatPatternId: 'matrix-grid',
+            chatPatternOpacity: 0.25,
+            chatBlur: false,
+            chatDim: 0.15,
+            bubbleRadius: 6,
+            fontSize: 15,
+            chatDensity: 'comfortable',
+            iconGradient: 'from-emerald-500 to-teal-700'
+          },
+          {
+            id: 'cosmic-nebula',
+            name: 'Cosmic Nebula',
+            description: 'Deep space telescope imagery with soft blur',
+            baseMode: 'dark',
+            accent: '#ec4899',
+            accentRgb: '236, 72, 153',
+            nameColor: '#ec4899',
+            userBubbleBg: 'linear-gradient(135deg, #ec4899 0%, #8b5cf6 100%)',
+            charBubbleBg: '#120b1f',
+            chatWallpaper: 'url("https://images.unsplash.com/photo-1506703719100-a0f3a48c0f86?auto=format&fit=crop&w=1920&q=85") center/cover no-repeat',
+            chatPatternId: 'constellation-stars',
+            chatPatternOpacity: 0.20,
+            chatBlur: true,
+            chatDim: 0.35,
+            bubbleRadius: 18,
+            fontSize: 16,
+            chatDensity: 'comfortable',
+            iconGradient: 'from-pink-500 to-purple-700'
+          },
+          {
+            id: 'sunset-horizon',
+            name: 'Sunset Horizon',
+            description: 'Warm evening dusk gradient with playful doodles',
+            baseMode: 'dark',
+            accent: '#f43f5e',
+            accentRgb: '244, 63, 94',
+            nameColor: '#f43f5e',
+            userBubbleBg: 'linear-gradient(135deg, #be123c 0%, #e11d48 100%)',
+            charBubbleBg: '#1a0b12',
+            chatWallpaper: 'linear-gradient(180deg, #2b0c1b 0%, #150811 50%, #090307 100%)',
+            chatPatternId: 'telegram-doodles',
+            chatPatternOpacity: 0.16,
+            chatBlur: false,
+            chatDim: 0.20,
+            bubbleRadius: 16,
+            fontSize: 16,
+            chatDensity: 'comfortable',
+            iconGradient: 'from-rose-500 to-amber-600'
+          },
+          {
+            id: 'glacier-arctic',
+            name: 'Glacier Arctic',
+            description: 'Oceanic blue with crisp hexagonal mesh',
+            baseMode: 'dark',
+            accent: '#0284c7',
+            accentRgb: '2, 132, 199',
+            nameColor: '#06b6d4',
+            userBubbleBg: 'linear-gradient(135deg, #0284c7 0%, #06b6d4 100%)',
+            charBubbleBg: '#081320',
+            chatWallpaper: 'linear-gradient(180deg, #040e1d 0%, #081d38 50%, #02070e 100%)',
+            chatPatternId: 'hex-mesh',
+            chatPatternOpacity: 0.20,
+            chatBlur: false,
+            chatDim: 0.15,
+            bubbleRadius: 14,
+            fontSize: 16,
+            chatDensity: 'comfortable',
+            iconGradient: 'from-sky-500 to-cyan-600'
+          },
+          {
+            id: 'crimson-dynasty',
+            name: 'Crimson Dynasty',
+            description: 'Deep royal crimson with velvet textures',
+            baseMode: 'dark',
+            accent: '#e11d48',
+            accentRgb: '225, 29, 72',
+            nameColor: '#f43f5e',
+            userBubbleBg: 'linear-gradient(135deg, #881337 0%, #be123c 100%)',
+            charBubbleBg: '#1c0a10',
+            chatWallpaper: 'linear-gradient(180deg, #240710 0%, #130408 50%, #070103 100%)',
+            chatPatternId: 'telegram-doodles',
+            chatPatternOpacity: 0.15,
+            chatBlur: false,
+            chatDim: 0.25,
+            bubbleRadius: 16,
+            fontSize: 16,
+            chatDensity: 'comfortable',
+            iconGradient: 'from-red-600 to-rose-900'
+          },
+          {
+            id: 'telegram-day',
+            name: 'Telegram Day',
+            description: 'Clean crisp light mode for daylight reading',
+            baseMode: 'day',
+            accent: '#0284c7',
+            accentRgb: '2, 132, 199',
+            nameColor: '#0284c7',
+            userBubbleBg: 'linear-gradient(135deg, #0284c7 0%, #38bdf8 100%)',
+            charBubbleBg: '#ffffff',
+            chatWallpaper: 'linear-gradient(to bottom, #e2e8f0, #cbd5e1, #94a3b8)',
+            chatPatternId: 'telegram-doodles',
+            chatPatternOpacity: 0.15,
+            chatBlur: false,
+            chatDim: 0.05,
+            bubbleRadius: 16,
+            fontSize: 16,
+            chatDensity: 'comfortable',
+            iconGradient: 'from-sky-400 to-blue-600'
           }
         ];
 
         const DEFAULT_THEME = {
-          themeId: 'aetheria-purple',
+          baseMode: 'dark',
           accent: '#9333ea',
           accentRgb: '147, 51, 234',
-          bubbleRadius: 16,
-          fontSize: 16,
-          chatDensity: 'comfortable',
+          nameColor: '#a855f7',
           userBubbleBg: 'linear-gradient(135deg, #9333ea 0%, #6366f1 100%)',
           charBubbleBg: '#101426',
-          chatBg: 'linear-gradient(to bottom, #090a12, #0e1122, #07080f)',
           chatWallpaper: 'linear-gradient(to bottom, #090a12, #0e1122, #07080f)',
-          chatWallpaperId: 'wp-default',
           chatPatternId: 'telegram-doodles',
           chatPatternOpacity: 0.18,
           chatBlur: false,
-          chatDim: 0.20
+          chatDim: 0.20,
+          bubbleRadius: 16,
+          fontSize: 16,
+          chatDensity: 'comfortable',
+          soundEnabled: true
         };
 
         function hexToRgb(hex) {
-          if (!hex) return '147, 51, 234';
-          let c = hex.replace('#', '').trim();
-          if (c.length === 3) c = c.split('').map(x => x + x).join('');
-          if (c.length !== 6) return '147, 51, 234';
-          const r = parseInt(c.slice(0, 2), 16);
-          const g = parseInt(c.slice(2, 4), 16);
-          const b = parseInt(c.slice(4, 6), 16);
-          return isNaN(r) || isNaN(g) || isNaN(b) ? '147, 51, 234' : `${r}, ${g}, ${b}`;
+          let clean = hex.replace('#', '').trim();
+          if (clean.length === 3) {
+            clean = clean.split('').map(c => c + c).join('');
+          }
+          const num = parseInt(clean, 16);
+          if (isNaN(num) || clean.length !== 6) return '147, 51, 234';
+          const r = (num >> 16) & 255;
+          const g = (num >> 8) & 255;
+          const b = num & 255;
+          return `${r}, ${g}, ${b}`;
         }
 
-        function getActiveCharId() {
+        // ==========================================
+        // TELEGRAM WEB AUDIO SYNTHESIZER
+        // ==========================================
+        let audioCtx = null;
+        function getAudioContext() {
+          if (typeof window === 'undefined') return null;
+          if (!audioCtx) {
+            const AudioContextClass = window.AudioContext || window.webkitAudioContext;
+            if (AudioContextClass) {
+              audioCtx = new AudioContextClass();
+            }
+          }
+          if (audioCtx && audioCtx.state === 'suspended') {
+            audioCtx.resume().catch(() => {});
+          }
+          return audioCtx;
+        }
+
+        function isSoundEnabled() {
+          if (typeof localStorage === 'undefined') return true;
+          return localStorage.getItem('aetheria_chat_sound') !== 'false';
+        }
+
+        function setSoundEnabled(enabled) {
+          if (typeof localStorage === 'undefined') return;
+          localStorage.setItem('aetheria_chat_sound', enabled ? 'true' : 'false');
+          window.dispatchEvent(new CustomEvent('aetheria-sound-changed', { detail: { enabled } }));
+        }
+
+        function playSendSound() {
+          if (!isSoundEnabled()) return;
           try {
-            const m = window.location.pathname.match(/\/chat\/([^\/\?#]+)/);
-            return m && m[1] ? m[1] : null;
+            const ctx = getAudioContext();
+            if (!ctx) return;
+            const now = ctx.currentTime;
+            
+            // Telegram outgoing pop: quick upward chirp with snappy exponential decay
+            const osc = ctx.createOscillator();
+            const gain = ctx.createGain();
+
+            osc.type = 'sine';
+            osc.frequency.setValueAtTime(580, now);
+            osc.frequency.exponentialRampToValueAtTime(880, now + 0.045);
+
+            gain.gain.setValueAtTime(0.24, now);
+            gain.gain.exponentialRampToValueAtTime(0.001, now + 0.08);
+
+            osc.connect(gain);
+            gain.connect(ctx.destination);
+
+            osc.start(now);
+            osc.stop(now + 0.085);
           } catch(e) {
+            // Ignore audio context autoplay policy blocks
+          }
+        }
+
+        function playReceiveSound() {
+          if (!isSoundEnabled()) return;
+          try {
+            const ctx = getAudioContext();
+            if (!ctx) return;
+            const now = ctx.currentTime;
+
+            // Telegram incoming notification: pleasant dual chime
+            const osc1 = ctx.createOscillator();
+            const gain1 = ctx.createGain();
+            osc1.type = 'sine';
+            osc1.frequency.setValueAtTime(523.25, now); // C5
+
+            gain1.gain.setValueAtTime(0.18, now);
+            gain1.gain.exponentialRampToValueAtTime(0.001, now + 0.12);
+
+            osc1.connect(gain1);
+            gain1.connect(ctx.destination);
+            osc1.start(now);
+            osc1.stop(now + 0.125);
+
+            // Second tone slightly delayed
+            const osc2 = ctx.createOscillator();
+            const gain2 = ctx.createGain();
+            osc2.type = 'sine';
+            osc2.frequency.setValueAtTime(783.99, now + 0.045); // G5
+
+            gain2.gain.setValueAtTime(0.001, now);
+            gain2.gain.setValueAtTime(0.22, now + 0.045);
+            gain2.gain.exponentialRampToValueAtTime(0.001, now + 0.15);
+
+            osc2.connect(gain2);
+            gain2.connect(ctx.destination);
+            osc2.start(now + 0.045);
+            osc2.stop(now + 0.155);
+          } catch(e) {
+            // Ignore audio policy
+          }
+        }
+
+        // ==========================================
+        // CUSTOM USER THEMES STORE (STEP 4)
+        // ==========================================
+        function getCustomThemes() {
+          try {
+            const stored = localStorage.getItem('aetheria_custom_saved_themes');
+            if (stored) return JSON.parse(stored);
+          } catch(e) {}
+          return [];
+        }
+
+        function saveCustomTheme(name, themeData) {
+          try {
+            const list = getCustomThemes();
+            const id = 'custom-' + Date.now();
+            const newTheme = {
+              id,
+              name: name || 'My Custom Theme',
+              description: 'Created by you',
+              isCustom: true,
+              ...themeData
+            };
+            list.unshift(newTheme);
+            localStorage.setItem('aetheria_custom_saved_themes', JSON.stringify(list));
+            window.dispatchEvent(new CustomEvent('aetheria-custom-themes-updated', { detail: list }));
+            return newTheme;
+          } catch(e) {
+            console.error(e);
             return null;
           }
         }
 
-        function getSettings(charId = null) {
+        function deleteCustomTheme(id) {
           try {
-            const targetChar = charId || getActiveCharId();
-            if (targetChar) {
-              const charKey = 'aetheria_theme_char_' + targetChar;
-              const charSaved = localStorage.getItem(charKey);
-              if (charSaved) {
-                const parsed = JSON.parse(charSaved);
-                return { ...DEFAULT_THEME, ...parsed, _isCharSpecific: true, _charId: targetChar };
-              }
-            }
-            const saved = localStorage.getItem('aetheria_theme_settings');
-            if (saved) {
-              const parsed = JSON.parse(saved);
-              return { ...DEFAULT_THEME, ...parsed, _isCharSpecific: false };
-            }
-          } catch (e) {
-            console.warn('AetheriaTheme: failed to load settings', e);
-          }
-          return { ...DEFAULT_THEME, _isCharSpecific: false };
-        }
-
-        function hasCharSettings(charId) {
-          if (!charId) return false;
-          try {
-            return !!localStorage.getItem('aetheria_theme_char_' + charId);
+            let list = getCustomThemes();
+            list = list.filter(t => t.id !== id);
+            localStorage.setItem('aetheria_custom_saved_themes', JSON.stringify(list));
+            window.dispatchEvent(new CustomEvent('aetheria-custom-themes-updated', { detail: list }));
+            return true;
           } catch(e) {
             return false;
           }
         }
 
-        function removeCharSettings(charId) {
-          if (!charId) return;
-          try {
-            localStorage.removeItem('aetheria_theme_char_' + charId);
-            const globalSettings = getSettings(null);
-            applyThemeToDOM(globalSettings);
-            window.dispatchEvent(new CustomEvent('aetheria-theme-change', { detail: globalSettings }));
-          } catch(e) {
-            console.error(e);
-          }
+        function getActiveCharId() {
+          if (typeof window === 'undefined') return null;
+          const path = window.location.pathname;
+          const match = path.match(/\/chat\/([^\/]+)/);
+          return match ? match[1] : null;
         }
 
-        function saveSettings(partial, charId = null) {
-          try {
-            const targetChar = charId !== undefined ? charId : getActiveCharId();
-            const current = getSettings(targetChar);
-            const merged = { ...current, ...partial };
-
-            if (targetChar) {
-              const cleanData = { ...merged };
-              delete cleanData._isCharSpecific;
-              delete cleanData._charId;
-              localStorage.setItem('aetheria_theme_char_' + targetChar, JSON.stringify(cleanData));
-              merged._isCharSpecific = true;
-              merged._charId = targetChar;
-            } else {
-              const cleanData = { ...merged };
-              delete cleanData._isCharSpecific;
-              delete cleanData._charId;
-              localStorage.setItem('aetheria_theme_settings', JSON.stringify(cleanData));
-              merged._isCharSpecific = false;
+        function getSettings(charId = null) {
+          if (typeof localStorage === 'undefined') return { ...DEFAULT_THEME };
+          const targetChar = charId || getActiveCharId();
+          if (targetChar) {
+            const charKey = `aetheria_theme_char_${targetChar}`;
+            const charSaved = localStorage.getItem(charKey);
+            if (charSaved) {
+              try {
+                return { ...DEFAULT_THEME, ...JSON.parse(charSaved), isCharOverride: true, charId: targetChar };
+              } catch (e) {}
             }
-
-            applyThemeToDOM(merged);
-            window.dispatchEvent(new CustomEvent('aetheria-theme-change', { detail: merged }));
-            return merged;
-          } catch (e) {
-            console.error('AetheriaTheme: failed to save', e);
-            return null;
           }
-        }
-
-        function exportTheme(charId = null) {
-          try {
-            const theme = getSettings(charId);
-            const payload = {
-              version: 3,
-              name: theme.name || 'Aetheria Custom Theme',
-              date: new Date().toISOString(),
-              settings: {
-                themeId: theme.themeId,
-                accent: theme.accent,
-                accentRgb: theme.accentRgb,
-                bubbleRadius: theme.bubbleRadius,
-                fontSize: theme.fontSize,
-                chatDensity: theme.chatDensity,
-                userBubbleBg: theme.userBubbleBg,
-                charBubbleBg: theme.charBubbleBg,
-                chatWallpaper: theme.chatWallpaper,
-                chatWallpaperId: theme.chatWallpaperId,
-                chatPatternId: theme.chatPatternId,
-                chatPatternOpacity: theme.chatPatternOpacity,
-                chatBlur: theme.chatBlur,
-                chatDim: theme.chatDim
-              }
-            };
-            return btoa(unescape(encodeURIComponent(JSON.stringify(payload))));
-          } catch(e) {
-            console.error('Export theme failed', e);
-            return null;
-          }
-        }
-
-        function importTheme(codeStr, charId = null) {
-          try {
-            let jsonStr = '';
+          const globalSaved = localStorage.getItem('aetheria_theme_global');
+          if (globalSaved) {
             try {
-              jsonStr = decodeURIComponent(escape(atob(codeStr.trim())));
-            } catch(e) {
-              jsonStr = codeStr.trim();
-            }
-            const data = JSON.parse(jsonStr);
-            const imported = data.settings || data;
-            if (!imported || (!imported.accent && !imported.userBubbleBg && !imported.chatWallpaper)) {
-              throw new Error('Invalid theme format');
-            }
-            return saveSettings(imported, charId);
-          } catch(e) {
-            console.error('Import theme failed', e);
-            return null;
+              return { ...DEFAULT_THEME, ...JSON.parse(globalSaved), isCharOverride: false };
+            } catch (e) {}
           }
+          return { ...DEFAULT_THEME, isCharOverride: false };
         }
 
-        function resetToDefault(charId = null) {
-          try {
-            if (charId) {
-              localStorage.removeItem('aetheria_theme_char_' + charId);
-            } else {
-              localStorage.removeItem('aetheria_theme_settings');
-            }
-            const def = { ...DEFAULT_THEME };
-            applyThemeToDOM(def);
-            window.dispatchEvent(new CustomEvent('aetheria-theme-change', { detail: def }));
-            return def;
-          } catch(e) {
-            console.error(e);
-            return null;
+        function saveSettings(settings, charId = null) {
+          if (typeof localStorage === 'undefined') return;
+          const targetChar = charId !== undefined ? charId : getActiveCharId();
+          if (targetChar) {
+            localStorage.setItem(`aetheria_theme_char_${targetChar}`, JSON.stringify(settings));
+          } else {
+            localStorage.setItem('aetheria_theme_global', JSON.stringify(settings));
           }
+          applyThemeToDOM(settings);
+          window.dispatchEvent(new CustomEvent('aetheria-theme-changed', { detail: settings }));
+        }
+
+        function hasCharSettings(charId) {
+          if (!charId || typeof localStorage === 'undefined') return false;
+          return !!localStorage.getItem(`aetheria_theme_char_${charId}`);
+        }
+
+        function removeCharSettings(charId) {
+          if (!charId || typeof localStorage === 'undefined') return;
+          localStorage.removeItem(`aetheria_theme_char_${charId}`);
+          const fallback = getSettings(null);
+          applyThemeToDOM(fallback);
+          window.dispatchEvent(new CustomEvent('aetheria-theme-changed', { detail: fallback }));
         }
 
         function applyThemeToDOM(theme) {
           if (!theme) return;
           const root = document.documentElement;
+          
+          // Base Mode (Dark, AMOLED, Day)
+          const baseMode = theme.baseMode || 'dark';
+          root.setAttribute('data-theme-base', baseMode);
+          if (baseMode === 'amoled') {
+            root.style.setProperty('--theme-base-bg', '#000000');
+            root.style.setProperty('--theme-bubble-char-bg', '#09090b');
+            root.style.setProperty('--theme-bubble-char-border', 'rgba(255, 255, 255, 0.08)');
+            root.style.setProperty('--theme-bubble-char-text', '#f1f5f9');
+          } else if (baseMode === 'day') {
+            root.style.setProperty('--theme-base-bg', '#f8fafc');
+            root.style.setProperty('--theme-bubble-char-bg', '#ffffff');
+            root.style.setProperty('--theme-bubble-char-border', '#e2e8f0');
+            root.style.setProperty('--theme-bubble-char-text', '#0f172a');
+          } else {
+            root.style.setProperty('--theme-base-bg', '#090a12');
+            root.style.setProperty('--theme-bubble-char-bg', theme.charBubbleBg || '#101426');
+            root.style.setProperty('--theme-bubble-char-border', 'rgba(255, 255, 255, 0.08)');
+            root.style.setProperty('--theme-bubble-char-text', '#f1f5f9');
+          }
+
+          // Accent colors
           const accent = theme.accent || '#9333ea';
           const rgb = theme.accentRgb || hexToRgb(accent);
-
           root.style.setProperty('--theme-accent', accent);
           root.style.setProperty('--theme-accent-rgb', rgb);
           root.style.setProperty('--theme-accent-hover', accent);
           root.style.setProperty('--theme-accent-glow', `rgba(${rgb}, 0.35)`);
 
+          // Telegram Name Color
+          const nameColor = theme.nameColor || '#a855f7';
+          root.style.setProperty('--theme-name-color', nameColor);
+          root.style.setProperty('--theme-char-name-color', nameColor);
+
+          // Geometry
           const radius = theme.bubbleRadius !== undefined ? theme.bubbleRadius : 16;
           root.style.setProperty('--theme-bubble-radius', `${radius}px`);
 
@@ -522,7 +799,7 @@ const {
           if (theme.userBubbleBg) {
             root.style.setProperty('--theme-bubble-user-bg', theme.userBubbleBg);
           }
-          if (theme.charBubbleBg) {
+          if (theme.charBubbleBg && baseMode === 'dark') {
             root.style.setProperty('--theme-bubble-char-bg', theme.charBubbleBg);
           }
 
@@ -535,76 +812,65 @@ const {
 
           // Chat Stream Wallpaper & Background
           const wpVal = theme.chatWallpaper || theme.chatBg || 'linear-gradient(to bottom, #090a12, #0e1122, #07080f)';
-          root.style.setProperty('--theme-chat-bg', wpVal);
-          root.style.setProperty('--theme-chat-wallpaper', wpVal.startsWith('http') || wpVal.startsWith('data:') ? `url("${wpVal}")` : wpVal);
+          root.style.setProperty('--theme-chat-wallpaper', wpVal);
 
-          // Blur & Dimmer
-          const blurVal = theme.chatBlur ? 'blur(12px)' : 'none';
+          // Doodle pattern
+          const patId = theme.chatPatternId || 'telegram-doodles';
+          const patObj = DOODLE_PATTERNS[patId] || DOODLE_PATTERNS['telegram-doodles'];
+          root.style.setProperty('--theme-chat-pattern', patObj.pattern);
+          root.style.setProperty('--theme-chat-pattern-size', patObj.patternSize);
+
+          const patOpacity = theme.chatPatternOpacity !== undefined ? theme.chatPatternOpacity : 0.18;
+          root.style.setProperty('--theme-chat-pattern-opacity', String(patOpacity));
+
+          // Blur & Dim
+          const blurVal = theme.chatBlur ? '14px' : '0px';
           root.style.setProperty('--theme-chat-blur', blurVal);
 
           const dimVal = theme.chatDim !== undefined ? theme.chatDim : 0.20;
-          root.style.setProperty('--theme-chat-dim', dimVal.toString());
+          root.style.setProperty('--theme-chat-dim', String(dimVal));
+        }
 
-          // Doodle Pattern
-          const patId = theme.chatPatternId || 'telegram-doodles';
-          const patObj = DOODLE_PATTERNS[patId] || DOODLE_PATTERNS['telegram-doodles'];
-          const patOpacity = theme.chatPatternOpacity !== undefined ? theme.chatPatternOpacity : 0.18;
+        function exportTheme() {
+          const settings = getSettings();
+          return JSON.stringify(settings, null, 2);
+        }
 
-          root.style.setProperty('--theme-chat-pattern', patObj.pattern);
-          root.style.setProperty('--theme-chat-pattern-size', patObj.patternSize);
-          root.style.setProperty('--theme-chat-pattern-opacity', patOpacity.toString());
-
-          // Direct DOM live updates for active chat container
-          const imgLayer = document.getElementById('chat-wallpaper-image-layer');
-          if (imgLayer) {
-            if (wpVal.startsWith('http') || wpVal.startsWith('data:')) {
-              imgLayer.style.backgroundImage = `url("${wpVal}")`;
-              imgLayer.style.backgroundSize = 'cover';
-              imgLayer.style.backgroundPosition = 'center';
-            } else {
-              imgLayer.style.background = wpVal;
-              imgLayer.style.backgroundSize = '';
-              imgLayer.style.backgroundPosition = '';
-            }
-            imgLayer.style.filter = blurVal;
-          }
-
-          const dimLayer = document.getElementById('chat-wallpaper-dimmer');
-          if (dimLayer) {
-            dimLayer.style.opacity = dimVal.toString();
-          }
-
-          const overlay = document.getElementById('chat-wallpaper-overlay');
-          if (overlay) {
-            overlay.style.backgroundImage = patObj.pattern;
-            overlay.style.backgroundSize = patObj.patternSize;
-            overlay.style.opacity = patOpacity.toString();
-          }
-
-          const chatMessages = document.getElementById('chat-messages-container');
-          if (chatMessages) {
-            chatMessages.style.setProperty('--theme-bubble-radius', `${radius}px`);
-            chatMessages.style.setProperty('--theme-msg-font-size', `${fontSize}px`);
-            if (theme.userBubbleBg) chatMessages.style.setProperty('--theme-bubble-user-bg', theme.userBubbleBg);
-            if (theme.charBubbleBg) chatMessages.style.setProperty('--theme-bubble-char-bg', theme.charBubbleBg);
+        function importTheme(jsonString, charId = null) {
+          try {
+            const parsed = JSON.parse(jsonString);
+            saveSettings(parsed, charId);
+            return true;
+          } catch (e) {
+            console.error('Invalid theme JSON', e);
+            return false;
           }
         }
 
-        // Apply immediately on first paint
-        const initialTheme = getSettings();
-        applyThemeToDOM(initialTheme);
-
-        // Cross-tab sync
-        window.addEventListener('storage', function(e) {
-          if (e.key === 'aetheria_theme_settings' || (e.key && e.key.startsWith('aetheria_theme_char_'))) {
-            applyThemeToDOM(getSettings());
+        function resetToDefault(charId = null) {
+          if (charId) {
+            removeCharSettings(charId);
+          } else {
+            if (typeof localStorage !== 'undefined') {
+              localStorage.removeItem('aetheria_theme_global');
+            }
+            applyThemeToDOM(DEFAULT_THEME);
+            window.dispatchEvent(new CustomEvent('aetheria-theme-changed', { detail: DEFAULT_THEME }));
           }
-        });
+        }
+
+        // Run immediately on page load to prevent FOUC
+        try {
+          const initial = getSettings();
+          applyThemeToDOM(initial);
+        } catch(e) {}
 
         window.AetheriaTheme = {
           DEFAULT_THEME,
           PRESETS: THEME_PRESETS,
           BUBBLE_GRADIENTS: BUBBLE_GRADIENTS,
+          NAME_COLORS: NAME_COLORS,
+          BASE_MODES: BASE_MODES,
           WALLPAPERS: WALLPAPERS,
           DOODLE_PATTERNS: DOODLE_PATTERNS,
           hexToRgb,
@@ -613,10 +879,17 @@ const {
           saveSettings,
           hasCharSettings,
           removeCharSettings,
+          getCustomThemes,
+          saveCustomTheme,
+          deleteCustomTheme,
           exportTheme,
           importTheme,
           resetToDefault,
-          apply: applyThemeToDOM
+          apply: applyThemeToDOM,
+          isSoundEnabled,
+          setSoundEnabled,
+          playSendSound,
+          playReceiveSound
         };
       })();
     </script>
