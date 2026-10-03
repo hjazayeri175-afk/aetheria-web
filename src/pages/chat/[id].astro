@@ -79,6 +79,28 @@ interface Props {
 }
 
 const { character } = Astro.props;
+
+const TELEGRAM_THEMES = [
+  { id: 'aetheria-purple', name: 'Neon', emoji: '💎', baseMode: 'dark', bg: '#090a12', bubble: 'linear-gradient(135deg, #9333ea, #6366f1)', accent: '#9333ea' },
+  { id: 'classic-dark', name: 'Classic', emoji: '✈️', baseMode: 'dark', bg: '#0e1621', bubble: 'linear-gradient(135deg, #2b5278, #17212b)', accent: '#2b5278' },
+  { id: 'glacier-arctic', name: 'Arctic', emoji: '❄️', baseMode: 'dark', bg: '#08131d', bubble: 'linear-gradient(135deg, #0284c7, #06b6d4)', accent: '#06b6d4' },
+  { id: 'cyberpunk-amber', name: 'Amber', emoji: '⚡', baseMode: 'dark', bg: '#100b04', bubble: 'linear-gradient(135deg, #ea580c, #f59e0b)', accent: '#f59e0b' },
+  { id: 'emerald-matrix', name: 'Matrix', emoji: '🌲', baseMode: 'dark', bg: '#05120a', bubble: 'linear-gradient(135deg, #059669, #10b981)', accent: '#10b981' },
+  { id: 'midnight-amoled', name: 'AMOLED', emoji: '🌙', baseMode: 'amoled', bg: '#000000', bubble: 'linear-gradient(135deg, #27272a, #18181b)', accent: '#06b6d4' },
+  { id: 'telegram-day', name: 'Day', emoji: '☀️', baseMode: 'day', bg: '#f1f5f9', bubble: 'linear-gradient(135deg, #3b82f6, #60a5fa)', accent: '#3b82f6' },
+  { id: 'sunset-horizon', name: 'Sunset', emoji: '🌅', baseMode: 'dark', bg: '#140810', bubble: 'linear-gradient(135deg, #db2777, #f97316)', accent: '#db2777' },
+  { id: 'crimson-dynasty', name: 'Crimson', emoji: '🔥', baseMode: 'dark', bg: '#130508', bubble: 'linear-gradient(135deg, #991b1b, #ef4444)', accent: '#ef4444' }
+];
+
+const TELEGRAM_NAME_COLORS = [
+  { name: 'Red', hex: '#f43f5e' },
+  { name: 'Orange', hex: '#f97316' },
+  { name: 'Violet', hex: '#a855f7' },
+  { name: 'Green', hex: '#10b981' },
+  { name: 'Cyan', hex: '#06b6d4' },
+  { name: 'Blue', hex: '#3b82f6' },
+  { name: 'Pink', hex: '#ec4899' }
+];
 ---
 
 <Layout title={`${character.name} — Immersive Roleplay Chat | Aetheria AI`} noScroll={true}>
@@ -3280,522 +3302,281 @@ const { character } = Astro.props;
           </div>
         </div>
 
-                <!-- Telegram-Grade Chat Appearance & Wallpaper Engine Modal -->
-<div id="chat-appearance-modal" class="fixed inset-0 z-50 hidden bg-black/85 backdrop-blur-md flex items-center justify-center p-3 sm:p-5 opacity-0 transition-opacity duration-200">
-  <div class="relative w-full max-w-2xl bg-[#0e101a] border border-white/[0.12] rounded-3xl shadow-2xl shadow-purple-950/40 flex flex-col max-h-[92vh] overflow-hidden transform scale-95 transition-transform duration-200" id="chat-appearance-panel">
+                <!-- ========================================== -->
+<!-- TELEGRAM CHAT APPEARANCE MODAL (EXACT TELEGRAM LAYOUT) -->
+<!-- ========================================== -->
+<div id="chat-appearance-modal" class="fixed inset-0 z-50 hidden bg-black/80 backdrop-blur-md flex items-center justify-center p-3 sm:p-5 opacity-0 transition-opacity duration-200">
+  <div class="relative w-full max-w-xl bg-[#0e101a] border border-white/[0.12] rounded-3xl shadow-2xl shadow-purple-950/40 flex flex-col max-h-[92vh] overflow-hidden transform scale-95 transition-transform duration-200" id="chat-appearance-panel">
     
     <!-- Modal Header -->
     <div class="px-5 py-4 border-b border-white/[0.08] flex items-center justify-between bg-white/[0.02] shrink-0">
       <div class="flex items-center gap-3">
-        <div class="w-10 h-10 rounded-2xl bg-purple-500/10 border border-purple-500/20 flex items-center justify-center text-purple-400">
-          <Palette class="w-5 h-5" />
+        <div class="w-9 h-9 rounded-2xl bg-purple-500/10 border border-purple-500/20 flex items-center justify-center text-purple-400">
+          <Palette class="w-4 h-4" />
         </div>
         <div>
-          <h2 class="text-base font-bold text-white flex items-center gap-2">
-            Chat Appearance
-            <span class="px-2 py-0.5 rounded-full bg-purple-500/20 border border-purple-500/30 text-[10px] font-mono text-purple-300 font-normal">Telegram Suite</span>
-          </h2>
-          <p class="text-xs text-slate-400">Themes, Wallpapers, Name Colors & Sound Effects</p>
+          <h2 class="text-base font-bold text-white tracking-tight">Chat Settings</h2>
+          <p class="text-xs text-slate-400">Appearance, themes & message styling</p>
         </div>
       </div>
-
-      <!-- Segmented Base Mode Pills (Day / Dark / AMOLED) -->
-      <div class="flex items-center gap-2">
-        <div class="flex items-center p-1 rounded-xl bg-white/[0.04] border border-white/[0.08]" id="appearance-base-mode-group">
-          <button type="button" data-mode="dark" class="appearance-mode-btn px-2.5 py-1 rounded-lg text-xs font-medium text-slate-300 hover:text-white transition flex items-center gap-1.5 cursor-pointer" title="Standard Telegram Dark">
-            <span>🌙</span>
-            <span class="hidden sm:inline">Dark</span>
-          </button>
-          <button type="button" data-mode="amoled" class="appearance-mode-btn px-2.5 py-1 rounded-lg text-xs font-medium text-slate-300 hover:text-white transition flex items-center gap-1.5 cursor-pointer" title="AMOLED Pitch Black #000">
-            <span>⚡</span>
-            <span class="hidden sm:inline">AMOLED</span>
-          </button>
-          <button type="button" data-mode="day" class="appearance-mode-btn px-2.5 py-1 rounded-lg text-xs font-medium text-slate-300 hover:text-white transition flex items-center gap-1.5 cursor-pointer" title="Telegram Soft Day Mode">
-            <span>☀️</span>
-            <span class="hidden sm:inline">Day</span>
-          </button>
-        </div>
-
-        <button type="button" id="chat-appearance-close-btn" class="w-9 h-9 rounded-xl hover:bg-white/10 text-slate-400 hover:text-white flex items-center justify-center transition cursor-pointer" title="Close">
-          <X class="w-5 h-5" />
-        </button>
-      </div>
-    </div>
-
-    <!-- Pinned Live Interactive Preview Viewport -->
-    <div class="p-4 sm:p-5 bg-[#080910] border-b border-white/[0.08] shrink-0">
-      <div class="flex items-center justify-between text-[11px] font-semibold tracking-wider text-slate-400 uppercase mb-2">
-        <span class="flex items-center gap-1.5">
-          <Sparkles class="w-3.5 h-3.5 text-purple-400" />
-          <span>Live Interactive Preview</span>
-        </span>
-        <span id="appearance-preview-status" class="text-[10px] font-mono text-purple-400/80 lowercase">real-time sync</span>
-      </div>
-
-      <!-- Preview Mockup Screen -->
-      <div id="appearance-preview-viewport" class="relative h-44 sm:h-48 rounded-2xl overflow-hidden border border-white/10 flex flex-col justify-end p-3.5 sm:p-4 select-none shadow-inner">
-        <!-- Layer 1: Background Image / Gradient -->
-        <div id="appearance-preview-image" class="absolute inset-0 transition-all duration-300" style="background: linear-gradient(to bottom, #090a12, #0e1122, #07080f);"></div>
-        <!-- Layer 2: Darkness Dimmer -->
-        <div id="appearance-preview-dimmer" class="absolute inset-0 bg-black/20 pointer-events-none transition-opacity duration-200"></div>
-        <!-- Layer 3: Vector Doodle Pattern Overlay -->
-        <div id="appearance-preview-pattern" class="absolute inset-0 pointer-events-none transition-opacity duration-300" style="background-image: none; opacity: 0.18;"></div>
-
-        <!-- Layer 4: Simulated Interactive Bubbles -->
-        <div class="relative z-10 space-y-2.5 max-w-full">
-          <!-- Incoming Character Bubble -->
-          <div class="flex items-start gap-2.5 max-w-[85%]">
-            <img src={character.avatar} alt={character.name} class="w-7 h-7 rounded-full object-cover shrink-0 ring-1 ring-white/20 mt-0.5" />
-            <div class="space-y-1 min-w-0">
-              <span id="appearance-preview-char-name" class="text-[11px] font-semibold truncate block transition-colors duration-200" style="color: var(--theme-name-color, #c084fc);">{character.name}</span>
-              <div id="appearance-preview-char-bubble" class="px-3.5 py-2 rounded-2xl rounded-tl-xs shadow-md transition-all duration-200" style="background: #101426; border: 1px solid rgba(255, 255, 255, 0.08); font-size: 15px; color: #f1f5f9;">
-                <p class="leading-relaxed">Aetheria Telegram theme is live! Explore custom name colors, sound effects and AMOLED mode. ✨</p>
-                <span class="text-[9px] text-slate-400 mt-1 block">10:42 PM</span>
-              </div>
-            </div>
-          </div>
-
-          <!-- Outgoing User Bubble -->
-          <div class="flex items-end justify-end max-w-[85%] ml-auto">
-            <div id="appearance-preview-user-bubble" class="px-3.5 py-2 rounded-2xl rounded-tr-xs shadow-lg transition-all duration-200 text-white" style="background: linear-gradient(135deg, #9333ea, #6366f1); font-size: 15px;">
-              <p class="leading-relaxed">Telegram styling with instant audio blip and vector patterns looks astonishing! 🚀</p>
-              <div class="text-[9px] text-white/70 mt-1 flex items-center justify-end gap-1">
-                <span>10:43 PM</span>
-                <svg class="w-3 h-3 text-cyan-300" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"></polyline></svg>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <!-- 4 Modern Tab Navigation Pills -->
-    <div class="px-5 pt-3 pb-0 border-b border-white/[0.08] flex items-center gap-2 overflow-x-auto no-scrollbar shrink-0 bg-white/[0.01]">
-      <button type="button" id="appearance-tab-presets" class="appearance-tab-btn active px-3.5 py-2 text-xs font-semibold rounded-t-xl transition flex items-center gap-2 border-b-2 border-purple-500 text-white cursor-pointer whitespace-nowrap">
-        <Sparkles class="w-3.5 h-3.5 text-purple-400" />
-        <span>Theme Presets</span>
-      </button>
-      <button type="button" id="appearance-tab-wallpapers" class="appearance-tab-btn px-3.5 py-2 text-xs font-medium rounded-t-xl transition flex items-center gap-2 border-b-2 border-transparent text-slate-400 hover:text-white cursor-pointer whitespace-nowrap">
-        <ImageIcon class="w-3.5 h-3.5 text-slate-400" />
-        <span>Wallpaper & Effects</span>
-      </button>
-      <button type="button" id="appearance-tab-bubbles" class="appearance-tab-btn px-3.5 py-2 text-xs font-medium rounded-t-xl transition flex items-center gap-2 border-b-2 border-transparent text-slate-400 hover:text-white cursor-pointer whitespace-nowrap">
-        <Palette class="w-3.5 h-3.5 text-slate-400" />
-        <span>Bubbles & Name Colors</span>
-      </button>
-      <button type="button" id="appearance-tab-extras" class="appearance-tab-btn px-3.5 py-2 text-xs font-medium rounded-t-xl transition flex items-center gap-2 border-b-2 border-transparent text-slate-400 hover:text-white cursor-pointer whitespace-nowrap">
-        <SlidersHorizontal class="w-3.5 h-3.5 text-slate-400" />
-        <span>Audio & Chat Extras</span>
+      <button type="button" id="appearance-btn-close-x" class="w-8 h-8 rounded-full bg-white/[0.04] hover:bg-white/[0.1] border border-white/[0.08] flex items-center justify-center text-slate-300 hover:text-white transition cursor-pointer">
+        <X class="w-4 h-4" />
       </button>
     </div>
 
-    <!-- Modal Scrollable Body -->
-    <div class="p-5 overflow-y-auto space-y-6 flex-1 text-slate-200">
+    <!-- Modal Body (Scrollable) -->
+    <div class="p-4 sm:p-6 overflow-y-auto space-y-4 flex-1">
       
-      <!-- ========================================== -->
-      <!-- VIEW 1: PRESETS & CUSTOM THEMES (STEP 4)   -->
-      <!-- ========================================== -->
-      <div id="appearance-view-presets" class="space-y-5">
-        
-        <!-- Custom Themes Action Bar -->
-        <div class="p-4 rounded-2xl bg-white/[0.02] border border-white/[0.08] space-y-3">
-          <div class="flex items-center justify-between">
-            <div>
-              <h3 class="text-xs font-bold text-white flex items-center gap-2">
-                <span>🎨 Custom Theme Creator</span>
-                <span class="px-2 py-0.5 rounded-full bg-cyan-500/20 text-cyan-300 text-[10px] font-mono">Create Your Own</span>
-              </h3>
-              <p class="text-[11px] text-slate-400 mt-0.5">Save current wallpaper, gradient, colors and audio preferences as a personal theme</p>
-            </div>
-            <button type="button" id="appearance-btn-toggle-custom-form" class="px-3 py-1.5 rounded-xl bg-purple-600 hover:bg-purple-500 text-white text-xs font-semibold flex items-center gap-1.5 transition cursor-pointer shadow-lg shadow-purple-900/30">
-              <Plus class="w-3.5 h-3.5" />
-              <span>Create New Theme</span>
-            </button>
+      <!-- Card 1: Text Size + Live Preview + Wallpaper & Name Color Links -->
+      <div class="rounded-2xl bg-white/[0.02] border border-white/[0.08] p-4 sm:p-5 space-y-4">
+        <!-- Message text size slider -->
+        <div class="space-y-2">
+          <div class="flex items-center justify-between text-xs">
+            <span class="font-medium text-slate-300">Message text size</span>
+            <span id="chat-modal-font-val" class="font-mono text-purple-400 font-bold bg-purple-500/10 px-2 py-0.5 rounded-lg border border-purple-500/20 text-xs">16</span>
           </div>
+          <input 
+            type="range" 
+            id="chat-modal-font-slider" 
+            min="12" 
+            max="24" 
+            step="1" 
+            value="16" 
+            class="w-full h-1.5 bg-white/10 rounded-lg appearance-none cursor-pointer accent-purple-500" 
+          />
+        </div>
 
-          <!-- Inline Form for Theme Creation (Hidden by default) -->
-          <div id="appearance-custom-theme-form" class="hidden pt-3 border-t border-white/[0.06] space-y-3">
-            <div class="flex flex-col sm:flex-row gap-2">
-              <input 
-                type="text" 
-                id="appearance-custom-theme-name" 
-                placeholder="Enter theme name (e.g. Cyber Velvet, Twilight Glow)..." 
-                class="flex-1 px-3.5 py-2 rounded-xl bg-black/40 border border-white/10 text-xs text-white placeholder-slate-500 focus:outline-none focus:border-purple-500 transition"
-              />
-              <div class="flex items-center gap-2">
-                <button type="button" id="appearance-btn-save-custom" class="px-4 py-2 rounded-xl bg-purple-600 hover:bg-purple-500 text-white text-xs font-bold transition cursor-pointer flex items-center gap-1.5">
-                  <Check class="w-3.5 h-3.5" />
-                  <span>Save Theme</span>
-                </button>
-                <button type="button" id="appearance-btn-cancel-custom" class="px-3 py-2 rounded-xl bg-white/5 hover:bg-white/10 text-slate-300 text-xs transition cursor-pointer">
-                  Cancel
-                </button>
+        <!-- Live Telegram Chat Preview (Identical to Screenshot 3) -->
+        <div id="chat-modal-preview-viewport" class="relative min-h-[160px] rounded-2xl overflow-hidden border border-white/10 flex flex-col justify-end p-4 select-none shadow-inner" style="background-color: #090a12;">
+          <div id="chat-modal-preview-bg" class="absolute inset-0 transition-all duration-300" style="background: linear-gradient(to bottom, #090a12, #0e1122, #07080f);"></div>
+          <div id="chat-modal-preview-dimmer" class="absolute inset-0 bg-black/20 pointer-events-none transition-opacity duration-200"></div>
+          <div id="chat-modal-preview-pattern" class="absolute inset-0 pointer-events-none transition-opacity duration-300" style="background-image: none; opacity: 0.18;"></div>
+
+          <div class="relative z-10 space-y-3 max-w-full">
+            <!-- Incoming message (Left) -->
+            <div class="flex items-start gap-2.5 max-w-[85%]">
+              <div class="w-7 h-7 rounded-full bg-purple-600/30 border border-purple-500/30 flex items-center justify-center text-purple-200 text-xs font-bold shrink-0 mt-0.5">
+                A
+              </div>
+              <div class="space-y-1 min-w-0">
+                <span id="chat-modal-preview-char-name" class="text-xs font-semibold block truncate" style="color: #a855f7;">Lyra Vance</span>
+                <div id="chat-modal-preview-char-bubble" class="px-3.5 py-2 rounded-2xl rounded-tl-xs shadow-md transition-all duration-200" style="background: #101426; border: 1px solid rgba(255, 255, 255, 0.08); font-size: 16px; color: #f1f5f9;">
+                  <p class="leading-relaxed text-sm">Good morning! Already on my way to the office.</p>
+                  <span class="text-[10px] text-slate-400 mt-1 block">10:42</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- Outgoing message from User (Right) with Double Checks -->
+            <div class="flex items-end justify-end max-w-[85%] ml-auto">
+              <div id="chat-modal-preview-user-bubble" class="px-3.5 py-2 rounded-2xl rounded-tr-xs shadow-lg transition-all duration-200 text-white" style="background: linear-gradient(135deg, #9333ea, #6366f1); font-size: 16px;">
+                <p class="leading-relaxed text-sm">Hello! Me too, just left home. See you there!</p>
+                <div class="text-[10px] text-white/70 mt-1 flex items-center justify-end gap-1">
+                  <span>10:43</span>
+                  <svg class="w-3.5 h-3.5 text-cyan-300" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                </div>
               </div>
             </div>
           </div>
-
-          <!-- User's Saved Themes Grid -->
-          <div id="appearance-custom-themes-container" class="hidden space-y-2 pt-2">
-            <span class="text-[11px] font-semibold text-purple-300 uppercase tracking-wider block">My Saved Themes</span>
-            <div id="appearance-custom-themes-grid" class="grid grid-cols-2 sm:grid-cols-3 gap-2.5">
-              <!-- Rendered via JS -->
-            </div>
-          </div>
         </div>
 
-        <!-- Built-in Telegram Themes Grid -->
-        <div class="space-y-2.5">
-          <div class="flex items-center justify-between">
-            <span class="text-xs font-bold text-slate-300 uppercase tracking-wider">Telegram Theme Presets</span>
-            <span class="text-[11px] text-slate-400">8 curated cohesive themes</span>
-          </div>
-          <div class="grid grid-cols-1 sm:grid-cols-2 gap-3" id="appearance-presets-grid">
-            <!-- Dynamically populated via JS -->
-          </div>
-        </div>
-      </div>
-
-      <!-- ========================================== -->
-      <!-- VIEW 2: WALLPAPERS & VISUAL EFFECTS        -->
-      <!-- ========================================== -->
-      <div id="appearance-view-wallpapers" class="hidden space-y-5">
-        <!-- Visual Effects Toolbar -->
-        <div class="p-4 rounded-2xl bg-white/[0.02] border border-white/[0.08] space-y-4">
-          <span class="text-xs font-bold text-slate-300 uppercase tracking-wider block">Visual Effects & Filters</span>
-          
-          <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-            <!-- Gaussian Blur Toggle -->
-            <div class="flex items-center justify-between p-3 rounded-xl bg-white/[0.02] border border-white/[0.06]">
-              <div class="space-y-0.5">
-                <span class="text-xs font-medium text-slate-200 block">Blur Wallpaper</span>
-                <span class="text-[10px] text-slate-400">14px Gaussian blur for text legibility</span>
-              </div>
-              <button type="button" id="appearance-blur-toggle" class="px-3 py-1.5 rounded-lg border text-xs font-semibold transition cursor-pointer bg-white/5 border-white/10 text-slate-300">
-                Off
-              </button>
-            </div>
-
-            <!-- Darkness Dimmer Slider -->
-            <div class="p-3 rounded-xl bg-white/[0.02] border border-white/[0.06] space-y-2">
-              <div class="flex items-center justify-between">
-                <span class="text-xs font-medium text-slate-200">Darkness Dimmer</span>
-                <span id="appearance-dim-val" class="text-xs font-mono text-purple-400 font-bold">20%</span>
-              </div>
-              <input type="range" id="appearance-dim-slider" min="0" max="70" step="5" value="20" class="w-full h-1.5 bg-white/10 rounded-lg appearance-none cursor-pointer accent-purple-500" />
-            </div>
-          </div>
-
-          <!-- Vector Doodle Patterns Section -->
-          <div class="space-y-2.5 pt-2 border-t border-white/[0.06]">
-            <div class="flex items-center justify-between">
-              <span class="text-xs font-medium text-slate-200">Vector Doodle Patterns</span>
-              <div class="flex items-center gap-2">
-                <span class="text-[10px] text-slate-400">Pattern Opacity:</span>
-                <span id="appearance-pattern-opacity-val" class="text-xs font-mono text-purple-400 font-bold">18%</span>
-              </div>
-            </div>
-            
-            <div class="grid grid-cols-3 sm:grid-cols-6 gap-2" id="appearance-doodle-pills">
-              <!-- Rendered via JS -->
-            </div>
-
-            <div class="pt-1">
-              <input type="range" id="appearance-pattern-opacity-slider" min="5" max="50" step="1" value="18" class="w-full h-1 bg-white/10 rounded-lg appearance-none cursor-pointer accent-purple-500" />
-            </div>
-          </div>
-        </div>
-
-        <!-- Custom Photo Upload Section -->
-        <div class="p-4 rounded-2xl bg-white/[0.02] border border-white/[0.08] space-y-3">
-          <span class="text-xs font-bold text-slate-300 uppercase tracking-wider block">Custom Photo Wallpaper</span>
-          <div class="flex flex-col sm:flex-row items-center gap-3">
-            <input type="file" id="appearance-photo-file" accept="image/*" class="hidden" />
-            <button type="button" id="appearance-photo-btn" class="w-full sm:w-auto px-4 py-2 rounded-xl bg-purple-600 hover:bg-purple-500 text-white text-xs font-semibold flex items-center justify-center gap-2 transition cursor-pointer">
-              <Upload class="w-4 h-4" />
-              <span>Choose from Photos</span>
-            </button>
-            <span class="text-xs text-slate-500 font-mono">or</span>
-            <div class="flex items-center gap-2 w-full sm:flex-1">
-              <input type="text" id="appearance-photo-url-input" placeholder="Paste direct image URL..." class="w-full px-3 py-1.5 rounded-xl bg-white/[0.04] border border-white/10 text-xs text-white placeholder-slate-500 focus:outline-none focus:border-purple-500" />
-              <button type="button" id="appearance-photo-url-apply" class="px-3 py-1.5 rounded-xl bg-white/10 hover:bg-white/20 text-white text-xs font-medium cursor-pointer transition">
-                Apply
-              </button>
-            </div>
-          </div>
-          <div id="appearance-photo-info" class="hidden items-center justify-between text-xs text-slate-400 bg-white/[0.02] p-2.5 rounded-xl border border-white/[0.06]">
-            <span class="truncate max-w-[260px]">Custom wallpaper active</span>
-            <button type="button" id="appearance-photo-clear" class="text-rose-400 hover:text-rose-300 text-[11px] font-semibold cursor-pointer">
-              Remove Photo
-            </button>
-          </div>
-        </div>
-
-        <!-- Wallpaper Gallery -->
-        <div class="space-y-3">
-          <div class="flex items-center justify-between">
-            <span class="text-xs font-bold text-slate-300 uppercase tracking-wider">Wallpaper Gallery</span>
-            <div class="flex items-center gap-1" id="appearance-wallpaper-category-filters">
-              <button type="button" class="wp-cat-btn active px-2.5 py-1 rounded-lg text-[10px] font-bold bg-purple-500/20 border border-purple-500/30 text-purple-300 cursor-pointer" data-cat="all">All</button>
-              <button type="button" class="wp-cat-btn px-2.5 py-1 rounded-lg text-[10px] font-medium bg-white/5 text-slate-400 hover:text-white cursor-pointer" data-cat="gradients">Gradients</button>
-              <button type="button" class="wp-cat-btn px-2.5 py-1 rounded-lg text-[10px] font-medium bg-white/5 text-slate-400 hover:text-white cursor-pointer" data-cat="art">Photos</button>
-            </div>
-          </div>
-          <div class="grid grid-cols-2 sm:grid-cols-3 gap-2.5" id="appearance-wallpapers-grid">
-            <!-- Rendered via JS -->
-          </div>
-        </div>
-      </div>
-
-      <!-- ========================================== -->
-      <!-- VIEW 3: BUBBLES & NAME COLORS (STEP 4)     -->
-      <!-- ========================================== -->
-      <div id="appearance-view-bubbles" class="hidden space-y-5">
-        
-        <!-- Telegram 7 Signature Name Colors Section (STEP 4) -->
-        <div class="p-4 rounded-2xl bg-white/[0.02] border border-white/[0.08] space-y-3">
-          <div class="flex items-center justify-between">
-            <div>
-              <span class="text-xs font-bold text-slate-300 uppercase tracking-wider block">Telegram Name & Reply Color</span>
-              <p class="text-[11px] text-slate-400 mt-0.5">Colors applied to your name, character title and reply quotes</p>
-            </div>
-            <div class="flex items-center gap-2">
-              <input type="color" id="appearance-custom-name-color" value="#a855f7" class="w-7 h-7 rounded-lg bg-transparent border-0 cursor-pointer" title="Pick custom name color" />
-              <span id="appearance-name-color-hex" class="text-xs font-mono text-purple-300 font-bold uppercase">#A855F7</span>
-            </div>
-          </div>
-          
-          <div class="grid grid-cols-4 sm:grid-cols-7 gap-2" id="appearance-name-color-palette">
-            <!-- 7 Telegram Name Colors rendered via JS -->
-          </div>
-        </div>
-
-        <!-- Geometry Sliders: Font Size & Bubble Radius -->
-        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-          <!-- Font Size Slider -->
-          <div class="p-3.5 rounded-2xl bg-white/[0.02] border border-white/[0.08] space-y-2">
-            <div class="flex items-center justify-between">
-              <span class="text-xs font-medium text-slate-200">Message Text Size</span>
-              <span id="appearance-font-val" class="px-2 py-0.5 rounded bg-purple-500/20 border border-purple-500/30 text-xs font-mono text-purple-300 font-bold">16px</span>
-            </div>
-            <input type="range" id="appearance-font-slider" min="13" max="22" step="1" value="16" class="w-full h-1.5 bg-white/10 rounded-lg appearance-none cursor-pointer accent-purple-500" />
-            <div class="flex justify-between text-[10px] text-slate-500 font-mono">
-              <span>Small (13px)</span>
-              <span>Default (16px)</span>
-              <span>Large (22px)</span>
-            </div>
-          </div>
-
-          <!-- Bubble Radius Slider -->
-          <div class="p-3.5 rounded-2xl bg-white/[0.02] border border-white/[0.08] space-y-2">
-            <div class="flex items-center justify-between">
-              <span class="text-xs font-medium text-slate-200">Bubble Corner Roundness</span>
-              <span id="appearance-radius-val" class="px-2 py-0.5 rounded bg-purple-500/20 border border-purple-500/30 text-xs font-mono text-purple-300 font-bold">16px</span>
-            </div>
-            <input type="range" id="appearance-radius-slider" min="0" max="24" step="2" value="16" class="w-full h-1.5 bg-white/10 rounded-lg appearance-none cursor-pointer accent-purple-500" />
-            <div class="flex justify-between text-[10px] text-slate-500 font-mono">
-              <span>Sharp (0px)</span>
-              <span>Soft (16px)</span>
-              <span>Capsule (24px)</span>
-            </div>
-          </div>
-        </div>
-
-        <!-- Outgoing User Bubble Gradients -->
-        <div class="p-4 rounded-2xl bg-white/[0.02] border border-white/[0.08] space-y-3.5">
-          <div class="flex items-center justify-between">
-            <span class="text-xs font-bold text-slate-300 uppercase tracking-wider">Outgoing Message Gradient</span>
-            <span class="text-[10px] text-slate-400">8 Preset Telegram Gradients</span>
-          </div>
-
-          <!-- Preset Gradients Pills -->
-          <div class="grid grid-cols-2 sm:grid-cols-4 gap-2" id="appearance-bubble-gradient-presets">
-            <!-- Populated via JS -->
-          </div>
-
-          <!-- Custom 2-Color Gradient Builder -->
-          <div class="pt-3 border-t border-white/[0.06] space-y-2.5">
-            <span class="text-xs font-medium text-slate-300 block">Custom 2-Color Gradient Builder</span>
+        <!-- List Menu Items: Change Wallpaper & Change Name Color -->
+        <div class="divide-y divide-white/[0.06] pt-1">
+          <!-- Change Chat Wallpaper Button -->
+          <button 
+            type="button" 
+            id="chat-modal-btn-open-wallpapers" 
+            class="w-full py-2.5 flex items-center justify-between text-left hover:text-purple-400 transition cursor-pointer group"
+          >
             <div class="flex items-center gap-3">
-              <div class="flex items-center gap-2 p-2 rounded-xl bg-white/[0.02] border border-white/[0.06] flex-1">
-                <span class="text-[11px] text-slate-400">From:</span>
-                <input type="color" id="appearance-gradient-color-a" value="#9333ea" class="w-7 h-7 rounded-lg bg-transparent border-0 cursor-pointer" />
-                <span id="appearance-gradient-val-a" class="text-xs font-mono text-slate-300 uppercase">#9333EA</span>
+              <div class="w-8 h-8 rounded-xl bg-purple-500/10 border border-purple-500/20 flex items-center justify-center text-purple-400 group-hover:scale-105 transition">
+                <Palette class="w-4 h-4" />
               </div>
-              <div class="flex items-center gap-2 p-2 rounded-xl bg-white/[0.02] border border-white/[0.06] flex-1">
-                <span class="text-[11px] text-slate-400">To:</span>
-                <input type="color" id="appearance-gradient-color-b" value="#6366f1" class="w-7 h-7 rounded-lg bg-transparent border-0 cursor-pointer" />
-                <span id="appearance-gradient-val-b" class="text-xs font-mono text-slate-300 uppercase">#6366F1</span>
-              </div>
-              <button type="button" id="appearance-apply-custom-gradient" class="px-3.5 py-2.5 rounded-xl bg-purple-600 hover:bg-purple-500 text-white text-xs font-semibold cursor-pointer transition shadow-md shadow-purple-950/40">
-                Apply Gradient
-              </button>
+              <span class="text-xs sm:text-sm font-medium text-slate-200 group-hover:text-purple-300 transition">Change Chat Wallpaper</span>
             </div>
-          </div>
-        </div>
-
-        <!-- Global Website Accent Color -->
-        <div class="p-4 rounded-2xl bg-white/[0.02] border border-white/[0.08] space-y-3">
-          <div class="flex items-center justify-between">
-            <span class="text-xs font-bold text-slate-300 uppercase tracking-wider">Global Website Accent Color</span>
             <div class="flex items-center gap-2">
-              <input type="color" id="appearance-custom-accent-input" value="#9333ea" class="w-6 h-6 rounded-lg bg-transparent border-0 cursor-pointer" />
-              <span id="appearance-custom-accent-hex" class="text-xs font-mono text-purple-300 uppercase">#9333EA</span>
+              <span class="text-xs text-slate-400 hidden sm:inline" id="chat-modal-current-wp-name">Default</span>
+              <span class="text-slate-400 text-sm">›</span>
             </div>
+          </button>
+
+          <!-- Collapsible Wallpaper Picker Drawer -->
+          <div id="chat-modal-wallpaper-drawer" class="hidden py-3 space-y-3">
+            <div class="flex items-center justify-between">
+              <span class="text-xs text-slate-400">Choose a background</span>
+              <div class="flex items-center gap-2">
+                <input type="file" id="chat-modal-photo-file-input" accept="image/*" class="hidden" />
+                <button type="button" id="chat-modal-btn-upload-photo" class="px-2.5 py-1 rounded-lg bg-purple-600/20 border border-purple-500/30 text-xs text-purple-300 hover:bg-purple-600/30 transition flex items-center gap-1 cursor-pointer">
+                  <Upload class="w-3 h-3" />
+                  <span>Upload Photo</span>
+                </button>
+              </div>
+            </div>
+            <div class="grid grid-cols-3 sm:grid-cols-6 gap-2" id="chat-modal-wallpaper-grid"></div>
           </div>
-          <div class="flex items-center gap-2.5 flex-wrap" id="appearance-accent-swatches">
-            <!-- Swatches rendered via JS -->
+
+          <!-- Change Name Color Button -->
+          <button 
+            type="button" 
+            id="chat-modal-btn-open-name-colors" 
+            class="w-full py-2.5 flex items-center justify-between text-left hover:text-purple-400 transition cursor-pointer group"
+          >
+            <div class="flex items-center gap-3">
+              <div class="w-8 h-8 rounded-xl bg-purple-500/10 border border-purple-500/20 flex items-center justify-center text-purple-400 group-hover:scale-105 transition">
+                <Sparkles class="w-4 h-4" />
+              </div>
+              <span class="text-xs sm:text-sm font-medium text-slate-200 group-hover:text-purple-300 transition">Change Name Color</span>
+            </div>
+            <div class="flex items-center gap-2">
+              <div id="chat-modal-name-color-dot" class="w-4 h-4 rounded-full border border-white/20 shadow-sm" style="background: #a855f7;"></div>
+              <span class="text-slate-400 text-sm">›</span>
+            </div>
+          </button>
+
+          <!-- Collapsible Name Color Drawer (SSR Rendered!) -->
+          <div id="chat-modal-name-color-drawer" class="hidden py-3 space-y-2">
+            <div class="flex items-center justify-between text-xs text-slate-400 mb-1">
+              <span>Telegram Signature Colors</span>
+              <span id="chat-modal-name-hex-label" class="font-mono text-purple-300 font-bold uppercase">#A855F7</span>
+            </div>
+            <div class="flex items-center gap-3 overflow-x-auto pb-1" id="chat-modal-name-colors-container">
+              {TELEGRAM_NAME_COLORS.map(c => (
+                <button 
+                  type="button" 
+                  class="chat-modal-name-col-btn w-9 h-9 rounded-full transition-transform hover:scale-110 active:scale-95 flex items-center justify-center shrink-0 border-2 border-white/10 cursor-pointer shadow-md relative"
+                  data-hex={c.hex}
+                  style={`background: ${c.hex};`}
+                  title={c.name}
+                >
+                  <div class="chat-modal-name-check hidden w-3.5 h-3.5 text-white">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                  </div>
+                </button>
+              ))}
+            </div>
           </div>
         </div>
       </div>
 
-      <!-- ========================================== -->
-      <!-- VIEW 4: CHAT EXTRAS & AUDIO (STEP 4)       -->
-      <!-- ========================================== -->
-      <div id="appearance-view-extras" class="hidden space-y-5">
-        
-        <!-- Telegram Sound Effects Section (STEP 4) -->
-        <div class="p-4 rounded-2xl bg-white/[0.02] border border-white/[0.08] space-y-3">
-          <div class="flex items-center justify-between">
-            <div class="space-y-0.5">
-              <span class="text-xs font-bold text-slate-300 uppercase tracking-wider block">Telegram Message Sounds</span>
-              <p class="text-[11px] text-slate-400">Synthesized audio pops on message send & incoming character replies</p>
-            </div>
-            <button type="button" id="appearance-sound-toggle" class="px-3.5 py-1.5 rounded-xl border text-xs font-semibold transition cursor-pointer bg-purple-500/20 border-purple-500/30 text-purple-300">
-              Enabled
-            </button>
-          </div>
-
-          <!-- Sound Test Audition Buttons -->
-          <div class="flex items-center gap-2.5 pt-2 border-t border-white/[0.06]">
-            <button type="button" id="appearance-sound-test-send" class="flex-1 px-3 py-2 rounded-xl bg-white/[0.04] hover:bg-white/[0.08] border border-white/[0.08] text-xs font-medium text-slate-200 hover:text-white transition flex items-center justify-center gap-2 cursor-pointer">
-              <span>🎵</span>
-              <span>Test Send Pop</span>
-            </button>
-            <button type="button" id="appearance-sound-test-receive" class="flex-1 px-3 py-2 rounded-xl bg-white/[0.04] hover:bg-white/[0.08] border border-white/[0.08] text-xs font-medium text-slate-200 hover:text-white transition flex items-center justify-center gap-2 cursor-pointer">
-              <span>🔔</span>
-              <span>Test Receive Chime</span>
-            </button>
-          </div>
+      <!-- Card 2: Color theme (Exact Telegram Carousel from Screenshot 3 & 4) -->
+      <div class="rounded-2xl bg-white/[0.02] border border-white/[0.08] p-4 sm:p-5 space-y-3">
+        <div class="flex items-center justify-between">
+          <h3 class="text-xs font-bold text-slate-400 uppercase tracking-wider">Color theme</h3>
+          <span class="text-[11px] text-purple-400 font-medium" id="chat-modal-selected-theme-name">Neon</span>
         </div>
 
-        <!-- Theme Scope Options -->
-        <div class="p-4 rounded-2xl bg-white/[0.02] border border-white/[0.08] space-y-3">
-          <span class="text-xs font-bold text-slate-300 uppercase tracking-wider block">Theme Application Scope</span>
-          
-          <div class="space-y-2">
-            <label class="flex items-center gap-3 p-3 rounded-xl bg-white/[0.02] border border-white/[0.06] cursor-pointer hover:bg-white/[0.04] transition">
-              <input type="radio" name="appearance-scope-radio" id="scope-radio-char" value="char" class="w-4 h-4 text-purple-600 focus:ring-purple-500" />
-              <div>
-                <span class="text-xs font-semibold text-white block">Save for {character.name} only</span>
-                <span class="text-[11px] text-slate-400">Keep a unique, individual look & wallpaper for this character</span>
+        <!-- SSR RENDERED THEME CAROUSEL (Never Invisible!) -->
+        <div class="flex items-center gap-3 overflow-x-auto pb-2 pt-1 scrollbar-none" id="chat-modal-theme-carousel">
+          {TELEGRAM_THEMES.map(theme => (
+            <button 
+              type="button" 
+              class="chat-modal-theme-capsule flex flex-col items-center gap-2 p-2.5 rounded-2xl bg-white/[0.03] hover:bg-white/[0.07] border border-white/[0.08] transition-all cursor-pointer shrink-0 w-[82px] group"
+              data-theme-id={theme.id}
+              title={theme.name}
+            >
+              <div class="relative w-12 h-12 rounded-full overflow-hidden shadow-lg flex items-center justify-center border-2 border-white/20 group-hover:scale-105 transition-transform" style={`background: ${theme.bubble};`}>
+                <span class="text-lg select-none drop-shadow">{theme.emoji}</span>
+                <div class="chat-modal-theme-active-ring absolute inset-0 bg-black/40 hidden items-center justify-center">
+                  <svg class="w-5 h-5 text-white" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                </div>
               </div>
-            </label>
-
-            <label class="flex items-center gap-3 p-3 rounded-xl bg-white/[0.02] border border-white/[0.06] cursor-pointer hover:bg-white/[0.04] transition">
-              <input type="radio" name="appearance-scope-radio" id="scope-radio-global" value="global" class="w-4 h-4 text-purple-600 focus:ring-purple-500" />
-              <div>
-                <span class="text-xs font-semibold text-white block">Save for all characters (Global)</span>
-                <span class="text-[11px] text-slate-400">Make this your global site-wide default theme</span>
-              </div>
-            </label>
-          </div>
-
-          <div id="appearance-char-override-banner" class="hidden p-3 rounded-xl bg-purple-950/40 border border-purple-500/30 flex items-center justify-between">
-            <span class="text-xs text-purple-200">This character has custom theme overrides active</span>
-            <button type="button" id="appearance-revert-char-btn" class="px-2.5 py-1 rounded-lg bg-purple-600/40 hover:bg-purple-600 text-purple-200 hover:text-white text-[11px] font-medium transition cursor-pointer">
-              Revert to Global
+              <span class="text-[11px] font-semibold text-slate-200 truncate max-w-full">{theme.name}</span>
             </button>
-          </div>
+          ))}
         </div>
 
-        <!-- Chat Density (Comfortable vs Compact) -->
-        <div class="p-4 rounded-2xl bg-white/[0.02] border border-white/[0.08] space-y-3">
-          <span class="text-xs font-bold text-slate-300 uppercase tracking-wider block">Chat Message Density</span>
-          <div class="grid grid-cols-2 gap-3">
-            <label class="flex items-center gap-2.5 p-3 rounded-xl bg-white/[0.02] border border-white/[0.06] cursor-pointer hover:bg-white/[0.04] transition">
-              <input type="radio" name="appearance-density-radio" value="comfortable" id="density-radio-comfortable" class="w-4 h-4 text-purple-600" />
-              <div>
-                <span class="text-xs font-medium text-white block">Comfortable</span>
-                <span class="text-[10px] text-slate-400">Standard spacing</span>
-              </div>
-            </label>
-            <label class="flex items-center gap-2.5 p-3 rounded-xl bg-white/[0.02] border border-white/[0.06] cursor-pointer hover:bg-white/[0.04] transition">
-              <input type="radio" name="appearance-density-radio" value="compact" id="density-radio-compact" class="w-4 h-4 text-purple-600" />
-              <div>
-                <span class="text-xs font-medium text-white block">Compact</span>
-                <span class="text-[10px] text-slate-400">Dense Telegram layout</span>
-              </div>
-            </label>
+        <!-- Day / Night Mode Switcher row (like Screenshot 3) -->
+        <div class="pt-3 border-t border-white/[0.06] flex items-center justify-between">
+          <div class="flex items-center gap-2.5">
+            <span id="chat-modal-mode-icon" class="text-base">🌙</span>
+            <span id="chat-modal-mode-text" class="text-xs font-medium text-slate-200">Switch to Day Mode</span>
           </div>
+          <button 
+            type="button" 
+            id="chat-modal-btn-toggle-day-night" 
+            class="px-3 py-1.5 rounded-xl bg-white/[0.06] hover:bg-white/[0.12] text-xs font-semibold text-white transition cursor-pointer flex items-center gap-1.5"
+          >
+            <span>Switch</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- Card 3: Message corners slider (Exact Telegram Screenshot 3 & 4) -->
+      <div class="rounded-2xl bg-white/[0.02] border border-white/[0.08] p-4 sm:p-5 space-y-3">
+        <div class="flex items-center justify-between text-xs">
+          <span class="font-bold text-slate-400 uppercase tracking-wider">Message corners</span>
+          <span id="chat-modal-radius-val" class="font-mono text-purple-400 font-bold bg-purple-500/10 px-2.5 py-0.5 rounded-lg border border-purple-500/20 text-xs">16</span>
+        </div>
+        <input 
+          type="range" 
+          id="chat-modal-radius-slider" 
+          min="0" 
+          max="24" 
+          step="1" 
+          value="16" 
+          class="w-full h-1.5 bg-white/10 rounded-lg appearance-none cursor-pointer accent-purple-500" 
+        />
+      </div>
+
+      <!-- Card 4: Sound, Send Key & Theme Scope -->
+      <div class="rounded-2xl bg-white/[0.02] border border-white/[0.08] p-4 sm:p-5 divide-y divide-white/[0.06]">
+        <!-- Sound Effects -->
+        <div class="pb-3 flex items-center justify-between">
+          <div class="space-y-0.5">
+            <span class="text-xs font-medium text-slate-200 block">Sound Effects</span>
+            <span class="text-[10px] text-slate-400">Telegram pop on message send/receive</span>
+          </div>
+          <button 
+            type="button" 
+            id="chat-modal-sound-btn" 
+            class="px-3 py-1 rounded-xl text-xs font-semibold transition cursor-pointer bg-purple-500/20 border border-purple-500/30 text-purple-300"
+          >
+            Enabled
+          </button>
         </div>
 
-        <!-- Send Shortcut Options -->
-        <div class="p-4 rounded-2xl bg-white/[0.02] border border-white/[0.08] space-y-3">
-          <span class="text-xs font-bold text-slate-300 uppercase tracking-wider block">Keyboard Send Shortcut</span>
-          <div class="space-y-2">
-            <label class="flex items-center gap-3 p-3 rounded-xl bg-white/[0.02] border border-white/[0.06] cursor-pointer hover:bg-white/[0.04] transition">
-              <input type="radio" name="appearance-send-radio" id="send-radio-enter" value="enter" class="w-4 h-4 text-purple-600" />
-              <div>
-                <span class="text-xs font-medium text-white block">Enter to Send</span>
-                <span class="text-[10px] text-slate-400">Press Enter to send, Shift+Enter for new line</span>
-              </div>
+        <!-- Send Shortcut -->
+        <div class="py-3 flex items-center justify-between">
+          <div class="space-y-0.5">
+            <span class="text-xs font-medium text-slate-200 block">Send Shortcut</span>
+            <span class="text-[10px] text-slate-400">Enter to send</span>
+          </div>
+          <div class="flex items-center gap-2">
+            <label class="text-xs text-slate-300 flex items-center gap-1 cursor-pointer">
+              <input type="radio" name="chat-modal-send-radio" value="enter" id="chat-modal-send-radio-enter" checked class="w-3.5 h-3.5 text-purple-600" />
+              <span>Enter</span>
             </label>
-            <label class="flex items-center gap-3 p-3 rounded-xl bg-white/[0.02] border border-white/[0.06] cursor-pointer hover:bg-white/[0.04] transition">
-              <input type="radio" name="appearance-send-radio" id="send-radio-ctrl-enter" value="ctrl_enter" class="w-4 h-4 text-purple-600" />
-              <div>
-                <span class="text-xs font-medium text-white block">Ctrl+Enter to Send</span>
-                <span class="text-[10px] text-slate-400">Press Enter for new line, Ctrl+Enter (Cmd+Enter) to send</span>
-              </div>
+            <label class="text-xs text-slate-300 flex items-center gap-1 cursor-pointer ml-1">
+              <input type="radio" name="chat-modal-send-radio" value="ctrl_enter" id="chat-modal-send-radio-ctrl" class="w-3.5 h-3.5 text-purple-600" />
+              <span>Ctrl+Enter</span>
             </label>
           </div>
         </div>
 
-        <!-- Backup, Share & Reset -->
-        <div class="p-4 rounded-2xl bg-white/[0.02] border border-white/[0.08] space-y-3">
-          <span class="text-xs font-bold text-slate-300 uppercase tracking-wider block">Backup, Share & Reset</span>
-          <div class="flex flex-wrap items-center gap-2">
-            <button type="button" id="appearance-export-btn" class="px-3.5 py-2 rounded-xl bg-white/5 hover:bg-white/10 text-white text-xs font-medium flex items-center gap-2 transition cursor-pointer">
-              <Copy class="w-3.5 h-3.5 text-slate-400" />
-              <span>Copy Theme JSON</span>
-            </button>
-            <button type="button" id="appearance-import-btn" class="px-3.5 py-2 rounded-xl bg-white/5 hover:bg-white/10 text-white text-xs font-medium flex items-center gap-2 transition cursor-pointer">
-              <Upload class="w-3.5 h-3.5 text-slate-400" />
-              <span>Import Theme Code</span>
-            </button>
-            <button type="button" id="appearance-reset-factory-btn" class="px-3.5 py-2 rounded-xl bg-rose-500/10 hover:bg-rose-500/20 text-rose-300 text-xs font-medium flex items-center gap-2 transition cursor-pointer ml-auto">
-              <RotateCcw class="w-3.5 h-3.5" />
-              <span>Reset to Default</span>
-            </button>
+        <!-- Theme Scope -->
+        <div class="pt-3 flex items-center justify-between">
+          <div class="space-y-0.5">
+            <span class="text-xs font-medium text-slate-200 block">Theme Scope</span>
+            <span class="text-[10px] text-slate-400">Apply to this character or all</span>
           </div>
-
-          <!-- Collapsible Import Box -->
-          <div id="appearance-import-box" class="hidden pt-3 border-t border-white/[0.06] space-y-2">
-            <textarea id="appearance-import-textarea" rows="3" placeholder="Paste your theme JSON code here..." class="w-full p-2.5 rounded-xl bg-black/40 border border-white/10 text-xs font-mono text-purple-200 placeholder-slate-500 focus:outline-none focus:border-purple-500"></textarea>
-            <div class="flex justify-end gap-2">
-              <button type="button" id="appearance-import-cancel" class="px-3 py-1.5 rounded-lg bg-white/5 text-slate-400 text-xs hover:text-white cursor-pointer">Cancel</button>
-              <button type="button" id="appearance-import-apply" class="px-3 py-1.5 rounded-lg bg-purple-600 text-white text-xs font-bold hover:bg-purple-500 cursor-pointer">Apply Code</button>
-            </div>
+          <div class="flex items-center gap-1 bg-white/[0.04] p-1 rounded-xl border border-white/[0.08]" id="chat-modal-scope-group">
+            <button type="button" data-scope="char" class="chat-modal-scope-btn px-2.5 py-1 rounded-lg text-xs font-medium bg-purple-600 text-white transition cursor-pointer">This Chat</button>
+            <button type="button" data-scope="global" class="chat-modal-scope-btn px-2.5 py-1 rounded-lg text-xs font-medium text-slate-300 hover:text-white transition cursor-pointer">All Chats</button>
           </div>
         </div>
-
       </div>
 
     </div>
 
-    <!-- Modal Footer Actions -->
+    <!-- Modal Footer -->
     <div class="px-5 py-3.5 border-t border-white/[0.08] flex items-center justify-between bg-white/[0.02] shrink-0">
-      <button type="button" id="appearance-reset-btn" class="px-3.5 py-2 rounded-xl text-xs font-medium text-slate-400 hover:text-white hover:bg-white/5 transition cursor-pointer flex items-center gap-1.5">
+      <button type="button" id="appearance-btn-reset-factory" class="text-xs text-slate-400 hover:text-rose-400 transition cursor-pointer flex items-center gap-1.5">
         <RotateCcw class="w-3.5 h-3.5" />
-        <span>Revert Changes</span>
+        <span>Reset Default</span>
       </button>
-
       <div class="flex items-center gap-2">
-        <button type="button" id="appearance-cancel-btn" class="px-4 py-2 rounded-xl text-xs font-medium text-slate-400 hover:text-white hover:bg-white/5 transition cursor-pointer">
-          Cancel
-        </button>
-        <button type="button" id="appearance-save-btn" class="px-5 py-2 rounded-xl text-xs font-bold text-white bg-purple-600 hover:bg-purple-500 transition cursor-pointer flex items-center gap-2 shadow-lg shadow-purple-950/50">
-          <Check class="w-4 h-4" />
-          <span>Apply & Save</span>
+        <button type="button" id="appearance-btn-cancel-bottom" class="px-4 py-2 rounded-xl text-xs font-semibold text-slate-300 hover:text-white hover:bg-white/[0.06] transition cursor-pointer">
+          Done
         </button>
       </div>
     </div>
@@ -19458,141 +19239,85 @@ Requirements:
 
 
   // ==========================================
-  // TELEGRAM-GRADE CHAT APPEARANCE & THEME CONTROLLER (STEP 4 ENGINE)
+  // TELEGRAM CHAT SETTINGS CONTROLLER (EXACT TELEGRAM INTERACTION)
   // ==========================================
-  function initChatAppearanceEngine() {
+  function initChatSettingsEngine() {
     const modal = document.getElementById('chat-appearance-modal');
     const panel = document.getElementById('chat-appearance-panel');
-    const closeBtn = document.getElementById('chat-appearance-close-btn');
-    const cancelBtn = document.getElementById('appearance-cancel-btn');
-    const saveBtn = document.getElementById('appearance-save-btn');
-    const resetBtn = document.getElementById('appearance-reset-btn');
-    const factoryResetBtn = document.getElementById('appearance-reset-factory-btn');
+    const btnOpenInMenu = document.getElementById('menu-action-appearance');
+    const btnCloseX = document.getElementById('appearance-btn-close-x');
+    const btnCancelBottom = document.getElementById('appearance-btn-cancel-bottom');
+    const btnReset = document.getElementById('appearance-btn-reset-factory');
 
-    // Tab buttons
-    const tabPresets = document.getElementById('appearance-tab-presets');
-    const tabWallpapers = document.getElementById('appearance-tab-wallpapers');
-    const tabBubbles = document.getElementById('appearance-tab-bubbles');
-    const tabExtras = document.getElementById('appearance-tab-extras');
+    const activeCharId = (window as any).AetheriaTheme?.getActiveCharId?.() || 'lyra-vance';
+    let currentScope = (window as any).AetheriaTheme?.hasCharSettings?.(activeCharId) ? 'char' : 'global';
+    let settings = { ...((window as any).AetheriaTheme?.getSettings?.(currentScope === 'char' ? activeCharId : null) || {}) };
 
-    // Views
-    const viewPresets = document.getElementById('appearance-view-presets');
-    const viewWallpapers = document.getElementById('appearance-view-wallpapers');
-    const viewBubbles = document.getElementById('appearance-view-bubbles');
-    const viewExtras = document.getElementById('appearance-view-extras');
+    const fontSlider = document.getElementById('chat-modal-font-slider') as HTMLInputElement | null;
+    const fontVal = document.getElementById('chat-modal-font-val');
+    const radiusSlider = document.getElementById('chat-modal-radius-slider') as HTMLInputElement | null;
+    const radiusVal = document.getElementById('chat-modal-radius-val');
 
-    // Live Preview elements
-    const previewViewport = document.getElementById('appearance-preview-viewport');
-    const previewImage = document.getElementById('appearance-preview-image');
-    const previewDimmer = document.getElementById('appearance-preview-dimmer');
-    const previewPattern = document.getElementById('appearance-preview-pattern');
-    const previewCharBubble = document.getElementById('appearance-preview-char-bubble');
-    const previewUserBubble = document.getElementById('appearance-preview-user-bubble');
-    const previewCharName = document.getElementById('appearance-preview-char-name');
+    const previewBg = document.getElementById('chat-modal-preview-bg');
+    const previewDimmer = document.getElementById('chat-modal-preview-dimmer');
+    const previewPattern = document.getElementById('chat-modal-preview-pattern');
+    const previewCharBubble = document.getElementById('chat-modal-preview-char-bubble');
+    const previewUserBubble = document.getElementById('chat-modal-preview-user-bubble');
+    const previewCharName = document.getElementById('chat-modal-preview-char-name');
+    const previewViewport = document.getElementById('chat-modal-preview-viewport');
 
-    // Base Mode buttons (Day / Dark / AMOLED)
-    const baseModeButtons = document.querySelectorAll('#appearance-base-mode-group .appearance-mode-btn');
+    const wpDrawer = document.getElementById('chat-modal-wallpaper-drawer');
+    const btnOpenWp = document.getElementById('chat-modal-btn-open-wallpapers');
+    const wpGrid = document.getElementById('chat-modal-wallpaper-grid');
+    const photoFileInput = document.getElementById('chat-modal-photo-file-input') as HTMLInputElement | null;
+    const btnUploadPhoto = document.getElementById('chat-modal-btn-upload-photo');
 
-    // Step 4 Custom Themes elements
-    const btnToggleCustomForm = document.getElementById('appearance-btn-toggle-custom-form');
-    const customThemeForm = document.getElementById('appearance-custom-theme-form');
-    const customThemeNameInput = document.getElementById('appearance-custom-theme-name');
-    const btnSaveCustomTheme = document.getElementById('appearance-btn-save-custom');
-    const btnCancelCustomTheme = document.getElementById('appearance-btn-cancel-custom');
-    const customThemesContainer = document.getElementById('appearance-custom-themes-container');
-    const customThemesGrid = document.getElementById('appearance-custom-themes-grid');
+    const nameDrawer = document.getElementById('chat-modal-name-color-drawer');
+    const btnOpenName = document.getElementById('chat-modal-btn-open-name-colors');
+    const nameColorDot = document.getElementById('chat-modal-name-color-dot');
+    const nameHexLabel = document.getElementById('chat-modal-name-hex-label');
 
-    // Name Colors
-    const nameColorPalette = document.getElementById('appearance-name-color-palette');
-    const customNameColorInput = document.getElementById('appearance-custom-name-color');
-    const nameColorHex = document.getElementById('appearance-name-color-hex');
+    const themeNameLabel = document.getElementById('chat-modal-selected-theme-name');
+    const btnToggleDayNight = document.getElementById('chat-modal-btn-toggle-day-night');
+    const modeIcon = document.getElementById('chat-modal-mode-icon');
+    const modeText = document.getElementById('chat-modal-mode-text');
 
-    // Audio Elements
-    const soundToggle = document.getElementById('appearance-sound-toggle');
-    const soundTestSend = document.getElementById('appearance-sound-test-send');
-    const soundTestReceive = document.getElementById('appearance-sound-test-receive');
+    const soundBtn = document.getElementById('chat-modal-sound-btn');
+    const radioEnter = document.getElementById('chat-modal-send-radio-enter') as HTMLInputElement | null;
+    const radioCtrl = document.getElementById('chat-modal-send-radio-ctrl') as HTMLInputElement | null;
+    const scopeButtons = document.querySelectorAll('#chat-modal-scope-group .chat-modal-scope-btn');
 
-    // Controls
-    const fontSlider = document.getElementById('appearance-font-slider');
-    const fontVal = document.getElementById('appearance-font-val');
-    const radiusSlider = document.getElementById('appearance-radius-slider');
-    const radiusVal = document.getElementById('appearance-radius-val');
-
-    const blurToggle = document.getElementById('appearance-blur-toggle');
-    const dimSlider = document.getElementById('appearance-dim-slider');
-    const dimVal = document.getElementById('appearance-dim-val');
-    const patternOpacitySlider = document.getElementById('appearance-pattern-opacity-slider');
-    const patternOpacityVal = document.getElementById('appearance-pattern-opacity-val');
-
-    const photoFileInput = document.getElementById('appearance-photo-file');
-    const photoBtn = document.getElementById('appearance-photo-btn');
-    const photoUrlInput = document.getElementById('appearance-photo-url-input');
-    const photoUrlApply = document.getElementById('appearance-photo-url-apply');
-    const photoInfo = document.getElementById('appearance-photo-info');
-    const photoClear = document.getElementById('appearance-photo-clear');
-
-    const gradColorA = document.getElementById('appearance-gradient-color-a');
-    const gradValA = document.getElementById('appearance-gradient-val-a');
-    const gradColorB = document.getElementById('appearance-gradient-color-b');
-    const gradValB = document.getElementById('appearance-gradient-val-b');
-    const applyGradBtn = document.getElementById('appearance-apply-custom-gradient');
-
-    const customAccentInput = document.getElementById('appearance-custom-accent-input');
-    const customAccentHex = document.getElementById('appearance-custom-accent-hex');
-    const swatchesContainer = document.getElementById('appearance-accent-swatches');
-
-    const scopeRadioChar = document.getElementById('scope-radio-char');
-    const scopeRadioGlobal = document.getElementById('scope-radio-global');
-    const charOverrideBanner = document.getElementById('appearance-char-override-banner');
-    const revertCharBtn = document.getElementById('appearance-revert-char-btn');
-
-    const densityRadioComfortable = document.getElementById('density-radio-comfortable');
-    const densityRadioCompact = document.getElementById('density-radio-compact');
-    const sendRadioEnter = document.getElementById('send-radio-enter');
-    const sendRadioCtrlEnter = document.getElementById('send-radio-ctrl-enter');
-
-    const exportBtn = document.getElementById('appearance-export-btn');
-    const importBtn = document.getElementById('appearance-import-btn');
-    const importBox = document.getElementById('appearance-import-box');
-    const importTextarea = document.getElementById('appearance-import-textarea');
-    const importCancel = document.getElementById('appearance-import-cancel');
-    const importApply = document.getElementById('appearance-import-apply');
-
-    const charId = window.AetheriaTheme?.getActiveCharId?.() || 'current';
-
-    // In-memory working draft state
-    let draftSettings = { ...(window.AetheriaTheme?.getSettings?.(charId) || {}) };
-    let initialSavedState = { ...draftSettings };
-
-    function switchTab(activeTab, activeView) {
-      [tabPresets, tabWallpapers, tabBubbles, tabExtras].forEach(t => {
-        if (!t) return;
-        t.classList.remove('active', 'border-purple-500', 'text-white');
-        t.classList.add('border-transparent', 'text-slate-400');
+    function openModal() {
+      if (!modal) return;
+      currentScope = (window as any).AetheriaTheme?.hasCharSettings?.(activeCharId) ? 'char' : 'global';
+      settings = { ...((window as any).AetheriaTheme?.getSettings?.(currentScope === 'char' ? activeCharId : null) || {}) };
+      syncScopeButtons();
+      syncInputs();
+      updatePreview();
+      modal.classList.remove('hidden');
+      requestAnimationFrame(() => {
+        modal.classList.remove('opacity-0');
+        panel?.classList.remove('scale-95');
+        panel?.classList.add('scale-100');
       });
-      [viewPresets, viewWallpapers, viewBubbles, viewExtras].forEach(v => {
-        if (v) v.classList.add('hidden');
-      });
-
-      if (activeTab && activeView) {
-        activeTab.classList.add('active', 'border-purple-500', 'text-white');
-        activeTab.classList.remove('border-transparent', 'text-slate-400');
-        activeView.classList.remove('hidden');
-      }
     }
 
-    tabPresets?.addEventListener('click', () => switchTab(tabPresets, viewPresets));
-    tabWallpapers?.addEventListener('click', () => switchTab(tabWallpapers, viewWallpapers));
-    tabBubbles?.addEventListener('click', () => switchTab(tabBubbles, viewBubbles));
-    tabExtras?.addEventListener('click', () => switchTab(tabExtras, viewExtras));
+    function closeModal() {
+      if (!modal) return;
+      modal.classList.add('opacity-0');
+      panel?.classList.remove('scale-100');
+      panel?.classList.add('scale-95');
+      setTimeout(() => modal.classList.add('hidden'), 200);
+    }
 
-    // Update Live Preview Viewport
-    function updateLivePreview() {
+    btnOpenInMenu?.addEventListener('click', openModal);
+    btnCloseX?.addEventListener('click', closeModal);
+    btnCancelBottom?.addEventListener('click', closeModal);
+
+    function updatePreview() {
       if (!previewViewport) return;
+      const baseMode = settings.baseMode || 'dark';
 
-      const baseMode = draftSettings.baseMode || 'dark';
-
-      // Base mode classes and colors on preview
       if (baseMode === 'amoled') {
         previewViewport.style.backgroundColor = '#000000';
         if (previewCharBubble) {
@@ -19610,784 +19335,262 @@ Requirements:
       } else {
         previewViewport.style.backgroundColor = '#090a12';
         if (previewCharBubble) {
-          previewCharBubble.style.background = draftSettings.charBubbleBg || '#101426';
+          previewCharBubble.style.background = settings.charBubbleBg || '#101426';
           previewCharBubble.style.borderColor = 'rgba(255, 255, 255, 0.08)';
           previewCharBubble.style.color = '#f1f5f9';
         }
       }
 
-      // Background Wallpaper
-      if (previewImage) {
-        previewImage.style.background = draftSettings.chatWallpaper || draftSettings.chatBg || 'linear-gradient(to bottom, #090a12, #0e1122, #07080f)';
-        previewImage.style.filter = draftSettings.chatBlur ? 'blur(14px)' : 'none';
-        previewImage.style.transform = draftSettings.chatBlur ? 'scale(1.08)' : 'none';
+      if (previewBg) {
+        previewBg.style.background = settings.chatWallpaper || 'linear-gradient(to bottom, #090a12, #0e1122, #07080f)';
+        previewBg.style.filter = settings.chatBlur ? 'blur(14px)' : 'none';
       }
-
-      // Dimmer
       if (previewDimmer) {
-        previewDimmer.style.opacity = String(draftSettings.chatDim !== undefined ? draftSettings.chatDim : 0.20);
+        previewDimmer.style.opacity = String(settings.chatDim !== undefined ? settings.chatDim : 0.20);
       }
-
-      // Pattern
       if (previewPattern) {
-        const patId = draftSettings.chatPatternId || 'telegram-doodles';
-        const patObj = window.AetheriaTheme?.DOODLE_PATTERNS?.[patId];
+        const patId = settings.chatPatternId || 'telegram-doodles';
+        const patObj = (window as any).AetheriaTheme?.DOODLE_PATTERNS?.[patId];
         if (patObj && patObj.pattern !== 'none') {
           previewPattern.style.backgroundImage = patObj.pattern;
           previewPattern.style.backgroundSize = patObj.patternSize;
-          previewPattern.style.opacity = String(draftSettings.chatPatternOpacity !== undefined ? draftSettings.chatPatternOpacity : 0.18);
+          previewPattern.style.opacity = String(settings.chatPatternOpacity !== undefined ? settings.chatPatternOpacity : 0.18);
         } else {
           previewPattern.style.backgroundImage = 'none';
           previewPattern.style.opacity = '0';
         }
       }
 
-      // Name Color
-      const nameColor = draftSettings.nameColor || '#a855f7';
-      if (previewCharName) {
-        previewCharName.style.color = nameColor;
-      }
+      const nameColor = settings.nameColor || '#a855f7';
+      if (previewCharName) previewCharName.style.color = nameColor;
+      if (nameColorDot) nameColorDot.style.background = nameColor;
+      if (nameHexLabel) nameHexLabel.textContent = nameColor.toUpperCase();
 
-      // Bubbles Geometry
-      const radius = draftSettings.bubbleRadius !== undefined ? draftSettings.bubbleRadius : 16;
-      const fontSize = draftSettings.fontSize !== undefined ? draftSettings.fontSize : 16;
+      const fontSize = settings.fontSize || 16;
+      const radius = settings.bubbleRadius !== undefined ? settings.bubbleRadius : 16;
 
       if (previewCharBubble) {
-        previewCharBubble.style.borderRadius = `${radius}px`;
         previewCharBubble.style.fontSize = `${fontSize}px`;
+        previewCharBubble.style.borderRadius = `${radius}px`;
       }
       if (previewUserBubble) {
-        previewUserBubble.style.borderRadius = `${radius}px`;
         previewUserBubble.style.fontSize = `${fontSize}px`;
-        if (draftSettings.userBubbleBg) {
-          previewUserBubble.style.background = draftSettings.userBubbleBg;
-        }
+        previewUserBubble.style.borderRadius = `${radius}px`;
+        if (settings.userBubbleBg) previewUserBubble.style.background = settings.userBubbleBg;
       }
 
-      // Highlight active base mode pill
-      baseModeButtons.forEach(btn => {
-        const mode = btn.dataset.mode;
-        if (mode === baseMode) {
-          btn.classList.add('bg-purple-600', 'text-white', 'shadow-xs');
+      if (fontVal) fontVal.textContent = String(fontSize);
+      if (radiusVal) radiusVal.textContent = String(radius);
+
+      // Day/Night button state
+      if (baseMode === 'day') {
+        if (modeIcon) modeIcon.textContent = '🌙';
+        if (modeText) modeText.textContent = 'Switch to Night Mode';
+      } else {
+        if (modeIcon) modeIcon.textContent = '☀️';
+        if (modeText) modeText.textContent = 'Switch to Day Mode';
+      }
+
+      // Active state on theme capsules
+      document.querySelectorAll('#chat-modal-theme-carousel .chat-modal-theme-capsule').forEach((cap: any) => {
+        const tid = cap.dataset.themeId;
+        const checkIcon = cap.querySelector('.chat-modal-theme-active-ring');
+        if (tid === (settings.presetId || 'aetheria-purple')) {
+          cap.classList.add('border-purple-500', 'bg-white/[0.08]');
+          if (checkIcon) {
+            checkIcon.classList.remove('hidden');
+            checkIcon.classList.add('flex');
+          }
+          if (themeNameLabel) themeNameLabel.textContent = cap.title;
+        } else {
+          cap.classList.remove('border-purple-500', 'bg-white/[0.08]');
+          if (checkIcon) {
+            checkIcon.classList.add('hidden');
+            checkIcon.classList.remove('flex');
+          }
+        }
+      });
+
+      // Active check on name colors
+      document.querySelectorAll('#chat-modal-name-colors-container .chat-modal-name-col-btn').forEach((btn: any) => {
+        const hex = btn.dataset.hex;
+        const check = btn.querySelector('.chat-modal-name-check');
+        if (hex && hex.toLowerCase() === nameColor.toLowerCase()) {
+          btn.classList.add('ring-2', 'ring-white', 'scale-110');
+          if (check) check.classList.remove('hidden');
+        } else {
+          btn.classList.remove('ring-2', 'ring-white', 'scale-110');
+          if (check) check.classList.add('hidden');
+        }
+      });
+    }
+
+    function saveAndApply() {
+      const scopeKey = currentScope === 'char' ? activeCharId : null;
+      (window as any).AetheriaTheme?.saveSettings?.(settings, scopeKey);
+      (window as any).AetheriaTheme?.apply?.(settings);
+    }
+
+    function syncScopeButtons() {
+      scopeButtons.forEach((btn: any) => {
+        if (btn.dataset.scope === currentScope) {
+          btn.classList.add('bg-purple-600', 'text-white');
           btn.classList.remove('text-slate-300');
         } else {
-          btn.classList.remove('bg-purple-600', 'text-white', 'shadow-xs');
+          btn.classList.remove('bg-purple-600', 'text-white');
           btn.classList.add('text-slate-300');
         }
       });
     }
 
-    // Base Mode Toggle Buttons
-    baseModeButtons.forEach(btn => {
+    scopeButtons.forEach((btn: any) => {
       btn.addEventListener('click', () => {
-        draftSettings.baseMode = btn.dataset.mode;
-        if (draftSettings.baseMode === 'amoled') {
-          draftSettings.chatWallpaper = '#000000';
-          draftSettings.chatPatternId = 'none';
-        } else if (draftSettings.baseMode === 'day') {
-          draftSettings.chatWallpaper = 'linear-gradient(to bottom, #e2e8f0, #cbd5e1, #94a3b8)';
-        }
-        updateLivePreview();
-        window.AetheriaTheme?.apply?.(draftSettings);
+        currentScope = btn.dataset.scope;
+        syncScopeButtons();
+        saveAndApply();
       });
-    });
-
-    // Populate Built-in Presets
-    function renderPresets() {
-      const grid = document.getElementById('appearance-presets-grid');
-      if (!grid) return;
-      const presets = window.AetheriaTheme?.PRESETS || [];
-
-      grid.innerHTML = presets.map(p => `
-        <div class="preset-card p-3 rounded-2xl bg-white/[0.02] border border-white/[0.08] hover:border-purple-500/50 hover:bg-white/[0.04] transition cursor-pointer group flex items-center justify-between" data-preset-id="${p.id}">
-          <div class="flex items-center gap-3">
-            <div class="w-10 h-10 rounded-xl bg-gradient-to-br ${p.iconGradient || 'from-purple-600 to-indigo-600'} p-0.5 shadow-md flex items-center justify-center text-white shrink-0">
-              <span class="text-xs font-bold font-mono">TG</span>
-            </div>
-            <div>
-              <div class="flex items-center gap-1.5">
-                <span class="text-xs font-bold text-white group-hover:text-purple-300 transition">${p.name}</span>
-                <span class="text-[9px] px-1.5 py-0.2 rounded bg-white/10 text-slate-300 uppercase font-mono">${p.baseMode || 'dark'}</span>
-              </div>
-              <p class="text-[11px] text-slate-400 truncate max-w-[170px] sm:max-w-[210px]">${p.description}</p>
-            </div>
-          </div>
-          <div class="w-6 h-6 rounded-full border border-white/20 flex items-center justify-center text-transparent preset-indicator shrink-0">
-            <svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"></polyline></svg>
-          </div>
-        </div>
-      `).join('');
-
-      grid.querySelectorAll('.preset-card').forEach(card => {
-        card.addEventListener('click', () => {
-          const pid = card.dataset.presetId;
-          const found = presets.find(p => p.id === pid);
-          if (!found) return;
-
-          draftSettings = {
-            ...draftSettings,
-            ...found,
-            chatWallpaper: found.chatWallpaper,
-            chatPatternId: found.chatPatternId,
-            chatPatternOpacity: found.chatPatternOpacity,
-            chatBlur: found.chatBlur,
-            chatDim: found.chatDim,
-            userBubbleBg: found.userBubbleBg,
-            charBubbleBg: found.charBubbleBg,
-            accent: found.accent,
-            accentRgb: found.accentRgb,
-            nameColor: found.nameColor || found.accent,
-            bubbleRadius: found.bubbleRadius,
-            fontSize: found.fontSize,
-            baseMode: found.baseMode || 'dark'
-          };
-
-          syncControls();
-          updateLivePreview();
-          window.AetheriaTheme?.apply?.(draftSettings);
-        });
-      });
-    }
-
-    // Render User Saved Custom Themes (STEP 4)
-    function renderCustomThemes() {
-      if (!customThemesContainer || !customThemesGrid) return;
-      const list = window.AetheriaTheme?.getCustomThemes?.() || [];
-
-      if (list.length === 0) {
-        customThemesContainer.classList.add('hidden');
-        return;
-      }
-
-      customThemesContainer.classList.remove('hidden');
-      customThemesGrid.innerHTML = list.map(t => `
-        <div class="p-2.5 rounded-xl bg-white/[0.03] border border-purple-500/20 hover:border-purple-500/60 transition group flex flex-col justify-between" data-custom-id="${t.id}">
-          <div class="flex items-center justify-between gap-1 mb-2">
-            <span class="text-xs font-bold text-white truncate max-w-[110px]">${escapeHtml(t.name)}</span>
-            <button type="button" class="delete-custom-btn text-slate-500 hover:text-rose-400 p-1 rounded transition cursor-pointer" data-delete-id="${t.id}" title="Delete Theme">
-              <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg>
-            </button>
-          </div>
-          <div class="flex items-center gap-1.5 mb-2">
-            <div class="w-4 h-4 rounded-full" style="background: ${t.accent || '#9333ea'};" title="Accent"></div>
-            <div class="w-4 h-4 rounded-full" style="background: ${t.nameColor || '#a855f7'};" title="Name"></div>
-            <div class="flex-1 h-3 rounded-full opacity-80" style="background: ${t.userBubbleBg || 'linear-gradient(135deg, #9333ea, #6366f1)'};" title="Bubble"></div>
-          </div>
-          <button type="button" class="apply-custom-btn w-full py-1 rounded-lg bg-purple-600/30 hover:bg-purple-600 text-purple-200 hover:text-white text-[10px] font-bold transition cursor-pointer text-center">
-            Apply Theme
-          </button>
-        </div>
-      `).join('');
-
-      customThemesGrid.querySelectorAll('.apply-custom-btn').forEach(btn => {
-        btn.addEventListener('click', (e) => {
-          const card = e.target.closest('[data-custom-id]');
-          const id = card?.dataset.customId;
-          const found = list.find(item => item.id === id);
-          if (found) {
-            draftSettings = { ...draftSettings, ...found };
-            syncControls();
-            updateLivePreview();
-            window.AetheriaTheme?.apply?.(draftSettings);
-          }
-        });
-      });
-
-      customThemesGrid.querySelectorAll('.delete-custom-btn').forEach(btn => {
-        btn.addEventListener('click', (e) => {
-          e.stopPropagation();
-          const id = btn.dataset.deleteId;
-          if (confirm('Delete this custom theme?')) {
-            window.AetheriaTheme?.deleteCustomTheme?.(id);
-            renderCustomThemes();
-          }
-        });
-      });
-    }
-
-    // Toggle Custom Theme Creation Form
-    btnToggleCustomForm?.addEventListener('click', () => {
-      customThemeForm?.classList.toggle('hidden');
-      if (!customThemeForm?.classList.contains('hidden')) {
-        customThemeNameInput?.focus();
-      }
-    });
-
-    btnCancelCustomTheme?.addEventListener('click', () => {
-      customThemeForm?.classList.add('hidden');
-      if (customThemeNameInput) customThemeNameInput.value = '';
-    });
-
-    btnSaveCustomTheme?.addEventListener('click', () => {
-      const name = customThemeNameInput ? customThemeNameInput.value.trim() : '';
-      if (!name) {
-        alert('Please enter a theme name');
-        return;
-      }
-      window.AetheriaTheme?.saveCustomTheme?.(name, {
-        baseMode: draftSettings.baseMode || 'dark',
-        accent: draftSettings.accent || '#9333ea',
-        accentRgb: draftSettings.accentRgb || '147, 51, 234',
-        nameColor: draftSettings.nameColor || '#a855f7',
-        userBubbleBg: draftSettings.userBubbleBg || 'linear-gradient(135deg, #9333ea, #6366f1)',
-        charBubbleBg: draftSettings.charBubbleBg || '#101426',
-        chatWallpaper: draftSettings.chatWallpaper || 'linear-gradient(to bottom, #090a12, #0e1122, #07080f)',
-        chatPatternId: draftSettings.chatPatternId || 'telegram-doodles',
-        chatPatternOpacity: draftSettings.chatPatternOpacity !== undefined ? draftSettings.chatPatternOpacity : 0.18,
-        chatBlur: !!draftSettings.chatBlur,
-        chatDim: draftSettings.chatDim !== undefined ? draftSettings.chatDim : 0.20,
-        bubbleRadius: draftSettings.bubbleRadius !== undefined ? draftSettings.bubbleRadius : 16,
-        fontSize: draftSettings.fontSize !== undefined ? draftSettings.fontSize : 16,
-        chatDensity: draftSettings.chatDensity || 'comfortable'
-      });
-      if (customThemeNameInput) customThemeNameInput.value = '';
-      customThemeForm?.classList.add('hidden');
-      renderCustomThemes();
-    });
-
-    // Telegram 7 Name Colors (STEP 4)
-    function renderNameColors() {
-      if (!nameColorPalette) return;
-      const colors = window.AetheriaTheme?.NAME_COLORS || [];
-
-      nameColorPalette.innerHTML = colors.map(nc => `
-        <button type="button" class="name-color-pill p-2 rounded-xl bg-white/[0.02] border border-white/[0.08] hover:border-white/30 flex flex-col items-center gap-1.5 transition cursor-pointer" data-color="${nc.hex}" title="${nc.name}">
-          <div class="w-6 h-6 rounded-full shadow-md flex items-center justify-center text-white" style="background: ${nc.hex};">
-            <svg class="w-3 h-3 text-white opacity-0 name-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"></polyline></svg>
-          </div>
-          <span class="text-[10px] text-slate-400 font-mono truncate max-w-[50px]">${nc.name.split(' ')[0]}</span>
-        </button>
-      `).join('');
-
-      nameColorPalette.querySelectorAll('.name-color-pill').forEach(pill => {
-        pill.addEventListener('click', () => {
-          const col = pill.dataset.color;
-          draftSettings.nameColor = col;
-          if (customNameColorInput) customNameColorInput.value = col;
-          if (nameColorHex) nameColorHex.textContent = col.toUpperCase();
-          updateNameColorSelection();
-          updateLivePreview();
-          window.AetheriaTheme?.apply?.(draftSettings);
-        });
-      });
-    }
-
-    function updateNameColorSelection() {
-      const activeColor = (draftSettings.nameColor || '#a855f7').toLowerCase();
-      nameColorPalette?.querySelectorAll('.name-color-pill').forEach(pill => {
-        const isMatch = (pill.dataset.color || '').toLowerCase() === activeColor;
-        const check = pill.querySelector('.name-check');
-        if (isMatch) {
-          pill.classList.add('border-purple-500', 'bg-purple-500/10');
-          if (check) check.classList.remove('opacity-0');
-        } else {
-          pill.classList.remove('border-purple-500', 'bg-purple-500/10');
-          if (check) check.classList.add('opacity-0');
-        }
-      });
-    }
-
-    customNameColorInput?.addEventListener('input', (e) => {
-      draftSettings.nameColor = e.target.value;
-      if (nameColorHex) nameColorHex.textContent = e.target.value.toUpperCase();
-      updateNameColorSelection();
-      updateLivePreview();
-      window.AetheriaTheme?.apply?.(draftSettings);
-    });
-
-    // Sound Controls (STEP 4)
-    function syncSoundControls() {
-      const isEnabled = window.AetheriaTheme?.isSoundEnabled?.() !== false;
-      if (soundToggle) {
-        if (isEnabled) {
-          soundToggle.textContent = 'Enabled';
-          soundToggle.className = 'px-3.5 py-1.5 rounded-xl border text-xs font-semibold transition cursor-pointer bg-purple-500/20 border-purple-500/30 text-purple-300';
-        } else {
-          soundToggle.textContent = 'Muted';
-          soundToggle.className = 'px-3.5 py-1.5 rounded-xl border text-xs font-semibold transition cursor-pointer bg-white/5 border-white/10 text-slate-400';
-        }
-      }
-    }
-
-    soundToggle?.addEventListener('click', () => {
-      const current = window.AetheriaTheme?.isSoundEnabled?.() !== false;
-      window.AetheriaTheme?.setSoundEnabled?.(!current);
-      syncSoundControls();
-    });
-
-    soundTestSend?.addEventListener('click', () => {
-      window.AetheriaTheme?.playSendSound?.();
-    });
-
-    soundTestReceive?.addEventListener('click', () => {
-      window.AetheriaTheme?.playReceiveSound?.();
-    });
-
-    // Doodle Pattern Pills
-    function renderDoodlePills() {
-      const container = document.getElementById('appearance-doodle-pills');
-      if (!container) return;
-      const patterns = window.AetheriaTheme?.DOODLE_PATTERNS || {};
-
-      container.innerHTML = Object.values(patterns).map(p => `
-        <button type="button" class="pattern-pill p-2 rounded-xl bg-white/[0.02] border border-white/[0.06] hover:border-purple-500/40 text-[11px] font-medium text-slate-300 hover:text-white transition cursor-pointer flex flex-col items-center gap-1" data-pattern-id="${p.id}">
-          <span class="truncate max-w-full">${p.name}</span>
-        </button>
-      `).join('');
-
-      container.querySelectorAll('.pattern-pill').forEach(pill => {
-        pill.addEventListener('click', () => {
-          draftSettings.chatPatternId = pill.dataset.patternId;
-          updateDoodleSelection();
-          updateLivePreview();
-          window.AetheriaTheme?.apply?.(draftSettings);
-        });
-      });
-    }
-
-    function updateDoodleSelection() {
-      const activePat = draftSettings.chatPatternId || 'telegram-doodles';
-      document.querySelectorAll('#appearance-doodle-pills .pattern-pill').forEach(pill => {
-        if (pill.dataset.patternId === activePat) {
-          pill.classList.add('border-purple-500', 'bg-purple-500/20', 'text-white');
-          pill.classList.remove('border-white/[0.06]', 'text-slate-300');
-        } else {
-          pill.classList.remove('border-purple-500', 'bg-purple-500/20', 'text-white');
-          pill.classList.add('border-white/[0.06]', 'text-slate-300');
-        }
-      });
-    }
-
-    // Wallpaper Gallery
-    let activeWallpaperCategory = 'all';
-    function renderWallpapers() {
-      const grid = document.getElementById('appearance-wallpapers-grid');
-      if (!grid) return;
-      const wallpapers = window.AetheriaTheme?.WALLPAPERS || [];
-
-      const filtered = activeWallpaperCategory === 'all' 
-        ? wallpapers 
-        : wallpapers.filter(w => w.category === activeWallpaperCategory);
-
-      grid.innerHTML = filtered.map(w => `
-        <div class="wallpaper-card relative h-20 rounded-xl overflow-hidden border border-white/10 hover:border-purple-500 transition cursor-pointer group select-none shadow-sm" data-wallpaper-css="${escapeHtml(w.cssValue)}">
-          <div class="absolute inset-0" style="background: ${w.thumb.startsWith('http') ? `url('${w.thumb}') center/cover` : w.thumb};"></div>
-          <div class="absolute inset-0 bg-black/40 group-hover:bg-black/10 transition"></div>
-          <span class="absolute bottom-1.5 left-2 text-[10px] font-medium text-white truncate max-w-[80%] drop-shadow">${w.name}</span>
-          <div class="absolute top-1.5 right-1.5 w-5 h-5 rounded-full bg-purple-600 text-white flex items-center justify-center opacity-0 group-hover:opacity-100 transition shadow">
-            <svg class="w-3 h-3" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"></polyline></svg>
-          </div>
-        </div>
-      `).join('');
-
-      grid.querySelectorAll('.wallpaper-card').forEach(card => {
-        card.addEventListener('click', () => {
-          draftSettings.chatWallpaper = card.dataset.wallpaperCss;
-          updateLivePreview();
-          window.AetheriaTheme?.apply?.(draftSettings);
-        });
-      });
-    }
-
-    document.querySelectorAll('#appearance-wallpaper-category-filters .wp-cat-btn').forEach(btn => {
-      btn.addEventListener('click', () => {
-        document.querySelectorAll('#appearance-wallpaper-category-filters .wp-cat-btn').forEach(b => {
-          b.classList.remove('active', 'bg-purple-500/20', 'border-purple-500/30', 'text-purple-300');
-          b.classList.add('bg-white/5', 'text-slate-400');
-        });
-        btn.classList.add('active', 'bg-purple-500/20', 'border-purple-500/30', 'text-purple-300');
-        btn.classList.remove('bg-white/5', 'text-slate-400');
-        activeWallpaperCategory = btn.dataset.cat;
-        renderWallpapers();
-      });
-    });
-
-    // Preset Gradients Pills
-    function renderGradientPresets() {
-      const container = document.getElementById('appearance-bubble-gradient-presets');
-      if (!container) return;
-      const grads = window.AetheriaTheme?.BUBBLE_GRADIENTS || [];
-
-      container.innerHTML = grads.map(g => `
-        <button type="button" class="grad-pill p-2 rounded-xl bg-white/[0.02] border border-white/[0.06] hover:border-purple-500/50 flex items-center gap-2 transition cursor-pointer text-left" data-grad-css="${escapeHtml(g.css)}" data-grad-from="${g.from}" data-grad-to="${g.to}">
-          <div class="w-5 h-5 rounded-lg shadow-inner shrink-0" style="background: ${g.css};"></div>
-          <span class="text-xs text-slate-300 truncate font-medium">${g.name}</span>
-        </button>
-      `).join('');
-
-      container.querySelectorAll('.grad-pill').forEach(pill => {
-        pill.addEventListener('click', () => {
-          draftSettings.userBubbleBg = pill.dataset.gradCss;
-          if (gradColorA) gradColorA.value = pill.dataset.gradFrom;
-          if (gradValA) gradValA.textContent = pill.dataset.gradFrom.toUpperCase();
-          if (gradColorB) gradColorB.value = pill.dataset.gradTo;
-          if (gradValB) gradValB.textContent = pill.dataset.gradTo.toUpperCase();
-          updateLivePreview();
-          window.AetheriaTheme?.apply?.(draftSettings);
-        });
-      });
-    }
-
-    // Custom 2-Color Gradient Builder
-    applyGradBtn?.addEventListener('click', () => {
-      const from = gradColorA?.value || '#9333ea';
-      const to = gradColorB?.value || '#6366f1';
-      const css = `linear-gradient(135deg, ${from} 0%, ${to} 100%)`;
-      draftSettings.userBubbleBg = css;
-      updateLivePreview();
-      window.AetheriaTheme?.apply?.(draftSettings);
-    });
-
-    gradColorA?.addEventListener('input', (e) => {
-      if (gradValA) gradValA.textContent = e.target.value.toUpperCase();
-    });
-    gradColorB?.addEventListener('input', (e) => {
-      if (gradValB) gradValB.textContent = e.target.value.toUpperCase();
-    });
-
-    // Custom Accent Swatches
-    const SWATCHES = [
-      { name: 'Purple', hex: '#9333ea' },
-      { name: 'Amber', hex: '#f59e0b' },
-      { name: 'Cyan', hex: '#06b6d4' },
-      { name: 'Emerald', hex: '#10b981' },
-      { name: 'Rose', hex: '#f43f5e' },
-      { name: 'Sky', hex: '#0284c7' }
-    ];
-
-    function renderSwatches() {
-      if (!swatchesContainer) return;
-      swatchesContainer.innerHTML = SWATCHES.map(s => `
-        <button type="button" class="accent-swatch w-7 h-7 rounded-xl border border-white/20 transition cursor-pointer hover:scale-110 shadow-sm" style="background: ${s.hex};" data-hex="${s.hex}" title="${s.name}"></button>
-      `).join('');
-
-      swatchesContainer.querySelectorAll('.accent-swatch').forEach(sw => {
-        sw.addEventListener('click', () => {
-          const hex = sw.dataset.hex;
-          draftSettings.accent = hex;
-          draftSettings.accentRgb = window.AetheriaTheme?.hexToRgb?.(hex) || '147, 51, 234';
-          if (customAccentInput) customAccentInput.value = hex;
-          if (customAccentHex) customAccentHex.textContent = hex.toUpperCase();
-          updateLivePreview();
-          window.AetheriaTheme?.apply?.(draftSettings);
-        });
-      });
-    }
-
-    customAccentInput?.addEventListener('input', (e) => {
-      const hex = e.target.value;
-      draftSettings.accent = hex;
-      draftSettings.accentRgb = window.AetheriaTheme?.hexToRgb?.(hex) || '147, 51, 234';
-      if (customAccentHex) customAccentHex.textContent = hex.toUpperCase();
-      updateLivePreview();
-      window.AetheriaTheme?.apply?.(draftSettings);
     });
 
     // Sliders
-    fontSlider?.addEventListener('input', (e) => {
-      const val = parseInt(e.target.value, 10);
-      draftSettings.fontSize = val;
-      if (fontVal) fontVal.textContent = `${val}px`;
-      updateLivePreview();
-      window.AetheriaTheme?.apply?.(draftSettings);
+    fontSlider?.addEventListener('input', (e: any) => {
+      settings.fontSize = parseInt(e.target.value, 10);
+      updatePreview();
+      saveAndApply();
     });
 
-    radiusSlider?.addEventListener('input', (e) => {
-      const val = parseInt(e.target.value, 10);
-      draftSettings.bubbleRadius = val;
-      if (radiusVal) radiusVal.textContent = `${val}px`;
-      updateLivePreview();
-      window.AetheriaTheme?.apply?.(draftSettings);
+    radiusSlider?.addEventListener('input', (e: any) => {
+      settings.bubbleRadius = parseInt(e.target.value, 10);
+      updatePreview();
+      saveAndApply();
     });
 
-    blurToggle?.addEventListener('click', () => {
-      draftSettings.chatBlur = !draftSettings.chatBlur;
-      if (blurToggle) {
-        blurToggle.textContent = draftSettings.chatBlur ? 'On' : 'Off';
-        blurToggle.className = draftSettings.chatBlur
-          ? 'px-3 py-1.5 rounded-lg border text-xs font-semibold transition cursor-pointer bg-purple-500/20 border-purple-500/30 text-purple-300'
-          : 'px-3 py-1.5 rounded-lg border text-xs font-semibold transition cursor-pointer bg-white/5 border-white/10 text-slate-300';
+    // Drawers toggle
+    btnOpenWp?.addEventListener('click', () => {
+      wpDrawer?.classList.toggle('hidden');
+    });
+    btnOpenName?.addEventListener('click', () => {
+      nameDrawer?.classList.toggle('hidden');
+    });
+
+    // Theme Capsules Click
+    document.querySelectorAll('#chat-modal-theme-carousel .chat-modal-theme-capsule').forEach((cap: any) => {
+      cap.addEventListener('click', () => {
+        const tid = cap.dataset.themeId;
+        const presets = (window as any).AetheriaTheme?.PRESETS || [];
+        const found = presets.find((p: any) => p.id === tid);
+        if (found) {
+          settings = { ...settings, ...found, presetId: tid };
+        } else {
+          settings.presetId = tid;
+        }
+        if (fontSlider) fontSlider.value = String(settings.fontSize || 16);
+        if (radiusSlider) radiusSlider.value = String(settings.bubbleRadius !== undefined ? settings.bubbleRadius : 16);
+        updatePreview();
+        saveAndApply();
+      });
+    });
+
+    // Name Colors Click
+    document.querySelectorAll('#chat-modal-name-colors-container .chat-modal-name-col-btn').forEach((btn: any) => {
+      btn.addEventListener('click', () => {
+        settings.nameColor = btn.dataset.hex;
+        updatePreview();
+        saveAndApply();
+      });
+    });
+
+    // Day/Night Toggle
+    btnToggleDayNight?.addEventListener('click', () => {
+      if (settings.baseMode === 'day') {
+        settings.baseMode = 'dark';
+        settings.chatWallpaper = 'linear-gradient(to bottom, #090a12, #0e1122, #07080f)';
+      } else {
+        settings.baseMode = 'day';
+        settings.chatWallpaper = 'linear-gradient(to bottom, #e2e8f0, #cbd5e1, #94a3b8)';
       }
-      updateLivePreview();
-      window.AetheriaTheme?.apply?.(draftSettings);
+      updatePreview();
+      saveAndApply();
     });
 
-    dimSlider?.addEventListener('input', (e) => {
-      const val = parseInt(e.target.value, 10);
-      draftSettings.chatDim = val / 100;
-      if (dimVal) dimVal.textContent = `${val}%`;
-      updateLivePreview();
-      window.AetheriaTheme?.apply?.(draftSettings);
-    });
+    // Wallpapers rendering
+    function renderWps() {
+      if (!wpGrid) return;
+      const wps = (window as any).AetheriaTheme?.WALLPAPERS || [];
+      wpGrid.innerHTML = wps.slice(0, 6).map((w: any) => `
+        <div class="chat-modal-wp-tile relative h-16 rounded-xl overflow-hidden border border-white/10 hover:border-purple-500 transition cursor-pointer select-none" data-css="${(w.cssValue || '').replace(/"/g, '&quot;')}">
+          <div class="absolute inset-0" style="background: ${w.thumb.startsWith('http') ? `url('${w.thumb}') center/cover` : w.thumb};"></div>
+          <div class="absolute inset-0 bg-black/20 hover:bg-transparent transition"></div>
+          <span class="absolute bottom-1 left-1.5 text-[9px] font-medium text-white truncate max-w-[90%] drop-shadow">${w.name}</span>
+        </div>
+      `).join('');
 
-    patternOpacitySlider?.addEventListener('input', (e) => {
-      const val = parseInt(e.target.value, 10);
-      draftSettings.chatPatternOpacity = val / 100;
-      if (patternOpacityVal) patternOpacityVal.textContent = `${val}%`;
-      updateLivePreview();
-      window.AetheriaTheme?.apply?.(draftSettings);
-    });
+      wpGrid.querySelectorAll('.chat-modal-wp-tile').forEach((tile: any) => {
+        tile.addEventListener('click', () => {
+          settings.chatWallpaper = tile.dataset.css;
+          updatePreview();
+          saveAndApply();
+        });
+      });
+    }
 
-    // Photo Upload Handlers
-    photoBtn?.addEventListener('click', () => photoFileInput?.click());
-
-    photoFileInput?.addEventListener('change', (e) => {
-      const file = e.target.files?.[0];
+    btnUploadPhoto?.addEventListener('click', () => photoFileInput?.click());
+    photoFileInput?.addEventListener('change', (e: any) => {
+      const file = e.target?.files?.[0];
       if (!file) return;
-
       const reader = new FileReader();
       reader.onload = (event) => {
-        const img = new Image();
-        img.onload = () => {
-          const canvas = document.createElement('canvas');
-          let width = img.width;
-          let height = img.height;
-          const maxDim = 1920;
-          if (width > maxDim || height > maxDim) {
-            if (width > height) {
-              height = Math.round((height * maxDim) / width);
-              width = maxDim;
-            } else {
-              width = Math.round((width * maxDim) / height);
-              height = maxDim;
-            }
-          }
-          canvas.width = width;
-          canvas.height = height;
-          const ctx = canvas.getContext('2d');
-          ctx.drawImage(img, 0, 0, width, height);
-
-          const compressed = canvas.toDataURL('image/jpeg', 0.82);
-          draftSettings.chatWallpaper = `url("${compressed}") center/cover no-repeat`;
-          if (photoInfo) photoInfo.classList.remove('hidden');
-          updateLivePreview();
-          window.AetheriaTheme?.apply?.(draftSettings);
-        };
-        img.src = event.target.result;
+        settings.chatWallpaper = `url("${event.target?.result}") center/cover no-repeat`;
+        updatePreview();
+        saveAndApply();
       };
       reader.readAsDataURL(file);
     });
 
-    photoUrlApply?.addEventListener('click', () => {
-      const url = photoUrlInput ? photoUrlInput.value.trim() : '';
-      if (!url) return;
-      draftSettings.chatWallpaper = `url("${url}") center/cover no-repeat`;
-      if (photoInfo) photoInfo.classList.remove('hidden');
-      updateLivePreview();
-      window.AetheriaTheme?.apply?.(draftSettings);
-    });
-
-    photoClear?.addEventListener('click', () => {
-      draftSettings.chatWallpaper = 'linear-gradient(to bottom, #090a12, #0e1122, #07080f)';
-      if (photoInfo) photoInfo.classList.add('hidden');
-      if (photoFileInput) photoFileInput.value = '';
-      if (photoUrlInput) photoUrlInput.value = '';
-      updateLivePreview();
-      window.AetheriaTheme?.apply?.(draftSettings);
-    });
-
-    // Chat Density Radios
-    densityRadioComfortable?.addEventListener('change', () => {
-      draftSettings.chatDensity = 'comfortable';
-      window.AetheriaTheme?.apply?.(draftSettings);
-    });
-    densityRadioCompact?.addEventListener('change', () => {
-      draftSettings.chatDensity = 'compact';
-      window.AetheriaTheme?.apply?.(draftSettings);
-    });
-
-    // Send Shortcut Radios
-    sendRadioEnter?.addEventListener('change', () => {
-      localStorage.setItem('aetheria_chat_send_key', 'enter');
-    });
-    sendRadioCtrlEnter?.addEventListener('change', () => {
-      localStorage.setItem('aetheria_chat_send_key', 'ctrl_enter');
-    });
-
-    // Scope Radios
-    revertCharBtn?.addEventListener('click', () => {
-      if (confirm('Revert this character to the global theme?')) {
-        window.AetheriaTheme?.removeCharSettings?.(charId);
-        draftSettings = { ...(window.AetheriaTheme?.getSettings?.(null) || {}) };
-        initialSavedState = { ...draftSettings };
-        syncControls();
-        updateLivePreview();
+    // Sound
+    function syncSound() {
+      const enabled = (window as any).AetheriaTheme?.isSoundEnabled?.() !== false;
+      if (soundBtn) {
+        soundBtn.textContent = enabled ? 'Enabled' : 'Muted';
+        soundBtn.className = enabled
+          ? 'px-3 py-1 rounded-xl text-xs font-semibold transition cursor-pointer bg-purple-500/20 border border-purple-500/30 text-purple-300'
+          : 'px-3 py-1 rounded-xl text-xs font-semibold transition cursor-pointer bg-white/5 border border-white/10 text-slate-400';
       }
+    }
+    soundBtn?.addEventListener('click', () => {
+      const current = (window as any).AetheriaTheme?.isSoundEnabled?.() !== false;
+      (window as any).AetheriaTheme?.setSoundEnabled?.(!current);
+      syncSound();
     });
 
-    // JSON Export / Import
-    exportBtn?.addEventListener('click', () => {
-      const json = JSON.stringify(draftSettings, null, 2);
-      navigator.clipboard?.writeText?.(json).then(() => {
-        alert('Theme code copied to clipboard!');
-      }).catch(() => {
-        prompt('Theme JSON Code:', json);
-      });
+    radioEnter?.addEventListener('change', () => localStorage.setItem('aetheria_chat_send_key', 'enter'));
+    radioCtrl?.addEventListener('change', () => localStorage.setItem('aetheria_chat_send_key', 'ctrl_enter'));
+
+    btnReset?.addEventListener('click', () => {
+      (window as any).AetheriaTheme?.resetToDefault?.();
+      settings = { ...((window as any).AetheriaTheme?.DEFAULT_THEME || {}) };
+      syncInputs();
+      updatePreview();
+      saveAndApply();
     });
 
-    importBtn?.addEventListener('click', () => {
-      importBox?.classList.toggle('hidden');
-    });
-    importCancel?.addEventListener('click', () => {
-      importBox?.classList.add('hidden');
-    });
-    importApply?.addEventListener('click', () => {
-      const raw = importTextarea ? importTextarea.value.trim() : '';
-      if (!raw) return;
-      try {
-        const parsed = JSON.parse(raw);
-        draftSettings = { ...draftSettings, ...parsed };
-        syncControls();
-        updateLivePreview();
-        window.AetheriaTheme?.apply?.(draftSettings);
-        importBox?.classList.add('hidden');
-        if (importTextarea) importTextarea.value = '';
-      } catch (err) {
-        alert('Invalid Theme JSON!');
-      }
-    });
-
-    // Factory Reset
-    factoryResetBtn?.addEventListener('click', () => {
-      if (confirm('Reset theme to original factory defaults?')) {
-        window.AetheriaTheme?.resetToDefault?.(null);
-        draftSettings = { ...(window.AetheriaTheme?.DEFAULT_THEME || {}) };
-        syncControls();
-        updateLivePreview();
-      }
-    });
-
-    // Synchronize UI Controls with draftSettings
-    function syncControls() {
-      if (fontSlider) fontSlider.value = draftSettings.fontSize || 16;
-      if (fontVal) fontVal.textContent = `${draftSettings.fontSize || 16}px`;
-
-      if (radiusSlider) radiusSlider.value = draftSettings.bubbleRadius !== undefined ? draftSettings.bubbleRadius : 16;
-      if (radiusVal) radiusVal.textContent = `${draftSettings.bubbleRadius !== undefined ? draftSettings.bubbleRadius : 16}px`;
-
-      if (blurToggle) {
-        blurToggle.textContent = draftSettings.chatBlur ? 'On' : 'Off';
-        blurToggle.className = draftSettings.chatBlur
-          ? 'px-3 py-1.5 rounded-lg border text-xs font-semibold transition cursor-pointer bg-purple-500/20 border-purple-500/30 text-purple-300'
-          : 'px-3 py-1.5 rounded-lg border text-xs font-semibold transition cursor-pointer bg-white/5 border-white/10 text-slate-300';
-      }
-
-      const dim = Math.round((draftSettings.chatDim !== undefined ? draftSettings.chatDim : 0.20) * 100);
-      if (dimSlider) dimSlider.value = dim;
-      if (dimVal) dimVal.textContent = `${dim}%`;
-
-      const patOp = Math.round((draftSettings.chatPatternOpacity !== undefined ? draftSettings.chatPatternOpacity : 0.18) * 100);
-      if (patternOpacitySlider) patternOpacitySlider.value = patOp;
-      if (patternOpacityVal) patternOpacityVal.textContent = `${patOp}%`;
-
-      if (customAccentInput) customAccentInput.value = draftSettings.accent || '#9333ea';
-      if (customAccentHex) customAccentHex.textContent = (draftSettings.accent || '#9333ea').toUpperCase();
-
-      if (customNameColorInput) customNameColorInput.value = draftSettings.nameColor || '#a855f7';
-      if (nameColorHex) nameColorHex.textContent = (draftSettings.nameColor || '#a855f7').toUpperCase();
-
-      // Density
-      if (draftSettings.chatDensity === 'compact') {
-        if (densityRadioCompact) densityRadioCompact.checked = true;
-      } else {
-        if (densityRadioComfortable) densityRadioComfortable.checked = true;
-      }
-
-      // Send Key
+    function syncInputs() {
+      if (fontSlider) fontSlider.value = String(settings.fontSize || 16);
+      if (radiusSlider) radiusSlider.value = String(settings.bubbleRadius !== undefined ? settings.bubbleRadius : 16);
       const sendPref = localStorage.getItem('aetheria_chat_send_key') || 'enter';
       if (sendPref === 'ctrl_enter') {
-        if (sendRadioCtrlEnter) sendRadioCtrlEnter.checked = true;
+        if (radioCtrl) radioCtrl.checked = true;
       } else {
-        if (sendRadioEnter) sendRadioEnter.checked = true;
+        if (radioEnter) radioEnter.checked = true;
       }
-
-      // Scope
-      const hasOverride = window.AetheriaTheme?.hasCharSettings?.(charId);
-      if (hasOverride) {
-        if (scopeRadioChar) scopeRadioChar.checked = true;
-        if (charOverrideBanner) charOverrideBanner.classList.remove('hidden');
-      } else {
-        if (scopeRadioGlobal) scopeRadioGlobal.checked = true;
-        if (charOverrideBanner) charOverrideBanner.classList.add('hidden');
-      }
-
-      updateDoodleSelection();
-      updateNameColorSelection();
-      syncSoundControls();
+      syncSound();
     }
 
-    // Open Modal
-    function openModal() {
-      draftSettings = { ...(window.AetheriaTheme?.getSettings?.(charId) || {}) };
-      initialSavedState = { ...draftSettings };
-
-      renderPresets();
-      renderCustomThemes();
-      renderNameColors();
-      renderDoodlePills();
-      renderWallpapers();
-      renderGradientPresets();
-      renderSwatches();
-      syncControls();
-      updateLivePreview();
-
-      modal.classList.remove('hidden');
-      requestAnimationFrame(() => {
-        modal.classList.remove('opacity-0');
-        panel.classList.remove('scale-95');
-      });
-    }
-
-    // Close Modal
-    function closeModal(save = false) {
-      if (!save) {
-        window.AetheriaTheme?.apply?.(initialSavedState);
-      }
-      modal.classList.add('opacity-0');
-      panel.classList.add('scale-95');
-      setTimeout(() => {
-        modal.classList.add('hidden');
-      }, 200);
-    }
-
-    closeBtn?.addEventListener('click', () => closeModal(false));
-    cancelBtn?.addEventListener('click', () => closeModal(false));
-    modal?.addEventListener('click', (e) => {
-      if (e.target === modal) closeModal(false);
-    });
-
-    resetBtn?.addEventListener('click', () => {
-      draftSettings = { ...initialSavedState };
-      syncControls();
-      updateLivePreview();
-      window.AetheriaTheme?.apply?.(draftSettings);
-    });
-
-    saveBtn?.addEventListener('click', () => {
-      const isCharScope = scopeRadioChar?.checked;
-      const targetChar = isCharScope ? charId : null;
-      window.AetheriaTheme?.saveSettings?.(draftSettings, targetChar);
-      closeModal(true);
-    });
-
-    // Wire trigger buttons
-    const triggerInDropdown = document.getElementById('chat-appearance-trigger');
-    triggerInDropdown?.addEventListener('click', () => {
-      const menu = document.getElementById('chat-overflow-menu');
-      if (menu) menu.classList.add('hidden');
-      openModal();
-    });
-
-    // Listen to custom theme updates from other windows/tabs
-    window.addEventListener('aetheria-custom-themes-updated', renderCustomThemes);
+    renderWps();
+    syncInputs();
+    updatePreview();
   }
 
-  // Initialize engine on DOM load
-  if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', initChatAppearanceEngine);
-  } else {
-    initChatAppearanceEngine();
-  }
+  initChatSettingsEngine();
 // Startup
   loadLorebook();
   initChat();
