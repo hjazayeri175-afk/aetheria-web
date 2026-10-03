@@ -288,7 +288,7 @@ input[type="checkbox"], input[type="radio"] {
   }
 }
 
-/* Primary Action & Connect Buttons */
+/* Primary Action & Connect Buttons (Solid Accent Background with Crisp White Text) */
 #chat-byok-tray button[type="submit"],
 #chat-byok-tray .btn-save-settings,
 #chat-byok-tray .bg-purple-600,
@@ -296,10 +296,12 @@ input[type="checkbox"], input[type="radio"] {
 #chat-byok-tray .bg-cyan-600,
 #chat-byok-tray .bg-amber-600,
 #chat-byok-tray .bg-indigo-600,
+#chat-byok-tray #test-voice-btn,
 #chat-byok-tray button[id*="save-"],
 #chat-byok-tray button[id*="-save"],
 #chat-byok-tray button[id*="connect-"],
 #chat-byok-tray button[id*="-connect"],
+#chat-byok-tray button[id*="verify-connect-"],
 #voice-engine-modal .bg-purple-600,
 #model-search-modal .bg-purple-600 {
   background-color: var(--theme-accent) !important;
@@ -307,16 +309,24 @@ input[type="checkbox"], input[type="radio"] {
   box-shadow: 0 4px 14px -2px var(--theme-accent-glow) !important;
 }
 
+#chat-byok-tray #test-voice-btn span,
+#chat-byok-tray #test-voice-btn svg,
+#chat-byok-tray #test-voice-label,
+#chat-byok-tray #test-voice-icon {
+  color: #ffffff !important;
+  fill: #ffffff !important;
+}
+
 #chat-byok-tray .hover\:bg-purple-500:hover,
 #chat-byok-tray .hover\:bg-rose-500:hover,
 #chat-byok-tray .hover\:bg-cyan-500:hover,
 #chat-byok-tray .hover\:bg-amber-500:hover,
-#chat-byok-tray .hover\:bg-indigo-500:hover {
+#chat-byok-tray .hover\:bg-indigo-500:hover,
+#chat-byok-tray #test-voice-btn:hover {
   background-color: var(--theme-accent-hover, var(--theme-accent)) !important;
 }
 
 /* Active Top Tab Button (Text, Voice, Visuals, Video) */
-#chat-byok-tray .engine-tab-btn[class*="bg-purple-950"],
 #chat-byok-tray .engine-tab-btn[class*="border-purple-500"] {
   background-color: rgba(var(--theme-accent-rgb, 147, 51, 234), 0.22) !important;
   border-color: rgba(var(--theme-accent-rgb, 147, 51, 234), 0.55) !important;
@@ -324,20 +334,15 @@ input[type="checkbox"], input[type="radio"] {
   box-shadow: 0 4px 16px -2px var(--theme-accent-glow) !important;
 }
 
-#chat-byok-tray .engine-tab-btn[class*="bg-purple-950"] svg,
 #chat-byok-tray .engine-tab-btn[class*="border-purple-500"] svg {
   color: var(--theme-accent-hover, var(--theme-accent)) !important;
 }
 
-/* Active Sub-tab Buttons (STT/TTS, Selfies/Scene Art/Vision, Motion/Angles) */
-#chat-byok-tray #voice-subtab-stt-btn[class*="bg-"],
-#chat-byok-tray #voice-subtab-tts-btn[class*="bg-"],
-#chat-byok-tray #image-subtab-output-btn[class*="bg-"],
-#chat-byok-tray #image-subtab-input-btn[class*="bg-"],
-#chat-byok-tray button[class*="bg-rose-600"],
-#chat-byok-tray button[class*="bg-cyan-600"],
-#chat-byok-tray button[class*="bg-amber-600"],
-#chat-byok-tray button[class*="bg-purple-600"] {
+/* Active Sub-tab Buttons (Strictly targeting active state classes, NOT hover classes) */
+#chat-byok-tray #voice-subtab-stt-btn.bg-rose-600,
+#chat-byok-tray #voice-subtab-tts-btn.bg-purple-600,
+#chat-byok-tray #image-subtab-output-btn.bg-amber-600,
+#chat-byok-tray #image-subtab-input-btn.bg-cyan-600 {
   background-color: var(--theme-accent) !important;
   color: #ffffff !important;
   box-shadow: 0 3px 12px -2px var(--theme-accent-glow) !important;
@@ -399,16 +404,17 @@ input[type="checkbox"], input[type="radio"] {
   background-color: rgba(var(--theme-accent-rgb, 147, 51, 234), 0.12) !important;
 }
 
-/* Secondary Action Buttons (e.g. Test Image, Reset to Defaults) */
-#chat-byok-tray button[id*="test-"],
-#chat-byok-tray button[id*="-test"],
+/* Secondary Outline Action Buttons (e.g. Test Image, Reset to Defaults) */
+#chat-byok-tray #test-image-btn,
+#chat-byok-tray #test-stt-btn,
 #chat-byok-tray button[id*="reset-"] {
   border-color: rgba(var(--theme-accent-rgb, 147, 51, 234), 0.35) !important;
   color: var(--theme-accent-hover, var(--theme-accent)) !important;
+  background-color: transparent !important;
 }
 
-#chat-byok-tray button[id*="test-"]:hover,
-#chat-byok-tray button[id*="-test"]:hover,
+#chat-byok-tray #test-image-btn:hover,
+#chat-byok-tray #test-stt-btn:hover,
 #chat-byok-tray button[id*="reset-"]:hover {
   background-color: rgba(var(--theme-accent-rgb, 147, 51, 234), 0.12) !important;
 }
