@@ -468,8 +468,8 @@ const TELEGRAM_NAME_COLORS = [
               <!-- Change Chat Wallpaper -->
               <button type="button" id="tg-btn-change-wallpaper" class="w-full py-3 flex items-center justify-between text-left hover:opacity-80 transition cursor-pointer group">
                 <div class="flex items-center gap-3.5">
-                  <ImageIcon class="w-5 h-5 text-[#8E9DFE]" />
-                  <span class="text-sm font-normal text-[#8E9DFE]">Change Chat Wallpaper</span>
+                  <ImageIcon class="w-5 h-5 tg-accent-text" />
+                  <span class="text-sm font-normal tg-accent-text">Change Chat Wallpaper</span>
                 </div>
               </button>
 
@@ -477,7 +477,7 @@ const TELEGRAM_NAME_COLORS = [
               <div id="tg-wp-drawer" class="hidden py-3 space-y-3">
                 <div class="flex items-center justify-between text-xs text-[#8A96B2]">
                   <span>Choose background or photo</span>
-                  <label class="px-2.5 py-1 rounded-lg bg-[#8E9DFE]/15 text-[#8E9DFE] font-medium hover:bg-[#8E9DFE]/25 transition cursor-pointer flex items-center gap-1.5">
+                  <label class="px-2.5 py-1 rounded-lg bg-[#8E9DFE]/15 tg-accent-text font-medium hover:bg-[#8E9DFE]/25 transition cursor-pointer flex items-center gap-1.5">
                     <Upload class="w-3.5 h-3.5" />
                     <span>Upload</span>
                     <input type="file" id="tg-wp-file-input" accept="image/*" class="hidden" />
@@ -489,8 +489,8 @@ const TELEGRAM_NAME_COLORS = [
               <!-- Change Name Color -->
               <button type="button" id="tg-btn-change-name" class="w-full py-3 flex items-center justify-between text-left hover:opacity-80 transition cursor-pointer group">
                 <div class="flex items-center gap-3.5">
-                  <Palette class="w-5 h-5 text-[#8E9DFE]" />
-                  <span class="text-sm font-normal text-[#8E9DFE]">Change Name Color</span>
+                  <Palette class="w-5 h-5 tg-accent-text" />
+                  <span class="text-sm font-normal tg-accent-text">Change Name Color</span>
                 </div>
                 <div class="flex items-center gap-2">
                   <div id="tg-name-color-pill" class="px-3 py-1 rounded-full text-xs font-semibold transition-all shadow-sm" style="background-color: #29233B; color: #A393FF;">
@@ -503,7 +503,7 @@ const TELEGRAM_NAME_COLORS = [
               <div id="tg-name-drawer" class="hidden py-3 space-y-2.5">
                 <div class="flex items-center justify-between text-xs text-[#8A96B2]">
                   <span>Name & Reply Color</span>
-                  <span id="tg-name-color-hex" class="font-mono text-[#8E9DFE] font-bold">#A393FF</span>
+                  <span id="tg-name-color-hex" class="font-mono tg-accent-text font-bold">#A393FF</span>
                 </div>
                 <div class="flex items-center gap-2.5 overflow-x-auto pb-1" id="tg-name-colors-row">
                   {TELEGRAM_NAME_COLORS.map(c => (
@@ -559,13 +559,13 @@ const TELEGRAM_NAME_COLORS = [
             <!-- Action items below carousel -->
             <div class="divide-y divide-[#2A3040] pt-1">
               <button type="button" id="tg-btn-switch-day-night" class="w-full py-3 flex items-center gap-3.5 text-left hover:opacity-80 transition cursor-pointer">
-                <Sun class="w-5 h-5 text-[#8E9DFE]" id="tg-icon-day-night" />
-                <span class="text-sm font-normal text-[#8E9DFE]" id="tg-text-day-night">Switch to Day Mode</span>
+                <Sun class="w-5 h-5 tg-accent-text" id="tg-icon-day-night" />
+                <span class="text-sm font-normal tg-accent-text" id="tg-text-day-night">Switch to Day Mode</span>
               </button>
 
               <button type="button" id="tg-btn-browse-themes" class="w-full py-3 flex items-center gap-3.5 text-left hover:opacity-80 transition cursor-pointer">
-                <Sparkles class="w-5 h-5 text-[#8E9DFE]" />
-                <span class="text-sm font-normal text-[#8E9DFE]">Browse Themes</span>
+                <Sparkles class="w-5 h-5 tg-accent-text" />
+                <span class="text-sm font-normal tg-accent-text">Browse Themes</span>
               </button>
             </div>
           </div>
@@ -609,7 +609,7 @@ const TELEGRAM_NAME_COLORS = [
                 <span class="text-sm font-normal text-white block">Sound Effects</span>
                 <span class="text-xs text-[#8A96B2] block">Telegram pop on message send/receive</span>
               </div>
-              <button type="button" id="tg-sound-toggle-btn" class="px-3 py-1 rounded-xl text-xs font-semibold bg-[#7385FF]/20 text-[#8E9DFE] border border-[#7385FF]/30 transition cursor-pointer">
+              <button type="button" id="tg-sound-toggle-btn" class="px-3 py-1 rounded-xl text-xs font-semibold bg-[#7385FF]/20 tg-accent-text border border-[#7385FF]/30 transition cursor-pointer">
                 Enabled
               </button>
             </div>
@@ -1261,7 +1261,8 @@ const TELEGRAM_NAME_COLORS = [
         const min = parseFloat(slider.min) || 0;
         const max = parseFloat(slider.max) || 100;
         const pct = ((val - min) / (max - min)) * 100;
-        slider.style.background = `linear-gradient(to right, #7385FF 0%, #7385FF ${pct}%, #343A4A ${pct}%, #343A4A 100%)`;
+        const curAccent = settings.accent || '#7385FF';
+        slider.style.background = `linear-gradient(to right, ${curAccent} 0%, ${curAccent} ${pct}%, #343A4A ${pct}%, #343A4A 100%)`;
       }
 
       function updatePreview() {
@@ -1324,12 +1325,13 @@ const TELEGRAM_NAME_COLORS = [
             (currentThemeId === 'glacier-arctic' && tid === 'cyan-palette') ||
             (currentThemeId === 'aetheria-purple' && tid === 'arcade-retro');
           
+          const curAccent = settings.accent || '#6B7CFF';
           if (isSelected) {
-            card.style.borderColor = '#6B7CFF';
-            card.classList.add('shadow-lg', 'shadow-[#6B7CFF]/30');
+            card.style.borderColor = curAccent;
+            card.style.boxShadow = `0 0 16px ${curAccent}66`;
           } else {
             card.style.borderColor = 'transparent';
-            card.classList.remove('shadow-lg', 'shadow-[#6B7CFF]/30');
+            card.style.boxShadow = 'none';
           }
         });
 
@@ -1378,37 +1380,47 @@ const TELEGRAM_NAME_COLORS = [
           if (tid === 'tulip-sunset') {
             settings.userBubbleBg = 'linear-gradient(135deg, #E8537A 0%, #FF9E4A 100%)';
             settings.accent = '#FF9E4A';
+            settings.nameColor = '#FF9E4A';
             settings.baseMode = 'dark';
           } else if (tid === 'violet-heart') {
             settings.userBubbleBg = 'linear-gradient(135deg, #EC4899 0%, #8B5CF6 100%)';
             settings.accent = '#8B5CF6';
+            settings.nameColor = '#8B5CF6';
             settings.baseMode = 'dark';
           } else if (tid === 'tree-gold') {
             settings.userBubbleBg = 'linear-gradient(135deg, #F59E0B 0%, #EA580C 100%)';
             settings.accent = '#F59E0B';
+            settings.nameColor = '#F59E0B';
             settings.baseMode = 'dark';
           } else if (tid === 'arcade-retro') {
             settings.userBubbleBg = 'linear-gradient(135deg, #9333EA 0%, #F97316 100%)';
             settings.accent = '#9333EA';
+            settings.nameColor = '#9333EA';
             settings.baseMode = 'dark';
           } else if (tid === 'cyan-palette') {
             settings.userBubbleBg = 'linear-gradient(135deg, #06B6D4 0%, #0D9488 100%)';
             settings.accent = '#06B6D4';
+            settings.nameColor = '#06B6D4';
             settings.baseMode = 'dark';
           } else if (tid === 'classic-tg') {
             settings.userBubbleBg = 'linear-gradient(135deg, #2AABEE 0%, #229ED9 100%)';
             settings.accent = '#229ED9';
+            settings.nameColor = '#229ED9';
             settings.baseMode = 'dark';
           } else if (tid === 'night-amoled') {
             settings.userBubbleBg = 'linear-gradient(135deg, #27272A 0%, #18181B 100%)';
             settings.accent = '#7385FF';
+            settings.nameColor = '#7385FF';
             settings.baseMode = 'amoled';
           } else if (tid === 'day-light') {
             settings.userBubbleBg = 'linear-gradient(135deg, #3B82F6 0%, #60A5FA 100%)';
             settings.accent = '#3B82F6';
+            settings.nameColor = '#3B82F6';
             settings.baseMode = 'day';
           }
           
+          updateSliderFill(fontSlider);
+          updateSliderFill(cornersSlider);
           updatePreview();
           saveAndApply();
         });
@@ -1473,7 +1485,7 @@ const TELEGRAM_NAME_COLORS = [
         if (soundBtn) {
           soundBtn.textContent = enabled ? 'Enabled' : 'Muted';
           soundBtn.className = enabled
-            ? 'px-3 py-1 rounded-xl text-xs font-semibold bg-[#7385FF]/20 text-[#8E9DFE] border border-[#7385FF]/30 transition cursor-pointer'
+            ? 'px-3 py-1 rounded-xl text-xs font-semibold bg-[#7385FF]/20 tg-accent-text border border-[#7385FF]/30 transition cursor-pointer'
             : 'px-3 py-1 rounded-xl text-xs font-semibold bg-white/5 text-[#8A96B2] border border-white/10 transition cursor-pointer';
         }
       }
