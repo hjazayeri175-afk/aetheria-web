@@ -23,22 +23,7 @@
 }
 
 
-
 :root {
-
-  --theme-purple-50: rgba(var(--theme-accent-rgb, 147, 51, 234), 0.05);
-  --theme-purple-100: rgba(var(--theme-accent-rgb, 147, 51, 234), 0.1);
-  --theme-purple-200: rgba(var(--theme-accent-rgb, 147, 51, 234), 0.25);
-  --theme-purple-300: rgba(var(--theme-accent-rgb, 147, 51, 234), 0.5);
-  --theme-purple-400: var(--theme-accent, #9333ea);
-  --theme-purple-500: var(--theme-accent, #9333ea);
-  --theme-purple-600: var(--theme-accent, #9333ea);
-  --theme-purple-700: var(--theme-accent, #9333ea);
-  --theme-purple-800: rgba(var(--theme-accent-rgb, 147, 51, 234), 0.8);
-  --theme-purple-900: rgba(var(--theme-accent-rgb, 147, 51, 234), 0.9);
-  --theme-purple-950: rgba(var(--theme-accent-rgb, 147, 51, 234), 0.95);
-
-
   --bg-primary: #07080d;
   --bg-secondary: #0d0f17;
   --bg-card: rgba(18, 20, 31, 0.7);
@@ -55,6 +40,19 @@
   --theme-accent-subtle: rgba(147, 51, 234, 0.15);
   --theme-accent-border: rgba(147, 51, 234, 0.4);
   --theme-accent-text: #ffffff;
+
+  --theme-purple-50: rgba(var(--theme-accent-rgb, 147, 51, 234), 0.05);
+  --theme-purple-100: rgba(var(--theme-accent-rgb, 147, 51, 234), 0.1);
+  --theme-purple-200: rgba(var(--theme-accent-rgb, 147, 51, 234), 0.25);
+  --theme-purple-300: rgba(var(--theme-accent-rgb, 147, 51, 234), 0.5);
+  --theme-purple-400: var(--theme-accent, #9333ea);
+  --theme-purple-500: var(--theme-accent, #9333ea);
+  --theme-purple-600: var(--theme-accent, #9333ea);
+  --theme-purple-700: var(--theme-accent, #9333ea);
+  --theme-purple-800: rgba(var(--theme-accent-rgb, 147, 51, 234), 0.8);
+  --theme-purple-900: rgba(var(--theme-accent-rgb, 147, 51, 234), 0.9);
+  --theme-purple-950: rgba(var(--theme-accent-rgb, 147, 51, 234), 0.95);
+
 
   /* Chat Messages & Bubbles Tokens */
   --theme-bubble-radius: 16px;
@@ -183,56 +181,17 @@ body {
 
 
 /* ==========================================================================
-   Universal Dynamic Theme Reactive Rules (100% Comprehensive Coverage)
-   When --theme-accent changes, EVERY button, text, border, icon, badge, 
-   nav indicator, slider, and glow across the ENTIRE website updates!
+   Telegram-Style Universal Dynamic Theme Reactive Rules
+   All buttons, badges, carets, selection, toggles and sliders dynamically react to --theme-accent
    ========================================================================== */
-
-/* Active theme accent variables */
-:root {
-  --theme-accent-subtle: rgba(var(--theme-accent-rgb, 147, 51, 234), 0.12);
-  --theme-accent-border: rgba(var(--theme-accent-rgb, 147, 51, 234), 0.35);
-  --theme-accent-glow: rgba(var(--theme-accent-rgb, 147, 51, 234), 0.45);
-}
-
-/* All background accents across the site */
 .bg-purple-600,
-.bg-purple-500,
-.bg-purple-400,
 .theme-accent-bg {
   background-color: var(--theme-accent) !important;
 }
 
-.bg-purple-600\/10,
-.bg-purple-600\/15,
-.bg-purple-600\/20,
-.bg-purple-600\/25,
-.bg-purple-600\/30,
-.bg-purple-500\/10,
-.bg-purple-500\/15,
-.bg-purple-500\/20,
-.bg-purple-500\/30,
-.bg-purple-900\/15,
-.bg-purple-900\/20,
-.bg-purple-900\/30,
-.bg-purple-900\/35,
-.bg-purple-900\/40,
-.bg-purple-900\/60,
-.bg-purple-900\/90,
-.bg-purple-950\/20,
-.bg-purple-950\/30,
-.bg-purple-950\/40,
-.bg-purple-950\/50,
-.bg-purple-950\/60,
-.bg-purple-950\/70,
-.bg-purple-950\/80 {
-  background-color: rgba(var(--theme-accent-rgb, 147, 51, 234), 0.15) !important;
-}
-
 .hover\:bg-purple-500:hover,
-.hover\:bg-purple-600:hover,
 .theme-accent-hover:hover {
-  background-color: var(--theme-accent-hover, var(--theme-accent)) !important;
+  background-color: var(--theme-accent-hover) !important;
 }
 
 .peer:checked ~ .peer-checked\:bg-purple-600,
@@ -240,88 +199,29 @@ body {
   background-color: var(--theme-accent) !important;
 }
 
-/* All text colors and link accents */
-.text-purple-100,
-.text-purple-200,
 .text-purple-300,
 .text-purple-400,
-.text-purple-500,
-.theme-accent-text,
-.tg-accent-text,
-.text-\[\#8E9DFE\],
-.text-\[\#7385FF\] {
-  color: var(--theme-accent-hover, var(--theme-accent)) !important;
+.theme-accent-text {
+  color: var(--theme-accent-hover) !important;
 }
 
-.hover\:text-purple-200:hover,
-.hover\:text-purple-300:hover,
-.hover\:text-purple-400:hover,
-.group-hover\:text-purple-200:hover,
-.group-hover\:text-purple-300:hover,
-.group-hover\:text-purple-400:hover {
-  color: var(--theme-accent-hover, var(--theme-accent)) !important;
-}
-
-/* All borders */
-.border-purple-400,
-.border-purple-500,
-.border-purple-600,
-.theme-accent-border {
-  border-color: var(--theme-accent) !important;
-}
-
-.border-purple-400\/20,
-.border-purple-400\/30,
-.border-purple-400\/40,
-.border-purple-500\/20,
-.border-purple-500\/25,
-.border-purple-500\/30,
 .border-purple-500\/40,
+.border-purple-500\/30,
 .border-purple-500\/50,
 .border-purple-500\/60,
-.border-purple-500\/70 {
-  border-color: rgba(var(--theme-accent-rgb, 147, 51, 234), 0.35) !important;
+.theme-accent-border {
+  border-color: var(--theme-accent-border) !important;
 }
 
-/* Focus and ring states */
-.ring-purple-400,
-.ring-purple-500,
-.focus\:border-purple-400:focus,
-.focus\:border-purple-500:focus,
-.focus\:ring-purple-500:focus {
-  border-color: var(--theme-accent) !important;
-  --tw-ring-color: var(--theme-accent) !important;
-}
-
-/* Glow and shadows */
-.shadow-purple-400,
-.shadow-purple-500,
-.shadow-purple-500\/20,
-.shadow-purple-500\/80,
-.shadow-purple-600,
-.shadow-purple-900,
-.shadow-purple-950,
-.glow-purple,
+.shadow-purple-950\/50,
+.shadow-purple-950\/60,
+.shadow-purple-900\/40,
+.shadow-purple-900\/50,
 .theme-accent-glow {
   box-shadow: 0 4px 20px -2px var(--theme-accent-glow) !important;
 }
 
-/* Gradient stops */
-.from-purple-400,
-.from-purple-500,
-.from-purple-600 {
-  --tw-gradient-from: var(--theme-accent) var(--tw-gradient-from-position) !important;
-  --tw-gradient-to: rgba(var(--theme-accent-rgb, 147, 51, 234), 0) var(--tw-gradient-to-position) !important;
-  --tw-gradient-stops: var(--tw-gradient-from), var(--tw-gradient-to) !important;
-}
-
-.to-purple-500,
-.to-purple-600,
-.to-purple-700 {
-  --tw-gradient-to: var(--theme-accent) var(--tw-gradient-to-position) !important;
-}
-
-/* Input carets and form accents */
+/* Caret, Selection, & Form Controls */
 input, textarea {
   caret-color: var(--theme-accent) !important;
 }
@@ -332,66 +232,8 @@ input, textarea {
 input[type="range"] {
   accent-color: var(--theme-accent) !important;
 }
-input[type="checkbox"]:checked, input[type="radio"]:checked {
+input[type="checkbox"], input[type="radio"] {
   accent-color: var(--theme-accent) !important;
-}
-
-/* Telegram Sliders (Track & Thumb react dynamically to --theme-accent) */
-.tg-slider {
-  -webkit-appearance: none;
-  appearance: none;
-  width: 100%;
-  height: 3px;
-  background: #343A4A;
-  border-radius: 9999px;
-  outline: none;
-  cursor: pointer;
-}
-.tg-slider::-webkit-slider-thumb {
-  -webkit-appearance: none;
-  appearance: none;
-  width: 16px;
-  height: 16px;
-  border-radius: 50%;
-  background: var(--theme-accent) !important;
-  cursor: pointer;
-  box-shadow: 0 2px 8px var(--theme-accent-glow) !important;
-  transition: transform 0.15s ease;
-}
-.tg-slider::-webkit-slider-thumb:hover {
-  transform: scale(1.2);
-}
-.tg-slider::-moz-range-thumb {
-  width: 16px;
-  height: 16px;
-  border-radius: 50%;
-  background: var(--theme-accent) !important;
-  border: none;
-  cursor: pointer;
-  box-shadow: 0 2px 8px var(--theme-accent-glow) !important;
-}
-
-/* Telegram Name Colors and Quote Bars */
-[data-telegram-name-color],
-.telegram-name-color,
-.telegram-name-label {
-  color: var(--theme-name-color, var(--theme-accent)) !important;
-}
-.telegram-quote-bar,
-.tg-quote-line {
-  border-left-color: var(--theme-name-color, var(--theme-accent)) !important;
-}
-
-/* Active Mockup Card Ring */
-.tg-theme-mockup-card.active,
-.tg-theme-mockup-card[data-active="true"] {
-  border-color: var(--theme-accent) !important;
-  box-shadow: 0 0 16px var(--theme-accent-glow) !important;
-}
-.tg-theme-mockup-card.active .tg-theme-selected-indicator,
-.tg-theme-mockup-card[data-active="true"] .tg-theme-selected-indicator {
-  display: block !important;
-  border-color: var(--theme-accent) !important;
 }
 
 /* Chat bubble dynamic classes */
@@ -411,6 +253,7 @@ input[type="checkbox"]:checked, input[type="radio"]:checked {
   color: var(--theme-bubble-char-text, #f1f5f9) !important;
 }
 
+
 /* Telegram-Style Chat Density & Spacing */
 [data-chat-density="compact"] .chat-msg-row {
   margin-bottom: 0.35rem !important;
@@ -421,90 +264,4 @@ input[type="checkbox"]:checked, input[type="radio"]:checked {
 [data-chat-density="compact"] .chat-msg-bubble-user,
 [data-chat-density="compact"] .chat-msg-bubble-char {
   font-size: calc(var(--theme-msg-font-size, 16px) - 1.5px) !important;
-}
-
-/* ==========================================================================
-   Telegram Base Themes (Day, AMOLED, Dark) - Global Page Adaptation
-   ========================================================================== */
-html[data-theme-base="day"] {
-  --bg-primary: #f8fafc;
-  --bg-secondary: #f1f5f9;
-  --bg-card: #ffffff;
-  color: #0f172a !important;
-}
-html[data-theme-base="day"] body {
-  background-color: #f8fafc !important;
-  color: #0f172a !important;
-}
-html[data-theme-base="day"] header {
-  background-color: rgba(255, 255, 255, 0.9) !important;
-  border-bottom-color: #e2e8f0 !important;
-}
-html[data-theme-base="day"] .nav-mobile-bottom,
-html[data-theme-base="day"] nav[class*="fixed bottom-0"] {
-  background-color: rgba(255, 255, 255, 0.94) !important;
-  border-top-color: #e2e8f0 !important;
-}
-html[data-theme-base="day"] .bg-\[\#1D212C\],
-html[data-theme-base="day"] .bg-\[\#0e101a\],
-html[data-theme-base="day"] .bg-white\/\[0\.02\],
-html[data-theme-base="day"] .bg-white\/\[0\.03\],
-html[data-theme-base="day"] .bg-white\/\[0\.04\],
-html[data-theme-base="day"] .glass-panel {
-  background-color: #ffffff !important;
-  border-color: #e2e8f0 !important;
-  color: #0f172a !important;
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05) !important;
-}
-html[data-theme-base="day"] .text-slate-200,
-html[data-theme-base="day"] .text-slate-300,
-html[data-theme-base="day"] .text-white {
-  color: #0f172a !important;
-}
-html[data-theme-base="day"] .text-\[\#8A96B2\],
-html[data-theme-base="day"] .text-slate-400 {
-  color: #64748b !important;
-}
-html[data-theme-base="day"] .divide-\[\#2A3040\] > * + *,
-html[data-theme-base="day"] .border-white\/\[0\.08\],
-html[data-theme-base="day"] .border-white\/\[0\.06\] {
-  border-color: #e2e8f0 !important;
-}
-html[data-theme-base="day"] .chat-msg-bubble-char {
-  background: #ffffff !important;
-  border: 1px solid #e2e8f0 !important;
-  color: #0f172a !important;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05) !important;
-}
-html[data-theme-base="day"] #chat-stream {
-  background-color: #e2e8f0 !important;
-}
-
-html[data-theme-base="amoled"] {
-  --bg-primary: #000000;
-  --bg-secondary: #000000;
-  --bg-card: #050505;
-}
-html[data-theme-base="amoled"] body {
-  background-color: #000000 !important;
-}
-html[data-theme-base="amoled"] header {
-  background-color: #000000 !important;
-  border-bottom-color: #1a1a1e !important;
-}
-html[data-theme-base="amoled"] .nav-mobile-bottom,
-html[data-theme-base="amoled"] nav[class*="fixed bottom-0"] {
-  background-color: #000000 !important;
-  border-top-color: #1a1a1e !important;
-}
-html[data-theme-base="amoled"] .bg-\[\#1D212C\],
-html[data-theme-base="amoled"] .bg-\[\#0e101a\],
-html[data-theme-base="amoled"] .bg-white\/\[0\.02\],
-html[data-theme-base="amoled"] .glass-panel {
-  background-color: #050507 !important;
-  border-color: #1a1a1e !important;
-}
-html[data-theme-base="amoled"] .chat-msg-bubble-char {
-  background: #09090b !important;
-  border: 1px solid rgba(255, 255, 255, 0.08) !important;
 }
