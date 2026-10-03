@@ -29,7 +29,10 @@ import {
   Database,
   Smartphone,
   Zap,
-  Globe
+  Globe,
+  Image,
+  Sun,
+  ChevronRight
 } from '@lucide/astro';
 ---
 
@@ -440,10 +443,10 @@ import {
       <!-- ========================================== -->
       <!-- VIEW 3: CHAT APPEARANCE SUB-PAGE          -->
       <!-- ========================================== -->
-      <div id="view-appearance" class="hidden space-y-5">
+      <div id="view-appearance" class="hidden space-y-4">
         
         <!-- Header with Back Button -->
-        <div class="flex items-center justify-between pb-1 border-b border-white/[0.06]">
+        <div class="flex items-center justify-between pb-1">
           <button 
             type="button" 
             id="btn-back-from-appearance"
@@ -452,167 +455,181 @@ import {
             <ArrowLeft class="w-5 h-5" />
             <span>Settings</span>
           </button>
-
-          <!-- Base Mode Switcher (Dark / AMOLED / Day) -->
-          <div class="flex items-center p-1 rounded-xl bg-white/[0.04] border border-white/[0.08]" id="profile-base-mode-group">
-            <button type="button" data-mode="dark" class="profile-mode-btn px-2.5 py-1 rounded-lg text-xs font-medium text-white bg-purple-600 transition flex items-center gap-1 cursor-pointer">
-              <span>🌙</span>
-              <span>Dark</span>
-            </button>
-            <button type="button" data-mode="amoled" class="profile-mode-btn px-2.5 py-1 rounded-lg text-xs font-medium text-slate-300 hover:text-white transition flex items-center gap-1 cursor-pointer">
-              <span>⚡</span>
-              <span>AMOLED</span>
-            </button>
-            <button type="button" data-mode="day" class="profile-mode-btn px-2.5 py-1 rounded-lg text-xs font-medium text-slate-300 hover:text-white transition flex items-center gap-1 cursor-pointer">
-              <span>☀️</span>
-              <span>Day</span>
-            </button>
-          </div>
+          <span class="text-sm font-semibold text-white/80">Chat Settings</span>
+          <div class="w-8"></div>
         </div>
 
-        <div>
-          <h1 class="text-xl font-bold text-white tracking-tight">Chat Settings</h1>
-          <p class="text-xs text-slate-400 mt-0.5">Themes, wallpapers, message styling and animations</p>
-        </div>
-
-        <!-- Telegram Chat Live Preview (Clean & Realistic) -->
-        <div class="rounded-3xl bg-[#141824] border border-white/[0.06] p-4 shadow-xl space-y-3">
-          <div class="flex items-center justify-between text-xs text-slate-400 px-1">
-            <span>Live Chat Preview</span>
-            <span class="text-[11px] text-purple-400">Updates in real-time</span>
+        <!-- Card 1: Text Sizing, Live Preview & Action Rows (Change Wallpaper / Name Color) -->
+        <div class="rounded-3xl bg-[#1e2336] p-4 border border-white/[0.08] shadow-xl space-y-4">
+          <!-- Message text size header & slider -->
+          <div class="space-y-2">
+            <div class="flex items-center justify-between px-0.5">
+              <span class="text-sm font-semibold text-[#8E9AB6]">Message text size</span>
+              <span id="profile-font-val" class="text-sm font-bold text-[#8E9AB6]">16</span>
+            </div>
+            <input 
+              type="range" 
+              id="profile-font-slider" 
+              min="12" 
+              max="22" 
+              step="1" 
+              value="16" 
+              class="w-full h-1 bg-white/10 rounded-lg appearance-none cursor-pointer accent-[#8E9AB6]" 
+            />
           </div>
 
-          <div id="profile-preview-viewport" class="relative h-48 rounded-2xl overflow-hidden border border-white/10 flex flex-col justify-end p-4 select-none shadow-inner" style="background-color: #090a12;">
-            <div id="profile-preview-image" class="absolute inset-0 transition-all duration-300" style="background: linear-gradient(to bottom, #090a12, #0e1122, #07080f);"></div>
-            <div id="profile-preview-dimmer" class="absolute inset-0 bg-black/20 pointer-events-none transition-opacity duration-200"></div>
-            <div id="profile-preview-pattern" class="absolute inset-0 pointer-events-none transition-opacity duration-300" style="background-image: none; opacity: 0.18;"></div>
+          <!-- Live Chat Preview Box (Pure Black & Clean Bubbles) -->
+          <div id="profile-preview-viewport" class="relative rounded-2xl overflow-hidden border border-white/10 flex flex-col justify-end p-3.5 select-none shadow-inner min-h-[195px]" style="background-color: #000000;">
+            <div id="profile-preview-image" class="absolute inset-0 bg-cover bg-center transition-all duration-300"></div>
+            <div id="profile-preview-dimmer" class="absolute inset-0 bg-black transition-opacity pointer-events-none" style="opacity: 0.20;"></div>
+            <div id="profile-preview-pattern" class="absolute inset-0 pointer-events-none transition-opacity" style="opacity: 0.18;"></div>
 
-            <div class="relative z-10 space-y-2.5 max-w-full">
-              <!-- Incoming message from Character -->
-              <div class="flex items-start gap-2.5 max-w-[85%]">
-                <div class="w-7 h-7 rounded-full bg-purple-600/40 border border-purple-500/40 flex items-center justify-center text-purple-200 text-xs font-bold shrink-0 mt-0.5">
-                  A
-                </div>
-                <div class="space-y-1 min-w-0">
-                  <span id="profile-preview-char-name" class="text-[11px] font-semibold text-purple-300 block truncate">Aetheria AI</span>
-                  <div id="profile-preview-char-bubble" class="px-3.5 py-2 rounded-2xl rounded-tl-xs shadow-md transition-all duration-200" style="background: #101426; border: 1px solid rgba(255, 255, 255, 0.08); font-size: 15px; color: #f1f5f9;">
-                    <p class="leading-relaxed">Good morning! How does this theme look?</p>
-                    <span class="text-[9px] text-slate-400 mt-1 block">10:42 PM</span>
+            <div class="relative z-10 space-y-2.5">
+              <!-- Incoming Message (Left Bubble) -->
+              <div class="flex justify-start">
+                <div id="profile-preview-char-bubble" class="max-w-[85%] rounded-2xl rounded-bl-xs p-3 text-white shadow-md border border-white/10 transition-all duration-200" style="background: #181d2c;">
+                  <!-- Reply Bar -->
+                  <div class="pl-2 border-l-2 border-purple-400 bg-white/[0.04] rounded-xs py-0.5 px-1.5 mb-1.5 text-xs">
+                    <div class="font-bold text-[11px]" id="profile-preview-char-name" style="color: #a855f7;">Hossein</div>
+                    <div class="text-[11px] text-slate-300">Good morning! 👋</div>
                   </div>
+                  <!-- Main Text -->
+                  <div class="text-sm text-white font-normal leading-relaxed">Do you know what time it is?</div>
+                  <!-- Timestamp -->
+                  <div class="text-[10px] text-slate-400 text-right mt-1">13:24</div>
                 </div>
               </div>
 
-              <!-- Outgoing message from User -->
-              <div class="flex items-end justify-end max-w-[85%] ml-auto">
-                <div id="profile-preview-user-bubble" class="px-3.5 py-2 rounded-2xl rounded-tr-xs shadow-lg transition-all duration-200 text-white" style="background: linear-gradient(135deg, #9333ea, #6366f1); font-size: 15px;">
-                  <p class="leading-relaxed">Looks stunning! Just like Telegram.</p>
-                  <div class="text-[9px] text-white/70 mt-1 flex items-center justify-end gap-1">
-                    <span>10:43 PM</span>
-                    <svg class="w-3 h-3 text-cyan-300" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"></polyline></svg>
+              <!-- Outgoing Message (Right Bubble) -->
+              <div class="flex justify-end">
+                <div id="profile-preview-user-bubble" class="max-w-[82%] rounded-2xl rounded-br-xs px-3.5 py-2.5 text-white shadow-md leading-relaxed transition-all duration-200" style="background: linear-gradient(135deg, #a855f7 0%, #6366f1 100%);">
+                  <div class="text-sm font-normal">It's morning in Tokyo 😎</div>
+                  <div class="text-[10px] text-white/70 flex items-center justify-end gap-1 mt-0.5">
+                    <span>13:39</span>
+                    <span>✓✓</span>
                   </div>
                 </div>
               </div>
             </div>
           </div>
-        </div>
 
-        <!-- Color Themes Grid -->
-        <div class="rounded-3xl bg-[#141824] border border-white/[0.06] p-5 shadow-xl space-y-3">
-          <div class="flex items-center justify-between">
-            <label class="block text-xs font-bold text-white uppercase tracking-wider">Color Themes</label>
-            <span class="text-[11px] text-slate-400">One-tap cohesive palettes</span>
-          </div>
-          <div class="grid grid-cols-2 sm:grid-cols-4 gap-2.5" id="profile-presets-grid"></div>
-        </div>
-
-        <!-- Sliders: Message Text Size & Corner Roundness -->
-        <div class="rounded-3xl bg-[#141824] border border-white/[0.06] p-5 shadow-xl space-y-4">
-          <div class="text-xs font-bold text-white uppercase tracking-wider">Typography & Bubbles</div>
-          
-          <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-            <!-- Message Text Size -->
-            <div class="space-y-2 p-3.5 rounded-2xl bg-white/[0.02] border border-white/[0.06]">
-              <div class="flex items-center justify-between text-xs">
-                <span class="font-medium text-slate-200">Message Text Size</span>
-                <span id="profile-font-val" class="font-mono text-purple-300 font-bold bg-purple-500/20 px-2 py-0.5 rounded">16</span>
+          <!-- Action Rows Inside Card 1 -->
+          <div class="space-y-1 pt-1">
+            <!-- Row 1: Change Chat Wallpaper -->
+            <button 
+              type="button" 
+              id="btn-toggle-wallpaper-drawer" 
+              class="w-full flex items-center justify-between py-2 px-1 text-left cursor-pointer group transition"
+            >
+              <div class="flex items-center gap-3">
+                <Image class="w-5 h-5 text-[#8E9AB6] group-hover:text-white transition-colors" />
+                <span class="text-sm font-medium text-[#8E9AB6] group-hover:text-white transition-colors">Change Chat Wallpaper</span>
               </div>
-              <input type="range" id="profile-font-slider" min="13" max="22" step="1" value="16" class="w-full h-1.5 bg-white/10 rounded-lg appearance-none cursor-pointer accent-purple-500" />
+              <ChevronRight class="w-4 h-4 text-[#8E9AB6] group-hover:text-white transition-transform" id="chevron-wallpaper" />
+            </button>
+
+            <!-- Expandable Wallpaper Drawer -->
+            <div id="drawer-wallpaper" class="hidden pt-2 pb-1 space-y-3 border-t border-white/[0.04]">
+              <div id="profile-wallpapers-grid" class="grid grid-cols-3 sm:grid-cols-6 gap-2"></div>
+              <div class="flex items-center gap-2 pt-1">
+                <input type="file" id="profile-photo-file" accept="image/*" class="hidden" />
+                <button type="button" id="profile-photo-btn" class="flex-1 py-2 px-3 rounded-xl bg-white/[0.04] hover:bg-white/[0.08] border border-white/[0.08] text-xs font-semibold text-slate-300 hover:text-white transition flex items-center justify-center gap-2 cursor-pointer">
+                  <Upload class="w-4 h-4" />
+                  <span>Upload Custom Wallpaper</span>
+                </button>
+              </div>
             </div>
 
-            <!-- Corner Roundness -->
-            <div class="space-y-2 p-3.5 rounded-2xl bg-white/[0.02] border border-white/[0.06]">
-              <div class="flex items-center justify-between text-xs">
-                <span class="font-medium text-slate-200">Corner Roundness</span>
-                <span id="profile-radius-val" class="font-mono text-purple-300 font-bold bg-purple-500/20 px-2 py-0.5 rounded">16</span>
-              </div>
-              <input type="range" id="profile-radius-slider" min="0" max="24" step="2" value="16" class="w-full h-1.5 bg-white/10 rounded-lg appearance-none cursor-pointer accent-purple-500" />
-            </div>
-          </div>
-        </div>
-
-        <!-- Telegram 7 Signature Name Colors -->
-        <div class="rounded-3xl bg-[#141824] border border-white/[0.06] p-5 shadow-xl space-y-3">
-          <div class="flex items-center justify-between">
-            <label class="block text-xs font-bold text-white uppercase tracking-wider">Name & Accent Color</label>
-            <span id="profile-name-color-hex" class="text-xs font-mono text-purple-300 font-bold uppercase">#A855F7</span>
-          </div>
-          <div class="grid grid-cols-7 gap-2" id="profile-name-color-palette"></div>
-        </div>
-
-        <!-- Change Chat Wallpaper -->
-        <div class="rounded-3xl bg-[#141824] border border-white/[0.06] p-5 shadow-xl space-y-4">
-          <div class="flex items-center justify-between">
-            <label class="block text-xs font-bold text-white uppercase tracking-wider">Chat Wallpaper</label>
-            <div class="flex items-center gap-2">
-              <input type="file" id="profile-photo-file" accept="image/*" class="hidden" />
-              <button type="button" id="profile-photo-btn" class="px-3 py-1.5 rounded-xl bg-white/[0.06] hover:bg-white/[0.12] text-xs font-medium text-white transition cursor-pointer flex items-center gap-1.5">
-                <Upload class="w-3.5 h-3.5" />
-                <span>Choose from Photos</span>
+            <!-- Row 2: Change Name Color -->
+            <div class="border-t border-white/[0.06] pt-1">
+              <button 
+                type="button" 
+                id="btn-toggle-name-color-drawer" 
+                class="w-full flex items-center justify-between py-2 px-1 text-left cursor-pointer group transition"
+              >
+                <div class="flex items-center gap-3">
+                  <Palette class="w-5 h-5 text-[#8E9AB6] group-hover:text-white transition-colors" />
+                  <span class="text-sm font-medium text-[#8E9AB6] group-hover:text-white transition-colors">Change Name Color</span>
+                </div>
+                <div class="flex items-center gap-2">
+                  <div id="profile-name-pill" class="px-2.5 py-0.5 rounded-full bg-white/[0.06] text-xs font-bold" style="color: #a855f7;">
+                    Hossein
+                  </div>
+                  <ChevronRight class="w-4 h-4 text-[#8E9AB6] group-hover:text-white transition-transform" id="chevron-name-color" />
+                </div>
               </button>
+
+              <!-- Expandable Name Color Palette -->
+              <div id="drawer-name-color" class="hidden pt-2 pb-1 border-t border-white/[0.04]">
+                <div id="profile-name-color-palette" class="grid grid-cols-6 sm:grid-cols-9 gap-2"></div>
+                <span id="profile-name-color-hex" class="hidden"></span>
+              </div>
             </div>
           </div>
-          <div class="grid grid-cols-3 sm:grid-cols-6 gap-2" id="profile-wallpapers-grid"></div>
         </div>
 
-        <!-- Sound Effects & Shortcut -->
-        <div class="rounded-3xl bg-[#141824] border border-white/[0.06] p-5 shadow-xl space-y-4">
-          <div class="text-xs font-bold text-white uppercase tracking-wider">Sound & Interaction</div>
+        <!-- Card 2: Color Themes & Display Modes -->
+        <div class="rounded-3xl bg-[#1e2336] p-4 border border-white/[0.08] shadow-xl space-y-4">
+          <div class="flex items-center justify-between px-0.5">
+            <span class="text-sm font-semibold text-[#8E9AB6]">Color theme</span>
+          </div>
 
-          <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-            <div class="flex items-center justify-between p-3.5 rounded-2xl bg-white/[0.02] border border-white/[0.06]">
-              <div class="space-y-0.5">
-                <span class="text-xs font-medium text-slate-200 block">Sound Effects</span>
-                <span class="text-[10px] text-slate-400">Telegram pop & chimes</span>
-              </div>
-              <button type="button" id="profile-sound-toggle" class="px-3 py-1 rounded-xl text-xs font-semibold transition cursor-pointer bg-purple-500/20 border border-purple-500/30 text-purple-300">
-                Enabled
-              </button>
-            </div>
+          <!-- Horizontal Theme Carousel -->
+          <div id="profile-presets-grid" class="flex gap-3 overflow-x-auto pb-2 pt-1 scrollbar-none select-none">
+            <!-- Dynamically populated by renderPresets() -->
+          </div>
 
-            <div class="flex items-center justify-between p-3.5 rounded-2xl bg-white/[0.02] border border-white/[0.06]">
-              <div class="space-y-0.5">
-                <span class="text-xs font-medium text-slate-200 block">Send Shortcut</span>
-                <span class="text-[10px] text-slate-400">Message input trigger</span>
+          <!-- Action Rows Inside Card 2 -->
+          <div class="space-y-1 pt-1 border-t border-white/[0.06]">
+            <!-- Row 1: Switch to Day Mode / Dark Mode -->
+            <button 
+              type="button" 
+              id="btn-switch-day-night" 
+              class="w-full flex items-center justify-between py-2 px-1 text-left cursor-pointer group transition"
+            >
+              <div class="flex items-center gap-3">
+                <Sun class="w-5 h-5 text-[#8E9AB6] group-hover:text-white transition-colors" id="icon-day-night" />
+                <span id="label-day-night" class="text-sm font-medium text-[#8E9AB6] group-hover:text-white transition-colors">Switch to Day Mode</span>
               </div>
-              <div class="flex items-center gap-2">
-                <label class="text-xs text-slate-300 flex items-center gap-1 cursor-pointer">
-                  <input type="radio" name="profile-send-radio" value="enter" id="profile-send-enter" checked class="w-3.5 h-3.5 text-purple-600" />
-                  <span>Enter</span>
-                </label>
-                <label class="text-xs text-slate-300 flex items-center gap-1 cursor-pointer ml-1">
-                  <input type="radio" name="profile-send-radio" value="ctrl_enter" id="profile-send-ctrl-enter" class="w-3.5 h-3.5 text-purple-600" />
-                  <span>Ctrl+Enter</span>
-                </label>
+              <span id="badge-day-night" class="text-xs text-slate-400 capitalize px-2.5 py-0.5 rounded-full bg-white/[0.04]">Dark</span>
+            </button>
+
+            <!-- Row 2: Corner Radius Slider -->
+            <div class="border-t border-white/[0.06] pt-2.5 pb-1 space-y-2">
+              <div class="flex items-center justify-between px-1">
+                <div class="flex items-center gap-3">
+                  <Sparkles class="w-5 h-5 text-[#8E9AB6]" />
+                  <span class="text-sm font-medium text-[#8E9AB6]">Corner radius</span>
+                </div>
+                <span id="profile-radius-val" class="text-xs font-semibold text-[#8E9AB6]">16px</span>
               </div>
+              <input 
+                type="range" 
+                id="profile-radius-slider" 
+                min="6" 
+                max="24" 
+                step="1" 
+                value="16" 
+                class="w-full h-1 bg-white/10 rounded-lg appearance-none cursor-pointer accent-[#8E9AB6]" 
+              />
             </div>
           </div>
+        </div>
+
+        <!-- Hidden Compatibility Containers for Stored Settings -->
+        <div class="hidden">
+          <div id="profile-base-mode-group">
+            <button data-mode="dark" class="profile-mode-btn"></button>
+            <button data-mode="amoled" class="profile-mode-btn"></button>
+            <button data-mode="day" class="profile-mode-btn"></button>
+          </div>
+          <div id="profile-sound-toggle"></div>
+          <input type="radio" id="profile-send-enter" name="send-key" checked />
+          <input type="radio" id="profile-send-ctrl-enter" name="send-key" />
         </div>
 
       </div>
 
-      <!-- ========================================== -->
-      <!-- VIEW 4: AI ENGINE & MODELS SUB-PAGE       -->
-      <!-- ========================================== -->
       <div id="view-ai-engine" class="hidden space-y-5">
         
         <!-- Header with Back Button -->
@@ -1564,11 +1581,24 @@ import {
       const previewCharBubble = document.getElementById('profile-preview-char-bubble');
       const previewUserBubble = document.getElementById('profile-preview-user-bubble');
       const previewCharName = document.getElementById('profile-preview-char-name');
+      const namePill = document.getElementById('profile-name-pill');
 
       const fontSlider = document.getElementById('profile-font-slider') as HTMLInputElement | null;
       const fontVal = document.getElementById('profile-font-val');
       const radiusSlider = document.getElementById('profile-radius-slider') as HTMLInputElement | null;
       const radiusVal = document.getElementById('profile-radius-val');
+
+      const btnSwitchDayNight = document.getElementById('btn-switch-day-night');
+      const labelDayNight = document.getElementById('label-day-night');
+      const badgeDayNight = document.getElementById('badge-day-night');
+
+      const btnToggleWallpaperDrawer = document.getElementById('btn-toggle-wallpaper-drawer');
+      const drawerWallpaper = document.getElementById('drawer-wallpaper');
+      const chevronWallpaper = document.getElementById('chevron-wallpaper');
+
+      const btnToggleNameColorDrawer = document.getElementById('btn-toggle-name-color-drawer');
+      const drawerNameColor = document.getElementById('drawer-name-color');
+      const chevronNameColor = document.getElementById('chevron-name-color');
 
       const baseModeButtons = document.querySelectorAll('#profile-base-mode-group .profile-mode-btn');
       const nameColorPalette = document.getElementById('profile-name-color-palette');
@@ -1578,9 +1608,17 @@ import {
 
       const photoFileInput = document.getElementById('profile-photo-file') as HTMLInputElement | null;
       const photoBtn = document.getElementById('profile-photo-btn');
-      const soundToggle = document.getElementById('profile-sound-toggle');
-      const sendEnter = document.getElementById('profile-send-enter') as HTMLInputElement | null;
-      const sendCtrlEnter = document.getElementById('profile-send-ctrl-enter') as HTMLInputElement | null;
+
+      const emojiMap: Record<string, string> = {
+        'aetheria-purple': '💜',
+        'cyberpunk-amber': '🎮',
+        'midnight-amoled': '⚡',
+        'emerald-matrix': '🎄',
+        'cosmic-nebula': '🌷',
+        'sunset-horizon': '🌅',
+        'glacier-arctic': '💎',
+        'crimson-dynasty': '🎨'
+      };
 
       function updatePreview() {
         if (!previewViewport) return;
@@ -1633,6 +1671,7 @@ import {
 
         const nameColor = settings.nameColor || '#a855f7';
         if (previewCharName) previewCharName.style.color = nameColor;
+        if (namePill) namePill.style.color = nameColor;
         if (nameColorHex) nameColorHex.textContent = nameColor.toUpperCase();
 
         const radius = settings.bubbleRadius !== undefined ? settings.bubbleRadius : 16;
@@ -1646,6 +1685,14 @@ import {
           previewUserBubble.style.borderRadius = `${radius}px`;
           previewUserBubble.style.fontSize = `${fontSize}px`;
           if (settings.userBubbleBg) previewUserBubble.style.background = settings.userBubbleBg;
+        }
+
+        if (baseMode === 'day') {
+          if (labelDayNight) labelDayNight.textContent = 'Switch to Night Mode';
+          if (badgeDayNight) badgeDayNight.textContent = 'Day';
+        } else {
+          if (labelDayNight) labelDayNight.textContent = 'Switch to Day Mode';
+          if (badgeDayNight) badgeDayNight.textContent = baseMode === 'amoled' ? 'AMOLED' : 'Dark';
         }
 
         baseModeButtons.forEach((btn: any) => {
@@ -1664,23 +1711,42 @@ import {
         (window as any).AetheriaTheme?.apply?.(settings);
       }
 
-      // Presets
+      // Presets (Horizontal Carousel matching Telegram)
       function renderPresets() {
         if (!presetsGrid) return;
         const presets = (window as any).AetheriaTheme?.PRESETS || [];
-        presetsGrid.innerHTML = presets.map((p: any) => `
-          <button type="button" class="preset-btn p-2.5 rounded-2xl bg-white/[0.02] border border-white/[0.08] hover:border-purple-500/50 hover:bg-white/[0.04] transition flex items-center gap-2.5 text-left cursor-pointer" data-preset-id="${p.id}">
-            <div class="w-8 h-8 rounded-xl bg-gradient-to-br ${p.iconGradient || 'from-purple-600 to-indigo-600'} flex items-center justify-center text-white text-[10px] font-bold shrink-0 shadow-sm">
-              TG
-            </div>
-            <div class="min-w-0">
-              <span class="text-xs font-bold text-white block truncate">${p.name}</span>
-              <span class="text-[10px] text-slate-400 capitalize">${p.baseMode || 'dark'}</span>
-            </div>
-          </button>
-        `).join('');
+        const activePresetId = settings.id || 'aetheria-purple';
 
-        presetsGrid.querySelectorAll('.preset-btn').forEach((btn: any) => {
+        presetsGrid.innerHTML = presets.map((p: any) => {
+          const isSelected = p.id === activePresetId;
+          const emoji = emojiMap[p.id] || '🎨';
+          return `
+            <button 
+              type="button" 
+              class="preset-thumb-btn shrink-0 w-20 h-28 rounded-2xl relative p-2 flex flex-col justify-between overflow-hidden border-2 transition cursor-pointer select-none ${isSelected ? 'border-[#8E9AB6] shadow-md shadow-[#8E9AB6]/20 ring-1 ring-[#8E9AB6]/40' : 'border-white/10 hover:border-white/20'}" 
+              style="background: ${p.chatWallpaper || '#0f111a'};"
+              data-preset-id="${p.id}"
+              title="${p.name}"
+            >
+              <!-- Mini Outgoing Bubble (top right) -->
+              <div class="w-10 h-3 rounded-lg rounded-br-xs self-end shadow-xs flex items-center justify-end px-1" style="background: ${p.userBubbleBg || p.accent};">
+                <div class="w-1 h-0.5 bg-white/50 rounded-xs"></div>
+              </div>
+
+              <!-- Center Emoji Sticker -->
+              <div class="self-center z-10 text-xl transform hover:scale-110 transition-transform">
+                ${emoji}
+              </div>
+
+              <!-- Mini Incoming Bubble (bottom left) -->
+              <div class="w-9 h-3 rounded-lg rounded-bl-xs self-start shadow-xs flex items-center px-1" style="background: ${p.charBubbleBg || '#1e2336'}; border: 1px solid rgba(255,255,255,0.12);">
+                <div class="w-1 h-0.5 bg-white/40 rounded-xs"></div>
+              </div>
+            </button>
+          `;
+        }).join('');
+
+        presetsGrid.querySelectorAll('.preset-thumb-btn').forEach((btn: any) => {
           btn.addEventListener('click', () => {
             const found = presets.find((p: any) => p.id === btn.dataset.presetId);
             if (!found) return;
@@ -1688,6 +1754,7 @@ import {
             syncInputs();
             updatePreview();
             saveAndApply();
+            renderPresets();
           });
         });
       }
@@ -1716,108 +1783,86 @@ import {
         if (!wallpapersGrid) return;
         const wps = (window as any).AetheriaTheme?.WALLPAPERS || [];
         wallpapersGrid.innerHTML = wps.slice(0, 6).map((w: any) => `
-          <div class="wp-card relative h-16 rounded-xl overflow-hidden border border-white/10 hover:border-purple-500 transition cursor-pointer select-none" data-css="${escapeHtml(w.cssValue)}">
-            <div class="absolute inset-0" style="background: ${w.thumb.startsWith('http') ? `url('${w.thumb}') center/cover` : w.thumb};"></div>
-            <div class="absolute inset-0 bg-black/30 hover:bg-black/10 transition"></div>
-            <span class="absolute bottom-1 left-1.5 text-[9px] font-medium text-white truncate max-w-[90%] drop-shadow">${w.name}</span>
+          <div class="wp-card relative h-16 rounded-xl overflow-hidden border border-white/10 cursor-pointer group shadow-sm" data-wp="${w.css}">
+            <div class="absolute inset-0 bg-cover bg-center" style="background: ${w.css};"></div>
+            <div class="absolute inset-0 bg-black/40 group-hover:bg-black/10 transition flex items-center justify-center">
+              <span class="text-[9px] font-bold text-white">${w.name}</span>
+            </div>
           </div>
         `).join('');
 
         wallpapersGrid.querySelectorAll('.wp-card').forEach((card: any) => {
           card.addEventListener('click', () => {
-            settings.chatWallpaper = card.dataset.css;
+            settings.chatWallpaper = card.dataset.wp;
             updatePreview();
             saveAndApply();
           });
         });
       }
 
-      function escapeHtml(str: string) {
-        return (str || '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+      function syncInputs() {
+        if (fontSlider) fontSlider.value = String(settings.fontSize || 16);
+        if (fontVal) fontVal.textContent = String(settings.fontSize || 16);
+        if (radiusSlider) radiusSlider.value = String(settings.bubbleRadius !== undefined ? settings.bubbleRadius : 16);
+        if (radiusVal) radiusVal.textContent = `${settings.bubbleRadius !== undefined ? settings.bubbleRadius : 16}px`;
       }
 
-      baseModeButtons.forEach((btn: any) => {
-        btn.addEventListener('click', () => {
-          settings.baseMode = btn.dataset.mode;
-          if (settings.baseMode === 'amoled') {
-            settings.chatWallpaper = '#000000';
-            settings.chatPatternId = 'none';
-          } else if (settings.baseMode === 'day') {
-            settings.chatWallpaper = 'linear-gradient(to bottom, #e2e8f0, #cbd5e1, #94a3b8)';
-          }
-          updatePreview();
-          saveAndApply();
-        });
-      });
-
+      // Event Listeners
       fontSlider?.addEventListener('input', (e: any) => {
-        settings.fontSize = parseInt(e.target.value, 10);
-        if (fontVal) fontVal.textContent = String(settings.fontSize);
+        const val = parseInt(e.target.value, 10);
+        settings.fontSize = val;
+        if (fontVal) fontVal.textContent = String(val);
         updatePreview();
         saveAndApply();
       });
 
       radiusSlider?.addEventListener('input', (e: any) => {
-        settings.bubbleRadius = parseInt(e.target.value, 10);
-        if (radiusVal) radiusVal.textContent = String(settings.bubbleRadius);
+        const val = parseInt(e.target.value, 10);
+        settings.bubbleRadius = val;
+        if (radiusVal) radiusVal.textContent = `${val}px`;
         updatePreview();
         saveAndApply();
       });
 
+      btnSwitchDayNight?.addEventListener('click', () => {
+        settings.baseMode = settings.baseMode === 'day' ? 'dark' : 'day';
+        updatePreview();
+        saveAndApply();
+      });
+
+      btnToggleWallpaperDrawer?.addEventListener('click', () => {
+        const isHidden = drawerWallpaper?.classList.toggle('hidden');
+        chevronWallpaper?.classList.toggle('rotate-90', !isHidden);
+      });
+
+      btnToggleNameColorDrawer?.addEventListener('click', () => {
+        const isHidden = drawerNameColor?.classList.toggle('hidden');
+        chevronNameColor?.classList.toggle('rotate-90', !isHidden);
+      });
+
       photoBtn?.addEventListener('click', () => photoFileInput?.click());
       photoFileInput?.addEventListener('change', (e: any) => {
-        const file = e.target?.files?.[0];
+        const file = e.target.files?.[0];
         if (!file) return;
         const reader = new FileReader();
-        reader.onload = (event) => {
-          settings.chatWallpaper = `url("${event.target?.result}") center/cover no-repeat`;
+        reader.onload = (re) => {
+          const res = re.target?.result as string;
+          settings.chatWallpaper = `url("${res}")`;
           updatePreview();
           saveAndApply();
         };
         reader.readAsDataURL(file);
       });
 
-      function syncSound() {
-        const enabled = (window as any).AetheriaTheme?.isSoundEnabled?.() !== false;
-        if (soundToggle) {
-          soundToggle.textContent = enabled ? 'Enabled' : 'Muted';
-          soundToggle.className = enabled
-            ? 'px-3 py-1 rounded-xl text-xs font-semibold transition cursor-pointer bg-purple-500/20 border border-purple-500/30 text-purple-300'
-            : 'px-3 py-1 rounded-xl text-xs font-semibold transition cursor-pointer bg-white/5 border border-white/10 text-slate-400';
-        }
-      }
-
-      soundToggle?.addEventListener('click', () => {
-        const current = (window as any).AetheriaTheme?.isSoundEnabled?.() !== false;
-        (window as any).AetheriaTheme?.setSoundEnabled?.(!current);
-        syncSound();
-      });
-
-      sendEnter?.addEventListener('change', () => localStorage.setItem('aetheria_chat_send_key', 'enter'));
-      sendCtrlEnter?.addEventListener('change', () => localStorage.setItem('aetheria_chat_send_key', 'ctrl_enter'));
-
-      function syncInputs() {
-        if (fontSlider) fontSlider.value = String(settings.fontSize || 16);
-        if (fontVal) fontVal.textContent = String(settings.fontSize || 16);
-        if (radiusSlider) radiusSlider.value = String(settings.bubbleRadius !== undefined ? settings.bubbleRadius : 16);
-        if (radiusVal) radiusVal.textContent = String(settings.bubbleRadius !== undefined ? settings.bubbleRadius : 16);
-
-        const sendPref = localStorage.getItem('aetheria_chat_send_key') || 'enter';
-        if (sendPref === 'ctrl_enter') {
-          if (sendCtrlEnter) sendCtrlEnter.checked = true;
-        } else {
-          if (sendEnter) sendEnter.checked = true;
-        }
-        syncSound();
-      }
-
+      // Init everything
+      syncInputs();
+      updatePreview();
       renderPresets();
       renderNameColors();
       renderWallpapers();
-      syncInputs();
-      updatePreview();
     }
 
+    // Call initProfileChatSettings
     initProfileChatSettings();
   });
 </script>
