@@ -599,6 +599,11 @@ const {
         // Apply immediately on first paint
         const initialTheme = getSettings();
         applyThemeToDOM(initialTheme);
+        try {
+          if (localStorage.getItem('aetheria_reduce_motion') === 'true') {
+            document.documentElement.classList.add('reduce-motion');
+          }
+        } catch(e) {}
 
         // Cross-tab sync
         window.addEventListener('storage', function(e) {

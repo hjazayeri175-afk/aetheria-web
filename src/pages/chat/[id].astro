@@ -5579,6 +5579,33 @@ const { character } = Astro.props;
 
   lightboxClose?.addEventListener('click', closeLightbox);
   lightboxBackdropClick?.addEventListener('click', (e) => {
+    if (e.target === lightboxImg && localStorage.getItem('aetheria_tap_next_media') !== 'false') {
+      // Tap to show next media
+      const mediaList = [activeChar.avatarUrl];
+      conversation.forEach(m => {
+        if (m.imageUrl && !mediaList.includes(m.imageUrl)) mediaList.push(m.imageUrl);
+        if (m.generatedImages) {
+          m.generatedImages.forEach((img) => {
+            const u = typeof img === 'string' ? img : img.url;
+            if (u && !mediaList.includes(u)) mediaList.push(u);
+          });
+        }
+      });
+
+      if (mediaList.length > 1) {
+        const rect = lightboxImg.getBoundingClientRect();
+        const clickX = e.clientX - rect.left;
+        const isRightSide = clickX > rect.width / 2;
+        const currentIdx = mediaList.indexOf(lightboxImg.src);
+        let nextIdx = isRightSide ? currentIdx + 1 : currentIdx - 1;
+        if (nextIdx >= mediaList.length) nextIdx = 0;
+        if (nextIdx < 0) nextIdx = mediaList.length - 1;
+        lightboxImg.src = mediaList[nextIdx];
+        if (lightboxDownload) lightboxDownload.href = mediaList[nextIdx];
+        return;
+      }
+    }
+
     if (e.target === lightboxBackdropClick || e.target === lightboxImg) {
       closeLightbox();
     }
@@ -15974,6 +16001,7 @@ const { character } = Astro.props;
     conversation.push(userMsg);
     saveChat();
     appendMessageToDOM(userMsg, conversation.length - 1);
+    playChatChime('send');
     if (chatStream) chatStream.scrollTop = chatStream.scrollHeight;
 
     if (input) {
@@ -16457,6 +16485,10 @@ const { character } = Astro.props;
             conversation.push(charMsg);
             saveChat();
             appendMessageToDOM(charMsg, conversation.length - 1);
+            playChatChime('receive');
+            if (localStorage.getItem('aetheria_autoplay_voice') === 'true' && charMsg.text) {
+              setTimeout(() => speak(charMsg.text), 350);
+            }
           }
         } else {
           console.warn('API returned non-OK status', res.status);
@@ -17998,6 +18030,33 @@ const { character } = Astro.props;
     reader.readAsDataURL(file);
   }
 
+  
+  function playChatChime(type = 'send') {
+    if (localStorage.getItem('aetheria_sound_effects') !== 'true') return;
+    try {
+      const ctx = new (window.AudioContext || (window as any).webkitAudioContext)();
+      const osc = ctx.createOscillator();
+      const gain = ctx.createGain();
+      osc.connect(gain);
+      gain.connect(ctx.destination);
+      if (type === 'send') {
+        osc.frequency.setValueAtTime(480, ctx.currentTime);
+        osc.frequency.exponentialRampToValueAtTime(960, ctx.currentTime + 0.07);
+        gain.gain.setValueAtTime(0.06, ctx.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.07);
+        osc.start();
+        osc.stop(ctx.currentTime + 0.07);
+      } else {
+        osc.frequency.setValueAtTime(587.33, ctx.currentTime);
+        osc.frequency.exponentialRampToValueAtTime(880, ctx.currentTime + 0.12);
+        gain.gain.setValueAtTime(0.08, ctx.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.13);
+        osc.start();
+        osc.stop(ctx.currentTime + 0.13);
+      }
+    } catch (e) {}
+  }
+
   async function handleUnifiedSubmit() {
     const text = input ? input.value.trim() : '';
 
@@ -18063,13 +18122,6 @@ const { character } = Astro.props;
 
     const sendPref = localStorage.getItem('aetheria_chat_send_key') || 'enter';
 
-    if (isTouchDevice()) {
-      if (e.key === 'Enter') {
-        setTimeout(adjustInputHeight, 0);
-        return;
-      }
-    }
-
     if (sendPref === 'ctrl_enter') {
       if (e.key === 'Enter' && (e.ctrlKey || e.metaKey)) {
         e.preventDefault();
@@ -18081,6 +18133,7 @@ const { character } = Astro.props;
         return;
       }
     } else {
+      // Send by Enter is ON
       if (e.shiftKey) {
         setTimeout(adjustInputHeight, 0);
         return;

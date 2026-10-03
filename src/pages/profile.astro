@@ -32,7 +32,9 @@ import {
   Globe,
   Image,
   Sun,
-  ChevronRight
+  ChevronRight,
+  Volume2,
+  MessageSquare
 } from '@lucide/astro';
 ---
 
@@ -631,6 +633,92 @@ import {
                 />
               </div>
             </div>
+          </div>
+        </div>
+
+        <!-- Card 3: Messages & Typing (Telegram-fidelity settings card) -->
+        <div class="rounded-3xl bg-[#1e2336] p-4 border border-white/[0.08] shadow-xl space-y-3">
+          <div class="px-0.5">
+            <span class="text-sm font-semibold text-[#8E9AB6]">Messages & Typing</span>
+          </div>
+
+          <!-- Row 1: Send by Enter -->
+          <div class="flex items-center justify-between py-1.5 px-0.5">
+            <div class="space-y-0.5 pr-3">
+              <div class="text-sm font-medium text-white/90">Send by Enter</div>
+              <div class="text-xs text-slate-400">Press Enter to send message, Shift+Enter for new line</div>
+            </div>
+            <label class="relative inline-flex items-center cursor-pointer shrink-0">
+              <input type="checkbox" id="setting-send-enter" class="sr-only peer" checked />
+              <div class="w-11 h-6 bg-white/10 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-[var(--theme-accent,#8E9AB6)] shadow-inner"></div>
+            </label>
+          </div>
+
+          <!-- Row 2: Streaming Typewriter Effect -->
+          <div class="flex items-center justify-between py-1.5 px-0.5 border-t border-white/[0.06] pt-2.5">
+            <div class="space-y-0.5 pr-3">
+              <div class="text-sm font-medium text-white/90">Streaming Typewriter</div>
+              <div class="text-xs text-slate-400">Render words in real-time as character thinks and speaks</div>
+            </div>
+            <label class="relative inline-flex items-center cursor-pointer shrink-0">
+              <input type="checkbox" id="setting-stream-typewriter" class="sr-only peer" checked />
+              <div class="w-11 h-6 bg-white/10 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-[var(--theme-accent,#8E9AB6)] shadow-inner"></div>
+            </label>
+          </div>
+
+          <!-- Row 3: Sound Effects -->
+          <div class="flex items-center justify-between py-1.5 px-0.5 border-t border-white/[0.06] pt-2.5">
+            <div class="space-y-0.5 pr-3">
+              <div class="text-sm font-medium text-white/90">Sound Effects</div>
+              <div class="text-xs text-slate-400">Play subtle audio chimes on message send and arrival</div>
+            </div>
+            <label class="relative inline-flex items-center cursor-pointer shrink-0">
+              <input type="checkbox" id="setting-sound-effects" class="sr-only peer" />
+              <div class="w-11 h-6 bg-white/10 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-[var(--theme-accent,#8E9AB6)] shadow-inner"></div>
+            </label>
+          </div>
+        </div>
+
+        <!-- Card 4: Media & Motion (Telegram-fidelity settings card) -->
+        <div class="rounded-3xl bg-[#1e2336] p-4 border border-white/[0.08] shadow-xl space-y-3">
+          <div class="px-0.5">
+            <span class="text-sm font-semibold text-[#8E9AB6]">Media & Motion</span>
+          </div>
+
+          <!-- Row 1: Auto-Play Voice -->
+          <div class="flex items-center justify-between py-1.5 px-0.5">
+            <div class="space-y-0.5 pr-3">
+              <div class="text-sm font-medium text-white/90">Auto-Play Voice</div>
+              <div class="text-xs text-slate-400">Play character voice automatically upon generation</div>
+            </div>
+            <label class="relative inline-flex items-center cursor-pointer shrink-0">
+              <input type="checkbox" id="setting-autoplay-voice" class="sr-only peer" />
+              <div class="w-11 h-6 bg-white/10 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-[var(--theme-accent,#8E9AB6)] shadow-inner"></div>
+            </label>
+          </div>
+
+          <!-- Row 2: Tap to show next media -->
+          <div class="flex items-center justify-between py-1.5 px-0.5 border-t border-white/[0.06] pt-2.5">
+            <div class="space-y-0.5 pr-3">
+              <div class="text-sm font-medium text-white/90">Tap to show next media</div>
+              <div class="text-xs text-slate-400">Tap near edge of screen in artwork viewer to navigate</div>
+            </div>
+            <label class="relative inline-flex items-center cursor-pointer shrink-0">
+              <input type="checkbox" id="setting-tap-next-media" class="sr-only peer" checked />
+              <div class="w-11 h-6 bg-white/10 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-[var(--theme-accent,#8E9AB6)] shadow-inner"></div>
+            </label>
+          </div>
+
+          <!-- Row 3: Reduce Motion & Blurs -->
+          <div class="flex items-center justify-between py-1.5 px-0.5 border-t border-white/[0.06] pt-2.5">
+            <div class="space-y-0.5 pr-3">
+              <div class="text-sm font-medium text-white/90">Reduce Motion & Blurs</div>
+              <div class="text-xs text-slate-400">Disable heavy background blur effects to save battery</div>
+            </div>
+            <label class="relative inline-flex items-center cursor-pointer shrink-0">
+              <input type="checkbox" id="setting-reduce-motion" class="sr-only peer" />
+              <div class="w-11 h-6 bg-white/10 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-[var(--theme-accent,#8E9AB6)] shadow-inner"></div>
+            </label>
           </div>
         </div>
 
@@ -1892,6 +1980,76 @@ import {
         };
         reader.readAsDataURL(file);
       });
+
+      // Card 3 & 4 Toggles Wiring
+      const toggleSendEnter = document.getElementById('setting-send-enter') as HTMLInputElement | null;
+      const toggleStreamTypewriter = document.getElementById('setting-stream-typewriter') as HTMLInputElement | null;
+      const toggleSoundEffects = document.getElementById('setting-sound-effects') as HTMLInputElement | null;
+      const toggleAutoplayVoice = document.getElementById('setting-autoplay-voice') as HTMLInputElement | null;
+      const toggleTapNextMedia = document.getElementById('setting-tap-next-media') as HTMLInputElement | null;
+      const toggleReduceMotion = document.getElementById('setting-reduce-motion') as HTMLInputElement | null;
+
+      function playPreviewChime() {
+        try {
+          const ctx = new (window.AudioContext || (window as any).webkitAudioContext)();
+          const osc = ctx.createOscillator();
+          const gain = ctx.createGain();
+          osc.connect(gain);
+          gain.connect(ctx.destination);
+          osc.frequency.setValueAtTime(587.33, ctx.currentTime);
+          osc.frequency.exponentialRampToValueAtTime(880, ctx.currentTime + 0.12);
+          gain.gain.setValueAtTime(0.08, ctx.currentTime);
+          gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.13);
+          osc.start();
+          osc.stop(ctx.currentTime + 0.13);
+        } catch(e) {}
+      }
+
+      if (toggleSendEnter) {
+        toggleSendEnter.checked = localStorage.getItem('aetheria_chat_send_key') !== 'ctrl_enter';
+        toggleSendEnter.addEventListener('change', () => {
+          localStorage.setItem('aetheria_chat_send_key', toggleSendEnter.checked ? 'enter' : 'ctrl_enter');
+        });
+      }
+
+      if (toggleStreamTypewriter) {
+        toggleStreamTypewriter.checked = localStorage.getItem('aetheria_stream_typewriter') !== 'false';
+        toggleStreamTypewriter.addEventListener('change', () => {
+          localStorage.setItem('aetheria_stream_typewriter', String(toggleStreamTypewriter.checked));
+        });
+      }
+
+      if (toggleSoundEffects) {
+        toggleSoundEffects.checked = localStorage.getItem('aetheria_sound_effects') === 'true';
+        toggleSoundEffects.addEventListener('change', () => {
+          localStorage.setItem('aetheria_sound_effects', String(toggleSoundEffects.checked));
+          if (toggleSoundEffects.checked) {
+            playPreviewChime();
+          }
+        });
+      }
+
+      if (toggleAutoplayVoice) {
+        toggleAutoplayVoice.checked = localStorage.getItem('aetheria_autoplay_voice') === 'true';
+        toggleAutoplayVoice.addEventListener('change', () => {
+          localStorage.setItem('aetheria_autoplay_voice', String(toggleAutoplayVoice.checked));
+        });
+      }
+
+      if (toggleTapNextMedia) {
+        toggleTapNextMedia.checked = localStorage.getItem('aetheria_tap_next_media') !== 'false';
+        toggleTapNextMedia.addEventListener('change', () => {
+          localStorage.setItem('aetheria_tap_next_media', String(toggleTapNextMedia.checked));
+        });
+      }
+
+      if (toggleReduceMotion) {
+        toggleReduceMotion.checked = localStorage.getItem('aetheria_reduce_motion') === 'true';
+        toggleReduceMotion.addEventListener('change', () => {
+          localStorage.setItem('aetheria_reduce_motion', String(toggleReduceMotion.checked));
+          document.documentElement.classList.toggle('reduce-motion', toggleReduceMotion.checked);
+        });
+      }
 
       // Init everything
       syncInputs();

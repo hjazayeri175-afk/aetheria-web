@@ -505,3 +505,25 @@ input[type="checkbox"], input[type="radio"] {
   box-shadow: 0 2px 6px rgba(0, 0, 0, 0.45);
   cursor: pointer;
 }
+
+
+/* ==========================================================================
+   Reduce Motion & Heavy Blurs Mode
+   ========================================================================== */
+html.reduce-motion *,
+body.reduce-motion * {
+  animation-duration: 0.001ms !important;
+  animation-iteration-count: 1 !important;
+  transition-duration: 0.001ms !important;
+}
+
+html.reduce-motion .backdrop-blur-sm,
+html.reduce-motion .backdrop-blur-md,
+html.reduce-motion .backdrop-blur-lg,
+html.reduce-motion .backdrop-blur-xl,
+html.reduce-motion .backdrop-blur-2xl,
+html.reduce-motion .backdrop-blur-3xl {
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+  background-color: rgba(12, 14, 24, 0.95) !important;
+}
