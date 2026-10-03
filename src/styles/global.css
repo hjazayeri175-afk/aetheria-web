@@ -338,6 +338,24 @@ input[type="checkbox"], input[type="radio"] {
   color: var(--theme-accent-hover, var(--theme-accent)) !important;
 }
 
+#chat-byok-tray .engine-tab-btn[class*="border-purple-500"] span {
+  color: #ffffff !important;
+}
+
+/* Inactive Tab Button: Gray Icon and Muted Gray Text matching label */
+#chat-byok-tray .engine-tab-btn:not([class*="border-purple-500"]) svg {
+  color: #94a3b8 !important; /* slate-400 */
+}
+
+#chat-byok-tray .engine-tab-btn:not([class*="border-purple-500"]) {
+  color: #94a3b8 !important; /* slate-400 */
+}
+
+#chat-byok-tray .engine-tab-btn:not([class*="border-purple-500"]):hover svg,
+#chat-byok-tray .engine-tab-btn:not([class*="border-purple-500"]):hover {
+  color: #e2e8f0 !important; /* slate-200 */
+}
+
 /* Active Sub-tab Buttons (Strictly targeting active state classes, NOT hover classes) */
 #chat-byok-tray #voice-subtab-stt-btn.bg-rose-600,
 #chat-byok-tray #voice-subtab-tts-btn.bg-purple-600,
