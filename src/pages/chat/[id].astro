@@ -55,7 +55,8 @@ import {
   ArrowUp,
   Mic,
   MoreVertical,
-  Save
+  Save,
+  Palette
 } from '@lucide/astro';
 
 export function getStaticPaths() {
@@ -227,6 +228,16 @@ const { character } = Astro.props;
             >
               <SlidersHorizontal class="w-5 h-5 text-[#c4c7c5] group-hover:text-white shrink-0 stroke-[1.8]" />
               <span>Settings</span>
+            </button>
+
+            <!-- Chat Appearance & Themes (Telegram Style) -->
+            <button 
+              id="overflow-item-appearance"
+              type="button"
+              class="w-full px-3.5 py-2.5 rounded-2xl hover:bg-white/[0.08] active:bg-white/[0.12] text-left flex items-center gap-3.5 text-sm font-normal text-[#e3e3e3] hover:text-white transition-colors cursor-pointer group"
+            >
+              <Palette class="w-5 h-5 text-[#c4c7c5] group-hover:text-white shrink-0 stroke-[1.8]" />
+              <span>Chat appearance</span>
             </button>
 
             <!-- 4. Voice Narration with Toggle -->
@@ -515,7 +526,17 @@ const { character } = Astro.props;
       </aside>
 
       <!-- Center: Immersive Chat Feed & Input -->
-      <section class="flex-1 min-w-0 flex flex-col h-full overflow-hidden bg-gradient-to-b from-[#090b17] to-[#060810] relative w-full max-w-full">
+      <section 
+        id="chat-viewport-section" 
+        class="flex-1 min-w-0 flex flex-col h-full overflow-hidden relative w-full max-w-full transition-colors duration-300"
+        style="background: var(--theme-chat-bg, linear-gradient(to bottom, #090b17, #060810));"
+      >
+        <!-- Telegram-Grade Dynamic Wallpaper & Doodle Pattern Overlay -->
+        <div 
+          id="chat-wallpaper-overlay" 
+          class="absolute inset-0 pointer-events-none transition-all duration-300 z-0 bg-cover bg-center" 
+          style="background-image: var(--theme-chat-pattern, none); background-size: var(--theme-chat-pattern-size, auto); opacity: var(--theme-chat-pattern-opacity, 0.18);"
+        ></div>
         
         <!-- Multi-Modal AI Engine Suite Modal / Drawer -->
         <div 
@@ -3351,7 +3372,7 @@ const { character } = Astro.props;
         <!-- Chat Messages Scroll Stream -->
         <div 
           id="chat-stream" 
-          class="flex-1 overflow-y-auto p-4 sm:p-6 space-y-4 sm:space-y-5"
+          class="flex-1 overflow-y-auto p-4 sm:p-6 space-y-4 sm:space-y-5 relative z-10"
         >
           <!-- Messages will be populated dynamically from localStorage or greeting -->
         </div>
@@ -14944,7 +14965,7 @@ const { character } = Astro.props;
         `;
       } else {
         contentHtml = `
-          <div id="msg-bubble-${idx}" class="p-3.5 sm:p-4 rounded-2xl rounded-tl-sm bg-[#101426] border border-white/[0.08] text-xs sm:text-sm text-slate-200 leading-relaxed shadow-md select-text">
+          <div id="msg-bubble-${idx}" class="chat-msg-bubble chat-msg-bubble-char p-3.5 sm:p-4 rounded-tl-sm text-slate-200 leading-relaxed shadow-md select-text" style="background: var(--theme-bubble-char-bg, #101426); border: 1px solid var(--theme-bubble-char-border, rgba(255, 255, 255, 0.08)); border-radius: var(--theme-bubble-radius, 16px); font-size: var(--theme-msg-font-size, 16px); line-height: var(--theme-msg-line-height, 1.6);">
             ${formatMessageText(msg.text)}
           </div>
         `;
@@ -14991,7 +15012,7 @@ const { character } = Astro.props;
             <span class="text-[10px] text-slate-500">${msg.timestamp || 'Just now'}</span>
             <span class="text-xs font-bold text-purple-300">${displayName}</span>
           </div>
-          <div id="msg-bubble-${idx}" class="p-3.5 sm:p-4 rounded-2xl rounded-tr-sm bg-gradient-to-r from-purple-700 to-indigo-600 text-white text-xs sm:text-sm leading-relaxed shadow-lg shadow-purple-950/40 text-left select-text">
+          <div id="msg-bubble-${idx}" class="chat-msg-bubble chat-msg-bubble-user p-3.5 sm:p-4 rounded-tr-sm text-white leading-relaxed shadow-lg shadow-purple-950/40 text-left select-text" style="background: var(--theme-bubble-user-bg, linear-gradient(135deg, var(--theme-accent) 0%, #6366f1 100%)); border-radius: var(--theme-bubble-radius, 16px); font-size: var(--theme-msg-font-size, 16px); line-height: var(--theme-msg-line-height, 1.6);">
             ${msg.mediaUrl ? `
               <div class="mb-2 rounded-xl overflow-hidden max-h-60 max-w-xs">
                 <img src="${msg.mediaUrl}" class="w-full h-auto object-cover cursor-pointer lightbox-img-trigger rounded-xl border border-white/20" data-img-url="${msg.mediaUrl}" data-img-title="Attached Photo" alt="Attached Photo" />
@@ -18359,6 +18380,11 @@ Requirements:
     showNotification('Feedback & Bug Report module coming soon!');
   });
 
+  document.getElementById('overflow-item-appearance')?.addEventListener('click', () => {
+    closeHeaderOverflowMenu();
+    openChatAppearanceModal();
+  });
+
   document.getElementById('overflow-item-clear')?.addEventListener('click', () => {
     closeHeaderOverflowMenu();
     clearChatBtn?.click();
@@ -18875,6 +18901,259 @@ Requirements:
     if (document.hidden) {
       stopSpeaking();
     }
+  });
+
+
+  // ==========================================
+  // TELEGRAM-GRADE CHAT APPEARANCE & THEME CONTROLLER
+  // ==========================================
+  const appearanceModal = document.getElementById('chat-appearance-modal');
+  const appearanceCloseBtn = document.getElementById('chat-appearance-close-btn');
+  const appearanceSaveBtn = document.getElementById('appearance-save-btn');
+  const appearanceResetBtn = document.getElementById('appearance-reset-btn');
+
+  const previewViewport = document.getElementById('appearance-preview-viewport');
+  const previewPattern = document.getElementById('appearance-preview-pattern');
+  const previewCharBubble = document.getElementById('appearance-preview-char-bubble');
+  const previewUserBubble = document.getElementById('appearance-preview-user-bubble');
+
+  const fontSizeSlider = document.getElementById('appearance-font-size-slider');
+  const fontSizeBadge = document.getElementById('appearance-font-size-badge');
+
+  const radiusSlider = document.getElementById('appearance-radius-slider');
+  const radiusBadge = document.getElementById('appearance-radius-badge');
+
+  const themePresetsGrid = document.getElementById('appearance-theme-presets-grid');
+  const customAccentInput = document.getElementById('appearance-custom-accent-input');
+  const customAccentHex = document.getElementById('appearance-custom-accent-hex');
+
+  const wallpaperGrid = document.getElementById('appearance-wallpaper-grid');
+  const patternOpacitySlider = document.getElementById('appearance-pattern-opacity-slider');
+  const patternOpacityBadge = document.getElementById('appearance-pattern-opacity-badge');
+
+  function openChatAppearanceModal() {
+    if (!appearanceModal) return;
+    renderThemePresets();
+    renderWallpaperOptions();
+    syncAppearanceInputs();
+    appearanceModal.classList.remove('hidden');
+  }
+
+  function closeChatAppearanceModal() {
+    if (!appearanceModal) return;
+    appearanceModal.classList.add('hidden');
+  }
+
+  appearanceCloseBtn?.addEventListener('click', closeChatAppearanceModal);
+  appearanceSaveBtn?.addEventListener('click', () => {
+    closeChatAppearanceModal();
+    showNotification('Theme & appearance saved!');
+  });
+  appearanceResetBtn?.addEventListener('click', () => {
+    if (window.AetheriaTheme) {
+      window.AetheriaTheme.saveSettings(window.AetheriaTheme.DEFAULT_THEME);
+      syncAppearanceInputs();
+      showNotification('Reset to default Aetheria theme!');
+    }
+  });
+
+  appearanceModal?.addEventListener('click', (e) => {
+    if (e.target === appearanceModal) {
+      closeChatAppearanceModal();
+    }
+  });
+
+  function syncAppearanceInputs() {
+    if (!window.AetheriaTheme) return;
+    const settings = window.AetheriaTheme.getSettings();
+
+    if (fontSizeSlider) fontSizeSlider.value = settings.fontSize || 16;
+    if (fontSizeBadge) fontSizeBadge.textContent = (settings.fontSize || 16) + 'px';
+
+    if (radiusSlider) radiusSlider.value = settings.bubbleRadius !== undefined ? settings.bubbleRadius : 16;
+    if (radiusBadge) radiusBadge.textContent = (settings.bubbleRadius !== undefined ? settings.bubbleRadius : 16) + 'px';
+
+    if (customAccentInput) customAccentInput.value = settings.accent || '#9333ea';
+    if (customAccentHex) customAccentHex.textContent = (settings.accent || '#9333ea').toUpperCase();
+
+    const opacityPct = Math.round((settings.chatPatternOpacity !== undefined ? settings.chatPatternOpacity : 0.18) * 100);
+    if (patternOpacitySlider) patternOpacitySlider.value = opacityPct;
+    if (patternOpacityBadge) patternOpacityBadge.textContent = opacityPct + '%';
+
+    updateLivePreview(settings);
+    renderThemePresets();
+    renderWallpaperOptions();
+  }
+
+  function updateLivePreview(s) {
+    if (!s) return;
+    if (previewViewport) {
+      previewViewport.style.background = s.chatBg || '#070913';
+    }
+    if (previewPattern) {
+      previewPattern.style.backgroundImage = s.chatPattern || 'none';
+      previewPattern.style.backgroundSize = s.chatPatternSize || 'auto';
+      previewPattern.style.opacity = s.chatPatternOpacity !== undefined ? s.chatPatternOpacity : 0.18;
+    }
+    if (previewCharBubble) {
+      previewCharBubble.style.background = s.charBubbleBg || '#101426';
+      previewCharBubble.style.borderRadius = (s.bubbleRadius !== undefined ? s.bubbleRadius : 16) + 'px';
+      previewCharBubble.style.fontSize = (s.fontSize || 16) + 'px';
+    }
+    if (previewUserBubble) {
+      previewUserBubble.style.background = s.userBubbleBg || `linear-gradient(135deg, ${s.accent || '#9333ea'} 0%, #6366f1 100%)`;
+      previewUserBubble.style.borderRadius = (s.bubbleRadius !== undefined ? s.bubbleRadius : 16) + 'px';
+      previewUserBubble.style.fontSize = (s.fontSize || 16) + 'px';
+    }
+  }
+
+  fontSizeSlider?.addEventListener('input', (e) => {
+    const val = parseInt(e.target.value, 10);
+    if (fontSizeBadge) fontSizeBadge.textContent = val + 'px';
+    if (window.AetheriaTheme) {
+      const updated = window.AetheriaTheme.saveSettings({ fontSize: val });
+      updateLivePreview(updated);
+    }
+  });
+
+  radiusSlider?.addEventListener('input', (e) => {
+    const val = parseInt(e.target.value, 10);
+    if (radiusBadge) radiusBadge.textContent = val + 'px';
+    if (window.AetheriaTheme) {
+      const updated = window.AetheriaTheme.saveSettings({ bubbleRadius: val });
+      updateLivePreview(updated);
+    }
+  });
+
+  patternOpacitySlider?.addEventListener('input', (e) => {
+    const val = parseInt(e.target.value, 10);
+    if (patternOpacityBadge) patternOpacityBadge.textContent = val + '%';
+    const dec = val / 100;
+    if (window.AetheriaTheme) {
+      const updated = window.AetheriaTheme.saveSettings({ chatPatternOpacity: dec });
+      updateLivePreview(updated);
+    }
+  });
+
+  customAccentInput?.addEventListener('input', (e) => {
+    const hex = e.target.value;
+    if (customAccentHex) customAccentHex.textContent = hex.toUpperCase();
+    if (window.AetheriaTheme) {
+      const rgb = window.AetheriaTheme.hexToRgb(hex);
+      const userBubbleBg = `linear-gradient(135deg, ${hex} 0%, #6366f1 100%)`;
+      const updated = window.AetheriaTheme.saveSettings({
+        presetId: 'custom',
+        accent: hex,
+        accentHover: hex,
+        accentActive: hex,
+        accentRgb: rgb,
+        userBubbleBg: userBubbleBg
+      });
+      updateLivePreview(updated);
+      renderThemePresets();
+    }
+  });
+
+  function renderThemePresets() {
+    if (!themePresetsGrid || !window.AetheriaTheme) return;
+    const current = window.AetheriaTheme.getSettings();
+    themePresetsGrid.innerHTML = window.AetheriaTheme.PRESETS.map((p) => {
+      const isSelected = current.presetId === p.id || (!current.presetId && p.id === 'aetheria-purple');
+      return `
+        <button 
+          type="button" 
+          class="theme-preset-btn p-3 rounded-2xl border text-left transition flex flex-col gap-2 cursor-pointer ${
+            isSelected 
+              ? 'bg-white/[0.08] border-white/40 ring-2 ring-[var(--theme-accent)] shadow-lg' 
+              : 'bg-white/[0.02] hover:bg-white/[0.05] border-white/[0.08] text-slate-300'
+          }" 
+          data-preset-id="${p.id}"
+        >
+          <div class="flex items-center justify-between">
+            <span class="text-xs font-bold text-white">${p.name}</span>
+            <span class="w-3.5 h-3.5 rounded-full shadow-md shrink-0" style="background-color: ${p.accent};"></span>
+          </div>
+          <div class="h-6 rounded-lg p-1 flex items-center gap-1.5" style="background-color: rgba(0,0,0,0.4);">
+            <div class="h-4 flex-1 rounded text-[9px] text-white flex items-center justify-center font-bold shadow-sm" style="background: ${p.userBubbleBg};">
+              Aa
+            </div>
+            <div class="h-4 flex-1 rounded bg-[#101426] border border-white/10 text-[9px] text-slate-400 flex items-center justify-center font-bold">
+              Aa
+            </div>
+          </div>
+        </button>
+      `;
+    }).join('');
+
+    themePresetsGrid.querySelectorAll('.theme-preset-btn').forEach((btn) => {
+      btn.addEventListener('click', () => {
+        const id = btn.getAttribute('data-preset-id');
+        const found = window.AetheriaTheme.PRESETS.find(x => x.id === id);
+        if (found) {
+          const updated = window.AetheriaTheme.saveSettings({
+            presetId: found.id,
+            accent: found.accent,
+            accentHover: found.accentHover,
+            accentActive: found.accentActive,
+            accentRgb: found.accentRgb,
+            userBubbleBg: found.userBubbleBg
+          });
+          syncAppearanceInputs();
+        }
+      });
+    });
+  }
+
+  function renderWallpaperOptions() {
+    if (!wallpaperGrid || !window.AetheriaTheme) return;
+    const current = window.AetheriaTheme.getSettings();
+    wallpaperGrid.innerHTML = window.AetheriaTheme.WALLPAPERS.map((w) => {
+      const isSelected = current.wallpaperId === w.id || (!current.wallpaperId && w.id === 'default');
+      return `
+        <button 
+          type="button" 
+          class="wallpaper-preset-btn p-2.5 rounded-2xl border text-left transition flex flex-col gap-2 cursor-pointer ${
+            isSelected 
+              ? 'bg-white/[0.08] border-white/40 ring-2 ring-[var(--theme-accent)] shadow-lg' 
+              : 'bg-white/[0.02] hover:bg-white/[0.05] border-white/[0.08] text-slate-300'
+          }" 
+          data-wallpaper-id="${w.id}"
+        >
+          <div 
+            class="h-14 w-full rounded-xl border border-white/10 relative overflow-hidden flex items-center justify-center shadow-inner"
+            style="background: ${w.bg};"
+          >
+            <div 
+              class="absolute inset-0 bg-cover bg-center pointer-events-none"
+              style="background-image: ${w.pattern || 'none'}; background-size: ${w.patternSize || 'auto'}; opacity: 0.25;"
+            ></div>
+            <span class="text-[10px] font-bold text-white/90 drop-shadow-md relative z-10 px-1.5 py-0.5 rounded bg-black/40 backdrop-blur-xs">
+              ${w.name}
+            </span>
+          </div>
+        </button>
+      `;
+    }).join('');
+
+    wallpaperGrid.querySelectorAll('.wallpaper-preset-btn').forEach((btn) => {
+      btn.addEventListener('click', () => {
+        const id = btn.getAttribute('data-wallpaper-id');
+        const found = window.AetheriaTheme.WALLPAPERS.find(x => x.id === id);
+        if (found) {
+          const updated = window.AetheriaTheme.saveSettings({
+            wallpaperId: found.id,
+            chatBg: found.bg,
+            chatPattern: found.pattern,
+            chatPatternSize: found.patternSize || 'auto'
+          });
+          syncAppearanceInputs();
+        }
+      });
+    });
+  }
+
+  window.addEventListener('aetheria-theme-change', (e) => {
+    updateLivePreview(e.detail);
   });
 
   // Startup

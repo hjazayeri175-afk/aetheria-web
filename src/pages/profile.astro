@@ -18,7 +18,8 @@ import {
   Upload,
   LogOut,
   LogIn,
-  ChevronDown
+  ChevronDown,
+  Palette
 } from '@lucide/astro';
 ---
 
@@ -309,6 +310,130 @@ import {
               >
                 Safe Mode
               </button>
+            </div>
+          </div>
+        </div>
+
+                <!-- Chat Appearance & Global Theme Section (Telegram Style) -->
+        <div class="rounded-3xl bg-white/[0.02] border border-white/[0.08] p-5 sm:p-6 space-y-6">
+          <div class="flex items-center justify-between">
+            <div>
+              <h2 class="text-xs font-bold text-slate-400 uppercase tracking-wider">Chat Appearance & Global Theming</h2>
+              <p class="text-[11px] text-slate-400 mt-0.5">Customize global website accent colors, chat bubble radius & wallpapers</p>
+            </div>
+            <div class="w-8 h-8 rounded-xl bg-purple-600/20 border border-purple-500/30 flex items-center justify-center text-purple-400 shrink-0">
+              <Palette class="w-4 h-4" />
+            </div>
+          </div>
+
+          <!-- Telegram-Style Live Interactive Preview Box -->
+          <div class="space-y-2">
+            <span class="text-xs font-medium text-slate-300 block">Live Chat Preview</span>
+            <div 
+              id="profile-theme-preview-viewport" 
+              class="relative p-4 sm:p-5 rounded-2xl border border-white/10 overflow-hidden shadow-inner flex flex-col gap-3 min-h-[140px] justify-center transition-all duration-300"
+              style="background: var(--theme-chat-bg, #070913);"
+            >
+              <div 
+                id="profile-theme-preview-pattern" 
+                class="absolute inset-0 pointer-events-none transition-all duration-300 bg-cover bg-center"
+                style="background-image: var(--theme-chat-pattern, none); background-size: var(--theme-chat-pattern-size, auto); opacity: var(--theme-chat-pattern-opacity, 0.18);"
+              ></div>
+
+              <!-- Character Bubble Preview -->
+              <div class="relative z-10 flex items-start gap-2.5 max-w-[85%]">
+                <div class="w-7 h-7 rounded-full bg-purple-600/40 border border-white/10 flex items-center justify-center text-xs font-bold text-white shrink-0 mt-0.5">
+                  AI
+                </div>
+                <div 
+                  id="profile-preview-char-bubble" 
+                  class="p-3 rounded-tl-sm text-slate-200 transition-all duration-150 shadow-md select-none"
+                  style="background: var(--theme-bubble-char-bg, #101426); border: 1px solid var(--theme-bubble-char-border, rgba(255,255,255,0.08)); border-radius: var(--theme-bubble-radius, 16px); font-size: var(--theme-msg-font-size, 16px); line-height: 1.5;"
+                >
+                  <span>Your theme changes apply across all buttons, pages and chat bubbles!</span>
+                </div>
+              </div>
+
+              <!-- User Bubble Preview -->
+              <div class="relative z-10 flex items-start gap-2 max-w-[85%] ml-auto justify-end">
+                <div 
+                  id="profile-preview-user-bubble" 
+                  class="p-3 rounded-tr-sm text-white transition-all duration-150 shadow-md select-none text-left"
+                  style="background: var(--theme-bubble-user-bg, linear-gradient(135deg, var(--theme-accent) 0%, #6366f1 100%)); border-radius: var(--theme-bubble-radius, 16px); font-size: var(--theme-msg-font-size, 16px); line-height: 1.5;"
+                >
+                  <span>Dynamic, instant and responsive ⚡</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Sliders Grid -->
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <!-- Text Size -->
+            <div class="p-3.5 rounded-2xl bg-white/[0.02] border border-white/[0.06] space-y-2.5">
+              <div class="flex items-center justify-between">
+                <span class="text-xs font-medium text-slate-200">Message Text Size</span>
+                <span id="profile-font-size-badge" class="px-2 py-0.5 rounded bg-purple-500/20 border border-purple-500/30 text-xs font-mono text-purple-300 font-bold">16px</span>
+              </div>
+              <input 
+                type="range" 
+                id="profile-font-size-slider" 
+                min="13" 
+                max="22" 
+                step="1" 
+                value="16" 
+                class="w-full h-1.5 bg-white/10 rounded-lg appearance-none cursor-pointer accent-purple-500"
+              />
+            </div>
+
+            <!-- Bubble Radius -->
+            <div class="p-3.5 rounded-2xl bg-white/[0.02] border border-white/[0.06] space-y-2.5">
+              <div class="flex items-center justify-between">
+                <span class="text-xs font-medium text-slate-200">Bubble Corner Roundness</span>
+                <span id="profile-radius-badge" class="px-2 py-0.5 rounded bg-purple-500/20 border border-purple-500/30 text-xs font-mono text-purple-300 font-bold">16px</span>
+              </div>
+              <input 
+                type="range" 
+                id="profile-radius-slider" 
+                min="0" 
+                max="24" 
+                step="2" 
+                value="16" 
+                class="w-full h-1.5 bg-white/10 rounded-lg appearance-none cursor-pointer accent-purple-500"
+              />
+            </div>
+          </div>
+
+          <!-- Presets Grid -->
+          <div class="space-y-3">
+            <label class="block text-xs font-medium text-slate-300">Global Website Color Preset</label>
+            <div class="grid grid-cols-2 sm:grid-cols-3 gap-2.5" id="profile-theme-presets-grid">
+              <!-- Rendered via JS -->
+            </div>
+          </div>
+
+          <!-- Custom Color Picker -->
+          <div class="p-3 rounded-2xl bg-white/[0.02] border border-white/[0.06] flex items-center justify-between">
+            <div class="flex items-center gap-2.5">
+              <input 
+                type="color" 
+                id="profile-custom-accent-input" 
+                value="#9333ea" 
+                class="w-8 h-8 rounded-xl bg-transparent border-0 cursor-pointer"
+              />
+              <div>
+                <span class="text-xs font-medium text-slate-200 block">Custom Accent Hex</span>
+                <span class="text-[10px] text-slate-400 block">Overrides primary site theme color</span>
+              </div>
+            </div>
+            <span id="profile-custom-accent-hex" class="text-xs font-mono text-slate-400 uppercase">#9333ea</span>
+          </div>
+
+          <!-- Wallpapers Grid -->
+          <div class="space-y-3">
+            <label class="block text-xs font-medium text-slate-300">Chat Wallpaper Preset</label>
+            <div class="grid grid-cols-2 sm:grid-cols-3 gap-2.5" id="profile-wallpaper-grid">
+              <!-- Rendered via JS -->
             </div>
           </div>
         </div>
@@ -913,6 +1038,199 @@ import {
       });
       window.location.reload();
     });
+
+    // ==========================================
+    // PROFILE CHAT APPEARANCE & THEME CONTROLLER
+    // ==========================================
+    function initProfileThemeSection() {
+      if (!window.AetheriaTheme) return;
+
+      const pPreviewViewport = document.getElementById('profile-theme-preview-viewport');
+      const pPreviewPattern = document.getElementById('profile-theme-preview-pattern');
+      const pPreviewChar = document.getElementById('profile-preview-char-bubble');
+      const pPreviewUser = document.getElementById('profile-preview-user-bubble');
+
+      const pFontSizeSlider = document.getElementById('profile-font-size-slider');
+      const pFontSizeBadge = document.getElementById('profile-font-size-badge');
+
+      const pRadiusSlider = document.getElementById('profile-radius-slider');
+      const pRadiusBadge = document.getElementById('profile-radius-badge');
+
+      const pPresetsGrid = document.getElementById('profile-theme-presets-grid');
+      const pCustomAccent = document.getElementById('profile-custom-accent-input');
+      const pCustomHex = document.getElementById('profile-custom-accent-hex');
+      const pWallpaperGrid = document.getElementById('profile-wallpaper-grid');
+
+      function syncProfileInputs() {
+        const s = window.AetheriaTheme.getSettings();
+        if (pFontSizeSlider) pFontSizeSlider.value = s.fontSize || 16;
+        if (pFontSizeBadge) pFontSizeBadge.textContent = (s.fontSize || 16) + 'px';
+
+        if (pRadiusSlider) pRadiusSlider.value = s.bubbleRadius !== undefined ? s.bubbleRadius : 16;
+        if (pRadiusBadge) pRadiusBadge.textContent = (s.bubbleRadius !== undefined ? s.bubbleRadius : 16) + 'px';
+
+        if (pCustomAccent) pCustomAccent.value = s.accent || '#9333ea';
+        if (pCustomHex) pCustomHex.textContent = (s.accent || '#9333ea').toUpperCase();
+
+        updateProfilePreview(s);
+        renderProfilePresets();
+        renderProfileWallpapers();
+      }
+
+      function updateProfilePreview(s) {
+        if (!s) return;
+        if (pPreviewViewport) pPreviewViewport.style.background = s.chatBg || '#070913';
+        if (pPreviewPattern) {
+          pPreviewPattern.style.backgroundImage = s.chatPattern || 'none';
+          pPreviewPattern.style.backgroundSize = s.chatPatternSize || 'auto';
+          pPreviewPattern.style.opacity = s.chatPatternOpacity !== undefined ? s.chatPatternOpacity : 0.18;
+        }
+        if (pPreviewChar) {
+          pPreviewChar.style.background = s.charBubbleBg || '#101426';
+          pPreviewChar.style.borderRadius = (s.bubbleRadius !== undefined ? s.bubbleRadius : 16) + 'px';
+          pPreviewChar.style.fontSize = (s.fontSize || 16) + 'px';
+        }
+        if (pPreviewUser) {
+          pPreviewUser.style.background = s.userBubbleBg || `linear-gradient(135deg, ${s.accent || '#9333ea'} 0%, #6366f1 100%)`;
+          pPreviewUser.style.borderRadius = (s.bubbleRadius !== undefined ? s.bubbleRadius : 16) + 'px';
+          pPreviewUser.style.fontSize = (s.fontSize || 16) + 'px';
+        }
+      }
+
+      pFontSizeSlider?.addEventListener('input', (e) => {
+        const val = parseInt(e.target.value, 10);
+        if (pFontSizeBadge) pFontSizeBadge.textContent = val + 'px';
+        const updated = window.AetheriaTheme.saveSettings({ fontSize: val });
+        updateProfilePreview(updated);
+      });
+
+      pRadiusSlider?.addEventListener('input', (e) => {
+        const val = parseInt(e.target.value, 10);
+        if (pRadiusBadge) pRadiusBadge.textContent = val + 'px';
+        const updated = window.AetheriaTheme.saveSettings({ bubbleRadius: val });
+        updateProfilePreview(updated);
+      });
+
+      pCustomAccent?.addEventListener('input', (e) => {
+        const hex = e.target.value;
+        if (pCustomHex) pCustomHex.textContent = hex.toUpperCase();
+        const rgb = window.AetheriaTheme.hexToRgb(hex);
+        const userBubbleBg = `linear-gradient(135deg, ${hex} 0%, #6366f1 100%)`;
+        const updated = window.AetheriaTheme.saveSettings({
+          presetId: 'custom',
+          accent: hex,
+          accentHover: hex,
+          accentActive: hex,
+          accentRgb: rgb,
+          userBubbleBg: userBubbleBg
+        });
+        updateProfilePreview(updated);
+        renderProfilePresets();
+      });
+
+      function renderProfilePresets() {
+        if (!pPresetsGrid) return;
+        const current = window.AetheriaTheme.getSettings();
+        pPresetsGrid.innerHTML = window.AetheriaTheme.PRESETS.map((p) => {
+          const isSelected = current.presetId === p.id || (!current.presetId && p.id === 'aetheria-purple');
+          return `
+            <button 
+              type="button" 
+              class="profile-preset-btn p-3 rounded-2xl border text-left transition flex flex-col gap-2 cursor-pointer ${
+                isSelected 
+                  ? 'bg-white/[0.08] border-white/40 ring-2 ring-[var(--theme-accent)] shadow-lg' 
+                  : 'bg-white/[0.02] hover:bg-white/[0.05] border-white/[0.08] text-slate-300'
+              }" 
+              data-preset-id="${p.id}"
+            >
+              <div class="flex items-center justify-between">
+                <span class="text-xs font-bold text-white">${p.name}</span>
+                <span class="w-3.5 h-3.5 rounded-full shadow-md shrink-0" style="background-color: ${p.accent};"></span>
+              </div>
+              <div class="h-5 rounded-lg p-1 flex items-center gap-1.5" style="background-color: rgba(0,0,0,0.4);">
+                <div class="h-3.5 flex-1 rounded text-[8px] text-white flex items-center justify-center font-bold" style="background: ${p.userBubbleBg};">Aa</div>
+                <div class="h-3.5 flex-1 rounded bg-[#101426] border border-white/10 text-[8px] text-slate-400 flex items-center justify-center font-bold">Aa</div>
+              </div>
+            </button>
+          `;
+        }).join('');
+
+        pPresetsGrid.querySelectorAll('.profile-preset-btn').forEach((btn) => {
+          btn.addEventListener('click', () => {
+            const id = btn.getAttribute('data-preset-id');
+            const found = window.AetheriaTheme.PRESETS.find(x => x.id === id);
+            if (found) {
+              window.AetheriaTheme.saveSettings({
+                presetId: found.id,
+                accent: found.accent,
+                accentHover: found.accentHover,
+                accentActive: found.accentActive,
+                accentRgb: found.accentRgb,
+                userBubbleBg: found.userBubbleBg
+              });
+              syncProfileInputs();
+            }
+          });
+        });
+      }
+
+      function renderProfileWallpapers() {
+        if (!pWallpaperGrid) return;
+        const current = window.AetheriaTheme.getSettings();
+        pWallpaperGrid.innerHTML = window.AetheriaTheme.WALLPAPERS.map((w) => {
+          const isSelected = current.wallpaperId === w.id || (!current.wallpaperId && w.id === 'default');
+          return `
+            <button 
+              type="button" 
+              class="profile-wallpaper-btn p-2 rounded-2xl border text-left transition flex flex-col gap-1.5 cursor-pointer ${
+                isSelected 
+                  ? 'bg-white/[0.08] border-white/40 ring-2 ring-[var(--theme-accent)] shadow-lg' 
+                  : 'bg-white/[0.02] hover:bg-white/[0.05] border-white/[0.08] text-slate-300'
+              }" 
+              data-wallpaper-id="${w.id}"
+            >
+              <div 
+                class="h-11 w-full rounded-xl border border-white/10 relative overflow-hidden flex items-center justify-center shadow-inner"
+                style="background: ${w.bg};"
+              >
+                <div 
+                  class="absolute inset-0 bg-cover bg-center pointer-events-none"
+                  style="background-image: ${w.pattern || 'none'}; background-size: ${w.patternSize || 'auto'}; opacity: 0.25;"
+                ></div>
+                <span class="text-[9px] font-bold text-white/90 drop-shadow-md relative z-10 px-1 py-0.5 rounded bg-black/40">
+                  ${w.name}
+                </span>
+              </div>
+            </button>
+          `;
+        }).join('');
+
+        pWallpaperGrid.querySelectorAll('.profile-wallpaper-btn').forEach((btn) => {
+          btn.addEventListener('click', () => {
+            const id = btn.getAttribute('data-wallpaper-id');
+            const found = window.AetheriaTheme.WALLPAPERS.find(x => x.id === id);
+            if (found) {
+              window.AetheriaTheme.saveSettings({
+                wallpaperId: found.id,
+                chatBg: found.bg,
+                chatPattern: found.pattern,
+                chatPatternSize: found.patternSize || 'auto'
+              });
+              syncProfileInputs();
+            }
+          });
+        });
+      }
+
+      window.addEventListener('aetheria-theme-change', (e) => {
+        updateProfilePreview(e.detail);
+      });
+
+      syncProfileInputs();
+    }
+
+    initProfileThemeSection();
+
 
   });
 </script>

@@ -7,6 +7,33 @@
   --border-subtle: rgba(255, 255, 255, 0.07);
   --accent-purple: #8b5cf6;
   --accent-cyan: #06b6d4;
+
+  /* Telegram-Grade Global Theming Engine Variables */
+  --theme-accent: #9333ea;
+  --theme-accent-rgb: 147, 51, 234;
+  --theme-accent-hover: #a855f7;
+  --theme-accent-active: #7e22ce;
+  --theme-accent-glow: rgba(147, 51, 234, 0.4);
+  --theme-accent-subtle: rgba(147, 51, 234, 0.15);
+  --theme-accent-border: rgba(147, 51, 234, 0.4);
+  --theme-accent-text: #ffffff;
+
+  /* Chat Messages & Bubbles Tokens */
+  --theme-bubble-radius: 16px;
+  --theme-msg-font-size: 16px;
+  --theme-msg-line-height: 1.6;
+  --theme-bubble-user-bg: linear-gradient(135deg, var(--theme-accent) 0%, #6366f1 100%);
+  --theme-bubble-user-text: #ffffff;
+  --theme-bubble-char-bg: #101426;
+  --theme-bubble-char-border: rgba(255, 255, 255, 0.08);
+  --theme-bubble-char-text: #f1f5f9;
+
+  /* Chat Stream & Wallpaper Tokens */
+  --theme-chat-bg: linear-gradient(to bottom, #090b17, #060810);
+  --theme-chat-pattern: none;
+  --theme-chat-pattern-size: auto;
+  --theme-chat-pattern-opacity: 0.18;
+
 }
 
 body {
@@ -113,3 +140,76 @@ body {
   font-feature-settings: "tnum" 1, "lnum" 1 !important;
 }
 
+
+/* ==========================================================================
+   Telegram-Style Universal Dynamic Theme Reactive Rules
+   All buttons, badges, carets, selection, toggles and sliders dynamically react to --theme-accent
+   ========================================================================== */
+.bg-purple-600,
+.theme-accent-bg {
+  background-color: var(--theme-accent) !important;
+}
+
+.hover\:bg-purple-500:hover,
+.theme-accent-hover:hover {
+  background-color: var(--theme-accent-hover) !important;
+}
+
+.peer:checked ~ .peer-checked\:bg-purple-600,
+.peer-checked\:bg-purple-600:checked {
+  background-color: var(--theme-accent) !important;
+}
+
+.text-purple-300,
+.text-purple-400,
+.theme-accent-text {
+  color: var(--theme-accent-hover) !important;
+}
+
+.border-purple-500\/40,
+.border-purple-500\/30,
+.border-purple-500\/50,
+.border-purple-500\/60,
+.theme-accent-border {
+  border-color: var(--theme-accent-border) !important;
+}
+
+.shadow-purple-950\/50,
+.shadow-purple-950\/60,
+.shadow-purple-900\/40,
+.shadow-purple-900\/50,
+.theme-accent-glow {
+  box-shadow: 0 4px 20px -2px var(--theme-accent-glow) !important;
+}
+
+/* Caret, Selection, & Form Controls */
+input, textarea {
+  caret-color: var(--theme-accent) !important;
+}
+::selection {
+  background-color: var(--theme-accent-glow) !important;
+  color: #ffffff !important;
+}
+input[type="range"] {
+  accent-color: var(--theme-accent) !important;
+}
+input[type="checkbox"], input[type="radio"] {
+  accent-color: var(--theme-accent) !important;
+}
+
+/* Chat bubble dynamic classes */
+.chat-msg-bubble {
+  border-radius: var(--theme-bubble-radius, 16px) !important;
+  font-size: var(--theme-msg-font-size, 16px) !important;
+  line-height: var(--theme-msg-line-height, 1.6) !important;
+  transition: border-radius 0.15s ease, font-size 0.15s ease, background 0.2s ease;
+}
+.chat-msg-bubble-user {
+  background: var(--theme-bubble-user-bg, linear-gradient(135deg, var(--theme-accent) 0%, #6366f1 100%)) !important;
+  color: var(--theme-bubble-user-text, #ffffff) !important;
+}
+.chat-msg-bubble-char {
+  background: var(--theme-bubble-char-bg, #101426) !important;
+  border: 1px solid var(--theme-bubble-char-border, rgba(255, 255, 255, 0.08)) !important;
+  color: var(--theme-bubble-char-text, #f1f5f9) !important;
+}

@@ -29,6 +29,227 @@ const {
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+    <!-- Telegram-Inspired Instant Zero-Latency Global Theming Engine -->
+    <script is:inline>
+      (function() {
+        const DEFAULT_THEME = {
+          presetId: 'aetheria-purple',
+          accent: '#9333ea',
+          accentRgb: '147, 51, 234',
+          accentHover: '#a855f7',
+          accentActive: '#7e22ce',
+          bubbleRadius: 16,
+          fontSize: 16,
+          userBubbleBg: 'linear-gradient(135deg, #9333ea 0%, #6366f1 100%)',
+          charBubbleBg: '#101426',
+          wallpaperId: 'default',
+          chatBg: 'linear-gradient(to bottom, #090b17, #060810)',
+          chatPattern: 'none',
+          chatPatternSize: 'auto',
+          chatPatternOpacity: 0.18
+        };
+
+        const THEME_PRESETS = [
+          {
+            id: 'aetheria-purple',
+            name: 'Aetheria Purple',
+            accent: '#9333ea',
+            accentRgb: '147, 51, 234',
+            accentHover: '#a855f7',
+            accentActive: '#7e22ce',
+            userBubbleBg: 'linear-gradient(135deg, #9333ea 0%, #6366f1 100%)'
+          },
+          {
+            id: 'cyberpunk-amber',
+            name: 'Cyberpunk Amber',
+            accent: '#f59e0b',
+            accentRgb: '245, 158, 11',
+            accentHover: '#fbbf24',
+            accentActive: '#d97706',
+            userBubbleBg: 'linear-gradient(135deg, #ea580c 0%, #f59e0b 100%)'
+          },
+          {
+            id: 'midnight-amoled',
+            name: 'Midnight AMOLED',
+            accent: '#8b5cf6',
+            accentRgb: '139, 92, 246',
+            accentHover: '#a78bfa',
+            accentActive: '#7c3aed',
+            userBubbleBg: 'linear-gradient(135deg, #27272a 0%, #18181b 100%)'
+          },
+          {
+            id: 'emerald-matrix',
+            name: 'Emerald Matrix',
+            accent: '#10b981',
+            accentRgb: '16, 185, 129',
+            accentHover: '#34d399',
+            accentActive: '#059669',
+            userBubbleBg: 'linear-gradient(135deg, #059669 0%, #0d9488 100%)'
+          },
+          {
+            id: 'ocean-blue',
+            name: 'Ocean Blue',
+            accent: '#2563eb',
+            accentRgb: '37, 99, 235',
+            accentHover: '#3b82f6',
+            accentActive: '#1d4ed8',
+            userBubbleBg: 'linear-gradient(135deg, #2563eb 0%, #0284c7 100%)'
+          },
+          {
+            id: 'neon-rose',
+            name: 'Neon Rose',
+            accent: '#e11d48',
+            accentRgb: '225, 29, 72',
+            accentHover: '#f43f5e',
+            accentActive: '#be123c',
+            userBubbleBg: 'linear-gradient(135deg, #e11d48 0%, #db2777 100%)'
+          }
+        ];
+
+        const WALLPAPER_PRESETS = [
+          {
+            id: 'default',
+            name: 'Cosmic Gradient',
+            bg: 'linear-gradient(to bottom, #090b17, #060810)',
+            pattern: 'none',
+            patternSize: 'auto'
+          },
+          {
+            id: 'amoled',
+            name: 'AMOLED Pure Black',
+            bg: '#000000',
+            pattern: 'none',
+            patternSize: 'auto'
+          },
+          {
+            id: 'slate',
+            name: 'Midnight Slate',
+            bg: 'linear-gradient(180deg, #0f172a 0%, #020617 100%)',
+            pattern: 'none',
+            patternSize: 'auto'
+          },
+          {
+            id: 'nebula',
+            name: 'Purple Nebula',
+            bg: 'linear-gradient(180deg, #160924 0%, #080410 100%)',
+            pattern: 'none',
+            patternSize: 'auto'
+          },
+          {
+            id: 'emerald-abyss',
+            name: 'Emerald Abyss',
+            bg: 'linear-gradient(180deg, #061814 0%, #030a08 100%)',
+            pattern: 'none',
+            patternSize: 'auto'
+          },
+          {
+            id: 'cyber-grid',
+            name: 'Cyber Matrix Grid',
+            bg: '#070913',
+            pattern: 'radial-gradient(rgba(147, 51, 234, 0.3) 1px, transparent 1px)',
+            patternSize: '24px 24px'
+          },
+          {
+            id: 'cosmic-stars',
+            name: 'Constellation Stars',
+            bg: '#050711',
+            pattern: 'radial-gradient(white 1px, transparent 1px), radial-gradient(rgba(255,255,255,0.4) 1px, transparent 1px)',
+            patternSize: '36px 36px, 18px 18px'
+          }
+        ];
+
+        function hexToRgb(hex) {
+          if (!hex) return '147, 51, 234';
+          hex = hex.replace('#', '');
+          if (hex.length === 3) hex = hex.split('').map(c => c + c).join('');
+          const num = parseInt(hex, 16);
+          return `${(num >> 16) & 255}, ${(num >> 8) & 255}, ${num & 255}`;
+        }
+
+        function applyThemeToDOM(theme) {
+          if (!theme) return;
+          const root = document.documentElement;
+          if (theme.accent) {
+            root.style.setProperty('--theme-accent', theme.accent);
+            const rgb = theme.accentRgb || hexToRgb(theme.accent);
+            root.style.setProperty('--theme-accent-rgb', rgb);
+            root.style.setProperty('--theme-accent-hover', theme.accentHover || theme.accent);
+            root.style.setProperty('--theme-accent-active', theme.accentActive || theme.accent);
+            root.style.setProperty('--theme-accent-glow', 'rgba(' + rgb + ', 0.4)');
+            root.style.setProperty('--theme-accent-subtle', 'rgba(' + rgb + ', 0.15)');
+            root.style.setProperty('--theme-accent-border', 'rgba(' + rgb + ', 0.4)');
+          }
+          if (theme.bubbleRadius !== undefined) {
+            root.style.setProperty('--theme-bubble-radius', theme.bubbleRadius + 'px');
+          }
+          if (theme.fontSize !== undefined) {
+            root.style.setProperty('--theme-msg-font-size', theme.fontSize + 'px');
+          }
+          if (theme.userBubbleBg) {
+            root.style.setProperty('--theme-bubble-user-bg', theme.userBubbleBg);
+          }
+          if (theme.charBubbleBg) {
+            root.style.setProperty('--theme-bubble-char-bg', theme.charBubbleBg);
+          }
+          if (theme.chatBg) {
+            root.style.setProperty('--theme-chat-bg', theme.chatBg);
+          }
+          if (theme.chatPattern) {
+            root.style.setProperty('--theme-chat-pattern', theme.chatPattern);
+          }
+          if (theme.chatPatternSize) {
+            root.style.setProperty('--theme-chat-pattern-size', theme.chatPatternSize);
+          }
+          if (theme.chatPatternOpacity !== undefined) {
+            root.style.setProperty('--theme-chat-pattern-opacity', theme.chatPatternOpacity);
+          }
+        }
+
+        function getSettings() {
+          try {
+            const raw = localStorage.getItem('aetheria_theme_settings');
+            if (raw) return { ...DEFAULT_THEME, ...JSON.parse(raw) };
+          } catch (e) {}
+          return { ...DEFAULT_THEME };
+        }
+
+        function saveSettings(partial) {
+          try {
+            const current = getSettings();
+            const updated = { ...current, ...partial };
+            localStorage.setItem('aetheria_theme_settings', JSON.stringify(updated));
+            applyThemeToDOM(updated);
+            window.dispatchEvent(new CustomEvent('aetheria-theme-change', { detail: updated }));
+            return updated;
+          } catch (e) {
+            console.error('Failed to save theme settings:', e);
+          }
+        }
+
+        // Apply immediately on parse (zero latency, no FOUC)
+        const initialTheme = getSettings();
+        applyThemeToDOM(initialTheme);
+
+        // Cross-tab and in-tab sync
+        window.addEventListener('storage', function(e) {
+          if (e.key === 'aetheria_theme_settings') {
+            applyThemeToDOM(getSettings());
+          }
+        });
+
+        // Expose global controller
+        window.AetheriaTheme = {
+          DEFAULT_THEME,
+          PRESETS: THEME_PRESETS,
+          WALLPAPERS: WALLPAPER_PRESETS,
+          hexToRgb,
+          getSettings,
+          saveSettings,
+          apply: applyThemeToDOM
+        };
+      })();
+    </script>
+
   </head>
   <body class={`bg-[#07080d] text-slate-100 selection:bg-purple-500/30 selection:text-purple-200 antialiased overflow-x-hidden w-full max-w-[100vw] ${noScroll ? 'h-[100dvh] max-h-[100dvh] overflow-hidden' : 'min-h-screen'}`}>
     <div class={`relative w-full ${noScroll ? 'h-[100dvh] max-h-[100dvh] overflow-hidden flex flex-col' : 'min-h-screen flex flex-col justify-between'}`}>
