@@ -19281,12 +19281,12 @@ Requirements:
     const btnDone = document.getElementById('chat-modal-btn-done');
     const btnReset = document.getElementById('chat-modal-btn-reset-default');
 
-    const activeCharId = (window as any).AetheriaTheme?.getActiveCharId?.() || 'lyra-vance';
-    let settings = { ...((window as any).AetheriaTheme?.getSettings?.(null) || {}) };
+    const activeCharId = window.AetheriaTheme?.getActiveCharId?.() || 'lyra-vance';
+    let settings = { ...(window.AetheriaTheme?.getSettings?.(null) || {}) };
 
-    const fontSlider = document.getElementById('chat-modal-font-slider') as HTMLInputElement | null;
+    const fontSlider = document.getElementById('chat-modal-font-slider') ;
     const fontVal = document.getElementById('chat-modal-font-val');
-    const cornersSlider = document.getElementById('chat-modal-corners-slider') as HTMLInputElement | null;
+    const cornersSlider = document.getElementById('chat-modal-corners-slider') ;
     const cornersVal = document.getElementById('chat-modal-corners-val');
 
     const previewContainer = document.getElementById('chat-modal-preview-container');
@@ -19298,7 +19298,7 @@ Requirements:
     const btnChangeWp = document.getElementById('chat-modal-btn-change-wallpaper');
     const wpDrawer = document.getElementById('chat-modal-wp-drawer');
     const wpGrid = document.getElementById('chat-modal-wp-grid');
-    const wpFileInput = document.getElementById('chat-modal-wp-file-input') as HTMLInputElement | null;
+    const wpFileInput = document.getElementById('chat-modal-wp-file-input') ;
 
     const btnChangeName = document.getElementById('chat-modal-btn-change-name');
     const nameDrawer = document.getElementById('chat-modal-name-drawer');
@@ -19309,11 +19309,11 @@ Requirements:
     const textDayNight = document.getElementById('chat-modal-text-day-night');
 
     const soundBtn = document.getElementById('chat-modal-sound-toggle-btn');
-    const sendEnterToggle = document.getElementById('chat-modal-send-enter-toggle') as HTMLInputElement | null;
+    const sendEnterToggle = document.getElementById('chat-modal-send-enter-toggle') ;
 
     function openModal() {
       if (!modal) return;
-      settings = { ...((window as any).AetheriaTheme?.getSettings?.(null) || {}) };
+      settings = { ...(window.AetheriaTheme?.getSettings?.(null) || {}) };
       syncInputs();
       updatePreview();
       modal.classList.remove('hidden');
@@ -19337,7 +19337,7 @@ Requirements:
     btnBack?.addEventListener('click', closeModal);
     btnDone?.addEventListener('click', closeModal);
 
-    function updateSliderFill(slider: HTMLInputElement | null) {
+    function updateSliderFill(slider) {
       if (!slider) return;
       const val = parseFloat(slider.value);
       const min = parseFloat(slider.min) || 0;
@@ -19400,7 +19400,7 @@ Requirements:
 
       // Highlight selected theme card
       const currentThemeId = settings.presetId || 'cyan-palette';
-      document.querySelectorAll('#chat-modal-theme-mockup-carousel .chat-modal-theme-mockup-card').forEach((card: any) => {
+      document.querySelectorAll('#chat-modal-theme-mockup-carousel .chat-modal-theme-mockup-card').forEach((card) => {
         const tid = card.dataset.themeId;
         const isSelected = (tid === currentThemeId) || 
           (currentThemeId === 'glacier-arctic' && tid === 'cyan-palette') ||
@@ -19416,7 +19416,7 @@ Requirements:
       });
 
       // Highlight selected name color
-      document.querySelectorAll('#chat-modal-name-colors-row .chat-modal-name-color-dot').forEach((dot: any) => {
+      document.querySelectorAll('#chat-modal-name-colors-row .chat-modal-name-color-dot').forEach((dot) => {
         const hex = dot.dataset.hex;
         const check = dot.querySelector('.chat-modal-name-check');
         if (hex && hex.toLowerCase() === nameColor.toLowerCase()) {
@@ -19430,18 +19430,18 @@ Requirements:
     }
 
     function saveAndApply() {
-      (window as any).AetheriaTheme?.saveSettings?.(settings, null);
-      (window as any).AetheriaTheme?.apply?.(settings);
+      window.AetheriaTheme?.saveSettings?.(settings, null);
+      window.AetheriaTheme?.apply?.(settings);
     }
 
     // Sliders
-    fontSlider?.addEventListener('input', (e: any) => {
+    fontSlider?.addEventListener('input', (e) => {
       settings.fontSize = parseInt(e.target.value, 10);
       updatePreview();
       saveAndApply();
     });
 
-    cornersSlider?.addEventListener('input', (e: any) => {
+    cornersSlider?.addEventListener('input', (e) => {
       settings.bubbleRadius = parseInt(e.target.value, 10);
       updatePreview();
       saveAndApply();
@@ -19452,7 +19452,7 @@ Requirements:
     btnChangeName?.addEventListener('click', () => nameDrawer?.classList.toggle('hidden'));
 
     // Theme mockups click
-    document.querySelectorAll('#chat-modal-theme-mockup-carousel .chat-modal-theme-mockup-card').forEach((card: any) => {
+    document.querySelectorAll('#chat-modal-theme-mockup-carousel .chat-modal-theme-mockup-card').forEach((card) => {
       card.addEventListener('click', () => {
         const tid = card.dataset.themeId;
         settings.presetId = tid;
@@ -19497,7 +19497,7 @@ Requirements:
     });
 
     // Name colors click
-    document.querySelectorAll('#chat-modal-name-colors-row .chat-modal-name-color-dot').forEach((dot: any) => {
+    document.querySelectorAll('#chat-modal-name-colors-row .chat-modal-name-color-dot').forEach((dot) => {
       dot.addEventListener('click', () => {
         settings.nameColor = dot.dataset.hex;
         updatePreview();
@@ -19519,8 +19519,8 @@ Requirements:
     // Wallpaper items
     function renderWps() {
       if (!wpGrid) return;
-      const wps = (window as any).AetheriaTheme?.WALLPAPERS || [];
-      wpGrid.innerHTML = wps.slice(0, 6).map((w: any) => `
+      const wps = window.AetheriaTheme?.WALLPAPERS || [];
+      wpGrid.innerHTML = wps.slice(0, 6).map((w) => `
         <div class="chat-modal-wp-tile relative h-16 rounded-xl overflow-hidden border border-[#2A3040] hover:border-[#7385FF] transition cursor-pointer select-none" data-css="${(w.cssValue || '').replace(/"/g, '&quot;')}">
           <div class="absolute inset-0" style="background: ${w.thumb.startsWith('http') ? `url('${w.thumb}') center/cover` : w.thumb};"></div>
           <div class="absolute inset-0 bg-black/20 hover:bg-transparent transition"></div>
@@ -19528,7 +19528,7 @@ Requirements:
         </div>
       `).join('');
 
-      wpGrid.querySelectorAll('.chat-modal-wp-tile').forEach((tile: any) => {
+      wpGrid.querySelectorAll('.chat-modal-wp-tile').forEach((tile) => {
         tile.addEventListener('click', () => {
           settings.chatWallpaper = tile.dataset.css;
           updatePreview();
@@ -19537,7 +19537,7 @@ Requirements:
       });
     }
 
-    wpFileInput?.addEventListener('change', (e: any) => {
+    wpFileInput?.addEventListener('change', (e) => {
       const file = e.target?.files?.[0];
       if (!file) return;
       const reader = new FileReader();
@@ -19551,7 +19551,7 @@ Requirements:
 
     // Sound
     function syncSound() {
-      const enabled = (window as any).AetheriaTheme?.isSoundEnabled?.() !== false;
+      const enabled = window.AetheriaTheme?.isSoundEnabled?.() !== false;
       if (soundBtn) {
         soundBtn.textContent = enabled ? 'Enabled' : 'Muted';
         soundBtn.className = enabled
@@ -19560,18 +19560,18 @@ Requirements:
       }
     }
     soundBtn?.addEventListener('click', () => {
-      const current = (window as any).AetheriaTheme?.isSoundEnabled?.() !== false;
-      (window as any).AetheriaTheme?.setSoundEnabled?.(!current);
+      const current = window.AetheriaTheme?.isSoundEnabled?.() !== false;
+      window.AetheriaTheme?.setSoundEnabled?.(!current);
       syncSound();
     });
 
-    sendEnterToggle?.addEventListener('change', (e: any) => {
+    sendEnterToggle?.addEventListener('change', (e) => {
       localStorage.setItem('aetheria_chat_send_key', e.target.checked ? 'enter' : 'ctrl_enter');
     });
 
     btnReset?.addEventListener('click', () => {
-      (window as any).AetheriaTheme?.resetToDefault?.();
-      settings = { ...((window as any).AetheriaTheme?.DEFAULT_THEME || {}) };
+      window.AetheriaTheme?.resetToDefault?.();
+      settings = { ...(window.AetheriaTheme?.DEFAULT_THEME || {}) };
       syncInputs();
       updatePreview();
       saveAndApply();
