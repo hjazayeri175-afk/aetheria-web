@@ -33,38 +33,80 @@ const {
     <script is:inline>
       (function() {
         const DOODLE_PATTERNS = {
-          'none': { id: 'none', name: 'None', pattern: 'none', patternSize: 'auto' },
-          'telegram-doodles': {
-            id: 'telegram-doodles',
-            name: 'Telegram Doodles',
-            pattern: "url(\"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='90' height='90' viewBox='0 0 90 90' fill='none' stroke='rgba(255,255,255,0.45)' stroke-width='1.2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M15 15 L28 20 L20 28 Z'/%3E%3Cpath d='M65 18 A 6 6 0 0 1 77 18 A 6 6 0 0 1 65 18'/%3E%3Cpolygon points='45,12 47,17 52,17 48,20 50,25 45,22 40,25 42,20 38,17 43,17'/%3E%3Crect x='16' y='60' width='14' height='10' rx='3'/%3E%3Ccircle cx='70' cy='65' r='6'/%3E%3Cpath d='M42 62 Q 48 55 54 62 T 66 62'/%3E%3C/svg%3E\")",
-            patternSize: '90px 90px'
-          },
-          'cyber-circuit': {
-            id: 'cyber-circuit',
-            name: 'Cyber Circuit',
-            pattern: "url(\"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='80' height='80' viewBox='0 0 80 80' fill='none' stroke='rgba(255,255,255,0.35)' stroke-width='1.1'%3E%3Cpath d='M0 40 H30 L40 30 H60 L70 40 H80'/%3E%3Cpath d='M40 0 V30'/%3E%3Cpath d='M40 50 V80'/%3E%3Ccircle cx='30' cy='40' r='2.5' fill='rgba(255,255,255,0.4)'/%3E%3Ccircle cx='60' cy='30' r='2.5' fill='rgba(255,255,255,0.4)'/%3E%3C/svg%3E\")",
-            patternSize: '80px 80px'
-          },
-          'constellation-stars': {
-            id: 'constellation-stars',
-            name: 'Constellation Stars',
-            pattern: "url(\"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='100' height='100' viewBox='0 0 100 100' fill='none' stroke='rgba(255,255,255,0.4)' stroke-width='1'%3E%3Ccircle cx='20' cy='25' r='1.5' fill='rgba(255,255,255,0.7)'/%3E%3Ccircle cx='55' cy='15' r='2' fill='rgba(255,255,255,0.8)'/%3E%3Ccircle cx='80' cy='45' r='1.5' fill='rgba(255,255,255,0.6)'/%3E%3Ccircle cx='35' cy='75' r='2' fill='rgba(255,255,255,0.8)'/%3E%3Ccircle cx='70' cy='85' r='1.5' fill='rgba(255,255,255,0.6)'/%3E%3Cpath d='M20 25 L55 15 L80 45' stroke-dasharray='2 2' stroke='rgba(255,255,255,0.25)'/%3E%3Cpath d='M35 75 L70 85' stroke-dasharray='2 2' stroke='rgba(255,255,255,0.25)'/%3E%3Cpolygon points='18,70 19,73 22,73 20,75 21,78 18,76 15,78 16,75 14,73 17,73' fill='rgba(255,255,255,0.5)'/%3E%3C/svg%3E\")",
-            patternSize: '100px 100px'
-          },
-          'hex-mesh': {
-            id: 'hex-mesh',
-            name: 'Hexagonal Grid',
-            pattern: "url(\"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='40' height='69.282' viewBox='0 0 40 69.282' fill='none' stroke='rgba(255,255,255,0.25)' stroke-width='1'%3E%3Cpath d='M 40 0 L 20 11.547 L 0 0 L 0 23.094 L 20 34.641 L 40 23.094 Z M 0 34.641 L 20 46.188 L 0 57.735 L 0 80.829 L 20 92.376 L 40 80.829 L 40 57.735 L 20 46.188 L 40 34.641'/%3E%3C/svg%3E\")",
-            patternSize: '40px 69.282px'
-          },
-          'matrix-grid': {
-            id: 'matrix-grid',
-            name: 'Matrix Code Rain',
-            pattern: "url(\"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='60' height='60' viewBox='0 0 60 60' fill='none' stroke='rgba(255,255,255,0.3)' stroke-width='1'%3E%3Ctext x='8' y='18' font-size='11' font-family='monospace' fill='rgba(255,255,255,0.35)'%3E01%3C/text%3E%3Ctext x='35' y='32' font-size='10' font-family='monospace' fill='rgba(255,255,255,0.35)'%3E10%3C/text%3E%3Ctext x='14' y='48' font-size='10' font-family='monospace' fill='rgba(255,255,255,0.35)'%3E11%3C/text%3E%3Ctext x='42' y='55' font-size='11' font-family='monospace' fill='rgba(255,255,255,0.35)'%3E00%3C/text%3E%3C/svg%3E\")",
-            patternSize: '60px 60px'
-          }
-        };
+  'none': { id: 'none', name: 'None', pattern: 'none', patternSize: 'auto' },
+  'pattern-amore': {
+    id: 'pattern-amore',
+    name: 'Geometric Hearts',
+    pattern: 'url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%20width%3D%2290%22%20height%3D%2290%22%20viewBox%3D%220%200%2090%2090%22%20fill%3D%22none%22%20stroke%3D%22rgba%28255%2C255%2C255%2C0.4%29%22%20stroke-width%3D%221.2%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%3E%20%3C%21--%20Heart%201%20--%3E%20%3Cpath%20d%3D%22M25%2035%20C15%2022%202%2032%2012%2045%20L25%2056%20L38%2045%20C48%2032%2035%2022%2025%2035%20Z%22%20/%3E%20%3C%21--%20Star%20dot%20--%3E%20%3Ccircle%20cx%3D%2270%22%20cy%3D%2220%22%20r%3D%221.5%22%20fill%3D%22rgba%28255%2C255%2C255%2C0.6%29%22%20/%3E%20%3C%21--%20Small%20Heart%202%20--%3E%20%3Cpath%20d%3D%22M70%2065%20C64%2056%2055%2062%2061%2070%20L70%2077%20L79%2070%20C85%2062%2076%2056%2070%2065%20Z%22%20stroke-width%3D%221%22%20/%3E%20%3C%21--%20Constellation%20spark%20--%3E%20%3Cpath%20d%3D%22M20%2075%20L23%2078%20L20%2081%20L17%2078%20Z%22%20fill%3D%22rgba%28255%2C255%2C255%2C0.5%29%22%20/%3E%20%3Cpath%20d%3D%22M72%2015%20L72%2025%20M67%2020%20L77%2020%22%20stroke-width%3D%220.8%22%20/%3E%20%3C%21--%20Soft%20connecting%20line%20--%3E%20%3Cpath%20d%3D%22M38%2045%20Q%2055%2035%2067%2020%22%20stroke-dasharray%3D%222%203%22%20stroke-width%3D%220.8%22%20stroke%3D%22rgba%28255%2C255%2C255%2C0.2%29%22%20/%3E%20%3C/svg%3E")',
+    patternSize: '90px 90px'
+  },
+  'pattern-gamer': {
+    id: 'pattern-gamer',
+    name: 'Cyber Grid & D-Pad',
+    pattern: 'url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%20width%3D%2280%22%20height%3D%2280%22%20viewBox%3D%220%200%2080%2080%22%20fill%3D%22none%22%20stroke%3D%22rgba%28255%2C255%2C255%2C0.35%29%22%20stroke-width%3D%221.1%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%3E%20%3C%21--%20Cyber%20Circuit%20Grid%20--%3E%20%3Cpath%20d%3D%22M0%2040%20H25%20L35%2030%20H55%20L65%2040%20H80%22%20/%3E%20%3Cpath%20d%3D%22M40%200%20V20%20L30%2030%22%20/%3E%20%3Cpath%20d%3D%22M50%2050%20L60%2060%20V80%22%20/%3E%20%3C%21--%20D-Pad%20cross%20--%3E%20%3Cpath%20d%3D%22M18%2014%20H22%20V18%20H26%20V22%20H22%20V26%20H18%20V22%20H14%20V18%20H18%20Z%22%20/%3E%20%3C%21--%20Action%20buttons%20--%3E%20%3Ccircle%20cx%3D%2262%22%20cy%3D%2218%22%20r%3D%222.5%22%20fill%3D%22rgba%28255%2C255%2C255%2C0.5%29%22%20/%3E%20%3Ccircle%20cx%3D%2268%22%20cy%3D%2224%22%20r%3D%222.5%22%20/%3E%20%3C%21--%20Pixel%20spark%20--%3E%20%3Crect%20x%3D%2225%22%20y%3D%2260%22%20width%3D%224%22%20height%3D%224%22%20fill%3D%22rgba%28255%2C255%2C255%2C0.4%29%22%20/%3E%20%3Crect%20x%3D%2235%22%20y%3D%2268%22%20width%3D%223%22%20height%3D%223%22%20fill%3D%22rgba%28255%2C255%2C255%2C0.3%29%22%20/%3E%20%3C%21--%20Connection%20node%20--%3E%20%3Ccircle%20cx%3D%2225%22%20cy%3D%2240%22%20r%3D%222%22%20fill%3D%22rgba%28255%2C255%2C255%2C0.5%29%22%20/%3E%20%3Ccircle%20cx%3D%2265%22%20cy%3D%2240%22%20r%3D%222%22%20fill%3D%22rgba%28255%2C255%2C255%2C0.5%29%22%20/%3E%20%3C/svg%3E")',
+    patternSize: '80px 80px'
+  },
+  'pattern-coffee': {
+    id: 'pattern-coffee',
+    name: 'Artisan Cafe Doodles',
+    pattern: 'url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%20width%3D%2290%22%20height%3D%2290%22%20viewBox%3D%220%200%2090%2090%22%20fill%3D%22none%22%20stroke%3D%22rgba%28255%2C255%2C255%2C0.38%29%22%20stroke-width%3D%221.2%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%3E%20%3C%21--%20Coffee%20Bean%201%20--%3E%20%3Cellipse%20cx%3D%2222%22%20cy%3D%2224%22%20rx%3D%2210%22%20ry%3D%2214%22%20transform%3D%22rotate%28-30%2022%2024%29%22%20/%3E%20%3Cpath%20d%3D%22M16%2014%20Q%2024%2024%2016%2034%22%20stroke-width%3D%221%22%20/%3E%20%3C%21--%20Cup%20with%20Steam%20--%3E%20%3Cpath%20d%3D%22M60%2055%20H78%20C78%2066%2070%2072%2060%2072%20C50%2072%2042%2066%2042%2055%20H60%20Z%22%20/%3E%20%3Cpath%20d%3D%22M78%2058%20H84%20C87%2058%2087%2066%2084%2066%20H76%22%20/%3E%20%3C%21--%20Steam%20curves%20--%3E%20%3Cpath%20d%3D%22M52%2048%20Q%2050%2042%2054%2036%22%20stroke-width%3D%221%22%20/%3E%20%3Cpath%20d%3D%22M62%2048%20Q%2064%2040%2060%2034%22%20stroke-width%3D%221%22%20/%3E%20%3C%21--%20Chemex%20outline%20--%3E%20%3Cpath%20d%3D%22M64%2012%20H76%20L70%2020%20L76%2028%20H64%20L70%2020%20Z%22%20stroke-width%3D%221%22%20/%3E%20%3C%21--%20Coffee%20Bean%202%20--%3E%20%3Cellipse%20cx%3D%2228%22%20cy%3D%2270%22%20rx%3D%228%22%20ry%3D%2211%22%20transform%3D%22rotate%2840%2028%2070%29%22%20/%3E%20%3Cpath%20d%3D%22M24%2064%20Q%2031%2070%2026%2078%22%20stroke-width%3D%220.9%22%20/%3E%20%3C/svg%3E")',
+    patternSize: '90px 90px'
+  },
+  'pattern-power': {
+    id: 'pattern-power',
+    name: 'Kinetic Energy Bolts',
+    pattern: 'url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%20width%3D%2280%22%20height%3D%2280%22%20viewBox%3D%220%200%2080%2080%22%20fill%3D%22none%22%20stroke%3D%22rgba%28255%2C255%2C255%2C0.4%29%22%20stroke-width%3D%221.2%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%3E%20%3C%21--%20Main%20Lightning%20Bolt%20--%3E%20%3Cpolygon%20points%3D%2226%2C10%2014%2C38%2028%2C38%2018%2C70%2046%2C32%2032%2C32%22%20/%3E%20%3C%21--%20Pulse%20Wave%20--%3E%20%3Cpath%20d%3D%22M50%2020%20L55%2020%20L58%2014%20L62%2026%20L66%2018%20L70%2022%20L75%2022%22%20stroke-width%3D%221.1%22%20/%3E%20%3C%21--%20Spark%20particles%20--%3E%20%3Ccircle%20cx%3D%2264%22%20cy%3D%2252%22%20r%3D%222%22%20fill%3D%22rgba%28255%2C255%2C255%2C0.6%29%22%20/%3E%20%3Ccircle%20cx%3D%2256%22%20cy%3D%2262%22%20r%3D%221.5%22%20fill%3D%22rgba%28255%2C255%2C255%2C0.4%29%22%20/%3E%20%3Cpath%20d%3D%22M68%2045%20L72%2045%20M70%2043%20L70%2047%22%20stroke-width%3D%221%22%20/%3E%20%3C%21--%20Small%20secondary%20bolt%20--%3E%20%3Cpolygon%20points%3D%2268%2C66%2062%2C74%2067%2C74%2063%2C82%2073%2C72%2068%2C72%22%20stroke-width%3D%220.9%22%20/%3E%20%3C/svg%3E")',
+    patternSize: '80px 80px'
+  },
+  'pattern-winter': {
+    id: 'pattern-winter',
+    name: 'Nordic Frost & Pine',
+    pattern: 'url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%20width%3D%2290%22%20height%3D%2290%22%20viewBox%3D%220%200%2090%2090%22%20fill%3D%22none%22%20stroke%3D%22rgba%28255%2C255%2C255%2C0.38%29%22%20stroke-width%3D%221.1%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%3E%20%3C%21--%206-Point%20Snowflake%20--%3E%20%3Cpath%20d%3D%22M25%2015%20V35%20M15%2025%20H35%20M18%2018%20L32%2032%20M32%2018%20L18%2032%22%20/%3E%20%3Ccircle%20cx%3D%2225%22%20cy%3D%2225%22%20r%3D%221.5%22%20fill%3D%22rgba%28255%2C255%2C255%2C0.7%29%22%20/%3E%20%3C%21--%20Pine%20Tree%20Silhouette%20--%3E%20%3Cpath%20d%3D%22M68%2045%20L78%2058%20H72%20L82%2072%20H54%20L64%2058%20H58%20Z%22%20stroke-width%3D%221.1%22%20/%3E%20%3Cline%20x1%3D%2268%22%20y1%3D%2272%22%20x2%3D%2268%22%20y2%3D%2278%22%20stroke-width%3D%221.5%22%20/%3E%20%3C%21--%20Tiny%20snowflake%20--%3E%20%3Cpath%20d%3D%22M68%2018%20V28%20M63%2023%20H73%22%20stroke-width%3D%220.9%22%20/%3E%20%3C%21--%20Frost%20star%20dots%20--%3E%20%3Ccircle%20cx%3D%2245%22%20cy%3D%2240%22%20r%3D%221.2%22%20fill%3D%22rgba%28255%2C255%2C255%2C0.5%29%22%20/%3E%20%3Ccircle%20cx%3D%2220%22%20cy%3D%2265%22%20r%3D%221.5%22%20fill%3D%22rgba%28255%2C255%2C255%2C0.4%29%22%20/%3E%20%3Ccircle%20cx%3D%2235%22%20cy%3D%2280%22%20r%3D%221%22%20fill%3D%22rgba%28255%2C255%2C255%2C0.5%29%22%20/%3E%20%3C/svg%3E")',
+    patternSize: '90px 90px'
+  },
+  'pattern-ocean': {
+    id: 'pattern-ocean',
+    name: 'Bioluminescent Deep Reef',
+    pattern: 'url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%20width%3D%2290%22%20height%3D%2290%22%20viewBox%3D%220%200%2090%2090%22%20fill%3D%22none%22%20stroke%3D%22rgba%28255%2C255%2C255%2C0.38%29%22%20stroke-width%3D%221.2%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%3E%20%3C%21--%20Ocean%20Sine%20Wave%201%20--%3E%20%3Cpath%20d%3D%22M0%2030%20C15%2020%2C%2030%2040%2C%2045%2030%20C60%2020%2C%2075%2040%2C%2090%2030%22%20/%3E%20%3C%21--%20Ocean%20Sine%20Wave%202%20--%3E%20%3Cpath%20d%3D%22M0%2065%20C15%2055%2C%2030%2075%2C%2045%2065%20C60%2055%2C%2075%2075%2C%2090%2065%22%20stroke-dasharray%3D%223%203%22%20stroke-width%3D%220.9%22%20/%3E%20%3C%21--%20Scallop%20Seashell%20--%3E%20%3Cpath%20d%3D%22M25%2045%20C15%2045%2C%2012%2055%2C%2025%2060%20C38%2055%2C%2035%2045%2C%2025%2045%20Z%22%20stroke-width%3D%221%22%20/%3E%20%3Cpath%20d%3D%22M25%2045%20L25%2060%20M20%2047%20L23%2059%20M30%2047%20L27%2059%22%20stroke-width%3D%220.8%22%20/%3E%20%3C%21--%20Oxygen%20Bubble%20clusters%20--%3E%20%3Ccircle%20cx%3D%2268%22%20cy%3D%2218%22%20r%3D%223%22%20/%3E%20%3Ccircle%20cx%3D%2274%22%20cy%3D%2212%22%20r%3D%221.5%22%20/%3E%20%3Ccircle%20cx%3D%2260%22%20cy%3D%2222%22%20r%3D%222%22%20/%3E%20%3Ccircle%20cx%3D%2270%22%20cy%3D%2248%22%20r%3D%222.5%22%20/%3E%20%3Ccircle%20cx%3D%2278%22%20cy%3D%2252%22%20r%3D%221.5%22%20/%3E%20%3C/svg%3E")',
+    patternSize: '90px 90px'
+  },
+  'pattern-sunset': {
+    id: 'pattern-sunset',
+    name: 'Retro Sunburst & Palm',
+    pattern: 'url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%20width%3D%22100%22%20height%3D%22100%22%20viewBox%3D%220%200%20100%20100%22%20fill%3D%22none%22%20stroke%3D%22rgba%28255%2C255%2C255%2C0.38%29%22%20stroke-width%3D%221.2%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%3E%20%3C%21--%20Concentric%20Sunburst%20over%20Horizon%20--%3E%20%3Cpath%20d%3D%22M15%2045%20H55%22%20stroke-width%3D%221.3%22%20/%3E%20%3Cpath%20d%3D%22M25%2045%20A%2010%2010%200%200%201%2045%2045%22%20/%3E%20%3Cpath%20d%3D%22M20%2045%20A%2015%2015%200%200%201%2050%2045%22%20stroke-dasharray%3D%222%202%22%20/%3E%20%3C%21--%20Radiating%20Sunbeams%20--%3E%20%3Cpath%20d%3D%22M35%2022%20V14%20M25%2026%20L19%2020%20M45%2026%20L51%2020%22%20stroke-width%3D%221%22%20/%3E%20%3C%21--%20Palm%20Frond%20silhouette%20--%3E%20%3Cpath%20d%3D%22M78%2085%20Q%2075%2060%2088%2045%22%20stroke-width%3D%221.3%22%20/%3E%20%3Cpath%20d%3D%22M88%2045%20Q%2078%2048%2074%2055%20M88%2045%20Q%2082%2052%2076%2062%20M88%2045%20Q%2094%2052%2090%2060%22%20stroke-width%3D%221%22%20/%3E%20%3C%21--%20Horizon%20flock%20birds%20--%3E%20%3Cpath%20d%3D%22M68%2020%20Q%2072%2016%2076%2020%20Q%2080%2016%2084%2020%22%20stroke-width%3D%220.9%22%20/%3E%20%3Cpath%20d%3D%22M18%2075%20Q%2022%2072%2026%2075%20Q%2030%2072%2034%2075%22%20stroke-width%3D%220.8%22%20/%3E%20%3C/svg%3E")',
+    patternSize: '100px 100px'
+  },
+  'pattern-terminal': {
+    id: 'pattern-terminal',
+    name: 'Phosphor CRT Matrix',
+    pattern: 'url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%20width%3D%2270%22%20height%3D%2270%22%20viewBox%3D%220%200%2070%2070%22%20fill%3D%22none%22%20stroke%3D%22rgba%28255%2C255%2C255%2C0.35%29%22%20stroke-width%3D%221%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%3E%20%3C%21--%20Horizontal%20CRT%20Scanlines%20--%3E%20%3Cline%20x1%3D%220%22%20y1%3D%2212%22%20x2%3D%2270%22%20y2%3D%2212%22%20stroke-dasharray%3D%222%204%22%20stroke-width%3D%220.6%22%20stroke%3D%22rgba%28255%2C255%2C255%2C0.2%29%22%20/%3E%20%3Cline%20x1%3D%220%22%20y1%3D%2236%22%20x2%3D%2270%22%20y2%3D%2236%22%20stroke-dasharray%3D%222%204%22%20stroke-width%3D%220.6%22%20stroke%3D%22rgba%28255%2C255%2C255%2C0.2%29%22%20/%3E%20%3Cline%20x1%3D%220%22%20y1%3D%2260%22%20x2%3D%2270%22%20y2%3D%2260%22%20stroke-dasharray%3D%222%204%22%20stroke-width%3D%220.6%22%20stroke%3D%22rgba%28255%2C255%2C255%2C0.2%29%22%20/%3E%20%3C%21--%20Terminal%20prompt%20%3E_%20--%3E%20%3Cpath%20d%3D%22M8%2024%20L14%2028%20L8%2032%20M17%2032%20H24%22%20stroke-width%3D%221.2%22%20/%3E%20%3C%21--%20Monospaced%20Code%20Hex%20Characters%20--%3E%20%3Ctext%20x%3D%2235%22%20y%3D%2227%22%20font-size%3D%229%22%20font-family%3D%22monospace%22%20fill%3D%22rgba%28255%2C255%2C255%2C0.4%29%22%20stroke%3D%22none%22%3E0x7F%3C/text%3E%20%3C%21--%20Brackets%20and%20code%20tokens%20--%3E%20%3Cpath%20d%3D%22M12%2048%20H8%20V58%20H12%20M20%2048%20H24%20V58%20H20%22%20stroke-width%3D%221%22%20/%3E%20%3Ctext%20x%3D%2238%22%20y%3D%2255%22%20font-size%3D%228%22%20font-family%3D%22monospace%22%20fill%3D%22rgba%28255%2C255%2C255%2C0.3%29%22%20stroke%3D%22none%22%3E%7B%2001%20%7D%3C/text%3E%20%3C/svg%3E")',
+    patternSize: '70px 70px'
+  },
+  'pattern-zen': {
+    id: 'pattern-zen',
+    name: 'Wabi-Sabi Sand Ripples',
+    pattern: 'url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%20width%3D%2290%22%20height%3D%2290%22%20viewBox%3D%220%200%2090%2090%22%20fill%3D%22none%22%20stroke%3D%22rgba%28255%2C255%2C255%2C0.36%29%22%20stroke-width%3D%221.1%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%3E%20%3C%21--%20Raked%20Sand%20Circular%20Ripples%20--%3E%20%3Ccircle%20cx%3D%2228%22%20cy%3D%2230%22%20r%3D%2210%22%20stroke-dasharray%3D%223%203%22%20/%3E%20%3Ccircle%20cx%3D%2228%22%20cy%3D%2230%22%20r%3D%2218%22%20stroke-dasharray%3D%223%203%22%20/%3E%20%3Ccircle%20cx%3D%2228%22%20cy%3D%2230%22%20r%3D%2226%22%20stroke-dasharray%3D%223%203%22%20stroke-width%3D%220.8%22%20/%3E%20%3C%21--%20Balanced%20River%20Stones%20--%3E%20%3Cellipse%20cx%3D%2228%22%20cy%3D%2230%22%20rx%3D%226%22%20ry%3D%224%22%20fill%3D%22rgba%28255%2C255%2C255%2C0.25%29%22%20stroke-width%3D%221.2%22%20/%3E%20%3C%21--%20Bamboo%20Stalk%20--%3E%20%3Cline%20x1%3D%2272%22%20y1%3D%2210%22%20x2%3D%2272%22%20y2%3D%2280%22%20stroke-width%3D%221.5%22%20/%3E%20%3Cline%20x1%3D%2268%22%20y1%3D%2232%22%20x2%3D%2276%22%20y2%3D%2232%22%20stroke-width%3D%221.5%22%20/%3E%20%3Cline%20x1%3D%2268%22%20y1%3D%2258%22%20x2%3D%2276%22%20y2%3D%2258%22%20stroke-width%3D%221.5%22%20/%3E%20%3C%21--%20Bamboo%20Leaves%20--%3E%20%3Cpath%20d%3D%22M72%2032%20Q%2082%2028%2086%2034%22%20stroke-width%3D%221.1%22%20/%3E%20%3Cpath%20d%3D%22M72%2058%20Q%2062%2054%2058%2060%22%20stroke-width%3D%221.1%22%20/%3E%20%3C%21--%20Stone%202%20in%20sand%20--%3E%20%3Cellipse%20cx%3D%2248%22%20cy%3D%2272%22%20rx%3D%227%22%20ry%3D%224.5%22%20transform%3D%22rotate%28-15%2048%2072%29%22%20stroke-width%3D%221%22%20/%3E%20%3C/svg%3E")',
+    patternSize: '90px 90px'
+  },
+  'pattern-urban': {
+    id: 'pattern-urban',
+    name: 'Architectural Monstera',
+    pattern: 'url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%20width%3D%2290%22%20height%3D%2290%22%20viewBox%3D%220%200%2090%2090%22%20fill%3D%22none%22%20stroke%3D%22rgba%28255%2C255%2C255%2C0.36%29%22%20stroke-width%3D%221.1%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%3E%20%3C%21--%20City%20Skyscraper%20Grid%20--%3E%20%3Crect%20x%3D%2212%22%20y%3D%2232%22%20width%3D%2218%22%20height%3D%2248%22%20rx%3D%221%22%20/%3E%20%3Cline%20x1%3D%2218%22%20y1%3D%2238%22%20x2%3D%2224%22%20y2%3D%2238%22%20stroke-width%3D%220.9%22%20/%3E%20%3Cline%20x1%3D%2218%22%20y1%3D%2246%22%20x2%3D%2224%22%20y2%3D%2246%22%20stroke-width%3D%220.9%22%20/%3E%20%3Cline%20x1%3D%2218%22%20y1%3D%2254%22%20x2%3D%2224%22%20y2%3D%2254%22%20stroke-width%3D%220.9%22%20/%3E%20%3C%21--%20Metro%20connection%20node%20lines%20--%3E%20%3Cpath%20d%3D%22M0%2018%20H35%20L48%2032%20H90%22%20stroke-width%3D%220.9%22%20stroke-dasharray%3D%222%203%22%20/%3E%20%3Ccircle%20cx%3D%2235%22%20cy%3D%2218%22%20r%3D%222.5%22%20fill%3D%22rgba%28255%2C255%2C255%2C0.5%29%22%20/%3E%20%3C%21--%20Monstera%20Leaf%20Silhouette%20--%3E%20%3Cpath%20d%3D%22M65%2080%20C50%2065%2C%2052%2045%2C%2068%2040%20C84%2045%2C%2086%2065%2C%2071%2080%20Z%22%20stroke-width%3D%221.2%22%20/%3E%20%3Cpath%20d%3D%22M68%2040%20V75%22%20stroke-width%3D%220.9%22%20/%3E%20%3Cpath%20d%3D%22M68%2050%20Q%2060%2048%2057%2052%20M68%2058%20Q%2058%2056%2056%2062%22%20stroke-width%3D%220.8%22%20/%3E%20%3Cpath%20d%3D%22M68%2050%20Q%2076%2048%2079%2052%20M68%2058%20Q%2078%2056%2080%2062%22%20stroke-width%3D%220.8%22%20/%3E%20%3C/svg%3E")',
+    patternSize: '90px 90px'
+  },
+  'pattern-stargazer': {
+    id: 'pattern-stargazer',
+    name: 'Astrolabe & Constellations',
+    pattern: 'url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%20width%3D%22100%22%20height%3D%22100%22%20viewBox%3D%220%200%20100%20100%22%20fill%3D%22none%22%20stroke%3D%22rgba%28255%2C255%2C255%2C0.4%29%22%20stroke-width%3D%221.1%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%3E%20%3C%21--%20Astrolabe%20Orbit%20Ring%20--%3E%20%3Cellipse%20cx%3D%2250%22%20cy%3D%2250%22%20rx%3D%2236%22%20ry%3D%2216%22%20transform%3D%22rotate%28-25%2050%2050%29%22%20stroke-dasharray%3D%223%203%22%20stroke-width%3D%220.9%22%20/%3E%20%3Ccircle%20cx%3D%2250%22%20cy%3D%2250%22%20r%3D%2228%22%20stroke-width%3D%220.8%22%20stroke%3D%22rgba%28255%2C255%2C255%2C0.2%29%22%20/%3E%20%3C%21--%204-Point%20Star%20Cluster%20--%3E%20%3Cpath%20d%3D%22M50%2042%20V58%20M42%2050%20H58%22%20stroke-width%3D%221.3%22%20/%3E%20%3Ccircle%20cx%3D%2250%22%20cy%3D%2250%22%20r%3D%221.5%22%20fill%3D%22rgba%28255%2C255%2C255%2C0.8%29%22%20/%3E%20%3C%21--%20Constellation%20Chart%20%28Big%20Dipper%29%20--%3E%20%3Ccircle%20cx%3D%2216%22%20cy%3D%2222%22%20r%3D%221.8%22%20fill%3D%22rgba%28255%2C255%2C255%2C0.7%29%22%20/%3E%20%3Ccircle%20cx%3D%2230%22%20cy%3D%2218%22%20r%3D%221.8%22%20fill%3D%22rgba%28255%2C255%2C255%2C0.7%29%22%20/%3E%20%3Ccircle%20cx%3D%2242%22%20cy%3D%2226%22%20r%3D%221.8%22%20fill%3D%22rgba%28255%2C255%2C255%2C0.7%29%22%20/%3E%20%3Ccircle%20cx%3D%2248%22%20cy%3D%2235%22%20r%3D%221.8%22%20fill%3D%22rgba%28255%2C255%2C255%2C0.7%29%22%20/%3E%20%3Cpath%20d%3D%22M16%2022%20L30%2018%20L42%2026%20L48%2035%22%20stroke-dasharray%3D%222%202%22%20stroke-width%3D%220.9%22%20/%3E%20%3C%21--%20Star%20dots%20--%3E%20%3Ccircle%20cx%3D%2282%22%20cy%3D%2225%22%20r%3D%221.5%22%20fill%3D%22rgba%28255%2C255%2C255%2C0.6%29%22%20/%3E%20%3Ccircle%20cx%3D%2274%22%20cy%3D%2278%22%20r%3D%222%22%20fill%3D%22rgba%28255%2C255%2C255%2C0.7%29%22%20/%3E%20%3Ccircle%20cx%3D%2222%22%20cy%3D%2275%22%20r%3D%221.2%22%20fill%3D%22rgba%28255%2C255%2C255%2C0.5%29%22%20/%3E%20%3C/svg%3E")',
+    patternSize: '100px 100px'
+  },
+  'pattern-luxury': {
+    id: 'pattern-luxury',
+    name: 'Titanium Guilloché',
+    pattern: 'url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%20width%3D%2260%22%20height%3D%2260%22%20viewBox%3D%220%200%2060%2060%22%20fill%3D%22none%22%20stroke%3D%22rgba%28255%2C255%2C255%2C0.32%29%22%20stroke-width%3D%220.9%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%3E%20%3C%21--%20Swiss%20Guilloch%C3%A9%20Overlapping%20Arcs%20--%3E%20%3Ccircle%20cx%3D%2230%22%20cy%3D%220%22%20r%3D%2220%22%20stroke-width%3D%220.8%22%20/%3E%20%3Ccircle%20cx%3D%2230%22%20cy%3D%2260%22%20r%3D%2220%22%20stroke-width%3D%220.8%22%20/%3E%20%3Ccircle%20cx%3D%220%22%20cy%3D%2230%22%20r%3D%2220%22%20stroke-width%3D%220.8%22%20/%3E%20%3Ccircle%20cx%3D%2260%22%20cy%3D%2230%22%20r%3D%2220%22%20stroke-width%3D%220.8%22%20/%3E%20%3C%21--%20Diamond%20faceted%20center%20contour%20--%3E%20%3Cpolygon%20points%3D%2230%2C18%2042%2C30%2030%2C42%2018%2C30%22%20stroke-width%3D%221%22%20/%3E%20%3Cpolygon%20points%3D%2230%2C23%2037%2C30%2030%2C37%2023%2C30%22%20stroke-dasharray%3D%221%202%22%20stroke-width%3D%220.7%22%20/%3E%20%3C%21--%20Central%20pinpoint%20diamond%20--%3E%20%3Ccircle%20cx%3D%2230%22%20cy%3D%2230%22%20r%3D%221.5%22%20fill%3D%22rgba%28255%2C255%2C255%2C0.6%29%22%20/%3E%20%3C%21--%20Corner%20ticks%20--%3E%20%3Cline%20x1%3D%220%22%20y1%3D%220%22%20x2%3D%228%22%20y2%3D%228%22%20stroke-width%3D%220.8%22%20/%3E%20%3Cline%20x1%3D%2260%22%20y1%3D%220%22%20x2%3D%2252%22%20y2%3D%228%22%20stroke-width%3D%220.8%22%20/%3E%20%3Cline%20x1%3D%220%22%20y1%3D%2260%22%20x2%3D%228%22%20y2%3D%2252%22%20stroke-width%3D%220.8%22%20/%3E%20%3Cline%20x1%3D%2260%22%20y1%3D%2260%22%20x2%3D%2252%22%20y2%3D%2252%22%20stroke-width%3D%220.8%22%20/%3E%20%3C/svg%3E")',
+    patternSize: '60px 60px'
+  },
+};
 
         const THEME_PRESETS = [
           {
@@ -81,6 +123,8 @@ const {
                     "userBubbleBg": "linear-gradient(135deg, #FF4B72 0%, #FF7EB3 50%, #FFAAA6 100%)",
                     "charBubbleBg": "#240c17",
                     "chatWallpaper": "linear-gradient(180deg, #1A0710 0%, #2A0E1C 50%, #12040B 100%)",
+                    "chatPatternId": "pattern-amore",
+                    "chatPatternOpacity": 0.16,
                     "chatDoodle": "hearts",
                     "nameColor": "#FF4B72",
                     "chatBlur": false,
@@ -104,6 +148,8 @@ const {
                     "userBubbleBg": "linear-gradient(135deg, #00F0FF 0%, #3B82F6 45%, #7000FF 100%)",
                     "charBubbleBg": "#0c0d24",
                     "chatWallpaper": "linear-gradient(180deg, #050811 0%, #0d122b 50%, #04050a 100%)",
+                    "chatPatternId": "pattern-gamer",
+                    "chatPatternOpacity": 0.16,
                     "chatDoodle": "tech",
                     "nameColor": "#00F0FF",
                     "chatBlur": false,
@@ -127,6 +173,8 @@ const {
                     "userBubbleBg": "linear-gradient(135deg, #8B5A2B 0%, #C49A6C 50%, #A06D3B 100%)",
                     "charBubbleBg": "#21140b",
                     "chatWallpaper": "linear-gradient(180deg, #160D07 0%, #29180E 50%, #0F0804 100%)",
+                    "chatPatternId": "pattern-coffee",
+                    "chatPatternOpacity": 0.16,
                     "chatDoodle": "cafe",
                     "nameColor": "#D4A373",
                     "chatBlur": false,
@@ -150,6 +198,8 @@ const {
                     "userBubbleBg": "linear-gradient(135deg, #FFD000 0%, #FF8800 50%, #FF3300 100%)",
                     "charBubbleBg": "#221603",
                     "chatWallpaper": "linear-gradient(180deg, #140F03 0%, #261B05 50%, #0D0A02 100%)",
+                    "chatPatternId": "pattern-power",
+                    "chatPatternOpacity": 0.16,
                     "chatDoodle": "lightning",
                     "nameColor": "#FFD000",
                     "chatBlur": false,
@@ -173,6 +223,8 @@ const {
                     "userBubbleBg": "linear-gradient(135deg, #1B4D3E 0%, #2E8B57 55%, #52B788 100%)",
                     "charBubbleBg": "#0c1e16",
                     "chatWallpaper": "linear-gradient(180deg, #07140E 0%, #0F261B 50%, #040D09 100%)",
+                    "chatPatternId": "pattern-winter",
+                    "chatPatternOpacity": 0.16,
                     "chatDoodle": "winter",
                     "nameColor": "#52B788",
                     "chatBlur": false,
@@ -196,6 +248,8 @@ const {
                     "userBubbleBg": "linear-gradient(135deg, #0072FF 0%, #00C0FF 50%, #00F5A0 100%)",
                     "charBubbleBg": "#071b26",
                     "chatWallpaper": "linear-gradient(180deg, #030E17 0%, #071E2E 50%, #02090F 100%)",
+                    "chatPatternId": "pattern-ocean",
+                    "chatPatternOpacity": 0.16,
                     "chatDoodle": "waves",
                     "nameColor": "#00D9F5",
                     "chatBlur": false,
@@ -219,6 +273,8 @@ const {
                     "userBubbleBg": "linear-gradient(135deg, #7F00FF 0%, #E100FF 45%, #FF7F50 100%)",
                     "charBubbleBg": "#230c24",
                     "chatWallpaper": "linear-gradient(180deg, #18091C 0%, #2B1033 50%, #100514 100%)",
+                    "chatPatternId": "pattern-sunset",
+                    "chatPatternOpacity": 0.16,
                     "chatDoodle": "sunset",
                     "nameColor": "#FF6E7F",
                     "chatBlur": false,
@@ -242,6 +298,8 @@ const {
                     "userBubbleBg": "linear-gradient(135deg, #003311 0%, #00882B 50%, #00FF66 100%)",
                     "charBubbleBg": "#041608",
                     "chatWallpaper": "linear-gradient(180deg, #020803 0%, #06170B 50%, #010502 100%)",
+                    "chatPatternId": "pattern-terminal",
+                    "chatPatternOpacity": 0.16,
                     "chatDoodle": "matrix",
                     "nameColor": "#00FF66",
                     "chatBlur": false,
@@ -265,6 +323,8 @@ const {
                     "userBubbleBg": "linear-gradient(135deg, #5B6B54 0%, #879782 50%, #B8C5A8 100%)",
                     "charBubbleBg": "#151c14",
                     "chatWallpaper": "linear-gradient(180deg, #0D110D 0%, #171E17 50%, #090C09 100%)",
+                    "chatPatternId": "pattern-zen",
+                    "chatPatternOpacity": 0.16,
                     "chatDoodle": "zen",
                     "nameColor": "#98A886",
                     "chatBlur": false,
@@ -288,6 +348,8 @@ const {
                     "userBubbleBg": "linear-gradient(135deg, #11998E 0%, #38EF7D 60%, #78FFD6 100%)",
                     "charBubbleBg": "#0c211b",
                     "chatWallpaper": "linear-gradient(180deg, #071210 0%, #0E2420 50%, #040C0A 100%)",
+                    "chatPatternId": "pattern-urban",
+                    "chatPatternOpacity": 0.16,
                     "chatDoodle": "leaves",
                     "nameColor": "#78FFD6",
                     "chatBlur": false,
@@ -311,6 +373,8 @@ const {
                     "userBubbleBg": "linear-gradient(135deg, #4A00E0 0%, #8E2DE2 50%, #F05053 100%)",
                     "charBubbleBg": "#1c0a2b",
                     "chatWallpaper": "linear-gradient(180deg, #090314 0%, #18092E 50%, #06020D 100%)",
+                    "chatPatternId": "pattern-stargazer",
+                    "chatPatternOpacity": 0.16,
                     "chatDoodle": "stars",
                     "nameColor": "#C471ED",
                     "chatBlur": false,
@@ -334,6 +398,8 @@ const {
                     "userBubbleBg": "linear-gradient(135deg, #475569 0%, #94A3B8 50%, #E2E8F0 100%)",
                     "charBubbleBg": "#161922",
                     "chatWallpaper": "linear-gradient(180deg, #08080A 0%, #12141C 50%, #050507 100%)",
+                    "chatPatternId": "pattern-luxury",
+                    "chatPatternOpacity": 0.16,
                     "chatDoodle": "none",
                     "nameColor": "#E2E8F0",
                     "chatBlur": false,
@@ -446,6 +512,8 @@ const {
           charBubbleBg: '#0c0d24',
           chatWallpaper: 'linear-gradient(180deg, #050811 0%, #0d122b 50%, #04050a 100%)',
           chatDoodle: 'tech',
+          chatPatternId: 'pattern-gamer',
+          chatPatternOpacity: 0.15,
           chatBlur: false,
           dayNightMode: 'dark',
           baseMode: 'dark',
@@ -663,13 +731,20 @@ const {
           root.style.setProperty('--theme-chat-dim', dimVal.toString());
 
           // Doodle Pattern
-          const patId = theme.chatPatternId || 'telegram-doodles';
-          const patObj = DOODLE_PATTERNS[patId] || DOODLE_PATTERNS['telegram-doodles'];
-          const patOpacity = theme.chatPatternOpacity !== undefined ? theme.chatPatternOpacity : 0.18;
+          const patId = theme.chatPatternId || (theme.id ? ('pattern-' + theme.id.replace('-mode', '').replace('-corner', '').replace('-luxury', '')) : 'pattern-gamer');
+          const patObj = DOODLE_PATTERNS[patId] || DOODLE_PATTERNS['pattern-gamer'] || DOODLE_PATTERNS['none'];
+          const patOpacity = theme.chatPatternOpacity !== undefined ? theme.chatPatternOpacity : 0.16;
 
           root.style.setProperty('--theme-chat-pattern', patObj.pattern);
           root.style.setProperty('--theme-chat-pattern-size', patObj.patternSize);
           root.style.setProperty('--theme-chat-pattern-opacity', patOpacity.toString());
+
+          const overlayLayer = document.getElementById('chat-wallpaper-overlay');
+          if (overlayLayer) {
+            overlayLayer.style.backgroundImage = patObj.pattern || 'none';
+            overlayLayer.style.backgroundSize = patObj.patternSize || 'auto';
+            overlayLayer.style.opacity = patOpacity.toString();
+          }
 
           // Direct DOM live updates for active chat container
           const imgLayer = document.getElementById('chat-wallpaper-image-layer');

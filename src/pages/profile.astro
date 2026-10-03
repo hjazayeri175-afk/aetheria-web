@@ -1749,6 +1749,19 @@ import {
           previewViewport.style.background = '#0a0d16';
         }
 
+        // 1.5 Wallpaper pattern overlay
+        if (previewPattern) {
+          const patId = settings.chatPatternId || (settings.id ? ('pattern-' + settings.id.replace('-mode', '').replace('-corner', '').replace('-luxury', '')) : 'pattern-gamer');
+          const patObj = (window as any).AetheriaTheme?.PATTERNS?.[patId];
+          if (patObj && patObj.pattern && patObj.pattern !== 'none') {
+            previewPattern.style.backgroundImage = patObj.pattern;
+            previewPattern.style.backgroundSize = patObj.patternSize;
+            previewPattern.style.opacity = (settings.chatPatternOpacity !== undefined ? settings.chatPatternOpacity : 0.16).toString();
+          } else {
+            previewPattern.style.backgroundImage = 'none';
+          }
+        }
+
         // 2. Outgoing User Message Bubble
         if (previewUserBubble) {
           const radius = settings.bubbleRadius !== undefined ? settings.bubbleRadius : 16;
