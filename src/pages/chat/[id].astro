@@ -3959,7 +3959,10 @@ const { character } = Astro.props;
 
           <!-- Dynamic Prompts Container -->
           <div id="smart-prompts-container" class="flex items-center gap-2 overflow-x-auto no-scrollbar scroll-smooth py-0.5">
-            {character.starterPrompts && character.starterPrompts.map((prompt) => {
+            {(character.starterPrompts && character.starterPrompts.length > 0 ? character.starterPrompts : [
+              `*Looks at ${character.name}* "Tell me more."`,
+              `*Smiles softly* "What should we do next?"`
+            ]).map((prompt) => {
               const cleanPrompt = String(prompt).trim().replace(/^["'«“]+|["'»”]+$/g, '').trim();
               const displayLabel = cleanPrompt.startsWith('*') ? cleanPrompt : `"${cleanPrompt}"`;
               return (
@@ -18151,26 +18154,40 @@ const { character } = Astro.props;
   input?.addEventListener('input', () => {
     adjustInputHeight();
     updateSendBtnState();
+    if (window.innerWidth < 640 && smartPromptsBar) {
+      if (input.value.trim().length > 0) {
+        smartPromptsBar.style.display = 'none';
+      } else {
+        smartPromptsBar.style.display = '';
+      }
+    }
   });
 
   input?.addEventListener('paste', () => {
     setTimeout(() => {
       adjustInputHeight();
       updateSendBtnState();
+      if (window.innerWidth < 640 && smartPromptsBar) {
+        if (input.value.trim().length > 0) {
+          smartPromptsBar.style.display = 'none';
+        } else {
+          smartPromptsBar.style.display = '';
+        }
+      }
     }, 10);
   });
 
-  // Mobile optimization: Auto-hide Smart Ideas suggestion bar on keyboard focus to maximize reading room
+  // Mobile optimization: Auto-hide Smart Ideas suggestion bar only when user has actively typed text
   input?.addEventListener('focus', () => {
-    if (window.innerWidth < 640 && smartPromptsBar) {
+    if (window.innerWidth < 640 && smartPromptsBar && input.value.trim().length > 0) {
       smartPromptsBar.style.display = 'none';
     }
   });
 
   input?.addEventListener('blur', () => {
-    // Always safely restore suggestion bar when mobile keyboard closes
+    // Always safely restore suggestion bar when mobile keyboard closes or input is empty
     setTimeout(() => {
-      if (smartPromptsBar) {
+      if (smartPromptsBar && !input?.value?.trim()) {
         smartPromptsBar.style.display = '';
       }
     }, 150);
@@ -18545,7 +18562,18 @@ const { character } = Astro.props;
   function renderSmartPrompts(prompts) {
     if (!smartPromptsContainer) return;
     if (!prompts || prompts.length === 0) {
-      prompts = activeChar.starterPrompts || character.starterPrompts || [];
+      prompts = (activeChar && activeChar.starterPrompts && activeChar.starterPrompts.length > 0)
+        ? activeChar.starterPrompts
+        : (character && character.starterPrompts && character.starterPrompts.length > 0)
+          ? character.starterPrompts
+          : [];
+    }
+    const charDisplayName = (activeChar && activeChar.name) || (character && character.name) || 'Character';
+    if (!prompts || prompts.length === 0) {
+      prompts = [
+        `*Looks at ${charDisplayName}* "Tell me more."`,
+        `*Smiles softly* "What should we do next?"`
+      ];
     }
     smartPromptsContainer.innerHTML = prompts.map(p => {
       const cleanPrompt = String(p).trim().replace(/^["'«“]+|["'»”]+$/g, '').trim();
@@ -18640,6 +18668,7 @@ const { character } = Astro.props;
       smartPromptsRefreshIcon.classList.add('animate-spin');
     }
 
+    let hasPersian = false;
     try {
       // 1. Gather rich context from character card and recent roleplay dialogue
       const charName = activeChar.name || character.name || 'Character';
@@ -18673,7 +18702,7 @@ const { character } = Astro.props;
       }
 
       // Detect language (Persian if Persian characters exist in history snippet)
-      const hasPersian = /[\u0600-\u06FF]/.test(historySnippet);
+      hasPersian = /[\u0600-\u06FF]/.test(historySnippet);
 
       const systemPrompt = `You are an immersive roleplay assistant and story co-writer.
 Given the character profile and the recent dialogue flow, suggest 3 to 4 distinct, creative, and engaging reply options that the user can say or do next.
@@ -18820,15 +18849,16 @@ Requirements:
 
       // If BYOK was not configured or returned empty, use character-tailored suggestion ideas (bilingual aware)
       if (!generatedPills) {
+        const charDisplayName = (activeChar && activeChar.name) || (character && character.name) || 'Character';
         if (hasPersian) {
           generatedPills = [
-            `*با دقت به ${activeChar.name} نگاه می‌کنم* "بیشتر برام بگو، داری به چی فکر می‌کنی؟"`,
+            `*با دقت به ${charDisplayName} نگاه می‌کنم* "بیشتر برام بگو، داری به چی فکر می‌کنی؟"`,
             `*یک قدم جلوتر می‌آیم* "دوست داری قدم بعدی چه‌کار کنیم؟"`,
             `*لبخند ملایمی می‌زنم* "من اینجام و باهات همراهی می‌کنم."`
           ];
         } else {
           generatedPills = [
-            `*Looks at ${activeChar.name} intently* "Tell me more about what you're thinking."`,
+            `*Looks at ${charDisplayName} intently* "Tell me more about what you're thinking."`,
             `*Takes a step closer* "What would you like to do next?"`,
             `*Smiles softly* "I'm right here with you."`
           ];
@@ -18852,11 +18882,12 @@ Requirements:
       }
       // Guarantee fallback suggestions so bar never stays blank
       if (smartPromptsContainer && smartPromptsContainer.children.length === 0) {
+        const charDisplayName = (activeChar && activeChar.name) || (character && character.name) || 'Character';
         const guaranteePills = hasPersian ? [
-          `*با دقت به ${activeChar.name} نگاه می‌کنم* "بیشتر برام بگو."`,
+          `*با دقت به ${charDisplayName} نگاه می‌کنم* "بیشتر برام بگو."`,
           `*لبخند می‌زنم* "قدم بعدی چیه؟"`
         ] : [
-          `*Looks at ${activeChar.name}* "Tell me more."`,
+          `*Looks at ${charDisplayName}* "Tell me more."`,
           `*Smiles softly* "What should we do next?"`
         ];
         renderSmartPrompts(guaranteePills);
