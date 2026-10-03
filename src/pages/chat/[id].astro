@@ -3328,7 +3328,7 @@ const { character } = Astro.props;
               id="fullscreen-composer-textarea"
               dir="auto"
               placeholder="Message..."
-              class="w-full flex-1 bg-transparent text-[#f1f3f4] text-[17px] sm:text-[19px] leading-[1.7] placeholder:text-white/30 outline-none resize-none overflow-y-auto selection:bg-blue-500/30 font-normal focus:ring-0 text-left border-none"
+              class="w-full flex-1 bg-transparent text-[#f1f3f4] text-[17px] sm:text-[19px] leading-[1.7] placeholder:text-white/30 outline-none resize-none overflow-y-auto selection:bg-purple-500/30 caret-purple-400 font-normal focus:ring-0 text-left border-none"
               style="scrollbar-width: thin;"
             ></textarea>
           </div>
@@ -3338,7 +3338,7 @@ const { character } = Astro.props;
             <button 
               type="button" 
               id="fullscreen-composer-send-btn"
-              class="w-11 h-11 sm:w-12 sm:h-12 rounded-full flex items-center justify-center transition-all duration-200 shadow-sm cursor-not-allowed bg-[#2a2b2e] text-white/30"
+              class="w-11 h-11 sm:w-12 sm:h-12 rounded-full flex items-center justify-center transition-all duration-200 shadow-sm cursor-not-allowed bg-purple-600 text-white opacity-40 scale-95"
               title="Send message"
             >
               <svg class="w-5 h-5 sm:w-6 sm:h-6 stroke-[2.5]" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round">
@@ -3663,7 +3663,7 @@ const { character } = Astro.props;
                     aria-checked="true"
                     title="Toggle persona personalization on/off"
                   >
-                    <span id="plus-persona-toggle-track" class="pointer-events-none absolute inset-0 rounded-full bg-blue-600 transition-colors duration-200"></span>
+                    <span id="plus-persona-toggle-track" class="pointer-events-none absolute inset-0 rounded-full bg-purple-600 transition-colors duration-200"></span>
                     <span id="plus-persona-toggle-thumb" class="pointer-events-none relative inline-block h-5 w-5 transform rounded-full bg-white shadow-md ring-0 transition duration-200 ease-in-out translate-x-5"></span>
                   </button>
                 </div>
@@ -3768,7 +3768,7 @@ const { character } = Astro.props;
                     rows="1" 
                     dir="auto"
                     placeholder={`Message ${character.name}...`}
-                    class="w-full bg-transparent text-[17px] sm:text-[18px] text-[#f1f3f4] placeholder:text-[#9aa0a6] outline-none resize-none leading-[1.55] transition-[height] duration-75 block font-normal selection:bg-blue-500/30 px-1 border-none caret-blue-500"
+                    class="w-full bg-transparent text-[17px] sm:text-[18px] text-[#f1f3f4] placeholder:text-[#9aa0a6] outline-none resize-none leading-[1.55] transition-[height] duration-75 block font-normal selection:bg-purple-500/30 px-1 border-none caret-purple-400"
                     style="min-height: 28px; max-height: 160px; height: 28px; overflow-y: hidden; scrollbar-width: thin;"
                   ></textarea>
                 </div>
@@ -3804,7 +3804,7 @@ const { character } = Astro.props;
                   <button 
                     type="submit" 
                     id="room-send-btn"
-                    class="w-9 h-9 sm:w-10 sm:h-10 rounded-full bg-blue-600 hover:bg-blue-500 text-white flex items-center justify-center transition-all duration-200 cursor-pointer active:scale-95 shadow-md shadow-blue-950/40 opacity-40 scale-95 shrink-0"
+                    class="w-9 h-9 sm:w-10 sm:h-10 rounded-full bg-purple-600 hover:bg-purple-500 text-white flex items-center justify-center transition-all duration-200 cursor-pointer active:scale-95 shadow-md shadow-purple-950/50 opacity-40 scale-95 shrink-0"
                     title="Send Message"
                   >
                     <ArrowUp class="w-5 h-5 stroke-[2.5]" />
@@ -4875,11 +4875,11 @@ const { character } = Astro.props;
     const hasText = input.value.trim().length > 0;
     const canSend = hasText || currentMultimodalMode !== null || attachedImageBase64 !== null;
     if (canSend) {
-      sendBtn.classList.remove('opacity-40', 'scale-95');
-      sendBtn.classList.add('opacity-100', 'scale-100');
+      sendBtn.classList.remove('opacity-40', 'scale-95', 'cursor-not-allowed');
+      sendBtn.classList.add('opacity-100', 'scale-100', 'cursor-pointer');
     } else {
-      sendBtn.classList.add('opacity-40', 'scale-95');
-      sendBtn.classList.remove('opacity-100', 'scale-100');
+      sendBtn.classList.add('opacity-40', 'scale-95', 'cursor-not-allowed');
+      sendBtn.classList.remove('opacity-100', 'scale-100', 'cursor-pointer');
     }
   }
 
@@ -5038,9 +5038,9 @@ const { character } = Astro.props;
     if (!fullscreenSendBtn || !fullscreenTextarea) return;
     const hasText = !!fullscreenTextarea.value.trim();
     if (hasText) {
-      fullscreenSendBtn.className = "w-11 h-11 sm:w-12 sm:h-12 rounded-full flex items-center justify-center transition-all duration-200 active:scale-95 shadow-lg cursor-pointer bg-white text-black hover:bg-slate-200";
+      fullscreenSendBtn.className = "w-11 h-11 sm:w-12 sm:h-12 rounded-full flex items-center justify-center transition-all duration-200 active:scale-95 shadow-lg shadow-purple-950/60 cursor-pointer bg-purple-600 hover:bg-purple-500 text-white opacity-100 scale-100";
     } else {
-      fullscreenSendBtn.className = "w-11 h-11 sm:w-12 sm:h-12 rounded-full flex items-center justify-center transition-all duration-200 shadow-sm cursor-not-allowed bg-[#2a2b2e] text-white/30";
+      fullscreenSendBtn.className = "w-11 h-11 sm:w-12 sm:h-12 rounded-full flex items-center justify-center transition-all duration-200 shadow-sm cursor-not-allowed bg-purple-600 text-white opacity-40 scale-95";
     }
   }
 
@@ -15068,7 +15068,7 @@ const { character } = Astro.props;
     }
     if (overflowTtsTrack) {
       overflowTtsTrack.className = ttsEnabled
-        ? 'absolute inset-0 rounded-full bg-blue-600 transition-colors duration-200'
+        ? 'absolute inset-0 rounded-full bg-purple-600 transition-colors duration-200'
         : 'absolute inset-0 rounded-full bg-white/20 transition-colors duration-200';
     }
     if (overflowTtsThumb) {
@@ -16875,7 +16875,7 @@ const { character } = Astro.props;
     }
     if (plusPersonaToggleTrack) {
       plusPersonaToggleTrack.className = isEnabled
-        ? 'pointer-events-none absolute inset-0 rounded-full bg-blue-600 transition-colors duration-200'
+        ? 'pointer-events-none absolute inset-0 rounded-full bg-purple-600 transition-colors duration-200'
         : 'pointer-events-none absolute inset-0 rounded-full bg-white/20 transition-colors duration-200';
     }
     if (plusPersonaToggleThumb) {
@@ -16887,7 +16887,7 @@ const { character } = Astro.props;
       if (isEnabled) {
         const pName = activeUserPersona.name || 'You';
         plusPersonaSubtitle.textContent = `Personalize chat (${pName})`;
-        plusPersonaSubtitle.className = 'text-[10px] text-blue-300 font-medium truncate';
+        plusPersonaSubtitle.className = 'text-[10px] text-purple-300 font-medium truncate';
       } else {
         plusPersonaSubtitle.textContent = 'Personalize chat if helpful (Off)';
         plusPersonaSubtitle.className = 'text-[10px] text-slate-400 truncate';
@@ -16997,7 +16997,7 @@ const { character } = Astro.props;
         <!-- Option: Disable Persona / Default Scenario -->
         <button type="button" class="w-full p-3 rounded-2xl border text-left transition flex items-center justify-between gap-3 cursor-pointer mask-pick-btn ${
           !isPersonaGloballyEnabled
-            ? 'bg-blue-600/15 border-blue-500/50 text-white shadow-lg'
+            ? 'bg-purple-600/20 border-purple-500/50 text-white shadow-lg'
             : 'bg-white/[0.03] hover:bg-white/[0.06] border-white/[0.08] text-slate-300 hover:text-white'
         }" data-mask-id="none">
           <div class="flex items-center gap-3 min-w-0">
