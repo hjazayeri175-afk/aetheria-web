@@ -4676,6 +4676,7 @@ const { character } = Astro.props;
         matched = customList[customList.length - 1]; // latest created custom character
       }
       if (matched) {
+        const matchedName = matched.name || 'Character';
         activeChar = {
           ...activeChar,
           ...matched,
@@ -4685,7 +4686,13 @@ const { character } = Astro.props;
             ? matched.alternateGreetings 
             : (matched.alternate_greetings || activeChar.alternateGreetings || []),
           fallbackReplies: (matched.alternateGreetings && matched.alternateGreetings.length > 0) ? matched.alternateGreetings : activeChar.fallbackReplies,
-          starterPrompts: (matched.starterPrompts && matched.starterPrompts.length > 0) ? matched.starterPrompts : activeChar.starterPrompts,
+          starterPrompts: (matched.starterPrompts && matched.starterPrompts.length > 0) 
+            ? matched.starterPrompts 
+            : [
+                `*Looks at ${matchedName}* "Tell me more."`,
+                `*Smiles softly* "What should we do next?"`,
+                `"Tell me about yourself."`
+              ],
           scenario: matched.scenario || activeChar.scenario || '',
           systemPrompt: matched.systemPrompt || activeChar.systemPrompt || '',
           speechStyle: matched.speechStyle || activeChar.speechStyle || '',
@@ -18179,17 +18186,17 @@ const { character } = Astro.props;
     }, 10);
   });
 
-  // Mobile optimization: Auto-hide Smart Ideas suggestion bar only when user has actively typed text
+  // Mobile optimization: Auto-hide Smart Ideas suggestion bar only when user has actively typed text (> 3 chars)
   input?.addEventListener('focus', () => {
-    if (window.innerWidth < 640 && smartPromptsBar && input.value.trim().length > 0) {
+    if (window.innerWidth < 640 && smartPromptsBar && input.value.trim().length > 3) {
       smartPromptsBar.style.display = 'none';
     }
   });
 
   input?.addEventListener('blur', () => {
-    // Always safely restore suggestion bar when mobile keyboard closes or input is empty
+    // Always safely restore suggestion bar when mobile keyboard closes or input is short
     setTimeout(() => {
-      if (smartPromptsBar && !input?.value?.trim()) {
+      if (smartPromptsBar && input?.value?.trim().length < 4) {
         smartPromptsBar.style.display = '';
       }
     }, 150);
@@ -18563,6 +18570,7 @@ const { character } = Astro.props;
   // Dynamic Smart Prompts System
   function renderSmartPrompts(prompts) {
     if (!smartPromptsContainer) return;
+    const charDisplayName = (activeChar && activeChar.name) || (character && character.name) || 'Holly';
     if (!prompts || prompts.length === 0) {
       prompts = (activeChar && activeChar.starterPrompts && activeChar.starterPrompts.length > 0)
         ? activeChar.starterPrompts
@@ -18570,15 +18578,23 @@ const { character } = Astro.props;
           ? character.starterPrompts
           : [];
     }
-    const charDisplayName = (activeChar && activeChar.name) || (character && character.name) || 'Character';
     if (!prompts || prompts.length === 0) {
       prompts = [
         `*Looks at ${charDisplayName}* "Tell me more."`,
-        `*Smiles softly* "What should we do next?"`
+        `*Smiles softly* "What should we do next?"`,
+        `"Tell me about yourself."`
       ];
     }
-    smartPromptsContainer.innerHTML = prompts.map(p => {
-      const cleanPrompt = String(p).trim().replace(/^["'«“]+|["'»”]+$/g, '').trim();
+    // Clean and substitute Custom Persona with real active character name
+    const cleanedList = prompts.map(p => {
+      let str = String(p).trim().replace(/^["'«“]+|["'»”]+$/g, '').trim();
+      str = str.replace(/Custom Persona/gi, charDisplayName);
+      str = str.replace(/\{\{char\}\}/gi, charDisplayName);
+      str = str.replace(/<char>/gi, charDisplayName);
+      return str;
+    }).filter(Boolean);
+
+    smartPromptsContainer.innerHTML = cleanedList.map(cleanPrompt => {
       const displayLabel = cleanPrompt.startsWith('*') ? cleanPrompt : `"${cleanPrompt}"`;
       const escapedVal = cleanPrompt.replace(/"/g, '&quot;');
       const escapedDisplay = displayLabel.replace(/"/g, '&quot;');
@@ -18594,6 +18610,10 @@ const { character } = Astro.props;
         </button>
       `;
     }).join('');
+
+    if (smartPromptsBar) {
+      smartPromptsBar.style.display = '';
+    }
 
     smartPromptsContainer.querySelectorAll('.room-starter-pill').forEach((btn) => {
       btn.addEventListener('click', () => {
