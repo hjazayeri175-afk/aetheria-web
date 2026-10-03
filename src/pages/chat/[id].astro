@@ -56,7 +56,8 @@ import {
   Mic,
   MoreVertical,
   Save,
-  Palette
+  Palette,
+  Image as ImageIcon
 } from '@lucide/astro';
 
 export function getStaticPaths() {
@@ -531,10 +532,25 @@ const { character } = Astro.props;
         class="flex-1 min-w-0 flex flex-col h-full overflow-hidden relative w-full max-w-full transition-colors duration-300"
         style="background: var(--theme-chat-bg, linear-gradient(to bottom, #090b17, #060810));"
       >
-        <!-- Telegram-Grade Dynamic Wallpaper & Doodle Pattern Overlay -->
+        <!-- Telegram-Grade 3-Layer Dynamic Wallpaper Engine -->
+        <!-- 1. Wallpaper Image / Photo Layer -->
+        <div 
+          id="chat-wallpaper-image-layer" 
+          class="absolute inset-0 pointer-events-none transition-all duration-300 z-0 bg-cover bg-center"
+          style="background-image: var(--theme-chat-wallpaper, none); filter: blur(var(--theme-chat-blur, 0px)) scale(1.04);"
+        ></div>
+
+        <!-- 2. Darkness Dimmer Scrim Layer -->
+        <div 
+          id="chat-wallpaper-dimmer" 
+          class="absolute inset-0 pointer-events-none transition-opacity duration-300 z-0 bg-black"
+          style="opacity: var(--theme-chat-dim, 0.2);"
+        ></div>
+
+        <!-- 3. Dynamic Vector Doodle Pattern Layer -->
         <div 
           id="chat-wallpaper-overlay" 
-          class="absolute inset-0 pointer-events-none transition-all duration-300 z-0 bg-cover bg-center" 
+          class="absolute inset-0 pointer-events-none transition-all duration-300 z-0 bg-repeat" 
           style="background-image: var(--theme-chat-pattern, none); background-size: var(--theme-chat-pattern-size, auto); opacity: var(--theme-chat-pattern-opacity, 0.18);"
         ></div>
         
@@ -3257,6 +3273,423 @@ const { character } = Astro.props;
                 <p class="text-[11px] text-slate-400 max-w-sm mx-auto">Click "+ New Entry" above or import a Tavern/Chub JSON lorebook to inject world knowledge into this roleplay.</p>
               </div>
 
+            </div>
+
+          </div>
+        </div>
+
+                <!-- Telegram-Grade Chat Appearance & Wallpaper Engine Modal -->
+        <div 
+          id="chat-appearance-modal" 
+          class="hidden fixed inset-0 z-50 bg-black/80 backdrop-blur-md flex items-center justify-center p-2.5 sm:p-6 transition-all duration-300 select-none"
+        >
+          <div class="w-full max-w-2xl max-h-[94vh] bg-[#121422] border border-white/10 rounded-3xl shadow-2xl shadow-black/95 flex flex-col overflow-hidden animate-in fade-in zoom-in-95 duration-200">
+            
+            <!-- Modal Header -->
+            <div class="p-4 sm:p-5 border-b border-white/[0.08] bg-[#0c0e1a] flex items-center justify-between shrink-0">
+              <div class="flex items-center gap-3 min-w-0">
+                <div class="w-9 h-9 sm:w-10 sm:h-10 rounded-2xl bg-purple-600/20 border border-purple-500/30 flex items-center justify-center text-purple-400 shrink-0">
+                  <Palette class="w-5 h-5" />
+                </div>
+                <div class="min-w-0">
+                  <h3 class="text-sm sm:text-base font-bold text-white truncate">Chat Appearance & Wallpaper</h3>
+                  <p class="text-[11px] text-slate-400 truncate">Themes, wallpapers, blur effects & message customization</p>
+                </div>
+              </div>
+              <button 
+                type="button" 
+                id="chat-appearance-close-btn" 
+                class="w-8 h-8 rounded-full bg-white/[0.05] hover:bg-white/10 text-slate-400 hover:text-white flex items-center justify-center transition cursor-pointer active:scale-95"
+                title="Close"
+              >
+                <X class="w-4 h-4" />
+              </button>
+            </div>
+
+            <!-- Tab Navigation Bar -->
+            <div class="px-4 sm:px-6 pt-2.5 flex items-center gap-2 border-b border-white/[0.08] bg-[#0c0e1a] shrink-0">
+              <button 
+                type="button" 
+                id="appearance-tab-themes" 
+                class="pb-2.5 px-3.5 text-xs sm:text-sm font-bold border-b-2 border-purple-500 text-white transition-all cursor-pointer flex items-center gap-2 active:scale-95"
+              >
+                <Palette class="w-4 h-4 text-purple-400" />
+                <span>Themes & Bubbles</span>
+              </button>
+              <button 
+                type="button" 
+                id="appearance-tab-wallpapers" 
+                class="pb-2.5 px-3.5 text-xs sm:text-sm font-medium border-b-2 border-transparent text-slate-400 hover:text-white transition-all cursor-pointer flex items-center gap-2 active:scale-95"
+              >
+                <ImageIcon class="w-4 h-4 text-slate-400" />
+                <span>Wallpaper & Effects</span>
+              </button>
+            </div>
+
+            <!-- Modal Scrollable Content Container -->
+            <div class="p-4 sm:p-6 overflow-y-auto max-h-[calc(94vh-180px)] space-y-6 no-scrollbar">
+
+              <!-- ============================================== -->
+              <!-- VIEW 1: THEMES & BUBBLES -->
+              <!-- ============================================== -->
+              <div id="appearance-view-themes" class="space-y-6">
+
+                <!-- 1. Live Interactive Preview Box (Themes View) -->
+                <div class="space-y-2">
+                  <div class="flex items-center justify-between">
+                    <span class="text-xs font-semibold uppercase tracking-wider text-slate-400">Live Preview</span>
+                    <span class="text-[11px] text-purple-400 font-mono">60fps Real-Time Sync</span>
+                  </div>
+                  
+                  <div 
+                    id="appearance-preview-viewport" 
+                    class="relative p-4 sm:p-5 rounded-2xl border border-white/10 overflow-hidden shadow-inner flex flex-col gap-3 min-h-[160px] justify-center transition-all duration-300"
+                    style="background: var(--theme-chat-bg, #070913);"
+                  >
+                    <!-- Preview Image Layer -->
+                    <div 
+                      id="appearance-preview-image" 
+                      class="absolute inset-0 pointer-events-none transition-all duration-300 bg-cover bg-center"
+                      style="background-image: var(--theme-chat-wallpaper, none); filter: blur(var(--theme-chat-blur, 0px)) scale(1.04);"
+                    ></div>
+
+                    <!-- Preview Dimmer Layer -->
+                    <div 
+                      id="appearance-preview-dimmer" 
+                      class="absolute inset-0 pointer-events-none transition-opacity duration-300 bg-black"
+                      style="opacity: var(--theme-chat-dim, 0.2);"
+                    ></div>
+
+                    <!-- Preview Doodle Layer -->
+                    <div 
+                      id="appearance-preview-pattern" 
+                      class="absolute inset-0 pointer-events-none transition-all duration-300 bg-repeat"
+                      style="background-image: var(--theme-chat-pattern, none); background-size: var(--theme-chat-pattern-size, auto); opacity: var(--theme-chat-pattern-opacity, 0.18);"
+                    ></div>
+
+                    <!-- Character Bubble Preview -->
+                    <div class="relative z-10 flex items-start gap-2.5 max-w-[85%]">
+                      <img src={character.avatarUrl} alt={character.name} class="w-7 h-7 rounded-full object-cover shrink-0 ring-1 ring-white/10 mt-0.5" />
+                      <div 
+                        id="appearance-preview-char-bubble" 
+                        class="p-3 rounded-tl-sm text-slate-200 transition-all duration-150 shadow-md select-none"
+                        style="background: var(--theme-bubble-char-bg, #101426); border: 1px solid var(--theme-bubble-char-border, rgba(255,255,255,0.08)); border-radius: var(--theme-bubble-radius, 16px); font-size: var(--theme-msg-font-size, 16px); line-height: 1.5;"
+                      >
+                        <span>How do you like the new style? Everything updates instantly across the website! ✨</span>
+                      </div>
+                    </div>
+
+                    <!-- User Bubble Preview -->
+                    <div class="relative z-10 flex items-start gap-2 max-w-[85%] ml-auto justify-end">
+                      <div 
+                        id="appearance-preview-user-bubble" 
+                        class="p-3 rounded-tr-sm text-white transition-all duration-150 shadow-md select-none text-left"
+                        style="background: var(--theme-bubble-user-bg, linear-gradient(135deg, var(--theme-accent) 0%, #6366f1 100%)); border-radius: var(--theme-bubble-radius, 16px); font-size: var(--theme-msg-font-size, 16px); line-height: 1.5;"
+                      >
+                        <span>It looks incredible! Feels just like Telegram with instant live syncing 🚀</span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- 2. Message Text Size Slider -->
+                <div class="p-3.5 sm:p-4 rounded-2xl bg-white/[0.03] border border-white/[0.06] space-y-3">
+                  <div class="flex items-center justify-between">
+                    <span class="text-xs font-semibold text-slate-200">Message Text Size</span>
+                    <span id="appearance-font-size-badge" class="px-2 py-0.5 rounded-md bg-purple-500/20 border border-purple-500/30 text-xs font-mono text-purple-300 font-bold">16px</span>
+                  </div>
+                  <input 
+                    type="range" 
+                    id="appearance-font-size-slider" 
+                    min="13" 
+                    max="22" 
+                    step="1" 
+                    value="16" 
+                    class="w-full h-1.5 bg-white/10 rounded-lg appearance-none cursor-pointer accent-purple-500"
+                  />
+                  <div class="flex justify-between text-[10px] text-slate-500 font-mono">
+                    <span>13px (Compact)</span>
+                    <span>16px (Standard)</span>
+                    <span>22px (Large)</span>
+                  </div>
+                </div>
+
+                <!-- 3. Message Corner Roundness Slider -->
+                <div class="p-3.5 sm:p-4 rounded-2xl bg-white/[0.03] border border-white/[0.06] space-y-3">
+                  <div class="flex items-center justify-between">
+                    <span class="text-xs font-semibold text-slate-200">Bubble Corner Roundness</span>
+                    <span id="appearance-radius-badge" class="px-2 py-0.5 rounded-md bg-purple-500/20 border border-purple-500/30 text-xs font-mono text-purple-300 font-bold">16px</span>
+                  </div>
+                  <input 
+                    type="range" 
+                    id="appearance-radius-slider" 
+                    min="0" 
+                    max="24" 
+                    step="2" 
+                    value="16" 
+                    class="w-full h-1.5 bg-white/10 rounded-lg appearance-none cursor-pointer accent-purple-500"
+                  />
+                  <div class="flex justify-between text-[10px] text-slate-500 font-mono">
+                    <span>Sharp (0px)</span>
+                    <span>Rounded (16px)</span>
+                    <span>Pill (24px)</span>
+                  </div>
+                </div>
+
+                <!-- 4. Global Color Themes -->
+                <div class="space-y-3">
+                  <div>
+                    <h4 class="text-xs font-semibold text-slate-200">Global Website & Chat Themes</h4>
+                    <p class="text-[11px] text-slate-400">Synchronizes buttons, focus rings, badges and bubbles across the entire site</p>
+                  </div>
+
+                  <div class="grid grid-cols-2 sm:grid-cols-3 gap-2.5" id="appearance-theme-presets-grid">
+                    <!-- Presets rendered dynamically -->
+                  </div>
+                </div>
+
+                <!-- 5. Advanced Color Customizer (Telegram Style) -->
+                <div class="p-4 rounded-2xl bg-white/[0.02] border border-white/[0.06] space-y-4">
+                  <h4 class="text-xs font-bold text-slate-300 uppercase tracking-wider">Advanced Color Customization</h4>
+                  
+                  <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                    <!-- User Outgoing Bubble Color -->
+                    <div class="p-3 rounded-xl bg-white/[0.02] border border-white/[0.06] flex items-center justify-between">
+                      <div class="flex items-center gap-2.5">
+                        <input type="color" id="appearance-user-bubble-input" value="#9333ea" class="w-7 h-7 rounded-lg bg-transparent border-0 cursor-pointer" />
+                        <div>
+                          <span class="text-xs font-medium text-slate-200 block">User Bubble</span>
+                          <span class="text-[10px] text-slate-400 block">Outgoing chat</span>
+                        </div>
+                      </div>
+                      <span id="appearance-user-bubble-hex" class="text-[11px] font-mono text-slate-400 uppercase">#9333ea</span>
+                    </div>
+
+                    <!-- AI Incoming Bubble Color -->
+                    <div class="p-3 rounded-xl bg-white/[0.02] border border-white/[0.06] flex items-center justify-between">
+                      <div class="flex items-center gap-2.5">
+                        <input type="color" id="appearance-char-bubble-input" value="#101426" class="w-7 h-7 rounded-lg bg-transparent border-0 cursor-pointer" />
+                        <div>
+                          <span class="text-xs font-medium text-slate-200 block">AI Bubble</span>
+                          <span class="text-[10px] text-slate-400 block">Incoming chat</span>
+                        </div>
+                      </div>
+                      <span id="appearance-char-bubble-hex" class="text-[11px] font-mono text-slate-400 uppercase">#101426</span>
+                    </div>
+
+                    <!-- Global Accent Color -->
+                    <div class="p-3 rounded-xl bg-white/[0.02] border border-white/[0.06] flex items-center justify-between">
+                      <div class="flex items-center gap-2.5">
+                        <input type="color" id="appearance-custom-accent-input" value="#9333ea" class="w-7 h-7 rounded-lg bg-transparent border-0 cursor-pointer" />
+                        <div>
+                          <span class="text-xs font-medium text-slate-200 block">Global Accent</span>
+                          <span class="text-[10px] text-slate-400 block">Site buttons</span>
+                        </div>
+                      </div>
+                      <span id="appearance-custom-accent-hex" class="text-[11px] font-mono text-slate-400 uppercase">#9333ea</span>
+                    </div>
+                  </div>
+                </div>
+
+              </div>
+
+              <!-- ============================================== -->
+              <!-- VIEW 2: WALLPAPERS & VISUAL EFFECTS -->
+              <!-- ============================================== -->
+              <div id="appearance-view-wallpapers" class="hidden space-y-6">
+
+                <!-- 1. Live Interactive Preview Box (Wallpaper View) -->
+                <div class="space-y-2">
+                  <div class="flex items-center justify-between">
+                    <span class="text-xs font-semibold uppercase tracking-wider text-slate-400">Wallpaper Live Preview</span>
+                    <span class="text-[11px] text-purple-400 font-mono">With Blur & Dimmer</span>
+                  </div>
+                  
+                  <div 
+                    id="appearance-wp-preview-viewport" 
+                    class="relative p-4 sm:p-5 rounded-2xl border border-white/10 overflow-hidden shadow-inner flex flex-col gap-3 min-h-[160px] justify-center transition-all duration-300"
+                    style="background: var(--theme-chat-bg, #070913);"
+                  >
+                    <!-- Preview Image Layer -->
+                    <div 
+                      id="appearance-wp-preview-image" 
+                      class="absolute inset-0 pointer-events-none transition-all duration-300 bg-cover bg-center"
+                      style="background-image: var(--theme-chat-wallpaper, none); filter: blur(var(--theme-chat-blur, 0px)) scale(1.04);"
+                    ></div>
+
+                    <!-- Preview Dimmer Layer -->
+                    <div 
+                      id="appearance-wp-preview-dimmer" 
+                      class="absolute inset-0 pointer-events-none transition-opacity duration-300 bg-black"
+                      style="opacity: var(--theme-chat-dim, 0.2);"
+                    ></div>
+
+                    <!-- Preview Doodle Layer -->
+                    <div 
+                      id="appearance-wp-preview-pattern" 
+                      class="absolute inset-0 pointer-events-none transition-all duration-300 bg-repeat"
+                      style="background-image: var(--theme-chat-pattern, none); background-size: var(--theme-chat-pattern-size, auto); opacity: var(--theme-chat-pattern-opacity, 0.18);"
+                    ></div>
+
+                    <!-- Sample Bubbles in Wallpaper Preview -->
+                    <div class="relative z-10 flex items-start gap-2.5 max-w-[85%]">
+                      <img src={character.avatarUrl} alt={character.name} class="w-7 h-7 rounded-full object-cover shrink-0 ring-1 ring-white/10 mt-0.5" />
+                      <div class="p-3 rounded-tl-sm text-slate-200 shadow-md select-none text-xs sm:text-sm" style="background: var(--theme-bubble-char-bg, #101426); border-radius: var(--theme-bubble-radius, 16px);">
+                        <span>Notice how the background blur & dimmer keep every word sharp and legible!</span>
+                      </div>
+                    </div>
+                    <div class="relative z-10 flex items-start gap-2 max-w-[85%] ml-auto justify-end">
+                      <div class="p-3 rounded-tr-sm text-white shadow-md select-none text-left text-xs sm:text-sm" style="background: var(--theme-bubble-user-bg, #9333ea); border-radius: var(--theme-bubble-radius, 16px);">
+                        <span>Clean, atmospheric and comfortable for night reading 🌙</span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- 2. Telegram-Style Visual Effects Toolbar -->
+                <div class="p-4 rounded-2xl bg-white/[0.03] border border-white/[0.08] space-y-4">
+                  <div class="flex items-center justify-between">
+                    <h4 class="text-xs font-bold text-slate-200 uppercase tracking-wider">Wallpaper Visual Effects</h4>
+                    <span class="text-[10px] text-purple-400 font-mono">Telegram-Inspired</span>
+                  </div>
+
+                  <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <!-- Blur Toggle -->
+                    <div class="p-3 rounded-xl bg-white/[0.02] border border-white/[0.06] flex items-center justify-between">
+                      <div>
+                        <span class="text-xs font-semibold text-white block">Blur Wallpaper</span>
+                        <span class="text-[10px] text-slate-400 block">Smooth Gaussian blur for focus</span>
+                      </div>
+                      <label class="relative inline-flex items-center cursor-pointer">
+                        <input type="checkbox" id="appearance-blur-toggle" class="sr-only peer" />
+                        <div class="w-11 h-6 bg-white/10 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-purple-600"></div>
+                      </label>
+                    </div>
+
+                    <!-- Darkness Dimmer Slider -->
+                    <div class="p-3 rounded-xl bg-white/[0.02] border border-white/[0.06] space-y-2">
+                      <div class="flex items-center justify-between">
+                        <span class="text-xs font-semibold text-white">Darkness Dimmer</span>
+                        <span id="appearance-dimmer-badge" class="px-1.5 py-0.5 rounded bg-purple-500/20 text-[10px] font-mono text-purple-300 font-bold">20%</span>
+                      </div>
+                      <input 
+                        type="range" 
+                        id="appearance-dimmer-slider" 
+                        min="0" 
+                        max="70" 
+                        step="5" 
+                        value="20" 
+                        class="w-full h-1.5 bg-white/10 rounded-lg appearance-none cursor-pointer accent-purple-500"
+                      />
+                    </div>
+                  </div>
+
+                  <!-- Vector Doodle Pattern Overlay Selector -->
+                  <div class="space-y-2.5 pt-2 border-t border-white/[0.06]">
+                    <div class="flex items-center justify-between">
+                      <span class="text-xs font-semibold text-slate-200">Vector Doodle Overlay</span>
+                      <div class="flex items-center gap-2">
+                        <span class="text-[11px] text-slate-400">Opacity:</span>
+                        <span id="appearance-pattern-opacity-badge" class="font-mono text-purple-300 font-bold text-xs">18%</span>
+                      </div>
+                    </div>
+
+                    <!-- Pattern Selection Pills -->
+                    <div class="flex flex-wrap gap-2" id="appearance-pattern-pills-row">
+                      <button type="button" class="pattern-pill-btn px-3 py-1.5 rounded-xl border text-xs font-medium cursor-pointer transition active:scale-95 bg-white/[0.08] border-white/40 text-white" data-pattern-id="none">None</button>
+                      <button type="button" class="pattern-pill-btn px-3 py-1.5 rounded-xl border text-xs font-medium cursor-pointer transition active:scale-95 bg-white/[0.02] border-white/10 text-slate-400 hover:text-white" data-pattern-id="telegram-doodles">Telegram Doodles</button>
+                      <button type="button" class="pattern-pill-btn px-3 py-1.5 rounded-xl border text-xs font-medium cursor-pointer transition active:scale-95 bg-white/[0.02] border-white/10 text-slate-400 hover:text-white" data-pattern-id="cyber-circuit">Cyber Circuit</button>
+                      <button type="button" class="pattern-pill-btn px-3 py-1.5 rounded-xl border text-xs font-medium cursor-pointer transition active:scale-95 bg-white/[0.02] border-white/10 text-slate-400 hover:text-white" data-pattern-id="constellation-stars">Constellations</button>
+                      <button type="button" class="pattern-pill-btn px-3 py-1.5 rounded-xl border text-xs font-medium cursor-pointer transition active:scale-95 bg-white/[0.02] border-white/10 text-slate-400 hover:text-white" data-pattern-id="hex-mesh">Hex Mesh</button>
+                      <button type="button" class="pattern-pill-btn px-3 py-1.5 rounded-xl border text-xs font-medium cursor-pointer transition active:scale-95 bg-white/[0.02] border-white/10 text-slate-400 hover:text-white" data-pattern-id="matrix-grid">Matrix Code</button>
+                    </div>
+
+                    <!-- Pattern Opacity Slider -->
+                    <input 
+                      type="range" 
+                      id="appearance-pattern-opacity-slider" 
+                      min="5" 
+                      max="50" 
+                      step="1" 
+                      value="18" 
+                      class="w-full h-1.5 bg-white/10 rounded-lg appearance-none cursor-pointer accent-purple-500 mt-2"
+                    />
+                  </div>
+                </div>
+
+                <!-- 3. Custom Wallpaper Actions (Upload & URL) -->
+                <div class="p-3.5 rounded-2xl bg-white/[0.02] border border-white/[0.06] space-y-3">
+                  <span class="text-xs font-semibold text-slate-200 block">Custom Wallpaper</span>
+                  <div class="flex flex-col sm:flex-row items-center gap-2.5">
+                    <!-- File Upload Button -->
+                    <label class="w-full sm:w-auto px-4 py-2.5 rounded-xl bg-purple-600/20 hover:bg-purple-600/30 border border-purple-500/30 text-purple-300 text-xs font-bold flex items-center justify-center gap-2 cursor-pointer transition shrink-0 active:scale-95">
+                      <Upload class="w-4 h-4" />
+                      <span>Choose from Photos</span>
+                      <input type="file" id="appearance-wallpaper-file-input" accept="image/*" class="hidden" />
+                    </label>
+
+                    <!-- Direct URL Input -->
+                    <div class="flex-1 w-full flex items-center gap-2">
+                      <input 
+                        type="url" 
+                        id="appearance-custom-wallpaper-url" 
+                        placeholder="Or paste direct image URL (https://...)" 
+                        class="flex-1 px-3 py-2 rounded-xl bg-white/[0.04] border border-white/10 text-xs text-white placeholder-slate-500 focus:outline-none focus:border-purple-500/60"
+                      />
+                      <button 
+                        type="button" 
+                        id="appearance-apply-url-btn" 
+                        class="px-3.5 py-2 rounded-xl bg-white/[0.08] hover:bg-white/15 text-xs text-white font-medium transition cursor-pointer shrink-0 active:scale-95"
+                      >
+                        Apply
+                      </button>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- 4. Curated Wallpaper Gallery with Category Filters -->
+                <div class="space-y-3">
+                  <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+                    <div>
+                      <h4 class="text-xs font-semibold text-slate-200">Wallpaper Catalog</h4>
+                      <p class="text-[11px] text-slate-400">Choose from atmospheric artwork, gradients, or vector patterns</p>
+                    </div>
+
+                    <!-- Filter Pills -->
+                    <div class="flex items-center gap-1.5 p-1 rounded-xl bg-white/[0.04] border border-white/[0.06] shrink-0" id="appearance-wallpaper-category-filters">
+                      <button type="button" class="wp-cat-filter px-2.5 py-1 rounded-lg text-[11px] font-bold transition cursor-pointer bg-purple-600 text-white" data-cat="all">All</button>
+                      <button type="button" class="wp-cat-filter px-2.5 py-1 rounded-lg text-[11px] font-medium transition cursor-pointer text-slate-400 hover:text-white" data-cat="gradients">Gradients</button>
+                      <button type="button" class="wp-cat-filter px-2.5 py-1 rounded-lg text-[11px] font-medium transition cursor-pointer text-slate-400 hover:text-white" data-cat="art">Art & Photos</button>
+                      <button type="button" class="wp-cat-filter px-2.5 py-1 rounded-lg text-[11px] font-medium transition cursor-pointer text-slate-400 hover:text-white" data-cat="patterns">Patterns</button>
+                    </div>
+                  </div>
+
+                  <!-- Wallpapers Grid -->
+                  <div class="grid grid-cols-2 sm:grid-cols-3 gap-2.5" id="appearance-wallpaper-grid">
+                    <!-- Wallpapers rendered dynamically -->
+                  </div>
+                </div>
+
+              </div>
+
+            </div>
+
+            <!-- Modal Footer -->
+            <div class="p-3.5 sm:p-5 border-t border-white/[0.08] bg-[#0c0e1a] flex items-center justify-between shrink-0">
+              <button 
+                type="button" 
+                id="appearance-reset-btn" 
+                class="px-4 py-2 rounded-xl text-xs font-medium text-slate-400 hover:text-white hover:bg-white/[0.06] transition cursor-pointer active:scale-95"
+              >
+                Reset to Default
+              </button>
+              <button 
+                type="button" 
+                id="appearance-save-btn" 
+                class="px-5 py-2.5 rounded-xl bg-purple-600 hover:bg-purple-500 text-white text-xs font-bold transition shadow-lg shadow-purple-950/50 cursor-pointer active:scale-95"
+              >
+                Done
+              </button>
             </div>
 
           </div>
@@ -18905,31 +19338,83 @@ Requirements:
 
 
   // ==========================================
-  // TELEGRAM-GRADE CHAT APPEARANCE & THEME CONTROLLER
+  // TELEGRAM-GRADE CHAT APPEARANCE & THEME CONTROLLER (STEP 2 ENGINE)
   // ==========================================
   const appearanceModal = document.getElementById('chat-appearance-modal');
   const appearanceCloseBtn = document.getElementById('chat-appearance-close-btn');
   const appearanceSaveBtn = document.getElementById('appearance-save-btn');
   const appearanceResetBtn = document.getElementById('appearance-reset-btn');
 
+  // Tabs & Views
+  const tabThemes = document.getElementById('appearance-tab-themes');
+  const tabWallpapers = document.getElementById('appearance-tab-wallpapers');
+  const viewThemes = document.getElementById('appearance-view-themes');
+  const viewWallpapers = document.getElementById('appearance-view-wallpapers');
+
+  // Tab 1 Previews
   const previewViewport = document.getElementById('appearance-preview-viewport');
+  const previewImage = document.getElementById('appearance-preview-image');
+  const previewDimmer = document.getElementById('appearance-preview-dimmer');
   const previewPattern = document.getElementById('appearance-preview-pattern');
   const previewCharBubble = document.getElementById('appearance-preview-char-bubble');
   const previewUserBubble = document.getElementById('appearance-preview-user-bubble');
 
+  // Tab 2 Previews
+  const wpPreviewViewport = document.getElementById('appearance-wp-preview-viewport');
+  const wpPreviewImage = document.getElementById('appearance-wp-preview-image');
+  const wpPreviewDimmer = document.getElementById('appearance-wp-preview-dimmer');
+  const wpPreviewPattern = document.getElementById('appearance-wp-preview-pattern');
+
+  // Controls - Themes
   const fontSizeSlider = document.getElementById('appearance-font-size-slider');
   const fontSizeBadge = document.getElementById('appearance-font-size-badge');
-
   const radiusSlider = document.getElementById('appearance-radius-slider');
   const radiusBadge = document.getElementById('appearance-radius-badge');
-
   const themePresetsGrid = document.getElementById('appearance-theme-presets-grid');
+  
+  // Advanced Colors
+  const userBubbleInput = document.getElementById('appearance-user-bubble-input');
+  const userBubbleHex = document.getElementById('appearance-user-bubble-hex');
+  const charBubbleInput = document.getElementById('appearance-char-bubble-input');
+  const charBubbleHex = document.getElementById('appearance-char-bubble-hex');
   const customAccentInput = document.getElementById('appearance-custom-accent-input');
   const customAccentHex = document.getElementById('appearance-custom-accent-hex');
 
-  const wallpaperGrid = document.getElementById('appearance-wallpaper-grid');
+  // Controls - Wallpapers & Effects
+  const blurToggle = document.getElementById('appearance-blur-toggle');
+  const dimmerSlider = document.getElementById('appearance-dimmer-slider');
+  const dimmerBadge = document.getElementById('appearance-dimmer-badge');
   const patternOpacitySlider = document.getElementById('appearance-pattern-opacity-slider');
   const patternOpacityBadge = document.getElementById('appearance-pattern-opacity-badge');
+  const wallpaperFileInput = document.getElementById('appearance-wallpaper-file-input');
+  const customWpUrlInput = document.getElementById('appearance-custom-wallpaper-url');
+  const applyUrlBtn = document.getElementById('appearance-apply-url-btn');
+  const wallpaperGrid = document.getElementById('appearance-wallpaper-grid');
+  const wpCatFilterContainer = document.getElementById('appearance-wallpaper-category-filters');
+
+  let activeWpCategory = 'all';
+
+  // Tab switching
+  function switchAppearanceTab(tab) {
+    if (tab === 'wallpapers') {
+      tabWallpapers?.classList.add('border-purple-500', 'text-white', 'font-bold');
+      tabWallpapers?.classList.remove('border-transparent', 'text-slate-400', 'font-medium');
+      tabThemes?.classList.remove('border-purple-500', 'text-white', 'font-bold');
+      tabThemes?.classList.add('border-transparent', 'text-slate-400', 'font-medium');
+      viewWallpapers?.classList.remove('hidden');
+      viewThemes?.classList.add('hidden');
+    } else {
+      tabThemes?.classList.add('border-purple-500', 'text-white', 'font-bold');
+      tabThemes?.classList.remove('border-transparent', 'text-slate-400', 'font-medium');
+      tabWallpapers?.classList.remove('border-purple-500', 'text-white', 'font-bold');
+      tabWallpapers?.classList.add('border-transparent', 'text-slate-400', 'font-medium');
+      viewThemes?.classList.remove('hidden');
+      viewWallpapers?.classList.add('hidden');
+    }
+  }
+
+  tabThemes?.addEventListener('click', () => switchAppearanceTab('themes'));
+  tabWallpapers?.addEventListener('click', () => switchAppearanceTab('wallpapers'));
 
   function openChatAppearanceModal() {
     if (!appearanceModal) return;
@@ -18947,7 +19432,7 @@ Requirements:
   appearanceCloseBtn?.addEventListener('click', closeChatAppearanceModal);
   appearanceSaveBtn?.addEventListener('click', () => {
     closeChatAppearanceModal();
-    showNotification('Theme & appearance saved!');
+    showNotification('Theme, wallpaper & effects saved!');
   });
   appearanceResetBtn?.addEventListener('click', () => {
     if (window.AetheriaTheme) {
@@ -18965,35 +19450,85 @@ Requirements:
 
   function syncAppearanceInputs() {
     if (!window.AetheriaTheme) return;
-    const settings = window.AetheriaTheme.getSettings();
+    const s = window.AetheriaTheme.getSettings();
 
-    if (fontSizeSlider) fontSizeSlider.value = settings.fontSize || 16;
-    if (fontSizeBadge) fontSizeBadge.textContent = (settings.fontSize || 16) + 'px';
+    // 1. Text size
+    if (fontSizeSlider) fontSizeSlider.value = s.fontSize || 16;
+    if (fontSizeBadge) fontSizeBadge.textContent = (s.fontSize || 16) + 'px';
 
-    if (radiusSlider) radiusSlider.value = settings.bubbleRadius !== undefined ? settings.bubbleRadius : 16;
-    if (radiusBadge) radiusBadge.textContent = (settings.bubbleRadius !== undefined ? settings.bubbleRadius : 16) + 'px';
+    // 2. Corner radius
+    if (radiusSlider) radiusSlider.value = s.bubbleRadius !== undefined ? s.bubbleRadius : 16;
+    if (radiusBadge) radiusBadge.textContent = (s.bubbleRadius !== undefined ? s.bubbleRadius : 16) + 'px';
 
-    if (customAccentInput) customAccentInput.value = settings.accent || '#9333ea';
-    if (customAccentHex) customAccentHex.textContent = (settings.accent || '#9333ea').toUpperCase();
+    // 3. Colors
+    if (customAccentInput) customAccentInput.value = s.accent || '#9333ea';
+    if (customAccentHex) customAccentHex.textContent = (s.accent || '#9333ea').toUpperCase();
 
-    const opacityPct = Math.round((settings.chatPatternOpacity !== undefined ? settings.chatPatternOpacity : 0.18) * 100);
+    const userColor = s.userBubbleBg && s.userBubbleBg.startsWith('#') ? s.userBubbleBg : (s.accent || '#9333ea');
+    if (userBubbleInput) userBubbleInput.value = userColor;
+    if (userBubbleHex) userBubbleHex.textContent = userColor.toUpperCase();
+
+    const charColor = s.charBubbleBg && s.charBubbleBg.startsWith('#') ? s.charBubbleBg : '#101426';
+    if (charBubbleInput) charBubbleInput.value = charColor;
+    if (charBubbleHex) charBubbleHex.textContent = charColor.toUpperCase();
+
+    // 4. Wallpaper Effects
+    if (blurToggle) blurToggle.checked = !!s.chatBlur;
+
+    const dimPct = Math.round((s.chatDim !== undefined ? s.chatDim : 0.2) * 100);
+    if (dimmerSlider) dimmerSlider.value = dimPct;
+    if (dimmerBadge) dimmerBadge.textContent = dimPct + '%';
+
+    const opacityPct = Math.round((s.chatPatternOpacity !== undefined ? s.chatPatternOpacity : 0.18) * 100);
     if (patternOpacitySlider) patternOpacitySlider.value = opacityPct;
     if (patternOpacityBadge) patternOpacityBadge.textContent = opacityPct + '%';
 
-    updateLivePreview(settings);
+    // Highlight active pattern pill
+    document.querySelectorAll('.pattern-pill-btn').forEach((btn) => {
+      const pId = btn.getAttribute('data-pattern-id');
+      const isSelected = (s.chatPatternId || 'none') === pId;
+      if (isSelected) {
+        btn.className = 'pattern-pill-btn px-3 py-1.5 rounded-xl border text-xs font-bold cursor-pointer transition active:scale-95 bg-purple-600 border-purple-500 text-white shadow-md';
+      } else {
+        btn.className = 'pattern-pill-btn px-3 py-1.5 rounded-xl border text-xs font-medium cursor-pointer transition active:scale-95 bg-white/[0.02] border-white/10 text-slate-400 hover:text-white';
+      }
+    });
+
+    updateLivePreview(s);
     renderThemePresets();
     renderWallpaperOptions();
   }
 
   function updateLivePreview(s) {
     if (!s) return;
-    if (previewViewport) {
-      previewViewport.style.background = s.chatBg || '#070913';
+    const wpImg = s.chatWallpaper && s.chatWallpaper !== 'none'
+      ? ((s.chatWallpaper.startsWith('http') || s.chatWallpaper.startsWith('data:')) ? `url("${s.chatWallpaper}")` : s.chatWallpaper)
+      : 'none';
+    const blurStyle = s.chatBlur ? 'blur(12px) scale(1.04)' : 'none';
+    const dimOpacity = s.chatDim !== undefined ? s.chatDim : 0.2;
+    const patOpacity = s.chatPatternOpacity !== undefined ? s.chatPatternOpacity : 0.18;
+
+    let patternUrl = 'none';
+    let patternSize = 'auto';
+    if (s.chatPatternId && window.AetheriaTheme && window.AetheriaTheme.DOODLE_PATTERNS[s.chatPatternId]) {
+      patternUrl = window.AetheriaTheme.DOODLE_PATTERNS[s.chatPatternId].pattern;
+      patternSize = window.AetheriaTheme.DOODLE_PATTERNS[s.chatPatternId].patternSize;
+    } else if (s.chatPattern && s.chatPattern !== 'none') {
+      patternUrl = s.chatPattern;
+      patternSize = s.chatPatternSize || 'auto';
     }
+
+    // Tab 1 Preview
+    if (previewViewport) previewViewport.style.background = s.chatBg || '#070913';
+    if (previewImage) {
+      previewImage.style.backgroundImage = wpImg;
+      previewImage.style.filter = blurStyle;
+    }
+    if (previewDimmer) previewDimmer.style.opacity = dimOpacity;
     if (previewPattern) {
-      previewPattern.style.backgroundImage = s.chatPattern || 'none';
-      previewPattern.style.backgroundSize = s.chatPatternSize || 'auto';
-      previewPattern.style.opacity = s.chatPatternOpacity !== undefined ? s.chatPatternOpacity : 0.18;
+      previewPattern.style.backgroundImage = patternUrl;
+      previewPattern.style.backgroundSize = patternSize;
+      previewPattern.style.opacity = patOpacity;
     }
     if (previewCharBubble) {
       previewCharBubble.style.background = s.charBubbleBg || '#101426';
@@ -19005,8 +19540,40 @@ Requirements:
       previewUserBubble.style.borderRadius = (s.bubbleRadius !== undefined ? s.bubbleRadius : 16) + 'px';
       previewUserBubble.style.fontSize = (s.fontSize || 16) + 'px';
     }
+
+    // Tab 2 Preview
+    if (wpPreviewViewport) wpPreviewViewport.style.background = s.chatBg || '#070913';
+    if (wpPreviewImage) {
+      wpPreviewImage.style.backgroundImage = wpImg;
+      wpPreviewImage.style.filter = blurStyle;
+    }
+    if (wpPreviewDimmer) wpPreviewDimmer.style.opacity = dimOpacity;
+    if (wpPreviewPattern) {
+      wpPreviewPattern.style.backgroundImage = patternUrl;
+      wpPreviewPattern.style.backgroundSize = patternSize;
+      wpPreviewPattern.style.opacity = patOpacity;
+    }
+
+    // Live section background sync behind modal
+    const liveSection = document.getElementById('chat-viewport-section');
+    const liveWpImg = document.getElementById('chat-wallpaper-image-layer');
+    const liveDimmer = document.getElementById('chat-wallpaper-dimmer');
+    const livePattern = document.getElementById('chat-wallpaper-overlay');
+
+    if (liveSection) liveSection.style.background = s.chatBg || '#070913';
+    if (liveWpImg) {
+      liveWpImg.style.backgroundImage = wpImg;
+      liveWpImg.style.filter = blurStyle;
+    }
+    if (liveDimmer) liveDimmer.style.opacity = dimOpacity;
+    if (livePattern) {
+      livePattern.style.backgroundImage = patternUrl;
+      livePattern.style.backgroundSize = patternSize;
+      livePattern.style.opacity = patOpacity;
+    }
   }
 
+  // Sliders listeners
   fontSizeSlider?.addEventListener('input', (e) => {
     const val = parseInt(e.target.value, 10);
     if (fontSizeBadge) fontSizeBadge.textContent = val + 'px';
@@ -19025,12 +19592,68 @@ Requirements:
     }
   });
 
+  // Blur Toggle listener
+  blurToggle?.addEventListener('change', (e) => {
+    const isBlurred = e.target.checked;
+    if (window.AetheriaTheme) {
+      const updated = window.AetheriaTheme.saveSettings({ chatBlur: isBlurred });
+      updateLivePreview(updated);
+    }
+  });
+
+  // Dimmer slider listener
+  dimmerSlider?.addEventListener('input', (e) => {
+    const val = parseInt(e.target.value, 10);
+    if (dimmerBadge) dimmerBadge.textContent = val + '%';
+    const dec = val / 100;
+    if (window.AetheriaTheme) {
+      const updated = window.AetheriaTheme.saveSettings({ chatDim: dec });
+      updateLivePreview(updated);
+    }
+  });
+
+  // Pattern Opacity listener
   patternOpacitySlider?.addEventListener('input', (e) => {
     const val = parseInt(e.target.value, 10);
     if (patternOpacityBadge) patternOpacityBadge.textContent = val + '%';
     const dec = val / 100;
     if (window.AetheriaTheme) {
       const updated = window.AetheriaTheme.saveSettings({ chatPatternOpacity: dec });
+      updateLivePreview(updated);
+    }
+  });
+
+  // Pattern pills listeners
+  document.querySelectorAll('.pattern-pill-btn').forEach((btn) => {
+    btn.addEventListener('click', () => {
+      const pId = btn.getAttribute('data-pattern-id');
+      if (window.AetheriaTheme) {
+        const patObj = window.AetheriaTheme.DOODLE_PATTERNS[pId];
+        const updated = window.AetheriaTheme.saveSettings({
+          chatPatternId: pId,
+          chatPattern: patObj ? patObj.pattern : 'none',
+          chatPatternSize: patObj ? patObj.patternSize : 'auto'
+        });
+        syncAppearanceInputs();
+      }
+    });
+  });
+
+  // Custom Color inputs
+  userBubbleInput?.addEventListener('input', (e) => {
+    const hex = e.target.value;
+    if (userBubbleHex) userBubbleHex.textContent = hex.toUpperCase();
+    if (window.AetheriaTheme) {
+      const updated = window.AetheriaTheme.saveSettings({ userBubbleBg: hex });
+      updateLivePreview(updated);
+    }
+  });
+
+  charBubbleInput?.addEventListener('input', (e) => {
+    const hex = e.target.value;
+    if (charBubbleHex) charBubbleHex.textContent = hex.toUpperCase();
+    if (window.AetheriaTheme) {
+      const updated = window.AetheriaTheme.saveSettings({ charBubbleBg: hex });
       updateLivePreview(updated);
     }
   });
@@ -19052,6 +19675,76 @@ Requirements:
       updateLivePreview(updated);
       renderThemePresets();
     }
+  });
+
+  // Wallpaper Upload Handling (with Canvas Scaler to protect localStorage)
+  wallpaperFileInput?.addEventListener('change', (e) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    const reader = new FileReader();
+    reader.onload = function(event) {
+      const img = new window.window.Image();
+      img.onload = function() {
+        const canvas = document.createElement('canvas');
+        const maxDim = 1280;
+        let w = img.width;
+        let h = img.height;
+        if (w > maxDim || h > maxDim) {
+          if (w > h) {
+            h = Math.round((h * maxDim) / w);
+            w = maxDim;
+          } else {
+            w = Math.round((w * maxDim) / h);
+            h = maxDim;
+          }
+        }
+        canvas.width = w;
+        canvas.height = h;
+        const ctx = canvas.getContext('2d');
+        ctx.drawImage(img, 0, 0, w, h);
+        const compressedDataUrl = canvas.toDataURL('image/jpeg', 0.85);
+
+        if (window.AetheriaTheme) {
+          const updated = window.AetheriaTheme.saveSettings({
+            wallpaperId: 'custom-upload',
+            chatWallpaper: compressedDataUrl,
+            chatBg: '#070913'
+          });
+          syncAppearanceInputs();
+          showNotification('Custom wallpaper uploaded successfully!');
+        }
+      };
+      img.src = event.target.result;
+    };
+    reader.readAsDataURL(file);
+  });
+
+  // Custom Wallpaper URL input
+  applyUrlBtn?.addEventListener('click', () => {
+    const url = customWpUrlInput?.value?.trim();
+    if (!url) return;
+    if (window.AetheriaTheme) {
+      const updated = window.AetheriaTheme.saveSettings({
+        wallpaperId: 'custom-url',
+        chatWallpaper: url,
+        chatBg: '#070913'
+      });
+      syncAppearanceInputs();
+      showNotification('Custom image wallpaper applied!');
+    }
+  });
+
+  // Category filter clicks
+  wpCatFilterContainer?.querySelectorAll('.wp-cat-filter').forEach((btn) => {
+    btn.addEventListener('click', () => {
+      activeWpCategory = btn.getAttribute('data-cat') || 'all';
+      wpCatFilterContainer.querySelectorAll('.wp-cat-filter').forEach(b => {
+        b.className = 'wp-cat-filter px-2.5 py-1 rounded-lg text-[11px] font-medium transition cursor-pointer text-slate-400 hover:text-white';
+      });
+      btn.className = 'wp-cat-filter px-2.5 py-1 rounded-lg text-[11px] font-bold transition cursor-pointer bg-purple-600 text-white';
+      renderWallpaperOptions();
+    });
   });
 
   function renderThemePresets() {
@@ -19107,45 +19800,80 @@ Requirements:
   function renderWallpaperOptions() {
     if (!wallpaperGrid || !window.AetheriaTheme) return;
     const current = window.AetheriaTheme.getSettings();
-    wallpaperGrid.innerHTML = window.AetheriaTheme.WALLPAPERS.map((w) => {
+
+    const filtered = window.AetheriaTheme.WALLPAPERS.filter(w => {
+      if (activeWpCategory === 'all') return true;
+      return w.category === activeWpCategory;
+    });
+
+    wallpaperGrid.innerHTML = filtered.map((w) => {
       const isSelected = current.wallpaperId === w.id || (!current.wallpaperId && w.id === 'default');
+      const isImage = w.wallpaper && w.wallpaper !== 'none';
+      const isPattern = !!w.patternId;
+
+      let thumbBgStyle = '';
+      if (isImage) {
+        thumbBgStyle = `background: ${w.bg}; background-image: url("${w.wallpaper}"); background-size: cover; background-position: center;`;
+      } else {
+        thumbBgStyle = `background: ${w.bg};`;
+      }
+
+      let patternOverlayStyle = '';
+      if (isPattern && window.AetheriaTheme.DOODLE_PATTERNS[w.patternId]) {
+        const pat = window.AetheriaTheme.DOODLE_PATTERNS[w.patternId];
+        patternOverlayStyle = `background-image: ${pat.pattern}; background-size: ${pat.patternSize}; opacity: 0.35;`;
+      }
+
       return `
         <button 
           type="button" 
-          class="wallpaper-preset-btn p-2.5 rounded-2xl border text-left transition flex flex-col gap-2 cursor-pointer ${
+          class="wallpaper-card-btn p-2 rounded-2xl border text-left transition flex flex-col gap-1.5 cursor-pointer relative overflow-hidden group ${
             isSelected 
-              ? 'bg-white/[0.08] border-white/40 ring-2 ring-[var(--theme-accent)] shadow-lg' 
+              ? 'bg-white/[0.08] border-white/50 ring-2 ring-[var(--theme-accent)] shadow-lg' 
               : 'bg-white/[0.02] hover:bg-white/[0.05] border-white/[0.08] text-slate-300'
           }" 
           data-wallpaper-id="${w.id}"
         >
           <div 
-            class="h-14 w-full rounded-xl border border-white/10 relative overflow-hidden flex items-center justify-center shadow-inner"
-            style="background: ${w.bg};"
+            class="h-16 w-full rounded-xl border border-white/10 relative overflow-hidden flex flex-col justify-end p-2 shadow-inner"
+            style="${thumbBgStyle}"
           >
             <div 
-              class="absolute inset-0 bg-cover bg-center pointer-events-none"
-              style="background-image: ${w.pattern || 'none'}; background-size: ${w.patternSize || 'auto'}; opacity: 0.25;"
+              class="absolute inset-0 pointer-events-none bg-repeat"
+              style="${patternOverlayStyle}"
             ></div>
-            <span class="text-[10px] font-bold text-white/90 drop-shadow-md relative z-10 px-1.5 py-0.5 rounded bg-black/40 backdrop-blur-xs">
-              ${w.name}
-            </span>
+            <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent pointer-events-none"></div>
+
+            <div class="relative z-10 flex items-center justify-between w-full">
+              <span class="text-[10px] font-bold text-white drop-shadow-md truncate">
+                ${w.name}
+              </span>
+              ${isSelected ? '<span class="w-3.5 h-3.5 rounded-full bg-purple-500 text-white flex items-center justify-center text-[9px] font-bold">✓</span>' : ''}
+            </div>
           </div>
         </button>
       `;
     }).join('');
 
-    wallpaperGrid.querySelectorAll('.wallpaper-preset-btn').forEach((btn) => {
+    wallpaperGrid.querySelectorAll('.wallpaper-card-btn').forEach((btn) => {
       btn.addEventListener('click', () => {
         const id = btn.getAttribute('data-wallpaper-id');
         const found = window.AetheriaTheme.WALLPAPERS.find(x => x.id === id);
         if (found) {
-          const updated = window.AetheriaTheme.saveSettings({
+          const updateObj = {
             wallpaperId: found.id,
             chatBg: found.bg,
-            chatPattern: found.pattern,
-            chatPatternSize: found.patternSize || 'auto'
-          });
+            chatWallpaper: found.wallpaper || 'none'
+          };
+          if (found.patternId) {
+            updateObj.chatPatternId = found.patternId;
+            const pat = window.AetheriaTheme.DOODLE_PATTERNS[found.patternId];
+            if (pat) {
+              updateObj.chatPattern = pat.pattern;
+              updateObj.chatPatternSize = pat.patternSize;
+            }
+          }
+          const updated = window.AetheriaTheme.saveSettings(updateObj);
           syncAppearanceInputs();
         }
       });
