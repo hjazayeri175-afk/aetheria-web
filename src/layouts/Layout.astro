@@ -776,20 +776,66 @@ const {
             root.style.setProperty('--theme-bubble-char-text', '#f1f5f9');
           }
 
-          // Accent colors
+                              // Accent colors
           const accent = theme.accent || '#9333ea';
           const rgb = theme.accentRgb || hexToRgb(accent);
           root.style.setProperty('--theme-accent', accent);
           root.style.setProperty('--theme-accent-rgb', rgb);
           root.style.setProperty('--theme-accent-hover', accent);
-          root.style.setProperty('--theme-accent-glow', `rgba(${rgb}, 0.35)`);
+          root.style.setProperty('--theme-accent-subtle', 'rgba(' + rgb + ', 0.15)');
+          root.style.setProperty('--theme-accent-border', 'rgba(' + rgb + ', 0.35)');
+          root.style.setProperty('--theme-accent-glow', 'rgba(' + rgb + ', 0.45)');
 
           // Telegram Name Color
           const nameColor = theme.nameColor || '#a855f7';
           root.style.setProperty('--theme-name-color', nameColor);
           root.style.setProperty('--theme-char-name-color', nameColor);
 
-          // Geometry
+          // Real-time DOM element synchronizer
+          if (typeof document !== 'undefined') {
+            try {
+              // Update sliders
+              document.querySelectorAll('.tg-slider').forEach(function(slider) {
+                const min = parseFloat(slider.min) || 0;
+                const max = parseFloat(slider.max) || 100;
+                const val = parseFloat(slider.value) || 0;
+                const pct = ((val - min) / (max - min)) * 100;
+                slider.style.background = 'linear-gradient(to right, ' + accent + ' 0%, ' + accent + ' ' + pct + '%, #343A4A ' + pct + '%, #343A4A 100%)';
+              });
+
+              // Update active theme card
+              const curPreset = theme.presetId || '';
+              document.querySelectorAll('.tg-theme-mockup-card').forEach(function(c) {
+                const tid = c.getAttribute('data-theme-id');
+                const isMatch = (tid === curPreset) || (curPreset === 'aetheria-purple' && tid === 'arcade-retro') || (curPreset === 'glacier-arctic' && tid === 'cyan-palette');
+                if (isMatch) {
+                  c.setAttribute('data-active', 'true');
+                  c.classList.add('active');
+                  c.style.borderColor = accent;
+                  c.style.boxShadow = '0 0 16px rgba(' + rgb + ', 0.45)';
+                } else {
+                  c.removeAttribute('data-active');
+                  c.classList.remove('active');
+                  c.style.borderColor = 'transparent';
+                  c.style.boxShadow = 'none';
+                }
+              });
+
+              // Update name pill
+              const np = document.getElementById('tg-name-color-pill');
+              if (np) {
+                np.style.color = nameColor;
+                np.style.backgroundColor = 'rgba(' + rgb + ', 0.15)';
+                np.style.borderColor = 'rgba(' + rgb + ', 0.35)';
+              }
+
+              // Update preview bubbles
+              document.querySelectorAll('#tg-preview-outgoing-bubble, #chat-preview-outgoing-bubble').forEach(function(b) {
+                if (theme.userBubbleBg) b.style.background = theme.userBubbleBg;
+              });
+            } catch(e) {}
+          }
+// Geometry
           const radius = theme.bubbleRadius !== undefined ? theme.bubbleRadius : 16;
           root.style.setProperty('--theme-bubble-radius', `${radius}px`);
 
