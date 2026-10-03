@@ -444,3 +444,64 @@ input[type="checkbox"], input[type="radio"] {
   border-color: var(--theme-accent) !important;
   box-shadow: 0 0 0 1px rgba(var(--theme-accent-rgb, 147, 51, 234), 0.3) !important;
 }
+
+
+/* ==========================================================================
+   Telegram Native Slider Styles
+   Progress-filled track + smooth thumb with tactile hover/active states
+   ========================================================================== */
+.telegram-slider {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 100%;
+  height: 5px;
+  border-radius: 9999px;
+  background: rgba(255, 255, 255, 0.14);
+  outline: none;
+  cursor: pointer;
+  margin: 0;
+  padding: 0;
+  transition: background 0.05s linear;
+}
+
+.telegram-slider::-webkit-slider-runnable-track {
+  height: 5px;
+  border-radius: 9999px;
+  background: transparent;
+}
+
+.telegram-slider::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 20px;
+  height: 20px;
+  margin-top: -7.5px;
+  border-radius: 50%;
+  background: #ffffff;
+  border: 2px solid var(--theme-accent, #8E9AB6);
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.45), 0 0 0 1px rgba(255, 255, 255, 0.15);
+  cursor: pointer;
+  transition: transform 0.12s ease, box-shadow 0.12s ease;
+}
+
+.telegram-slider::-webkit-slider-thumb:hover,
+.telegram-slider:active::-webkit-slider-thumb {
+  transform: scale(1.18);
+  box-shadow: 0 3px 10px rgba(0, 0, 0, 0.6), 0 0 0 5px rgba(var(--theme-accent-rgb, 142, 154, 182), 0.25);
+}
+
+.telegram-slider::-moz-range-track {
+  height: 5px;
+  border-radius: 9999px;
+  background: transparent;
+}
+
+.telegram-slider::-moz-range-thumb {
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: #ffffff;
+  border: 2px solid var(--theme-accent, #8E9AB6);
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.45);
+  cursor: pointer;
+}
