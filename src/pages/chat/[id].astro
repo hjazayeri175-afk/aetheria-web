@@ -18108,6 +18108,9 @@ const { character } = Astro.props;
       input.value = '';
       adjustInputHeight();
     }
+    if (smartPromptsBar) {
+      smartPromptsBar.style.display = '';
+    }
     clearAttachedImage();
     await handleSendMessage(userMsgText, userAttachedImg);
   }
@@ -18165,9 +18168,12 @@ const { character } = Astro.props;
   });
 
   input?.addEventListener('blur', () => {
-    if (window.innerWidth < 640 && smartPromptsBar && !input.value.trim()) {
-      smartPromptsBar.style.display = '';
-    }
+    // Always safely restore suggestion bar when mobile keyboard closes
+    setTimeout(() => {
+      if (smartPromptsBar) {
+        smartPromptsBar.style.display = '';
+      }
+    }, 150);
   });
 
   // Gemini-style Plus Menu (+) Controls
@@ -18812,13 +18818,21 @@ Requirements:
         }
       }
 
-      // If BYOK was not configured or returned empty, use character-tailored suggestion ideas
+      // If BYOK was not configured or returned empty, use character-tailored suggestion ideas (bilingual aware)
       if (!generatedPills) {
-        generatedPills = [
-          `*Looks at ${activeChar.name} intently* "Tell me more about what you're thinking."`,
-          `*Takes a step closer* "What would you like to do next?"`,
-          `*Smiles softly* "I'm right here with you."`
-        ];
+        if (hasPersian) {
+          generatedPills = [
+            `*با دقت به ${activeChar.name} نگاه می‌کنم* "بیشتر برام بگو، داری به چی فکر می‌کنی؟"`,
+            `*یک قدم جلوتر می‌آیم* "دوست داری قدم بعدی چه‌کار کنیم؟"`,
+            `*لبخند ملایمی می‌زنم* "من اینجام و باهات همراهی می‌کنم."`
+          ];
+        } else {
+          generatedPills = [
+            `*Looks at ${activeChar.name} intently* "Tell me more about what you're thinking."`,
+            `*Takes a step closer* "What would you like to do next?"`,
+            `*Smiles softly* "I'm right here with you."`
+          ];
+        }
       }
 
       if (generatedPills && generatedPills.length > 0) {
@@ -18833,8 +18847,20 @@ Requirements:
         }
       }
     } catch (err) {
-      if (err.name === 'AbortError') return;
-      console.warn('Smart suggestions fetch error:', err);
+      if (err.name !== 'AbortError') {
+        console.warn('Smart suggestions fetch error:', err);
+      }
+      // Guarantee fallback suggestions so bar never stays blank
+      if (smartPromptsContainer && smartPromptsContainer.children.length === 0) {
+        const guaranteePills = hasPersian ? [
+          `*با دقت به ${activeChar.name} نگاه می‌کنم* "بیشتر برام بگو."`,
+          `*لبخند می‌زنم* "قدم بعدی چیه؟"`
+        ] : [
+          `*Looks at ${activeChar.name}* "Tell me more."`,
+          `*Smiles softly* "What should we do next?"`
+        ];
+        renderSmartPrompts(guaranteePills);
+      }
     } finally {
       clearTimeout(timeoutId);
       if (smartPromptsLoading) {
