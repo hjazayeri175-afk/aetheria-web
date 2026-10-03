@@ -33,6 +33,7 @@ import {
   Image,
   Sun,
   ChevronRight,
+  ChevronLeft,
   Volume2,
   MessageSquare
 } from '@lucide/astro';
@@ -590,10 +591,31 @@ import {
         <div class="rounded-3xl bg-[#1e2336] p-4 border border-white/[0.08] shadow-xl space-y-4">
           <div class="flex items-center justify-between px-0.5">
             <span class="text-sm font-semibold text-[#8E9AB6]">Color theme</span>
+            <div class="flex items-center gap-1.5">
+              <button 
+                type="button" 
+                id="btn-prev-theme" 
+                class="w-7 h-7 rounded-full bg-white/[0.05] hover:bg-white/[0.12] text-slate-400 hover:text-white flex items-center justify-center transition cursor-pointer"
+                title="Previous Theme"
+              >
+                <ChevronLeft class="w-4 h-4" />
+              </button>
+              <button 
+                type="button" 
+                id="btn-next-theme" 
+                class="w-7 h-7 rounded-full bg-white/[0.05] hover:bg-white/[0.12] text-slate-400 hover:text-white flex items-center justify-center transition cursor-pointer"
+                title="Next Theme"
+              >
+                <ChevronRight class="w-4 h-4" />
+              </button>
+            </div>
           </div>
 
-          <!-- Horizontal Theme Carousel -->
-          <div id="profile-presets-grid" class="flex gap-3 overflow-x-auto pb-2 pt-1 scrollbar-none select-none">
+          <!-- 12 Rich Theme Cards Carousel -->
+          <div 
+            id="profile-presets-grid" 
+            class="flex gap-3.5 overflow-x-auto pb-3 pt-1 scroll-smooth scrollbar-none select-none -mx-1 px-1"
+          >
             <!-- Dynamically populated by renderPresets() -->
           </div>
 
@@ -1715,155 +1737,78 @@ import {
       const photoFileInput = document.getElementById('profile-photo-file') as HTMLInputElement | null;
       const photoBtn = document.getElementById('profile-photo-btn');
 
-      const emojiMap: Record<string, string> = {
-        'aetheria-purple': '💜',
-        'cyberpunk-amber': '🎮',
-        'midnight-amoled': '⚡',
-        'emerald-matrix': '🎄',
-        'cosmic-nebula': '🌷',
-        'sunset-horizon': '🌅',
-        'glacier-arctic': '💎',
-        'crimson-dynasty': '🎨'
-      };
+      const THEME_HERO_SVGS: Record<string, string> = {'amore': '<svg class="w-24 h-16" viewBox="0 0 100 65" fill="none" xmlns="http://www.w3.org/2000/svg">\n  <path d="M30 45 C15 30 10 18 22 10 C32 4 42 16 45 22 C48 16 58 4 68 10 C80 18 75 30 60 45 L45 58 Z" stroke="url(#amore-grad)" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>\n  <path d="M50 35 C42 26 38 18 45 12 C52 7 58 15 60 19 C62 15 68 7 75 12 C82 18 78 26 70 35 L60 44 Z" stroke="#FFA5B4" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>\n  <defs>\n    <linearGradient id="amore-grad" x1="10" y1="10" x2="80" y2="60" gradientUnits="userSpaceOnUse">\n      <stop stop-color="#F8A5A5"/>\n      <stop offset="1" stop-color="#C3A6E8"/>\n    </linearGradient>\n  </defs>\n</svg>', 'gamer-mode': '<svg class="w-24 h-16" viewBox="0 0 100 65" fill="none" xmlns="http://www.w3.org/2000/svg">\n  <path d="M25 15 C15 15 12 28 15 48 C16 54 22 55 26 50 L34 40 L66 40 L74 50 C78 55 84 54 85 48 C88 28 85 15 75 15 L25 15 Z" stroke="url(#gamer-grad)" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>\n  <path d="M26 27 L32 27 M29 24 L29 30" stroke="#06B6D4" stroke-width="2.5" stroke-linecap="round"/>\n  <circle cx="68" cy="27" r="2" fill="#3B82F6"/>\n  <circle cx="74" cy="23" r="2" fill="#06B6D4"/>\n  <circle cx="74" cy="31" r="2" fill="#38BDF8"/>\n  <circle cx="80" cy="27" r="2" fill="#60A5FA"/>\n  <defs>\n    <linearGradient id="gamer-grad" x1="15" y1="15" x2="85" y2="55" gradientUnits="userSpaceOnUse">\n      <stop stop-color="#06B6D4"/>\n      <stop offset="1" stop-color="#3B82F6"/>\n    </linearGradient>\n  </defs>\n</svg>', 'power-up': '<svg class="w-24 h-16" viewBox="0 0 100 65" fill="none" xmlns="http://www.w3.org/2000/svg">\n  <circle cx="50" cy="32" r="28" stroke="url(#power-grad)" stroke-width="2" stroke-dasharray="4 4"/>\n  <path d="M53 12 L35 34 L48 34 L44 54 L65 28 L51 28 Z" fill="url(#power-grad)" stroke="#FEF08A" stroke-width="1.5" stroke-linejoin="round"/>\n  <defs>\n    <linearGradient id="power-grad" x1="35" y1="12" x2="65" y2="54" gradientUnits="userSpaceOnUse">\n      <stop stop-color="#FACC15"/>\n      <stop offset="1" stop-color="#F97316"/>\n    </linearGradient>\n  </defs>\n</svg>', 'winter-cozy': '<svg class="w-24 h-16" viewBox="0 0 100 65" fill="none" xmlns="http://www.w3.org/2000/svg">\n  <path d="M50 10 L62 24 L56 24 L68 38 L60 38 L72 52 L28 52 L40 38 L32 38 L44 24 L38 24 Z" stroke="url(#winter-grad)" stroke-width="2.5" stroke-linejoin="round"/>\n  <path d="M50 52 L50 58" stroke="#10B981" stroke-width="3" stroke-linecap="round"/>\n  <circle cx="30" cy="18" r="1.5" fill="#F43F5E"/>\n  <circle cx="70" cy="20" r="1.5" fill="#34D399"/>\n  <circle cx="24" cy="40" r="2" fill="#E2E8F0"/>\n  <circle cx="76" cy="42" r="2" fill="#F43F5E"/>\n  <defs>\n    <linearGradient id="winter-grad" x1="50" y1="10" x2="50" y2="52" gradientUnits="userSpaceOnUse">\n      <stop stop-color="#34D399"/>\n      <stop offset="1" stop-color="#10B981"/>\n    </linearGradient>\n  </defs>\n</svg>', 'midnight-calm': '<svg class="w-24 h-16" viewBox="0 0 100 65" fill="none" xmlns="http://www.w3.org/2000/svg">\n  <path d="M42 12 C58 16 64 34 54 48 C44 60 26 58 20 50 C36 50 48 38 42 12 Z" stroke="url(#midnight-grad)" stroke-width="3" stroke-linejoin="round" fill="#818CF8" fill-opacity="0.15"/>\n  <path d="M68 18 L70 24 L76 26 L70 28 L68 34 L66 28 L60 26 L66 24 Z" fill="#C084FC"/>\n  <circle cx="78" cy="42" r="2" fill="#A5B4FC"/>\n  <circle cx="28" cy="22" r="1.5" fill="#C084FC"/>\n  <defs>\n    <linearGradient id="midnight-grad" x1="20" y1="12" x2="65" y2="55" gradientUnits="userSpaceOnUse">\n      <stop stop-color="#A5B4FC"/>\n      <stop offset="1" stop-color="#818CF8"/>\n    </linearGradient>\n  </defs>\n</svg>', 'ocean-motion': '<svg class="w-24 h-16" viewBox="0 0 100 65" fill="none" xmlns="http://www.w3.org/2000/svg">\n  <path d="M28 48 C22 30 32 16 50 16 C68 16 78 30 72 48 C64 54 36 54 28 48 Z" stroke="url(#ocean-grad)" stroke-width="2.5" stroke-linejoin="round"/>\n  <path d="M50 16 L50 51 M38 24 L44 50 M62 24 L56 50" stroke="#38BDF8" stroke-width="1.8" stroke-linecap="round"/>\n  <path d="M15 56 Q 25 50 35 56 T 55 56 T 75 56 T 90 56" stroke="#2DD4BF" stroke-width="2" stroke-linecap="round"/>\n  <defs>\n    <linearGradient id="ocean-grad" x1="25" y1="16" x2="75" y2="52" gradientUnits="userSpaceOnUse">\n      <stop stop-color="#38BDF8"/>\n      <stop offset="1" stop-color="#2DD4BF"/>\n    </linearGradient>\n  </defs>\n</svg>', 'sunset-glow': '<svg class="w-24 h-16" viewBox="0 0 100 65" fill="none" xmlns="http://www.w3.org/2000/svg">\n  <path d="M24 44 C24 30 36 18 50 18 C64 18 76 30 76 44 Z" stroke="url(#sunset-grad)" stroke-width="3" fill="#F97316" fill-opacity="0.15"/>\n  <line x1="16" y1="48" x2="84" y2="48" stroke="#FB7185" stroke-width="2.5" stroke-linecap="round"/>\n  <line x1="22" y1="54" x2="78" y2="54" stroke="#F97316" stroke-width="1.5" stroke-linecap="round"/>\n  <line x1="50" y1="8" x2="50" y2="13" stroke="#FDBA74" stroke-width="2" stroke-linecap="round"/>\n  <line x1="28" y1="14" x2="32" y2="18" stroke="#FDBA74" stroke-width="2" stroke-linecap="round"/>\n  <line x1="72" y1="14" x2="68" y2="18" stroke="#FDBA74" stroke-width="2" stroke-linecap="round"/>\n  <defs>\n    <linearGradient id="sunset-grad" x1="24" y1="18" x2="76" y2="48" gradientUnits="userSpaceOnUse">\n      <stop stop-color="#F97316"/>\n      <stop offset="1" stop-color="#FB7185"/>\n    </linearGradient>\n  </defs>\n</svg>', 'retro-terminal': '<svg class="w-24 h-16" viewBox="0 0 100 65" fill="none" xmlns="http://www.w3.org/2000/svg">\n  <rect x="22" y="12" width="56" height="40" rx="6" stroke="url(#term-grad)" stroke-width="2.5"/>\n  <rect x="28" y="18" width="44" height="28" rx="3" fill="#041208" stroke="#22C55E" stroke-width="1.2"/>\n  <path d="M34 26 L40 31 L34 36 M43 36 L50 36" stroke="#4ADE80" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>\n  <path d="M42 52 L38 58 L62 58 L58 52" stroke="#22C55E" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>\n  <defs>\n    <linearGradient id="term-grad" x1="22" y1="12" x2="78" y2="52" gradientUnits="userSpaceOnUse">\n      <stop stop-color="#4ADE80"/>\n      <stop offset="1" stop-color="#15803D"/>\n    </linearGradient>\n  </defs>\n</svg>', 'zen-garden': '<svg class="w-24 h-16" viewBox="0 0 100 65" fill="none" xmlns="http://www.w3.org/2000/svg">\n  <ellipse cx="50" cy="48" rx="24" ry="9" stroke="url(#zen-grad)" stroke-width="2.5" fill="#84CC16" fill-opacity="0.2"/>\n  <ellipse cx="50" cy="36" rx="17" ry="7" stroke="url(#zen-grad)" stroke-width="2.2" fill="#84CC16" fill-opacity="0.3"/>\n  <ellipse cx="50" cy="26" rx="10" ry="5" stroke="url(#zen-grad)" stroke-width="2" fill="#BEF264" fill-opacity="0.4"/>\n  <path d="M20 54 Q 50 62 80 54" stroke="#BEF264" stroke-width="1.5" stroke-linecap="round"/>\n  <defs>\n    <linearGradient id="zen-grad" x1="30" y1="20" x2="70" y2="55" gradientUnits="userSpaceOnUse">\n      <stop stop-color="#BEF264"/>\n      <stop offset="1" stop-color="#65A30D"/>\n    </linearGradient>\n  </defs>\n</svg>', 'urban-jungle': '<svg class="w-24 h-16" viewBox="0 0 100 65" fill="none" xmlns="http://www.w3.org/2000/svg">\n  <rect x="25" y="24" width="16" height="34" stroke="#2DD4BF" stroke-width="1.5"/>\n  <rect x="37" y="16" width="18" height="42" stroke="url(#urban-grad)" stroke-width="2"/>\n  <rect x="52" y="28" width="15" height="30" stroke="#10B981" stroke-width="1.5"/>\n  <path d="M60 22 C72 20 80 32 75 48 C65 44 64 30 60 22 Z" fill="#2DD4BF" fill-opacity="0.35" stroke="#10B981" stroke-width="2"/>\n  <path d="M60 22 L75 48" stroke="#10B981" stroke-width="1.5"/>\n  <defs>\n    <linearGradient id="urban-grad" x1="37" y1="16" x2="55" y2="58" gradientUnits="userSpaceOnUse">\n      <stop stop-color="#2DD4BF"/>\n      <stop offset="1" stop-color="#10B981"/>\n    </linearGradient>\n  </defs>\n</svg>', 'stargazer': '<svg class="w-24 h-16" viewBox="0 0 100 65" fill="none" xmlns="http://www.w3.org/2000/svg">\n  <path d="M30 46 L62 20 L72 26 L40 52 Z" stroke="url(#star-grad)" stroke-width="2.5" stroke-linejoin="round" fill="#A855F7" fill-opacity="0.15"/>\n  <line x1="35" y1="49" x2="25" y2="60" stroke="#C084FC" stroke-width="2" stroke-linecap="round"/>\n  <line x1="37" y1="47" x2="48" y2="60" stroke="#C084FC" stroke-width="2" stroke-linecap="round"/>\n  <circle cx="78" cy="14" r="3" fill="#60A5FA"/>\n  <circle cx="88" cy="22" r="1.5" fill="#C084FC"/>\n  <circle cx="68" cy="8" r="1.5" fill="#E2E8F0"/>\n  <defs>\n    <linearGradient id="star-grad" x1="30" y1="20" x2="72" y2="52" gradientUnits="userSpaceOnUse">\n      <stop stop-color="#C084FC"/>\n      <stop offset="1" stop-color="#60A5FA"/>\n    </linearGradient>\n  </defs>\n</svg>', 'coffee-corner': '<svg class="w-24 h-16" viewBox="0 0 100 65" fill="none" xmlns="http://www.w3.org/2000/svg">\n  <path d="M28 26 L32 50 C33 54 37 56 42 56 L58 56 C63 56 67 54 68 50 L72 26 Z" stroke="url(#coffee-grad)" stroke-width="2.5" stroke-linejoin="round"/>\n  <path d="M71 32 C78 32 82 36 80 43 C78 48 72 48 70 48" stroke="#F59E0B" stroke-width="2.2" stroke-linecap="round"/>\n  <ellipse cx="50" cy="26" rx="22" ry="4" stroke="url(#coffee-grad)" stroke-width="2"/>\n  <path d="M42 18 Q 44 12 42 8 M50 19 Q 52 13 50 7 M58 18 Q 60 12 58 8" stroke="#FCD34D" stroke-width="1.8" stroke-linecap="round"/>\n  <line x1="22" y1="58" x2="78" y2="58" stroke="#B45309" stroke-width="2" stroke-linecap="round"/>\n  <defs>\n    <linearGradient id="coffee-grad" x1="28" y1="26" x2="72" y2="56" gradientUnits="userSpaceOnUse">\n      <stop stop-color="#FCD34D"/>\n      <stop offset="1" stop-color="#B45309"/>\n    </linearGradient>\n  </defs>\n</svg>'};
+const THEME_FLOATING_ELEMENTS: Record<string, string> = {'amore': '<span class="absolute top-2 left-6 text-xs transform -rotate-12 animate-pulse">💖</span><span class="absolute bottom-3 right-6 text-sm transform rotate-12">💕</span><span class="absolute top-7 right-3 text-[10px]">✨</span>', 'gamer-mode': '<span class="absolute top-2 left-4 text-xs font-mono text-cyan-400">XP+</span><span class="absolute bottom-3 right-5 text-sm transform rotate-6">🎮</span><span class="absolute top-6 right-3 text-[11px] text-blue-400">👾</span>', 'power-up': '<span class="absolute top-1 left-5 text-xs text-yellow-300">⚡</span><span class="absolute bottom-2 right-4 text-sm">💥</span><span class="absolute top-6 right-2 text-[10px]">✨</span>', 'winter-cozy': '<span class="absolute top-2 left-5 text-xs">❄️</span><span class="absolute bottom-2 right-4 text-xs">🎄</span><span class="absolute top-6 right-3 text-[10px]">✨</span>', 'midnight-calm': '<span class="absolute top-1 left-5 text-xs">🌙</span><span class="absolute bottom-2 right-5 text-xs">✨</span><span class="absolute top-6 right-2 text-[10px]">⭐</span>', 'ocean-motion': '<span class="absolute top-1 left-5 text-xs">🌊</span><span class="absolute bottom-2 right-5 text-xs">🐚</span><span class="absolute top-6 right-2 text-[10px]">🫧</span>', 'sunset-glow': '<span class="absolute top-1 left-5 text-xs">🌅</span><span class="absolute bottom-2 right-5 text-xs">🌇</span><span class="absolute top-6 right-2 text-[10px]">✨</span>', 'retro-terminal': '<span class="absolute top-1 left-4 text-[10px] font-mono text-green-400">&gt;_</span><span class="absolute bottom-2 right-4 text-xs">📟</span><span class="absolute top-6 right-2 text-[10px] text-emerald-400">101</span>', 'zen-garden': '<span class="absolute top-1 left-5 text-xs">🎋</span><span class="absolute bottom-2 right-5 text-xs">🪨</span><span class="absolute top-6 right-2 text-[10px]">☯️</span>', 'urban-jungle': '<span class="absolute top-1 left-5 text-xs">🌿</span><span class="absolute bottom-2 right-5 text-xs">🏙️</span><span class="absolute top-6 right-2 text-[10px]">🍃</span>', 'stargazer': '<span class="absolute top-1 left-5 text-xs">🔭</span><span class="absolute bottom-2 right-5 text-xs">🌌</span><span class="absolute top-6 right-2 text-[10px]">✨</span>', 'coffee-corner': '<span class="absolute top-1 left-5 text-xs">☕</span><span class="absolute bottom-2 right-5 text-xs">🤎</span><span class="absolute top-6 right-2 text-[10px]">🥐</span>'};
 
-      function updatePreview() {
-        if (!previewViewport) return;
-        const baseMode = settings.baseMode || 'dark';
-
-        if (baseMode === 'amoled') {
-          previewViewport.style.backgroundColor = '#000000';
-          if (previewCharBubble) {
-            previewCharBubble.style.background = '#09090b';
-            previewCharBubble.style.borderColor = 'rgba(255, 255, 255, 0.08)';
-            previewCharBubble.style.color = '#f1f5f9';
-          }
-        } else if (baseMode === 'day') {
-          previewViewport.style.backgroundColor = '#e2e8f0';
-          if (previewCharBubble) {
-            previewCharBubble.style.background = '#ffffff';
-            previewCharBubble.style.borderColor = '#cbd5e1';
-            previewCharBubble.style.color = '#0f172a';
-          }
-        } else {
-          previewViewport.style.backgroundColor = '#090a12';
-          if (previewCharBubble) {
-            previewCharBubble.style.background = settings.charBubbleBg || '#101426';
-            previewCharBubble.style.borderColor = 'rgba(255, 255, 255, 0.08)';
-            previewCharBubble.style.color = '#f1f5f9';
-          }
-        }
-
-        if (previewImage) {
-          previewImage.style.background = settings.chatWallpaper || 'linear-gradient(to bottom, #090a12, #0e1122, #07080f)';
-          previewImage.style.filter = settings.chatBlur ? 'blur(14px)' : 'none';
-        }
-
-        if (previewDimmer) {
-          previewDimmer.style.opacity = String(settings.chatDim !== undefined ? settings.chatDim : 0.20);
-        }
-
-        if (previewPattern) {
-          const patId = settings.chatPatternId || 'telegram-doodles';
-          const patObj = (window as any).AetheriaTheme?.DOODLE_PATTERNS?.[patId];
-          if (patObj && patObj.pattern !== 'none') {
-            previewPattern.style.backgroundImage = patObj.pattern;
-            previewPattern.style.backgroundSize = patObj.patternSize;
-            previewPattern.style.opacity = String(settings.chatPatternOpacity !== undefined ? settings.chatPatternOpacity : 0.18);
-          } else {
-            previewPattern.style.backgroundImage = 'none';
-            previewPattern.style.opacity = '0';
-          }
-        }
-
-        const nameColor = settings.nameColor || '#a855f7';
-        if (previewCharName) previewCharName.style.color = nameColor;
-        if (namePill) namePill.style.color = nameColor;
-        if (nameColorHex) nameColorHex.textContent = nameColor.toUpperCase();
-
-        const radius = settings.bubbleRadius !== undefined ? settings.bubbleRadius : 16;
-        const fontSize = settings.fontSize !== undefined ? settings.fontSize : 16;
-
-        const charMsgText = document.getElementById('profile-preview-char-msg-text');
-        const userMsgText = document.getElementById('profile-preview-user-msg-text');
-        if (charMsgText) charMsgText.style.fontSize = `${fontSize}px`;
-        if (userMsgText) userMsgText.style.fontSize = `${fontSize}px`;
-        document.documentElement.style.setProperty('--theme-msg-font-size', `${fontSize}px`);
-
-        if (previewCharBubble) {
-          previewCharBubble.style.borderRadius = `${radius}px`;
-          previewCharBubble.style.fontSize = `${fontSize}px`;
-        }
-        if (previewUserBubble) {
-          previewUserBubble.style.borderRadius = `${radius}px`;
-          previewUserBubble.style.fontSize = `${fontSize}px`;
-          if (settings.userBubbleBg) previewUserBubble.style.background = settings.userBubbleBg;
-        }
-
-        updateSliderProgress(fontSlider);
-        updateSliderProgress(radiusSlider);
-
-        if (baseMode === 'day') {
-          if (labelDayNight) labelDayNight.textContent = 'Switch to Night Mode';
-          if (badgeDayNight) badgeDayNight.textContent = 'Day';
-        } else {
-          if (labelDayNight) labelDayNight.textContent = 'Switch to Day Mode';
-          if (badgeDayNight) badgeDayNight.textContent = baseMode === 'amoled' ? 'AMOLED' : 'Dark';
-        }
-
-        baseModeButtons.forEach((btn: any) => {
-          if (btn.dataset.mode === baseMode) {
-            btn.classList.add('bg-purple-600', 'text-white');
-            btn.classList.remove('text-slate-300');
-          } else {
-            btn.classList.remove('bg-purple-600', 'text-white');
-            btn.classList.add('text-slate-300');
-          }
-        });
-      }
-
-      function saveAndApply() {
-        (window as any).AetheriaTheme?.saveSettings?.(settings, null);
-        (window as any).AetheriaTheme?.apply?.(settings);
-      }
-
-      // Presets (Horizontal Carousel matching Telegram)
       function renderPresets() {
         if (!presetsGrid) return;
         const presets = (window as any).AetheriaTheme?.PRESETS || [];
-        const activePresetId = settings.id || 'aetheria-purple';
+        const activePresetId = settings.id || 'amore';
 
         presetsGrid.innerHTML = presets.map((p: any) => {
           const isSelected = p.id === activePresetId;
-          const emoji = emojiMap[p.id] || '🎨';
+          const svgIcon = THEME_HERO_SVGS[p.id] || '';
+          const floatingHtml = THEME_FLOATING_ELEMENTS[p.id] || '';
+          const accentColor = p.accent || '#8E9AB6';
+
           return `
-            <button 
-              type="button" 
-              class="preset-thumb-btn shrink-0 w-20 h-28 rounded-2xl relative p-2 flex flex-col justify-between overflow-hidden border-2 transition cursor-pointer select-none ${isSelected ? 'border-[#8E9AB6] shadow-md shadow-[#8E9AB6]/20 ring-1 ring-[#8E9AB6]/40' : 'border-white/10 hover:border-white/20'}" 
-              style="background: ${p.chatWallpaper || '#0f111a'};"
+            <div 
+              class="preset-theme-card shrink-0 w-[240px] sm:w-[260px] h-[370px] rounded-[30px] p-4 flex flex-col justify-between relative overflow-hidden transition-all duration-300 cursor-pointer select-none group" 
+              style="background: radial-gradient(circle at 50% 12%, ${accentColor}18 0%, #13161c 70%); border: ${isSelected ? `2px solid ${accentColor}` : '1px solid rgba(255, 255, 255, 0.08)'}; box-shadow: ${isSelected ? `0 0 0 2px ${accentColor}88, 0 0 28px ${accentColor}44, 0 16px 36px rgba(0,0,0,0.7)` : '0 10px 24px rgba(0, 0, 0, 0.5)'};"
               data-preset-id="${p.id}"
-              title="${p.name}"
             >
-              <!-- Mini Outgoing Bubble (top right) -->
-              <div class="w-10 h-3 rounded-lg rounded-br-xs self-end shadow-xs flex items-center justify-end px-1" style="background: ${p.userBubbleBg || p.accent};">
-                <div class="w-1 h-0.5 bg-white/50 rounded-xs"></div>
+              <!-- Selected Checkmark Badge (Top-Right) -->
+              ${isSelected ? `
+                <div class="absolute top-3.5 right-3.5 w-6 h-6 rounded-full flex items-center justify-center shadow-lg z-20" style="background: ${accentColor};">
+                  <svg class="w-3.5 h-3.5 text-white" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+                    <polyline points="20 6 9 17 4 12"></polyline>
+                  </svg>
+                </div>
+              ` : ''}
+
+              <!-- 1. Top Pill Badge -->
+              <div class="w-full py-2 px-3 rounded-full flex items-center justify-center font-bold text-xs sm:text-sm tracking-tight shadow-md transition-transform group-hover:scale-[1.02]" style="background: ${p.pillGradient}; color: ${p.pillTextColor};">
+                ${p.name}
               </div>
 
-              <!-- Center Emoji Sticker -->
-              <div class="self-center z-10 text-xl transform hover:scale-110 transition-transform">
-                ${emoji}
+              <!-- 2. Central Vector Hero Icon -->
+              <div class="my-auto py-1 flex items-center justify-center transition-transform duration-300 group-hover:scale-110">
+                ${svgIcon}
               </div>
 
-              <!-- Mini Incoming Bubble (bottom left) -->
-              <div class="w-9 h-3 rounded-lg rounded-bl-xs self-start shadow-xs flex items-center px-1" style="background: ${p.charBubbleBg || '#1e2336'}; border: 1px solid rgba(255,255,255,0.12);">
-                <div class="w-1 h-0.5 bg-white/40 rounded-xs"></div>
+              <!-- 3. Headline / Tagline Text -->
+              <div class="text-center px-1 mb-2">
+                <div class="text-xs sm:text-[13px] font-normal text-[#E1E3E8] leading-tight whitespace-pre-line opacity-90">
+                  ${p.tagline || p.description}
+                </div>
               </div>
-            </button>
+
+              <!-- 4. Mock Chat Interface Container -->
+              <div class="w-full rounded-2xl p-2.5 relative overflow-hidden flex flex-col justify-between h-[86px] shadow-inner" style="background: ${p.charBubbleBg}99; backdrop-filter: blur(8px); border: 1px solid rgba(255,255,255,0.06);">
+                <!-- Floating Theme Micro-Elements -->
+                <div class="absolute inset-0 pointer-events-none overflow-hidden select-none">
+                  ${floatingHtml}
+                </div>
+                
+                <!-- Left/Incoming Chat Bubble -->
+                <div class="self-start max-w-[80%] rounded-xl px-2.5 py-1.5 shadow-xs relative z-10" style="background: ${p.charBubbleBg}; border: 1px solid rgba(255,255,255,0.12);">
+                  <div class="h-1.5 w-14 rounded-full mb-1" style="background: ${accentColor}99;"></div>
+                  <div class="h-1.5 w-8 rounded-full" style="background: rgba(255,255,255,0.25);"></div>
+                </div>
+
+                <!-- Right/Outgoing Chat Bubble -->
+                <div class="self-end max-w-[75%] rounded-full px-3 py-1 shadow-xs relative z-10 flex items-center gap-1.5" style="background: ${p.userBubbleBg};">
+                  <div class="h-1.5 w-10 rounded-full bg-white/70"></div>
+                  <div class="w-1.5 h-1.5 rounded-full bg-white/90"></div>
+                </div>
+              </div>
+            </div>
           `;
         }).join('');
 
-        presetsGrid.querySelectorAll('.preset-thumb-btn').forEach((btn: any) => {
-          btn.addEventListener('click', () => {
-            const found = presets.find((p: any) => p.id === btn.dataset.presetId);
+        presetsGrid.querySelectorAll('.preset-theme-card').forEach((card: any) => {
+          card.addEventListener('click', () => {
+            const found = presets.find((p: any) => p.id === card.dataset.presetId);
             if (!found) return;
             settings = { ...settings, ...found };
             syncInputs();
@@ -1874,7 +1819,17 @@ import {
         });
       }
 
-      // Name Colors
+      const btnPrevTheme = document.getElementById('btn-prev-theme');
+      const btnNextTheme = document.getElementById('btn-next-theme');
+
+      btnPrevTheme?.addEventListener('click', () => {
+        if (presetsGrid) presetsGrid.scrollBy({ left: -280, behavior: 'smooth' });
+      });
+
+      btnNextTheme?.addEventListener('click', () => {
+        if (presetsGrid) presetsGrid.scrollBy({ left: 280, behavior: 'smooth' });
+      });
+
       function renderNameColors() {
         if (!nameColorPalette) return;
         const colors = (window as any).AetheriaTheme?.NAME_COLORS || [];
