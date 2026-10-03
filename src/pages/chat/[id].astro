@@ -18135,8 +18135,26 @@ const { character } = Astro.props;
   input?.addEventListener('keydown', (e) => {
     if (e.isComposing || e.keyCode === 229) return;
 
+    // Detect mobile touch devices (Android, iOS, iPad, small touchscreens)
+    const isTouchMobile = (window.innerWidth < 768) || 
+                          ('ontouchstart' in window && window.innerWidth < 1024) || 
+                          /Android|iPhone|iPad|iPod|Mobile/i.test(navigator.userAgent);
+
     const sendPref = localStorage.getItem('aetheria_chat_send_key') || 'enter';
 
+    // 1. Mobile & Touch Screen keyboards:
+    // On mobile virtual keyboards (Gboard/iOS), the Return key does NOT support Shift+Enter.
+    // In Telegram, WhatsApp, Character.ai, etc., Return on mobile MUST insert a new line!
+    // The user taps the dedicated on-screen Send button to dispatch.
+    if (isTouchMobile) {
+      if (e.key === 'Enter') {
+        // Allow default Enter key behavior (newline in textarea) and dynamically adjust height
+        setTimeout(adjustInputHeight, 0);
+        return;
+      }
+    }
+
+    // 2. Desktop behavior based on user setting
     if (sendPref === 'ctrl_enter') {
       if (e.key === 'Enter' && (e.ctrlKey || e.metaKey)) {
         e.preventDefault();
@@ -18148,7 +18166,7 @@ const { character } = Astro.props;
         return;
       }
     } else {
-      // Send by Enter is ON
+      // Send by Enter is ON (Desktop standard)
       if (e.shiftKey) {
         setTimeout(adjustInputHeight, 0);
         return;
