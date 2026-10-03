@@ -265,3 +265,158 @@ input[type="checkbox"], input[type="radio"] {
 [data-chat-density="compact"] .chat-msg-bubble-char {
   font-size: calc(var(--theme-msg-font-size, 16px) - 1.5px) !important;
 }
+
+
+/* ==========================================================================
+   Chat & Media Settings Modal Dynamic Theme Reactive Binding
+   Enables all tabs (Text, Voice, Visuals, Video, Lorebook, Advanced),
+   all buttons, active pills, sliders, badges and borders to seamlessly
+   match the active --theme-accent (Cyberpunk Amber, AMOLED Cyan, Emerald, etc.)
+   ========================================================================== */
+#chat-byok-tray,
+#voice-engine-modal,
+#model-search-modal,
+#lorebook-modal,
+#fullscreen-composer-modal {
+  /* Sliders & controls */
+  input[type="range"] {
+    accent-color: var(--theme-accent) !important;
+  }
+  input[type="checkbox"]:checked,
+  input[type="radio"]:checked {
+    accent-color: var(--theme-accent) !important;
+  }
+}
+
+/* Primary Action & Connect Buttons */
+#chat-byok-tray button[type="submit"],
+#chat-byok-tray .btn-save-settings,
+#chat-byok-tray .bg-purple-600,
+#chat-byok-tray .bg-rose-600,
+#chat-byok-tray .bg-cyan-600,
+#chat-byok-tray .bg-amber-600,
+#chat-byok-tray .bg-indigo-600,
+#chat-byok-tray button[id*="save-"],
+#chat-byok-tray button[id*="-save"],
+#chat-byok-tray button[id*="connect-"],
+#chat-byok-tray button[id*="-connect"],
+#voice-engine-modal .bg-purple-600,
+#model-search-modal .bg-purple-600 {
+  background-color: var(--theme-accent) !important;
+  color: #ffffff !important;
+  box-shadow: 0 4px 14px -2px var(--theme-accent-glow) !important;
+}
+
+#chat-byok-tray .hover\:bg-purple-500:hover,
+#chat-byok-tray .hover\:bg-rose-500:hover,
+#chat-byok-tray .hover\:bg-cyan-500:hover,
+#chat-byok-tray .hover\:bg-amber-500:hover,
+#chat-byok-tray .hover\:bg-indigo-500:hover {
+  background-color: var(--theme-accent-hover, var(--theme-accent)) !important;
+}
+
+/* Active Top Tab Button (Text, Voice, Visuals, Video) */
+#chat-byok-tray .engine-tab-btn[class*="bg-purple-950"],
+#chat-byok-tray .engine-tab-btn[class*="border-purple-500"] {
+  background-color: rgba(var(--theme-accent-rgb, 147, 51, 234), 0.22) !important;
+  border-color: rgba(var(--theme-accent-rgb, 147, 51, 234), 0.55) !important;
+  color: #ffffff !important;
+  box-shadow: 0 4px 16px -2px var(--theme-accent-glow) !important;
+}
+
+#chat-byok-tray .engine-tab-btn[class*="bg-purple-950"] svg,
+#chat-byok-tray .engine-tab-btn[class*="border-purple-500"] svg {
+  color: var(--theme-accent-hover, var(--theme-accent)) !important;
+}
+
+/* Active Sub-tab Buttons (STT/TTS, Selfies/Scene Art/Vision, Motion/Angles) */
+#chat-byok-tray #voice-subtab-stt-btn[class*="bg-"],
+#chat-byok-tray #voice-subtab-tts-btn[class*="bg-"],
+#chat-byok-tray #image-subtab-output-btn[class*="bg-"],
+#chat-byok-tray #image-subtab-input-btn[class*="bg-"],
+#chat-byok-tray button[class*="bg-rose-600"],
+#chat-byok-tray button[class*="bg-cyan-600"],
+#chat-byok-tray button[class*="bg-amber-600"],
+#chat-byok-tray button[class*="bg-purple-600"] {
+  background-color: var(--theme-accent) !important;
+  color: #ffffff !important;
+  box-shadow: 0 3px 12px -2px var(--theme-accent-glow) !important;
+}
+
+/* Accent Borders */
+#chat-byok-tray .border-purple-500\/50,
+#chat-byok-tray .border-purple-500\/40,
+#chat-byok-tray .border-purple-500\/30,
+#chat-byok-tray .border-purple-500\/25,
+#chat-byok-tray .border-purple-500\/20,
+#chat-byok-tray .border-rose-500\/50,
+#chat-byok-tray .border-rose-500\/30,
+#chat-byok-tray .border-cyan-500\/50,
+#chat-byok-tray .border-cyan-500\/30,
+#chat-byok-tray .border-amber-500\/50,
+#chat-byok-tray .border-amber-500\/30,
+#chat-byok-tray .border-indigo-500\/50,
+#chat-byok-tray .border-indigo-500\/30,
+#voice-engine-modal .border-purple-500\/30,
+#model-search-modal .border-purple-500\/30 {
+  border-color: rgba(var(--theme-accent-rgb, 147, 51, 234), 0.35) !important;
+}
+
+/* Accent Text & Icons */
+#chat-byok-tray .text-purple-400,
+#chat-byok-tray .text-purple-300,
+#chat-byok-tray .text-rose-400,
+#chat-byok-tray .text-rose-300,
+#chat-byok-tray .text-cyan-400,
+#chat-byok-tray .text-cyan-300,
+#chat-byok-tray .text-amber-400,
+#chat-byok-tray .text-amber-300,
+#chat-byok-tray .text-indigo-400,
+#chat-byok-tray .text-indigo-300,
+#voice-engine-modal .text-purple-400,
+#voice-engine-modal .text-purple-300,
+#model-search-modal .text-purple-400,
+#model-search-modal .text-purple-300 {
+  color: var(--theme-accent-hover, var(--theme-accent)) !important;
+}
+
+/* Accent Subtle Backgrounds & Badges */
+#chat-byok-tray .bg-purple-500\/20,
+#chat-byok-tray .bg-purple-500\/10,
+#chat-byok-tray .bg-purple-950\/80,
+#chat-byok-tray .bg-purple-950\/60,
+#chat-byok-tray .bg-purple-950\/40,
+#chat-byok-tray .bg-rose-500\/20,
+#chat-byok-tray .bg-rose-500\/10,
+#chat-byok-tray .bg-cyan-500\/20,
+#chat-byok-tray .bg-cyan-500\/10,
+#chat-byok-tray .bg-amber-500\/20,
+#chat-byok-tray .bg-amber-500\/10,
+#chat-byok-tray .bg-indigo-500\/20,
+#chat-byok-tray .bg-indigo-500\/10,
+#voice-engine-modal .bg-purple-500\/20,
+#model-search-modal .bg-purple-500\/20 {
+  background-color: rgba(var(--theme-accent-rgb, 147, 51, 234), 0.12) !important;
+}
+
+/* Secondary Action Buttons (e.g. Test Image, Reset to Defaults) */
+#chat-byok-tray button[id*="test-"],
+#chat-byok-tray button[id*="-test"],
+#chat-byok-tray button[id*="reset-"] {
+  border-color: rgba(var(--theme-accent-rgb, 147, 51, 234), 0.35) !important;
+  color: var(--theme-accent-hover, var(--theme-accent)) !important;
+}
+
+#chat-byok-tray button[id*="test-"]:hover,
+#chat-byok-tray button[id*="-test"]:hover,
+#chat-byok-tray button[id*="reset-"]:hover {
+  background-color: rgba(var(--theme-accent-rgb, 147, 51, 234), 0.12) !important;
+}
+
+/* Focus States */
+#chat-byok-tray input:focus,
+#chat-byok-tray select:focus,
+#chat-byok-tray textarea:focus {
+  border-color: var(--theme-accent) !important;
+  box-shadow: 0 0 0 1px rgba(var(--theme-accent-rgb, 147, 51, 234), 0.3) !important;
+}
