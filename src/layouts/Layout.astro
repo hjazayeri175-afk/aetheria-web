@@ -799,6 +799,17 @@ const {
           root.style.setProperty('--color-purple-900', 'rgba(' + rgb + ', 0.9)');
           root.style.setProperty('--color-purple-950', 'rgba(' + rgb + ', 0.95)');
           root.style.setProperty('--accent-purple', accent);
+          root.style.setProperty('--theme-purple-50', 'rgba(' + rgb + ', 0.05)');
+          root.style.setProperty('--theme-purple-100', 'rgba(' + rgb + ', 0.1)');
+          root.style.setProperty('--theme-purple-200', 'rgba(' + rgb + ', 0.25)');
+          root.style.setProperty('--theme-purple-300', 'rgba(' + rgb + ', 0.5)');
+          root.style.setProperty('--theme-purple-400', accent);
+          root.style.setProperty('--theme-purple-500', accent);
+          root.style.setProperty('--theme-purple-600', accent);
+          root.style.setProperty('--theme-purple-700', accent);
+          root.style.setProperty('--theme-purple-800', 'rgba(' + rgb + ', 0.8)');
+          root.style.setProperty('--theme-purple-900', 'rgba(' + rgb + ', 0.9)');
+          root.style.setProperty('--theme-purple-950', 'rgba(' + rgb + ', 0.95)');
 
           // Telegram Name Color
           const nameColor = theme.nameColor || accent;
@@ -835,6 +846,11 @@ const {
                 '  --color-purple-400: ' + accent + ' !important;',
                 '  --color-purple-500: ' + accent + ' !important;',
                 '  --color-purple-600: ' + accent + ' !important;',
+                '  --theme-purple-400: ' + accent + ' !important;',
+                '  --theme-purple-500: ' + accent + ' !important;',
+                '  --theme-purple-600: ' + accent + ' !important;',
+                '  --color-indigo-500: ' + accent + ' !important;',
+                '  --color-indigo-600: ' + accent + ' !important;',
                 '  --accent-purple: ' + accent + ' !important;',
                 '}',
                 '.tg-accent-text, [class*="text-purple-"], [class*="text-[#8E9DFE]"], [class*="text-[#7385FF]"] {',

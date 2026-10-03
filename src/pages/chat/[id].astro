@@ -15171,6 +15171,19 @@ const TELEGRAM_NAME_COLORS = [
     initPinnedNote();
     fetchDynamicSuggestions();
     syncFromCloud();
+
+    window.addEventListener('aetheria-theme-changed', (e) => {
+      const theme = e.detail;
+      if (!theme) return;
+      document.querySelectorAll('.chat-msg-bubble-user').forEach((bubble) => {
+        if (theme.userBubbleBg) bubble.style.background = theme.userBubbleBg;
+        if (theme.bubbleRadius !== undefined) bubble.style.borderRadius = theme.bubbleRadius + 'px';
+      });
+      document.querySelectorAll('.chat-msg-bubble-char').forEach((bubble) => {
+        if (theme.charBubbleBg) bubble.style.background = theme.charBubbleBg;
+        if (theme.bubbleRadius !== undefined) bubble.style.borderRadius = theme.bubbleRadius + 'px';
+      });
+    });
   }
 
   function saveChat(triggerCloud = true) {
