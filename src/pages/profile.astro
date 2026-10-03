@@ -1802,7 +1802,7 @@ import {
 function renderPresets() {
         if (!presetsGrid) return;
         const presets = (window as any).AetheriaTheme?.PRESETS || [];
-        const activePresetId = settings.id || 'amore';
+        const activePresetId = settings.id || 'gamer-mode';
 
         presetsGrid.innerHTML = presets.map((p: any) => {
           const isSelected = p.id === activePresetId;
@@ -1812,53 +1812,53 @@ function renderPresets() {
 
           return `
             <div 
-              class="preset-theme-card shrink-0 w-[240px] sm:w-[260px] h-[370px] rounded-[30px] p-4 flex flex-col justify-between relative overflow-hidden transition-all duration-300 cursor-pointer select-none group" 
-              style="background: radial-gradient(circle at 50% 12%, ${accentColor}18 0%, #13161c 70%); border: ${isSelected ? `2px solid ${accentColor}` : '1px solid rgba(255, 255, 255, 0.08)'}; box-shadow: ${isSelected ? `0 0 0 2px ${accentColor}88, 0 0 28px ${accentColor}44, 0 16px 36px rgba(0,0,0,0.7)` : '0 10px 24px rgba(0, 0, 0, 0.5)'};"
+              class="preset-theme-card shrink-0 w-[122px] sm:w-[138px] md:w-[152px] h-[225px] sm:h-[240px] rounded-[22px] p-2.5 flex flex-col justify-between relative overflow-hidden transition-all duration-300 cursor-pointer select-none group" 
+              style="background: radial-gradient(circle at 50% 10%, ${accentColor}18 0%, #13161c 70%); border: ${isSelected ? `2px solid ${accentColor}` : '1px solid rgba(255, 255, 255, 0.08)'}; box-shadow: ${isSelected ? `0 0 0 2px ${accentColor}88, 0 0 20px ${accentColor}35, 0 12px 24px rgba(0,0,0,0.7)` : '0 6px 18px rgba(0, 0, 0, 0.4)'};"
               data-preset-id="${p.id}"
             >
               <!-- Selected Checkmark Badge (Top-Right) -->
               ${isSelected ? `
-                <div class="absolute top-3.5 right-3.5 w-6 h-6 rounded-full flex items-center justify-center shadow-lg z-20" style="background: ${accentColor};">
-                  <svg class="w-3.5 h-3.5 text-white" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+                <div class="absolute top-2 right-2 w-4 h-4 rounded-full flex items-center justify-center shadow-md z-20" style="background: ${accentColor};">
+                  <svg class="w-2.5 h-2.5 text-white" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
                     <polyline points="20 6 9 17 4 12"></polyline>
                   </svg>
                 </div>
               ` : ''}
 
               <!-- 1. Top Pill Badge -->
-              <div class="w-full py-2 px-3 rounded-full flex items-center justify-center font-bold text-xs sm:text-sm tracking-tight shadow-md transition-transform group-hover:scale-[1.02]" style="background: ${p.pillGradient}; color: ${p.pillTextColor};">
+              <div class="w-full py-1 px-1.5 rounded-full flex items-center justify-center font-bold text-[10px] sm:text-[11px] tracking-tight shadow-xs text-center truncate transition-transform group-hover:scale-[1.02]" style="background: ${p.pillGradient}; color: ${p.pillTextColor};">
                 ${p.name}
               </div>
 
               <!-- 2. Central Vector Hero Icon -->
-              <div class="my-auto py-1 flex items-center justify-center transition-transform duration-300 group-hover:scale-110">
+              <div class="my-auto py-0.5 flex items-center justify-center transition-transform duration-300 group-hover:scale-105 [&>svg]:w-14 [&>svg]:h-9 sm:[&>svg]:w-16 sm:[&>svg]:h-10">
                 ${svgIcon}
               </div>
 
               <!-- 3. Headline / Tagline Text -->
-              <div class="text-center px-1 mb-2">
-                <div class="text-xs sm:text-[13px] font-normal text-[#E1E3E8] leading-tight whitespace-pre-line opacity-90">
+              <div class="text-center px-0.5 mb-1">
+                <div class="text-[9px] sm:text-[10px] font-normal text-[#E1E3E8] leading-tight line-clamp-2 opacity-90">
                   ${p.tagline || p.description}
                 </div>
               </div>
 
               <!-- 4. Mock Chat Interface Container -->
-              <div class="w-full rounded-2xl p-2.5 relative overflow-hidden flex flex-col justify-between h-[86px] shadow-inner" style="background: ${p.charBubbleBg}99; backdrop-filter: blur(8px); border: 1px solid rgba(255,255,255,0.06);">
+              <div class="w-full rounded-xl p-1.5 relative overflow-hidden flex flex-col justify-between h-[52px] sm:h-[56px] shadow-inner" style="background: ${p.charBubbleBg}99; backdrop-filter: blur(8px); border: 1px solid rgba(255,255,255,0.06);">
                 <!-- Floating Theme Micro-Elements -->
-                <div class="absolute inset-0 pointer-events-none overflow-hidden select-none">
+                <div class="absolute inset-0 pointer-events-none overflow-hidden select-none text-[10px]">
                   ${floatingHtml}
                 </div>
                 
                 <!-- Left/Incoming Chat Bubble -->
-                <div class="self-start max-w-[80%] rounded-xl px-2.5 py-1.5 shadow-xs relative z-10" style="background: ${p.charBubbleBg}; border: 1px solid rgba(255,255,255,0.12);">
-                  <div class="h-1.5 w-14 rounded-full mb-1" style="background: ${accentColor}99;"></div>
-                  <div class="h-1.5 w-8 rounded-full" style="background: rgba(255,255,255,0.25);"></div>
+                <div class="self-start max-w-[85%] rounded-lg px-1.5 py-0.5 shadow-xs relative z-10" style="background: ${p.charBubbleBg}; border: 1px solid rgba(255,255,255,0.12);">
+                  <div class="h-1 w-8 sm:w-10 rounded-full mb-0.5" style="background: ${accentColor}99;"></div>
+                  <div class="h-1 w-5 sm:w-6 rounded-full" style="background: rgba(255,255,255,0.25);"></div>
                 </div>
 
                 <!-- Right/Outgoing Chat Bubble -->
-                <div class="self-end max-w-[75%] rounded-full px-3 py-1 shadow-xs relative z-10 flex items-center gap-1.5" style="background: ${p.userBubbleBg};">
-                  <div class="h-1.5 w-10 rounded-full bg-white/70"></div>
-                  <div class="w-1.5 h-1.5 rounded-full bg-white/90"></div>
+                <div class="self-end max-w-[80%] rounded-full px-1.5 py-0.5 shadow-xs relative z-10 flex items-center gap-1" style="background: ${p.userBubbleBg};">
+                  <div class="h-1 w-6 sm:w-8 rounded-full bg-white/70"></div>
+                  <div class="w-1 h-1 rounded-full bg-white/90"></div>
                 </div>
               </div>
             </div>
@@ -1882,11 +1882,11 @@ function renderPresets() {
       const btnNextTheme = document.getElementById('btn-next-theme');
 
       btnPrevTheme?.addEventListener('click', () => {
-        if (presetsGrid) presetsGrid.scrollBy({ left: -280, behavior: 'smooth' });
+        if (presetsGrid) presetsGrid.scrollBy({ left: -140, behavior: 'smooth' });
       });
 
       btnNextTheme?.addEventListener('click', () => {
-        if (presetsGrid) presetsGrid.scrollBy({ left: 280, behavior: 'smooth' });
+        if (presetsGrid) presetsGrid.scrollBy({ left: 140, behavior: 'smooth' });
       });
 
       function renderNameColors() {
