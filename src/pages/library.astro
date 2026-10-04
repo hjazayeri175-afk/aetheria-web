@@ -79,19 +79,19 @@ import {
 
       <!-- Filter Pills: nowrap and shrink-0 to prevent truncation -->
       <div class="flex items-center gap-2 overflow-x-auto no-scrollbar pb-1">
-        <button type="button" class="lib-filter-pill active px-3.5 py-1.5 rounded-full text-xs font-medium bg-white/[0.12] text-white border border-white/20 shadow-sm transition cursor-pointer flex items-center gap-1.5 shrink-0 whitespace-nowrap" data-filter="all">
+        <button type="button" class="lib-filter-pill active px-3.5 py-1.5 rounded-full text-xs font-medium shadow-sm transition cursor-pointer flex items-center gap-1.5 shrink-0 whitespace-nowrap" data-filter="all">
           <MessageSquare class="w-3.5 h-3.5" />
           <span>All Chats</span>
         </button>
-        <button type="button" class="lib-filter-pill px-3.5 py-1.5 rounded-full text-xs font-medium bg-white/[0.03] hover:bg-white/[0.06] text-slate-400 hover:text-slate-200 border border-white/[0.06] transition cursor-pointer flex items-center gap-1.5 shrink-0 whitespace-nowrap" data-filter="custom">
+        <button type="button" class="lib-filter-pill px-3.5 py-1.5 rounded-full text-xs font-medium transition cursor-pointer flex items-center gap-1.5 shrink-0 whitespace-nowrap" data-filter="custom">
           <User class="w-3.5 h-3.5" />
           <span>Custom Heroes</span>
         </button>
-        <button type="button" class="lib-filter-pill px-3.5 py-1.5 rounded-full text-xs font-medium bg-white/[0.03] hover:bg-white/[0.06] text-slate-400 hover:text-slate-200 border border-white/[0.06] transition cursor-pointer flex items-center gap-1.5 shrink-0 whitespace-nowrap" data-filter="official">
+        <button type="button" class="lib-filter-pill px-3.5 py-1.5 rounded-full text-xs font-medium transition cursor-pointer flex items-center gap-1.5 shrink-0 whitespace-nowrap" data-filter="official">
           <ShieldCheck class="w-3.5 h-3.5" />
           <span>Official Champions</span>
         </button>
-        <button type="button" class="lib-filter-pill px-3.5 py-1.5 rounded-full text-xs font-medium bg-white/[0.03] hover:bg-white/[0.06] text-slate-400 hover:text-slate-200 border border-white/[0.06] transition cursor-pointer flex items-center gap-1.5 shrink-0 whitespace-nowrap" data-filter="media">
+        <button type="button" class="lib-filter-pill px-3.5 py-1.5 rounded-full text-xs font-medium transition cursor-pointer flex items-center gap-1.5 shrink-0 whitespace-nowrap" data-filter="media">
           <Camera class="w-3.5 h-3.5" />
           <span>With Media</span>
         </button>
@@ -473,8 +473,8 @@ import {
               </div>
               <div class="min-w-0 flex-1">
                 <div class="flex items-center gap-1.5">
-                  <h3 class="text-sm font-semibold text-white group-hover:text-purple-300 transition truncate">${escapeHtml(char.name)}</h3>
-                  ${char.isCustom ? '<span class="text-[9px] px-1.5 py-0.5 rounded bg-cyan-500/10 text-cyan-300 border border-cyan-500/20 font-mono shrink-0">Custom</span>' : ''}
+                  <h3 class="chat-card-title text-sm font-semibold text-white transition truncate">${escapeHtml(char.name)}</h3>
+                  ${char.isCustom ? '<span class="chat-card-custom-badge text-[9px] px-1.5 py-0.5 rounded font-mono shrink-0">Custom</span>' : ''}
                 </div>
                 <p class="text-xs text-slate-400 truncate mt-0.5">${escapeHtml(char.title)}</p>
               </div>
@@ -501,7 +501,7 @@ import {
             <div class="flex items-center gap-1.5 overflow-hidden min-w-0">
               <!-- Branch Badge -->
               <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-md bg-white/[0.04] border border-white/[0.06] text-slate-300 font-mono text-[10px] shrink-0 max-w-[130px] sm:max-w-[160px] truncate">
-                <span class="text-slate-400">${ICONS.gitBranch}</span>
+                <span class="chat-card-branch-icon text-slate-400 transition-colors">${ICONS.gitBranch}</span>
                 <span class="truncate">${escapeHtml(item.branchTitle)}</span>
               </span>
 
@@ -511,8 +511,8 @@ import {
               </span>
 
               <!-- Media Badges -->
-              ${item.hasImage ? `<span class="inline-flex items-center gap-1 text-[10px] text-purple-300 px-1.5 py-0.5 rounded bg-purple-500/10 shrink-0" title="Includes Photos">${ICONS.image}</span>` : ''}
-              ${item.hasVideo ? `<span class="inline-flex items-center gap-1 text-[10px] text-pink-300 px-1.5 py-0.5 rounded bg-pink-500/10 shrink-0" title="Includes Video Clips">${ICONS.film}</span>` : ''}
+              ${item.hasImage ? `<span class="chat-card-media-badge inline-flex items-center gap-1 text-[10px] px-1.5 py-0.5 rounded shrink-0" title="Includes Photos">${ICONS.image}</span>` : ''}
+              ${item.hasVideo ? `<span class="chat-card-media-badge inline-flex items-center gap-1 text-[10px] px-1.5 py-0.5 rounded shrink-0" title="Includes Video Clips">${ICONS.film}</span>` : ''}
             </div>
 
             <!-- Card Actions: Export & Delete -->
@@ -709,10 +709,8 @@ import {
   // Filter pills click
   filterPills.forEach(pill => {
     pill.addEventListener('click', () => {
-      filterPills.forEach(p => {
-        p.className = 'lib-filter-pill px-3.5 py-1.5 rounded-full text-xs font-medium bg-white/[0.03] hover:bg-white/[0.06] text-slate-400 hover:text-slate-200 border border-white/[0.06] transition cursor-pointer flex items-center gap-1.5 shrink-0 whitespace-nowrap';
-      });
-      pill.className = 'lib-filter-pill active px-3.5 py-1.5 rounded-full text-xs font-medium bg-white/[0.12] text-white border border-white/20 shadow-sm transition cursor-pointer flex items-center gap-1.5 shrink-0 whitespace-nowrap';
+      filterPills.forEach(p => p.classList.remove('active'));
+      pill.classList.add('active');
       activeFilter = pill.getAttribute('data-filter') || 'all';
       renderGrid();
     });
