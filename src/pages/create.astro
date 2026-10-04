@@ -47,11 +47,12 @@ const PRESET_AVATARS = [
     <header class="sticky top-0 z-40 h-16 border-b border-white/[0.08] bg-[#070913]/95 backdrop-blur-xl px-4 sm:px-6 flex items-center justify-between">
       <div class="flex items-center gap-3">
         <a 
-          href="/" 
+          href="/library" 
+          id="create-back-btn"
           class="flex items-center justify-center w-9 h-9 rounded-xl bg-white/[0.05] hover:bg-white/[0.1] border border-white/[0.1] text-slate-300 hover:text-white transition"
-          title="Back to Hub"
+          title="Back to Chats Library"
         >
-          <ArrowLeft class="w-4 h-4 text-purple-400" />
+          <ArrowLeft class="w-4 h-4 text-[var(--theme-accent,#c084fc)]" />
         </a>
         <div>
           <h1 class="text-sm sm:text-base font-bold text-white flex items-center gap-2">
@@ -876,6 +877,17 @@ const PRESET_AVATARS = [
 </Layout>
 
 <script>
+  const AVATAR_PRESETS = [
+    { url: '/avatars/asian_woman.webp', label: 'Asian / Japanese Woman (Studio Neon)', name: 'Aiko' },
+    { url: '/avatars/western_woman.webp', label: 'Western / Caucasian Woman (Coral Amber)', name: 'Elena' },
+    { url: '/avatars/black_woman.webp', label: 'Black Woman (Radiant Magenta)', name: 'Amara' },
+    { url: '/avatars/white_man.webp', label: 'White / Caucasian Man (Golden Studio)', name: 'Julian' },
+    { url: '/avatars/black_man.webp', label: 'Black Man (Emerald Cyan)', name: 'Darius' },
+    { url: '/avatars/anime_girl.webp', label: 'Anime Girl (Painterly Cyberpunk Concept Art)', name: 'Kira' },
+    { url: '/avatars/anime_androgynous.webp', label: 'Anime Androgynous / Boy (Painterly Cyberpunk Concept Art)', name: 'Ren' },
+    { url: '/avatars/abstract_ai.webp', label: 'Abstract AI / Intelligent Entity (Neural Core)', name: 'Nexus Core' },
+  ];
+
   // ================= STEP WIZARD LOGIC =================
   let currentStep = 1;
   const totalSteps = 4;
@@ -993,29 +1005,57 @@ const PRESET_AVATARS = [
     if (currentStep > 1) updateStepUI(currentStep - 1);
   });
 
+  let isSavingAndLaunching = false;
+  function handleSaveAndLaunch(triggerBtn?: HTMLElement | null) {
+    if (isSavingAndLaunching) return;
+    isSavingAndLaunching = true;
+
+    if (triggerBtn) {
+      triggerBtn.setAttribute('disabled', 'true');
+      triggerBtn.classList.add('opacity-80', 'cursor-wait');
+      triggerBtn.innerHTML = `
+        <span class="inline-block w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin shrink-0"></span>
+        <span>Saving & Launching Chat...</span>
+      `;
+    }
+
+    try {
+      const savedChar = saveCharacterData();
+      if (!savedChar || !savedChar.id) {
+        throw new Error('Failed to generate valid character record');
+      }
+
+      showToast(`"${savedChar.name}" saved! Launching chat...`);
+
+      // Direct navigation to custom chat route with trailing slash to prevent 307
+      const targetUrl = `/chat/custom/?charId=${encodeURIComponent(savedChar.id)}`;
+      window.location.href = targetUrl;
+    } catch (err: any) {
+      console.error('Character Save & Launch failed:', err);
+      showToast('Error: ' + (err?.message || 'Could not save character'));
+      isSavingAndLaunching = false;
+      if (triggerBtn) {
+        triggerBtn.removeAttribute('disabled');
+        triggerBtn.classList.remove('opacity-80', 'cursor-wait');
+        triggerBtn.innerHTML = `
+          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="w-4 h-4 text-emerald-200"><path d="M12 3v18"/><path d="m19 12-7 7-7-7"/></svg>
+          <span>Save & Start Chatting</span>
+        `;
+      }
+    }
+  }
+
   nextStepBtn?.addEventListener('click', () => {
     if (currentStep < totalSteps) {
       updateStepUI(currentStep + 1);
     } else {
-      const savedChar = saveCharacterData();
-      if (savedChar && savedChar.id) {
-        showToast(`"${savedChar.name}" saved! Launching chat...`);
-        setTimeout(() => {
-          window.location.href = `/chat/custom?id=${encodeURIComponent(savedChar.id)}`;
-        }, 500);
-      }
+      handleSaveAndLaunch(nextStepBtn);
     }
   });
 
   const sidebarStartChatBtn = document.getElementById('sidebar-start-chat-btn');
   sidebarStartChatBtn?.addEventListener('click', () => {
-    const savedChar = saveCharacterData();
-    if (savedChar && savedChar.id) {
-      showToast(`"${savedChar.name}" saved! Launching chat...`);
-      setTimeout(() => {
-        window.location.href = `/chat/custom?id=${encodeURIComponent(savedChar.id)}`;
-      }, 500);
-    }
+    handleSaveAndLaunch(sidebarStartChatBtn);
   });
 
   // ================= FORM & PREVIEW ELEMENTS =================
@@ -1355,7 +1395,7 @@ const PRESET_AVATARS = [
     const nameVal = nameInput?.value.trim() || 'Your Character Name';
     const titleVal = titleInput?.value.trim() || 'Role Archetype & Title';
     const catVal = catInput?.value || 'Sci-Fi';
-    const avatarVal = avatarInput?.value || PRESET_AVATARS[0].url;
+    const avatarVal = avatarInput?.value || AVATAR_PRESETS[0].url;
     const greetVal = greetingInput?.value.trim() || "Type your character's opening greeting in Step 4 to preview it here...";
 
     if (previewName) previewName.textContent = nameVal;
@@ -1818,48 +1858,121 @@ const PRESET_AVATARS = [
 
   // ================= SAVE TO LOCAL STORAGE =================
   function saveCharacterData() {
-    const charName = nameInput.value.trim() || 'Custom Persona';
+    // 1. Resolve character name & title with smart defaults
+    let charName = nameInput?.value?.trim() || '';
+    if (!charName) {
+      const currentAvatar = avatarInput?.value || '';
+      const matchedPreset = AVATAR_PRESETS.find(p => p.url === currentAvatar);
+      charName = matchedPreset?.name || 'Aiko';
+      if (nameInput) nameInput.value = charName;
+    }
+
+    let charTitle = titleInput?.value?.trim() || '';
+    if (!charTitle) {
+      charTitle = 'Companion';
+      if (titleInput) titleInput.value = charTitle;
+    }
+
+    // 2. Generate bulletproof ID supporting Unicode / Persian / Arabic
+    let cleanId = charName.toLowerCase().trim()
+      .replace(/[^\p{L}\p{N}]+/gu, '-')
+      .replace(/^-+|-+$/g, '');
+    if (!cleanId || cleanId === '-') {
+      cleanId = 'custom-' + Date.now().toString(36);
+    }
+
+    // 3. Ensure engaging greeting exists
+    let greetingText = greetingInput?.value?.trim() || '';
+    if (!greetingText) {
+      const isPersian = /[\u0600-\u06FF]/.test(charName);
+      if (isPersian) {
+        greetingText = `*با لبخندی آرام و نگاهی گرم به شما نزدیک می‌شود.* "سلام! من ${charName} هستم. خوشحالم که اینجایی؛ دوست داری صحبت‌مون رو از کجا شروع کنیم؟"`;
+      } else {
+        greetingText = `*Looks at you with a gentle, engaging smile.* "Hello there. I'm ${charName}. What would you like to explore together today?"`;
+      }
+      if (greetingInput) greetingInput.value = greetingText;
+    }
+
+    // 4. Ensure personality exists
+    let personalityText = personalityInput?.value?.trim() || '';
+    if (!personalityText) {
+      personalityText = 'Warm, observant, empathetic, and attentive conversational partner';
+      if (personalityInput) personalityInput.value = personalityText;
+    }
+
     const characterData = {
-      id: charName.toLowerCase().replace(/[^a-z0-9]+/g, '-'),
+      id: cleanId,
       name: charName,
-      title: titleInput.value.trim() || 'Companion',
-      category: catInput.value,
-      avatarUrl: avatarInput.value,
-      greeting: greetingInput.value.trim(),
-      personality: personalityInput.value.trim(),
-      tags: tagsInput.value.split(',').map(t => t.trim()).filter(Boolean),
-      description: loreInput.value.trim(),
-      scenario: scenarioInput.value.trim(),
-      appearance: appearanceInput.value.trim(),
-      speechStyle: speechInput.value.trim(),
-      mesExample: mesExampleInput.value.trim(),
-      systemPrompt: sysPromptInput.value.trim(),
-      alternateGreetings: altGreetingInput.value.split('<START>').map(s => s.trim()).filter(Boolean),
-      alternate_greetings: altGreetingInput.value.split('<START>').map(s => s.trim()).filter(Boolean),
-      starterPrompts: [starter1.value.trim(), starter2.value.trim(), starter3.value.trim()].filter(Boolean),
+      title: charTitle,
+      category: catInput?.value || 'Sci-Fi',
+      avatarUrl: avatarInput?.value || AVATAR_PRESETS[0].url,
+      greeting: greetingText,
+      personality: personalityText,
+      tags: tagsInput?.value ? tagsInput.value.split(',').map(t => t.trim()).filter(Boolean) : ['Companion', 'RPG'],
+      description: loreInput?.value?.trim() || '',
+      scenario: scenarioInput?.value?.trim() || '',
+      appearance: appearanceInput?.value?.trim() || '',
+      speechStyle: speechInput?.value?.trim() || '',
+      mesExample: mesExampleInput?.value?.trim() || '',
+      systemPrompt: sysPromptInput?.value?.trim() || 'Portray the character with atmospheric consistency.',
+      alternateGreetings: altGreetingInput?.value ? altGreetingInput.value.split('<START>').map(s => s.trim()).filter(Boolean) : [],
+      alternate_greetings: altGreetingInput?.value ? altGreetingInput.value.split('<START>').map(s => s.trim()).filter(Boolean) : [],
+      starterPrompts: [
+        starter1?.value?.trim(), 
+        starter2?.value?.trim(), 
+        starter3?.value?.trim()
+      ].filter(Boolean),
       lorebook: {
-        name: loreBookName.value.trim(),
-        description: loreBookDesc.value.trim(),
-        entries: loreEntries.map((en, idx) => ({
+        name: loreBookName?.value?.trim() || 'Aetheria Lorebook',
+        description: loreBookDesc?.value?.trim() || 'World Info Book',
+        entries: Array.isArray(loreEntries) ? loreEntries.map((en, idx) => ({
           ...en,
-          keys: Array.isArray(en.keys) ? en.keys : (typeof en.keys === 'string' ? en.keys.split(',').map((k: string) => k.trim()).filter(Boolean) : [])
-        }))
+          keys: Array.isArray(en?.keys) ? en.keys : (typeof en?.keys === 'string' ? en.keys.split(',').map((k: string) => k.trim()).filter(Boolean) : [])
+        })) : []
       },
       rating: '5.0',
       chatsCount: '1',
       isCustom: true
     };
 
-    const existing = JSON.parse(localStorage.getItem('aetheria_custom_characters') || '[]');
-    const idx = existing.findIndex((c: any) => c.id === characterData.id);
+    // If starterPrompts are empty, add default starter prompts
+    if (characterData.starterPrompts.length === 0) {
+      characterData.starterPrompts = [
+        `*Looks at ${charName}* "Tell me more about yourself."`,
+        `*Smiles softly* "What should we do next?"`,
+        `"What are your thoughts on this?"`
+      ];
+    }
+
+    // 5. Safe LocalStorage commit
+    let existing = [];
+    try {
+      const raw = localStorage.getItem('aetheria_custom_characters');
+      existing = raw ? JSON.parse(raw) : [];
+      if (!Array.isArray(existing)) existing = [];
+    } catch (e) {
+      existing = [];
+    }
+
+    const idx = existing.findIndex((c: any) => c && c.id === characterData.id);
     if (idx !== -1) {
       existing[idx] = characterData;
     } else {
       existing.push(characterData);
     }
-    localStorage.setItem('aetheria_custom_characters', JSON.stringify(existing));
 
-    showToast(`"${characterData.name}" saved! Character is ready for chat.`);
+    try {
+      localStorage.setItem('aetheria_custom_characters', JSON.stringify(existing));
+    } catch (storageErr) {
+      console.warn('LocalStorage save failed, attempting cleanup of old custom items:', storageErr);
+      if (existing.length > 3) {
+        existing = existing.slice(-3); // keep only 3 most recent
+        try {
+          localStorage.setItem('aetheria_custom_characters', JSON.stringify(existing));
+        } catch(e) {}
+      }
+    }
+
     return characterData;
   }
 
