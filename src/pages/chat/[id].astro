@@ -4736,6 +4736,23 @@ const { character } = Astro.props;
           lorebook: matched.lorebook || activeChar.lorebook || []
         };
       }
+
+      // Check IndexedDB for 100% full-resolution original lossless avatar
+      if (typeof (window as any).AetheriaDB !== 'undefined' && customId) {
+        (window as any).AetheriaDB.getCharacter(decodeURIComponent(customId).trim()).then((idbChar: any) => {
+          if (idbChar) {
+            if (idbChar.avatarUrl) {
+              activeChar.avatarUrl = idbChar.avatarUrl;
+              const hAvatar = document.getElementById('chat-header-avatar') as HTMLImageElement | null;
+              if (hAvatar) hAvatar.src = idbChar.avatarUrl;
+              const sAvatar = document.getElementById('chat-sidebar-avatar') as HTMLImageElement | null;
+              if (sAvatar) sAvatar.src = idbChar.avatarUrl;
+              const tAvatar = document.getElementById('chat-typing-avatar') as HTMLImageElement | null;
+              if (tAvatar) tAvatar.src = idbChar.avatarUrl;
+            }
+          }
+        });
+      }
     } catch {}
   }
 

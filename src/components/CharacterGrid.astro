@@ -129,24 +129,35 @@ const QUICK_TAGS = [
   const sortSelector = document.getElementById('sort-selector') as HTMLSelectElement | null;
   const tagButtons = document.querySelectorAll<HTMLButtonElement>('[data-quick-tag]');
 
-  // Render custom characters from localStorage at top of grid
-  function loadCustomCharacters() {
+  // Render custom characters from IndexedDB / localStorage at top of grid
+  async function loadCustomCharacters() {
     try {
-      const customList = JSON.parse(localStorage.getItem('aetheria_custom_characters') || '[]');
-      if (customList.length === 0 || !grid) return;
+      let customList: any[] = [];
+      if (typeof (window as any).AetheriaDB !== 'undefined') {
+        customList = await (window as any).AetheriaDB.getAllCharacters();
+      } else {
+        const raw = localStorage.getItem('aetheria_custom_characters');
+        customList = raw ? JSON.parse(raw) : [];
+      }
+      if (!Array.isArray(customList) || customList.length === 0 || !grid) {
+        filterCards();
+        return;
+      }
 
       customList.forEach((char: any) => {
+        if (!char || !char.id) return;
         if (document.querySelector(`[data-character-id="${char.id}"]`)) return;
 
         const card = document.createElement('div');
         card.className = 'character-card group relative flex flex-col rounded-2xl sm:rounded-3xl overflow-hidden bg-[#0c0e17] border border-purple-500/40 hover:border-purple-400 hover:shadow-2xl hover:shadow-purple-950/60 transition-all duration-300 transform hover:-translate-y-1 select-none cursor-pointer';
         card.setAttribute('data-character-id', char.id);
-        card.setAttribute('data-category', char.category || 'custom');
+        card.setAttribute('data-category', 'custom');
+        card.setAttribute('data-is-custom', 'true');
         card.setAttribute('data-name', (char.name || '').toLowerCase());
         card.setAttribute('data-tags', (((char.tags || []).join(' ')) + ' custom roleplay').toLowerCase());
         card.setAttribute('data-rating', '5.0');
         card.setAttribute('data-chats', '1.2k');
-        card.setAttribute('data-has-lorebook', (char.lorebook && char.lorebook.length > 0) ? 'true' : 'false');
+        card.setAttribute('data-has-lorebook', (char.lorebook && char.lorebook.entries && char.lorebook.entries.length > 0) ? 'true' : 'false');
 
         const tagsMarkup = (char.tags || ['Custom', 'User']).slice(0, 2).map((t: string) => `<span class="text-[10px] font-medium px-2 py-0.5 rounded-md bg-white/[0.08] text-slate-300 backdrop-blur-sm border border-white/[0.06]">${t}</span>`).join('');
 
@@ -162,13 +173,23 @@ const QUICK_TAGS = [
             <div class="absolute inset-0 bg-gradient-to-t from-[#07080d] via-[#07080d]/60 to-transparent opacity-95 group-hover:opacity-90 transition-opacity"></div>
             <div class="absolute inset-0 bg-gradient-to-b from-[#07080d]/70 via-transparent to-transparent"></div>
 
-            <div class="absolute top-2.5 sm:top-3 right-2.5 sm:right-3 flex items-center gap-1 z-10">
+            <div class="absolute top-2.5 sm:top-3 right-2.5 sm:right-3 flex items-center gap-1.5 z-20">
               <span class="px-2 py-0.5 rounded-full bg-purple-900/60 backdrop-blur-md border border-purple-500/30 text-[10px] font-semibold text-purple-300 shadow-sm">
                 Custom
               </span>
+              <button 
+                type="button" 
+                data-del-char="${char.id}" 
+                title="Delete character" 
+                class="delete-card-btn p-1.5 rounded-full bg-black/70 hover:bg-rose-600/90 text-slate-300 hover:text-white transition backdrop-blur-md cursor-pointer border border-white/10 active:scale-90"
+              >
+                <svg class="w-3.5 h-3.5 pointer-events-none" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                </svg>
+              </button>
             </div>
 
-            <div class="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300 z-20 pointer-events-none sm:pointer-events-auto">
+            <div class="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300 z-10 pointer-events-none sm:pointer-events-auto">
               <button 
                 type="button"
                 data-character-id="${char.id}"
@@ -199,45 +220,29 @@ const QUICK_TAGS = [
           </div>
         `;
 
+        // Attach delete listener
+        const delBtn = card.querySelector('[data-del-char]');
+        delBtn?.addEventListener('click', async (e) => {
+          e.stopPropagation();
+          const targetName = char.name || 'this character';
+          if (confirm(`Are you sure you want to delete "${targetName}"?`)) {
+            if (typeof (window as any).AetheriaDB !== 'undefined') {
+              await (window as any).AetheriaDB.deleteCharacter(char.id);
+            }
+            card.remove();
+            filterCards();
+          }
+        });
+
         grid.prepend(card);
       });
-    } catch {}
+      filterCards();
+    } catch (e) {
+      console.warn('Error loading custom characters:', e);
+      filterCards();
+    }
   }
 
-  // Sanitize bloated legacy storage
-  function sanitizeCustomCharactersStorage() {
-    try {
-      const raw = localStorage.getItem('aetheria_custom_characters');
-      if (!raw) return;
-      const list = JSON.parse(raw);
-      if (!Array.isArray(list) || list.length === 0) return;
-
-      list.forEach((c: any) => {
-        if (c.avatarUrl && c.avatarUrl.startsWith('data:image') && c.avatarUrl.length > 50000) {
-          const img = new Image();
-          img.onload = () => {
-            const canvas = document.createElement('canvas');
-            const maxDim = 320;
-            let w = img.width, h = img.height;
-            if (w > maxDim || h > maxDim) {
-              if (w > h) { h = Math.round((h * maxDim) / w); w = maxDim; }
-              else { w = Math.round((w * maxDim) / h); h = maxDim; }
-            }
-            canvas.width = Math.max(1, w); canvas.height = Math.max(1, h);
-            const ctx = canvas.getContext('2d');
-            if (ctx) {
-              ctx.drawImage(img, 0, 0, w, h);
-              c.avatarUrl = canvas.toDataURL('image/webp', 0.85);
-              try { localStorage.setItem('aetheria_custom_characters', JSON.stringify(list)); } catch(e) {}
-            }
-          };
-          img.src = c.avatarUrl;
-        }
-      });
-    } catch(e) {}
-  }
-
-  sanitizeCustomCharactersStorage();
   loadCustomCharacters();
   filterCards();
 
@@ -281,36 +286,50 @@ const QUICK_TAGS = [
 
   function filterCards() {
     const cards = document.querySelectorAll<HTMLElement>('.character-card');
-    let visibleCount = 0;
+    let presetVisible = 0;
+    let customVisible = 0;
 
     cards.forEach((card) => {
       const cat = card.getAttribute('data-category') || '';
       const name = card.getAttribute('data-name') || '';
       const tags = card.getAttribute('data-tags') || '';
       const hasLore = card.getAttribute('data-has-lorebook') === 'true';
+      const isCustom = card.getAttribute('data-is-custom') === 'true' || cat === 'custom' || tags.includes('custom');
 
       const matchCategory = (activeCategory === 'all' || cat === activeCategory);
       
       let matchTag = true;
       if (activeTag === 'lorebook') matchTag = hasLore;
-      else if (activeTag === 'custom') matchTag = (cat === 'custom' || tags.includes('custom'));
+      else if (activeTag === 'custom') matchTag = isCustom;
       else if (activeTag !== 'all') matchTag = (tags.includes(activeTag) || name.includes(activeTag) || cat.includes(activeTag));
 
       const matchSearch = (!searchQuery || name.includes(searchQuery) || tags.includes(searchQuery) || cat.includes(searchQuery));
 
       if (matchCategory && matchTag && matchSearch) {
         card.style.display = 'flex';
-        visibleCount++;
+        if (isCustom) customVisible++;
+        else presetVisible++;
       } else {
         card.style.display = 'none';
       }
     });
 
+    const totalVisible = presetVisible + customVisible;
     if (counter) {
-      counter.textContent = `${visibleCount} Available`;
+      if (activeTag === 'custom') {
+        counter.textContent = `${customVisible} Custom Characters`;
+      } else if (activeCategory === 'all' && activeTag === 'all') {
+        if (customVisible > 0) {
+          counter.textContent = `${totalVisible} Available (${presetVisible} Presets · ${customVisible} Custom)`;
+        } else {
+          counter.textContent = `${presetVisible} Available`;
+        }
+      } else {
+        counter.textContent = `${totalVisible} Available`;
+      }
     }
 
-    if (visibleCount === 0) {
+    if (totalVisible === 0) {
       grid?.classList.add('hidden');
       emptyState?.classList.remove('hidden');
       emptyState?.classList.add('flex');

@@ -816,6 +816,162 @@ const {
           apply: applyThemeToDOM
         };
       })();
+
+      // Native IndexedDB Engine: Unlimited Local Storage & Lossless High-Fidelity Images
+      (function() {
+        const DB_NAME = 'aetheria_vault';
+        const DB_VERSION = 1;
+        let dbInstance = null;
+
+        function openDB() {
+          if (dbInstance) return Promise.resolve(dbInstance);
+          return new Promise((resolve) => {
+            if (typeof indexedDB === 'undefined') return resolve(null);
+            try {
+              const req = indexedDB.open(DB_NAME, DB_VERSION);
+              req.onupgradeneeded = () => {
+                const db = req.result;
+                if (!db.objectStoreNames.contains('characters')) {
+                  db.createObjectStore('characters', { keyPath: 'id' });
+                }
+              };
+              req.onsuccess = () => {
+                dbInstance = req.result;
+                resolve(dbInstance);
+              };
+              req.onerror = () => resolve(null);
+            } catch (err) {
+              resolve(null);
+            }
+          });
+        }
+
+        async function saveCharacter(character) {
+          if (!character || !character.id) return false;
+          const db = await openDB();
+          if (db) {
+            try {
+              await new Promise((resolve, reject) => {
+                const tx = db.transaction('characters', 'readwrite');
+                tx.objectStore('characters').put(character);
+                tx.oncomplete = () => resolve(true);
+                tx.onerror = () => reject(tx.error);
+              });
+            } catch (e) {
+              console.warn('IDB put error:', e);
+            }
+          }
+          // Mirror in localStorage safely
+          try {
+            const raw = localStorage.getItem('aetheria_custom_characters');
+            let list = raw ? JSON.parse(raw) : [];
+            if (!Array.isArray(list)) list = [];
+            const idx = list.findIndex(c => c && c.id === character.id);
+            if (idx !== -1) list[idx] = character;
+            else list.push(character);
+            localStorage.setItem('aetheria_custom_characters', JSON.stringify(list));
+          } catch (lsErr) {
+            try {
+              const raw = localStorage.getItem('aetheria_custom_characters');
+              let list = raw ? JSON.parse(raw) : [];
+              const safeChar = { ...character };
+              if (safeChar.avatarUrl && safeChar.avatarUrl.length > 50000) {
+                safeChar.avatarUrl = '/avatars/asian_woman.webp';
+              }
+              const idx = list.findIndex(c => c && c.id === safeChar.id);
+              if (idx !== -1) list[idx] = safeChar;
+              else list.push(safeChar);
+              localStorage.setItem('aetheria_custom_characters', JSON.stringify(list));
+            } catch (e2) {}
+          }
+          return true;
+        }
+
+        async function getCharacter(id) {
+          if (!id) return null;
+          const db = await openDB();
+          if (db) {
+            try {
+              const char = await new Promise((resolve) => {
+                const tx = db.transaction('characters', 'readonly');
+                const req = tx.objectStore('characters').get(id);
+                req.onsuccess = () => resolve(req.result || null);
+                req.onerror = () => resolve(null);
+              });
+              if (char) return char;
+            } catch (e) {}
+          }
+          try {
+            const raw = localStorage.getItem('aetheria_custom_characters');
+            const list = raw ? JSON.parse(raw) : [];
+            const normId = id.toLowerCase().trim();
+            return list.find(c => c && (c.id === id || c.id?.toLowerCase() === normId || (c.name && c.name.toLowerCase() === normId))) || null;
+          } catch (e) {
+            return null;
+          }
+        }
+
+        async function getAllCharacters() {
+          const db = await openDB();
+          let idbList = [];
+          if (db) {
+            try {
+              idbList = await new Promise((resolve) => {
+                const tx = db.transaction('characters', 'readonly');
+                const req = tx.objectStore('characters').getAll();
+                req.onsuccess = () => resolve(req.result || []);
+                req.onerror = () => resolve([]);
+              });
+            } catch (e) {}
+          }
+
+          try {
+            const raw = localStorage.getItem('aetheria_custom_characters');
+            const lsList = raw ? JSON.parse(raw) : [];
+            if (Array.isArray(lsList)) {
+              lsList.forEach(lsChar => {
+                if (lsChar && lsChar.id && !idbList.some(c => c.id === lsChar.id)) {
+                  idbList.push(lsChar);
+                  if (db) saveCharacter(lsChar);
+                }
+              });
+            }
+          } catch (e) {}
+
+          return idbList;
+        }
+
+        async function deleteCharacter(id) {
+          if (!id) return false;
+          const db = await openDB();
+          if (db) {
+            try {
+              await new Promise((resolve) => {
+                const tx = db.transaction('characters', 'readwrite');
+                tx.objectStore('characters').delete(id);
+                tx.oncomplete = () => resolve(true);
+                tx.onerror = () => resolve(false);
+              });
+            } catch (e) {}
+          }
+          try {
+            const raw = localStorage.getItem('aetheria_custom_characters');
+            let list = raw ? JSON.parse(raw) : [];
+            if (Array.isArray(list)) {
+              list = list.filter(c => c && c.id !== id && c.id?.toLowerCase() !== id.toLowerCase());
+              localStorage.setItem('aetheria_custom_characters', JSON.stringify(list));
+            }
+          } catch (e) {}
+          return true;
+        }
+
+        window.AetheriaDB = {
+          saveCharacter,
+          getCharacter,
+          getAllCharacters,
+          deleteCharacter
+        };
+      })();
     </script>
 </head>
   <body class={`bg-[#07080d] text-slate-100 selection:bg-purple-500/30 selection:text-purple-200 antialiased overflow-x-hidden w-full max-w-[100vw] ${noScroll ? 'h-[100dvh] max-h-[100dvh] overflow-hidden' : 'min-h-screen'}`}>
