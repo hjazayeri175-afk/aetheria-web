@@ -868,9 +868,19 @@ const PRESET_AVATARS = [
     </div>
 
     <!-- ================= TOAST NOTIFICATION ================= -->
-    <div id="status-toast" class="fixed bottom-6 right-6 z-50 hidden p-3.5 rounded-2xl bg-purple-900/90 border border-purple-500/50 text-xs text-purple-100 flex items-center gap-2.5 shadow-2xl backdrop-blur-xl">
-      <Check class="w-4 h-4 text-emerald-400 shrink-0" />
-      <span id="toast-text">Tavern Card loaded successfully!</span>
+    <div id="status-toast" class="fixed bottom-6 left-4 right-4 sm:left-auto sm:right-6 z-50 hidden px-4 py-3 rounded-2xl bg-[#0f1428]/95 border border-emerald-500/40 text-xs text-white flex items-center gap-3 shadow-2xl shadow-black/80 backdrop-blur-xl max-w-sm sm:max-w-md transition-all duration-300">
+      <div class="w-6 h-6 rounded-full bg-emerald-500/20 border border-emerald-500/30 flex items-center justify-center shrink-0">
+        <Check class="w-3.5 h-3.5 text-emerald-400" />
+      </div>
+      <span id="toast-text" class="font-medium text-slate-100 flex-1 leading-snug">Tavern Card loaded successfully!</span>
+      <button 
+        type="button" 
+        id="toast-close-btn"
+        onclick="document.getElementById('status-toast')?.classList.add('hidden')"
+        class="text-slate-400 hover:text-white p-1 transition cursor-pointer"
+      >
+        <X class="w-3.5 h-3.5" />
+      </button>
     </div>
 
   </div>
@@ -1319,13 +1329,16 @@ const PRESET_AVATARS = [
   });
 
   // ================= TOAST NOTIFICATION =================
+  let toastTimer: any = null;
   function showToast(msg: string) {
     if (toastText && statusToast) {
+      if (toastTimer) clearTimeout(toastTimer);
       toastText.textContent = msg;
       statusToast.classList.remove('hidden');
-      setTimeout(() => {
+      toastTimer = setTimeout(() => {
         statusToast.classList.add('hidden');
-      }, 4000);
+        toastTimer = null;
+      }, 3200);
     }
   }
 
