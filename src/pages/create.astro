@@ -1027,9 +1027,11 @@ const PRESET_AVATARS = [
 
       showToast(`"${savedChar.name}" saved! Launching chat...`);
 
-      // Direct navigation to custom chat route with trailing slash to prevent 307
-      const targetUrl = `/chat/custom/?charId=${encodeURIComponent(savedChar.id)}`;
-      window.location.href = targetUrl;
+      // Flush microtasks and persist before navigating
+      setTimeout(() => {
+        const targetUrl = `/chat/custom/?charId=${encodeURIComponent(savedChar.id)}`;
+        window.location.href = targetUrl;
+      }, 120);
     } catch (err: any) {
       console.error('Character Save & Launch failed:', err);
       showToast('Error: ' + (err?.message || 'Could not save character'));
@@ -2083,15 +2085,19 @@ const PRESET_AVATARS = [
       existing.push(characterData);
     }
 
-    // Save to IndexedDB (lossless, original full resolution, unlimited capacity)
+    // 1. ALWAYS write synchronously to localStorage first
+    try {
+      localStorage.setItem('aetheria_custom_characters', JSON.stringify(existing));
+      localStorage.setItem(`aetheria_character_${characterData.id}`, JSON.stringify(characterData));
+    } catch (storageErr) {
+      console.warn('LocalStorage save warning:', storageErr);
+    }
+
+    // 2. Also persist to IndexedDB for unlimited capacity
     if (typeof (window as any).AetheriaDB !== 'undefined') {
-      (window as any).AetheriaDB.saveCharacter(characterData);
-    } else {
       try {
-        localStorage.setItem('aetheria_custom_characters', JSON.stringify(existing));
-      } catch (storageErr) {
-        console.warn('LocalStorage save warning:', storageErr);
-      }
+        (window as any).AetheriaDB.saveCharacter(characterData);
+      } catch (e) {}
     }
 
     return characterData;

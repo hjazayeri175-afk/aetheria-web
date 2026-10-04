@@ -4737,21 +4737,28 @@ const { character } = Astro.props;
         };
       }
 
-      // Check IndexedDB for 100% full-resolution original lossless avatar
-      if (typeof (window as any).AetheriaDB !== 'undefined' && customId) {
-        (window as any).AetheriaDB.getCharacter(decodeURIComponent(customId).trim()).then((idbChar: any) => {
+      // Check IndexedDB for 100% full-resolution original lossless avatar and details
+      if (typeof window.AetheriaDB !== 'undefined' && customId) {
+        window.AetheriaDB.getCharacter(decodeURIComponent(customId).trim()).then((idbChar) => {
           if (idbChar) {
+            if (idbChar.name) {
+              activeChar = { ...activeChar, ...idbChar };
+              const hName = document.getElementById('chat-header-name');
+              if (hName) hName.textContent = idbChar.name;
+              const hTitle = document.getElementById('chat-header-title');
+              if (hTitle) hTitle.textContent = idbChar.title || 'Custom Companion';
+            }
             if (idbChar.avatarUrl) {
               activeChar.avatarUrl = idbChar.avatarUrl;
-              const hAvatar = document.getElementById('chat-header-avatar') as HTMLImageElement | null;
+              const hAvatar = document.getElementById('chat-header-avatar');
               if (hAvatar) hAvatar.src = idbChar.avatarUrl;
-              const sAvatar = document.getElementById('chat-sidebar-avatar') as HTMLImageElement | null;
+              const sAvatar = document.getElementById('chat-sidebar-avatar');
               if (sAvatar) sAvatar.src = idbChar.avatarUrl;
-              const tAvatar = document.getElementById('chat-typing-avatar') as HTMLImageElement | null;
+              const tAvatar = document.getElementById('chat-typing-avatar');
               if (tAvatar) tAvatar.src = idbChar.avatarUrl;
             }
           }
-        });
+        }).catch(() => {});
       }
     } catch {}
   }
