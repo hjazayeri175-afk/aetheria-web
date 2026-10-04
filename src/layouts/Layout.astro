@@ -971,6 +971,79 @@ const {
           getAllCharacters,
           deleteCharacter
         };
+
+        // Global sleek dark-mode confirm dialog
+        window.showConfirmModal = function({
+          title = 'Delete Character',
+          message = 'Are you sure you want to delete this character?',
+          confirmText = 'Delete',
+          cancelText = 'Cancel',
+          danger = true
+        } = {}) {
+          return new Promise((resolve) => {
+            const modal = document.getElementById('aetheria-confirm-modal');
+            const dialog = document.getElementById('aetheria-confirm-dialog');
+            const titleEl = document.getElementById('confirm-modal-title');
+            const msgEl = document.getElementById('confirm-modal-msg');
+            const cancelBtn = document.getElementById('confirm-modal-cancel');
+            const okBtn = document.getElementById('confirm-modal-ok');
+            const glow = document.getElementById('confirm-glow');
+            const iconBox = document.getElementById('confirm-icon-box');
+
+            if (!modal || !dialog || !okBtn || !cancelBtn) {
+              return resolve(window.confirm(message));
+            }
+
+            if (titleEl) titleEl.textContent = title;
+            if (msgEl) msgEl.textContent = message;
+            if (cancelBtn) cancelBtn.textContent = cancelText;
+            if (okBtn) {
+              okBtn.textContent = confirmText;
+              if (danger) {
+                okBtn.className = 'w-full py-2.5 sm:py-3 rounded-2xl bg-gradient-to-r from-rose-600 to-rose-700 hover:from-rose-500 hover:to-rose-600 active:scale-95 text-xs sm:text-sm font-semibold text-white shadow-lg shadow-rose-950/60 transition duration-200 cursor-pointer';
+                if (glow) glow.className = 'absolute -top-12 left-1/2 -translate-x-1/2 w-32 h-32 bg-rose-600/25 rounded-full blur-3xl pointer-events-none';
+                if (iconBox) iconBox.className = 'w-12 h-12 rounded-2xl bg-rose-500/10 border border-rose-500/25 flex items-center justify-center mb-3 text-rose-400 shadow-inner';
+              } else {
+                okBtn.className = 'w-full py-2.5 sm:py-3 rounded-2xl bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-500 hover:to-indigo-500 active:scale-95 text-xs sm:text-sm font-semibold text-white shadow-lg shadow-purple-950/60 transition duration-200 cursor-pointer';
+                if (glow) glow.className = 'absolute -top-12 left-1/2 -translate-x-1/2 w-32 h-32 bg-purple-600/20 rounded-full blur-3xl pointer-events-none';
+                if (iconBox) iconBox.className = 'w-12 h-12 rounded-2xl bg-purple-500/10 border border-purple-500/20 flex items-center justify-center mb-3 text-purple-400 shadow-inner';
+              }
+            }
+
+            function cleanup(result) {
+              modal.classList.remove('opacity-100', 'pointer-events-auto');
+              modal.classList.add('opacity-0', 'pointer-events-none');
+              dialog.classList.remove('scale-100');
+              dialog.classList.add('scale-95');
+
+              cancelBtn.removeEventListener('click', onCancel);
+              okBtn.removeEventListener('click', onOk);
+              modal.removeEventListener('click', onBackdrop);
+              document.removeEventListener('keydown', onKey);
+
+              resolve(result);
+            }
+
+            function onCancel() { cleanup(false); }
+            function onOk() { cleanup(true); }
+            function onBackdrop(e) {
+              if (e.target === modal) cleanup(false);
+            }
+            function onKey(e) {
+              if (e.key === 'Escape') cleanup(false);
+            }
+
+            cancelBtn.addEventListener('click', onCancel);
+            okBtn.addEventListener('click', onOk);
+            modal.addEventListener('click', onBackdrop);
+            document.addEventListener('keydown', onKey);
+
+            modal.classList.remove('opacity-0', 'pointer-events-none');
+            modal.classList.add('opacity-100', 'pointer-events-auto');
+            dialog.classList.remove('scale-95');
+            dialog.classList.add('scale-100');
+          });
+        };
       })();
     </script>
 </head>
@@ -980,6 +1053,61 @@ const {
       <div class="fixed top-0 left-1/2 -translate-x-1/2 w-full max-w-7xl h-[450px] bg-gradient-to-b from-purple-900/10 via-indigo-950/5 to-transparent blur-[120px] pointer-events-none -z-10"></div>
       
       <slot />
+
+      <!-- Sleek Dark-Themed Global Confirm Dialog Modal -->
+      <div 
+        id="aetheria-confirm-modal" 
+        class="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/80 backdrop-blur-md opacity-0 pointer-events-none transition-all duration-200 select-none"
+        role="dialog"
+        aria-modal="true"
+      >
+        <div 
+          id="aetheria-confirm-dialog" 
+          class="relative w-full max-w-[340px] sm:max-w-sm rounded-3xl bg-[#0c0f1e] border border-white/[0.1] shadow-2xl shadow-black/95 p-6 flex flex-col items-center text-center transform scale-95 transition-all duration-200"
+        >
+          <!-- Glow Backdrop -->
+          <div id="confirm-glow" class="absolute -top-12 left-1/2 -translate-x-1/2 w-32 h-32 bg-rose-600/25 rounded-full blur-3xl pointer-events-none"></div>
+
+          <!-- Icon -->
+          <div id="confirm-icon-box" class="w-12 h-12 rounded-2xl bg-rose-500/10 border border-rose-500/25 flex items-center justify-center mb-3 text-rose-400 shadow-inner">
+            <svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+            </svg>
+          </div>
+
+          <!-- Title -->
+          <h3 id="confirm-modal-title" class="text-base sm:text-lg font-bold text-white tracking-tight">
+            Delete Character
+          </h3>
+
+          <!-- Message -->
+          <p id="confirm-modal-msg" class="text-xs sm:text-sm text-slate-300/90 mt-2 leading-relaxed px-1">
+            Are you sure you want to delete this character?
+          </p>
+
+          <p class="text-[11px] text-rose-400/80 font-medium mt-1.5">
+            This action cannot be undone.
+          </p>
+
+          <!-- Actions -->
+          <div class="grid grid-cols-2 gap-3 w-full mt-6">
+            <button 
+              id="confirm-modal-cancel" 
+              type="button" 
+              class="w-full py-2.5 sm:py-3 rounded-2xl bg-white/[0.05] hover:bg-white/[0.1] active:scale-95 border border-white/10 text-xs sm:text-sm font-semibold text-slate-300 hover:text-white transition duration-200 cursor-pointer"
+            >
+              Cancel
+            </button>
+            <button 
+              id="confirm-modal-ok" 
+              type="button" 
+              class="w-full py-2.5 sm:py-3 rounded-2xl bg-gradient-to-r from-rose-600 to-rose-700 hover:from-rose-500 hover:to-rose-600 active:scale-95 text-xs sm:text-sm font-semibold text-white shadow-lg shadow-rose-950/60 transition duration-200 cursor-pointer"
+            >
+              Delete
+            </button>
+          </div>
+        </div>
+      </div>
     </div>
   </body>
 </html>

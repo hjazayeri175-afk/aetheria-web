@@ -225,7 +225,17 @@ const QUICK_TAGS = [
         delBtn?.addEventListener('click', async (e) => {
           e.stopPropagation();
           const targetName = char.name || 'this character';
-          if (confirm(`Are you sure you want to delete "${targetName}"?`)) {
+          const confirmed = typeof (window as any).showConfirmModal === 'function'
+            ? await (window as any).showConfirmModal({
+                title: 'Delete Character',
+                message: `Are you sure you want to delete "${targetName}"?`,
+                confirmText: 'Delete',
+                cancelText: 'Cancel',
+                danger: true
+              })
+            : confirm(`Are you sure you want to delete "${targetName}"?`);
+
+          if (confirmed) {
             if (typeof (window as any).AetheriaDB !== 'undefined') {
               await (window as any).AetheriaDB.deleteCharacter(char.id);
             }
