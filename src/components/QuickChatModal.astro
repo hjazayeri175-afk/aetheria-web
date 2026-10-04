@@ -237,7 +237,12 @@ import {
     if (!char) {
       try {
         const customList = JSON.parse(localStorage.getItem('aetheria_custom_characters') || '[]');
-        char = customList.find((c: any) => c.id === charId);
+        const normId = charId.toLowerCase().trim();
+        char = customList.find((c: any) => c && (
+          c.id === charId || 
+          c.id?.toLowerCase() === normId || 
+          (c.name && c.name.toLowerCase() === normId)
+        ));
         if (char) char.isCustom = true;
       } catch {}
     }

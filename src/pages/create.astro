@@ -1579,20 +1579,61 @@ const PRESET_AVATARS = [
     }
   });
 
+  // ================= AVATAR IMAGE COMPRESSOR (MAX 384px WebP / ~25KB) =================
+  async function compressImageToThumbnail(imageSrc: string, maxDim = 384): Promise<string> {
+    if (!imageSrc || (!imageSrc.startsWith('data:image') && !imageSrc.startsWith('blob:'))) {
+      return imageSrc;
+    }
+    return new Promise((resolve) => {
+      const img = new Image();
+      img.onload = () => {
+        try {
+          const canvas = document.createElement('canvas');
+          let w = img.width;
+          let h = img.height;
+          if (w > maxDim || h > maxDim) {
+            if (w > h) {
+              h = Math.round((h * maxDim) / w);
+              w = maxDim;
+            } else {
+              w = Math.round((w * maxDim) / h);
+              h = maxDim;
+            }
+          }
+          canvas.width = Math.max(1, w);
+          canvas.height = Math.max(1, h);
+          const ctx = canvas.getContext('2d');
+          if (ctx) {
+            ctx.drawImage(img, 0, 0, w, h);
+            const compressed = canvas.toDataURL('image/webp', 0.85);
+            resolve(compressed.length < imageSrc.length ? compressed : imageSrc);
+            return;
+          }
+        } catch (e) {
+          console.warn('Canvas compression error:', e);
+        }
+        resolve(imageSrc);
+      };
+      img.onerror = () => resolve(imageSrc);
+      img.src = imageSrc;
+    });
+  }
+
   // Custom local avatar upload from device
   customAvatarFile?.addEventListener('change', (e: Event) => {
     const file = (e.target as HTMLInputElement).files?.[0];
     if (file) {
       const reader = new FileReader();
-      reader.onload = (re) => {
-        const base64Url = re.target?.result as string;
-        if (avatarInput) avatarInput.value = base64Url;
+      reader.onload = async (re) => {
+        const rawUrl = re.target?.result as string;
+        const compressedUrl = await compressImageToThumbnail(rawUrl);
+        if (avatarInput) avatarInput.value = compressedUrl;
         // remove ring from presets
         presetBtns.forEach(b => {
           b.className = 'preset-avatar-btn relative aspect-square rounded-xl overflow-hidden border-2 border-white/10 hover:border-purple-500/60 transition cursor-pointer';
         });
         updateAllCalculations();
-        showToast('Custom avatar loaded from your device!');
+        showToast('Custom avatar loaded and optimized from your device!');
       };
       reader.readAsDataURL(file);
     }
@@ -1836,16 +1877,18 @@ const PRESET_AVATARS = [
           reader.readAsDataURL(file);
         });
 
+        const compressedDataUrl = await compressImageToThumbnail(dataUrl);
+
         if (parsed) {
-          populateFromCardData(parsed, dataUrl);
+          populateFromCardData(parsed, compressedDataUrl);
         } else {
           // No embedded Tavern metadata found, but load as avatar
-          if (avatarInput) avatarInput.value = dataUrl;
+          if (avatarInput) avatarInput.value = compressedDataUrl;
           presetBtns.forEach(b => {
             b.className = 'preset-avatar-btn relative aspect-square rounded-xl overflow-hidden border-2 border-white/10 hover:border-purple-500/60 transition cursor-pointer';
           });
           updateAllCalculations();
-          showToast('Image loaded as Avatar! (No Tavern metadata chunk detected)');
+          showToast('Image loaded and optimized as Avatar! (No Tavern metadata chunk detected)');
         }
       } catch (err: any) {
         console.error('Image card parse error:', err);
@@ -1989,11 +2032,29 @@ const PRESET_AVATARS = [
     }
 
     // 2. Generate bulletproof ID supporting Unicode / Persian / Arabic
-    let cleanId = charName.toLowerCase().trim()
-      .replace(/[^\p{L}\p{N}]+/gu, '-')
-      .replace(/^-+|-+$/g, '');
+    const editId = new URLSearchParams(window.location.search).get('edit');
+    let cleanId = editId ? editId.trim() : (
+      charName.toLowerCase().trim()
+        .replace(/[^\p{L}\p{N}]+/gu, '-')
+        .replace(/^-+|-+$/g, '')
+    );
     if (!cleanId || cleanId === '-') {
       cleanId = 'custom-' + Date.now().toString(36);
+    }
+
+    // 5. Safe LocalStorage commit
+    let existing = [];
+    try {
+      const raw = localStorage.getItem('aetheria_custom_characters');
+      existing = raw ? JSON.parse(raw) : [];
+      if (!Array.isArray(existing)) existing = [];
+    } catch (e) {
+      existing = [];
+    }
+
+    // If creating new (not editing) and ID exists, make unique so it doesn't overwrite
+    if (!editId && existing.some((c: any) => c && c.id === cleanId)) {
+      cleanId = `${cleanId}-${Date.now().toString(36).slice(-4)}`;
     }
 
     // 3. Ensure engaging greeting exists
@@ -2059,16 +2120,6 @@ const PRESET_AVATARS = [
       ];
     }
 
-    // 5. Safe LocalStorage commit
-    let existing = [];
-    try {
-      const raw = localStorage.getItem('aetheria_custom_characters');
-      existing = raw ? JSON.parse(raw) : [];
-      if (!Array.isArray(existing)) existing = [];
-    } catch (e) {
-      existing = [];
-    }
-
     const idx = existing.findIndex((c: any) => c && c.id === characterData.id);
     if (idx !== -1) {
       existing[idx] = characterData;
@@ -2076,15 +2127,23 @@ const PRESET_AVATARS = [
       existing.push(characterData);
     }
 
+    // Keep up to 60 characters
+    if (existing.length > 60) {
+      existing = existing.slice(-60);
+    }
+
     try {
       localStorage.setItem('aetheria_custom_characters', JSON.stringify(existing));
     } catch (storageErr) {
-      console.warn('LocalStorage save failed, attempting cleanup of old custom items:', storageErr);
-      if (existing.length > 3) {
-        existing = existing.slice(-3); // keep only 3 most recent
-        try {
-          localStorage.setItem('aetheria_custom_characters', JSON.stringify(existing));
-        } catch(e) {}
+      console.warn('LocalStorage save failed, attempting avatar compression:', storageErr);
+      try {
+        existing = existing.map(c => ({
+          ...c,
+          avatarUrl: (c.avatarUrl && c.avatarUrl.length > 60000) ? AVATAR_PRESETS[0].url : c.avatarUrl
+        }));
+        localStorage.setItem('aetheria_custom_characters', JSON.stringify(existing));
+      } catch(e) {
+        console.error('Final storage save failure:', e);
       }
     }
 
@@ -2104,6 +2163,30 @@ const PRESET_AVATARS = [
 
     showToast('Tavern V2 Card JSON exported with World Info!');
   });
+
+  // Sanitize bloated legacy storage
+  function sanitizeCustomCharactersStorage() {
+    try {
+      const raw = localStorage.getItem('aetheria_custom_characters');
+      if (!raw) return;
+      const list = JSON.parse(raw);
+      if (!Array.isArray(list) || list.length === 0) return;
+
+      let modified = false;
+      list.forEach((c: any) => {
+        if (c.avatarUrl && c.avatarUrl.startsWith('data:image') && c.avatarUrl.length > 50000) {
+          compressImageToThumbnail(c.avatarUrl, 320).then(comp => {
+            c.avatarUrl = comp;
+            try {
+              localStorage.setItem('aetheria_custom_characters', JSON.stringify(list));
+            } catch(e) {}
+          });
+          modified = true;
+        }
+      });
+    } catch(e) {}
+  }
+  sanitizeCustomCharactersStorage();
 
   // Initial render
   renderLoreEntries();
