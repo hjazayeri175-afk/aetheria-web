@@ -4671,20 +4671,44 @@ const { character } = Astro.props;
       const customList = JSON.parse(localStorage.getItem('aetheria_custom_characters') || '[]');
       let matched = null;
       if (customId) {
-        matched = customList.find(c => c.id === customId || (c.name && c.name.toLowerCase() === customId.toLowerCase()));
+        const decodedCustomId = decodeURIComponent(customId).trim();
+        const normCustomId = decodedCustomId.toLowerCase();
+        
+        // Search newest first
+        for (let i = customList.length - 1; i >= 0; i--) {
+          const c = customList[i];
+          if (!c) continue;
+          const cId = (c.id || '').toLowerCase();
+          const cName = (c.name || '').toLowerCase();
+          if (cId === normCustomId || cName === normCustomId || cId === customId.toLowerCase() || (c.slug && c.slug.toLowerCase() === normCustomId)) {
+            matched = c;
+            break;
+          }
+        }
+
+        // If not found in customList, check if stored under standalone key
+        if (!matched) {
+          try {
+            const singleKey = localStorage.getItem(`aetheria_character_${decodedCustomId}`);
+            if (singleKey) matched = JSON.parse(singleKey);
+          } catch(e) {}
+        }
       }
-      if (!matched && customList.length > 0) {
-        matched = customList[customList.length - 1]; // latest created custom character
-      }
+
+      // If customId was specified, but not in list, build character specifically for this customId
       if (!matched && customId) {
-        const prettyName = customId.charAt(0).toUpperCase() + customId.slice(1);
+        const decodedCustomId = decodeURIComponent(customId).trim();
+        const prettyName = decodedCustomId.replace(/[-_]+/g, ' ').replace(/\b\w/g, l => l.toUpperCase());
         matched = {
-          id: customId,
+          id: decodedCustomId,
           name: prettyName,
           title: 'Custom Companion',
-          avatarUrl: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=400&auto=format&fit=crop&q=80',
+          avatarUrl: '/avatars/asian_woman.webp',
           greeting: `Hello! I am ${prettyName}. What would you like to explore today?`
         };
+      } else if (!matched && !customId && customList.length > 0) {
+        // ONLY if no customId was passed at all, fall back to latest character
+        matched = customList[customList.length - 1];
       }
       if (matched) {
         const matchedName = matched.name || 'Character';
@@ -4882,7 +4906,7 @@ const { character } = Astro.props;
   }
 
   // Update DOM elements for custom character if resolved
-  if (isCustomRoute && activeChar.name !== 'Custom Persona') {
+  if (isCustomRoute) {
     document.title = `${activeChar.name} — Immersive Roleplay Chat | Aetheria AI`;
     const hName = document.getElementById('chat-header-name');
     if (hName) hName.textContent = activeChar.name;
