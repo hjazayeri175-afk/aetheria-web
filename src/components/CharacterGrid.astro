@@ -41,7 +41,7 @@ const QUICK_TAGS = [
 
     <!-- Active Count & Sort Selector -->
     <div class="flex items-center justify-between sm:justify-end gap-2.5">
-      <span id="character-counter" class="text-xs text-slate-400 font-mono bg-white/[0.04] px-2.5 py-1 rounded-full border border-white/[0.06]">
+      <span id="character-counter" class="text-xs text-slate-400 font-mono bg-white/[0.04] px-2.5 py-1 rounded-full border border-white/[0.06] whitespace-nowrap">
         {characters.length} Available
       </span>
 
@@ -316,17 +316,7 @@ const QUICK_TAGS = [
 
     const totalVisible = presetVisible + customVisible;
     if (counter) {
-      if (activeTag === 'custom') {
-        counter.textContent = `${customVisible} Custom Characters`;
-      } else if (activeCategory === 'all' && activeTag === 'all') {
-        if (customVisible > 0) {
-          counter.textContent = `${totalVisible} Available (${presetVisible} Presets · ${customVisible} Custom)`;
-        } else {
-          counter.textContent = `${presetVisible} Available`;
-        }
-      } else {
-        counter.textContent = `${totalVisible} Available`;
-      }
+      counter.textContent = `${totalVisible} Available`;
     }
 
     if (totalVisible === 0) {
