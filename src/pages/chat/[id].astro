@@ -3944,10 +3944,10 @@ const { character } = Astro.props;
             <button 
               id="refresh-smart-prompts-btn" 
               type="button" 
-              class="p-1 rounded-md hover:bg-white/[0.08] text-slate-400 transition cursor-pointer active:scale-90"
+              class="w-7 h-7 sm:w-6 sm:h-6 flex items-center justify-center rounded-lg hover:bg-white/[0.08] active:bg-white/[0.15] text-slate-400 hover:text-slate-200 transition cursor-pointer active:scale-90"
               title="Generate new contextual suggestions based on story"
             >
-              <RefreshCw class="w-2.5 h-2.5" id="smart-prompts-refresh-icon" />
+              <RefreshCw class="w-3 h-3 sm:w-2.5 sm:h-2.5" id="smart-prompts-refresh-icon" />
             </button>
           </div>
 
@@ -3958,7 +3958,7 @@ const { character } = Astro.props;
           </div>
 
           <!-- Dynamic Prompts Container -->
-          <div id="smart-prompts-container" class="flex-1 min-w-0 flex items-center gap-2 overflow-x-auto no-scrollbar scroll-smooth py-0.5">
+          <div id="smart-prompts-container" class="flex-1 min-w-0 flex items-center gap-2 overflow-x-auto no-scrollbar scroll-smooth py-0.5 transition-all duration-200">
             {(character.starterPrompts && character.starterPrompts.length > 0 ? character.starterPrompts : [
               `*Looks at ${character.name}* "Tell me more."`,
               `*Smiles softly* "What should we do next?"`
@@ -4670,10 +4670,20 @@ const { character } = Astro.props;
       const customList = JSON.parse(localStorage.getItem('aetheria_custom_characters') || '[]');
       let matched = null;
       if (customId) {
-        matched = customList.find(c => c.id === customId);
+        matched = customList.find(c => c.id === customId || (c.name && c.name.toLowerCase() === customId.toLowerCase()));
       }
       if (!matched && customList.length > 0) {
         matched = customList[customList.length - 1]; // latest created custom character
+      }
+      if (!matched && customId) {
+        const prettyName = customId.charAt(0).toUpperCase() + customId.slice(1);
+        matched = {
+          id: customId,
+          name: prettyName,
+          title: 'Custom Companion',
+          avatarUrl: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=400&auto=format&fit=crop&q=80',
+          greeting: `Hello! I am ${prettyName}. What would you like to explore today?`
+        };
       }
       if (matched) {
         const matchedName = matched.name || 'Character';
@@ -18586,9 +18596,82 @@ const { character } = Astro.props;
   updateSendBtnState();
 
   // Dynamic Smart Prompts System
+  let currentSmartPromptPoolIndex = 0;
+  let activeSmartPromptsList = [];
+
+  function getDynamicPoolSuggestions(charDisplayName, isFa, currentList = []) {
+    const poolsEn = [
+      [
+        `*Looks at ${charDisplayName} curiously* "What made you say that?"`,
+        `*Smiles softly* "Tell me more about what you're thinking."`,
+        `*Takes a step closer* "What would you like to do next?"`
+      ],
+      [
+        `*Tilts head slightly with a smirk* "Is there something you're not telling me?"`,
+        `*Crosses arms with a warm grin* "Try me."`,
+        `*Chuckles softly* "You never make things easy, do you?"`
+      ],
+      [
+        `*Gently rests a hand on ${charDisplayName}'s arm* "Take your time."`,
+        `*Takes a deep breath* "I trust you, you know."`,
+        `*Softly looks into ${charDisplayName}'s eyes* "I'm right here with you."`
+      ],
+      [
+        `*Looks around cautiously and lowers voice* "Are we safe here?"`,
+        `"Let's deal with this right now, together."`,
+        `*Shrugs casually* "I'm ready whenever you are."`
+      ],
+      [
+        `"What's the real reason behind all this?"`,
+        `*Takes a step closer* "Show me what you mean."`,
+        `"What do you want to do about it?"`
+      ]
+    ];
+
+    const poolsFa = [
+      [
+        `*با کنجکاوی به ${charDisplayName} نگاه می‌کنم* "چی شد که اینو گفتی؟"`,
+        `*لبخند ملایمی می‌زنم* "بیشتر برام بگو، به چی فکر می‌کنی؟"`,
+        `*یک قدم جلوتر می‌آیم* "دوست داری قدم بعدی چه‌کار کنیم؟"`
+      ],
+      [
+        `*سرم رو کمی کج می‌کنم و لبخند می‌زنم* "چیزی هست که بهم نگفته باشی؟"`,
+        `*دست به سینه با لبخند می‌ایستم* "ببینم چی تو چنته داری!"`,
+        `*خنده کوتاهی می‌کنم* "هیچ‌وقت کار ساده‌ای نیست، نه؟"`
+      ],
+      [
+        `*آرام دستم را روی شانه ${charDisplayName} می‌گذارم* "تنها نیستی."`,
+        `*نفس عمیقی می‌کشم* "من بهت اعتماد دارم."`,
+        `*با آرامش نگاهش می‌کنم* "من اینجام، کنارت."`
+      ],
+      [
+        `*نگاهی به اطراف می‌اندازم و با صدای آروم می‌گم* "اینجا امنه؟"`,
+        `"بیا همین الان تکلیفش رو مشخص کنیم."`,
+        `*شانه بالا می‌اندازم* "من که حاضرم، هر وقت تو بگی."`
+      ],
+      [
+        `"دلیل واقعی این همه ماجرا چیه؟"`,
+        `*کمی نزدیک‌تر می‌شوم* "دقیقاً منظورت چیه؟ نشونم بده."`,
+        `"خودت دوست داری در موردش چه‌کار کنیم؟"`
+      ]
+    ];
+
+    const customStarters = (activeChar?.starterPrompts || character?.starterPrompts || []).filter(Boolean);
+    const pools = isFa ? poolsFa : poolsEn;
+    if (customStarters.length >= 2) {
+      pools.unshift(customStarters.slice(0, 3));
+    }
+
+    currentSmartPromptPoolIndex = (currentSmartPromptPoolIndex + 1) % pools.length;
+    return pools[currentSmartPromptPoolIndex];
+  }
+
   function renderSmartPrompts(prompts) {
     if (!smartPromptsContainer) return;
-    const charDisplayName = (activeChar && activeChar.name) || (character && character.name) || 'Holly';
+    const charDisplayName = (activeChar && activeChar.name && activeChar.name !== 'Custom Persona') 
+      ? activeChar.name 
+      : (customId ? customId.charAt(0).toUpperCase() + customId.slice(1) : ((character && character.name !== 'Custom Persona') ? character.name : 'Holly'));
+
     if (!prompts || prompts.length === 0) {
       prompts = (activeChar && activeChar.starterPrompts && activeChar.starterPrompts.length > 0)
         ? activeChar.starterPrompts
@@ -18611,6 +18694,8 @@ const { character } = Astro.props;
       str = str.replace(/<char>/gi, charDisplayName);
       return str;
     }).filter(Boolean);
+
+    activeSmartPromptsList = cleanedList;
 
     smartPromptsContainer.innerHTML = cleanedList.map(cleanPrompt => {
       const displayLabel = cleanPrompt.startsWith('*') ? cleanPrompt : `"${cleanPrompt}"`;
@@ -18700,7 +18785,7 @@ const { character } = Astro.props;
     return [];
   }
 
-  async function fetchDynamicSuggestions(contextText) {
+  async function fetchDynamicSuggestions(contextText, isManualRefresh = false) {
     if (smartPromptsAbortController) {
       try { smartPromptsAbortController.abort(); } catch (e) {}
     }
@@ -18718,11 +18803,31 @@ const { character } = Astro.props;
     if (smartPromptsRefreshIcon) {
       smartPromptsRefreshIcon.classList.add('animate-spin');
     }
+    if (smartPromptsContainer) {
+      smartPromptsContainer.classList.add('opacity-40', 'scale-98');
+    }
 
-    let hasPersian = false;
+    const minSpinPromise = new Promise(resolve => setTimeout(resolve, 450));
+
+    const charDisplayName = (activeChar && activeChar.name && activeChar.name !== 'Custom Persona') 
+      ? activeChar.name 
+      : (customId ? customId.charAt(0).toUpperCase() + customId.slice(1) : ((character && character.name !== 'Custom Persona') ? character.name : 'Holly'));
+
+    const convSnippet = conversation.map(m => m.text || '').join(' ') + (activeChar.greeting || '') + (contextText || '');
+    let hasPersian = /[\u0600-\u06FF]/.test(convSnippet);
+
+    // If manual refresh click, immediately cycle the local pool so response is instantaneous
+    if (isManualRefresh) {
+      const nextLocal = getDynamicPoolSuggestions(charDisplayName, hasPersian, activeSmartPromptsList);
+      renderSmartPrompts(nextLocal);
+      setTimeout(() => {
+        if (smartPromptsContainer) smartPromptsContainer.classList.remove('opacity-40', 'scale-98');
+      }, 150);
+    }
+
     try {
       // 1. Gather rich context from character card and recent roleplay dialogue
-      const charName = activeChar.name || character.name || 'Character';
+      const charName = charDisplayName;
       const charTitle = activeChar.title || character.title || '';
       const charScenario = (activeChar.scenario || character.scenario || '').slice(0, 300);
       const charPersonality = (activeChar.personality || character.personality || '').slice(0, 200);
@@ -18774,7 +18879,7 @@ Requirements:
 - Output format: Return ONLY a valid JSON array of strings, e.g. ["Option 1", "Option 2", "Option 3", "Option 4"].
 - No markdown wrappers, no backticks, no introductory text.`;
 
-      const userPrompt = `Recent dialogue:\n${historySnippet}\n\nProvide the 3-4 reply ideas for the user as a JSON array:`;
+      const userPrompt = `Recent dialogue:\n${historySnippet}\n\n(Variation #${Date.now().toString().slice(-4)}: Provide fresh, distinct reply ideas):\nProvide the 3-4 reply ideas for the user as a JSON array:`;
 
       // 2. Determine Provider & API Key (BYOK User API)
       const provider = localStorage.getItem('aetheria_text_provider') || 'groq';
@@ -18819,7 +18924,7 @@ Requirements:
             reqBody = {
               model: model,
               max_tokens: 300,
-              temperature: 0.8,
+              temperature: 0.9,
               system: systemPrompt,
               messages: [{ role: 'user', content: userPrompt }]
             };
@@ -18843,7 +18948,7 @@ Requirements:
                 { role: 'user', content: userPrompt }
               ],
               max_tokens: 250,
-              temperature: 0.8,
+              temperature: 0.9,
               stream: false
             };
           }
@@ -18894,28 +18999,11 @@ Requirements:
           }
         } catch (byokErr) {
           if (currentSignal.aborted) return;
-          console.warn('Smart ideas BYOK call failed, falling back to edge:', byokErr);
+          console.warn('Smart ideas BYOK call failed, falling back to local pool:', byokErr);
         }
       }
 
-      // If BYOK was not configured or returned empty, use character-tailored suggestion ideas (bilingual aware)
-      if (!generatedPills) {
-        const charDisplayName = (activeChar && activeChar.name) || (character && character.name) || 'Character';
-        if (hasPersian) {
-          generatedPills = [
-            `*با دقت به ${charDisplayName} نگاه می‌کنم* "بیشتر برام بگو، داری به چی فکر می‌کنی؟"`,
-            `*یک قدم جلوتر می‌آیم* "دوست داری قدم بعدی چه‌کار کنیم؟"`,
-            `*لبخند ملایمی می‌زنم* "من اینجام و باهات همراهی می‌کنم."`
-          ];
-        } else {
-          generatedPills = [
-            `*Looks at ${charDisplayName} intently* "Tell me more about what you're thinking."`,
-            `*Takes a step closer* "What would you like to do next?"`,
-            `*Smiles softly* "I'm right here with you."`
-          ];
-        }
-      }
-
+      // If BYOK succeeded with new suggestions, render them!
       if (generatedPills && generatedPills.length > 0) {
         const cleanPills = generatedPills
           .map(p => String(p).trim().replace(/^["'«“]+|["'»”]+$/g, '').trim())
@@ -18928,32 +19016,22 @@ Requirements:
         }
       }
 
-      // Guarantee fallback suggestions if cleanPills was empty
-      const charDisplayName = (activeChar && activeChar.name) || (character && character.name) || 'Character';
-      const guaranteePills = hasPersian ? [
-        `*با دقت به ${charDisplayName} نگاه می‌کنم* "بیشتر برام بگو."`,
-        `*لبخند می‌زنم* "قدم بعدی چیه؟"`
-      ] : [
-        `*Looks at ${charDisplayName}* "Tell me more."`,
-        `*Smiles softly* "What should we do next?"`
-      ];
-      renderSmartPrompts(guaranteePills);
+      // If not already rotated (e.g. automatic update on reply), use local dynamic pool
+      if (!isManualRefresh) {
+        const fallbackPool = getDynamicPoolSuggestions(charDisplayName, hasPersian, activeSmartPromptsList);
+        renderSmartPrompts(fallbackPool);
+      }
     } catch (err) {
       if (err.name !== 'AbortError') {
         console.warn('Smart suggestions fetch error:', err);
       }
-      // Guarantee fallback suggestions so bar never stays blank
-      const charDisplayName = (activeChar && activeChar.name) || (character && character.name) || 'Character';
-      const guaranteePills = hasPersian ? [
-        `*با دقت به ${charDisplayName} نگاه می‌کنم* "بیشتر برام بگو."`,
-        `*لبخند می‌زنم* "قدم بعدی چیه؟"`
-      ] : [
-        `*Looks at ${charDisplayName}* "Tell me more."`,
-        `*Smiles softly* "What should we do next?"`
-      ];
-      renderSmartPrompts(guaranteePills);
+      if (!isManualRefresh) {
+        const fallbackPool = getDynamicPoolSuggestions(charDisplayName, hasPersian, activeSmartPromptsList);
+        renderSmartPrompts(fallbackPool);
+      }
     } finally {
       clearTimeout(timeoutId);
+      await minSpinPromise;
       if (smartPromptsLoading) {
         smartPromptsLoading.classList.add('hidden');
         smartPromptsLoading.classList.remove('flex');
@@ -18961,12 +19039,17 @@ Requirements:
       if (smartPromptsRefreshIcon) {
         smartPromptsRefreshIcon.classList.remove('animate-spin');
       }
+      if (smartPromptsContainer) {
+        smartPromptsContainer.classList.remove('opacity-40', 'scale-98');
+      }
     }
   }
 
   // Refresh Smart Prompts on click
-  refreshSmartPromptsBtn?.addEventListener('click', () => {
-    fetchDynamicSuggestions();
+  refreshSmartPromptsBtn?.addEventListener('click', async (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+    await fetchDynamicSuggestions(null, true);
   });
 
   // Initial render of smart prompts on load
