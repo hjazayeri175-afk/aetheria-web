@@ -420,7 +420,7 @@ const { character } = Astro.props;
         <!-- Bio & Lore -->
         <div class="space-y-2">
           <h2 class="text-xs uppercase tracking-wider text-slate-400 font-bold">About Character</h2>
-          <div id="chat-sidebar-desc" class="text-xs text-slate-300 leading-relaxed bg-white/[0.02] p-3.5 rounded-xl border border-white/[0.05] max-h-60 overflow-y-auto space-y-2">
+          <div id="chat-sidebar-desc" class="text-xs text-slate-300 leading-relaxed bg-white/[0.02] p-3.5 rounded-xl border border-white/[0.05] max-h-80 overflow-y-auto card-rich-content">
             <Fragment set:html={formatRichDescription(character.description || '')} />
           </div>
         </div>
