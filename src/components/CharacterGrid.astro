@@ -117,7 +117,7 @@ const QUICK_TAGS = [
 </section>
 
 <script>
-  import { stripHtmlForPrompt } from '../utils/cardFormatter';
+  import { stripHtmlForPrompt, sanitizeTitle } from '../utils/cardFormatter';
 
   let activeCategory = 'all';
   let activeTag = 'all';
@@ -209,7 +209,7 @@ const QUICK_TAGS = [
                 ${char.name}
               </h3>
               <p class="text-[11px] sm:text-xs text-purple-400/90 font-medium line-clamp-1 mt-0.5">
-                ${char.title || 'Custom Character'}
+                ${sanitizeTitle(char.title, 'Custom Character')}
               </p>
               <p class="hidden sm:block text-[11px] text-slate-400 line-clamp-2 mt-1.5 leading-relaxed">
                 ${stripHtmlForPrompt(char.description || char.scenario || '')}

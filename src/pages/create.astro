@@ -887,6 +887,8 @@ const PRESET_AVATARS = [
 </Layout>
 
 <script>
+  import { sanitizeTitle } from '../utils/cardFormatter';
+
   const AVATAR_PRESETS = [
     { url: '/avatars/asian_woman.webp', label: 'Asian / Japanese Woman (Studio Neon)', name: 'Aiko' },
     { url: '/avatars/western_woman.webp', label: 'Western / Caucasian Woman (Coral Amber)', name: 'Elena' },
@@ -1712,7 +1714,8 @@ const PRESET_AVATARS = [
 
     // 1. Name & Title
     const charName = d.name || d.char_name || d.character_name || root.name || root.char_name || '';
-    const charTitle = d.title || d.creator_notes || d.personality_summary || d.short_description || 'Companion';
+    const rawTitle = d.title || d.personality_summary || d.short_description || d.tagline || '';
+    const charTitle = sanitizeTitle(rawTitle, 'AI Companion');
 
     if (charName && nameInput) {
       nameInput.value = charName;
@@ -1730,8 +1733,14 @@ const PRESET_AVATARS = [
       personalityInput.dispatchEvent(new Event('input', { bubbles: true }));
     }
 
-    // 3. Description / Backstory / Lore
-    const charDesc = d.description || d.char_desc || d.summary || d.bio || root.description || '';
+    // 3. Description / Backstory / Lore (incorporate creator notes if not already included)
+    let charDesc = d.description || d.char_desc || d.summary || d.bio || root.description || '';
+    if (d.creator_notes && typeof d.creator_notes === 'string') {
+      const notes = d.creator_notes.trim();
+      if (notes && !charDesc.includes(notes.slice(0, 30))) {
+        charDesc = notes + '\n\n' + charDesc;
+      }
+    }
     if (charDesc) {
       if (loreInput) {
         loreInput.value = charDesc;
@@ -1996,11 +2005,8 @@ const PRESET_AVATARS = [
       if (nameInput) nameInput.value = charName;
     }
 
-    let charTitle = titleInput?.value?.trim() || '';
-    if (!charTitle) {
-      charTitle = 'Companion';
-      if (titleInput) titleInput.value = charTitle;
-    }
+    let charTitle = sanitizeTitle(titleInput?.value, 'Companion');
+    if (titleInput) titleInput.value = charTitle;
 
     // 2. Generate bulletproof ID supporting Unicode / Persian / Arabic
     const editId = new URLSearchParams(window.location.search).get('edit');

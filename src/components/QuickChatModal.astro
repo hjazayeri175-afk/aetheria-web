@@ -112,7 +112,7 @@ import {
             Character Name
           </h2>
 
-          <p id="showcase-title" class="text-xs sm:text-sm font-medium text-purple-400/90 mt-0.5">
+          <p id="showcase-title" class="text-xs sm:text-sm font-medium text-purple-400/90 mt-0.5 line-clamp-2 max-w-full">
             Character Title
           </p>
 
@@ -192,10 +192,10 @@ import {
 <script id="predefined-characters-data" type="application/json" set:html={JSON.stringify(characters)} />
 
 <script>
-  import { formatRichDescription, formatRichGreeting } from '../utils/cardFormatter';
+  import { formatRichDescription, formatRichGreeting, sanitizeTitle } from '../utils/cardFormatter';
 
-  // Build version token to bust stale browser module caches: v20261012-rev7-self-healing-observer
-  const BUNDLE_BUILD_VERSION = '20261012-rev7-self-healing-observer';
+  // Build version token to bust stale browser module caches: v20261012-rev8-sanitize-title-notes
+  const BUNDLE_BUILD_VERSION = '20261012-rev8-sanitize-title-notes';
 
   // DOM Elements
   const showcaseModal = document.getElementById('character-showcase-modal');
@@ -218,24 +218,6 @@ import {
   const showcaseEditBtn = document.getElementById('showcase-edit-btn') as HTMLAnchorElement;
   const showcaseDeleteBtn = document.getElementById('showcase-delete-btn') as HTMLButtonElement;
   const showcaseStartBtnLabel = document.getElementById('showcase-start-btn-label');
-
-  // Self-healing observer: if ANY legacy script or unescaped entity inserts raw HTML/comment text into showcaseDescription, immediately re-render it as real DOM nodes
-  if (showcaseDescription) {
-    let healing = false;
-    const observer = new MutationObserver(() => {
-      if (healing) return;
-      const html = showcaseDescription.innerHTML;
-      if (html.includes('&lt;h') || html.includes('&lt;div') || html.includes('<!--') || (html.includes('<h2') && showcaseDescription.querySelector('h2') === null)) {
-        healing = true;
-        try {
-          showcaseDescription.innerHTML = formatRichDescription(showcaseDescription.textContent || html);
-        } finally {
-          healing = false;
-        }
-      }
-    });
-    observer.observe(showcaseDescription, { childList: true, subtree: true, characterData: true });
-  }
 
   // Predefined characters lookup
   let predefinedChars: any[] = [];
@@ -285,10 +267,30 @@ import {
     if (!char) return;
     activeCharacter = char;
 
+    // Auto-heal legacy or malformed titles containing HTML or creator notes
+    if (char.isCustom) {
+      const rawTitle = char.title || '';
+      if (/<[^>]+>/i.test(rawTitle) || rawTitle.length > 75) {
+        if (!char.description || !char.description.includes(rawTitle.slice(0, 30))) {
+          char.description = rawTitle + '\n\n' + (char.description || '');
+        }
+        char.title = sanitizeTitle(rawTitle, 'Custom Companion');
+        try {
+          const customList = JSON.parse(localStorage.getItem('aetheria_custom_characters') || '[]');
+          const idx = customList.findIndex((c: any) => c && c.id === char.id);
+          if (idx !== -1) {
+            customList[idx].title = char.title;
+            customList[idx].description = char.description;
+            localStorage.setItem('aetheria_custom_characters', JSON.stringify(customList));
+          }
+        } catch {}
+      }
+    }
+
     // Populate visual details
     if (showcaseAvatar) showcaseAvatar.src = char.avatarUrl || '/avatars/default.webp';
     if (showcaseName) showcaseName.textContent = char.name || 'Unknown Character';
-    if (showcaseTitle) showcaseTitle.textContent = char.title || 'AI Companion';
+    if (showcaseTitle) showcaseTitle.textContent = sanitizeTitle(char.title, 'AI Companion');
     
     if (showcaseBadge) {
       showcaseBadge.textContent = char.isCustom ? 'Custom Creation' : (char.badge || char.category || 'Roleplay');
@@ -364,7 +366,20 @@ import {
           if (idbChar.avatarUrl && showcaseAvatar) {
             showcaseAvatar.src = idbChar.avatarUrl;
           }
-          if (idbChar.description || idbChar.scenario) {
+          if (idbChar.title) {
+            const rawTitle = idbChar.title;
+            if (/<[^>]+>/i.test(rawTitle) || rawTitle.length > 75) {
+              if (!idbChar.description || !idbChar.description.includes(rawTitle.slice(0, 30))) {
+                idbChar.description = rawTitle + '\n\n' + (idbChar.description || '');
+              }
+              idbChar.title = sanitizeTitle(rawTitle, 'Custom Companion');
+              try {
+                (window as any).AetheriaDB.saveCharacter(idbChar).catch(() => {});
+              } catch {}
+            }
+            if (showcaseTitle) showcaseTitle.textContent = sanitizeTitle(idbChar.title, 'Custom Companion');
+          }
+          if (idbChar.description || idbChar.scenario || char.description || char.scenario) {
             if (showcaseDescription) {
               showcaseDescription.innerHTML = formatRichDescription(idbChar.description || idbChar.scenario || char.description || char.scenario || 'No detailed background provided.');
             }

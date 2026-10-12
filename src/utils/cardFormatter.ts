@@ -198,3 +198,32 @@ if (typeof window !== 'undefined') {
   (window as any).formatRichGreeting = formatRichGreeting;
   (window as any).stripHtmlForPrompt = stripHtmlForPrompt;
 }
+
+/**
+ * Sanitizes character titles/taglines to ensure they remain clean, short, single-line
+ * presentation labels without raw HTML tags, unparsed markdown, or excessive author notes.
+ */
+export function sanitizeTitle(input: string | undefined | null, fallback = 'Custom Companion'): string {
+  if (!input || typeof input !== 'string') return fallback;
+  // 1. Fully decode entities
+  let str = decodeHtmlEntities(input);
+  // 2. Strip HTML tags completely
+  str = str.replace(/<[^>]+>/g, ' ');
+  // 3. Normalize whitespace & strip newlines
+  str = str.replace(/[\r\n\t]+/g, ' ').replace(/\s{2,}/g, ' ').trim();
+  if (!str) return fallback;
+  // 4. If creator stuffed a whole changelog or markdown article into title (> 75 chars)
+  if (str.length > 75) {
+    const parts = str.split(/[.!?,;\n]/);
+    const candidate = parts[0]?.trim();
+    if (candidate && candidate.length >= 3 && candidate.length <= 65) {
+      return candidate;
+    }
+    return str.slice(0, 60).trim() + '...';
+  }
+  return str;
+}
+
+if (typeof window !== 'undefined') {
+  (window as any).sanitizeTitle = sanitizeTitle;
+}
