@@ -130,7 +130,7 @@ import {
         </h4>
         <div 
           id="showcase-description" 
-          class="p-4 rounded-2xl bg-white/[0.03] border border-white/[0.06] text-xs sm:text-sm text-slate-300 leading-relaxed max-h-48 overflow-y-auto whitespace-pre-wrap font-normal"
+          class="p-4 rounded-2xl bg-white/[0.03] border border-white/[0.06] text-xs sm:text-sm text-slate-300 leading-relaxed max-h-60 overflow-y-auto font-normal space-y-2"
         >
           Character backstory...
         </div>
@@ -144,7 +144,7 @@ import {
         </h4>
         <div 
           id="showcase-greeting" 
-          class="p-4 rounded-2xl bg-purple-950/20 border border-purple-500/20 text-xs sm:text-sm text-purple-200 italic leading-relaxed"
+          class="p-4 rounded-2xl bg-purple-950/20 border border-purple-500/20 text-xs sm:text-sm text-purple-200 leading-relaxed max-h-48 overflow-y-auto space-y-1.5"
         >
           "*Glares across the dimly lit room...*"
         </div>
@@ -192,6 +192,8 @@ import {
 <script id="predefined-characters-data" type="application/json" set:html={JSON.stringify(characters)} />
 
 <script>
+  import { formatRichDescription, formatRichGreeting } from '../utils/cardFormatter';
+
   // DOM Elements
   const showcaseModal = document.getElementById('character-showcase-modal');
   const showcaseDialog = document.getElementById('showcase-modal-dialog');
@@ -289,11 +291,11 @@ import {
 
     // Populate description & greeting
     if (showcaseDescription) {
-      showcaseDescription.textContent = char.description || char.scenario || 'No detailed background provided.';
+      showcaseDescription.innerHTML = formatRichDescription(char.description || char.scenario || 'No detailed background provided.');
     }
 
     if (showcaseGreeting) {
-      showcaseGreeting.textContent = char.greeting || '*Awaits your first message...*';
+      showcaseGreeting.innerHTML = formatRichGreeting(char.greeting || '*Awaits your first message...*');
     }
 
     // Update Star state
