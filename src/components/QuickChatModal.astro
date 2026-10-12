@@ -194,8 +194,8 @@ import {
 <script>
   import { formatRichDescription, formatRichGreeting } from '../utils/cardFormatter';
 
-  // Build version token to bust stale browser module caches: v20261012-rev5-rich-html
-  const BUNDLE_BUILD_VERSION = '20261012-rev5-rich-html';
+  // Build version token to bust stale browser module caches: v20261012-rev6-recursive-entity-decode
+  const BUNDLE_BUILD_VERSION = '20261012-rev6-recursive-entity-decode';
 
   // DOM Elements
   const showcaseModal = document.getElementById('character-showcase-modal');
@@ -339,13 +339,23 @@ import {
       }
     }
 
-    // Load full-resolution original lossless avatar from IndexedDB if available
+    // Load full-resolution original lossless avatar and rich background from IndexedDB if available
     if (char.isCustom && typeof (window as any).AetheriaDB !== 'undefined') {
       (window as any).AetheriaDB.getCharacter(char.id).then((idbChar: any) => {
-        if (idbChar && idbChar.avatarUrl && showcaseAvatar) {
-          showcaseAvatar.src = idbChar.avatarUrl;
+        if (idbChar) {
+          if (idbChar.avatarUrl && showcaseAvatar) {
+            showcaseAvatar.src = idbChar.avatarUrl;
+          }
+          if (idbChar.description || idbChar.scenario) {
+            if (showcaseDescription) {
+              showcaseDescription.innerHTML = formatRichDescription(idbChar.description || idbChar.scenario || char.description || char.scenario || 'No detailed background provided.');
+            }
+          }
+          if (idbChar.greeting && showcaseGreeting) {
+            showcaseGreeting.innerHTML = formatRichGreeting(idbChar.greeting || char.greeting || '*Awaits your first message...*');
+          }
         }
-      });
+      }).catch(() => {});
     }
 
     // Animate Modal Open

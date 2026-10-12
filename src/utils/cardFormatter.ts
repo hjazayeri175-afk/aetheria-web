@@ -29,6 +29,48 @@ export function stripHtmlForPrompt(text: string): string {
 }
 
 /**
+ * Fully decodes HTML entities (including single, double, triple escaped entities
+ * like &amp;lt;, &lt;, &#60;, &#x3C;) so that character cards imported from Chub,
+ * Tavern, or external JSONs parse as real DOM nodes rather than plain text code.
+ */
+export function decodeHtmlEntities(raw: string): string {
+  if (!raw || typeof raw !== 'string') return '';
+  let str = raw;
+
+  // 1. Recursive entity replacement pass (up to 4 iterations for deeply nested entity escaping)
+  for (let i = 0; i < 4; i++) {
+    if (!str.includes('&')) break;
+    const prev = str;
+    str = str
+      .replace(/&amp;/gi, '&')
+      .replace(/&lt;/gi, '<')
+      .replace(/&gt;/gi, '>')
+      .replace(/&quot;/gi, '"')
+      .replace(/&#39;/gi, "'")
+      .replace(/&#x27;/gi, "'")
+      .replace(/&#x2F;/gi, '/')
+      .replace(/&#60;/gi, '<')
+      .replace(/&#62;/gi, '>')
+      .replace(/&#34;/gi, '"')
+      .replace(/&#38;/gi, '&');
+    if (str === prev) break;
+  }
+
+  // 2. Browser native textarea fallback if entity markers remain
+  if (typeof document !== 'undefined' && str.includes('&')) {
+    try {
+      const txt = document.createElement('textarea');
+      txt.innerHTML = str;
+      if (txt.value && txt.value !== str) {
+        str = txt.value;
+      }
+    } catch {}
+  }
+
+  return str;
+}
+
+/**
  * Sanitizes and renders rich character descriptions containing Tavern/Chub HTML layouts,
  * custom CSS skins, collapsible details/summaries, scenario grids, images, and Markdown.
  *
@@ -41,15 +83,8 @@ export function formatRichDescription(input: string): string {
   let text = input.trim();
   if (!text) return 'No detailed background provided.';
 
-  // 0. If input contains escaped HTML tags (e.g. &lt;h2, &lt;div, &lt;!--), unescape them first so they parse as real DOM elements
-  if (/&(?:lt|gt|amp|quot|#39);/i.test(text) && /&lt;\s*\/?[a-z!]/i.test(text)) {
-    text = text
-      .replace(/&lt;/gi, '<')
-      .replace(/&gt;/gi, '>')
-      .replace(/&quot;/gi, '"')
-      .replace(/&#39;/gi, "'")
-      .replace(/&amp;/gi, '&');
-  }
+  // 0. Fully decode single, double, and triple escaped entities (&amp;lt; -> &lt; -> <)
+  text = decodeHtmlEntities(text);
 
   // 1. Remove dangerous active scripts and external embed tags (XSS prevention)
   text = text.replace(/<!--[\s\S]*?-->/g, '');
@@ -133,15 +168,8 @@ export function formatRichGreeting(greeting: string): string {
   if (!greeting || typeof greeting !== 'string') return '*Awaits your first message...*';
   let text = greeting.trim();
 
-  // 0. Unescape escaped HTML tags if present
-  if (/&(?:lt|gt|amp|quot|#39);/i.test(text) && /&lt;\s*\/?[a-z!]/i.test(text)) {
-    text = text
-      .replace(/&lt;/gi, '<')
-      .replace(/&gt;/gi, '>')
-      .replace(/&quot;/gi, '"')
-      .replace(/&#39;/gi, "'")
-      .replace(/&amp;/gi, '&');
-  }
+  // 0. Fully decode entities
+  text = decodeHtmlEntities(text);
 
   // Strip dangerous scripts
   text = text.replace(/<\s*(script|iframe|object|embed)[\s\S]*?<\/\s*\1\s*>/gi, '');
