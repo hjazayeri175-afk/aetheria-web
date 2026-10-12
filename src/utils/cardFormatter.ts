@@ -41,6 +41,16 @@ export function formatRichDescription(input: string): string {
   let text = input.trim();
   if (!text) return 'No detailed background provided.';
 
+  // 0. If input contains escaped HTML tags (e.g. &lt;h2, &lt;div, &lt;!--), unescape them first so they parse as real DOM elements
+  if (/&(?:lt|gt|amp|quot|#39);/i.test(text) && /&lt;\s*\/?[a-z!]/i.test(text)) {
+    text = text
+      .replace(/&lt;/gi, '<')
+      .replace(/&gt;/gi, '>')
+      .replace(/&quot;/gi, '"')
+      .replace(/&#39;/gi, "'")
+      .replace(/&amp;/gi, '&');
+  }
+
   // 1. Remove dangerous active scripts and external embed tags (XSS prevention)
   text = text.replace(/<!--[\s\S]*?-->/g, '');
   text = text.replace(/<\s*(script|iframe|object|embed|meta|base|form|input|button)[\s\S]*?<\/\s*\1\s*>/gi, '');
@@ -122,6 +132,16 @@ export function formatRichDescription(input: string): string {
 export function formatRichGreeting(greeting: string): string {
   if (!greeting || typeof greeting !== 'string') return '*Awaits your first message...*';
   let text = greeting.trim();
+
+  // 0. Unescape escaped HTML tags if present
+  if (/&(?:lt|gt|amp|quot|#39);/i.test(text) && /&lt;\s*\/?[a-z!]/i.test(text)) {
+    text = text
+      .replace(/&lt;/gi, '<')
+      .replace(/&gt;/gi, '>')
+      .replace(/&quot;/gi, '"')
+      .replace(/&#39;/gi, "'")
+      .replace(/&amp;/gi, '&');
+  }
 
   // Strip dangerous scripts
   text = text.replace(/<\s*(script|iframe|object|embed)[\s\S]*?<\/\s*\1\s*>/gi, '');

@@ -101,9 +101,11 @@ export default {
     if (!url.pathname.startsWith('/api/')) {
       const assetRes = await env.ASSETS.fetch(request);
       const newHeaders = new Headers(assetRes.headers);
-      newHeaders.set('Cache-Control', 'no-cache, no-store, must-revalidate');
+      newHeaders.set('Cache-Control', 'no-cache, no-store, must-revalidate, max-age=0');
       newHeaders.set('Pragma', 'no-cache');
       newHeaders.set('Expires', '0');
+      newHeaders.set('CDN-Cache-Control', 'no-store');
+      newHeaders.set('Cloudflare-CDN-Cache-Control', 'no-store');
       return new Response(assetRes.body, {
         status: assetRes.status,
         statusText: assetRes.statusText,
