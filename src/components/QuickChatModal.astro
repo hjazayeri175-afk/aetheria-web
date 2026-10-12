@@ -194,8 +194,8 @@ import {
 <script>
   import { formatRichDescription, formatRichGreeting } from '../utils/cardFormatter';
 
-  // Build version token to bust stale browser module caches: v20261012-rev6-recursive-entity-decode
-  const BUNDLE_BUILD_VERSION = '20261012-rev6-recursive-entity-decode';
+  // Build version token to bust stale browser module caches: v20261012-rev7-self-healing-observer
+  const BUNDLE_BUILD_VERSION = '20261012-rev7-self-healing-observer';
 
   // DOM Elements
   const showcaseModal = document.getElementById('character-showcase-modal');
@@ -218,6 +218,24 @@ import {
   const showcaseEditBtn = document.getElementById('showcase-edit-btn') as HTMLAnchorElement;
   const showcaseDeleteBtn = document.getElementById('showcase-delete-btn') as HTMLButtonElement;
   const showcaseStartBtnLabel = document.getElementById('showcase-start-btn-label');
+
+  // Self-healing observer: if ANY legacy script or unescaped entity inserts raw HTML/comment text into showcaseDescription, immediately re-render it as real DOM nodes
+  if (showcaseDescription) {
+    let healing = false;
+    const observer = new MutationObserver(() => {
+      if (healing) return;
+      const html = showcaseDescription.innerHTML;
+      if (html.includes('&lt;h') || html.includes('&lt;div') || html.includes('<!--') || (html.includes('<h2') && showcaseDescription.querySelector('h2') === null)) {
+        healing = true;
+        try {
+          showcaseDescription.innerHTML = formatRichDescription(showcaseDescription.textContent || html);
+        } finally {
+          healing = false;
+        }
+      }
+    });
+    observer.observe(showcaseDescription, { childList: true, subtree: true, characterData: true });
+  }
 
   // Predefined characters lookup
   let predefinedChars: any[] = [];
