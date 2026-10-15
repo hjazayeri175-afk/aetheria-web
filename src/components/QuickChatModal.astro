@@ -39,10 +39,10 @@ import {
   aria-modal="true"
   aria-labelledby="showcase-name"
 >
-  <!-- Modal Dialog Container (Ergonomic mobile bottom sheet with 90dvh height) -->
+  <!-- Modal Dialog Container (Ergonomic mobile bottom sheet with natural adaptive height up to 90dvh) -->
   <div 
     id="showcase-modal-dialog"
-    class="w-full h-[90dvh] max-h-[90dvh] sm:h-auto sm:max-h-[86vh] rounded-t-3xl sm:rounded-3xl border-t sm:border border-white/[0.1] bg-[#090b16] flex flex-col overflow-hidden shadow-2xl shadow-purple-950/80 transform translate-y-full sm:translate-y-0 sm:scale-95 transition-all duration-300 ease-out sm:max-w-xl sm:mx-auto"
+    class="w-full max-h-[90dvh] sm:h-auto sm:max-h-[86vh] rounded-t-3xl sm:rounded-3xl border-t sm:border border-white/[0.1] bg-[#090b16] flex flex-col overflow-hidden shadow-2xl shadow-purple-950/80 transform translate-y-full sm:translate-y-0 sm:scale-95 transition-all duration-300 ease-out sm:max-w-xl sm:mx-auto"
   >
     <!-- Mobile Pull Drag Indicator -->
     <div class="w-12 h-1.5 rounded-full bg-white/20 mx-auto my-2 shrink-0 sm:hidden"></div>
@@ -120,8 +120,8 @@ import {
       </div>
     </header>
 
-    <!-- Scrollable Showcase Body (Unified Single Scroll Area with Ample Bottom Clearance) -->
-    <div id="showcase-body" class="flex-1 overflow-y-auto p-4 sm:p-5 space-y-4 custom-scrollbar overscroll-contain pb-32 sm:pb-8">
+    <!-- Scrollable Showcase Body (Unified Single Scroll Area with Clean Clearance) -->
+    <div id="showcase-body" class="flex-1 overflow-y-auto p-4 sm:p-5 space-y-4 custom-scrollbar overscroll-contain pb-6">
       
       <!-- Chub-Style Hero Profile Summary (Open & Breathable) -->
       <div class="space-y-2.5">
@@ -193,80 +193,63 @@ import {
         </div>
       </div>
 
-      <!-- Chub.ai Modern Tab Bar (3 Columns Grid: No overflow, Perfect mobile fit) -->
-      <div class="grid grid-cols-3 gap-1.5 p-1 rounded-xl bg-[#0c0e1a]/80 border border-white/[0.08] shrink-0">
-        <!-- Tab 1: Description -->
-        <button 
-          type="button"
-          id="showcase-tab-desc"
-          class="showcase-tab-btn w-full flex items-center justify-center gap-1.5 py-2 px-1 rounded-lg text-xs font-semibold truncate bg-purple-500/20 text-purple-200 border border-purple-500/30 transition cursor-pointer"
-          data-tab="desc"
-        >
-          <BookOpen class="w-3.5 h-3.5 text-purple-400 shrink-0" />
-          <span class="truncate">Description</span>
-        </button>
+      <!-- Chub.ai Modern Tab Bar (Sticky 3 Columns Grid: Accessible & Always Context-Aware) -->
+      <div class="sticky top-0 z-20 -mx-4 px-4 sm:-mx-5 sm:px-5 py-2 bg-[#090b16]/95 backdrop-blur-md border-b border-white/[0.05]">
+        <div class="grid grid-cols-3 gap-1.5 p-1 rounded-xl bg-[#0c0e1a] border border-white/[0.08]">
+          <!-- Tab 1: Description -->
+          <button 
+            type="button"
+            id="showcase-tab-desc"
+            class="showcase-tab-btn w-full flex items-center justify-center gap-1.5 py-2 px-1 rounded-lg text-xs font-semibold truncate bg-purple-500/20 text-purple-200 border border-purple-500/30 transition cursor-pointer"
+            data-tab="desc"
+          >
+            <BookOpen class="w-3.5 h-3.5 text-purple-400 shrink-0" />
+            <span class="truncate">Description</span>
+          </button>
 
-        <!-- Tab 2: Greetings -->
-        <button 
-          type="button"
-          id="showcase-tab-greetings"
-          class="showcase-tab-btn w-full flex items-center justify-center gap-1.5 py-2 px-1 rounded-lg text-xs font-medium truncate text-slate-400 hover:text-slate-200 hover:bg-white/[0.03] transition cursor-pointer"
-          data-tab="greetings"
-        >
-          <MessageSquare class="w-3.5 h-3.5 text-cyan-400 shrink-0" />
-          <span class="truncate">Greetings</span>
-          <span id="showcase-greetings-count-badge" class="px-1.5 py-0.2 rounded-full text-[10px] font-mono font-bold bg-cyan-500/20 text-cyan-300 border border-cyan-500/30 shrink-0">
-            1
-          </span>
-        </button>
+          <!-- Tab 2: Greetings -->
+          <button 
+            type="button"
+            id="showcase-tab-greetings"
+            class="showcase-tab-btn w-full flex items-center justify-center gap-1.5 py-2 px-1 rounded-lg text-xs font-medium truncate text-slate-400 hover:text-slate-200 hover:bg-white/[0.03] transition cursor-pointer"
+            data-tab="greetings"
+          >
+            <MessageSquare class="w-3.5 h-3.5 text-cyan-400 shrink-0" />
+            <span class="truncate">Greetings</span>
+            <span id="showcase-greetings-count-badge" class="px-1.5 py-0.2 rounded-full text-[10px] font-mono font-bold bg-cyan-500/20 text-cyan-300 border border-cyan-500/30 shrink-0">
+              1
+            </span>
+          </button>
 
-        <!-- Tab 3: Definition -->
-        <button 
-          type="button"
-          id="showcase-tab-definition"
-          class="showcase-tab-btn w-full flex items-center justify-center gap-1.5 py-2 px-1 rounded-lg text-xs font-medium truncate text-slate-400 hover:text-slate-200 hover:bg-white/[0.03] transition cursor-pointer"
-          data-tab="definition"
-        >
-          <Code class="w-3.5 h-3.5 text-indigo-400 shrink-0" />
-          <span class="truncate">Definition</span>
-        </button>
+          <!-- Tab 3: Definition -->
+          <button 
+            type="button"
+            id="showcase-tab-definition"
+            class="showcase-tab-btn w-full flex items-center justify-center gap-1.5 py-2 px-1 rounded-lg text-xs font-medium truncate text-slate-400 hover:text-slate-200 hover:bg-white/[0.03] transition cursor-pointer"
+            data-tab="definition"
+          >
+            <Code class="w-3.5 h-3.5 text-indigo-400 shrink-0" />
+            <span class="truncate">Definition</span>
+          </button>
+        </div>
       </div>
 
       <!-- Tab Panels Container -->
-      <div class="min-h-[140px] pt-1">
+      <div class="pt-1">
         
-        <!-- Panel 1: Description (Full Story & Lore with Prominent Show More) -->
+        <!-- Panel 1: Description (Natural Full Story & Lore - No Artificial Clamping) -->
         <div id="showcase-panel-desc" class="showcase-panel space-y-2">
-          <!-- Text Box with Contained Fade Mask (strictly isolated from the button) -->
           <div class="relative rounded-2xl bg-white/[0.02] border border-white/[0.06] p-3.5 sm:p-4">
             <div 
               id="showcase-description" 
-              class="text-xs sm:text-sm text-slate-200 font-normal leading-relaxed card-rich-content overflow-hidden transition-[max-height] duration-300 max-h-56"
+              class="text-xs sm:text-sm text-slate-200 font-normal leading-relaxed card-rich-content break-words space-y-2"
             >
               Character backstory...
             </div>
-
-            <!-- Bottom gradient fade mask (strictly covers text only, never the button!) -->
-            <div 
-              id="showcase-desc-fade" 
-              class="absolute inset-x-0 bottom-0 h-20 rounded-b-2xl bg-gradient-to-t from-[#090b16] via-[#090b16]/90 to-transparent pointer-events-none transition-opacity duration-300 z-10"
-            ></div>
-          </div>
-
-          <!-- Show More / Show Less Toggle Button (Completely outside fade mask: 100% visible, high-contrast, crystal-clear) -->
-          <div id="showcase-desc-toggle-wrapper" class="pt-1">
-            <button 
-              type="button" 
-              id="showcase-desc-toggle" 
-              class="w-full py-2.5 px-4 rounded-xl bg-purple-600/30 hover:bg-purple-600/40 border border-purple-400/50 text-white font-bold text-xs flex items-center justify-center gap-2 transition active:scale-[0.98] shadow-md shadow-purple-950/50 cursor-pointer"
-            >
-              <span id="showcase-desc-toggle-text" class="text-white font-bold tracking-wide">Show Full Description</span>
-              <ChevronDown id="showcase-desc-toggle-icon" class="w-4 h-4 text-purple-200 transition-transform duration-300 shrink-0" />
-            </button>
           </div>
         </div>
 
-        <!-- Panel 2: Greetings (Opening Scene with Alternate Switcher & Show More) -->
+        <!-- Panel 2: Greetings (Opening Scene with Alternate Switcher - Natural Full Display) -->
         <div id="showcase-panel-greetings" class="showcase-panel hidden space-y-2">
           <!-- Alternate Greetings Switcher Bar (Visible when >1 greeting) -->
           <div id="greeting-switcher" class="hidden items-center justify-between p-2.5 rounded-xl bg-purple-950/25 border border-purple-500/20">
@@ -294,31 +277,14 @@ import {
             </div>
           </div>
 
-          <!-- Greeting Content Box with Contained Fade Mask -->
+          <!-- Greeting Content Box -->
           <div class="relative rounded-2xl bg-white/[0.02] border border-white/[0.06] p-3.5 sm:p-4">
             <div 
               id="showcase-greeting" 
-              class="text-xs sm:text-sm text-cyan-200 font-normal leading-relaxed card-rich-content overflow-hidden transition-[max-height] duration-300 max-h-56 space-y-1.5"
+              class="text-xs sm:text-sm text-cyan-200 font-normal leading-relaxed card-rich-content break-words space-y-1.5"
             >
               "*Awaits your first message...*"
             </div>
-
-            <div 
-              id="showcase-greeting-fade" 
-              class="absolute inset-x-0 bottom-0 h-20 rounded-b-2xl bg-gradient-to-t from-[#090b16] via-[#090b16]/90 to-transparent pointer-events-none transition-opacity duration-300 z-10"
-            ></div>
-          </div>
-
-          <!-- Greeting Show More / Show Less Toggle Button -->
-          <div id="showcase-greeting-toggle-wrapper" class="pt-1">
-            <button 
-              type="button" 
-              id="showcase-greeting-toggle" 
-              class="w-full py-2.5 px-4 rounded-xl bg-cyan-600/30 hover:bg-cyan-600/40 border border-cyan-400/50 text-white font-bold text-xs flex items-center justify-center gap-2 transition active:scale-[0.98] shadow-md shadow-cyan-950/50 cursor-pointer"
-            >
-              <span id="showcase-greeting-toggle-text" class="text-white font-bold tracking-wide">Show Full Greeting</span>
-              <ChevronDown id="showcase-greeting-toggle-icon" class="w-4 h-4 text-cyan-200 transition-transform duration-300 shrink-0" />
-            </button>
           </div>
         </div>
 
@@ -424,6 +390,7 @@ import {
   // Elements
   const showcaseModal = document.getElementById('character-showcase-modal');
   const showcaseDialog = document.getElementById('showcase-modal-dialog');
+  const showcaseBody = document.getElementById('showcase-body');
   const showcaseAvatar = document.getElementById('showcase-avatar') as HTMLImageElement;
   const showcaseBadge = document.getElementById('showcase-badge');
   const showcaseNsfwBadge = document.getElementById('showcase-nsfw-badge');
@@ -444,23 +411,9 @@ import {
   const panelDefinition = document.getElementById('showcase-panel-definition');
   const greetingsCountBadge = document.getElementById('showcase-greetings-count-badge');
 
-  // Description Show More Elements
+  // Content Panels
   const showcaseDescription = document.getElementById('showcase-description');
-  const showcaseDescFade = document.getElementById('showcase-desc-fade');
-  const showcaseDescToggleWrapper = document.getElementById('showcase-desc-toggle-wrapper');
-  const showcaseDescToggle = document.getElementById('showcase-desc-toggle');
-  const showcaseDescToggleText = document.getElementById('showcase-desc-toggle-text');
-  const showcaseDescToggleIcon = document.getElementById('showcase-desc-toggle-icon');
-  let isDescExpanded = false;
-
-  // Greetings Show More Elements & Switcher
   const showcaseGreeting = document.getElementById('showcase-greeting');
-  const showcaseGreetingFade = document.getElementById('showcase-greeting-fade');
-  const showcaseGreetingToggleWrapper = document.getElementById('showcase-greeting-toggle-wrapper');
-  const showcaseGreetingToggle = document.getElementById('showcase-greeting-toggle');
-  const showcaseGreetingToggleText = document.getElementById('showcase-greeting-toggle-text');
-  const showcaseGreetingToggleIcon = document.getElementById('showcase-greeting-toggle-icon');
-  let isGreetingExpanded = false;
 
   const greetingSwitcher = document.getElementById('greeting-switcher');
   const greetingIndexLabel = document.getElementById('greeting-index-label');
@@ -567,13 +520,6 @@ import {
         panel?.classList.add('hidden');
       }
     });
-
-    // Check clamps on tab switch
-    if (tab === 'desc') {
-      setupDescriptionClamp();
-    } else if (tab === 'greetings') {
-      setupGreetingClamp();
-    }
   }
 
   tabBtnDesc?.addEventListener('click', () => switchTab('desc'));
@@ -618,92 +564,6 @@ import {
       showcaseTags.appendChild(toggleBtn);
     }
   }
-
-  // Description Show More / Show Less Logic (224px clamp with complete unconstrained expansion)
-  function setupDescriptionClamp() {
-    if (!showcaseDescription) return;
-    isDescExpanded = false;
-    showcaseDescription.style.maxHeight = '';
-    showcaseDescription.classList.add('max-h-56');
-
-    requestAnimationFrame(() => {
-      const isOverflowing = showcaseDescription.scrollHeight > 230;
-      if (isOverflowing) {
-        showcaseDescFade?.classList.remove('opacity-0', 'hidden');
-        showcaseDescFade?.classList.add('opacity-100');
-        showcaseDescToggleWrapper?.classList.remove('hidden');
-        if (showcaseDescToggleText) showcaseDescToggleText.textContent = 'Show Full Description';
-        if (showcaseDescToggleIcon) showcaseDescToggleIcon.classList.remove('rotate-180');
-      } else {
-        showcaseDescFade?.classList.add('opacity-0', 'hidden');
-        showcaseDescToggleWrapper?.classList.add('hidden');
-      }
-    });
-  }
-
-  showcaseDescToggle?.addEventListener('click', (e) => {
-    e.stopPropagation();
-    if (!showcaseDescription) return;
-    isDescExpanded = !isDescExpanded;
-
-    if (isDescExpanded) {
-      showcaseDescription.classList.remove('max-h-56');
-      showcaseDescription.style.maxHeight = 'none';
-      showcaseDescFade?.classList.add('opacity-0', 'hidden');
-      if (showcaseDescToggleText) showcaseDescToggleText.textContent = 'Show Less';
-      if (showcaseDescToggleIcon) showcaseDescToggleIcon.classList.add('rotate-180');
-    } else {
-      showcaseDescription.style.maxHeight = '';
-      showcaseDescription.classList.add('max-h-56');
-      showcaseDescFade?.classList.remove('opacity-0', 'hidden');
-      if (showcaseDescToggleText) showcaseDescToggleText.textContent = 'Show Full Description';
-      if (showcaseDescToggleIcon) showcaseDescToggleIcon.classList.remove('rotate-180');
-      showcaseDescription.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
-    }
-  });
-
-  // Greetings Show More / Show Less Logic
-  function setupGreetingClamp() {
-    if (!showcaseGreeting) return;
-    isGreetingExpanded = false;
-    showcaseGreeting.style.maxHeight = '';
-    showcaseGreeting.classList.add('max-h-56');
-
-    requestAnimationFrame(() => {
-      const isOverflowing = showcaseGreeting.scrollHeight > 230;
-      if (isOverflowing) {
-        showcaseGreetingFade?.classList.remove('opacity-0', 'hidden');
-        showcaseGreetingFade?.classList.add('opacity-100');
-        showcaseGreetingToggleWrapper?.classList.remove('hidden');
-        if (showcaseGreetingToggleText) showcaseGreetingToggleText.textContent = 'Show Full Greeting';
-        if (showcaseGreetingToggleIcon) showcaseGreetingToggleIcon.classList.remove('rotate-180');
-      } else {
-        showcaseGreetingFade?.classList.add('opacity-0', 'hidden');
-        showcaseGreetingToggleWrapper?.classList.add('hidden');
-      }
-    });
-  }
-
-  showcaseGreetingToggle?.addEventListener('click', (e) => {
-    e.stopPropagation();
-    if (!showcaseGreeting) return;
-    isGreetingExpanded = !isGreetingExpanded;
-
-    if (isGreetingExpanded) {
-      showcaseGreeting.classList.remove('max-h-56');
-      showcaseGreeting.style.maxHeight = 'none';
-      showcaseGreetingFade?.classList.add('opacity-0', 'hidden');
-      if (showcaseGreetingToggleText) showcaseGreetingToggleText.textContent = 'Show Less';
-      if (showcaseGreetingToggleIcon) showcaseGreetingToggleIcon.classList.add('rotate-180');
-    } else {
-      showcaseGreeting.style.maxHeight = '';
-      showcaseGreeting.classList.add('max-h-56');
-      showcaseGreetingFade?.classList.remove('opacity-0', 'hidden');
-      if (showcaseGreetingToggleText) showcaseGreetingToggleText.textContent = 'Show Full Greeting';
-      if (showcaseGreetingToggleIcon) showcaseGreetingToggleIcon.classList.remove('rotate-180');
-      showcaseGreeting.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
-    }
-  });
 
   // Greeting Switcher Logic
   function updateGreetingUI() {
@@ -925,7 +785,6 @@ import {
       }
       const publicText = cleanPublicDescription(rawMainDesc, char.creatorNotes || char.creator_notes);
       showcaseDescription.innerHTML = formatRichDescription(publicText);
-      setupDescriptionClamp();
     }
 
     // Populate Tab 2: Greetings & Alternates
@@ -1009,7 +868,6 @@ import {
               if (!fullDesc) fullDesc = char.description || 'No detailed background provided.';
               const cleanText = cleanPublicDescription(fullDesc, idbChar.creator_notes || idbChar.creatorNotes || char.creatorNotes);
               showcaseDescription.innerHTML = formatRichDescription(cleanText);
-              setupDescriptionClamp();
             }
           }
           if (idbChar.greeting || idbChar.first_mes) {
@@ -1033,6 +891,12 @@ import {
     showcaseDialog?.classList.remove('translate-y-full', 'sm:scale-95');
     showcaseDialog?.classList.add('translate-y-0', 'sm:scale-100');
     document.body.style.overflow = 'hidden';
+
+    // Reset scroll position to top unconditionally
+    if (showcaseBody) showcaseBody.scrollTop = 0;
+    requestAnimationFrame(() => {
+      if (showcaseBody) showcaseBody.scrollTop = 0;
+    });
   }
 
   // Close Showcase Modal
@@ -1042,6 +906,7 @@ import {
     showcaseDialog?.classList.add('translate-y-full', 'sm:scale-95');
     showcaseDialog?.classList.remove('translate-y-0', 'sm:scale-100');
     document.body.style.overflow = '';
+    if (showcaseBody) showcaseBody.scrollTop = 0;
   }
 
   // Star System
