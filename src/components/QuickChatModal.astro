@@ -14,6 +14,8 @@ import {
   Code,
   ChevronLeft,
   ChevronRight,
+  ChevronDown,
+  ChevronUp,
   Copy,
   Check
 } from '@lucide/astro';
@@ -29,10 +31,10 @@ import {
 } from '../utils/cardFormatter';
 ---
 
-<!-- Character Showcase Modal (Chub.ai 3-Tab Layout) -->
+<!-- Character Showcase Modal (Chub.ai Modern Uncluttered Layout) -->
 <div 
   id="character-showcase-modal" 
-  class="fixed inset-0 z-50 flex items-end sm:items-center justify-center p-0 sm:p-4 bg-black/85 backdrop-blur-md transition-all duration-300 opacity-0 pointer-events-none"
+  class="fixed inset-0 z-50 flex items-end sm:items-center justify-center p-0 sm:p-4 bg-black/80 backdrop-blur-md transition-all duration-300 opacity-0 pointer-events-none"
   role="dialog"
   aria-modal="true"
   aria-labelledby="showcase-name"
@@ -40,26 +42,26 @@ import {
   <!-- Modal Dialog Container -->
   <div 
     id="showcase-modal-dialog"
-    class="w-full max-h-[94vh] sm:max-h-[90vh] rounded-t-3xl sm:rounded-3xl border-t sm:border border-white/[0.12] bg-[#090b16] flex flex-col overflow-hidden shadow-2xl shadow-purple-950/90 transform translate-y-full sm:translate-y-0 sm:scale-95 transition-all duration-300 ease-out sm:max-w-2xl sm:mx-auto"
+    class="w-full max-h-[92vh] sm:max-h-[88vh] rounded-t-3xl sm:rounded-3xl border-t sm:border border-white/[0.1] bg-[#090b16] flex flex-col overflow-hidden shadow-2xl shadow-purple-950/80 transform translate-y-full sm:translate-y-0 sm:scale-95 transition-all duration-300 ease-out sm:max-w-xl sm:mx-auto"
   >
-    <!-- Mobile Pull Drag Bar -->
+    <!-- Mobile Pull Drag Indicator -->
     <div class="w-12 h-1.5 rounded-full bg-white/20 mx-auto my-2.5 shrink-0 sm:hidden"></div>
 
     <!-- Modal Header -->
-    <header class="px-4 py-3 sm:px-6 sm:py-3.5 border-b border-white/[0.08] bg-[#0c0f20]/95 flex items-center justify-between shrink-0">
+    <header class="px-4 py-3 sm:px-5 sm:py-3.5 border-b border-white/[0.08] bg-[#0c0f20]/95 flex items-center justify-between shrink-0">
       <div class="flex items-center gap-2">
-        <span class="text-xs font-bold uppercase tracking-wider text-purple-400 flex items-center gap-1.5">
-          <Sparkles class="w-3.5 h-3.5" />
+        <span class="text-xs font-bold uppercase tracking-wider text-purple-400/90 flex items-center gap-1.5">
+          <Sparkles class="w-3.5 h-3.5 text-purple-400" />
           <span>Character Profile</span>
         </span>
       </div>
 
-      <div class="flex items-center gap-1.5 sm:gap-2">
+      <div class="flex items-center gap-1 sm:gap-1.5">
         <!-- Interactive Star Button -->
         <button 
           type="button"
           id="showcase-star-btn"
-          class="flex items-center gap-1.5 px-2.5 sm:px-3 py-1.5 rounded-xl bg-amber-500/10 hover:bg-amber-500/20 border border-amber-500/30 text-amber-300 text-xs font-semibold transition active:scale-95 cursor-pointer"
+          class="flex items-center gap-1.5 px-2.5 py-1.5 rounded-xl bg-amber-500/10 hover:bg-amber-500/20 border border-amber-500/25 text-amber-300 text-xs font-semibold transition active:scale-95 cursor-pointer"
           title="Star this character"
         >
           <Star id="showcase-star-icon" class="w-3.5 h-3.5 fill-none text-amber-400 transition" />
@@ -70,17 +72,37 @@ import {
         <button 
           type="button"
           id="showcase-share-btn"
-          class="p-2 rounded-xl bg-white/[0.05] hover:bg-white/[0.1] text-slate-400 hover:text-white transition cursor-pointer"
+          class="p-2 rounded-xl text-slate-400 hover:text-white hover:bg-white/[0.06] transition cursor-pointer"
           title="Share character link"
         >
           <Share2 class="w-4 h-4" />
+        </button>
+
+        <!-- Edit Button (custom character only) -->
+        <a 
+          id="showcase-edit-btn"
+          href="#"
+          class="hidden p-2 rounded-xl text-slate-400 hover:text-purple-300 hover:bg-purple-500/10 transition cursor-pointer"
+          title="Edit Custom Companion"
+        >
+          <Pencil class="w-4 h-4" />
+        </a>
+
+        <!-- Delete Button (custom character only) -->
+        <button 
+          type="button"
+          id="showcase-delete-btn"
+          class="hidden p-2 rounded-xl text-slate-400 hover:text-rose-400 hover:bg-rose-500/10 transition cursor-pointer"
+          title="Delete Custom Companion"
+        >
+          <Trash class="w-4 h-4" />
         </button>
 
         <!-- Report Button -->
         <button 
           type="button"
           id="showcase-report-btn"
-          class="p-2 rounded-xl bg-white/[0.05] hover:bg-rose-500/20 text-slate-400 hover:text-rose-400 transition cursor-pointer"
+          class="p-2 rounded-xl text-slate-400 hover:text-rose-400 hover:bg-white/[0.06] transition cursor-pointer"
           title="Report character issue"
         >
           <Flag class="w-4 h-4" />
@@ -90,7 +112,7 @@ import {
         <button 
           type="button" 
           id="showcase-close-btn"
-          class="p-2 rounded-xl bg-white/[0.05] hover:bg-white/[0.1] text-slate-400 hover:text-white transition cursor-pointer"
+          class="p-2 rounded-xl text-slate-400 hover:text-white hover:bg-white/[0.06] transition cursor-pointer ml-0.5"
           aria-label="Close"
         >
           <X class="w-4 h-4" />
@@ -98,103 +120,102 @@ import {
       </div>
     </header>
 
-    <!-- Scrollable Showcase Body -->
-    <div class="flex-1 overflow-y-auto p-4 sm:p-5 space-y-4 custom-scrollbar">
+    <!-- Scrollable Showcase Body (Unified Single Scroll Area) -->
+    <div id="showcase-body" class="flex-1 overflow-y-auto p-4 sm:p-5 space-y-4 custom-scrollbar">
       
-      <!-- Chub.ai Profile Card / Hero Section -->
-      <div class="bg-white/[0.02] border border-white/[0.06] rounded-2xl p-4 sm:p-4.5">
-        <div class="flex gap-3.5 sm:gap-4.5 items-start">
+      <!-- Chub-Style Hero Profile Summary (Open & Breathable) -->
+      <div class="space-y-3">
+        <div class="flex gap-3.5 sm:gap-4 items-start">
           <!-- Portrait Avatar -->
-          <div class="relative shrink-0 w-22 h-26 sm:w-26 sm:h-32 rounded-2xl overflow-hidden shadow-2xl ring-1 ring-purple-500/30 bg-[#07080e]">
+          <div class="relative shrink-0 w-20 h-24 sm:w-24 sm:h-28 rounded-2xl overflow-hidden ring-1 ring-white/10 shadow-lg bg-[#07080e]">
             <img 
               id="showcase-avatar" 
               src="" 
               alt="Character Portrait" 
               class="w-full h-full object-cover object-center"
             />
-            <div class="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent"></div>
           </div>
 
           <!-- Character Identity & Stats -->
           <div class="flex-1 min-w-0">
-            <div class="flex flex-wrap items-center gap-1.5 mb-1">
+            <div class="flex flex-wrap items-center gap-1.5 mb-0.5">
               <!-- SFW / NSFW Rating Badge -->
-              <span id="showcase-nsfw-badge" class="px-2 py-0.5 rounded-md text-[10px] font-black uppercase tracking-wider bg-rose-500/20 text-rose-300 border border-rose-500/30">
+              <span id="showcase-nsfw-badge" class="px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wider bg-rose-500/20 text-rose-300 border border-rose-500/30">
                 NSFW
               </span>
               <!-- Category Badge -->
-              <span id="showcase-badge" class="px-2 py-0.5 rounded-md bg-purple-500/20 border border-purple-500/30 text-[10px] font-bold text-purple-300">
+              <span id="showcase-badge" class="px-2 py-0.5 rounded text-[10px] font-medium text-slate-300 bg-white/[0.05] border border-white/[0.08]">
                 Roleplay
               </span>
               <!-- Author / Creator Attribution -->
-              <span id="showcase-author" class="text-[11px] text-slate-400 font-medium truncate max-w-[120px] sm:max-w-none">
-                By @Aetheria
+              <span id="showcase-author" class="text-[11px] text-slate-400 truncate max-w-[140px] sm:max-w-none">
+                By Community Creator
               </span>
             </div>
 
             <!-- Name -->
-            <h2 id="showcase-name" class="text-lg sm:text-xl font-black text-white tracking-tight leading-tight">
+            <h2 id="showcase-name" class="text-lg sm:text-xl font-bold text-white tracking-tight leading-snug mt-1">
               Character Name
             </h2>
 
             <!-- Tagline / Title -->
-            <p id="showcase-title" class="text-xs sm:text-sm font-medium text-purple-400/90 mt-0.5 line-clamp-1 max-w-full">
+            <p id="showcase-title" class="text-xs text-purple-300/80 font-normal line-clamp-1 mt-0.5">
               Character Title
             </p>
 
-            <!-- Chub-style Stats Strip -->
-            <div class="flex flex-wrap items-center gap-1.5 sm:gap-2 mt-2.5 pt-2 border-t border-white/[0.06]">
-              <div id="showcase-tokens-badge" class="inline-flex items-center gap-1 px-2 py-0.5 rounded-md bg-white/[0.04] border border-white/[0.08] text-[10.5px] font-mono text-slate-300">
-                <Cpu class="w-3 h-3 text-purple-400" />
-                <span id="showcase-tokens-count">~1,840</span>
-                <span class="text-slate-500 text-[10px]">tokens</span>
-              </div>
-
-              <div id="showcase-chats-badge" class="inline-flex items-center gap-1 px-2 py-0.5 rounded-md bg-white/[0.04] border border-white/[0.08] text-[10.5px] text-slate-300">
-                <MessageSquare class="w-3 h-3 text-cyan-400" />
-                <span id="showcase-chats-count">1.2k</span>
-                <span class="text-slate-500 text-[10px]">chats</span>
-              </div>
-
-              <div id="showcase-rating-badge" class="inline-flex items-center gap-1 px-2 py-0.5 rounded-md bg-amber-500/10 border border-amber-500/20 text-[10.5px] text-amber-300 font-semibold">
+            <!-- Chub-Style Unified Stats Row -->
+            <div class="flex items-center gap-2.5 text-[11px] text-slate-400 mt-2.5 pt-2 border-t border-white/[0.06]">
+              <span class="inline-flex items-center gap-1 text-amber-300 font-semibold">
                 <Star class="w-3 h-3 fill-amber-400 text-amber-400" />
                 <span id="showcase-rating-val">5.0</span>
-              </div>
+              </span>
+              <span class="text-slate-600">•</span>
+              <span class="inline-flex items-center gap-1">
+                <MessageSquare class="w-3 h-3 text-cyan-400" />
+                <span id="showcase-chats-count">1.2k</span>
+                <span class="text-slate-500">chats</span>
+              </span>
+              <span class="text-slate-600">•</span>
+              <span class="inline-flex items-center gap-1 font-mono text-purple-300">
+                <Cpu class="w-3 h-3 text-purple-400" />
+                <span id="showcase-tokens-count">~3,474</span>
+                <span class="text-slate-500">tokens</span>
+              </span>
             </div>
           </div>
         </div>
 
         <!-- Tags Row with Chub-style +N More Toggle -->
-        <div id="showcase-tags-wrapper" class="mt-3 pt-2.5 border-t border-white/[0.06]">
+        <div id="showcase-tags-wrapper" class="pt-2">
           <div id="showcase-tags" class="flex flex-wrap items-center gap-1.5">
             <!-- Dynamic tags injected here -->
           </div>
         </div>
       </div>
 
-      <!-- Chub.ai 3-Tab Navigation Bar -->
-      <div class="flex border-b border-white/[0.08] bg-white/[0.02] rounded-t-xl overflow-hidden p-0.5">
+      <!-- Chub.ai Modern Tab Bar (No line breaks, smooth horizontal scroll) -->
+      <div class="flex items-center gap-1.5 border-b border-white/[0.08] bg-[#0c0e1a]/60 p-1 rounded-xl overflow-x-auto no-scrollbar">
         <!-- Tab 1: Description -->
         <button 
           type="button"
           id="showcase-tab-desc"
-          class="showcase-tab-btn flex-1 flex items-center justify-center gap-1.5 px-3 py-2 text-xs sm:text-sm font-bold border-b-2 border-purple-500 text-white bg-white/[0.04] transition cursor-pointer"
+          class="showcase-tab-btn shrink-0 flex items-center gap-1.5 px-3.5 py-1.5 rounded-lg text-xs font-semibold whitespace-nowrap bg-purple-500/20 text-purple-200 border border-purple-500/30 transition cursor-pointer"
           data-tab="desc"
         >
           <BookOpen class="w-3.5 h-3.5 text-purple-400" />
           <span>Description</span>
         </button>
 
-        <!-- Tab 2: First Message -->
+        <!-- Tab 2: Greetings -->
         <button 
           type="button"
           id="showcase-tab-greetings"
-          class="showcase-tab-btn flex-1 flex items-center justify-center gap-1.5 px-3 py-2 text-xs sm:text-sm font-medium border-b-2 border-transparent text-slate-400 hover:text-slate-200 hover:bg-white/[0.02] transition cursor-pointer"
+          class="showcase-tab-btn shrink-0 flex items-center gap-1.5 px-3.5 py-1.5 rounded-lg text-xs font-medium whitespace-nowrap text-slate-400 hover:text-slate-200 hover:bg-white/[0.03] transition cursor-pointer"
           data-tab="greetings"
         >
           <MessageSquare class="w-3.5 h-3.5 text-cyan-400" />
-          <span>First Message</span>
-          <span id="showcase-greetings-count-badge" class="px-1.5 py-0.2 rounded-full text-[10px] font-bold bg-white/[0.08] text-slate-300">
+          <span>Greetings</span>
+          <span id="showcase-greetings-count-badge" class="px-1.5 py-0.2 rounded-full text-[10px] font-mono font-bold bg-cyan-500/20 text-cyan-300 border border-cyan-500/30">
             1
           </span>
         </button>
@@ -203,43 +224,64 @@ import {
         <button 
           type="button"
           id="showcase-tab-definition"
-          class="showcase-tab-btn flex-1 flex items-center justify-center gap-1.5 px-3 py-2 text-xs sm:text-sm font-medium border-b-2 border-transparent text-slate-400 hover:text-slate-200 hover:bg-white/[0.02] transition cursor-pointer"
+          class="showcase-tab-btn shrink-0 flex items-center gap-1.5 px-3.5 py-1.5 rounded-lg text-xs font-medium whitespace-nowrap text-slate-400 hover:text-slate-200 hover:bg-white/[0.03] transition cursor-pointer"
           data-tab="definition"
         >
           <Code class="w-3.5 h-3.5 text-indigo-400" />
           <span>Definition</span>
-          <span id="showcase-definition-token-badge" class="px-1.5 py-0.2 rounded-full text-[10px] font-mono bg-purple-500/20 text-purple-300 border border-purple-500/30">
-            ~1.8k
+          <span id="showcase-definition-token-badge" class="px-1.5 py-0.2 rounded-full text-[10px] font-mono font-bold bg-purple-500/20 text-purple-300 border border-purple-500/30">
+            ~3.5k
           </span>
         </button>
       </div>
 
       <!-- Tab Panels Container -->
-      <div class="min-h-[200px]">
+      <div class="min-h-[140px] pt-1">
         
-        <!-- Panel 1: Description (Pure Story / Lore / Creator Notes) -->
+        <!-- Panel 1: Description (Pure Story / Lore / Creator Notes with Show More / Show Less) -->
         <div id="showcase-panel-desc" class="showcase-panel space-y-2">
-          <div 
-            id="showcase-description" 
-            class="p-4 sm:p-5 rounded-2xl bg-white/[0.03] border border-white/[0.06] text-xs sm:text-sm text-slate-300 leading-relaxed max-h-[380px] overflow-y-auto card-rich-content custom-scrollbar"
-          >
-            Character backstory...
+          <div id="showcase-desc-wrapper" class="relative">
+            <!-- Text container clamped by default with smooth expansion -->
+            <div 
+              id="showcase-description" 
+              class="text-xs sm:text-sm text-slate-300 font-normal leading-relaxed card-rich-content relative overflow-hidden transition-all duration-300 max-h-32"
+            >
+              Character backstory...
+            </div>
+
+            <!-- Bottom gradient fade mask when collapsed -->
+            <div 
+              id="showcase-desc-fade" 
+              class="absolute bottom-0 inset-x-0 h-14 bg-gradient-to-t from-[#090b16] to-transparent pointer-events-none transition-opacity duration-300"
+            ></div>
+
+            <!-- Show More / Show Less Toggle Button -->
+            <div id="showcase-desc-toggle-wrapper" class="pt-2 flex justify-center">
+              <button 
+                type="button" 
+                id="showcase-desc-toggle" 
+                class="inline-flex items-center gap-1.5 px-4 py-1.5 rounded-full bg-white/[0.05] hover:bg-white/[0.1] border border-white/[0.08] text-xs font-semibold text-purple-300 hover:text-white transition active:scale-95 cursor-pointer"
+              >
+                <span id="showcase-desc-toggle-text">Show more</span>
+                <ChevronDown id="showcase-desc-toggle-icon" class="w-3.5 h-3.5 transition-transform duration-300" />
+              </button>
+            </div>
           </div>
         </div>
 
-        <!-- Panel 2: First Message (Opening Scene & Alternate Greetings) -->
+        <!-- Panel 2: Greetings (Opening Scene with Alternate Switcher & Show More) -->
         <div id="showcase-panel-greetings" class="showcase-panel hidden space-y-3">
           <!-- Alternate Greetings Switcher Bar (Visible when >1 greeting) -->
-          <div id="greeting-switcher" class="hidden items-center justify-between p-2.5 rounded-xl bg-purple-950/30 border border-purple-500/20">
+          <div id="greeting-switcher" class="hidden items-center justify-between p-2.5 rounded-xl bg-purple-950/25 border border-purple-500/20">
             <div class="flex items-center gap-2">
-              <span class="text-xs font-bold text-cyan-300">Alternate Scenario:</span>
-              <span id="greeting-index-label" class="text-xs text-slate-300 font-mono font-bold">(1 of 3)</span>
+              <span class="text-xs font-bold text-cyan-300">Scenario</span>
+              <span id="greeting-index-label" class="text-xs text-slate-300 font-mono font-bold">(1 of 12)</span>
             </div>
             <div class="flex items-center gap-1.5">
               <button 
                 type="button" 
                 id="greeting-prev-btn" 
-                class="p-1 rounded-lg bg-white/[0.06] hover:bg-white/[0.12] text-slate-300 hover:text-white transition disabled:opacity-30 disabled:pointer-events-none cursor-pointer"
+                class="p-1.5 rounded-lg bg-white/[0.06] hover:bg-white/[0.12] text-slate-300 hover:text-white transition disabled:opacity-30 disabled:pointer-events-none cursor-pointer"
                 title="Previous Greeting"
               >
                 <ChevronLeft class="w-4 h-4" />
@@ -247,7 +289,7 @@ import {
               <button 
                 type="button" 
                 id="greeting-next-btn" 
-                class="p-1 rounded-lg bg-white/[0.06] hover:bg-white/[0.12] text-slate-300 hover:text-white transition disabled:opacity-30 disabled:pointer-events-none cursor-pointer"
+                class="p-1.5 rounded-lg bg-white/[0.06] hover:bg-white/[0.12] text-slate-300 hover:text-white transition disabled:opacity-30 disabled:pointer-events-none cursor-pointer"
                 title="Next Greeting"
               >
                 <ChevronRight class="w-4 h-4" />
@@ -255,44 +297,64 @@ import {
             </div>
           </div>
 
-          <!-- Greeting Content Box -->
-          <div 
-            id="showcase-greeting" 
-            class="p-4 sm:p-5 rounded-2xl bg-purple-950/20 border border-purple-500/20 text-xs sm:text-sm text-purple-200 leading-relaxed max-h-[380px] overflow-y-auto space-y-1.5 custom-scrollbar"
-          >
-            "*Awaits your first message...*"
+          <!-- Greeting Content Box with Show More / Show Less -->
+          <div id="showcase-greeting-wrapper" class="relative">
+            <div 
+              id="showcase-greeting" 
+              class="text-xs sm:text-sm text-purple-200 font-normal leading-relaxed relative overflow-hidden transition-all duration-300 max-h-36 space-y-1.5"
+            >
+              "*Awaits your first message...*"
+            </div>
+
+            <!-- Bottom gradient fade mask when collapsed -->
+            <div 
+              id="showcase-greeting-fade" 
+              class="absolute bottom-0 inset-x-0 h-14 bg-gradient-to-t from-[#090b16] to-transparent pointer-events-none transition-opacity duration-300"
+            ></div>
+
+            <!-- Show More / Show Less Toggle Button -->
+            <div id="showcase-greeting-toggle-wrapper" class="pt-2 flex justify-center">
+              <button 
+                type="button" 
+                id="showcase-greeting-toggle" 
+                class="inline-flex items-center gap-1.5 px-4 py-1.5 rounded-full bg-white/[0.05] hover:bg-white/[0.1] border border-white/[0.08] text-xs font-semibold text-cyan-300 hover:text-white transition active:scale-95 cursor-pointer"
+              >
+                <span id="showcase-greeting-toggle-text">Show more</span>
+                <ChevronDown id="showcase-greeting-toggle-icon" class="w-3.5 h-3.5 transition-transform duration-300" />
+              </button>
+            </div>
           </div>
         </div>
 
         <!-- Panel 3: Definition (Technical Specs / Prompt Architecture) -->
         <div id="showcase-panel-definition" class="showcase-panel hidden space-y-3">
           <!-- Token Metrics Banner -->
-          <div class="grid grid-cols-3 gap-2 p-3 rounded-xl bg-white/[0.02] border border-white/[0.06] text-center">
-            <div class="p-1.5">
+          <div class="grid grid-cols-3 gap-2 p-2.5 rounded-xl bg-white/[0.02] border border-white/[0.06] text-center">
+            <div class="p-1">
               <div class="text-[10px] text-slate-500 uppercase font-bold tracking-wider">Total Tokens</div>
-              <div id="def-total-tokens" class="text-xs sm:text-sm font-mono font-bold text-white mt-0.5">~1,840</div>
+              <div id="def-total-tokens" class="text-xs sm:text-sm font-mono font-bold text-white mt-0.5">~3,474</div>
             </div>
-            <div class="p-1.5 border-x border-white/[0.06]">
+            <div class="p-1 border-x border-white/[0.06]">
               <div class="text-[10px] text-slate-500 uppercase font-bold tracking-wider">Permanent</div>
-              <div id="def-perm-tokens" class="text-xs sm:text-sm font-mono font-bold text-purple-300 mt-0.5">~1,250</div>
+              <div id="def-perm-tokens" class="text-xs sm:text-sm font-mono font-bold text-purple-300 mt-0.5">~2,850</div>
             </div>
-            <div class="p-1.5">
+            <div class="p-1">
               <div class="text-[10px] text-slate-500 uppercase font-bold tracking-wider">Greeting</div>
-              <div id="def-greeting-tokens" class="text-xs sm:text-sm font-mono font-bold text-cyan-300 mt-0.5">~590</div>
+              <div id="def-greeting-tokens" class="text-xs sm:text-sm font-mono font-bold text-cyan-300 mt-0.5">~624</div>
             </div>
           </div>
 
           <!-- Personality block -->
-          <div id="def-personality-box" class="p-3.5 rounded-xl bg-[#060813] border border-white/[0.06] space-y-1.5">
+          <div id="def-personality-box" class="p-3 rounded-xl bg-[#060813] border border-white/[0.06] space-y-1">
             <div class="flex items-center justify-between text-[11px] font-bold text-purple-300">
-              <span>Personality & Identity Specs</span>
+              <span>Personality & Behavioral Directives</span>
               <span id="def-personality-token-label" class="text-[10px] font-mono text-slate-500"></span>
             </div>
             <pre id="def-personality-content" class="text-xs text-slate-300 whitespace-pre-wrap font-mono max-h-36 overflow-y-auto custom-scrollbar"></pre>
           </div>
 
           <!-- Scenario block -->
-          <div id="def-scenario-box" class="p-3.5 rounded-xl bg-[#060813] border border-white/[0.06] space-y-1.5">
+          <div id="def-scenario-box" class="p-3 rounded-xl bg-[#060813] border border-white/[0.06] space-y-1">
             <div class="flex items-center justify-between text-[11px] font-bold text-cyan-300">
               <span>Scenario & Context</span>
               <span id="def-scenario-token-label" class="text-[10px] font-mono text-slate-500"></span>
@@ -301,7 +363,7 @@ import {
           </div>
 
           <!-- System Prompt block -->
-          <div id="def-system-box" class="p-3.5 rounded-xl bg-[#060813] border border-white/[0.06] space-y-1.5">
+          <div id="def-system-box" class="p-3 rounded-xl bg-[#060813] border border-white/[0.06] space-y-1">
             <div class="flex items-center justify-between text-[11px] font-bold text-amber-300">
               <span>System Prompt & Roleplay Constraints</span>
               <span id="def-system-token-label" class="text-[10px] font-mono text-slate-500"></span>
@@ -310,7 +372,7 @@ import {
           </div>
 
           <!-- Example Dialogue block -->
-          <div id="def-mes-example-box" class="p-3.5 rounded-xl bg-[#060813] border border-white/[0.06] space-y-1.5">
+          <div id="def-mes-example-box" class="p-3 rounded-xl bg-[#060813] border border-white/[0.06] space-y-1">
             <div class="flex items-center justify-between text-[11px] font-bold text-emerald-300">
               <span>Dialogue Examples (&lt;START&gt;)</span>
               <span id="def-mes-example-token-label" class="text-[10px] font-mono text-slate-500"></span>
@@ -335,31 +397,12 @@ import {
 
     </div>
 
-    <!-- Action Footer: Direct Navigation to Full Chat -->
-    <footer class="p-3.5 sm:p-4 border-t border-white/[0.08] bg-[#0c0f20]/95 flex items-center gap-2 sm:gap-3 shrink-0">
-      <a 
-        id="showcase-edit-btn"
-        href="#"
-        class="hidden items-center gap-1.5 px-3 py-2.5 rounded-xl bg-white/[0.06] hover:bg-white/[0.12] border border-white/[0.1] text-xs font-bold text-slate-200 transition active:scale-95 cursor-pointer"
-        title="Edit Custom Companion"
-      >
-        <Pencil class="w-3.5 h-3.5 text-purple-400" />
-        <span class="hidden sm:inline">Edit</span>
-      </a>
-
-      <button 
-        type="button"
-        id="showcase-delete-btn"
-        class="hidden items-center gap-1.5 px-3 py-2.5 rounded-xl bg-rose-500/10 hover:bg-rose-500/20 border border-rose-500/20 text-xs font-bold text-rose-300 transition active:scale-95 cursor-pointer"
-        title="Delete Custom Companion"
-      >
-        <Trash class="w-3.5 h-3.5 text-rose-400" />
-      </button>
-
+    <!-- Action Footer: Full-Width Primary CTA (Clean & Uncluttered) -->
+    <footer class="p-3.5 sm:p-4 border-t border-white/[0.08] bg-[#0c0f20]/95 shrink-0">
       <a 
         id="showcase-chat-btn"
         href="#"
-        class="flex-1 flex items-center justify-center gap-2 px-5 py-3 rounded-xl bg-gradient-to-r from-purple-600 via-indigo-600 to-pink-600 hover:from-purple-500 hover:to-pink-500 text-white font-black text-xs sm:text-sm tracking-wide shadow-lg shadow-purple-900/40 hover:shadow-purple-900/60 active:scale-[0.98] transition duration-200 cursor-pointer"
+        class="w-full flex items-center justify-center gap-2 py-3 px-5 rounded-xl bg-gradient-to-r from-purple-600 via-indigo-600 to-pink-600 hover:from-purple-500 hover:to-pink-500 text-white font-bold text-sm tracking-wide shadow-lg shadow-purple-900/40 hover:shadow-purple-900/60 active:scale-[0.98] transition duration-200 cursor-pointer"
       >
         <Sparkles class="w-4 h-4 text-purple-200 animate-pulse" />
         <span id="showcase-chat-btn-text">Start Roleplay</span>
@@ -406,9 +449,24 @@ import {
   const greetingsCountBadge = document.getElementById('showcase-greetings-count-badge');
   const definitionTokenBadge = document.getElementById('showcase-definition-token-badge');
 
-  // Content Containers
+  // Description Show More Elements
   const showcaseDescription = document.getElementById('showcase-description');
+  const showcaseDescFade = document.getElementById('showcase-desc-fade');
+  const showcaseDescToggleWrapper = document.getElementById('showcase-desc-toggle-wrapper');
+  const showcaseDescToggle = document.getElementById('showcase-desc-toggle');
+  const showcaseDescToggleText = document.getElementById('showcase-desc-toggle-text');
+  const showcaseDescToggleIcon = document.getElementById('showcase-desc-toggle-icon');
+  let isDescExpanded = false;
+
+  // Greetings Show More Elements & Switcher
   const showcaseGreeting = document.getElementById('showcase-greeting');
+  const showcaseGreetingFade = document.getElementById('showcase-greeting-fade');
+  const showcaseGreetingToggleWrapper = document.getElementById('showcase-greeting-toggle-wrapper');
+  const showcaseGreetingToggle = document.getElementById('showcase-greeting-toggle');
+  const showcaseGreetingToggleText = document.getElementById('showcase-greeting-toggle-text');
+  const showcaseGreetingToggleIcon = document.getElementById('showcase-greeting-toggle-icon');
+  let isGreetingExpanded = false;
+
   const greetingSwitcher = document.getElementById('greeting-switcher');
   const greetingIndexLabel = document.getElementById('greeting-index-label');
   const greetingPrevBtn = document.getElementById('greeting-prev-btn') as HTMLButtonElement;
@@ -499,22 +557,28 @@ import {
   function switchTab(tab: 'desc' | 'greetings' | 'definition') {
     activeTab = tab;
 
-    // Reset button styles
     [
       { btn: tabBtnDesc, panel: panelDesc, key: 'desc' },
       { btn: tabBtnGreetings, panel: panelGreetings, key: 'greetings' },
       { btn: tabBtnDefinition, panel: panelDefinition, key: 'definition' }
     ].forEach(({ btn, panel, key }) => {
       if (key === tab) {
-        btn?.classList.remove('border-transparent', 'text-slate-400', 'hover:text-slate-200', 'hover:bg-white/[0.02]');
-        btn?.classList.add('border-purple-500', 'text-white', 'bg-white/[0.04]', 'font-bold');
+        btn?.classList.remove('text-slate-400', 'hover:text-slate-200', 'hover:bg-white/[0.03]');
+        btn?.classList.add('bg-purple-500/20', 'text-purple-200', 'border', 'border-purple-500/30', 'font-semibold');
         panel?.classList.remove('hidden');
       } else {
-        btn?.classList.remove('border-purple-500', 'text-white', 'bg-white/[0.04]', 'font-bold');
-        btn?.classList.add('border-transparent', 'text-slate-400', 'hover:text-slate-200', 'hover:bg-white/[0.02]');
+        btn?.classList.remove('bg-purple-500/20', 'text-purple-200', 'border', 'border-purple-500/30', 'font-semibold');
+        btn?.classList.add('text-slate-400', 'hover:text-slate-200', 'hover:bg-white/[0.03]');
         panel?.classList.add('hidden');
       }
     });
+
+    // Check clamps on tab switch
+    if (tab === 'desc') {
+      setupDescriptionClamp();
+    } else if (tab === 'greetings') {
+      setupGreetingClamp();
+    }
   }
 
   tabBtnDesc?.addEventListener('click', () => switchTab('desc'));
@@ -542,7 +606,7 @@ import {
     visibleTags.forEach(tag => {
       const cleanTag = tag.replace(/^#/, '');
       const pill = document.createElement('span');
-      pill.className = 'px-2 py-0.5 rounded-md bg-white/[0.04] border border-white/[0.08] text-[10.5px] font-medium text-slate-300';
+      pill.className = 'px-2 py-0.5 rounded-md bg-white/[0.03] hover:bg-white/[0.06] border border-white/[0.05] text-[10.5px] font-medium text-slate-400';
       pill.textContent = `#${cleanTag}`;
       showcaseTags.appendChild(pill);
     });
@@ -550,7 +614,7 @@ import {
     if (shouldTruncate) {
       const toggleBtn = document.createElement('button');
       toggleBtn.type = 'button';
-      toggleBtn.className = 'px-2 py-0.5 rounded-md bg-purple-500/10 hover:bg-purple-500/20 border border-purple-500/20 text-[10.5px] font-bold text-purple-300 transition cursor-pointer';
+      toggleBtn.className = 'px-2 py-0.5 rounded-md bg-purple-500/10 hover:bg-purple-500/20 border border-purple-500/20 text-[10.5px] font-semibold text-purple-300 transition cursor-pointer';
       toggleBtn.textContent = expanded ? 'Show less' : `+${currentTags.length - limit} more`;
       toggleBtn.addEventListener('click', (e) => {
         e.stopPropagation();
@@ -559,6 +623,92 @@ import {
       showcaseTags.appendChild(toggleBtn);
     }
   }
+
+  // Description Show More / Show Less Logic
+  function setupDescriptionClamp() {
+    if (!showcaseDescription) return;
+    isDescExpanded = false;
+    showcaseDescription.classList.remove('max-h-[3000px]');
+    showcaseDescription.classList.add('max-h-32');
+
+    requestAnimationFrame(() => {
+      const isOverflowing = showcaseDescription.scrollHeight > 135;
+      if (isOverflowing) {
+        showcaseDescFade?.classList.remove('opacity-0', 'hidden');
+        showcaseDescFade?.classList.add('opacity-100');
+        showcaseDescToggleWrapper?.classList.remove('hidden');
+        if (showcaseDescToggleText) showcaseDescToggleText.textContent = 'Show more';
+        if (showcaseDescToggleIcon) showcaseDescToggleIcon.classList.remove('rotate-180');
+      } else {
+        showcaseDescFade?.classList.add('opacity-0', 'hidden');
+        showcaseDescToggleWrapper?.classList.add('hidden');
+      }
+    });
+  }
+
+  showcaseDescToggle?.addEventListener('click', (e) => {
+    e.stopPropagation();
+    if (!showcaseDescription) return;
+    isDescExpanded = !isDescExpanded;
+
+    if (isDescExpanded) {
+      showcaseDescription.classList.remove('max-h-32');
+      showcaseDescription.classList.add('max-h-[3000px]');
+      showcaseDescFade?.classList.add('opacity-0');
+      if (showcaseDescToggleText) showcaseDescToggleText.textContent = 'Show less';
+      if (showcaseDescToggleIcon) showcaseDescToggleIcon.classList.add('rotate-180');
+    } else {
+      showcaseDescription.classList.remove('max-h-[3000px]');
+      showcaseDescription.classList.add('max-h-32');
+      showcaseDescFade?.classList.remove('opacity-0');
+      if (showcaseDescToggleText) showcaseDescToggleText.textContent = 'Show more';
+      if (showcaseDescToggleIcon) showcaseDescToggleIcon.classList.remove('rotate-180');
+      showcaseDescription.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+    }
+  });
+
+  // Greetings Show More / Show Less Logic
+  function setupGreetingClamp() {
+    if (!showcaseGreeting) return;
+    isGreetingExpanded = false;
+    showcaseGreeting.classList.remove('max-h-[3000px]');
+    showcaseGreeting.classList.add('max-h-36');
+
+    requestAnimationFrame(() => {
+      const isOverflowing = showcaseGreeting.scrollHeight > 150;
+      if (isOverflowing) {
+        showcaseGreetingFade?.classList.remove('opacity-0', 'hidden');
+        showcaseGreetingFade?.classList.add('opacity-100');
+        showcaseGreetingToggleWrapper?.classList.remove('hidden');
+        if (showcaseGreetingToggleText) showcaseGreetingToggleText.textContent = 'Show more';
+        if (showcaseGreetingToggleIcon) showcaseGreetingToggleIcon.classList.remove('rotate-180');
+      } else {
+        showcaseGreetingFade?.classList.add('opacity-0', 'hidden');
+        showcaseGreetingToggleWrapper?.classList.add('hidden');
+      }
+    });
+  }
+
+  showcaseGreetingToggle?.addEventListener('click', (e) => {
+    e.stopPropagation();
+    if (!showcaseGreeting) return;
+    isGreetingExpanded = !isGreetingExpanded;
+
+    if (isGreetingExpanded) {
+      showcaseGreeting.classList.remove('max-h-36');
+      showcaseGreeting.classList.add('max-h-[3000px]');
+      showcaseGreetingFade?.classList.add('opacity-0');
+      if (showcaseGreetingToggleText) showcaseGreetingToggleText.textContent = 'Show less';
+      if (showcaseGreetingToggleIcon) showcaseGreetingToggleIcon.classList.add('rotate-180');
+    } else {
+      showcaseGreeting.classList.remove('max-h-[3000px]');
+      showcaseGreeting.classList.add('max-h-36');
+      showcaseGreetingFade?.classList.remove('opacity-0');
+      if (showcaseGreetingToggleText) showcaseGreetingToggleText.textContent = 'Show more';
+      if (showcaseGreetingToggleIcon) showcaseGreetingToggleIcon.classList.remove('rotate-180');
+      showcaseGreeting.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+    }
+  });
 
   // Greeting Switcher Logic
   function updateGreetingUI() {
@@ -583,6 +733,7 @@ import {
 
     const activeGreetingText = currentGreetings[currentGreetingIndex] || '*Awaits your first message...*';
     showcaseGreeting.innerHTML = formatRichGreeting(activeGreetingText);
+    setupGreetingClamp();
   }
 
   greetingPrevBtn?.addEventListener('click', (e) => {
@@ -605,10 +756,10 @@ import {
   function updateDefinitionUI(char: any) {
     const def = extractCardDefinition(char);
 
-    // Update tokens badges
-    const totalTokensFormatted = def.tokensTotal ? `~${def.tokensTotal.toLocaleString()}` : '~1.2k';
-    const permTokensFormatted = def.tokensPermanent ? `~${def.tokensPermanent.toLocaleString()}` : '~800';
-    const greetingTokensFormatted = def.tokensGreeting ? `~${def.tokensGreeting.toLocaleString()}` : '~400';
+    // Format tokens strictly in English digits for UI consistency
+    const totalTokensFormatted = def.tokensTotal ? `~${def.tokensTotal.toLocaleString('en-US')}` : '~1,200';
+    const permTokensFormatted = def.tokensPermanent ? `~${def.tokensPermanent.toLocaleString('en-US')}` : '~800';
+    const greetingTokensFormatted = def.tokensGreeting ? `~${def.tokensGreeting.toLocaleString('en-US')}` : '~400';
 
     if (defTotalTokens) defTotalTokens.textContent = totalTokensFormatted;
     if (defPermTokens) defPermTokens.textContent = permTokensFormatted;
@@ -623,7 +774,7 @@ import {
         defPersonalityBox.classList.remove('hidden');
         defPersonalityContent.textContent = def.personality;
         if (defPersonalityTokenLabel) {
-          defPersonalityTokenLabel.textContent = `~${estimateTokens(def.personality)} tokens`;
+          defPersonalityTokenLabel.textContent = `~${estimateTokens(def.personality).toLocaleString('en-US')} tokens`;
         }
       } else {
         defPersonalityBox.classList.add('hidden');
@@ -636,7 +787,7 @@ import {
         defScenarioBox.classList.remove('hidden');
         defScenarioContent.textContent = def.scenario;
         if (defScenarioTokenLabel) {
-          defScenarioTokenLabel.textContent = `~${estimateTokens(def.scenario)} tokens`;
+          defScenarioTokenLabel.textContent = `~${estimateTokens(def.scenario).toLocaleString('en-US')} tokens`;
         }
       } else {
         defScenarioBox.classList.add('hidden');
@@ -649,7 +800,7 @@ import {
         defSystemBox.classList.remove('hidden');
         defSystemContent.textContent = def.systemPrompt;
         if (defSystemTokenLabel) {
-          defSystemTokenLabel.textContent = `~${estimateTokens(def.systemPrompt)} tokens`;
+          defSystemTokenLabel.textContent = `~${estimateTokens(def.systemPrompt).toLocaleString('en-US')} tokens`;
         }
       } else {
         defSystemBox.classList.add('hidden');
@@ -662,7 +813,7 @@ import {
         defMesExampleBox.classList.remove('hidden');
         defMesExampleContent.textContent = def.mesExample;
         if (defMesExampleTokenLabel) {
-          defMesExampleTokenLabel.textContent = `~${estimateTokens(def.mesExample)} tokens`;
+          defMesExampleTokenLabel.textContent = `~${estimateTokens(def.mesExample).toLocaleString('en-US')} tokens`;
         }
       } else {
         defMesExampleBox.classList.add('hidden');
@@ -761,10 +912,10 @@ import {
     if (showcaseNsfwBadge) {
       if (hasNsfwTag) {
         showcaseNsfwBadge.textContent = 'NSFW';
-        showcaseNsfwBadge.className = 'px-2 py-0.5 rounded-md text-[10px] font-black uppercase tracking-wider bg-rose-500/20 text-rose-300 border border-rose-500/30';
+        showcaseNsfwBadge.className = 'px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wider bg-rose-500/20 text-rose-300 border border-rose-500/30';
       } else {
         showcaseNsfwBadge.textContent = 'SFW';
-        showcaseNsfwBadge.className = 'px-2 py-0.5 rounded-md text-[10px] font-black uppercase tracking-wider bg-emerald-500/20 text-emerald-300 border border-emerald-500/30';
+        showcaseNsfwBadge.className = 'px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wider bg-emerald-500/20 text-emerald-300 border border-emerald-500/30';
       }
     }
 
@@ -775,6 +926,7 @@ import {
     if (showcaseDescription) {
       const publicText = cleanPublicDescription(char.description, char.creatorNotes || char.creator_notes);
       showcaseDescription.innerHTML = formatRichDescription(publicText);
+      setupDescriptionClamp();
     }
 
     // Populate Tab 2: Greetings & Alternates
@@ -803,10 +955,10 @@ import {
     }
 
     if (showcaseStartBtnLabel) {
-      showcaseStartBtnLabel.textContent = `Start Roleplay with ${char.name.split(' ')[0]}`;
+      showcaseStartBtnLabel.textContent = 'Start Roleplay';
     }
 
-    // Edit & Delete buttons for custom characters
+    // Edit & Delete buttons in Header for custom characters
     if (showcaseEditBtn) {
       if (char.isCustom) {
         showcaseEditBtn.href = `/create?edit=${encodeURIComponent(char.id)}`;
@@ -853,6 +1005,7 @@ import {
               const fullDesc = idbChar.description || idbChar.scenario || char.description || char.scenario || 'No detailed background provided.';
               const cleanText = cleanPublicDescription(fullDesc, idbChar.creator_notes || idbChar.creatorNotes || char.creatorNotes);
               showcaseDescription.innerHTML = formatRichDescription(cleanText);
+              setupDescriptionClamp();
             }
           }
           if (idbChar.greeting || idbChar.first_mes) {
