@@ -5623,22 +5623,26 @@ const { character } = Astro.props;
 
   // Smart Auto-Scroll & Scroll-To-Bottom Manager (prevents forced pulling during streaming)
   let isAutoScrollActive = true;
-  let userTouchStartY = 0;
+  let userScrolledUp = false;
+  let isUserTouching = false;
+  let isUserWheeling = false;
+  let wheelTimeout = null;
+  let isProgrammaticScroll = false;
+  let lastKnownScrollTop = 0;
+  let scrollAnimationFrame = null;
+
   const scrollBottomBtn = document.getElementById('chat-scroll-bottom-btn');
   const scrollBottomBadge = document.getElementById('scroll-bottom-badge');
 
-  function updateScrollBottomButtonVisibility() {
+  function updateScrollBottomButtonUI() {
     if (!chatStream) return;
-    const threshold = 90; // px from bottom
-    const distanceFromBottom = chatStream.scrollHeight - (chatStream.scrollTop + chatStream.clientHeight);
-    if (distanceFromBottom > threshold) {
-      isAutoScrollActive = false;
+    const dist = chatStream.scrollHeight - (chatStream.scrollTop + chatStream.clientHeight);
+    if (userScrolledUp || dist > 60) {
       if (scrollBottomBtn) {
         scrollBottomBtn.classList.remove('hidden');
         scrollBottomBtn.classList.add('flex');
       }
     } else {
-      isAutoScrollActive = true;
       if (scrollBottomBtn) {
         scrollBottomBtn.classList.add('hidden');
         scrollBottomBtn.classList.remove('flex');
@@ -5649,20 +5653,48 @@ const { character } = Astro.props;
     }
   }
 
+  function requestAutoScroll() {
+    if (!chatStream) return;
+    if (!isAutoScrollActive || userScrolledUp || isUserTouching || isUserWheeling) {
+      if (scrollBottomBadge) scrollBottomBadge.classList.remove('hidden');
+      return;
+    }
+    if (scrollAnimationFrame) return;
+    scrollAnimationFrame = requestAnimationFrame(() => {
+      scrollAnimationFrame = null;
+      if (!isAutoScrollActive || userScrolledUp || isUserTouching || isUserWheeling) {
+        if (scrollBottomBadge) scrollBottomBadge.classList.remove('hidden');
+        return;
+      }
+      if (chatStream) {
+        isProgrammaticScroll = true;
+        chatStream.scrollTop = chatStream.scrollHeight;
+        lastKnownScrollTop = chatStream.scrollTop;
+        requestAnimationFrame(() => {
+          isProgrammaticScroll = false;
+        });
+      }
+    });
+  }
+
   function scrollToChatBottom(smooth = false) {
     if (!chatStream) return;
+    userScrolledUp = false;
     isAutoScrollActive = true;
+    updateScrollBottomButtonUI();
+    isProgrammaticScroll = true;
     if (smooth) {
       chatStream.scrollTo({ top: chatStream.scrollHeight, behavior: 'smooth' });
+      setTimeout(() => {
+        isProgrammaticScroll = false;
+        if (chatStream) lastKnownScrollTop = chatStream.scrollTop;
+      }, 400);
     } else {
       chatStream.scrollTop = chatStream.scrollHeight;
-    }
-    if (scrollBottomBtn) {
-      scrollBottomBtn.classList.add('hidden');
-      scrollBottomBtn.classList.remove('flex');
-    }
-    if (scrollBottomBadge) {
-      scrollBottomBadge.classList.add('hidden');
+      lastKnownScrollTop = chatStream.scrollTop;
+      requestAnimationFrame(() => {
+        isProgrammaticScroll = false;
+      });
     }
   }
 
@@ -16598,11 +16630,7 @@ const { character } = Astro.props;
                         } else if (enableThinking && reasoningText) {
                           bubbleEl.innerHTML = `<div class="flex items-center gap-2 text-xs text-purple-300 italic mb-2 animate-pulse"><svg class="w-3.5 h-3.5 text-purple-400 animate-spin" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2v4m0 12v4M4.93 4.93l2.83 2.83m8.48 8.48 2.83 2.83M2 12h4m12 0h4M4.93 19.07l2.83-2.83m8.48-8.48 2.83-2.83"/></svg><span>Thinking & processing character persona...</span></div><div class="text-xs text-slate-400 font-mono leading-relaxed line-clamp-4 whitespace-pre-wrap border-l-2 border-purple-500/40 pl-2">${reasoningText}</div>`;
                         }
-                        if (chatStream && isAutoScrollActive) {
-                          chatStream.scrollTop = chatStream.scrollHeight;
-                        } else if (scrollBottomBadge) {
-                          scrollBottomBadge.classList.remove('hidden');
-                        }
+                        requestAutoScroll();
                       }
                     } catch (e) {}
                   }
@@ -18024,32 +18052,81 @@ const { character } = Astro.props;
   };
   chatStream?.addEventListener('scroll', () => {
     dismissMessagePopovers();
-    updateScrollBottomButtonVisibility();
+
+    if (isProgrammaticScroll) {
+      if (chatStream) lastKnownScrollTop = chatStream.scrollTop;
+      return;
+    }
+
+    const currentScrollTop = chatStream.scrollTop;
+    const dist = chatStream.scrollHeight - (currentScrollTop + chatStream.clientHeight);
+
+    // If scroll moved upward (scrollTop decreased by more than 1px):
+    if (currentScrollTop < lastKnownScrollTop - 1) {
+      userScrolledUp = true;
+      isAutoScrollActive = false;
+    } else if (dist <= 15 && currentScrollTop > lastKnownScrollTop) {
+      // User explicitly scrolled all the way to the bottom!
+      userScrolledUp = false;
+      isAutoScrollActive = true;
+    }
+
+    lastKnownScrollTop = currentScrollTop;
+    updateScrollBottomButtonUI();
   }, { passive: true });
   window.addEventListener('scroll', dismissMessagePopovers, { passive: true });
 
   // Disengage auto-scroll when user scrolls up via mouse wheel
   chatStream?.addEventListener('wheel', (e) => {
+    isUserWheeling = true;
+    clearTimeout(wheelTimeout);
+    wheelTimeout = setTimeout(() => {
+      isUserWheeling = false;
+      updateScrollBottomButtonUI();
+    }, 300);
+
     if (e.deltaY < 0) {
+      userScrolledUp = true;
       isAutoScrollActive = false;
+      updateScrollBottomButtonUI();
     }
   }, { passive: true });
 
-  // Disengage auto-scroll when user touches & drags up on mobile
+  // Touch & Pointer listeners (Mobile & Tablet)
+  let chatScrollTouchStartY = 0;
+  let chatScrollTouchStartX = 0;
+
   chatStream?.addEventListener('touchstart', (e) => {
+    isUserTouching = true;
     if (e.touches && e.touches[0]) {
-      userTouchStartY = e.touches[0].clientY;
+      chatScrollTouchStartY = e.touches[0].clientY;
+      chatScrollTouchStartX = e.touches[0].clientX;
     }
   }, { passive: true });
 
   chatStream?.addEventListener('touchmove', (e) => {
     if (e.touches && e.touches[0]) {
       const currentY = e.touches[0].clientY;
-      // Moving finger downwards drags content down -> viewport moves UP towards earlier messages
-      if (currentY - userTouchStartY > 10) {
+      const currentX = e.touches[0].clientX;
+      const deltaY = currentY - chatScrollTouchStartY;
+      const deltaX = Math.abs(currentX - chatScrollTouchStartX);
+      // If user drags finger downwards vertically, they are scrolling up towards earlier messages!
+      if (deltaY > 5 && deltaY > deltaX) {
+        userScrolledUp = true;
         isAutoScrollActive = false;
+        updateScrollBottomButtonUI();
       }
     }
+  }, { passive: true });
+
+  window.addEventListener('touchend', () => {
+    isUserTouching = false;
+    updateScrollBottomButtonUI();
+  }, { passive: true });
+
+  window.addEventListener('touchcancel', () => {
+    isUserTouching = false;
+    updateScrollBottomButtonUI();
   }, { passive: true });
 
   // Floating scroll-to-bottom button click handler
