@@ -1,7 +1,7 @@
 ---
 import type { Character } from '../data/characters';
 import { Flame, Star, MessageSquare, Sparkles } from '@lucide/astro';
-import { stripHtmlForPrompt } from '../utils/cardFormatter';
+import { stripHtmlForPrompt, sanitizeTitle } from '../utils/cardFormatter';
 
 interface Props {
   character: Character;
@@ -73,7 +73,7 @@ const { character } = Astro.props;
 
       <!-- Subtitle / Persona Role -->
       <p class="text-[11px] sm:text-xs text-purple-400/90 font-medium line-clamp-1 mt-0.5">
-        {character.title}
+        {sanitizeTitle(character.title, 'Companion')}
       </p>
 
       <!-- Short Snippet (Desktop only) -->

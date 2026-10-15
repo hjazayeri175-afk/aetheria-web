@@ -1724,7 +1724,10 @@ const PRESET_AVATARS = [
 
     // 1. Name & Title
     const charName = d.name || d.char_name || d.character_name || root.name || root.char_name || '';
-    const rawTitle = d.title || d.personality_summary || d.short_description || d.tagline || '';
+    let rawTitle = d.title || d.personality_summary || d.short_description || d.tagline || '';
+    if (!rawTitle && (d.description || d.creator_notes)) {
+      rawTitle = d.description || d.creator_notes || '';
+    }
     const charTitle = sanitizeTitle(rawTitle, 'AI Companion');
 
     if (charName && nameInput) {

@@ -10,19 +10,21 @@
  */
 export function stripHtmlForPrompt(text: string): string {
   if (!text || typeof text !== 'string') return '';
-  return text
+  // 1. Decode entities first so tags hidden behind &lt; &gt; are exposed to strip
+  let str = decodeHtmlEntities(text);
+  str = str
     .replace(/<!--[\s\S]*?-->/g, '')
     .replace(/<\s*(script|style|iframe|object|embed)[\s\S]*?<\/\s*\1\s*>/gi, '')
     .replace(/<\s*(script|style|iframe|object|embed)[^>]*\/?>/gi, '')
     .replace(/<br\s*\/?>/gi, '\n')
     .replace(/<\/(p|div|h[1-6]|li|blockquote|section|article|tr)>/gi, '\n')
-    .replace(/<[^>]+>/g, '')
-    .replace(/&nbsp;/gi, ' ')
-    .replace(/&amp;/gi, '&')
-    .replace(/&lt;/gi, '<')
-    .replace(/&gt;/gi, '>')
-    .replace(/&quot;/gi, '"')
-    .replace(/&#39;/gi, "'")
+    .replace(/<[^>]+>/g, '');
+  // 2. Second decode pass for double-encoded entities (&amp;lt;)
+  if (str.includes('&')) {
+    str = decodeHtmlEntities(str);
+    str = str.replace(/<[^>]+>/g, '');
+  }
+  return str
     .replace(/\r\n/g, '\n')
     .replace(/\n{3,}/g, '\n\n')
     .trim();
@@ -259,14 +261,37 @@ if (typeof window !== 'undefined') {
  */
 export function sanitizeTitle(input: string | undefined | null, fallback = 'Custom Companion'): string {
   if (!input || typeof input !== 'string') return fallback;
-  // 1. Fully decode entities
+  // 1. Fully decode entities (up to 4 passes for nested encoding like &amp;lt;)
   let str = decodeHtmlEntities(input);
-  // 2. Strip HTML tags completely
+  // 2. Convert closing block tags into periods to cleanly separate headings from body text
+  str = str.replace(/<\/(?:h[1-6]|p|div|li|blockquote)>/gi, '. ').replace(/<br\s*\/?>/gi, '. ');
+  // 3. Strip scripts, styles, comments, and all HTML/XML tags
+  str = str.replace(/<script[\s\S]*?<\/script>/gi, ' ');
+  str = str.replace(/<style[\s\S]*?<\/style>/gi, ' ');
+  str = str.replace(/<!--[\s\S]*?-->/g, ' ');
+  str = str.replace(/<\/?[a-zA-Z][^>]*>/g, ' ');
   str = str.replace(/<[^>]+>/g, ' ');
-  // 3. Normalize whitespace & strip newlines
+  // 4. Second decode & strip pass for double-encoded or hidden tags
+  if (str.includes('&')) {
+    str = decodeHtmlEntities(str);
+    str = str.replace(/<\/?[a-zA-Z][^>]*>/g, ' ').replace(/<[^>]+>/g, ' ');
+  }
+  // 5. Strip Markdown formatting (# headings, **bold**, *italic*, `code`, [link](url))
+  str = str.replace(/(^|\s)#{1,6}\s+/g, '$1');
+  str = str.replace(/(\*\*|__)(.*?)\1/g, '$2');
+  str = str.replace(/(\*|_)(.*?)\1/g, '$2');
+  str = str.replace(/~~(.*?)~~/g, '$1');
+  str = str.replace(/`([^`]+)`/g, '$1');
+  str = str.replace(/\[([^\]]+)\]\([^)]+\)/g, '$1');
+  str = str.replace(/(^|\s)>\s*/g, '$1');
+  str = str.replace(/(^|\s)[-*+]\s+/g, '$1');
+  // 6. Remove stray unclosed or dangling tag brackets
+  str = str.replace(/<+[a-zA-Z0-9]*$/g, '');
+  str = str.replace(/^>+/g, '');
+  // 7. Normalize whitespace & strip newlines
   str = str.replace(/[\r\n\t]+/g, ' ').replace(/\s{2,}/g, ' ').trim();
   if (!str) return fallback;
-  // 4. If creator stuffed a whole changelog or markdown article into title (> 75 chars)
+  // 8. If creator stuffed a whole changelog or markdown article into title (> 75 chars)
   if (str.length > 75) {
     const parts = str.split(/[.!?,;\n]/);
     const candidate = parts[0]?.trim();
