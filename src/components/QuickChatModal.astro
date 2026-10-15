@@ -39,16 +39,13 @@ import {
   aria-modal="true"
   aria-labelledby="showcase-name"
 >
-  <!-- Modal Dialog Container (Ergonomic mobile bottom sheet with natural adaptive height up to 90dvh) -->
+  <!-- Modal Dialog Container (Full-Screen on Mobile, Centered Modal on Desktop) -->
   <div 
     id="showcase-modal-dialog"
-    class="w-full max-h-[90dvh] sm:h-auto sm:max-h-[86vh] rounded-t-3xl sm:rounded-3xl border-t sm:border border-white/[0.1] bg-[#090b16] flex flex-col overflow-hidden shadow-2xl shadow-purple-950/80 transform translate-y-full sm:translate-y-0 sm:scale-95 transition-all duration-300 ease-out sm:max-w-xl sm:mx-auto"
+    class="w-full h-[100dvh] sm:h-auto sm:max-h-[86vh] rounded-none sm:rounded-3xl border-0 sm:border border-white/[0.1] bg-[#090b16] flex flex-col overflow-hidden shadow-2xl shadow-purple-950/80 transform translate-y-full sm:translate-y-0 sm:scale-95 transition-all duration-300 ease-out sm:max-w-xl sm:mx-auto"
   >
-    <!-- Mobile Pull Drag Indicator -->
-    <div class="w-12 h-1.5 rounded-full bg-white/20 mx-auto my-2 shrink-0 sm:hidden"></div>
-
     <!-- Modal Header -->
-    <header class="px-4 py-2.5 sm:px-5 sm:py-3 border-b border-white/[0.08] bg-[#0c0f20]/95 flex items-center justify-between shrink-0">
+    <header class="px-4 py-3 sm:px-5 sm:py-3 border-b border-white/[0.08] bg-[#0c0f20]/95 flex items-center justify-between shrink-0">
       <div class="flex items-center gap-2">
         <span class="text-xs font-bold uppercase tracking-wider text-purple-400/90 flex items-center gap-1.5">
           <Sparkles class="w-3.5 h-3.5 text-purple-400" />
