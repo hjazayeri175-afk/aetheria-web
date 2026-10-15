@@ -1528,6 +1528,15 @@ const PRESET_AVATARS = [
     importDrawer?.classList.add('hidden');
   });
 
+  // Check if URL has ?import=true to auto-open import drawer on navigation
+  const urlParams = new URLSearchParams(window.location.search);
+  if (urlParams.get('import') === 'true' || urlParams.get('action') === 'import') {
+    importDrawer?.classList.remove('hidden');
+    setTimeout(() => {
+      importDrawer?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }, 150);
+  }
+
   // Mobile Drawer Open / Close
   mobileOpenPreviewBtn?.addEventListener('click', () => {
     mobilePreviewDrawer?.classList.remove('hidden');

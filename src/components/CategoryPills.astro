@@ -8,20 +8,19 @@ import {
   Search, 
   Coffee, 
   Brain, 
-  Bot,
-  Compass
+  Bot
 } from '@lucide/astro';
 
 const categories = [
-  { id: 'all', label: 'All', icon: Sparkles, count: '124' },
-  { id: 'trending', label: 'Trending', icon: Flame, count: '28' },
-  { id: 'anime', label: 'Anime & Manga', icon: Tv, count: '45' },
-  { id: 'scifi', label: 'Sci-Fi & Cyberpunk', icon: Rocket, count: '32' },
-  { id: 'fantasy', label: 'Fantasy & RPG', icon: Sword, count: '39' },
-  { id: 'mystery', label: 'Mystery & Noir', icon: Search, count: '14' },
-  { id: 'slice-of-life', label: 'Slice of Life', icon: Coffee, count: '21' },
-  { id: 'philosophy', label: 'Philosophy & Lore', icon: Brain, count: '16' },
-  { id: 'vtuber', label: 'VTuber & AI Idols', icon: Bot, count: '18' },
+  { id: 'all', label: 'All', icon: Sparkles },
+  { id: 'trending', label: 'Trending', icon: Flame },
+  { id: 'anime', label: 'Anime & Manga', icon: Tv },
+  { id: 'scifi', label: 'Sci-Fi & Cyberpunk', icon: Rocket },
+  { id: 'fantasy', label: 'Fantasy & RPG', icon: Sword },
+  { id: 'mystery', label: 'Mystery & Noir', icon: Search },
+  { id: 'slice-of-life', label: 'Slice of Life', icon: Coffee },
+  { id: 'philosophy', label: 'Philosophy & Lore', icon: Brain },
+  { id: 'vtuber', label: 'VTuber & AI Idols', icon: Bot },
 ];
 ---
 
@@ -54,11 +53,6 @@ const categories = [
             >
               <Icon class={`w-3.5 h-3.5 transition-colors ${isFirst ? 'text-purple-400' : 'text-slate-400'}`} />
               <span>{cat.label}</span>
-              <span class={`text-[10px] px-1.5 py-0.2 rounded-full font-mono ${
-                isFirst ? 'bg-purple-500/20 text-purple-300' : 'bg-white/[0.05] text-slate-500'
-              }`}>
-                {cat.count}
-              </span>
             </button>
           );
         })}
@@ -94,11 +88,6 @@ const categories = [
           icon.classList.remove('text-purple-400');
           icon.classList.add('text-slate-400');
         }
-        const badge = p.querySelector('span:last-child');
-        if (badge) {
-          badge.classList.remove('bg-purple-500/20', 'text-purple-300');
-          badge.classList.add('bg-white/[0.05]', 'text-slate-500');
-        }
       });
 
       // Activate clicked pill
@@ -119,11 +108,6 @@ const categories = [
       if (activeIcon) {
         activeIcon.classList.add('text-purple-400');
         activeIcon.classList.remove('text-slate-400');
-      }
-      const activeBadge = pill.querySelector('span:last-child');
-      if (activeBadge) {
-        activeBadge.classList.add('bg-purple-500/20', 'text-purple-300');
-        activeBadge.classList.remove('bg-white/[0.05]', 'text-slate-500');
       }
 
       // Dispatch event for character grid filtering
