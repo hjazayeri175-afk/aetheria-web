@@ -4347,14 +4347,14 @@ const { character } = Astro.props;
                   </div>
                 </div>
 
-                <!-- Center/Top: Textarea Container (Full width when multi-line) -->
+                <!-- Center/Top: Textarea Container (Full width when typing/expanded) -->
                 <div id="input-textarea-container" class="order-2 flex-1 min-w-0 flex items-center px-1">
                   <textarea 
                     id="room-input" 
                     rows="1" 
                     dir="auto"
                     placeholder={`Message ${character.name}...`}
-                    class="w-full bg-transparent text-[17px] sm:text-[18px] text-[#f1f3f4] placeholder:text-[#9aa0a6] outline-none resize-none leading-[1.55] transition-[height] duration-75 block font-normal selection:bg-purple-500/30 px-1 border-none caret-purple-400"
+                    class="w-full bg-transparent text-[17px] sm:text-[18px] text-[#f1f3f4] placeholder:text-[#9aa0a6] outline-none resize-none leading-[1.55] block font-normal selection:bg-purple-500/30 px-1 border-none caret-purple-400"
                     style="min-height: 28px; max-height: 160px; height: 28px; overflow-y: hidden; scrollbar-width: thin;"
                   ></textarea>
                 </div>
@@ -5731,9 +5731,14 @@ const { character } = Astro.props;
   const inputLeftTools = document.getElementById('input-left-tools');
   const inputRightActions = document.getElementById('input-right-actions');
 
-  function updateComposerLayoutMode(isMultiLine) {
+  let isComposerExpanded = false;
+
+  function updateComposerLayoutMode(expanded) {
     if (!inputComposerLayout || !inputTextareaContainer || !inputRightActions || !inputLeftTools) return;
-    if (isMultiLine) {
+    if (isComposerExpanded === expanded) return;
+    isComposerExpanded = expanded;
+
+    if (expanded) {
       inputComposerLayout.className = 'w-full flex flex-wrap items-end justify-between gap-y-1.5 transition-all';
       inputTextareaContainer.className = 'w-full order-1 px-1.5 pt-0.5 pb-1 flex flex-col min-w-0';
       inputLeftTools.className = 'order-2 flex items-center gap-1 shrink-0';
@@ -5746,29 +5751,30 @@ const { character } = Astro.props;
     }
   }
 
-  function adjustInputHeight() {
+  function adjustInputHeight(forceCollapse = false) {
     if (!input) return;
-    input.style.height = 'auto';
-
-    const singleLineHeight = 28;
-    const lineHeight = 26; // 17px * 1.55 line-height
-    const maxLinesHeight = lineHeight * 6; // up to 6 lines max
 
     const val = input.value;
-    const hasText = !!val.trim();
-    const scrollHeight = input.scrollHeight;
+    const hasText = val.trim().length > 0;
+    const isFocused = (document.activeElement === input);
 
-    // Check if multi-line: user entered newline or text wrapped beyond 1 line
-    const isMultiLine = hasText && (val.includes('\n') || scrollHeight > singleLineHeight + 6);
+    // Expand to full-width composer from the very first line (when typing or focused)
+    const shouldExpand = !forceCollapse && (hasText || isFocused);
+    updateComposerLayoutMode(shouldExpand);
 
-    updateComposerLayoutMode(isMultiLine);
+    const singleLineHeight = 28;
+    const baseExpandedHeight = 38;
+    const maxLinesHeight = 160;
 
-    if (isMultiLine) {
+    if (shouldExpand) {
+      input.style.height = 'auto';
+      const scrollHeight = input.scrollHeight;
       if (scrollHeight > maxLinesHeight) {
         input.style.height = `${maxLinesHeight}px`;
         input.style.overflowY = 'auto';
       } else {
-        input.style.height = `${scrollHeight}px`;
+        const targetHeight = Math.max(baseExpandedHeight, scrollHeight);
+        input.style.height = `${targetHeight}px`;
         input.style.overflowY = 'hidden';
       }
     } else {
@@ -16302,7 +16308,7 @@ const { character } = Astro.props;
 
     if (input && !options?.preserveInputDraft) {
       input.value = '';
-      adjustInputHeight();
+      adjustInputHeight(true);
       updateSendBtnState();
     }
 
@@ -18467,7 +18473,7 @@ const { character } = Astro.props;
       const currentAspect = selectedAspectRatio;
       if (input) {
         input.value = '';
-        adjustInputHeight();
+        adjustInputHeight(true);
       }
       setMultimodalMode(null);
       clearAttachedImage();
@@ -18480,7 +18486,7 @@ const { character } = Astro.props;
       const currentImg = attachedImageBase64;
       if (input) {
         input.value = '';
-        adjustInputHeight();
+        adjustInputHeight(true);
       }
       setMultimodalMode(null);
       clearAttachedImage();
@@ -18492,7 +18498,7 @@ const { character } = Astro.props;
       const currentText = text;
       if (input) {
         input.value = '';
-        adjustInputHeight();
+        adjustInputHeight(true);
       }
       setMultimodalMode(null);
       if (currentText) {
@@ -18507,7 +18513,7 @@ const { character } = Astro.props;
     const userAttachedImg = attachedImageBase64;
     if (input) {
       input.value = '';
-      adjustInputHeight();
+      adjustInputHeight(true);
     }
     if (smartPromptsBar) {
       smartPromptsBar.style.display = '';
@@ -18595,14 +18601,17 @@ const { character } = Astro.props;
 
   // Mobile optimization: Auto-hide Smart Ideas suggestion bar only when user has actively typed text (> 3 chars)
   input?.addEventListener('focus', () => {
+    adjustInputHeight();
     if (window.innerWidth < 640 && smartPromptsBar && input.value.trim().length > 3) {
       smartPromptsBar.style.display = 'none';
     }
   });
 
   input?.addEventListener('blur', () => {
-    // Always safely restore suggestion bar when mobile keyboard closes or input is short
+    // Delay slightly so clicks on buttons (like send or tools) are handled first before collapsing
     setTimeout(() => {
+      adjustInputHeight();
+      // Always safely restore suggestion bar when mobile keyboard closes or input is short
       if (smartPromptsBar && input?.value?.trim().length < 4) {
         smartPromptsBar.style.display = '';
       }
