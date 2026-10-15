@@ -239,40 +239,37 @@ export function estimateTokens(text: string | undefined | null): number {
 }
 
 /**
- * Filters out raw AI system prompts, roleplay constraints, W++ pseudocode,
- * and bracketed model directives from the public-facing description.
- * Leaves only the genuine author backstory, scenario lore, and creator notes.
+ * Filters out raw AI system prompts, roleplay constraints, and hidden model directives
+ * from the public-facing description, while preserving character lore, backstory,
+ * traits, and creator notes in full.
  */
 export function cleanPublicDescription(rawDesc?: string | null, creatorNotes?: string | null): string {
   let desc = (rawDesc || '').trim();
   const notes = (creatorNotes || '').trim();
 
-  // If creator notes are present and meaningful, that is what the author wrote for the public
-  if (notes && notes.length > 5) {
-    desc = notes;
+  // If creator notes exist and are not already part of the description, prepend them nicely
+  if (notes && notes.length > 3) {
+    const noteSnippet = notes.slice(0, 30);
+    if (!desc.includes(noteSnippet)) {
+      desc = desc ? `${notes}\n\n${desc}` : notes;
+    }
   }
 
   // 1. Remove HTML system tags: <system>...</system>, <guidelines>...</guidelines>, etc.
-  desc = desc.replace(/<\s*(?:system|guidelines|rules|instructions|behavior|prompt|context|formatting)[\s\S]*?<\/\s*(?:system|guidelines|rules|instructions|behavior|prompt|context|formatting)\s*>/gi, '');
+  desc = desc.replace(/<\s*(?:system|guidelines|rules|instructions|behavior|prompt|formatting)[\s\S]*?<\/\s*(?:system|guidelines|rules|instructions|behavior|prompt|formatting)\s*>/gi, '');
 
-  // 2. Remove W++ multi-line blocks: [Character(...) { ... }] or [Name(...) ...]
-  desc = desc.replace(/\[\s*[A-Za-z0-9_-]+\([^)]*\)\s*\{[\s\S]*?\}\s*\]/gi, '');
+  // 2. Remove pure system directives like [System: ...], [Guidelines: ...], [Rule: ...]
+  desc = desc.replace(/\[\s*(?:System|Guidelines?|Rules?|Instructions?|Constraints?)[^\]]*\]/gi, '');
 
-  // 3. Remove bracketed system/roleplay directives and forbidden-to-speak rules
-  desc = desc.replace(/\[[^\]]*(?:forbidden|narrate|speak on behalf|\{\{user\}\}|\{\{char\}\}|guidelines?|instructions?|style:|rules?:|system:|writing|behavior|constraints?)[^\]]*\]/gi, '');
-
-  // 4. Remove bracketed W++ attribute lines: [Gender(...)], [Age(...)], [Personality(...)], etc.
-  desc = desc.replace(/\[\s*(?:Name|Gender|Age|Personality|Appearance|Likes|Dislikes|Mind|Attributes|Features|Description|Occupation|Species|Background|Scenario)\([^)]*\)\s*\]/gi, '');
-
-  // 5. Remove standard boilerplate sentences and prompt instructions
+  // 3. Remove standard boilerplate model guardrails
   desc = desc.replace(/(?:Character\s+dialogue\s+and\s+)?(?:system\s+instructions|roleplay\s+guidelines|behavior\s+constraints|formatting\s+rules)[\s\S]*?(?=\n\s*\n|$)/gi, '');
   desc = desc.replace(/(?:[^\n]*\b(?:forbidden to narrate|do not speak for|never speak for|will not speak for|avoid speaking for)\s+(?:\{\{user\}\}|the user)\b[^\n]*)/gi, '');
   desc = desc.replace(/(?:^|\n)\s*[-*•]\s*(?:write in third person|never speak for|always respond|stay in character)[^\n]*/gi, '');
 
-  // 6. Normalize whitespace
+  // 4. Normalize whitespace
   desc = desc.replace(/[\r\n]{3,}/g, '\n\n').trim();
 
-  return desc || notes || 'No public backstory provided. See Definition tab for prompt structure.';
+  return desc || notes || 'No detailed background provided.';
 }
 
 /**

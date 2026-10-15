@@ -39,16 +39,16 @@ import {
   aria-modal="true"
   aria-labelledby="showcase-name"
 >
-  <!-- Modal Dialog Container -->
+  <!-- Modal Dialog Container (Tall mobile bottom sheet with 94vh height) -->
   <div 
     id="showcase-modal-dialog"
-    class="w-full max-h-[92vh] sm:max-h-[88vh] rounded-t-3xl sm:rounded-3xl border-t sm:border border-white/[0.1] bg-[#090b16] flex flex-col overflow-hidden shadow-2xl shadow-purple-950/80 transform translate-y-full sm:translate-y-0 sm:scale-95 transition-all duration-300 ease-out sm:max-w-xl sm:mx-auto"
+    class="w-full h-[94vh] max-h-[94vh] sm:h-auto sm:max-h-[88vh] rounded-t-3xl sm:rounded-3xl border-t sm:border border-white/[0.1] bg-[#090b16] flex flex-col overflow-hidden shadow-2xl shadow-purple-950/80 transform translate-y-full sm:translate-y-0 sm:scale-95 transition-all duration-300 ease-out sm:max-w-xl sm:mx-auto"
   >
     <!-- Mobile Pull Drag Indicator -->
-    <div class="w-12 h-1.5 rounded-full bg-white/20 mx-auto my-2.5 shrink-0 sm:hidden"></div>
+    <div class="w-12 h-1.5 rounded-full bg-white/20 mx-auto my-2 shrink-0 sm:hidden"></div>
 
     <!-- Modal Header -->
-    <header class="px-4 py-3 sm:px-5 sm:py-3.5 border-b border-white/[0.08] bg-[#0c0f20]/95 flex items-center justify-between shrink-0">
+    <header class="px-4 py-2.5 sm:px-5 sm:py-3 border-b border-white/[0.08] bg-[#0c0f20]/95 flex items-center justify-between shrink-0">
       <div class="flex items-center gap-2">
         <span class="text-xs font-bold uppercase tracking-wider text-purple-400/90 flex items-center gap-1.5">
           <Sparkles class="w-3.5 h-3.5 text-purple-400" />
@@ -124,7 +124,7 @@ import {
     <div id="showcase-body" class="flex-1 overflow-y-auto p-4 sm:p-5 space-y-4 custom-scrollbar">
       
       <!-- Chub-Style Hero Profile Summary (Open & Breathable) -->
-      <div class="space-y-3">
+      <div class="space-y-2.5">
         <div class="flex gap-3.5 sm:gap-4 items-start">
           <!-- Portrait Avatar -->
           <div class="relative shrink-0 w-20 h-24 sm:w-24 sm:h-28 rounded-2xl overflow-hidden ring-1 ring-white/10 shadow-lg bg-[#07080e]">
@@ -164,7 +164,7 @@ import {
             </p>
 
             <!-- Chub-Style Unified Stats Row -->
-            <div class="flex items-center gap-2.5 text-[11px] text-slate-400 mt-2.5 pt-2 border-t border-white/[0.06]">
+            <div class="flex items-center gap-2.5 text-[11px] text-slate-400 mt-2 pt-2 border-t border-white/[0.06]">
               <span class="inline-flex items-center gap-1 text-amber-300 font-semibold">
                 <Star class="w-3 h-3 fill-amber-400 text-amber-400" />
                 <span id="showcase-rating-val">5.0</span>
@@ -186,36 +186,36 @@ import {
         </div>
 
         <!-- Tags Row with Chub-style +N More Toggle -->
-        <div id="showcase-tags-wrapper" class="pt-2">
+        <div id="showcase-tags-wrapper" class="pt-1">
           <div id="showcase-tags" class="flex flex-wrap items-center gap-1.5">
             <!-- Dynamic tags injected here -->
           </div>
         </div>
       </div>
 
-      <!-- Chub.ai Modern Tab Bar (No line breaks, smooth horizontal scroll) -->
-      <div class="flex items-center gap-1.5 border-b border-white/[0.08] bg-[#0c0e1a]/60 p-1 rounded-xl overflow-x-auto no-scrollbar">
+      <!-- Chub.ai Modern Tab Bar (3 Columns Grid: No overflow, Perfect mobile fit) -->
+      <div class="grid grid-cols-3 gap-1.5 p-1 rounded-xl bg-[#0c0e1a]/80 border border-white/[0.08] shrink-0">
         <!-- Tab 1: Description -->
         <button 
           type="button"
           id="showcase-tab-desc"
-          class="showcase-tab-btn shrink-0 flex items-center gap-1.5 px-3.5 py-1.5 rounded-lg text-xs font-semibold whitespace-nowrap bg-purple-500/20 text-purple-200 border border-purple-500/30 transition cursor-pointer"
+          class="showcase-tab-btn w-full flex items-center justify-center gap-1.5 py-2 px-1 rounded-lg text-xs font-semibold truncate bg-purple-500/20 text-purple-200 border border-purple-500/30 transition cursor-pointer"
           data-tab="desc"
         >
-          <BookOpen class="w-3.5 h-3.5 text-purple-400" />
-          <span>Description</span>
+          <BookOpen class="w-3.5 h-3.5 text-purple-400 shrink-0" />
+          <span class="truncate">Description</span>
         </button>
 
         <!-- Tab 2: Greetings -->
         <button 
           type="button"
           id="showcase-tab-greetings"
-          class="showcase-tab-btn shrink-0 flex items-center gap-1.5 px-3.5 py-1.5 rounded-lg text-xs font-medium whitespace-nowrap text-slate-400 hover:text-slate-200 hover:bg-white/[0.03] transition cursor-pointer"
+          class="showcase-tab-btn w-full flex items-center justify-center gap-1.5 py-2 px-1 rounded-lg text-xs font-medium truncate text-slate-400 hover:text-slate-200 hover:bg-white/[0.03] transition cursor-pointer"
           data-tab="greetings"
         >
-          <MessageSquare class="w-3.5 h-3.5 text-cyan-400" />
-          <span>Greetings</span>
-          <span id="showcase-greetings-count-badge" class="px-1.5 py-0.2 rounded-full text-[10px] font-mono font-bold bg-cyan-500/20 text-cyan-300 border border-cyan-500/30">
+          <MessageSquare class="w-3.5 h-3.5 text-cyan-400 shrink-0" />
+          <span class="truncate">Greetings</span>
+          <span id="showcase-greetings-count-badge" class="px-1.5 py-0.2 rounded-full text-[10px] font-mono font-bold bg-cyan-500/20 text-cyan-300 border border-cyan-500/30 shrink-0">
             1
           </span>
         </button>
@@ -224,27 +224,24 @@ import {
         <button 
           type="button"
           id="showcase-tab-definition"
-          class="showcase-tab-btn shrink-0 flex items-center gap-1.5 px-3.5 py-1.5 rounded-lg text-xs font-medium whitespace-nowrap text-slate-400 hover:text-slate-200 hover:bg-white/[0.03] transition cursor-pointer"
+          class="showcase-tab-btn w-full flex items-center justify-center gap-1.5 py-2 px-1 rounded-lg text-xs font-medium truncate text-slate-400 hover:text-slate-200 hover:bg-white/[0.03] transition cursor-pointer"
           data-tab="definition"
         >
-          <Code class="w-3.5 h-3.5 text-indigo-400" />
-          <span>Definition</span>
-          <span id="showcase-definition-token-badge" class="px-1.5 py-0.2 rounded-full text-[10px] font-mono font-bold bg-purple-500/20 text-purple-300 border border-purple-500/30">
-            ~3.5k
-          </span>
+          <Code class="w-3.5 h-3.5 text-indigo-400 shrink-0" />
+          <span class="truncate">Definition</span>
         </button>
       </div>
 
       <!-- Tab Panels Container -->
       <div class="min-h-[140px] pt-1">
         
-        <!-- Panel 1: Description (Pure Story / Lore / Creator Notes with Show More / Show Less) -->
-        <div id="showcase-panel-desc" class="showcase-panel space-y-2">
+        <!-- Panel 1: Description (Full Story & Lore with Prominent Show More) -->
+        <div id="showcase-panel-desc" class="showcase-panel space-y-3">
           <div id="showcase-desc-wrapper" class="relative">
-            <!-- Text container clamped by default with smooth expansion -->
+            <!-- Text container clamped at max-h-60 with smooth expansion -->
             <div 
               id="showcase-description" 
-              class="text-xs sm:text-sm text-slate-300 font-normal leading-relaxed card-rich-content relative overflow-hidden transition-all duration-300 max-h-32"
+              class="text-xs sm:text-sm text-slate-300 font-normal leading-relaxed card-rich-content relative overflow-hidden transition-all duration-300 max-h-60"
             >
               Character backstory...
             </div>
@@ -252,18 +249,18 @@ import {
             <!-- Bottom gradient fade mask when collapsed -->
             <div 
               id="showcase-desc-fade" 
-              class="absolute bottom-0 inset-x-0 h-14 bg-gradient-to-t from-[#090b16] to-transparent pointer-events-none transition-opacity duration-300"
+              class="absolute bottom-0 inset-x-0 h-16 bg-gradient-to-t from-[#090b16] to-transparent pointer-events-none transition-opacity duration-300"
             ></div>
 
-            <!-- Show More / Show Less Toggle Button -->
-            <div id="showcase-desc-toggle-wrapper" class="pt-2 flex justify-center">
+            <!-- Show More / Show Less Toggle Button (Prominent, High-Contrast, Full Width) -->
+            <div id="showcase-desc-toggle-wrapper" class="pt-3 flex justify-center">
               <button 
                 type="button" 
                 id="showcase-desc-toggle" 
-                class="inline-flex items-center gap-1.5 px-4 py-1.5 rounded-full bg-white/[0.05] hover:bg-white/[0.1] border border-white/[0.08] text-xs font-semibold text-purple-300 hover:text-white transition active:scale-95 cursor-pointer"
+                class="w-full py-2.5 px-4 rounded-xl bg-purple-600/20 hover:bg-purple-600/30 border border-purple-500/35 text-xs font-bold text-purple-200 hover:text-white flex items-center justify-center gap-2 transition active:scale-[0.99] shadow-lg shadow-purple-950/40 cursor-pointer"
               >
-                <span id="showcase-desc-toggle-text">Show more</span>
-                <ChevronDown id="showcase-desc-toggle-icon" class="w-3.5 h-3.5 transition-transform duration-300" />
+                <span id="showcase-desc-toggle-text">Show Full Description</span>
+                <ChevronDown id="showcase-desc-toggle-icon" class="w-4 h-4 text-purple-300 transition-transform duration-300" />
               </button>
             </div>
           </div>
@@ -301,7 +298,7 @@ import {
           <div id="showcase-greeting-wrapper" class="relative">
             <div 
               id="showcase-greeting" 
-              class="text-xs sm:text-sm text-purple-200 font-normal leading-relaxed relative overflow-hidden transition-all duration-300 max-h-36 space-y-1.5"
+              class="text-xs sm:text-sm text-purple-200 font-normal leading-relaxed relative overflow-hidden transition-all duration-300 max-h-60 space-y-1.5"
             >
               "*Awaits your first message...*"
             </div>
@@ -309,18 +306,18 @@ import {
             <!-- Bottom gradient fade mask when collapsed -->
             <div 
               id="showcase-greeting-fade" 
-              class="absolute bottom-0 inset-x-0 h-14 bg-gradient-to-t from-[#090b16] to-transparent pointer-events-none transition-opacity duration-300"
+              class="absolute bottom-0 inset-x-0 h-16 bg-gradient-to-t from-[#090b16] to-transparent pointer-events-none transition-opacity duration-300"
             ></div>
 
             <!-- Show More / Show Less Toggle Button -->
-            <div id="showcase-greeting-toggle-wrapper" class="pt-2 flex justify-center">
+            <div id="showcase-greeting-toggle-wrapper" class="pt-3 flex justify-center">
               <button 
                 type="button" 
                 id="showcase-greeting-toggle" 
-                class="inline-flex items-center gap-1.5 px-4 py-1.5 rounded-full bg-white/[0.05] hover:bg-white/[0.1] border border-white/[0.08] text-xs font-semibold text-cyan-300 hover:text-white transition active:scale-95 cursor-pointer"
+                class="w-full py-2.5 px-4 rounded-xl bg-cyan-600/20 hover:bg-cyan-600/30 border border-cyan-500/35 text-xs font-bold text-cyan-200 hover:text-white flex items-center justify-center gap-2 transition active:scale-[0.99] shadow-lg shadow-cyan-950/40 cursor-pointer"
               >
-                <span id="showcase-greeting-toggle-text">Show more</span>
-                <ChevronDown id="showcase-greeting-toggle-icon" class="w-3.5 h-3.5 transition-transform duration-300" />
+                <span id="showcase-greeting-toggle-text">Show Full Greeting</span>
+                <ChevronDown id="showcase-greeting-toggle-icon" class="w-4 h-4 text-cyan-300 transition-transform duration-300" />
               </button>
             </div>
           </div>
@@ -447,7 +444,6 @@ import {
   const panelGreetings = document.getElementById('showcase-panel-greetings');
   const panelDefinition = document.getElementById('showcase-panel-definition');
   const greetingsCountBadge = document.getElementById('showcase-greetings-count-badge');
-  const definitionTokenBadge = document.getElementById('showcase-definition-token-badge');
 
   // Description Show More Elements
   const showcaseDescription = document.getElementById('showcase-description');
@@ -599,7 +595,7 @@ import {
       return;
     }
 
-    const limit = 5;
+    const limit = 4;
     const shouldTruncate = currentTags.length > limit;
     const visibleTags = expanded || !shouldTruncate ? currentTags : currentTags.slice(0, limit);
 
@@ -624,20 +620,20 @@ import {
     }
   }
 
-  // Description Show More / Show Less Logic
+  // Description Show More / Show Less Logic (Generous 240px clamp)
   function setupDescriptionClamp() {
     if (!showcaseDescription) return;
     isDescExpanded = false;
-    showcaseDescription.classList.remove('max-h-[3000px]');
-    showcaseDescription.classList.add('max-h-32');
+    showcaseDescription.classList.remove('max-h-[5000px]');
+    showcaseDescription.classList.add('max-h-60');
 
     requestAnimationFrame(() => {
-      const isOverflowing = showcaseDescription.scrollHeight > 135;
+      const isOverflowing = showcaseDescription.scrollHeight > 250;
       if (isOverflowing) {
         showcaseDescFade?.classList.remove('opacity-0', 'hidden');
         showcaseDescFade?.classList.add('opacity-100');
         showcaseDescToggleWrapper?.classList.remove('hidden');
-        if (showcaseDescToggleText) showcaseDescToggleText.textContent = 'Show more';
+        if (showcaseDescToggleText) showcaseDescToggleText.textContent = 'Show Full Description';
         if (showcaseDescToggleIcon) showcaseDescToggleIcon.classList.remove('rotate-180');
       } else {
         showcaseDescFade?.classList.add('opacity-0', 'hidden');
@@ -652,16 +648,16 @@ import {
     isDescExpanded = !isDescExpanded;
 
     if (isDescExpanded) {
-      showcaseDescription.classList.remove('max-h-32');
-      showcaseDescription.classList.add('max-h-[3000px]');
+      showcaseDescription.classList.remove('max-h-60');
+      showcaseDescription.classList.add('max-h-[5000px]');
       showcaseDescFade?.classList.add('opacity-0');
-      if (showcaseDescToggleText) showcaseDescToggleText.textContent = 'Show less';
+      if (showcaseDescToggleText) showcaseDescToggleText.textContent = 'Show Less';
       if (showcaseDescToggleIcon) showcaseDescToggleIcon.classList.add('rotate-180');
     } else {
-      showcaseDescription.classList.remove('max-h-[3000px]');
-      showcaseDescription.classList.add('max-h-32');
+      showcaseDescription.classList.remove('max-h-[5000px]');
+      showcaseDescription.classList.add('max-h-60');
       showcaseDescFade?.classList.remove('opacity-0');
-      if (showcaseDescToggleText) showcaseDescToggleText.textContent = 'Show more';
+      if (showcaseDescToggleText) showcaseDescToggleText.textContent = 'Show Full Description';
       if (showcaseDescToggleIcon) showcaseDescToggleIcon.classList.remove('rotate-180');
       showcaseDescription.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
     }
@@ -671,16 +667,16 @@ import {
   function setupGreetingClamp() {
     if (!showcaseGreeting) return;
     isGreetingExpanded = false;
-    showcaseGreeting.classList.remove('max-h-[3000px]');
-    showcaseGreeting.classList.add('max-h-36');
+    showcaseGreeting.classList.remove('max-h-[5000px]');
+    showcaseGreeting.classList.add('max-h-60');
 
     requestAnimationFrame(() => {
-      const isOverflowing = showcaseGreeting.scrollHeight > 150;
+      const isOverflowing = showcaseGreeting.scrollHeight > 250;
       if (isOverflowing) {
         showcaseGreetingFade?.classList.remove('opacity-0', 'hidden');
         showcaseGreetingFade?.classList.add('opacity-100');
         showcaseGreetingToggleWrapper?.classList.remove('hidden');
-        if (showcaseGreetingToggleText) showcaseGreetingToggleText.textContent = 'Show more';
+        if (showcaseGreetingToggleText) showcaseGreetingToggleText.textContent = 'Show Full Greeting';
         if (showcaseGreetingToggleIcon) showcaseGreetingToggleIcon.classList.remove('rotate-180');
       } else {
         showcaseGreetingFade?.classList.add('opacity-0', 'hidden');
@@ -695,16 +691,16 @@ import {
     isGreetingExpanded = !isGreetingExpanded;
 
     if (isGreetingExpanded) {
-      showcaseGreeting.classList.remove('max-h-36');
-      showcaseGreeting.classList.add('max-h-[3000px]');
+      showcaseGreeting.classList.remove('max-h-60');
+      showcaseGreeting.classList.add('max-h-[5000px]');
       showcaseGreetingFade?.classList.add('opacity-0');
-      if (showcaseGreetingToggleText) showcaseGreetingToggleText.textContent = 'Show less';
+      if (showcaseGreetingToggleText) showcaseGreetingToggleText.textContent = 'Show Less';
       if (showcaseGreetingToggleIcon) showcaseGreetingToggleIcon.classList.add('rotate-180');
     } else {
-      showcaseGreeting.classList.remove('max-h-[3000px]');
-      showcaseGreeting.classList.add('max-h-36');
+      showcaseGreeting.classList.remove('max-h-[5000px]');
+      showcaseGreeting.classList.add('max-h-60');
       showcaseGreetingFade?.classList.remove('opacity-0');
-      if (showcaseGreetingToggleText) showcaseGreetingToggleText.textContent = 'Show more';
+      if (showcaseGreetingToggleText) showcaseGreetingToggleText.textContent = 'Show Full Greeting';
       if (showcaseGreetingToggleIcon) showcaseGreetingToggleIcon.classList.remove('rotate-180');
       showcaseGreeting.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
     }
@@ -766,7 +762,6 @@ import {
     if (defGreetingTokens) defGreetingTokens.textContent = greetingTokensFormatted;
 
     if (showcaseTokensCount) showcaseTokensCount.textContent = totalTokensFormatted;
-    if (definitionTokenBadge) definitionTokenBadge.textContent = totalTokensFormatted;
 
     // Personality Block
     if (defPersonalityBox && defPersonalityContent) {
@@ -922,7 +917,7 @@ import {
     // Render Tags with Truncation
     renderTags(false);
 
-    // Populate Tab 1: Clean Public Description (No system prompt leak)
+    // Populate Tab 1: Clean Public Description (Complete story, traits, and notes)
     if (showcaseDescription) {
       const publicText = cleanPublicDescription(char.description, char.creatorNotes || char.creator_notes);
       showcaseDescription.innerHTML = formatRichDescription(publicText);
