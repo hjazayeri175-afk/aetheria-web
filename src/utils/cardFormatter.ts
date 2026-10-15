@@ -225,6 +225,107 @@ export function sanitizeTitle(input: string | undefined | null, fallback = 'Cust
   return str;
 }
 
+/**
+ * Fast blended token estimator for character cards.
+ * Heuristic based on word count & character length (~3.8-4 chars per token).
+ */
+export function estimateTokens(text: string | undefined | null): number {
+  if (!text || typeof text !== 'string') return 0;
+  const trimmed = text.trim();
+  if (!trimmed) return 0;
+  const words = trimmed.split(/\s+/).filter(Boolean).length;
+  const chars = trimmed.length;
+  return Math.max(1, Math.round((words * 1.2 + chars / 4) / 2));
+}
+
+/**
+ * Filters out raw AI system prompts, roleplay constraints, W++ pseudocode,
+ * and bracketed model directives from the public-facing description.
+ * Leaves only the genuine author backstory, scenario lore, and creator notes.
+ */
+export function cleanPublicDescription(rawDesc?: string | null, creatorNotes?: string | null): string {
+  let desc = (rawDesc || '').trim();
+  const notes = (creatorNotes || '').trim();
+
+  // If creator notes are present and meaningful, that is what the author wrote for the public
+  if (notes && notes.length > 5) {
+    desc = notes;
+  }
+
+  // 1. Remove HTML system tags: <system>...</system>, <guidelines>...</guidelines>, etc.
+  desc = desc.replace(/<\s*(?:system|guidelines|rules|instructions|behavior|prompt|context|formatting)[\s\S]*?<\/\s*(?:system|guidelines|rules|instructions|behavior|prompt|context|formatting)\s*>/gi, '');
+
+  // 2. Remove W++ multi-line blocks: [Character(...) { ... }] or [Name(...) ...]
+  desc = desc.replace(/\[\s*[A-Za-z0-9_-]+\([^)]*\)\s*\{[\s\S]*?\}\s*\]/gi, '');
+
+  // 3. Remove bracketed system/roleplay directives and forbidden-to-speak rules
+  desc = desc.replace(/\[[^\]]*(?:forbidden|narrate|speak on behalf|\{\{user\}\}|\{\{char\}\}|guidelines?|instructions?|style:|rules?:|system:|writing|behavior|constraints?)[^\]]*\]/gi, '');
+
+  // 4. Remove bracketed W++ attribute lines: [Gender(...)], [Age(...)], [Personality(...)], etc.
+  desc = desc.replace(/\[\s*(?:Name|Gender|Age|Personality|Appearance|Likes|Dislikes|Mind|Attributes|Features|Description|Occupation|Species|Background|Scenario)\([^)]*\)\s*\]/gi, '');
+
+  // 5. Remove standard boilerplate sentences and prompt instructions
+  desc = desc.replace(/(?:Character\s+dialogue\s+and\s+)?(?:system\s+instructions|roleplay\s+guidelines|behavior\s+constraints|formatting\s+rules)[\s\S]*?(?=\n\s*\n|$)/gi, '');
+  desc = desc.replace(/(?:[^\n]*\b(?:forbidden to narrate|do not speak for|never speak for|will not speak for|avoid speaking for)\s+(?:\{\{user\}\}|the user)\b[^\n]*)/gi, '');
+  desc = desc.replace(/(?:^|\n)\s*[-*•]\s*(?:write in third person|never speak for|always respond|stay in character)[^\n]*/gi, '');
+
+  // 6. Normalize whitespace
+  desc = desc.replace(/[\r\n]{3,}/g, '\n\n').trim();
+
+  return desc || notes || 'No public backstory provided. See Definition tab for prompt structure.';
+}
+
+/**
+ * Extracts structured definition components and token breakdown for Chub.ai style Definition tab.
+ */
+export function extractCardDefinition(char: any) {
+  if (!char || typeof char !== 'object') {
+    return {
+      tokensTotal: 0,
+      tokensPermanent: 0,
+      tokensGreeting: 0,
+      personality: '',
+      scenario: '',
+      systemPrompt: '',
+      mesExample: '',
+      greeting: '',
+      creatorNotes: '',
+      rawDesc: ''
+    };
+  }
+
+  const personality = (char.personality || '').trim();
+  const scenario = (char.scenario || '').trim();
+  const systemPrompt = (char.systemPrompt || char.system_prompt || '').trim();
+  const mesExample = (char.mesExample || char.mes_example || '').trim();
+  const greeting = (char.greeting || char.first_mes || '').trim();
+  const creatorNotes = (char.creator_notes || char.creatorNotes || '').trim();
+  const rawDesc = (char.description || '').trim();
+
+  const permanentText = [personality, scenario, systemPrompt].filter(Boolean).join('\n\n');
+  const totalText = [rawDesc, permanentText, mesExample, greeting].filter(Boolean).join('\n\n');
+
+  const tokensPermanent = estimateTokens(permanentText);
+  const tokensGreeting = estimateTokens(greeting);
+  const tokensTotal = estimateTokens(totalText);
+
+  return {
+    tokensTotal,
+    tokensPermanent,
+    tokensGreeting,
+    personality,
+    scenario,
+    systemPrompt,
+    mesExample,
+    greeting,
+    creatorNotes,
+    rawDesc
+  };
+}
+
 if (typeof window !== 'undefined') {
   (window as any).sanitizeTitle = sanitizeTitle;
+  (window as any).estimateTokens = estimateTokens;
+  (window as any).cleanPublicDescription = cleanPublicDescription;
+  (window as any).extractCardDefinition = extractCardDefinition;
 }

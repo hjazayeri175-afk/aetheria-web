@@ -903,6 +903,7 @@ const PRESET_AVATARS = [
   // ================= STEP WIZARD LOGIC =================
   let currentStep = 1;
   const totalSteps = 4;
+  let importedCreatorNotes = '';
 
   const stepTitles = [
     'Identity & Card',
@@ -1734,12 +1735,10 @@ const PRESET_AVATARS = [
     }
 
     // 3. Description / Backstory / Lore (incorporate creator notes if not already included)
+    importedCreatorNotes = (d.creator_notes || d.creatorNotes || root.creator_notes || root.creatorNotes || '').trim();
     let charDesc = d.description || d.char_desc || d.summary || d.bio || root.description || '';
-    if (d.creator_notes && typeof d.creator_notes === 'string') {
-      const notes = d.creator_notes.trim();
-      if (notes && !charDesc.includes(notes.slice(0, 30))) {
-        charDesc = notes + '\n\n' + charDesc;
-      }
+    if (importedCreatorNotes && !charDesc.includes(importedCreatorNotes.slice(0, 30))) {
+      charDesc = importedCreatorNotes + '\n\n' + charDesc;
     }
     if (charDesc) {
       if (loreInput) {
@@ -2063,6 +2062,8 @@ const PRESET_AVATARS = [
       personality: personalityText,
       tags: tagsInput?.value ? tagsInput.value.split(',').map(t => t.trim()).filter(Boolean) : ['Companion', 'RPG'],
       description: loreInput?.value?.trim() || '',
+      creator_notes: importedCreatorNotes || '',
+      creatorNotes: importedCreatorNotes || '',
       scenario: scenarioInput?.value?.trim() || '',
       appearance: appearanceInput?.value?.trim() || '',
       speechStyle: speechInput?.value?.trim() || '',

@@ -1,22 +1,37 @@
 ---
-import { characters } from '../data/characters';
 import { 
   X, 
   Sparkles, 
-  Star,
-  MessageSquare,
-  Share2,
-  BookOpen,
-  Scroll,
-  Pencil,
-  ArrowRight,
-  Flag
+  Star, 
+  MessageSquare, 
+  Share2, 
+  BookOpen, 
+  Pencil, 
+  ArrowRight, 
+  Flag,
+  Trash,
+  Cpu,
+  Code,
+  ChevronLeft,
+  ChevronRight,
+  Copy,
+  Check
 } from '@lucide/astro';
+import { characters } from '../data/characters';
+import { 
+  decodeHtmlEntities, 
+  sanitizeTitle, 
+  formatRichDescription, 
+  formatRichGreeting,
+  cleanPublicDescription,
+  estimateTokens,
+  extractCardDefinition
+} from '../utils/cardFormatter';
 ---
 
-<!-- Character Showcase / Profile View Modal -->
+<!-- Character Showcase Modal (Chub.ai 3-Tab Layout) -->
 <div 
-  id="character-showcase-modal"
+  id="character-showcase-modal" 
   class="fixed inset-0 z-50 flex items-end sm:items-center justify-center p-0 sm:p-4 bg-black/85 backdrop-blur-md transition-all duration-300 opacity-0 pointer-events-none"
   role="dialog"
   aria-modal="true"
@@ -35,16 +50,16 @@ import {
       <div class="flex items-center gap-2">
         <span class="text-xs font-bold uppercase tracking-wider text-purple-400 flex items-center gap-1.5">
           <Sparkles class="w-3.5 h-3.5" />
-          <span>Character Showcase</span>
+          <span>Character Profile</span>
         </span>
       </div>
 
-      <div class="flex items-center gap-2">
+      <div class="flex items-center gap-1.5 sm:gap-2">
         <!-- Interactive Star Button -->
         <button 
           type="button"
           id="showcase-star-btn"
-          class="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-amber-500/10 hover:bg-amber-500/20 border border-amber-500/30 text-amber-300 text-xs font-semibold transition active:scale-95 cursor-pointer"
+          class="flex items-center gap-1.5 px-2.5 sm:px-3 py-1.5 rounded-xl bg-amber-500/10 hover:bg-amber-500/20 border border-amber-500/30 text-amber-300 text-xs font-semibold transition active:scale-95 cursor-pointer"
           title="Star this character"
         >
           <Star id="showcase-star-icon" class="w-3.5 h-3.5 fill-none text-amber-400 transition" />
@@ -66,7 +81,7 @@ import {
           type="button"
           id="showcase-report-btn"
           class="p-2 rounded-xl bg-white/[0.05] hover:bg-rose-500/20 text-slate-400 hover:text-rose-400 transition cursor-pointer"
-          title="Report legal issue or guidelines violation"
+          title="Report character issue"
         >
           <Flag class="w-4 h-4" />
         </button>
@@ -84,242 +99,696 @@ import {
     </header>
 
     <!-- Scrollable Showcase Body -->
-    <div class="flex-1 overflow-y-auto p-4 sm:p-6 space-y-5 custom-scrollbar">
+    <div class="flex-1 overflow-y-auto p-4 sm:p-5 space-y-4 custom-scrollbar">
       
-      <!-- Hero Banner / Portrait & Identity -->
-      <div class="flex flex-col sm:flex-row gap-4 sm:gap-5 items-center sm:items-start bg-white/[0.02] border border-white/[0.06] rounded-2xl p-4 sm:p-5">
-        <div class="relative shrink-0 w-28 h-36 sm:w-32 sm:h-40 rounded-2xl overflow-hidden shadow-2xl ring-2 ring-purple-500/30 bg-[#07080e]">
-          <img 
-            id="showcase-avatar" 
-            src="" 
-            alt="Character Portrait" 
-            class="w-full h-full object-cover object-center"
-          />
-          <div class="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent"></div>
-        </div>
-
-        <div class="flex-1 text-center sm:text-left min-w-0">
-          <div class="flex flex-wrap items-center justify-center sm:justify-start gap-2 mb-1.5">
-            <span id="showcase-badge" class="px-2.5 py-0.5 rounded-full bg-purple-500/20 border border-purple-500/30 text-[10px] font-bold text-purple-300">
-              Roleplay
-            </span>
-            <span id="showcase-author" class="text-[11px] text-slate-400 font-medium">
-              Created by @Aetheria
-            </span>
+      <!-- Chub.ai Profile Card / Hero Section -->
+      <div class="bg-white/[0.02] border border-white/[0.06] rounded-2xl p-4 sm:p-4.5">
+        <div class="flex gap-3.5 sm:gap-4.5 items-start">
+          <!-- Portrait Avatar -->
+          <div class="relative shrink-0 w-22 h-26 sm:w-26 sm:h-32 rounded-2xl overflow-hidden shadow-2xl ring-1 ring-purple-500/30 bg-[#07080e]">
+            <img 
+              id="showcase-avatar" 
+              src="" 
+              alt="Character Portrait" 
+              class="w-full h-full object-cover object-center"
+            />
+            <div class="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent"></div>
           </div>
 
-          <h2 id="showcase-name" class="text-xl sm:text-2xl font-black text-white tracking-tight">
-            Character Name
-          </h2>
+          <!-- Character Identity & Stats -->
+          <div class="flex-1 min-w-0">
+            <div class="flex flex-wrap items-center gap-1.5 mb-1">
+              <!-- SFW / NSFW Rating Badge -->
+              <span id="showcase-nsfw-badge" class="px-2 py-0.5 rounded-md text-[10px] font-black uppercase tracking-wider bg-rose-500/20 text-rose-300 border border-rose-500/30">
+                NSFW
+              </span>
+              <!-- Category Badge -->
+              <span id="showcase-badge" class="px-2 py-0.5 rounded-md bg-purple-500/20 border border-purple-500/30 text-[10px] font-bold text-purple-300">
+                Roleplay
+              </span>
+              <!-- Author / Creator Attribution -->
+              <span id="showcase-author" class="text-[11px] text-slate-400 font-medium truncate max-w-[120px] sm:max-w-none">
+                By @Aetheria
+              </span>
+            </div>
 
-          <p id="showcase-title" class="text-xs sm:text-sm font-medium text-purple-400/90 mt-0.5 line-clamp-2 max-w-full">
-            Character Title
-          </p>
+            <!-- Name -->
+            <h2 id="showcase-name" class="text-lg sm:text-xl font-black text-white tracking-tight leading-tight">
+              Character Name
+            </h2>
 
-          <div id="showcase-tags" class="flex flex-wrap items-center justify-center sm:justify-start gap-1.5 mt-3">
-            <!-- Dynamic tags -->
+            <!-- Tagline / Title -->
+            <p id="showcase-title" class="text-xs sm:text-sm font-medium text-purple-400/90 mt-0.5 line-clamp-1 max-w-full">
+              Character Title
+            </p>
+
+            <!-- Chub-style Stats Strip -->
+            <div class="flex flex-wrap items-center gap-1.5 sm:gap-2 mt-2.5 pt-2 border-t border-white/[0.06]">
+              <div id="showcase-tokens-badge" class="inline-flex items-center gap-1 px-2 py-0.5 rounded-md bg-white/[0.04] border border-white/[0.08] text-[10.5px] font-mono text-slate-300">
+                <Cpu class="w-3 h-3 text-purple-400" />
+                <span id="showcase-tokens-count">~1,840</span>
+                <span class="text-slate-500 text-[10px]">tokens</span>
+              </div>
+
+              <div id="showcase-chats-badge" class="inline-flex items-center gap-1 px-2 py-0.5 rounded-md bg-white/[0.04] border border-white/[0.08] text-[10.5px] text-slate-300">
+                <MessageSquare class="w-3 h-3 text-cyan-400" />
+                <span id="showcase-chats-count">1.2k</span>
+                <span class="text-slate-500 text-[10px]">chats</span>
+              </div>
+
+              <div id="showcase-rating-badge" class="inline-flex items-center gap-1 px-2 py-0.5 rounded-md bg-amber-500/10 border border-amber-500/20 text-[10.5px] text-amber-300 font-semibold">
+                <Star class="w-3 h-3 fill-amber-400 text-amber-400" />
+                <span id="showcase-rating-val">5.0</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Tags Row with Chub-style +N More Toggle -->
+        <div id="showcase-tags-wrapper" class="mt-3 pt-2.5 border-t border-white/[0.06]">
+          <div id="showcase-tags" class="flex flex-wrap items-center gap-1.5">
+            <!-- Dynamic tags injected here -->
           </div>
         </div>
       </div>
 
-      <!-- Description & Story World -->
-      <div class="space-y-2">
-        <h4 class="text-xs font-bold uppercase tracking-wider text-slate-400 flex items-center gap-1.5">
+      <!-- Chub.ai 3-Tab Navigation Bar -->
+      <div class="flex border-b border-white/[0.08] bg-white/[0.02] rounded-t-xl overflow-hidden p-0.5">
+        <!-- Tab 1: Description -->
+        <button 
+          type="button"
+          id="showcase-tab-desc"
+          class="showcase-tab-btn flex-1 flex items-center justify-center gap-1.5 px-3 py-2 text-xs sm:text-sm font-bold border-b-2 border-purple-500 text-white bg-white/[0.04] transition cursor-pointer"
+          data-tab="desc"
+        >
           <BookOpen class="w-3.5 h-3.5 text-purple-400" />
-          <span>Story & World Background</span>
-        </h4>
-        <div 
-          id="showcase-description" 
-          class="p-4 rounded-2xl bg-white/[0.03] border border-white/[0.06] text-xs sm:text-sm text-slate-300 leading-relaxed max-h-[380px] overflow-y-auto font-normal card-rich-content"
+          <span>Description</span>
+        </button>
+
+        <!-- Tab 2: First Message -->
+        <button 
+          type="button"
+          id="showcase-tab-greetings"
+          class="showcase-tab-btn flex-1 flex items-center justify-center gap-1.5 px-3 py-2 text-xs sm:text-sm font-medium border-b-2 border-transparent text-slate-400 hover:text-slate-200 hover:bg-white/[0.02] transition cursor-pointer"
+          data-tab="greetings"
         >
-          Character backstory...
-        </div>
+          <MessageSquare class="w-3.5 h-3.5 text-cyan-400" />
+          <span>First Message</span>
+          <span id="showcase-greetings-count-badge" class="px-1.5 py-0.2 rounded-full text-[10px] font-bold bg-white/[0.08] text-slate-300">
+            1
+          </span>
+        </button>
+
+        <!-- Tab 3: Definition -->
+        <button 
+          type="button"
+          id="showcase-tab-definition"
+          class="showcase-tab-btn flex-1 flex items-center justify-center gap-1.5 px-3 py-2 text-xs sm:text-sm font-medium border-b-2 border-transparent text-slate-400 hover:text-slate-200 hover:bg-white/[0.02] transition cursor-pointer"
+          data-tab="definition"
+        >
+          <Code class="w-3.5 h-3.5 text-indigo-400" />
+          <span>Definition</span>
+          <span id="showcase-definition-token-badge" class="px-1.5 py-0.2 rounded-full text-[10px] font-mono bg-purple-500/20 text-purple-300 border border-purple-500/30">
+            ~1.8k
+          </span>
+        </button>
       </div>
 
-      <!-- Opening Dialogue / Greeting Preview -->
-      <div class="space-y-2">
-        <h4 class="text-xs font-bold uppercase tracking-wider text-slate-400 flex items-center gap-1.5">
-          <Scroll class="w-3.5 h-3.5 text-amber-400" />
-          <span>Opening Scene (First Message)</span>
-        </h4>
-        <div 
-          id="showcase-greeting" 
-          class="p-4 rounded-2xl bg-purple-950/20 border border-purple-500/20 text-xs sm:text-sm text-purple-200 leading-relaxed max-h-48 overflow-y-auto space-y-1.5"
-        >
-          "*Glares across the dimly lit room...*"
+      <!-- Tab Panels Container -->
+      <div class="min-h-[200px]">
+        
+        <!-- Panel 1: Description (Pure Story / Lore / Creator Notes) -->
+        <div id="showcase-panel-desc" class="showcase-panel space-y-2">
+          <div 
+            id="showcase-description" 
+            class="p-4 sm:p-5 rounded-2xl bg-white/[0.03] border border-white/[0.06] text-xs sm:text-sm text-slate-300 leading-relaxed max-h-[380px] overflow-y-auto card-rich-content custom-scrollbar"
+          >
+            Character backstory...
+          </div>
         </div>
+
+        <!-- Panel 2: First Message (Opening Scene & Alternate Greetings) -->
+        <div id="showcase-panel-greetings" class="showcase-panel hidden space-y-3">
+          <!-- Alternate Greetings Switcher Bar (Visible when >1 greeting) -->
+          <div id="greeting-switcher" class="hidden items-center justify-between p-2.5 rounded-xl bg-purple-950/30 border border-purple-500/20">
+            <div class="flex items-center gap-2">
+              <span class="text-xs font-bold text-cyan-300">Alternate Scenario:</span>
+              <span id="greeting-index-label" class="text-xs text-slate-300 font-mono font-bold">(1 of 3)</span>
+            </div>
+            <div class="flex items-center gap-1.5">
+              <button 
+                type="button" 
+                id="greeting-prev-btn" 
+                class="p-1 rounded-lg bg-white/[0.06] hover:bg-white/[0.12] text-slate-300 hover:text-white transition disabled:opacity-30 disabled:pointer-events-none cursor-pointer"
+                title="Previous Greeting"
+              >
+                <ChevronLeft class="w-4 h-4" />
+              </button>
+              <button 
+                type="button" 
+                id="greeting-next-btn" 
+                class="p-1 rounded-lg bg-white/[0.06] hover:bg-white/[0.12] text-slate-300 hover:text-white transition disabled:opacity-30 disabled:pointer-events-none cursor-pointer"
+                title="Next Greeting"
+              >
+                <ChevronRight class="w-4 h-4" />
+              </button>
+            </div>
+          </div>
+
+          <!-- Greeting Content Box -->
+          <div 
+            id="showcase-greeting" 
+            class="p-4 sm:p-5 rounded-2xl bg-purple-950/20 border border-purple-500/20 text-xs sm:text-sm text-purple-200 leading-relaxed max-h-[380px] overflow-y-auto space-y-1.5 custom-scrollbar"
+          >
+            "*Awaits your first message...*"
+          </div>
+        </div>
+
+        <!-- Panel 3: Definition (Technical Specs / Prompt Architecture) -->
+        <div id="showcase-panel-definition" class="showcase-panel hidden space-y-3">
+          <!-- Token Metrics Banner -->
+          <div class="grid grid-cols-3 gap-2 p-3 rounded-xl bg-white/[0.02] border border-white/[0.06] text-center">
+            <div class="p-1.5">
+              <div class="text-[10px] text-slate-500 uppercase font-bold tracking-wider">Total Tokens</div>
+              <div id="def-total-tokens" class="text-xs sm:text-sm font-mono font-bold text-white mt-0.5">~1,840</div>
+            </div>
+            <div class="p-1.5 border-x border-white/[0.06]">
+              <div class="text-[10px] text-slate-500 uppercase font-bold tracking-wider">Permanent</div>
+              <div id="def-perm-tokens" class="text-xs sm:text-sm font-mono font-bold text-purple-300 mt-0.5">~1,250</div>
+            </div>
+            <div class="p-1.5">
+              <div class="text-[10px] text-slate-500 uppercase font-bold tracking-wider">Greeting</div>
+              <div id="def-greeting-tokens" class="text-xs sm:text-sm font-mono font-bold text-cyan-300 mt-0.5">~590</div>
+            </div>
+          </div>
+
+          <!-- Personality block -->
+          <div id="def-personality-box" class="p-3.5 rounded-xl bg-[#060813] border border-white/[0.06] space-y-1.5">
+            <div class="flex items-center justify-between text-[11px] font-bold text-purple-300">
+              <span>Personality & Identity Specs</span>
+              <span id="def-personality-token-label" class="text-[10px] font-mono text-slate-500"></span>
+            </div>
+            <pre id="def-personality-content" class="text-xs text-slate-300 whitespace-pre-wrap font-mono max-h-36 overflow-y-auto custom-scrollbar"></pre>
+          </div>
+
+          <!-- Scenario block -->
+          <div id="def-scenario-box" class="p-3.5 rounded-xl bg-[#060813] border border-white/[0.06] space-y-1.5">
+            <div class="flex items-center justify-between text-[11px] font-bold text-cyan-300">
+              <span>Scenario & Context</span>
+              <span id="def-scenario-token-label" class="text-[10px] font-mono text-slate-500"></span>
+            </div>
+            <pre id="def-scenario-content" class="text-xs text-slate-300 whitespace-pre-wrap font-mono max-h-36 overflow-y-auto custom-scrollbar"></pre>
+          </div>
+
+          <!-- System Prompt block -->
+          <div id="def-system-box" class="p-3.5 rounded-xl bg-[#060813] border border-white/[0.06] space-y-1.5">
+            <div class="flex items-center justify-between text-[11px] font-bold text-amber-300">
+              <span>System Prompt & Roleplay Constraints</span>
+              <span id="def-system-token-label" class="text-[10px] font-mono text-slate-500"></span>
+            </div>
+            <pre id="def-system-content" class="text-xs text-slate-300 whitespace-pre-wrap font-mono max-h-36 overflow-y-auto custom-scrollbar"></pre>
+          </div>
+
+          <!-- Example Dialogue block -->
+          <div id="def-mes-example-box" class="p-3.5 rounded-xl bg-[#060813] border border-white/[0.06] space-y-1.5">
+            <div class="flex items-center justify-between text-[11px] font-bold text-emerald-300">
+              <span>Dialogue Examples (&lt;START&gt;)</span>
+              <span id="def-mes-example-token-label" class="text-[10px] font-mono text-slate-500"></span>
+            </div>
+            <pre id="def-mes-example-content" class="text-xs text-slate-300 whitespace-pre-wrap font-mono max-h-36 overflow-y-auto custom-scrollbar"></pre>
+          </div>
+
+          <!-- Copy Prompt Action -->
+          <div class="flex justify-end pt-1">
+            <button 
+              type="button" 
+              id="def-copy-btn" 
+              class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-white/[0.05] hover:bg-white/[0.1] border border-white/[0.08] text-xs font-semibold text-slate-300 hover:text-white transition cursor-pointer"
+            >
+              <Copy id="def-copy-icon" class="w-3.5 h-3.5 text-purple-400" />
+              <span id="def-copy-text">Copy Character Definition</span>
+            </button>
+          </div>
+        </div>
+
       </div>
 
     </div>
 
     <!-- Action Footer: Direct Navigation to Full Chat -->
-    <footer class="p-4 sm:p-5 border-t border-white/[0.08] bg-[#0c0f20]/95 flex items-center gap-3 shrink-0">
+    <footer class="p-3.5 sm:p-4 border-t border-white/[0.08] bg-[#0c0f20]/95 flex items-center gap-2 sm:gap-3 shrink-0">
       <a 
         id="showcase-edit-btn"
         href="#"
-        class="hidden px-4 py-3.5 rounded-2xl bg-white/[0.05] hover:bg-white/[0.1] border border-white/10 text-xs font-semibold text-slate-300 hover:text-white transition items-center gap-2"
-        title="Edit Character in Studio"
+        class="hidden items-center gap-1.5 px-3 py-2.5 rounded-xl bg-white/[0.06] hover:bg-white/[0.12] border border-white/[0.1] text-xs font-bold text-slate-200 transition active:scale-95 cursor-pointer"
+        title="Edit Custom Companion"
       >
-        <Pencil class="w-4 h-4 text-purple-400" />
-        <span>Edit</span>
+        <Pencil class="w-3.5 h-3.5 text-purple-400" />
+        <span class="hidden sm:inline">Edit</span>
       </a>
 
-      <button
-        id="showcase-delete-btn"
+      <button 
         type="button"
-        class="hidden px-3.5 py-3.5 rounded-2xl bg-rose-500/10 hover:bg-rose-500/20 border border-rose-500/20 text-xs font-semibold text-rose-400 hover:text-rose-300 transition items-center gap-2 cursor-pointer active:scale-95"
-        title="Delete Custom Character"
+        id="showcase-delete-btn"
+        class="hidden items-center gap-1.5 px-3 py-2.5 rounded-xl bg-rose-500/10 hover:bg-rose-500/20 border border-rose-500/20 text-xs font-bold text-rose-300 transition active:scale-95 cursor-pointer"
+        title="Delete Custom Companion"
       >
-        <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
-        </svg>
+        <Trash class="w-3.5 h-3.5 text-rose-400" />
       </button>
 
       <a 
-        id="showcase-start-chat-btn"
+        id="showcase-chat-btn"
         href="#"
-        class="flex-1 inline-flex items-center justify-center gap-2 px-6 py-3.5 rounded-2xl bg-gradient-to-r from-purple-600 via-indigo-600 to-purple-600 hover:from-purple-500 hover:to-indigo-500 active:scale-[0.98] text-white font-bold text-sm shadow-xl shadow-purple-950/70 transition duration-300 cursor-pointer"
+        class="flex-1 flex items-center justify-center gap-2 px-5 py-3 rounded-xl bg-gradient-to-r from-purple-600 via-indigo-600 to-pink-600 hover:from-purple-500 hover:to-pink-500 text-white font-black text-xs sm:text-sm tracking-wide shadow-lg shadow-purple-900/40 hover:shadow-purple-900/60 active:scale-[0.98] transition duration-200 cursor-pointer"
       >
-        <MessageSquare class="w-4 h-4" />
-        <span id="showcase-start-btn-label">Start Roleplay / Chat</span>
-        <ArrowRight class="w-4 h-4 opacity-70 ml-1" />
+        <Sparkles class="w-4 h-4 text-purple-200 animate-pulse" />
+        <span id="showcase-chat-btn-text">Start Roleplay</span>
+        <ArrowRight class="w-4 h-4" />
       </a>
     </footer>
+
   </div>
 </div>
 
-<!-- Embedded Predefined Characters JSON -->
-<script id="predefined-characters-data" type="application/json" set:html={JSON.stringify(characters)} />
-
 <script>
-  import { formatRichDescription, formatRichGreeting, sanitizeTitle } from '../utils/cardFormatter';
+  import { characters } from '../data/characters';
+  import { 
+    decodeHtmlEntities, 
+    sanitizeTitle, 
+    formatRichDescription, 
+    formatRichGreeting,
+    cleanPublicDescription,
+    estimateTokens,
+    extractCardDefinition
+  } from '../utils/cardFormatter';
 
-  // Build version token to bust stale browser module caches: v20261012-rev8-sanitize-title-notes
-  const BUNDLE_BUILD_VERSION = '20261012-rev8-sanitize-title-notes';
-
-  // DOM Elements
+  // Elements
   const showcaseModal = document.getElementById('character-showcase-modal');
   const showcaseDialog = document.getElementById('showcase-modal-dialog');
-  const showcaseCloseBtn = document.getElementById('showcase-close-btn');
   const showcaseAvatar = document.getElementById('showcase-avatar') as HTMLImageElement;
   const showcaseBadge = document.getElementById('showcase-badge');
+  const showcaseNsfwBadge = document.getElementById('showcase-nsfw-badge');
   const showcaseAuthor = document.getElementById('showcase-author');
   const showcaseName = document.getElementById('showcase-name');
   const showcaseTitle = document.getElementById('showcase-title');
   const showcaseTags = document.getElementById('showcase-tags');
+  const showcaseTokensCount = document.getElementById('showcase-tokens-count');
+  const showcaseChatsCount = document.getElementById('showcase-chats-count');
+  const showcaseRatingVal = document.getElementById('showcase-rating-val');
+
+  // Chub.ai Tabs & Panels
+  const tabBtnDesc = document.getElementById('showcase-tab-desc');
+  const tabBtnGreetings = document.getElementById('showcase-tab-greetings');
+  const tabBtnDefinition = document.getElementById('showcase-tab-definition');
+  const panelDesc = document.getElementById('showcase-panel-desc');
+  const panelGreetings = document.getElementById('showcase-panel-greetings');
+  const panelDefinition = document.getElementById('showcase-panel-definition');
+  const greetingsCountBadge = document.getElementById('showcase-greetings-count-badge');
+  const definitionTokenBadge = document.getElementById('showcase-definition-token-badge');
+
+  // Content Containers
   const showcaseDescription = document.getElementById('showcase-description');
   const showcaseGreeting = document.getElementById('showcase-greeting');
+  const greetingSwitcher = document.getElementById('greeting-switcher');
+  const greetingIndexLabel = document.getElementById('greeting-index-label');
+  const greetingPrevBtn = document.getElementById('greeting-prev-btn') as HTMLButtonElement;
+  const greetingNextBtn = document.getElementById('greeting-next-btn') as HTMLButtonElement;
+
+  // Definition Elements
+  const defTotalTokens = document.getElementById('def-total-tokens');
+  const defPermTokens = document.getElementById('def-perm-tokens');
+  const defGreetingTokens = document.getElementById('def-greeting-tokens');
+  const defPersonalityBox = document.getElementById('def-personality-box');
+  const defPersonalityContent = document.getElementById('def-personality-content');
+  const defPersonalityTokenLabel = document.getElementById('def-personality-token-label');
+  const defScenarioBox = document.getElementById('def-scenario-box');
+  const defScenarioContent = document.getElementById('def-scenario-content');
+  const defScenarioTokenLabel = document.getElementById('def-scenario-token-label');
+  const defSystemBox = document.getElementById('def-system-box');
+  const defSystemContent = document.getElementById('def-system-content');
+  const defSystemTokenLabel = document.getElementById('def-system-token-label');
+  const defMesExampleBox = document.getElementById('def-mes-example-box');
+  const defMesExampleContent = document.getElementById('def-mes-example-content');
+  const defMesExampleTokenLabel = document.getElementById('def-mes-example-token-label');
+  const defCopyBtn = document.getElementById('def-copy-btn');
+  const defCopyText = document.getElementById('def-copy-text');
+
+  // Action Buttons
   const showcaseStarBtn = document.getElementById('showcase-star-btn');
-  const showcaseStarIcon = document.getElementById('showcase-star-icon');
   const showcaseStarCount = document.getElementById('showcase-star-count');
+  const showcaseStarIcon = document.getElementById('showcase-star-icon');
   const showcaseShareBtn = document.getElementById('showcase-share-btn');
   const showcaseReportBtn = document.getElementById('showcase-report-btn');
-  const showcaseStartBtn = document.getElementById('showcase-start-chat-btn') as HTMLAnchorElement;
+  const showcaseCloseBtn = document.getElementById('showcase-close-btn');
+  const showcaseStartBtn = document.getElementById('showcase-chat-btn') as HTMLAnchorElement;
+  const showcaseStartBtnLabel = document.getElementById('showcase-chat-btn-text');
   const showcaseEditBtn = document.getElementById('showcase-edit-btn') as HTMLAnchorElement;
   const showcaseDeleteBtn = document.getElementById('showcase-delete-btn') as HTMLButtonElement;
-  const showcaseStartBtnLabel = document.getElementById('showcase-start-btn-label');
 
-  // Predefined characters lookup
-  let predefinedChars: any[] = [];
-  try {
-    const rawData = document.getElementById('predefined-characters-data')?.textContent;
-    if (rawData) predefinedChars = JSON.parse(rawData);
-  } catch {
-    predefinedChars = [];
-  }
-
+  // Active State
   let activeCharacter: any = null;
+  let currentTags: string[] = [];
+  let isTagsExpanded = false;
+  let currentGreetings: string[] = [];
+  let currentGreetingIndex = 0;
+  let activeTab: 'desc' | 'greetings' | 'definition' = 'desc';
 
-  // Notification Toast Helper
+  // Helper Toast for Showcase Interactions
   function showShowcaseToast(msg: string) {
-    const toast = document.createElement('div');
-    toast.className = 'fixed bottom-6 left-1/2 -translate-x-1/2 z-[60] px-4 py-2 rounded-xl bg-purple-900/90 text-white text-xs font-semibold shadow-2xl backdrop-blur-md border border-purple-500/40 pointer-events-none transition-all duration-300';
+    let toast = document.getElementById('showcase-toast');
+    if (!toast) {
+      toast = document.createElement('div');
+      toast.id = 'showcase-toast';
+      toast.className = 'fixed bottom-20 left-1/2 -translate-x-1/2 z-[60] px-4 py-2.5 rounded-xl bg-purple-950/90 border border-purple-500/40 text-purple-200 text-xs font-semibold shadow-2xl backdrop-blur-md pointer-events-none transition-all duration-300 opacity-0 translate-y-3';
+      document.body.appendChild(toast);
+    }
     toast.textContent = msg;
-    document.body.appendChild(toast);
+    toast.classList.remove('opacity-0', 'translate-y-3');
+    toast.classList.add('opacity-100', 'translate-y-0');
     setTimeout(() => {
-      toast.style.opacity = '0';
-      toast.style.transform = 'translate(-50%, 10px)';
-      setTimeout(() => toast.remove(), 300);
+      toast?.classList.remove('opacity-100', 'translate-y-0');
+      toast?.classList.add('opacity-0', 'translate-y-3');
     }, 2500);
   }
 
+  // Safe Synchronous Clipboard Copy
+  function copyTextToClipboard(text: string): boolean {
+    let success = false;
+    try {
+      const textarea = document.createElement('textarea');
+      textarea.value = text;
+      textarea.setAttribute('readonly', '');
+      textarea.style.position = 'fixed';
+      textarea.style.opacity = '0.001';
+      document.body.appendChild(textarea);
+      textarea.focus({ preventScroll: true });
+      textarea.select();
+      success = document.execCommand('copy');
+      document.body.removeChild(textarea);
+    } catch {
+      success = false;
+    }
+    if (!success && navigator.clipboard && typeof navigator.clipboard.writeText === 'function') {
+      navigator.clipboard.writeText(text).catch(() => {});
+      return true;
+    }
+    return success;
+  }
+
+  // Tab Switcher
+  function switchTab(tab: 'desc' | 'greetings' | 'definition') {
+    activeTab = tab;
+
+    // Reset button styles
+    [
+      { btn: tabBtnDesc, panel: panelDesc, key: 'desc' },
+      { btn: tabBtnGreetings, panel: panelGreetings, key: 'greetings' },
+      { btn: tabBtnDefinition, panel: panelDefinition, key: 'definition' }
+    ].forEach(({ btn, panel, key }) => {
+      if (key === tab) {
+        btn?.classList.remove('border-transparent', 'text-slate-400', 'hover:text-slate-200', 'hover:bg-white/[0.02]');
+        btn?.classList.add('border-purple-500', 'text-white', 'bg-white/[0.04]', 'font-bold');
+        panel?.classList.remove('hidden');
+      } else {
+        btn?.classList.remove('border-purple-500', 'text-white', 'bg-white/[0.04]', 'font-bold');
+        btn?.classList.add('border-transparent', 'text-slate-400', 'hover:text-slate-200', 'hover:bg-white/[0.02]');
+        panel?.classList.add('hidden');
+      }
+    });
+  }
+
+  tabBtnDesc?.addEventListener('click', () => switchTab('desc'));
+  tabBtnGreetings?.addEventListener('click', () => switchTab('greetings'));
+  tabBtnDefinition?.addEventListener('click', () => switchTab('definition'));
+
+  // Tags Renderer with Chub-style +N Toggle
+  function renderTags(expanded = false) {
+    if (!showcaseTags) return;
+    showcaseTags.innerHTML = '';
+    isTagsExpanded = expanded;
+
+    if (!currentTags || currentTags.length === 0) {
+      const emptySpan = document.createElement('span');
+      emptySpan.className = 'text-[11px] text-slate-500 italic';
+      emptySpan.textContent = 'No tags';
+      showcaseTags.appendChild(emptySpan);
+      return;
+    }
+
+    const limit = 5;
+    const shouldTruncate = currentTags.length > limit;
+    const visibleTags = expanded || !shouldTruncate ? currentTags : currentTags.slice(0, limit);
+
+    visibleTags.forEach(tag => {
+      const cleanTag = tag.replace(/^#/, '');
+      const pill = document.createElement('span');
+      pill.className = 'px-2 py-0.5 rounded-md bg-white/[0.04] border border-white/[0.08] text-[10.5px] font-medium text-slate-300';
+      pill.textContent = `#${cleanTag}`;
+      showcaseTags.appendChild(pill);
+    });
+
+    if (shouldTruncate) {
+      const toggleBtn = document.createElement('button');
+      toggleBtn.type = 'button';
+      toggleBtn.className = 'px-2 py-0.5 rounded-md bg-purple-500/10 hover:bg-purple-500/20 border border-purple-500/20 text-[10.5px] font-bold text-purple-300 transition cursor-pointer';
+      toggleBtn.textContent = expanded ? 'Show less' : `+${currentTags.length - limit} more`;
+      toggleBtn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        renderTags(!isTagsExpanded);
+      });
+      showcaseTags.appendChild(toggleBtn);
+    }
+  }
+
+  // Greeting Switcher Logic
+  function updateGreetingUI() {
+    if (!showcaseGreeting) return;
+
+    if (currentGreetings.length <= 1) {
+      greetingSwitcher?.classList.add('hidden');
+      greetingSwitcher?.classList.remove('flex');
+    } else {
+      greetingSwitcher?.classList.remove('hidden');
+      greetingSwitcher?.classList.add('flex');
+      if (greetingIndexLabel) {
+        greetingIndexLabel.textContent = `(${currentGreetingIndex + 1} of ${currentGreetings.length})`;
+      }
+      if (greetingPrevBtn) {
+        greetingPrevBtn.disabled = currentGreetingIndex <= 0;
+      }
+      if (greetingNextBtn) {
+        greetingNextBtn.disabled = currentGreetingIndex >= currentGreetings.length - 1;
+      }
+    }
+
+    const activeGreetingText = currentGreetings[currentGreetingIndex] || '*Awaits your first message...*';
+    showcaseGreeting.innerHTML = formatRichGreeting(activeGreetingText);
+  }
+
+  greetingPrevBtn?.addEventListener('click', (e) => {
+    e.stopPropagation();
+    if (currentGreetingIndex > 0) {
+      currentGreetingIndex--;
+      updateGreetingUI();
+    }
+  });
+
+  greetingNextBtn?.addEventListener('click', (e) => {
+    e.stopPropagation();
+    if (currentGreetingIndex < currentGreetings.length - 1) {
+      currentGreetingIndex++;
+      updateGreetingUI();
+    }
+  });
+
+  // Definition Tab UI Builder
+  function updateDefinitionUI(char: any) {
+    const def = extractCardDefinition(char);
+
+    // Update tokens badges
+    const totalTokensFormatted = def.tokensTotal ? `~${def.tokensTotal.toLocaleString()}` : '~1.2k';
+    const permTokensFormatted = def.tokensPermanent ? `~${def.tokensPermanent.toLocaleString()}` : '~800';
+    const greetingTokensFormatted = def.tokensGreeting ? `~${def.tokensGreeting.toLocaleString()}` : '~400';
+
+    if (defTotalTokens) defTotalTokens.textContent = totalTokensFormatted;
+    if (defPermTokens) defPermTokens.textContent = permTokensFormatted;
+    if (defGreetingTokens) defGreetingTokens.textContent = greetingTokensFormatted;
+
+    if (showcaseTokensCount) showcaseTokensCount.textContent = totalTokensFormatted;
+    if (definitionTokenBadge) definitionTokenBadge.textContent = totalTokensFormatted;
+
+    // Personality Block
+    if (defPersonalityBox && defPersonalityContent) {
+      if (def.personality) {
+        defPersonalityBox.classList.remove('hidden');
+        defPersonalityContent.textContent = def.personality;
+        if (defPersonalityTokenLabel) {
+          defPersonalityTokenLabel.textContent = `~${estimateTokens(def.personality)} tokens`;
+        }
+      } else {
+        defPersonalityBox.classList.add('hidden');
+      }
+    }
+
+    // Scenario Block
+    if (defScenarioBox && defScenarioContent) {
+      if (def.scenario) {
+        defScenarioBox.classList.remove('hidden');
+        defScenarioContent.textContent = def.scenario;
+        if (defScenarioTokenLabel) {
+          defScenarioTokenLabel.textContent = `~${estimateTokens(def.scenario)} tokens`;
+        }
+      } else {
+        defScenarioBox.classList.add('hidden');
+      }
+    }
+
+    // System Prompt Block
+    if (defSystemBox && defSystemContent) {
+      if (def.systemPrompt) {
+        defSystemBox.classList.remove('hidden');
+        defSystemContent.textContent = def.systemPrompt;
+        if (defSystemTokenLabel) {
+          defSystemTokenLabel.textContent = `~${estimateTokens(def.systemPrompt)} tokens`;
+        }
+      } else {
+        defSystemBox.classList.add('hidden');
+      }
+    }
+
+    // Mes Example Block
+    if (defMesExampleBox && defMesExampleContent) {
+      if (def.mesExample) {
+        defMesExampleBox.classList.remove('hidden');
+        defMesExampleContent.textContent = def.mesExample;
+        if (defMesExampleTokenLabel) {
+          defMesExampleTokenLabel.textContent = `~${estimateTokens(def.mesExample)} tokens`;
+        }
+      } else {
+        defMesExampleBox.classList.add('hidden');
+      }
+    }
+  }
+
+  // Copy Definition Button
+  defCopyBtn?.addEventListener('click', (e) => {
+    e.stopPropagation();
+    if (!activeCharacter) return;
+    const def = extractCardDefinition(activeCharacter);
+    const dump = [
+      `# ${activeCharacter.name || 'Character'} - Definition`,
+      def.personality ? `## Personality\n${def.personality}` : '',
+      def.scenario ? `## Scenario\n${def.scenario}` : '',
+      def.systemPrompt ? `## System Prompt\n${def.systemPrompt}` : '',
+      def.mesExample ? `## Dialogue Examples\n${def.mesExample}` : '',
+      def.rawDesc ? `## Raw Description\n${def.rawDesc}` : ''
+    ].filter(Boolean).join('\n\n');
+
+    const copied = copyTextToClipboard(dump);
+    if (copied) {
+      if (defCopyText) defCopyText.textContent = 'Copied to clipboard!';
+      showShowcaseToast('📋 Character definition copied!');
+      setTimeout(() => {
+        if (defCopyText) defCopyText.textContent = 'Copy Character Definition';
+      }, 2000);
+    }
+  });
+
   // Open Showcase Modal
-  function openShowcase(charId: string) {
-    if (!charId) return;
+  function openShowcase(characterId: string) {
+    // 1. Search in pre-defined characters
+    let char: any = characters.find(c => c.id === characterId);
 
-    // 1. Look in predefined
-    let char = predefinedChars.find(c => c.id === charId);
-
-    // 2. Look in custom characters
+    // 2. Search in custom characters
     if (!char) {
       try {
-        const customList = JSON.parse(localStorage.getItem('aetheria_custom_characters') || '[]');
-        const normId = charId.toLowerCase().trim();
-        char = customList.find((c: any) => c && (
-          c.id === charId || 
-          c.id?.toLowerCase() === normId || 
-          (c.name && c.name.toLowerCase() === normId)
-        ));
-        if (char) char.isCustom = true;
-      } catch {}
+        const stored = localStorage.getItem('aetheria_custom_characters');
+        if (stored) {
+          const customChars = JSON.parse(stored);
+          const custom = customChars.find((c: any) => c.id === characterId);
+          if (custom) {
+            char = {
+              id: custom.id,
+              name: custom.name,
+              title: sanitizeTitle(custom.title || custom.tagline, 'Custom Companion'),
+              category: custom.category || 'Custom',
+              avatar: custom.avatarUrl || '/avatars/default.webp',
+              tags: custom.tags || ['Custom', 'Roleplay'],
+              description: custom.description || custom.lore || '',
+              creatorNotes: custom.creator_notes || custom.creatorNotes || '',
+              greeting: custom.greeting || custom.first_mes || '',
+              alternateGreetings: custom.alternateGreetings || custom.alternate_greetings || [],
+              personality: custom.personality || '',
+              scenario: custom.scenario || '',
+              systemPrompt: custom.systemPrompt || custom.system_prompt || '',
+              mesExample: custom.mesExample || custom.mes_example || '',
+              isCustom: true,
+              chats: custom.chats || 100,
+              rating: custom.rating || '5.0'
+            };
+          }
+        }
+      } catch (err) {
+        console.error('Failed to parse custom characters:', err);
+      }
     }
 
     if (!char) return;
     activeCharacter = char;
 
-    // Auto-heal legacy or malformed titles containing HTML or creator notes
-    if (char.isCustom) {
-      const rawTitle = char.title || '';
-      if (/<[^>]+>/i.test(rawTitle) || rawTitle.length > 75) {
-        if (!char.description || !char.description.includes(rawTitle.slice(0, 30))) {
-          char.description = rawTitle + '\n\n' + (char.description || '');
-        }
-        char.title = sanitizeTitle(rawTitle, 'Custom Companion');
-        try {
-          const customList = JSON.parse(localStorage.getItem('aetheria_custom_characters') || '[]');
-          const idx = customList.findIndex((c: any) => c && c.id === char.id);
-          if (idx !== -1) {
-            customList[idx].title = char.title;
-            customList[idx].description = char.description;
-            localStorage.setItem('aetheria_custom_characters', JSON.stringify(customList));
-          }
-        } catch {}
+    // Reset to Description Tab
+    switchTab('desc');
+
+    // Populate Identity
+    if (showcaseAvatar) {
+      showcaseAvatar.src = char.avatar || '/avatars/default.webp';
+      showcaseAvatar.alt = char.name;
+    }
+    if (showcaseName) showcaseName.textContent = char.name;
+    if (showcaseTitle) showcaseTitle.textContent = sanitizeTitle(char.title, 'Companion');
+    if (showcaseBadge) showcaseBadge.textContent = char.category || 'Roleplay';
+
+    if (showcaseAuthor) {
+      showcaseAuthor.textContent = char.isCustom ? 'By Community Creator' : 'By Aetheria Studio';
+    }
+
+    // NSFW / SFW Badge Detection
+    const tagsList = char.tags || [];
+    currentTags = Array.isArray(tagsList) ? tagsList : [String(tagsList)];
+    const nsfwKeywords = ['nsfw', '18+', 'adult', 'erotica', 'smut', 'incest', 'lewd', 'hentai', 'explicit'];
+    const hasNsfwTag = currentTags.some(t => typeof t === 'string' && nsfwKeywords.some(k => t.toLowerCase().includes(k)));
+
+    if (showcaseNsfwBadge) {
+      if (hasNsfwTag) {
+        showcaseNsfwBadge.textContent = 'NSFW';
+        showcaseNsfwBadge.className = 'px-2 py-0.5 rounded-md text-[10px] font-black uppercase tracking-wider bg-rose-500/20 text-rose-300 border border-rose-500/30';
+      } else {
+        showcaseNsfwBadge.textContent = 'SFW';
+        showcaseNsfwBadge.className = 'px-2 py-0.5 rounded-md text-[10px] font-black uppercase tracking-wider bg-emerald-500/20 text-emerald-300 border border-emerald-500/30';
       }
     }
 
-    // Populate visual details
-    if (showcaseAvatar) showcaseAvatar.src = char.avatarUrl || '/avatars/default.webp';
-    if (showcaseName) showcaseName.textContent = char.name || 'Unknown Character';
-    if (showcaseTitle) showcaseTitle.textContent = sanitizeTitle(char.title, 'AI Companion');
-    
-    if (showcaseBadge) {
-      showcaseBadge.textContent = char.isCustom ? 'Custom Creation' : (char.badge || char.category || 'Roleplay');
-    }
+    // Render Tags with Truncation
+    renderTags(false);
 
-    if (showcaseAuthor) {
-      showcaseAuthor.textContent = char.isCustom ? 'Created by You' : 'Created by @Aetheria';
-    }
-
-    // Populate tags
-    if (showcaseTags) {
-      showcaseTags.innerHTML = '';
-      const tags: string[] = char.tags || [char.category || 'Roleplay'];
-      tags.forEach((tag: string) => {
-        const span = document.createElement('span');
-        span.className = 'px-2 py-0.5 rounded-lg bg-white/[0.04] border border-white/5 text-[10px] font-medium text-slate-300';
-        span.textContent = `#${tag}`;
-        showcaseTags.appendChild(span);
-      });
-    }
-
-    // Populate description & greeting
+    // Populate Tab 1: Clean Public Description (No system prompt leak)
     if (showcaseDescription) {
-      showcaseDescription.innerHTML = formatRichDescription(char.description || char.scenario || 'No detailed background provided.');
+      const publicText = cleanPublicDescription(char.description, char.creatorNotes || char.creator_notes);
+      showcaseDescription.innerHTML = formatRichDescription(publicText);
     }
 
-    if (showcaseGreeting) {
-      showcaseGreeting.innerHTML = formatRichGreeting(char.greeting || '*Awaits your first message...*');
-    }
+    // Populate Tab 2: Greetings & Alternates
+    const rawAlt = char.alternateGreetings || char.alternate_greetings || [];
+    const mainGreeting = char.greeting || char.first_mes || '';
+    const allList = [mainGreeting, ...(Array.isArray(rawAlt) ? rawAlt : [])];
+    currentGreetings = allList.filter((g, idx, arr) => g && typeof g === 'string' && arr.indexOf(g) === idx);
+    if (currentGreetings.length === 0) currentGreetings = ['*Awaits your first message...*'];
+    currentGreetingIndex = 0;
+    if (greetingsCountBadge) greetingsCountBadge.textContent = String(currentGreetings.length);
+    updateGreetingUI();
+
+    // Populate Tab 3: Definition & Token Analysis
+    updateDefinitionUI(char);
 
     // Update Star state
     updateStarUI(char.id);
@@ -381,12 +850,22 @@ import {
           }
           if (idbChar.description || idbChar.scenario || char.description || char.scenario) {
             if (showcaseDescription) {
-              showcaseDescription.innerHTML = formatRichDescription(idbChar.description || idbChar.scenario || char.description || char.scenario || 'No detailed background provided.');
+              const fullDesc = idbChar.description || idbChar.scenario || char.description || char.scenario || 'No detailed background provided.';
+              const cleanText = cleanPublicDescription(fullDesc, idbChar.creator_notes || idbChar.creatorNotes || char.creatorNotes);
+              showcaseDescription.innerHTML = formatRichDescription(cleanText);
             }
           }
-          if (idbChar.greeting && showcaseGreeting) {
-            showcaseGreeting.innerHTML = formatRichGreeting(idbChar.greeting || char.greeting || '*Awaits your first message...*');
+          if (idbChar.greeting || idbChar.first_mes) {
+            const idbMain = idbChar.greeting || idbChar.first_mes || '';
+            const idbAlts = idbChar.alternateGreetings || idbChar.alternate_greetings || [];
+            currentGreetings = [idbMain, ...idbAlts].filter((g, i, a) => g && a.indexOf(g) === i);
+            if (currentGreetings.length === 0) currentGreetings = ['*Awaits your first message...*'];
+            currentGreetingIndex = 0;
+            if (greetingsCountBadge) greetingsCountBadge.textContent = String(currentGreetings.length);
+            updateGreetingUI();
           }
+          // Re-update Definition tab with complete IDB character object
+          updateDefinitionUI({ ...char, ...idbChar });
         }
       }).catch(() => {});
     }
@@ -468,7 +947,6 @@ import {
       const cardEl = document.querySelector(`[data-character-id="${activeCharacter.id}"]`);
       if (cardEl) {
         cardEl.remove();
-        // Trigger filter to update counter
         const sortSel = document.getElementById('sort-selector');
         sortSel?.dispatchEvent(new Event('change'));
       }
@@ -481,34 +959,9 @@ import {
     e.stopPropagation();
     if (!activeCharacter) return;
     const link = `${window.location.origin}/chat/${activeCharacter.isCustom ? 'custom?id=' + activeCharacter.id : activeCharacter.id}`;
-    
-    let execSuccess = false;
-    try {
-      const textarea = document.createElement('textarea');
-      textarea.value = link;
-      textarea.setAttribute('readonly', '');
-      textarea.style.position = 'fixed';
-      textarea.style.opacity = '0.001';
-      document.body.appendChild(textarea);
-      textarea.focus({ preventScroll: true });
-      textarea.select();
-      execSuccess = document.execCommand('copy');
-      document.body.removeChild(textarea);
-    } catch (err) {
-      execSuccess = false;
-    }
-
-    if (execSuccess) {
+    const copied = copyTextToClipboard(link);
+    if (copied) {
       showShowcaseToast('📋 Character link copied to clipboard!');
-      return;
-    }
-
-    if (navigator.clipboard && typeof navigator.clipboard.writeText === 'function') {
-      navigator.clipboard.writeText(link).then(() => {
-        showShowcaseToast('📋 Character link copied to clipboard!');
-      }).catch(() => {
-        showShowcaseToast('Character URL: ' + link);
-      });
     } else {
       showShowcaseToast('Character URL: ' + link);
     }
