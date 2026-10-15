@@ -251,15 +251,6 @@ import {
             <ArrowLeft class="w-5 h-5" />
             <span>Settings</span>
           </button>
-
-          <button 
-            type="button" 
-            id="btn-new-persona"
-            class="px-3.5 py-1.5 rounded-xl bg-purple-600 hover:bg-purple-500 text-white text-xs font-semibold flex items-center gap-1.5 transition active:scale-95 cursor-pointer shadow-md shadow-purple-900/40"
-          >
-            <Plus class="w-3.5 h-3.5" />
-            <span>New Persona</span>
-          </button>
         </div>
 
         <div>
@@ -315,12 +306,27 @@ import {
                     <User class="w-8 h-8 opacity-70" />
                   </div>
                 </div>
-                <!-- Camera Badge Overlay -->
+
+                <!-- Permanent Floating Camera Badge for Instant Touch/Mobile Affordance -->
+                <div class="absolute -bottom-0.5 -right-0.5 w-7 h-7 sm:w-7.5 sm:h-7.5 rounded-full bg-purple-600 border-2 border-[#141824] flex items-center justify-center text-white shadow-md shadow-purple-950/80 transition group-hover:bg-purple-500 group-active:scale-90">
+                  <Camera class="w-3.5 h-3.5 text-white" />
+                </div>
+
+                <!-- Desktop Hover Overlay -->
                 <div class="absolute inset-0 rounded-full bg-black/50 backdrop-blur-[2px] opacity-0 group-hover:opacity-100 flex flex-col items-center justify-center text-white text-[10px] font-medium transition duration-200">
                   <Camera class="w-5 h-5 mb-0.5 text-purple-300" />
                   <span>Change</span>
                 </div>
               </div>
+
+              <!-- Clear Touch Hint Label -->
+              <button 
+                type="button" 
+                id="btn-trigger-avatar-text" 
+                class="text-[11px] font-medium text-purple-400/90 hover:text-purple-300 transition cursor-pointer flex items-center gap-1 active:scale-95"
+              >
+                <span>Tap to change avatar</span>
+              </button>
 
               <!-- Hidden File Input -->
               <input type="file" id="avatar-file-input" accept="image/png,image/jpeg,image/webp,image/gif" class="hidden" />
@@ -1294,7 +1300,7 @@ import {
     });
 
     document.getElementById('btn-add-persona-carousel')?.addEventListener('click', () => {
-      document.getElementById('btn-new-persona')?.click();
+      createNewPersona();
     });
   }
 
@@ -1463,11 +1469,15 @@ import {
       });
     }
 
-    // Avatar Click Zone
+    // Avatar Click Zone & Touch Trigger
     const avatarZone = document.getElementById('avatar-click-zone');
+    const avatarTextBtn = document.getElementById('btn-trigger-avatar-text');
     const fileInput = document.getElementById('avatar-file-input') as HTMLInputElement;
 
     avatarZone?.addEventListener('click', () => {
+      fileInput?.click();
+    });
+    avatarTextBtn?.addEventListener('click', () => {
       fileInput?.click();
     });
 
@@ -1517,8 +1527,8 @@ import {
       }
     });
 
-    // New Persona
-    document.getElementById('btn-new-persona')?.addEventListener('click', () => {
+    // New Persona Creation Logic
+    function createNewPersona() {
       personas.forEach(x => { x.isDefault = false; });
       const newP: Persona = {
         id: 'p_' + Date.now(),
@@ -1538,7 +1548,9 @@ import {
       const nInput = document.getElementById('persona-name') as HTMLInputElement;
       nInput?.focus();
       showToast('New persona created & active', 'success');
-    });
+    }
+
+    document.getElementById('btn-new-persona')?.addEventListener('click', createNewPersona);
 
     // Save Persona
     document.getElementById('btn-save-persona')?.addEventListener('click', () => {
