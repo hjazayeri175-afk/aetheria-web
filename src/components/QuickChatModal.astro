@@ -481,11 +481,37 @@ import {
     e.stopPropagation();
     if (!activeCharacter) return;
     const link = `${window.location.origin}/chat/${activeCharacter.isCustom ? 'custom?id=' + activeCharacter.id : activeCharacter.id}`;
-    navigator.clipboard.writeText(link).then(() => {
+    
+    let execSuccess = false;
+    try {
+      const textarea = document.createElement('textarea');
+      textarea.value = link;
+      textarea.setAttribute('readonly', '');
+      textarea.style.position = 'fixed';
+      textarea.style.opacity = '0.001';
+      document.body.appendChild(textarea);
+      textarea.focus({ preventScroll: true });
+      textarea.select();
+      execSuccess = document.execCommand('copy');
+      document.body.removeChild(textarea);
+    } catch (err) {
+      execSuccess = false;
+    }
+
+    if (execSuccess) {
       showShowcaseToast('📋 Character link copied to clipboard!');
-    }).catch(() => {
+      return;
+    }
+
+    if (navigator.clipboard && typeof navigator.clipboard.writeText === 'function') {
+      navigator.clipboard.writeText(link).then(() => {
+        showShowcaseToast('📋 Character link copied to clipboard!');
+      }).catch(() => {
+        showShowcaseToast('Character URL: ' + link);
+      });
+    } else {
       showShowcaseToast('Character URL: ' + link);
-    });
+    }
   });
 
   // Report Character Button

@@ -137,7 +137,7 @@ export function formatRichDescription(input: string): string {
   text = text.replace(/\*\*(.*?)\*\*/g, '<strong class="font-semibold text-white">$1</strong>');
   text = text.replace(/__([^_]+)__/g, '<strong class="font-semibold text-white">$1</strong>');
   text = text.replace(/(^|[^\*<])\*([^\*\n<]+)\*([^\*>]|$)/g, '$1<em class="text-purple-200/90 italic">$2</em>$3');
-  text = text.replace(/`([^`\n]+)`/g, '<code class="px-1.5 py-0.5 rounded bg-black/40 border border-white/10 text-purple-300 text-[11px] font-mono">$1</code>');
+  text = text.replace(/`([^`\n]+)`/g, '<span translate="yes" class="px-1.5 py-0.5 rounded bg-black/40 border border-white/10 text-purple-300 text-[11px] font-mono inline-block">$1</span>');
 
   // 8. If text is pure markdown (no HTML structure tags), convert headers and lists
   if (!hasHtml) {
@@ -182,8 +182,9 @@ export function formatRichGreeting(greeting: string): string {
   text = text.replace(/\*\*([^\*\n<]+)\*\*/g, '<strong class="text-white font-semibold">$1</strong>');
 
   // Quoted dialogue: "speech" -> highlight speech
-  text = text.replace(/"([^"\n]+)"/g, '<span class="text-white font-medium">"$1"</span>');
-  text = text.replace(/“([^”\n]+)”/g, '<span class="text-white font-medium">“$1”</span>');
+  text = text.replace(/"([^"\n]+)"/g, '<span translate="yes" class="text-white font-medium">"$1"</span>');
+  text = text.replace(/“([^”\n]+)”/g, '<span translate="yes" class="text-white font-medium">“$1”</span>');
+  text = text.replace(/«([^»\n]+)»/g, '<span translate="yes" class="text-white font-medium">«$1»</span>');
 
   if (!hasHtml) {
     text = text.replace(/\n/g, '<br/>');

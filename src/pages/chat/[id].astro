@@ -5037,6 +5037,57 @@ const { character } = Astro.props;
       .replace(/'/g, '&#039;');
   }
 
+  // Universal mobile & desktop clipboard copy with execCommand fallback
+  function copyTextToClipboard(text) {
+    return new Promise((resolve) => {
+      if (!text) {
+        resolve(false);
+        return;
+      }
+
+      // Method 1: execCommand with invisible textarea (most reliable on mobile Android / iOS)
+      let execSuccess = false;
+      try {
+        const textarea = document.createElement('textarea');
+        textarea.value = text;
+        textarea.setAttribute('readonly', '');
+        textarea.style.position = 'fixed';
+        textarea.style.top = '0';
+        textarea.style.left = '0';
+        textarea.style.width = '2em';
+        textarea.style.height = '2em';
+        textarea.style.padding = '0';
+        textarea.style.border = 'none';
+        textarea.style.outline = 'none';
+        textarea.style.boxShadow = 'none';
+        textarea.style.background = 'transparent';
+        textarea.style.opacity = '0.001';
+        document.body.appendChild(textarea);
+        textarea.focus({ preventScroll: true });
+        textarea.select();
+        textarea.setSelectionRange(0, textarea.value.length);
+        execSuccess = document.execCommand('copy');
+        document.body.removeChild(textarea);
+      } catch (err) {
+        execSuccess = false;
+      }
+
+      if (execSuccess) {
+        resolve(true);
+        return;
+      }
+
+      // Method 2: Modern Clipboard API
+      if (navigator.clipboard && typeof navigator.clipboard.writeText === 'function') {
+        navigator.clipboard.writeText(text)
+          .then(() => resolve(true))
+          .catch(() => resolve(false));
+      } else {
+        resolve(false);
+      }
+    });
+  }
+
   function showNotification(msg, type = 'info') {
     let container = document.getElementById('aetheria-toast-container');
     if (!container) {
@@ -6553,11 +6604,18 @@ const { character } = Astro.props;
       .replace(/</g, '&lt;')
       .replace(/>/g, '&gt;');
 
-    // 2. Protect inline code `code`
+    // 2. Protect inline & block code / dialogue (translatable by browser translation)
     const codeBlocks = [];
+    // Triple backticks ```...```
+    s = s.replace(/```(?:[a-zA-Z0-9_-]+)?\n?([\s\S]*?)```/g, (_, code) => {
+      const idx = codeBlocks.length;
+      codeBlocks.push(`<div translate="yes" class="my-2 p-3 rounded-xl bg-black/40 border border-white/10 font-mono text-[12px] text-cyan-300 overflow-x-auto whitespace-pre-wrap">${code}</div>`);
+      return `__CODE_BLOCK_${idx}__`;
+    });
+    // Single backticks `code` or `dialogue`
     s = s.replace(/`([^`]+)`/g, (_, code) => {
       const idx = codeBlocks.length;
-      codeBlocks.push(`<code class="px-1.5 py-0.5 rounded bg-white/10 text-cyan-300 font-mono text-[11px]">${code}</code>`);
+      codeBlocks.push(`<span translate="yes" class="px-1.5 py-0.5 rounded bg-white/10 text-cyan-300 font-mono text-[11px] inline-block">${code}</span>`);
       return `__CODE_BLOCK_${idx}__`;
     });
 
@@ -15710,7 +15768,7 @@ const { character } = Astro.props;
             <button class="msg-speak-btn w-7 h-7 sm:w-8 sm:h-8 rounded-lg flex items-center justify-center text-slate-400 hover:text-purple-300 hover:bg-white/[0.08] active:scale-95 transition cursor-pointer" data-idx="${idx}" title="Listen (Read aloud)">
               ${TOOLBAR_ICONS.speaker}
             </button>
-            <button class="msg-copy-btn w-7 h-7 sm:w-8 sm:h-8 rounded-lg flex items-center justify-center text-slate-400 hover:text-slate-200 hover:bg-white/[0.08] active:scale-95 transition cursor-pointer" data-text="${encodeURIComponent(msg.text)}" title="Copy message">
+            <button class="msg-copy-btn w-7 h-7 sm:w-8 sm:h-8 rounded-lg flex items-center justify-center text-slate-400 hover:text-emerald-400 hover:bg-white/[0.08] active:scale-95 transition cursor-pointer" data-idx="${idx}" data-text="${encodeURIComponent(msg.text)}" title="Copy message">
               ${TOOLBAR_ICONS.copy}
             </button>
             <button class="msg-more-btn w-7 h-7 sm:w-8 sm:h-8 rounded-lg flex items-center justify-center text-slate-400 hover:text-slate-200 hover:bg-white/[0.08] active:scale-95 transition cursor-pointer" data-idx="${idx}" data-is-user="false" title="More options">
@@ -15742,7 +15800,7 @@ const { character } = Astro.props;
             <button class="msg-rewind-btn w-7 h-7 sm:w-8 sm:h-8 rounded-lg flex items-center justify-center text-slate-400 hover:text-amber-400 hover:bg-white/[0.08] active:scale-95 transition cursor-pointer" data-idx="${idx}" title="Rewind / Step back here">
               ${TOOLBAR_ICONS.rewind}
             </button>
-            <button class="msg-copy-btn w-7 h-7 sm:w-8 sm:h-8 rounded-lg flex items-center justify-center text-slate-400 hover:text-slate-200 hover:bg-white/[0.08] active:scale-95 transition cursor-pointer" data-text="${encodeURIComponent(msg.text)}" title="Copy text">
+            <button class="msg-copy-btn w-7 h-7 sm:w-8 sm:h-8 rounded-lg flex items-center justify-center text-slate-400 hover:text-emerald-400 hover:bg-white/[0.08] active:scale-95 transition cursor-pointer" data-idx="${idx}" data-text="${encodeURIComponent(msg.text)}" title="Copy text">
               ${TOOLBAR_ICONS.copy}
             </button>
             <button class="msg-edit-btn w-7 h-7 sm:w-8 sm:h-8 rounded-lg flex items-center justify-center text-slate-400 hover:text-slate-200 hover:bg-white/[0.08] active:scale-95 transition cursor-pointer" data-idx="${idx}" title="Edit message">
@@ -18001,17 +18059,40 @@ const { character } = Astro.props;
     // Copy button
     const copyBtn = target.closest('.msg-copy-btn');
     if (copyBtn) {
-      const text = decodeURIComponent(copyBtn.getAttribute('data-text') || '');
-      navigator.clipboard.writeText(text);
-      copyBtn.innerHTML = TOOLBAR_ICONS.check;
-      copyBtn.classList.remove('text-slate-400');
-      copyBtn.classList.add('text-emerald-400');
-      setTimeout(() => {
-        copyBtn.innerHTML = TOOLBAR_ICONS.copy;
-        copyBtn.classList.remove('text-emerald-400');
-        copyBtn.classList.add('text-slate-400');
-      }, 1500);
-      showNotification('Copied message to clipboard!');
+      const idx = parseInt(copyBtn.getAttribute('data-idx') || '-1', 10);
+      const bubble = (idx >= 0 ? document.getElementById(`msg-bubble-${idx}`) : null) || copyBtn.closest('.space-y-1\\.5')?.querySelector('.chat-msg-bubble');
+      let textToCopy = '';
+      if (bubble) {
+        const clone = bubble.cloneNode(true);
+        clone.querySelectorAll('details, .think-accordion, script, style').forEach((el) => el.remove());
+        textToCopy = (clone.innerText || clone.textContent || '').trim();
+      }
+      if (!textToCopy) {
+        try {
+          textToCopy = decodeURIComponent(copyBtn.getAttribute('data-text') || '');
+        } catch (e) {
+          textToCopy = copyBtn.getAttribute('data-text') || '';
+        }
+      }
+      if (!textToCopy && idx >= 0 && conversation[idx]) {
+        textToCopy = (conversation[idx].text || '').replace(/<details[\s\S]*?<\/details>/gi, '').trim();
+      }
+
+      copyTextToClipboard(textToCopy).then((success) => {
+        if (success) {
+          copyBtn.innerHTML = TOOLBAR_ICONS.check;
+          copyBtn.classList.remove('text-slate-400');
+          copyBtn.classList.add('text-emerald-400');
+          setTimeout(() => {
+            copyBtn.innerHTML = TOOLBAR_ICONS.copy;
+            copyBtn.classList.remove('text-emerald-400');
+            copyBtn.classList.add('text-slate-400');
+          }, 1500);
+          showNotification('Copied message to clipboard!');
+        } else {
+          showNotification('Failed to copy to clipboard', 'error');
+        }
+      });
       return;
     }
 
@@ -20508,10 +20589,12 @@ Requirements:
   exportBtn?.addEventListener('click', () => {
     const code = window.AetheriaTheme.exportTheme(modalScope === 'character' ? activeCharId : null);
     if (code) {
-      navigator.clipboard.writeText(code).then(() => {
-        showNotification('Theme code copied to clipboard! 📋');
-      }).catch(() => {
-        prompt('Copy your theme code:', code);
+      copyTextToClipboard(code).then((ok) => {
+        if (ok) {
+          showNotification('Theme code copied to clipboard! 📋');
+        } else {
+          prompt('Copy your theme code:', code);
+        }
       });
     }
   });
