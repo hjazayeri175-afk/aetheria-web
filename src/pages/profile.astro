@@ -35,7 +35,9 @@ import {
   ChevronRight,
   ChevronLeft,
   Volume2,
-  MessageSquare
+  MessageSquare,
+  Pencil,
+  WandSparkles
 } from '@lucide/astro';
 ---
 
@@ -237,11 +239,11 @@ import {
       </div>
 
       <!-- ========================================== -->
-      <!-- VIEW 2: PERSONAS SUB-PAGE (DEDICATED)     -->
+      <!-- VIEW 2: PERSONAS SUB-PAGE (3D CAROUSEL)    -->
       <!-- ========================================== -->
-      <div id="view-personas" class="hidden space-y-5">
+      <div id="view-personas" class="hidden space-y-4">
         
-        <!-- Header with Back Button -->
+        <!-- Header with Back Button & New Persona CTA -->
         <div class="flex items-center justify-between pb-1 border-b border-white/[0.06]">
           <button 
             type="button" 
@@ -251,201 +253,90 @@ import {
             <ArrowLeft class="w-5 h-5" />
             <span>Settings</span>
           </button>
+
+          <div class="flex items-center gap-2">
+            <span id="personas-count-badge" class="px-2.5 py-1 rounded-full bg-purple-500/10 border border-purple-500/20 text-purple-300 text-[11px] font-semibold">
+              1 Persona
+            </span>
+            <button 
+              type="button" 
+              id="btn-carousel-add-new"
+              class="px-3 py-1.5 rounded-xl bg-purple-600 hover:bg-purple-500 text-white text-xs font-semibold flex items-center gap-1.5 transition active:scale-95 cursor-pointer shadow-md shadow-purple-900/40"
+            >
+              <Plus class="w-3.5 h-3.5" />
+              <span>New Persona</span>
+            </button>
+          </div>
         </div>
 
         <div>
           <h1 class="text-xl font-bold text-white tracking-tight">Personas</h1>
-          <p class="text-xs text-slate-400 mt-0.5">Customize how characters perceive you in chat</p>
+          <p class="text-xs text-slate-400 mt-0.5">Customize how characters perceive you in chat with 3D cards</p>
         </div>
 
         <!-- Master Enable / Disable Toggle -->
-        <div class="flex items-center justify-between p-4 rounded-2xl bg-[#141824] border border-white/[0.06] transition">
+        <div class="flex items-center justify-between p-3.5 sm:p-4 rounded-2xl bg-[#141824] border border-white/[0.06] transition">
           <div class="flex items-center gap-3">
-            <div id="persona-toggle-icon" class="w-9 h-9 rounded-xl bg-purple-600/20 border border-purple-500/30 flex items-center justify-center text-purple-300 transition">
+            <div id="persona-toggle-icon" class="w-9 h-9 rounded-xl bg-purple-600/20 border border-purple-500/30 flex items-center justify-center text-purple-300 transition shrink-0">
               <User class="w-4 h-4" />
             </div>
-            <div>
+            <div class="min-w-0">
               <p class="text-xs font-semibold text-white">Enable Persona in Chats</p>
-              <p id="persona-toggle-status" class="text-[11px] text-slate-400 transition">Active in chats • Characters will use your persona</p>
+              <p id="persona-toggle-status" class="text-[11px] text-slate-400 truncate">Active in chats • Characters will use your persona</p>
             </div>
           </div>
-          <label class="relative inline-flex items-center cursor-pointer">
+          <label class="relative inline-flex items-center cursor-pointer shrink-0">
             <input type="checkbox" id="persona-master-toggle" class="sr-only peer" checked>
             <div class="w-11 h-6 bg-white/10 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-purple-600"></div>
           </label>
         </div>
 
-        <!-- Persona Carousel Bar -->
-        <div class="space-y-2">
-          <div class="flex items-center justify-between text-xs text-slate-400 px-1">
-            <span>Your Personas</span>
-            <span id="personas-count-label" class="text-[11px] text-purple-400 font-medium">1 persona</span>
+        <!-- 3D CAROUSEL CONTROLS BAR -->
+        <div class="flex items-center justify-between px-1 text-xs text-slate-400">
+          <div class="flex items-center gap-2">
+            <span class="font-medium text-slate-300">Swipe or tap cards</span>
+            <span class="text-[10px] text-purple-400/80 bg-purple-500/10 px-2 py-0.5 rounded-full border border-purple-500/20 font-mono">3D Coverflow</span>
           </div>
-          <div id="personas-pill-list" class="flex items-center gap-2.5 overflow-x-auto pb-2 pt-0.5 no-scrollbar scroll-smooth">
-            <!-- Populated by JS -->
+          <!-- Arrow Navigation -->
+          <div class="flex items-center gap-1.5">
+            <button 
+              type="button" 
+              id="carousel-btn-prev" 
+              class="w-7 h-7 rounded-lg bg-white/[0.04] hover:bg-white/[0.08] active:scale-90 border border-white/10 flex items-center justify-center text-slate-300 transition cursor-pointer"
+              title="Previous persona"
+            >
+              <ChevronLeft class="w-4 h-4" />
+            </button>
+            <span id="carousel-page-indicator" class="text-[11px] font-mono text-purple-300 min-w-[36px] text-center">1 / 1</span>
+            <button 
+              type="button" 
+              id="carousel-btn-next" 
+              class="w-7 h-7 rounded-lg bg-white/[0.04] hover:bg-white/[0.08] active:scale-90 border border-white/10 flex items-center justify-center text-slate-300 transition cursor-pointer"
+              title="Next persona"
+            >
+              <ChevronRight class="w-4 h-4" />
+            </button>
           </div>
         </div>
 
-        <!-- Full Persona Editor Card -->
-        <div class="rounded-3xl bg-[#141824] border border-white/[0.06] p-5 sm:p-6 space-y-5 shadow-xl">
-          
-          <!-- Avatar + Basic Info Row -->
-          <div class="flex flex-col sm:flex-row items-center sm:items-start gap-5">
-            
-            <!-- Click-to-Change Avatar -->
-            <div class="flex flex-col items-center gap-2 shrink-0">
-              <div class="relative group cursor-pointer" id="avatar-click-zone" title="Click to change photo">
-                <div class="w-20 h-20 sm:w-22 sm:h-22 rounded-full overflow-hidden border-2 border-purple-500/40 bg-purple-950/30 flex items-center justify-center shadow-lg shadow-purple-950/50 transition group-hover:border-purple-400">
-                  <img 
-                    id="persona-avatar-img" 
-                    src="" 
-                    alt="Persona Avatar" 
-                    class="w-full h-full object-cover hidden" 
-                  />
-                  <div id="persona-avatar-placeholder" class="flex flex-col items-center justify-center text-purple-400">
-                    <User class="w-8 h-8 opacity-70" />
-                  </div>
-                </div>
-
-                <!-- Permanent Floating Camera Badge for Instant Touch/Mobile Affordance -->
-                <div class="absolute -bottom-0.5 -right-0.5 w-7 h-7 sm:w-7.5 sm:h-7.5 rounded-full bg-purple-600 border-2 border-[#141824] flex items-center justify-center text-white shadow-md shadow-purple-950/80 transition group-hover:bg-purple-500 group-active:scale-90">
-                  <Camera class="w-3.5 h-3.5 text-white" />
-                </div>
-
-                <!-- Desktop Hover Overlay -->
-                <div class="absolute inset-0 rounded-full bg-black/50 backdrop-blur-[2px] opacity-0 group-hover:opacity-100 flex flex-col items-center justify-center text-white text-[10px] font-medium transition duration-200">
-                  <Camera class="w-5 h-5 mb-0.5 text-purple-300" />
-                  <span>Change</span>
-                </div>
-              </div>
-
-              <!-- Clear Touch Hint Label -->
-              <button 
-                type="button" 
-                id="btn-trigger-avatar-text" 
-                class="text-[11px] font-medium text-purple-400/90 hover:text-purple-300 transition cursor-pointer flex items-center gap-1 active:scale-95"
-              >
-                <span>Tap to change avatar</span>
-              </button>
-
-              <!-- Hidden File Input -->
-              <input type="file" id="avatar-file-input" accept="image/png,image/jpeg,image/webp,image/gif" class="hidden" />
-
-              <!-- Remove Photo Link -->
-              <button 
-                type="button" 
-                id="btn-remove-avatar" 
-                class="hidden text-[11px] text-red-400/80 hover:text-red-300 transition cursor-pointer"
-              >
-                Remove photo
-              </button>
-            </div>
-
-            <!-- Name, Age, Pronouns -->
-            <div class="flex-1 w-full space-y-3">
-              <div>
-                <label for="persona-name" class="block text-xs font-semibold text-slate-300 mb-1">
-                  Name
-                </label>
-                <input 
-                  type="text" 
-                  id="persona-name" 
-                  placeholder="Name" 
-                  class="w-full px-3.5 py-2.5 rounded-xl bg-white/[0.04] border border-white/10 focus:border-purple-500/60 text-sm font-medium text-white placeholder:text-slate-600 outline-none transition"
-                />
-              </div>
-
-              <div class="grid grid-cols-2 gap-3">
-                <div>
-                  <label for="persona-age" class="block text-xs font-semibold text-slate-300 mb-1">
-                    Age
-                  </label>
-                  <input 
-                    type="text" 
-                    id="persona-age" 
-                    placeholder="Age" 
-                    class="w-full px-3.5 py-2 rounded-xl bg-white/[0.04] border border-white/10 focus:border-purple-500/60 text-sm font-medium text-white placeholder:text-slate-600 outline-none transition"
-                  />
-                </div>
-                <div>
-                  <label for="persona-pronouns" class="block text-xs font-semibold text-slate-300 mb-1">
-                    Pronouns
-                  </label>
-                  <input 
-                    type="text" 
-                    id="persona-pronouns" 
-                    placeholder="Pronouns" 
-                    class="w-full px-3.5 py-2 rounded-xl bg-white/[0.04] border border-white/10 focus:border-purple-500/60 text-sm font-medium text-white placeholder:text-slate-600 outline-none transition"
-                  />
-                </div>
-              </div>
-            </div>
+        <!-- 3D CAROUSEL STAGE CONTAINER -->
+        <div 
+          id="persona-carousel-stage" 
+          class="relative w-full h-[560px] sm:h-[600px] perspective-1200 flex items-center justify-center overflow-hidden select-none touch-pan-y"
+        >
+          <!-- CARDS WRAPPER (Populated dynamically by JavaScript) -->
+          <div id="persona-cards-wrapper" class="relative w-full h-full flex items-center justify-center preserve-3d">
+            <!-- Dynamically populated with 3D Coverflow Persona Cards -->
           </div>
-
-          <!-- About You / Description -->
-          <div>
-            <label for="persona-about" class="block text-xs font-semibold text-slate-300 mb-1">
-              About Persona
-            </label>
-            <textarea 
-              id="persona-about" 
-              rows="4" 
-              placeholder="Describe your appearance, personality, or background..." 
-              class="w-full px-3.5 py-2.5 rounded-xl bg-white/[0.04] border border-white/10 focus:border-purple-500/60 text-sm text-slate-200 placeholder:text-slate-600 outline-none transition resize-y leading-relaxed"
-            ></textarea>
-          </div>
-
-          <!-- Optional Advanced Instructions -->
-          <details class="group border border-white/5 rounded-2xl bg-white/[0.01] px-4 py-3 text-xs">
-            <summary class="cursor-pointer text-slate-400 hover:text-slate-200 font-medium flex items-center justify-between select-none">
-              <span>Additional instructions (optional)</span>
-              <ChevronDown class="w-3.5 h-3.5 transition-transform group-open:rotate-180 opacity-60" />
-            </summary>
-            <div class="pt-3">
-              <textarea 
-                id="persona-directives" 
-                rows="2" 
-                placeholder="Optional formatting or character guidelines..." 
-                class="w-full px-3 py-2 rounded-xl bg-white/[0.03] border border-white/10 focus:border-purple-500/50 text-xs text-slate-300 placeholder:text-slate-600 outline-none transition"
-              ></textarea>
-            </div>
-          </details>
-
-          <!-- Action Buttons -->
-          <div class="flex items-center justify-between pt-2 border-t border-white/[0.06]">
-            <div>
-              <button 
-                type="button" 
-                id="btn-delete-persona" 
-                class="text-xs text-red-400/80 hover:text-red-300 transition flex items-center gap-1 cursor-pointer py-1.5 px-2 rounded-lg hover:bg-red-500/10"
-              >
-                <Trash class="w-3.5 h-3.5" />
-                <span>Delete</span>
-              </button>
-            </div>
-
-            <div class="flex items-center gap-2.5">
-              <!-- Active Status Badge -->
-              <div 
-                id="persona-status-badge" 
-                class="px-3 py-1.5 rounded-xl bg-purple-500/15 border border-purple-500/30 text-purple-300 text-xs font-semibold flex items-center gap-1.5 select-none"
-              >
-                <Check class="w-3.5 h-3.5 text-purple-400" />
-                <span id="persona-status-badge-text">Active for Chat</span>
-              </div>
-
-              <button 
-                type="button" 
-                id="btn-save-persona" 
-                class="px-4 py-2 rounded-xl bg-purple-600 hover:bg-purple-500 text-white text-xs font-semibold transition active:scale-95 cursor-pointer shadow-md shadow-purple-900/40 flex items-center gap-1.5"
-              >
-                <Save class="w-3.5 h-3.5" />
-                <span>Save</span>
-              </button>
-            </div>
-          </div>
-
         </div>
+
+        <!-- Dots Indicator -->
+        <div id="carousel-dots" class="flex items-center justify-center gap-1.5 pt-0.5 pb-2">
+          <!-- Populated by JS -->
+        </div>
+
+        <!-- Hidden Global File Input for Persona Avatar Uploads -->
+        <input type="file" id="avatar-file-input" accept="image/png,image/jpeg,image/webp,image/gif" class="hidden" />
 
       </div>
 
@@ -1088,11 +979,16 @@ import {
 
 <script>
   interface Persona {
-    id: string;
+    id: string; // uuid
     name: string;
+    avatar?: string; // base64 or object URL
     age?: string;
-    pronouns?: string;
-    avatar?: string;
+    pronouns?: 'he/him' | 'she/her' | 'they/them' | string;
+    about: string;
+    additionalInstructions?: string;
+    isActive: boolean;
+    boundChatIds?: string[]; // locks persona to specific chats
+    tokenCount?: number; // Estimated tokens
     bio?: string;
     directives?: string;
     isDefault?: boolean;
@@ -1102,9 +998,30 @@ import {
   const STORAGE_KEY_ACTIVE = 'aetheria_user_persona';
 
   let personas: Persona[] = [];
-  let currentPersonaId = '';
+  let activeCardIndex = 0;
+  let flippedCards: Record<string, boolean> = {};
+  let targetAvatarUploadPersonaId = '';
 
-  // Helpers: Toast & Modal
+  // Helpers: Escaping, Toast & Modal
+  function escapeHtml(str: string): string {
+    if (!str) return '';
+    return str
+      .replace(/&/g, '&amp;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;')
+      .replace(/"/g, '&quot;')
+      .replace(/'/g, '&#039;');
+  }
+
+  function estimateTokens(text: string): number {
+    if (!text || typeof text !== 'string') return 0;
+    const clean = text.trim();
+    if (!clean) return 0;
+    const words = clean.split(/\s+/).filter(Boolean).length;
+    const chars = clean.length;
+    return Math.max(Math.round(words * 1.3), Math.ceil(chars / 3.8));
+  }
+
   function showToast(message: string, type: 'success' | 'info' | 'warning' = 'info') {
     const container = document.getElementById('toast-container');
     if (!container) return;
@@ -1163,37 +1080,82 @@ import {
     });
   }
 
+  function normalizePersona(raw: any, index: number): Persona {
+    const id = raw.id || ('p_' + Date.now() + '_' + index);
+    const name = (raw.name || '').trim();
+    const avatar = raw.avatar || '';
+    const age = (raw.age || '').trim();
+    const pronouns = (raw.pronouns || '').trim();
+    const about = (raw.about !== undefined ? raw.about : (raw.bio || '')).trim();
+    const additionalInstructions = (raw.additionalInstructions !== undefined ? raw.additionalInstructions : (raw.directives || '')).trim();
+    const isActive = (raw.isActive !== undefined) ? !!raw.isActive : (raw.isDefault !== undefined ? !!raw.isDefault : false);
+    const boundChatIds = Array.isArray(raw.boundChatIds) ? raw.boundChatIds : [];
+    const tokenCount = estimateTokens(about + ' ' + additionalInstructions);
+
+    return {
+      id,
+      name,
+      avatar,
+      age,
+      pronouns,
+      about,
+      additionalInstructions,
+      isActive,
+      boundChatIds,
+      tokenCount,
+      bio: about,
+      directives: additionalInstructions,
+      isDefault: isActive
+    };
+  }
+
   function loadPersonas() {
     try {
       const raw = localStorage.getItem(STORAGE_KEY_PERSONAS);
       if (raw) {
-        personas = JSON.parse(raw);
+        const parsed = JSON.parse(raw);
+        if (Array.isArray(parsed) && parsed.length > 0) {
+          personas = parsed.map((p, idx) => normalizePersona(p, idx));
+        }
       }
     } catch {}
 
     if (!Array.isArray(personas) || personas.length === 0) {
       personas = [
-        {
+        normalizePersona({
           id: 'p_hossein_default',
           name: 'Hossein',
           age: '26',
           pronouns: 'He/Him',
           avatar: '',
-          bio: 'Lead system engineer, software designer, and tech enthusiast.',
-          directives: 'Speak naturally, keep descriptions immersive and grounded.',
-          isDefault: true
-        }
+          about: 'Lead system engineer, software designer, and tech enthusiast exploring deep narrative worlds.',
+          additionalInstructions: 'Speak naturally, keep descriptions immersive and grounded. Never narrate actions for Hossein.',
+          isActive: true
+        }, 0)
       ];
       savePersonas();
     }
 
-    const defaultPersona = personas.find(p => p.isDefault) || personas[0];
-    currentPersonaId = defaultPersona.id;
+    if (!personas.some(p => p.isActive)) {
+      personas[0].isActive = true;
+      personas[0].isDefault = true;
+    }
+
+    const activeIdx = personas.findIndex(p => p.isActive);
+    activeCardIndex = activeIdx >= 0 ? activeIdx : 0;
   }
 
   function savePersonas() {
+    personas.forEach(p => {
+      p.bio = p.about;
+      p.directives = p.additionalInstructions;
+      p.isDefault = p.isActive;
+      p.tokenCount = estimateTokens((p.about || '') + ' ' + (p.additionalInstructions || ''));
+    });
+
     localStorage.setItem(STORAGE_KEY_PERSONAS, JSON.stringify(personas));
-    const active = personas.find(p => p.id === currentPersonaId) || personas.find(p => p.isDefault) || personas[0];
+
+    const active = personas.find(p => p.isActive) || personas[0];
     if (active) {
       localStorage.setItem(STORAGE_KEY_ACTIVE, JSON.stringify(active));
     }
@@ -1201,7 +1163,7 @@ import {
   }
 
   function updateHubProfileSummary() {
-    const active = personas.find(p => p.id === currentPersonaId) || personas.find(p => p.isDefault) || personas[0];
+    const active = personas.find(p => p.isActive) || personas[0];
     const hubName = document.getElementById('hub-user-name');
     const hubHandle = document.getElementById('hub-user-handle');
     const hubBadge = document.getElementById('hub-persona-status-badge');
@@ -1233,135 +1195,894 @@ import {
     if (hubCountPill) hubCountPill.textContent = String(personas.length);
   }
 
-  function renderPillList() {
-    const list = document.getElementById('personas-pill-list');
-    const countLabel = document.getElementById('personas-count-label');
-    if (!list) return;
+  // ==========================================
+  // 3D COVERFLOW & 3D FLIP CARD ENGINE
+  // ==========================================
 
-    if (countLabel) {
-      countLabel.textContent = `${personas.length} ${personas.length === 1 ? 'persona' : 'personas'}`;
-    }
+  function render3DCarousel() {
+    const wrapper = document.getElementById('persona-cards-wrapper');
+    if (!wrapper) return;
 
-    const itemsHtml = personas.map(p => {
-      const isSelected = p.id === currentPersonaId;
-      const displayName = p.name.trim() || 'Untitled';
-      const ageText = p.age ? `${p.age}` : (p.pronouns ? `${p.pronouns}` : 'No details');
-      return `
-        <button 
-          type="button" 
-          class="persona-pill group relative flex items-center gap-3 py-2 px-3.5 rounded-2xl border text-left shrink-0 transition-all duration-200 cursor-pointer ${
-            isSelected 
-              ? 'bg-purple-600/20 border-purple-500/60 text-white shadow-lg shadow-purple-950/40 ring-1 ring-purple-500/40' 
-              : 'bg-white/[0.03] border-white/5 text-slate-400 hover:text-slate-200 hover:bg-white/[0.06] hover:border-white/10'
-          }"
+    let cardsHtml = '';
+
+    // Render Persona Cards
+    personas.forEach((p, idx) => {
+      const isFlipped = !!flippedCards[p.id];
+      const displayName = escapeHtml(p.name || 'Untitled Persona');
+      const aboutText = escapeHtml(p.about || '');
+      const directivesText = escapeHtml(p.additionalInstructions || '');
+      const ageDisplay = p.age ? `${escapeHtml(p.age)} yrs` : 'Age unset';
+      const pronounsDisplay = p.pronouns ? escapeHtml(p.pronouns) : 'They/Them';
+      const boundDisplay = p.boundChatIds && p.boundChatIds.length > 0 ? `${p.boundChatIds.length} bound chats` : 'All chats';
+      const tokens = p.tokenCount || estimateTokens((p.about || '') + ' ' + (p.additionalInstructions || ''));
+
+      cardsHtml += `
+        <div 
+          class="persona-3d-card absolute w-[86%] max-w-[340px] sm:max-w-[370px] h-[520px] sm:h-[550px] preserve-3d will-change-transform select-none" 
+          data-index="${idx}" 
           data-id="${p.id}"
+          style="transition: transform 0.45s cubic-bezier(0.25, 1, 0.5, 1), opacity 0.45s, filter 0.45s;"
         >
-          <div class="relative w-8 h-8 rounded-full overflow-hidden bg-purple-950/40 border ${isSelected ? 'border-purple-400' : 'border-white/10'} shrink-0 flex items-center justify-center">
-            ${p.avatar ? `<img src="${p.avatar}" class="w-full h-full object-cover" />` : `<span class="text-xs font-bold text-purple-300">${(displayName.charAt(0) || 'U').toUpperCase()}</span>`}
-          </div>
-          <div class="min-w-0 pr-1">
-            <p class="persona-pill-name text-xs font-bold truncate max-w-[90px] sm:max-w-[120px] leading-tight">${displayName}</p>
-            <p class="text-[10px] text-slate-500 truncate leading-tight mt-0.5">${ageText}</p>
-          </div>
-          ${p.isDefault ? '<span class="ml-1 text-[9px] px-1.5 py-0.5 rounded-full bg-purple-500/30 text-purple-200 font-semibold border border-purple-400/20 shrink-0">Active</span>' : ''}
-        </button>
-      `;
-    }).join('');
+          <div 
+            class="persona-card-inner relative w-full h-full preserve-3d ${isFlipped ? 'rotate-y-180' : ''}" 
+            style="transform-style: preserve-3d; transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1);"
+          >
+            <!-- ================= FRONT: VIEWER (image_12.png) ================= -->
+            <div class="absolute inset-0 backface-hidden rounded-3xl p-5 flex flex-col justify-between border ${p.isActive ? 'border-purple-500/50 shadow-2xl shadow-purple-950/70 ring-1 ring-purple-500/30' : 'border-white/[0.08] shadow-2xl shadow-black/80'} bg-gradient-to-b from-[#161a2c]/98 via-[#121524]/98 to-[#0d0f1b]/98 backdrop-blur-xl overflow-hidden">
+              
+              <!-- Subtle Ambient Radial Glow -->
+              <div class="absolute -top-16 -right-16 w-44 h-44 rounded-full ${p.isActive ? 'bg-purple-600/20' : 'bg-white/[0.03]'} blur-3xl pointer-events-none"></div>
 
-    const addBtnHtml = `
-      <button 
-        type="button" 
-        id="btn-add-persona-carousel"
-        class="flex items-center gap-2 py-2 px-3.5 rounded-2xl border border-dashed border-white/15 bg-white/[0.01] hover:bg-white/[0.05] text-slate-400 hover:text-purple-300 text-xs font-semibold shrink-0 transition cursor-pointer"
-        title="Create new persona"
+              <!-- Top Status Bar -->
+              <div class="flex items-center justify-between z-10">
+                ${p.isActive ? `
+                  <div class="px-2.5 py-1 rounded-full bg-emerald-500/15 border border-emerald-500/30 text-emerald-300 text-[10px] font-bold flex items-center gap-1.5 shadow-sm">
+                    <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span>
+                    <span>Active in Roleplay</span>
+                  </div>
+                ` : `
+                  <button type="button" class="btn-card-activate px-2.5 py-1 rounded-full bg-white/[0.04] hover:bg-purple-600/20 border border-white/10 hover:border-purple-500/40 text-slate-300 hover:text-purple-300 text-[10px] font-semibold transition cursor-pointer" data-id="${p.id}">
+                    <span>Set as Active</span>
+                  </button>
+                `}
+
+                <div class="flex items-center gap-1.5">
+                  <div class="px-2 py-0.5 rounded-lg border text-[10px] font-mono font-medium ${tokens > 500 ? 'bg-amber-500/15 border-amber-500/40 text-amber-300 font-bold' : 'bg-white/[0.04] border-white/10 text-purple-300'}">
+                    ~${tokens} tok
+                  </div>
+                  <button type="button" class="btn-trigger-flip-edit w-7 h-7 rounded-xl bg-purple-600/20 hover:bg-purple-600 text-purple-300 hover:text-white border border-purple-500/30 flex items-center justify-center transition active:scale-95 cursor-pointer shadow-md" data-id="${p.id}" title="Edit Persona">
+                    <svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 3a2.85 2.83 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5Z"/><path d="m15 5 4 4"/></svg>
+                  </button>
+                </div>
+              </div>
+
+              <!-- Center Avatar & Identity -->
+              <div class="flex flex-col items-center text-center my-auto py-2 z-10">
+                <div class="relative w-20 h-20 sm:w-22 sm:h-22 rounded-full overflow-hidden border-2 ${p.isActive ? 'border-purple-400 ring-2 ring-purple-500/40 shadow-xl shadow-purple-900/60' : 'border-white/15'} bg-purple-950/40 flex items-center justify-center mb-3 transition">
+                  ${p.avatar ? `
+                    <img src="${p.avatar}" alt="${displayName}" class="w-full h-full object-cover" />
+                  ` : `
+                    <div class="w-full h-full flex items-center justify-center text-purple-300 font-bold text-2xl bg-gradient-to-tr from-purple-900/50 to-indigo-900/50">
+                      ${(displayName.charAt(0) || 'H').toUpperCase()}
+                    </div>
+                  `}
+                </div>
+
+                <h2 class="text-xl font-bold text-white tracking-tight truncate max-w-[260px]">${displayName}</h2>
+                
+                <!-- Badges Row -->
+                <div class="flex flex-wrap items-center justify-center gap-1.5 mt-2">
+                  <span class="px-2 py-0.5 rounded-lg bg-white/[0.04] border border-white/[0.06] text-[10px] font-medium text-slate-300">
+                    ${ageDisplay}
+                  </span>
+                  <span class="px-2 py-0.5 rounded-lg bg-purple-500/10 border border-purple-500/20 text-[10px] font-semibold text-purple-300">
+                    ${pronounsDisplay}
+                  </span>
+                  <span class="px-2 py-0.5 rounded-lg bg-white/[0.03] border border-white/[0.05] text-[10px] text-slate-400">
+                    ${boundDisplay}
+                  </span>
+                </div>
+              </div>
+
+              <!-- About & Directives Snippet Box -->
+              <div class="space-y-2 z-10">
+                <div class="bg-white/[0.02] border border-white/[0.06] rounded-2xl p-3 min-h-[75px] max-h-[110px] overflow-y-auto no-scrollbar">
+                  <div class="flex items-center justify-between text-[10px] font-bold uppercase tracking-wider text-purple-400/80 mb-1">
+                    <span>About Persona</span>
+                    <span class="text-[9px] text-slate-500 font-normal">Viewer</span>
+                  </div>
+                  <p class="text-xs text-slate-300 leading-relaxed line-clamp-3">
+                    ${aboutText || '<span class="italic text-slate-500">No description provided yet. Flip to customize.</span>'}
+                  </p>
+                </div>
+
+                ${directivesText ? `
+                  <div class="px-3 py-1.5 rounded-xl bg-purple-950/20 border border-purple-500/20 flex items-center justify-between text-[11px] text-purple-300">
+                    <span class="truncate max-w-[220px]">📌 ${directivesText}</span>
+                    <span class="text-[9px] text-purple-400/60 font-mono">Rule</span>
+                  </div>
+                ` : ''}
+              </div>
+
+              <!-- Card Front Footer Actions -->
+              <div class="pt-3 border-t border-white/[0.06] flex items-center gap-2 z-10">
+                ${p.isActive ? `
+                  <div class="flex-1 py-2 px-3 rounded-xl bg-emerald-500/10 border border-emerald-500/20 text-emerald-300 text-xs font-semibold text-center select-none">
+                    Currently Active ✓
+                  </div>
+                ` : `
+                  <button type="button" class="btn-card-activate flex-1 py-2 px-3 rounded-xl bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-500 hover:to-indigo-500 text-white text-xs font-semibold shadow-md shadow-purple-900/40 transition active:scale-95 cursor-pointer text-center" data-id="${p.id}">
+                    Set as Active
+                  </button>
+                `}
+                
+                <button type="button" class="btn-trigger-flip-edit py-2 px-3 rounded-xl bg-white/[0.04] hover:bg-white/[0.08] text-slate-300 hover:text-white border border-white/10 text-xs font-medium flex items-center justify-center gap-1.5 transition active:scale-95 cursor-pointer shrink-0" data-id="${p.id}">
+                  <svg class="w-3.5 h-3.5 text-purple-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 3a2.85 2.83 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5Z"/><path d="m15 5 4 4"/></svg>
+                  <span>Edit</span>
+                </button>
+              </div>
+
+            </div>
+
+            <!-- ================= BACK: EDITOR (FLIPPED, image_13.png) ================= -->
+            <div class="absolute inset-0 backface-hidden rotate-y-180 rounded-3xl p-4 sm:p-5 flex flex-col justify-between border border-purple-500/40 bg-gradient-to-b from-[#131626]/98 via-[#0f111e]/98 to-[#090b14]/98 backdrop-blur-2xl shadow-2xl overflow-y-auto no-scrollbar">
+              
+              <!-- Editor Header -->
+              <div class="flex items-center justify-between pb-2 border-b border-white/[0.06]">
+                <button type="button" class="btn-trigger-flip-back flex items-center gap-1 text-[11px] font-semibold text-purple-400 hover:text-purple-300 transition cursor-pointer" data-id="${p.id}">
+                  <svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m12 19-7-7 7-7"/><path d="M19 12H5"/></svg>
+                  <span>View Card</span>
+                </button>
+
+                <span class="text-xs font-bold text-white">Edit Persona</span>
+
+                <div class="live-token-pill px-2 py-0.5 rounded-full text-[10px] font-mono font-medium ${tokens > 500 ? 'bg-amber-500/20 text-amber-300 border border-amber-500/50' : 'bg-white/[0.04] text-purple-300 border border-white/10'}">
+                  ~${tokens} tok
+                </div>
+              </div>
+
+              <!-- Avatar Uploader with Camera Badge -->
+              <div class="flex flex-col items-center gap-1 py-1">
+                <div class="relative group cursor-pointer avatar-click-target" data-id="${p.id}" title="Tap to upload photo">
+                  <div class="w-16 h-16 rounded-full overflow-hidden border-2 border-purple-500/50 bg-purple-950/40 flex items-center justify-center shadow-lg shadow-purple-950/60 transition group-hover:border-purple-400">
+                    ${p.avatar ? `
+                      <img src="${p.avatar}" class="w-full h-full object-cover" />
+                    ` : `
+                      <span class="text-xl font-bold text-purple-400">${(displayName.charAt(0) || 'H').toUpperCase()}</span>
+                    `}
+                  </div>
+                  <!-- Camera Floating Badge -->
+                  <div class="absolute -bottom-0.5 -right-0.5 w-6 h-6 rounded-full bg-purple-600 border-2 border-[#121626] flex items-center justify-center text-white shadow-md transition group-active:scale-95">
+                    <svg class="w-3 h-3" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14.5 4h-5L7 7H4a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-3l-2.5-3z"/><circle cx="12" cy="13" r="3"/></svg>
+                  </div>
+                </div>
+                
+                <div class="flex items-center gap-2 mt-0.5">
+                  <button type="button" class="btn-trigger-upload text-[10px] font-medium text-purple-400 hover:text-purple-300 transition cursor-pointer" data-id="${p.id}">
+                    Tap to change
+                  </button>
+                  ${p.avatar ? `
+                    <span class="text-white/20 text-[10px]">•</span>
+                    <button type="button" class="btn-remove-avatar-target text-[10px] font-medium text-rose-400 hover:text-rose-300 transition cursor-pointer" data-id="${p.id}">
+                      Remove
+                    </button>
+                  ` : ''}
+                </div>
+              </div>
+
+              <!-- Form Inputs -->
+              <div class="space-y-2.5 my-1">
+                <!-- Name & Age -->
+                <div class="grid grid-cols-3 gap-2">
+                  <div class="col-span-2">
+                    <label class="block text-[10px] font-bold text-slate-400 mb-1">Name</label>
+                    <input 
+                      type="text" 
+                      class="card-edit-name w-full px-2.5 py-1.5 rounded-xl bg-white/[0.04] border border-white/10 text-white text-xs placeholder-slate-600 focus:outline-none focus:border-purple-500 focus:ring-1 focus:ring-purple-500 transition" 
+                      placeholder="e.g. Hossein" 
+                      value="${displayName}" 
+                    />
+                  </div>
+                  <div>
+                    <label class="block text-[10px] font-bold text-slate-400 mb-1">Age</label>
+                    <input 
+                      type="text" 
+                      class="card-edit-age w-full px-2.5 py-1.5 rounded-xl bg-white/[0.04] border border-white/10 text-white text-xs placeholder-slate-600 focus:outline-none focus:border-purple-500 focus:ring-1 focus:ring-purple-500 transition" 
+                      placeholder="26" 
+                      value="${escapeHtml(p.age || '')}" 
+                    />
+                  </div>
+                </div>
+
+                <!-- Pronouns Quick Chip Selectors -->
+                <div>
+                  <div class="flex items-center justify-between mb-1">
+                    <label class="block text-[10px] font-bold text-slate-400">Pronouns</label>
+                    <div class="flex items-center gap-1">
+                      <button type="button" class="pronoun-chip px-2 py-0.5 rounded-lg text-[9px] font-medium transition cursor-pointer" data-val="He/Him">He/Him</button>
+                      <button type="button" class="pronoun-chip px-2 py-0.5 rounded-lg text-[9px] font-medium transition cursor-pointer" data-val="She/Her">She/Her</button>
+                      <button type="button" class="pronoun-chip px-2 py-0.5 rounded-lg text-[9px] font-medium transition cursor-pointer" data-val="They/Them">They/Them</button>
+                    </div>
+                  </div>
+                  <input 
+                    type="text" 
+                    class="card-edit-pronouns w-full px-2.5 py-1.5 rounded-xl bg-white/[0.04] border border-white/10 text-white text-xs placeholder-slate-600 focus:outline-none focus:border-purple-500 focus:ring-1 focus:ring-purple-500 transition" 
+                    placeholder="He/Him or custom" 
+                    value="${escapeHtml(p.pronouns || '')}" 
+                  />
+                </div>
+
+                <!-- About Persona with AI Generate -->
+                <div>
+                  <div class="flex items-center justify-between mb-1">
+                    <label class="block text-[10px] font-bold text-slate-400">About Persona</label>
+                    <button 
+                      type="button" 
+                      class="btn-ai-generate px-2 py-0.5 rounded-lg bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-500 hover:to-indigo-500 text-white text-[9px] font-bold flex items-center gap-1 shadow-sm active:scale-95 transition cursor-pointer" 
+                      data-id="${p.id}"
+                    >
+                      <span>AI Generate ✨</span>
+                    </button>
+                  </div>
+                  <textarea 
+                    rows="3" 
+                    class="card-edit-about w-full px-2.5 py-1.5 rounded-xl bg-white/[0.04] border border-white/10 text-white text-xs placeholder-slate-600 focus:outline-none focus:border-purple-500 focus:ring-1 focus:ring-purple-500 transition resize-none leading-relaxed" 
+                    placeholder="Who are you in roleplay? Voice, appearance, demeanor..."
+                  >${aboutText}</textarea>
+                </div>
+
+                <!-- Accordion: Additional Instructions -->
+                <details class="group rounded-xl border border-white/[0.06] bg-white/[0.02] p-2 text-xs">
+                  <summary class="flex items-center justify-between cursor-pointer text-[10px] font-semibold text-slate-400 group-hover:text-slate-300 transition list-none">
+                    <span>Additional instructions (optional)</span>
+                    <svg class="w-3.5 h-3.5 text-slate-500 group-open:rotate-180 transition-transform" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg>
+                  </summary>
+                  <div class="pt-2">
+                    <textarea 
+                      rows="2" 
+                      class="card-edit-directives w-full px-2.5 py-1.5 rounded-xl bg-white/[0.04] border border-white/10 text-white text-xs placeholder-slate-600 focus:outline-none focus:border-purple-500 focus:ring-1 focus:ring-purple-500 transition resize-none" 
+                      placeholder="e.g. Never narrate actions for Hossein. Write in 3rd person."
+                    >${directivesText}</textarea>
+                  </div>
+                </details>
+
+                <!-- Set as Active Checkbox -->
+                <div class="flex items-center justify-between px-1 pt-0.5">
+                  <label class="text-[11px] font-medium text-slate-300 cursor-pointer" for="toggle-active-${p.id}">
+                    Active for roleplay chats
+                  </label>
+                  <input 
+                    type="checkbox" 
+                    id="toggle-active-${p.id}" 
+                    class="card-edit-active-toggle rounded border-white/20 text-purple-600 focus:ring-purple-500 cursor-pointer" 
+                    ${p.isActive ? 'checked' : ''} 
+                  />
+                </div>
+              </div>
+
+              <!-- Editor Actions -->
+              <div class="pt-2 border-t border-white/[0.06] flex items-center justify-between gap-2">
+                ${personas.length > 1 ? `
+                  <button type="button" class="btn-card-delete px-3 py-1.5 rounded-xl text-rose-400 hover:text-rose-300 hover:bg-rose-500/10 text-xs font-semibold transition cursor-pointer flex items-center gap-1 active:scale-95" data-id="${p.id}">
+                    <svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18"/><path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"/><path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"/></svg>
+                    <span>Delete</span>
+                  </button>
+                ` : `<div></div>`}
+
+                <div class="flex items-center gap-1.5">
+                  <button type="button" class="btn-trigger-flip-back px-3 py-1.5 rounded-xl text-slate-400 hover:text-white text-xs font-medium transition cursor-pointer" data-id="${p.id}">
+                    Cancel
+                  </button>
+                  <button type="button" class="btn-card-save px-4 py-1.5 rounded-xl bg-purple-600 hover:bg-purple-500 text-white text-xs font-bold transition active:scale-95 cursor-pointer shadow-md shadow-purple-950/60" data-id="${p.id}">
+                    Save
+                  </button>
+                </div>
+              </div>
+
+            </div>
+
+          </div>
+        </div>
+      `;
+    });
+
+    // Final Slide: "+ Create New Persona Trigger Slide"
+    cardsHtml += `
+      <div 
+        class="persona-3d-card absolute w-[86%] max-w-[340px] sm:max-w-[370px] h-[520px] sm:h-[550px] preserve-3d will-change-transform select-none cursor-pointer group" 
+        data-index="${personas.length}" 
+        data-trigger-new="true"
+        style="transition: transform 0.45s cubic-bezier(0.25, 1, 0.5, 1), opacity 0.45s, filter 0.45s;"
       >
-        <span class="w-6 h-6 rounded-full bg-white/5 flex items-center justify-center text-slate-300 font-bold text-xs">+</span>
-        <span>Add</span>
-      </button>
+        <div class="w-full h-full rounded-3xl border-2 border-dashed border-purple-500/30 group-hover:border-purple-400/70 bg-gradient-to-b from-purple-950/15 via-[#121524]/70 to-[#0e101a]/80 backdrop-blur-xl p-6 flex flex-col items-center justify-center text-center transition-all duration-300 shadow-2xl group-hover:shadow-purple-950/40">
+          
+          <div class="w-16 h-16 rounded-2xl bg-purple-600/20 group-hover:bg-purple-600/30 border border-purple-500/40 flex items-center justify-center text-purple-300 group-hover:text-purple-200 group-hover:scale-110 transition duration-300 shadow-lg shadow-purple-950/50 mb-4">
+            <svg class="w-7 h-7" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="M12 5v14"/></svg>
+          </div>
+
+          <h3 class="text-lg font-bold text-white mb-1.5">Create New Persona</h3>
+          <p class="text-xs text-slate-400 max-w-[220px] leading-relaxed mb-5">
+            Add a distinctive identity with unique traits and directives for rich roleplay journeys.
+          </p>
+
+          <span class="px-4 py-2 rounded-xl bg-purple-600 hover:bg-purple-500 text-white text-xs font-bold transition shadow-md shadow-purple-950/60 group-hover:scale-105 active:scale-95">
+            + Add Persona
+          </span>
+
+        </div>
+      </div>
     `;
 
-    list.innerHTML = itemsHtml + addBtnHtml;
+    wrapper.innerHTML = cardsHtml;
 
-    list.querySelectorAll('.persona-pill').forEach(btn => {
-      btn.addEventListener('click', () => {
-        const id = btn.getAttribute('data-id');
-        if (id) {
-          currentPersonaId = id;
-          personas.forEach(x => {
-            x.isDefault = (x.id === currentPersonaId);
-          });
-          savePersonas();
-          renderPillList();
-          fillForm();
-          const p = personas.find(x => x.id === currentPersonaId);
-          showToast(`Active persona: ${p?.name || 'Persona'}`, 'success');
+    attachCardListeners();
+    update3DCardTransforms();
+  }
+
+  function update3DCardTransforms() {
+    const cards = document.querySelectorAll<HTMLElement>('.persona-3d-card');
+    const totalSlides = personas.length + 1;
+
+    cards.forEach((card) => {
+      const idx = parseInt(card.getAttribute('data-index') || '0', 10);
+      const offset = idx - activeCardIndex;
+
+      let transformStr = '';
+      let zIndex = 1;
+      let opacity = 0;
+      let pointerEvents = 'none';
+      let filterStr = 'none';
+
+      if (offset === 0) {
+        transformStr = 'translate3d(0, 0, 0) scale(1) rotateY(0deg)';
+        zIndex = 20;
+        opacity = 1;
+        pointerEvents = 'auto';
+        filterStr = 'drop-shadow(0 20px 25px rgba(0,0,0,0.7))';
+      } else if (offset === 1) {
+        transformStr = 'translate3d(58%, 0, -120px) scale(0.85) rotateY(-24deg)';
+        zIndex = 10;
+        opacity = 0.55;
+        pointerEvents = 'auto';
+        filterStr = 'drop-shadow(0 15px 20px rgba(0,0,0,0.5)) blur(0.4px)';
+      } else if (offset === -1) {
+        transformStr = 'translate3d(-58%, 0, -120px) scale(0.85) rotateY(24deg)';
+        zIndex = 10;
+        opacity = 0.55;
+        pointerEvents = 'auto';
+        filterStr = 'drop-shadow(0 15px 20px rgba(0,0,0,0.5)) blur(0.4px)';
+      } else if (offset > 1) {
+        transformStr = `translate3d(${58 + (offset - 1) * 35}%, 0, -240px) scale(0.7) rotateY(-32deg)`;
+        zIndex = Math.max(1, 10 - offset);
+        opacity = 0;
+        pointerEvents = 'none';
+      } else if (offset < -1) {
+        transformStr = `translate3d(${-58 + (offset + 1) * 35}%, 0, -240px) scale(0.7) rotateY(32deg)`;
+        zIndex = Math.max(1, 10 + offset);
+        opacity = 0;
+        pointerEvents = 'none';
+      }
+
+      card.style.transform = transformStr;
+      card.style.zIndex = String(zIndex);
+      card.style.opacity = String(opacity);
+      card.style.pointerEvents = pointerEvents;
+      card.style.filter = filterStr;
+    });
+
+    const pageIndicator = document.getElementById('carousel-page-indicator');
+    if (pageIndicator) {
+      pageIndicator.textContent = `${activeCardIndex + 1} / ${totalSlides}`;
+    }
+
+    const badge = document.getElementById('personas-count-badge');
+    if (badge) {
+      badge.textContent = `${personas.length} ${personas.length === 1 ? 'Persona' : 'Personas'}`;
+    }
+
+    renderDots();
+  }
+
+  function renderDots() {
+    const container = document.getElementById('carousel-dots');
+    if (!container) return;
+    const totalSlides = personas.length + 1;
+
+    let dotsHtml = '';
+    for (let i = 0; i < totalSlides; i++) {
+      const isCur = i === activeCardIndex;
+      const isNew = i === personas.length;
+      dotsHtml += `
+        <button 
+          type="button" 
+          class="carousel-dot h-2 rounded-full transition-all duration-300 cursor-pointer ${
+            isCur 
+              ? 'w-6 bg-purple-500 shadow-md shadow-purple-500/50' 
+              : isNew 
+              ? 'w-2 bg-purple-400/40 hover:bg-purple-400/70' 
+              : 'w-2 bg-white/20 hover:bg-white/40'
+          }" 
+          data-index="${i}" 
+          title="${isNew ? 'New Persona' : 'Persona ' + (i + 1)}"
+        ></button>
+      `;
+    }
+    container.innerHTML = dotsHtml;
+
+    container.querySelectorAll('.carousel-dot').forEach(btn => {
+      btn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        const idx = parseInt(btn.getAttribute('data-index') || '0', 10);
+        goToCard(idx);
+      });
+    });
+  }
+
+  function goToCard(index: number) {
+    const totalSlides = personas.length + 1;
+    const target = Math.max(0, Math.min(index, totalSlides - 1));
+    if (target !== activeCardIndex) {
+      activeCardIndex = target;
+      update3DCardTransforms();
+    }
+  }
+
+  function flipCard(personaId: string, isEditing: boolean) {
+    flippedCards[personaId] = isEditing;
+    const cardEl = document.querySelector(`.persona-3d-card[data-id="${personaId}"]`);
+    if (!cardEl) return;
+    const innerEl = cardEl.querySelector('.persona-card-inner') as HTMLElement;
+    if (!innerEl) return;
+
+    if (isEditing) {
+      innerEl.classList.add('rotate-y-180');
+      setTimeout(() => {
+        const nameInput = cardEl.querySelector('.card-edit-name') as HTMLInputElement;
+        if (nameInput && !nameInput.value) nameInput.focus();
+      }, 300);
+    } else {
+      innerEl.classList.remove('rotate-y-180');
+    }
+  }
+
+  function setActivePersona(personaId: string) {
+    personas.forEach(p => {
+      p.isActive = (p.id === personaId);
+      p.isDefault = p.isActive;
+    });
+    savePersonas();
+    render3DCarousel();
+    const active = personas.find(p => p.id === personaId);
+    showToast(`Active persona: ${active?.name || 'Persona'}`, 'success');
+  }
+
+  function createNewPersona() {
+    const newP = normalizePersona({
+      id: 'p_' + Date.now(),
+      name: '',
+      age: '',
+      pronouns: '',
+      avatar: '',
+      about: '',
+      additionalInstructions: '',
+      isActive: true
+    }, personas.length);
+
+    personas.forEach(p => { p.isActive = false; p.isDefault = false; });
+    personas.push(newP);
+
+    activeCardIndex = personas.length - 1;
+    flippedCards[newP.id] = true;
+
+    savePersonas();
+    render3DCarousel();
+
+    setTimeout(() => {
+      const cardEl = document.querySelector(`.persona-3d-card[data-id="${newP.id}"]`);
+      const nameInput = cardEl?.querySelector('.card-edit-name') as HTMLInputElement;
+      nameInput?.focus();
+    }, 350);
+
+    showToast('New persona created — fill in details', 'info');
+  }
+
+  function saveCardForm(personaId: string) {
+    const p = personas.find(x => x.id === personaId);
+    if (!p) return;
+
+    const cardEl = document.querySelector(`.persona-3d-card[data-id="${personaId}"]`);
+    if (!cardEl) return;
+
+    const nameInput = cardEl.querySelector('.card-edit-name') as HTMLInputElement;
+    const ageInput = cardEl.querySelector('.card-edit-age') as HTMLInputElement;
+    const pronounsInput = cardEl.querySelector('.card-edit-pronouns') as HTMLInputElement;
+    const aboutTextarea = cardEl.querySelector('.card-edit-about') as HTMLTextAreaElement;
+    const directivesTextarea = cardEl.querySelector('.card-edit-directives') as HTMLTextAreaElement;
+    const activeToggle = cardEl.querySelector('.card-edit-active-toggle') as HTMLInputElement;
+
+    p.name = nameInput?.value.trim() || '';
+    p.age = ageInput?.value.trim() || '';
+    p.pronouns = pronounsInput?.value.trim() || '';
+    p.about = aboutTextarea?.value.trim() || '';
+    p.additionalInstructions = directivesTextarea?.value.trim() || '';
+
+    if (activeToggle?.checked) {
+      personas.forEach(x => { x.isActive = (x.id === personaId); x.isDefault = x.isActive; });
+    }
+
+    p.tokenCount = estimateTokens((p.about || '') + ' ' + (p.additionalInstructions || ''));
+
+    savePersonas();
+    flipCard(personaId, false);
+    setTimeout(() => {
+      render3DCarousel();
+    }, 300);
+    showToast('Persona saved! ✨', 'success');
+  }
+
+  async function deleteCardPersona(personaId: string) {
+    if (personas.length <= 1) {
+      showToast('You must keep at least one persona profile', 'warning');
+      return;
+    }
+    const p = personas.find(x => x.id === personaId);
+    const ok = await showConfirm('Delete Persona', `Are you sure you want to delete "${p?.name || 'this persona'}"?`);
+    if (!ok) return;
+
+    personas = personas.filter(x => x.id !== personaId);
+    if (!personas.some(x => x.isActive)) {
+      personas[0].isActive = true;
+      personas[0].isDefault = true;
+    }
+
+    activeCardIndex = Math.min(activeCardIndex, personas.length - 1);
+    savePersonas();
+    render3DCarousel();
+    showToast('Persona deleted', 'info');
+  }
+
+  async function handleAiGenerate(personaId: string, btn: HTMLButtonElement) {
+    const cardEl = document.querySelector(`.persona-3d-card[data-id="${personaId}"]`);
+    if (!cardEl) return;
+
+    const nameInput = cardEl.querySelector('.card-edit-name') as HTMLInputElement;
+    const ageInput = cardEl.querySelector('.card-edit-age') as HTMLInputElement;
+    const pronounsInput = cardEl.querySelector('.card-edit-pronouns') as HTMLInputElement;
+    const aboutTextarea = cardEl.querySelector('.card-edit-about') as HTMLTextAreaElement;
+
+    const nameVal = nameInput?.value.trim() || 'Roleplayer';
+    const ageVal = ageInput?.value.trim() || '';
+    const pronounsVal = pronounsInput?.value.trim() || '';
+    const currentPrompt = aboutTextarea?.value.trim() || '';
+
+    const originalContent = btn.innerHTML;
+    btn.disabled = true;
+    btn.innerHTML = `<span class="animate-spin inline-block w-2.5 h-2.5 border-2 border-white border-t-transparent rounded-full mr-1"></span><span>Writing...</span>`;
+
+    try {
+      const res = await fetch('/api/enhance-persona', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          name: nameVal,
+          age: ageVal,
+          pronouns: pronounsVal,
+          prompt: currentPrompt
+        })
+      });
+
+      const data = await res.json().catch(() => ({}));
+      if (data && data.ok && data.enhanced) {
+        if (aboutTextarea) {
+          aboutTextarea.value = data.enhanced;
+          aboutTextarea.dispatchEvent(new Event('input'));
         }
+        showToast('AI Persona description enhanced! ✨', 'success');
+      } else {
+        throw new Error('Enhance failed');
+      }
+    } catch (err) {
+      console.warn('AI enhancement fallback:', err);
+      if (aboutTextarea) {
+        const fallback = `I am ${nameVal}, carrying a poised and watchful presence. Behind my measured words lies an adventurous spirit, always searching for the next revelation.`;
+        aboutTextarea.value = fallback;
+        aboutTextarea.dispatchEvent(new Event('input'));
+        showToast('Generated description from local template ✨', 'info');
+      }
+    } finally {
+      btn.disabled = false;
+      btn.innerHTML = originalContent;
+    }
+  }
+
+  function setupPronounChips(cardEl: HTMLElement) {
+    const chips = cardEl.querySelectorAll('.pronoun-chip');
+    const pronounsInput = cardEl.querySelector('.card-edit-pronouns') as HTMLInputElement;
+    if (!pronounsInput) return;
+
+    chips.forEach(chip => {
+      chip.addEventListener('click', (e) => {
+        e.preventDefault();
+        const val = chip.getAttribute('data-val') || '';
+        if (pronounsInput.value.toLowerCase() === val.toLowerCase()) {
+          pronounsInput.value = '';
+        } else {
+          pronounsInput.value = val;
+        }
+        updateChipStyles();
       });
     });
 
-    document.getElementById('btn-add-persona-carousel')?.addEventListener('click', () => {
+    pronounsInput.addEventListener('input', updateChipStyles);
+
+    function updateChipStyles() {
+      const current = (pronounsInput.value || '').trim().toLowerCase();
+      chips.forEach(chip => {
+        const cVal = (chip.getAttribute('data-val') || '').toLowerCase();
+        if (current === cVal) {
+          chip.className = 'pronoun-chip px-2 py-0.5 rounded-lg text-[9px] font-semibold bg-purple-600 text-white border border-purple-400 transition cursor-pointer active:scale-95';
+        } else {
+          chip.className = 'pronoun-chip px-2 py-0.5 rounded-lg text-[9px] font-medium bg-white/[0.04] text-slate-400 border border-white/10 hover:border-white/20 transition cursor-pointer active:scale-95';
+        }
+      });
+    }
+
+    updateChipStyles();
+  }
+
+  function setupTokenCounter(cardEl: HTMLElement) {
+    const aboutTextarea = cardEl.querySelector('.card-edit-about') as HTMLTextAreaElement;
+    const directivesTextarea = cardEl.querySelector('.card-edit-directives') as HTMLTextAreaElement;
+    const tokenPill = cardEl.querySelector('.live-token-pill') as HTMLElement;
+    if (!tokenPill) return;
+
+    function updateTokens() {
+      const text = (aboutTextarea?.value || '') + ' ' + (directivesTextarea?.value || '');
+      const tokens = estimateTokens(text);
+
+      tokenPill.textContent = `~${tokens} tok`;
+
+      if (tokens > 500) {
+        tokenPill.className = 'live-token-pill px-2 py-0.5 rounded-full text-[10px] font-mono font-bold bg-amber-500/20 text-amber-300 border border-amber-500/50 shadow-sm shadow-amber-950/60 animate-pulse';
+      } else if (tokens > 300) {
+        tokenPill.className = 'live-token-pill px-2 py-0.5 rounded-full text-[10px] font-mono font-medium bg-purple-500/15 text-purple-300 border border-purple-500/30';
+      } else {
+        tokenPill.className = 'live-token-pill px-2 py-0.5 rounded-full text-[10px] font-mono font-medium bg-white/[0.04] text-slate-300 border border-white/10';
+      }
+    }
+
+    aboutTextarea?.addEventListener('input', updateTokens);
+    directivesTextarea?.addEventListener('input', updateTokens);
+    updateTokens();
+  }
+
+  function triggerAvatarUpload(personaId: string) {
+    targetAvatarUploadPersonaId = personaId;
+    const fileInput = document.getElementById('avatar-file-input') as HTMLInputElement;
+    if (fileInput) {
+      fileInput.value = '';
+      fileInput.click();
+    }
+  }
+
+  function attachCardListeners() {
+    const cards = document.querySelectorAll<HTMLElement>('.persona-3d-card');
+    cards.forEach(card => {
+      const idx = parseInt(card.getAttribute('data-index') || '0', 10);
+      const isNewTrigger = card.getAttribute('data-trigger-new') === 'true';
+      const personaId = card.getAttribute('data-id') || '';
+
+      // Sibling click brings to center
+      card.addEventListener('click', (e) => {
+        const target = e.target as HTMLElement;
+        if (target.closest('button, input, textarea, a, details, label')) return;
+
+        if (isNewTrigger) {
+          if (idx === activeCardIndex) {
+            createNewPersona();
+          } else {
+            goToCard(idx);
+          }
+          return;
+        }
+
+        if (idx !== activeCardIndex) {
+          goToCard(idx);
+        }
+      });
+
+      if (isNewTrigger) {
+        card.querySelector('span')?.addEventListener('click', (e) => {
+          e.stopPropagation();
+          createNewPersona();
+        });
+        return;
+      }
+
+      // Flip to edit buttons
+      card.querySelectorAll('.btn-trigger-flip-edit').forEach(btn => {
+        btn.addEventListener('click', (e) => {
+          e.stopPropagation();
+          goToCard(idx);
+          flipCard(personaId, true);
+        });
+      });
+
+      // Flip back to viewer buttons
+      card.querySelectorAll('.btn-trigger-flip-back').forEach(btn => {
+        btn.addEventListener('click', (e) => {
+          e.stopPropagation();
+          flipCard(personaId, false);
+        });
+      });
+
+      // Quick activate
+      card.querySelectorAll('.btn-card-activate').forEach(btn => {
+        btn.addEventListener('click', (e) => {
+          e.stopPropagation();
+          setActivePersona(personaId);
+        });
+      });
+
+      // Avatar upload triggers
+      card.querySelectorAll('.avatar-click-target, .btn-trigger-upload').forEach(el => {
+        el.addEventListener('click', (e) => {
+          e.stopPropagation();
+          triggerAvatarUpload(personaId);
+        });
+      });
+
+      // Remove avatar button
+      card.querySelector('.btn-remove-avatar-target')?.addEventListener('click', (e) => {
+        e.stopPropagation();
+        const p = personas.find(x => x.id === personaId);
+        if (p) {
+          p.avatar = '';
+          savePersonas();
+          render3DCarousel();
+          showToast('Photo removed', 'info');
+        }
+      });
+
+      // AI Generate
+      card.querySelector('.btn-ai-generate')?.addEventListener('click', (e) => {
+        e.stopPropagation();
+        handleAiGenerate(personaId, e.currentTarget as HTMLButtonElement);
+      });
+
+      // Pronoun chips
+      setupPronounChips(card);
+
+      // Live token counter
+      setupTokenCounter(card);
+
+      // Save persona
+      card.querySelector('.btn-card-save')?.addEventListener('click', (e) => {
+        e.stopPropagation();
+        saveCardForm(personaId);
+      });
+
+      // Delete persona
+      card.querySelector('.btn-card-delete')?.addEventListener('click', (e) => {
+        e.stopPropagation();
+        deleteCardPersona(personaId);
+      });
+    });
+  }
+
+  function setupGestures() {
+    const stage = document.getElementById('persona-carousel-stage');
+    if (!stage) return;
+
+    let startX = 0;
+    let startY = 0;
+    let isDown = false;
+
+    stage.addEventListener('touchstart', (e) => {
+      startX = e.touches[0].clientX;
+      startY = e.touches[0].clientY;
+      isDown = true;
+    }, { passive: true });
+
+    stage.addEventListener('touchend', (e) => {
+      if (!isDown) return;
+      isDown = false;
+      const endX = e.changedTouches[0].clientX;
+      const endY = e.changedTouches[0].clientY;
+      const diffX = endX - startX;
+      const diffY = endY - startY;
+
+      if (Math.abs(diffX) > 40 && Math.abs(diffX) > Math.abs(diffY)) {
+        if (diffX < 0) {
+          goToCard(activeCardIndex + 1);
+        } else {
+          goToCard(activeCardIndex - 1);
+        }
+      }
+    }, { passive: true });
+
+    // Desktop mouse drag
+    let mouseStartX = 0;
+    let isMouseDown = false;
+
+    stage.addEventListener('mousedown', (e) => {
+      const target = e.target as HTMLElement;
+      if (target.closest('input, textarea, button, select, label, details')) return;
+      isMouseDown = true;
+      mouseStartX = e.clientX;
+    });
+
+    window.addEventListener('mouseup', (e) => {
+      if (!isMouseDown) return;
+      isMouseDown = false;
+      const diffX = e.clientX - mouseStartX;
+      if (Math.abs(diffX) > 45) {
+        if (diffX < 0) {
+          goToCard(activeCardIndex + 1);
+        } else {
+          goToCard(activeCardIndex - 1);
+        }
+      }
+    });
+
+    // Keyboard navigation
+    window.addEventListener('keydown', (e) => {
+      const personasView = document.getElementById('view-personas');
+      if (!personasView || personasView.classList.contains('hidden')) return;
+      const activeEl = document.activeElement;
+      if (activeEl && (activeEl.tagName === 'INPUT' || activeEl.tagName === 'TEXTAREA')) return;
+
+      if (e.key === 'ArrowRight') {
+        goToCard(activeCardIndex + 1);
+      } else if (e.key === 'ArrowLeft') {
+        goToCard(activeCardIndex - 1);
+      }
+    });
+
+    // Prev / Next button listeners
+    document.getElementById('carousel-btn-prev')?.addEventListener('click', () => {
+      goToCard(activeCardIndex - 1);
+    });
+    document.getElementById('carousel-btn-next')?.addEventListener('click', () => {
+      goToCard(activeCardIndex + 1);
+    });
+
+    // Global "+ New Persona" button in top bar
+    document.getElementById('btn-carousel-add-new')?.addEventListener('click', () => {
       createNewPersona();
     });
   }
 
-  function fillForm() {
-    const p = personas.find(x => x.id === currentPersonaId) || personas[0];
-    if (!p) return;
+  // File input change listener for Base64 image
+  const globalAvatarFileInput = document.getElementById('avatar-file-input') as HTMLInputElement;
+  globalAvatarFileInput?.addEventListener('change', () => {
+    const file = globalAvatarFileInput.files?.[0];
+    if (!file || !targetAvatarUploadPersonaId) return;
 
-    const nameInput = document.getElementById('persona-name') as HTMLInputElement;
-    const ageInput = document.getElementById('persona-age') as HTMLInputElement;
-    const pronounsInput = document.getElementById('persona-pronouns') as HTMLInputElement;
-    const aboutInput = document.getElementById('persona-about') as HTMLTextAreaElement;
-    const directivesInput = document.getElementById('persona-directives') as HTMLTextAreaElement;
-    const avatarImg = document.getElementById('persona-avatar-img') as HTMLImageElement;
-    const avatarPlaceholder = document.getElementById('persona-avatar-placeholder');
-    const removeBtn = document.getElementById('btn-remove-avatar');
-    const deleteBtn = document.getElementById('btn-delete-persona');
+    if (file.size > 4 * 1024 * 1024) {
+      showToast('Image size exceeds 4MB limit', 'warning');
+      return;
+    }
 
-    if (nameInput) nameInput.value = p.name || '';
-    if (ageInput) ageInput.value = p.age || '';
-    if (pronounsInput) pronounsInput.value = p.pronouns || '';
-    if (aboutInput) aboutInput.value = p.bio || '';
-    if (directivesInput) directivesInput.value = p.directives || '';
-
-    if (avatarImg && avatarPlaceholder && removeBtn) {
-      if (p.avatar) {
-        avatarImg.src = p.avatar;
-        avatarImg.classList.remove('hidden');
-        avatarPlaceholder.classList.add('hidden');
-        removeBtn.classList.remove('hidden');
-      } else {
-        avatarImg.src = '';
-        avatarImg.classList.add('hidden');
-        avatarPlaceholder.classList.remove('hidden');
-        removeBtn.classList.add('hidden');
+    const reader = new FileReader();
+    reader.onload = (e) => {
+      const base64 = e.target?.result as string;
+      const p = personas.find(x => x.id === targetAvatarUploadPersonaId);
+      if (p) {
+        p.avatar = base64;
+        savePersonas();
+        render3DCarousel();
+        showToast('Avatar photo updated', 'success');
       }
-    }
-
-    const isGlobalEnabled = (localStorage.getItem('aetheria_persona_enabled') !== 'false');
-    const statusBadge = document.getElementById('persona-status-badge');
-    const statusBadgeText = document.getElementById('persona-status-badge-text');
-
-    if (statusBadge && statusBadgeText) {
-      if (isGlobalEnabled) {
-        statusBadge.className = 'px-3 py-1.5 rounded-xl bg-purple-500/15 border border-purple-500/30 text-purple-300 text-xs font-semibold flex items-center gap-1.5 select-none';
-        statusBadgeText.textContent = 'Active for Chat';
-      } else {
-        statusBadge.className = 'px-3 py-1.5 rounded-xl bg-white/5 border border-white/10 text-slate-500 text-xs font-medium flex items-center gap-1.5 select-none';
-        statusBadgeText.textContent = 'Paused (Chats Off)';
-      }
-    }
-
-    if (deleteBtn) {
-      deleteBtn.style.display = (personas.length > 1) ? 'flex' : 'none';
-    }
-  }
+    };
+    reader.readAsDataURL(file);
+  });
 
   // Setup Event Handlers
   document.addEventListener('DOMContentLoaded', () => {
     loadPersonas();
-    renderPillList();
-    fillForm();
+    render3DCarousel();
+    setupGestures();
     updateHubProfileSummary();
 
     // ==========================================
@@ -1375,6 +2096,9 @@ import {
         if (id === targetId) {
           el.classList.remove('hidden');
           window.scrollTo({ top: 0, behavior: 'instant' });
+          if (id === 'view-personas') {
+            render3DCarousel();
+          }
         } else {
           el.classList.add('hidden');
         }
@@ -1448,9 +2172,9 @@ import {
       }
       if (toggleIcon) {
         if (enabled) {
-          toggleIcon.className = 'w-9 h-9 rounded-xl bg-purple-600/20 border border-purple-500/30 flex items-center justify-center text-purple-300 transition';
+          toggleIcon.className = 'w-9 h-9 rounded-xl bg-purple-600/20 border border-purple-500/30 flex items-center justify-center text-purple-300 transition shrink-0';
         } else {
-          toggleIcon.className = 'w-9 h-9 rounded-xl bg-white/5 border border-white/10 flex items-center justify-center text-slate-500 transition';
+          toggleIcon.className = 'w-9 h-9 rounded-xl bg-white/5 border border-white/10 flex items-center justify-center text-slate-500 transition shrink-0';
         }
       }
     }
@@ -1464,136 +2188,10 @@ import {
         const isEnabled = masterToggle.checked;
         localStorage.setItem('aetheria_persona_enabled', isEnabled ? 'true' : 'false');
         updateToggleUI(isEnabled);
-        fillForm();
+        render3DCarousel();
         showToast(isEnabled ? 'Personas enabled in chats' : 'Personas disabled. Using scenario default', isEnabled ? 'success' : 'info');
       });
     }
-
-    // Avatar Click Zone & Touch Trigger
-    const avatarZone = document.getElementById('avatar-click-zone');
-    const avatarTextBtn = document.getElementById('btn-trigger-avatar-text');
-    const fileInput = document.getElementById('avatar-file-input') as HTMLInputElement;
-
-    avatarZone?.addEventListener('click', () => {
-      fileInput?.click();
-    });
-    avatarTextBtn?.addEventListener('click', () => {
-      fileInput?.click();
-    });
-
-    fileInput?.addEventListener('change', () => {
-      const file = fileInput.files?.[0];
-      if (!file) return;
-
-      const reader = new FileReader();
-      reader.onload = (e) => {
-        const dataUrl = e.target?.result as string;
-        const p = personas.find(x => x.id === currentPersonaId);
-        if (p) {
-          p.avatar = dataUrl;
-          savePersonas();
-          fillForm();
-          renderPillList();
-          showToast('Photo updated', 'success');
-        }
-      };
-      reader.readAsDataURL(file);
-    });
-
-    // Remove Photo
-    document.getElementById('btn-remove-avatar')?.addEventListener('click', (e) => {
-      e.stopPropagation();
-      const p = personas.find(x => x.id === currentPersonaId);
-      if (p) {
-        p.avatar = '';
-        savePersonas();
-        fillForm();
-        renderPillList();
-        showToast('Photo removed');
-      }
-    });
-
-    // Live update card title as user types
-    const nameInput = document.getElementById('persona-name') as HTMLInputElement;
-    nameInput?.addEventListener('input', () => {
-      const p = personas.find(x => x.id === currentPersonaId);
-      if (p) {
-        p.name = nameInput.value;
-        const pillText = document.querySelector(`.persona-pill[data-id="${p.id}"] .persona-pill-name`);
-        if (pillText) {
-          pillText.textContent = nameInput.value.trim() || 'Untitled';
-        }
-        updateHubProfileSummary();
-      }
-    });
-
-    // New Persona Creation Logic
-    function createNewPersona() {
-      personas.forEach(x => { x.isDefault = false; });
-      const newP: Persona = {
-        id: 'p_' + Date.now(),
-        name: '',
-        age: '',
-        pronouns: '',
-        avatar: '',
-        bio: '',
-        directives: '',
-        isDefault: true
-      };
-      personas.push(newP);
-      currentPersonaId = newP.id;
-      savePersonas();
-      renderPillList();
-      fillForm();
-      const nInput = document.getElementById('persona-name') as HTMLInputElement;
-      nInput?.focus();
-      showToast('New persona created & active', 'success');
-    }
-
-    document.getElementById('btn-new-persona')?.addEventListener('click', createNewPersona);
-
-    // Save Persona
-    document.getElementById('btn-save-persona')?.addEventListener('click', () => {
-      const p = personas.find(x => x.id === currentPersonaId);
-      if (!p) return;
-
-      const nameInp = document.getElementById('persona-name') as HTMLInputElement;
-      const ageInput = document.getElementById('persona-age') as HTMLInputElement;
-      const pronounsInput = document.getElementById('persona-pronouns') as HTMLInputElement;
-      const aboutInput = document.getElementById('persona-about') as HTMLTextAreaElement;
-      const directivesInput = document.getElementById('persona-directives') as HTMLTextAreaElement;
-
-      p.name = nameInp?.value.trim() || '';
-      p.age = ageInput?.value.trim() || '';
-      p.pronouns = pronounsInput?.value.trim() || '';
-      p.bio = aboutInput?.value.trim() || '';
-      p.directives = directivesInput?.value.trim() || '';
-
-      personas.forEach(x => { x.isDefault = (x.id === currentPersonaId); });
-
-      savePersonas();
-      renderPillList();
-      fillForm();
-      showToast('Persona saved', 'success');
-    });
-
-    // Delete Persona
-    document.getElementById('btn-delete-persona')?.addEventListener('click', async () => {
-      if (personas.length <= 1) return;
-      const p = personas.find(x => x.id === currentPersonaId);
-      const ok = await showConfirm('Delete Persona', `Delete "${p?.name || 'this persona'}"?`);
-      if (!ok) return;
-
-      personas = personas.filter(x => x.id !== currentPersonaId);
-      if (!personas.some(x => x.isDefault)) {
-        personas[0].isDefault = true;
-      }
-      currentPersonaId = personas[0].id;
-      savePersonas();
-      renderPillList();
-      fillForm();
-      showToast('Persona deleted');
-    });
 
     // NSFW Mode Options
     const nsfwButtons = document.querySelectorAll('.nsfw-opt-btn');

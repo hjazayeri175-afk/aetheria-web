@@ -958,6 +958,85 @@ export default {
         }
       }
 
+      // ==========================================
+      // AI Persona Enhancement Endpoint
+      // ==========================================
+      if (url.pathname === '/api/enhance-persona' && request.method === 'POST') {
+        const payload = await request.json().catch(() => ({})) as any;
+        const nameVal = (payload.name || '').trim();
+        const ageVal = (payload.age || '').trim();
+        const promptVal = (payload.prompt || payload.about || '').trim();
+        const pronounsVal = (payload.pronouns || '').trim();
+
+        const traitsSummary = [
+          nameVal ? `Name: ${nameVal}` : '',
+          ageVal ? `Age: ${ageVal}` : '',
+          pronounsVal ? `Pronouns: ${pronounsVal}` : '',
+          promptVal ? `Key Traits/Vibe: ${promptVal}` : ''
+        ].filter(Boolean).join(', ') || 'A mysterious, intriguing traveler';
+
+        const systemInstruction = 'You are an expert roleplay writer. Write a vivid, punchy 2-sentence first-person description for an AI Persona in roleplay chats. Capture voice, appearance, and demeanor. Output ONLY the 2 sentences with no quotation marks, greeting, or preamble.';
+        const userPrompt = `Based on the traits [${traitsSummary}], write a 2-sentence first-person/rich description for an AI Persona in roleplay. Keep it punchy.`;
+
+        let enhancedText = '';
+
+        // Tier 1: Cloudflare Native Workers AI
+        if (env.AI) {
+          try {
+            const aiResult = await env.AI.run('@cf/meta/llama-3.1-8b-instruct-fp8', {
+              messages: [
+                { role: 'system', content: systemInstruction },
+                { role: 'user', content: userPrompt }
+              ],
+              max_tokens: 180,
+              temperature: 0.8
+            });
+            enhancedText = (aiResult?.response || '').trim();
+          } catch (err: any) {
+            console.error('Workers AI persona enhance failed, falling back:', err);
+          }
+        }
+
+        // Tier 2: Pollinations AI Fast Fallback
+        if (!enhancedText || enhancedText.length < 15) {
+          try {
+            const pollRes = await fetch('https://text.pollinations.ai/', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({
+                messages: [
+                  { role: 'system', content: systemInstruction },
+                  { role: 'user', content: userPrompt }
+                ],
+                model: 'openai-fast',
+                temperature: 0.8
+              }),
+              signal: AbortSignal.timeout(8000)
+            });
+            if (pollRes.ok) {
+              const resText = await pollRes.text();
+              if (resText && !resText.includes('"error"') && resText.length > 10) {
+                enhancedText = resText.trim();
+              }
+            }
+          } catch (pErr) {
+            console.error('Pollinations fallback failed:', pErr);
+          }
+        }
+
+        // Clean up quotes or markdown wrapper if any
+        if (enhancedText) {
+          enhancedText = enhancedText.replace(/^["'`]+|["'`]+$/g, '').trim();
+        } else {
+          enhancedText = `I move through the world with quiet confidence, watching every detail before I make my presence known. Behind my calm demeanor lies a sharp mind and an appetite for the unexpected.`;
+        }
+
+        return jsonResponse({
+          ok: true,
+          enhanced: enhancedText
+        });
+      }
+
       // Edge AI Image Generation (Free Tier / Keyless Selfie Engine)
       if (url.pathname === '/api/image/generate' && request.method === 'POST') {
         const body = await request.json().catch(() => ({})) as any;

@@ -844,3 +844,36 @@ label[title*="Restore"]:hover svg {
   text-decoration: underline;
 }
 
+/* ==================================================== */
+/* 3D Card Carousel & 3D Flip Transform Utilities       */
+/* ==================================================== */
+.perspective-1200 {
+  perspective: 1200px;
+  -webkit-perspective: 1200px;
+}
+
+.preserve-3d {
+  transform-style: preserve-3d;
+  -webkit-transform-style: preserve-3d;
+}
+
+.backface-hidden {
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+}
+
+.rotate-y-180 {
+  transform: rotateY(180deg);
+  -webkit-transform: rotateY(180deg);
+}
+
+.will-change-transform {
+  will-change: transform, opacity;
+}
+
+/* Touch Pan Y allows smooth native vertical page scroll while capturing horizontal swipe */
+.touch-pan-y {
+  touch-action: pan-y;
+}
+
+
