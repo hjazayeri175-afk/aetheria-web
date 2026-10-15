@@ -78,119 +78,172 @@ export function decodeHtmlEntities(raw: string): string {
  * center, table, lists, headings, img, b, i, p, etc.) and author styles while stripping
  * XSS vectors (script, on* handlers, javascript:).
  */
-export function formatRichDescription(input: string): string {
-  if (!input || typeof input !== 'string') return 'No detailed background provided.';
+/**
+ * Universal tag-shielded rich text processor for Markdown + HTML content.
+ * Protects existing HTML elements & attributes from regex collisions (quotes, asterisks, brackets),
+ * while formatting markdown images, links, styles, and dialogue safely.
+ */
+function processRichContent(
+  input: string, 
+  mode: 'description' | 'greeting', 
+  charName?: string
+): string {
+  if (!input || typeof input !== 'string') {
+    return mode === 'greeting' ? '*Awaits your first message...*' : 'No detailed background provided.';
+  }
   let text = input.trim();
-  if (!text) return 'No detailed background provided.';
+  if (!text) {
+    return mode === 'greeting' ? '*Awaits your first message...*' : 'No detailed background provided.';
+  }
 
-  // 0. Fully decode single, double, and triple escaped entities (&amp;lt; -> &lt; -> <)
+  // 1. Fully decode entities (up to 4 passes for nested entities)
   text = decodeHtmlEntities(text);
 
-  // 1. Remove dangerous active scripts and external embed tags (XSS prevention)
+  // 2. Expand {{char}} and {{user}} macros if present
+  if (charName) {
+    text = text.replace(/\{\{char\}\}/gi, charName);
+  } else {
+    text = text.replace(/\{\{char\}\}/gi, 'Companion');
+  }
+  text = text.replace(/\{\{user\}\}/gi, 'You');
+
+  // 3. Strip active dangerous scripts and event handlers (XSS prevention)
   text = text.replace(/<!--[\s\S]*?-->/g, '');
   text = text.replace(/<\s*(script|iframe|object|embed|meta|base|form|input|button)[\s\S]*?<\/\s*\1\s*>/gi, '');
   text = text.replace(/<\s*(script|iframe|object|embed|meta|base|form|input|button)[^>]*\/?>/gi, '');
-
-  // 2. Remove inline event handlers (onclick, onload, onerror, etc.)
-  text = text.replace(/\son[a-z]+\s*=\s*(["\'])[\s\S]*?\1/gi, '');
+  text = text.replace(/\son[a-z]+\s*=\s*(["'])[\s\S]*?\1/gi, '');
   text = text.replace(/\son[a-z]+\s*=\s*[^\s>]+/gi, '');
+  text = text.replace(/href\s*=\s*(["'])\s*javascript:[\s\S]*?\1/gi, 'href="#"');
+  text = text.replace(/src\s*=\s*(["'])\s*javascript:[\s\S]*?\1/gi, 'src=""');
 
-  // 3. Neutralize javascript: pseudo-protocol in URLs
-  text = text.replace(/href\s*=\s*(["\'])\s*javascript:[\s\S]*?\1/gi, 'href="#"');
-  text = text.replace(/src\s*=\s*(["\'])\s*javascript:[\s\S]*?\1/gi, 'src=""');
-
-  // 4. Safely scope and sanitize <style> blocks if present in Chub card skins
-  // Keeps creator styles and custom classes, but scopes global html/body rules
-  text = text.replace(/<style\b[^>]*>([\s\S]*?)<\/style>/gi, (match, css) => {
-    // Strip @import to prevent external style injection
+  // 4. Format/scope style blocks if present in Chub card skins
+  text = text.replace(/<style\b[^>]*>([\s\S]*?)<\/style>/gi, (_, css) => {
     let safeCss = css.replace(/@import\b[^;]*;/gi, '');
-    // Scope global body/html rules to .card-rich-content
     safeCss = safeCss.replace(/\b(body|html|:root)\b/gi, '.card-rich-content');
     return `<style>${safeCss}</style>`;
   });
 
-  // 5. Ensure responsive image safety without breaking author's layout
-  text = text.replace(/<img\b([^>]*)>/gi, (match, attrs) => {
-    if (!attrs.includes('loading=')) {
-      attrs += ' loading="lazy"';
-    }
-    if (!attrs.includes('class=')) {
-      attrs += ' class="max-w-full h-auto rounded-lg my-2 inline-block shadow-md"';
-    }
-    return `<img ${attrs.trim()}>`;
+  // 5. Enhance existing <img> tags (responsive + lazy loading)
+  text = text.replace(/<img\b([^>]*?)(\/?)>/gi, (_, attrs) => {
+    let cleanAttrs = attrs.replace(/\/$/, '').trim();
+    if (!cleanAttrs.includes('loading=')) cleanAttrs += ' loading="lazy"';
+    if (!cleanAttrs.includes('class=')) cleanAttrs += ' class="max-w-full h-auto rounded-lg my-2 inline-block shadow-md"';
+    return `<img ${cleanAttrs} />`;
   });
 
-  // 6. Ensure external links open safely in a new tab
-  text = text.replace(/<a\b([^>]*)>/gi, (match, attrs) => {
-    if (!attrs.includes('target=')) {
-      attrs += ' target="_blank" rel="noopener noreferrer"';
-    }
-    if (!attrs.includes('class=')) {
-      attrs += ' class="text-purple-400 hover:text-purple-300 underline underline-offset-2"';
-    }
+  // 6. Enhance existing <a> tags (open safely in new tab)
+  text = text.replace(/<a\b([^>]*)>/gi, (_, attrs) => {
+    if (!attrs.includes('target=')) attrs += ' target="_blank" rel="noopener noreferrer"';
+    if (!attrs.includes('class=')) attrs += ' class="text-purple-400 hover:text-purple-300 underline underline-offset-2"';
     return `<a ${attrs.trim()}>`;
   });
 
-  const hasHtml = /<\/?([a-z][a-z0-9]*)\b[^>]*>/i.test(text);
-
-  // 7. Inline markdown formatting (support mixed markdown and HTML)
-  text = text.replace(/\*\*(.*?)\*\*/g, '<strong class="font-semibold text-white">$1</strong>');
-  text = text.replace(/__([^_]+)__/g, '<strong class="font-semibold text-white">$1</strong>');
-  text = text.replace(/(^|[^\*<])\*([^\*\n<]+)\*([^\*>]|$)/g, '$1<em class="text-purple-200/90 italic">$2</em>$3');
-  text = text.replace(/`([^`\n]+)`/g, '<span translate="yes" class="px-1.5 py-0.5 rounded bg-black/40 border border-white/10 text-purple-300 text-[11px] font-mono inline-block">$1</span>');
-
-  // 8. If text is pure markdown (no HTML structure tags), convert headers and lists
-  if (!hasHtml) {
-    text = text.replace(/^### (.*$)/gim, '<h3 class="font-bold text-white text-sm my-2">$1</h3>');
-    text = text.replace(/^## (.*$)/gim, '<h2 class="font-bold text-white text-sm sm:text-base my-2">$1</h2>');
-    text = text.replace(/^# (.*$)/gim, '<h1 class="font-black text-white text-base my-2.5">$1</h1>');
-    text = text.replace(/^[\*\-] (.*$)/gim, '<li class="leading-relaxed">$1</li>');
-
-    text = text
-      .split(/\n{2,}/)
-      .map(p => {
-        const trimmed = p.trim();
-        if (trimmed.startsWith('<li')) {
-          return `<ul class="list-disc list-inside space-y-1.5 my-2 text-slate-300">${trimmed}</ul>`;
-        }
-        return `<p class="mb-2.5 last:mb-0 leading-relaxed">${trimmed.replace(/\n/g, '<br/>')}</p>`;
-      })
-      .join('');
+  // 7. Tokenize / Mask ALL existing HTML tags so regexes never touch tag syntax or attribute quotes!
+  const tokens: string[] = [];
+  function addToken(html: string): string {
+    tokens.push(html);
+    return `\x00TOKEN_${tokens.length - 1}\x00`;
   }
 
-  return text.trim();
+  let masked = text.replace(/<[^>]+>/g, (tag) => addToken(tag));
+
+  // 8. Markdown images: ![alt](url)
+  masked = masked.replace(/!\[([^\]]*)\]\((https?:\/\/[^\s\)]+)\)/g, (_, alt, url) => {
+    return addToken(`<img src="${url}" alt="${alt || 'Scene illustration'}" class="max-w-full h-auto rounded-lg my-2 inline-block shadow-md" loading="lazy" />`);
+  });
+
+  // Standalone image URLs on their own line: e.g. https://...png
+  masked = masked.replace(/(^|\n)\s*(https?:\/\/\S+\.(?:png|jpe?g|webp|gif))(?:\s*($|\n))/gi, (_, p1, url, p2) => {
+    return `${p1}${addToken(`<img src="${url}" alt="Illustration" class="max-w-full h-auto rounded-lg my-2 inline-block shadow-md" loading="lazy" />`)}${p2}`;
+  });
+
+  // 9. Markdown links: [text](url)
+  masked = masked.replace(/\[([^\]]+)\]\((https?:\/\/[^\s\)]+)\)/g, (_, label, url) => {
+    return addToken(`<a href="${url}" target="_blank" rel="noopener noreferrer" class="text-purple-400 hover:text-purple-300 underline underline-offset-2">${label}</a>`);
+  });
+
+  // 10. Markdown inline code: `code`
+  masked = masked.replace(/`([^`\n]+)`/g, (_, code) => {
+    return addToken(`<span translate="yes" class="px-1.5 py-0.5 rounded bg-black/40 border border-white/10 text-purple-300 text-[11px] font-mono inline-block">${code}</span>`);
+  });
+
+  // 11. Markdown Headers & lists (for description mode)
+  if (mode === 'description') {
+    masked = masked.replace(/^### (.*$)/gim, (_, c) => addToken(`<h3 class="font-bold text-white text-sm my-2">${c}</h3>`));
+    masked = masked.replace(/^## (.*$)/gim, (_, c) => addToken(`<h2 class="font-bold text-white text-sm sm:text-base my-2">${c}</h2>`));
+    masked = masked.replace(/^# (.*$)/gim, (_, c) => addToken(`<h1 class="font-black text-white text-base my-2.5">${c}</h1>`));
+    masked = masked.replace(/^[\*\-] (.*$)/gim, (_, c) => addToken(`<li class="leading-relaxed">${c}</li>`));
+  }
+
+  // 12. Markdown Bold: **text** or __text__
+  masked = masked.replace(/\*\*([^\*\n]+)\*\*/g, (_, content) => {
+    return addToken(`<strong class="text-white font-semibold">${content}</strong>`);
+  });
+  masked = masked.replace(/__([^_\n]+)__/g, (_, content) => {
+    return addToken(`<strong class="text-white font-semibold">${content}</strong>`);
+  });
+
+  // 13. Markdown Strikethrough: ~~text~~
+  masked = masked.replace(/~~([^~\n]+)~~/g, (_, content) => {
+    return addToken(`<del class="text-slate-400 line-through">${content}</del>`);
+  });
+
+  // 14. Markdown Italics (actions / narration): *text* or _text_
+  masked = masked.replace(/(^|[^\*])\*([^\*\n]+)\*([^\*]|$)/g, (_, p1, content, p2) => {
+    const cls = mode === 'greeting' ? 'text-purple-300 italic' : 'text-purple-200/90 italic';
+    return `${p1}${addToken(`<em class="${cls}">${content}</em>`)}${p2}`;
+  });
+
+  // 15. Dialogue Quotes (for greetings and story dialogue)
+  if (mode === 'greeting') {
+    masked = masked.replace(/"([^"\n]+)"/g, (_, speech) => {
+      return addToken(`<span translate="yes" class="text-white font-medium">"${speech}"</span>`);
+    });
+    masked = masked.replace(/“([^”\n]+)”/g, (_, speech) => {
+      return addToken(`<span translate="yes" class="text-white font-medium">“${speech}”</span>`);
+    });
+    masked = masked.replace(/«([^»\n]+)»/g, (_, speech) => {
+      return addToken(`<span translate="yes" class="text-white font-medium">«${speech}»</span>`);
+    });
+  }
+
+  // 16. Newlines / Paragraph handling
+  const hasStructuralHtml = /<(?:p|div|table|ul|ol|h[1-6]|details|blockquote)\b/i.test(text);
+  if (!hasStructuralHtml) {
+    if (mode === 'description') {
+      masked = masked
+        .split(/\n{2,}/)
+        .map(p => {
+          const trimmed = p.trim();
+          if (trimmed.includes('\x00TOKEN_') && tokens.some(t => t.startsWith('<li'))) {
+            return `<ul class="list-disc list-inside space-y-1.5 my-2 text-slate-300">${trimmed}</ul>`;
+          }
+          return `<p class="mb-2.5 last:mb-0 leading-relaxed">${trimmed.replace(/\n/g, '<br/>')}</p>`;
+        })
+        .join('');
+    } else {
+      masked = masked.replace(/\n/g, '<br/>');
+    }
+  }
+
+  // 17. Unmask all tokens
+  const result = masked.replace(/\x00TOKEN_(\d+)\x00/g, (_, i) => tokens[Number(i)] || '');
+  return result.trim();
+}
+
+/**
+ * Sanitizes and renders rich character descriptions containing Tavern/Chub HTML layouts,
+ * custom CSS skins, collapsible details/summaries, scenario grids, images, and Markdown.
+ */
+export function formatRichDescription(input: string, charName?: string): string {
+  return processRichContent(input, 'description', charName);
 }
 
 /**
  * Formats character opening greetings with dialogue quotes, narrative italics, and macro expansions.
  */
-export function formatRichGreeting(greeting: string): string {
-  if (!greeting || typeof greeting !== 'string') return '*Awaits your first message...*';
-  let text = greeting.trim();
-
-  // 0. Fully decode entities
-  text = decodeHtmlEntities(text);
-
-  // Strip dangerous scripts
-  text = text.replace(/<\s*(script|iframe|object|embed)[\s\S]*?<\/\s*\1\s*>/gi, '');
-  text = text.replace(/\son[a-z]+\s*=\s*(["\'])[\s\S]*?\1/gi, '');
-
-  const hasHtml = /<\/?([a-z][a-z0-9]*)\b[^>]*>/i.test(text);
-
-  // Markdown italics for actions/narration: *action* -> <em ...>
-  text = text.replace(/(^|[^\*<])\*([^\*\n<]+)\*([^\*>]|$)/g, '$1<em class="text-purple-300 italic">$2</em>$3');
-  text = text.replace(/\*\*([^\*\n<]+)\*\*/g, '<strong class="text-white font-semibold">$1</strong>');
-
-  // Quoted dialogue: "speech" -> highlight speech
-  text = text.replace(/"([^"\n]+)"/g, '<span translate="yes" class="text-white font-medium">"$1"</span>');
-  text = text.replace(/“([^”\n]+)”/g, '<span translate="yes" class="text-white font-medium">“$1”</span>');
-  text = text.replace(/«([^»\n]+)»/g, '<span translate="yes" class="text-white font-medium">«$1»</span>');
-
-  if (!hasHtml) {
-    text = text.replace(/\n/g, '<br/>');
-  }
-
-  return text;
+export function formatRichGreeting(greeting: string, charName?: string): string {
+  return processRichContent(greeting, 'greeting', charName);
 }
 
 // Global exposure for non-bundled inline scripts

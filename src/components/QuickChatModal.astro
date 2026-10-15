@@ -665,7 +665,7 @@ import {
     }
 
     const activeGreetingText = currentGreetings[currentGreetingIndex] || '*Awaits your first message...*';
-    showcaseGreeting.innerHTML = formatRichGreeting(activeGreetingText);
+    showcaseGreeting.innerHTML = formatRichGreeting(activeGreetingText, activeCharacter?.name);
   }
 
   greetingPrevBtn?.addEventListener('click', (e) => {
@@ -861,7 +861,7 @@ import {
         rawMainDesc = rawMainDesc ? `${rawMainDesc}\n\n${charScen}` : charScen;
       }
       const publicText = cleanPublicDescription(rawMainDesc, char.creatorNotes || char.creator_notes);
-      showcaseDescription.innerHTML = formatRichDescription(publicText);
+      showcaseDescription.innerHTML = formatRichDescription(publicText, char.name);
     }
 
     // Populate Tab 2: Greetings & Alternates
@@ -955,7 +955,7 @@ import {
               }
               if (!fullDesc) fullDesc = char.description || 'No detailed background provided.';
               const cleanText = cleanPublicDescription(fullDesc, idbChar.creator_notes || idbChar.creatorNotes || char.creatorNotes);
-              showcaseDescription.innerHTML = formatRichDescription(cleanText);
+              showcaseDescription.innerHTML = formatRichDescription(cleanText, idbChar.name || char.name);
             }
           }
           if (idbChar.greeting || idbChar.first_mes) {
