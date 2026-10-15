@@ -2137,8 +2137,57 @@ const PRESET_AVATARS = [
     showToast('Tavern V2 Card JSON exported with World Info!');
   });
 
+  // ================= EDIT MODE HANDLER (?edit=character_id) =================
+  async function checkEditMode() {
+    const editId = new URLSearchParams(window.location.search).get('edit');
+    if (!editId) return;
+
+    let targetChar: any = null;
+
+    // 1. Try IndexedDB first (high-resolution lossless card storage)
+    if (typeof (window as any).AetheriaDB !== 'undefined') {
+      try {
+        targetChar = await (window as any).AetheriaDB.getCharacter(editId);
+      } catch (err) {
+        console.warn('Could not read from IndexedDB for edit:', err);
+      }
+    }
+
+    // 2. Fallback to localStorage
+    if (!targetChar) {
+      try {
+        const stored = localStorage.getItem('aetheria_custom_characters');
+        if (stored) {
+          const list = JSON.parse(stored);
+          targetChar = list.find((c: any) => c && c.id === editId);
+        }
+      } catch (err) {
+        console.warn('Could not read from localStorage for edit:', err);
+      }
+    }
+
+    if (targetChar) {
+      // Pre-fill all 4 creation steps with this character's exact data
+      populateFromCardData(targetChar, targetChar.avatarUrl || targetChar.avatar);
+
+      // Adjust page UI to indicate Edit mode
+      const pageHeading = document.querySelector('h1');
+      if (pageHeading) {
+        pageHeading.textContent = `Edit Companion: ${targetChar.name || 'Character'}`;
+      }
+
+      const saveBtnSpan = document.querySelector('#character-form button[type="button"] span');
+      if (saveBtnSpan) {
+        saveBtnSpan.textContent = 'Save Changes & Chat';
+      }
+
+      showToast(`✏️ Loaded "${targetChar.name}" for editing. Modify any fields and save.`);
+    }
+  }
+
   // Initial render
   renderLoreEntries();
   updateStepUI(1);
   updateAllCalculations();
+  checkEditMode();
 </script>
