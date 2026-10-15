@@ -3919,6 +3919,20 @@ const { character } = Astro.props;
           <!-- Messages will be populated dynamically from localStorage or greeting -->
         </div>
 
+        <!-- Floating Scroll-To-Bottom Button (Telegram / ChatGPT style) -->
+        <button
+          type="button"
+          id="chat-scroll-bottom-btn"
+          class="hidden fixed bottom-24 sm:bottom-28 right-4 sm:right-7 z-30 w-9 h-9 sm:w-10 sm:h-10 rounded-full bg-[#11142a]/95 hover:bg-purple-600 border border-white/10 hover:border-purple-400 text-slate-300 hover:text-white shadow-xl shadow-black/80 backdrop-blur-md items-center justify-center transition-all duration-200 cursor-pointer active:scale-95 group"
+          title="Scroll to bottom"
+          aria-label="Scroll to bottom"
+        >
+          <svg class="w-4 h-4 sm:w-5 sm:h-5 text-current stroke-[2.5] group-hover:translate-y-0.5 transition-transform" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="6 9 12 15 18 9"></polyline>
+          </svg>
+          <span id="scroll-bottom-badge" class="hidden absolute -top-1 -right-1 w-2.5 h-2.5 rounded-full bg-purple-500 animate-pulse border-2 border-[#11142a]"></span>
+        </button>
+
         <!-- Character Typing Indicator -->
         <div 
           id="full-typing-indicator" 
@@ -5606,6 +5620,51 @@ const { character } = Astro.props;
   const typingIndicator = document.getElementById('full-typing-indicator');
   const inputForm = document.getElementById('room-input-form');
   const input = document.getElementById('room-input');
+
+  // Smart Auto-Scroll & Scroll-To-Bottom Manager (prevents forced pulling during streaming)
+  let isAutoScrollActive = true;
+  let userTouchStartY = 0;
+  const scrollBottomBtn = document.getElementById('chat-scroll-bottom-btn');
+  const scrollBottomBadge = document.getElementById('scroll-bottom-badge');
+
+  function updateScrollBottomButtonVisibility() {
+    if (!chatStream) return;
+    const threshold = 90; // px from bottom
+    const distanceFromBottom = chatStream.scrollHeight - (chatStream.scrollTop + chatStream.clientHeight);
+    if (distanceFromBottom > threshold) {
+      isAutoScrollActive = false;
+      if (scrollBottomBtn) {
+        scrollBottomBtn.classList.remove('hidden');
+        scrollBottomBtn.classList.add('flex');
+      }
+    } else {
+      isAutoScrollActive = true;
+      if (scrollBottomBtn) {
+        scrollBottomBtn.classList.add('hidden');
+        scrollBottomBtn.classList.remove('flex');
+      }
+      if (scrollBottomBadge) {
+        scrollBottomBadge.classList.add('hidden');
+      }
+    }
+  }
+
+  function scrollToChatBottom(smooth = false) {
+    if (!chatStream) return;
+    isAutoScrollActive = true;
+    if (smooth) {
+      chatStream.scrollTo({ top: chatStream.scrollHeight, behavior: 'smooth' });
+    } else {
+      chatStream.scrollTop = chatStream.scrollHeight;
+    }
+    if (scrollBottomBtn) {
+      scrollBottomBtn.classList.add('hidden');
+      scrollBottomBtn.classList.remove('flex');
+    }
+    if (scrollBottomBadge) {
+      scrollBottomBadge.classList.add('hidden');
+    }
+  }
 
   // Device detection: Mobile / Touch
   const isTouchDevice = () => {
@@ -15622,7 +15681,7 @@ const { character } = Astro.props;
     conversation.forEach((msg, idx) => {
       appendMessageToDOM(msg, idx);
     });
-    chatStream.scrollTop = chatStream.scrollHeight;
+    scrollToChatBottom(false);
   }
 
   function appendMessageToDOM(msg, idx) {
@@ -16207,7 +16266,7 @@ const { character } = Astro.props;
     saveChat();
     appendMessageToDOM(userMsg, conversation.length - 1);
     playChatChime('send');
-    if (chatStream) chatStream.scrollTop = chatStream.scrollHeight;
+    scrollToChatBottom(false);
 
     if (input && !options?.preserveInputDraft) {
       input.value = '';
@@ -16217,7 +16276,7 @@ const { character } = Astro.props;
 
     if (typingIndicator) {
       typingIndicator.classList.remove('hidden');
-      if (chatStream) chatStream.scrollTop = chatStream.scrollHeight;
+      scrollToChatBottom(false);
     }
 
     const provider = localStorage.getItem('aetheria_text_provider') || 'groq';
@@ -16539,7 +16598,11 @@ const { character } = Astro.props;
                         } else if (enableThinking && reasoningText) {
                           bubbleEl.innerHTML = `<div class="flex items-center gap-2 text-xs text-purple-300 italic mb-2 animate-pulse"><svg class="w-3.5 h-3.5 text-purple-400 animate-spin" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2v4m0 12v4M4.93 4.93l2.83 2.83m8.48 8.48 2.83 2.83M2 12h4m12 0h4M4.93 19.07l2.83-2.83m8.48-8.48 2.83-2.83"/></svg><span>Thinking & processing character persona...</span></div><div class="text-xs text-slate-400 font-mono leading-relaxed line-clamp-4 whitespace-pre-wrap border-l-2 border-purple-500/40 pl-2">${reasoningText}</div>`;
                         }
-                        if (chatStream) chatStream.scrollTop = chatStream.scrollHeight;
+                        if (chatStream && isAutoScrollActive) {
+                          chatStream.scrollTop = chatStream.scrollHeight;
+                        } else if (scrollBottomBadge) {
+                          scrollBottomBadge.classList.remove('hidden');
+                        }
                       }
                     } catch (e) {}
                   }
@@ -16726,7 +16789,7 @@ const { character } = Astro.props;
           conversation.push(errorMsg);
           saveChat();
           appendMessageToDOM(errorMsg, conversation.length - 1);
-          if (chatStream) chatStream.scrollTop = chatStream.scrollHeight;
+          scrollToChatBottom(false);
           return;
         }
       } catch (err) {
@@ -16742,7 +16805,7 @@ const { character } = Astro.props;
         conversation.push(errorMsg);
         saveChat();
         appendMessageToDOM(errorMsg, conversation.length - 1);
-        if (chatStream) chatStream.scrollTop = chatStream.scrollHeight;
+        scrollToChatBottom(false);
         return;
       }
     }
@@ -17959,8 +18022,41 @@ const { character } = Astro.props;
     const pop2 = document.getElementById('chat-more-popover');
     if (pop2) pop2.remove();
   };
-  chatStream?.addEventListener('scroll', dismissMessagePopovers, { passive: true });
+  chatStream?.addEventListener('scroll', () => {
+    dismissMessagePopovers();
+    updateScrollBottomButtonVisibility();
+  }, { passive: true });
   window.addEventListener('scroll', dismissMessagePopovers, { passive: true });
+
+  // Disengage auto-scroll when user scrolls up via mouse wheel
+  chatStream?.addEventListener('wheel', (e) => {
+    if (e.deltaY < 0) {
+      isAutoScrollActive = false;
+    }
+  }, { passive: true });
+
+  // Disengage auto-scroll when user touches & drags up on mobile
+  chatStream?.addEventListener('touchstart', (e) => {
+    if (e.touches && e.touches[0]) {
+      userTouchStartY = e.touches[0].clientY;
+    }
+  }, { passive: true });
+
+  chatStream?.addEventListener('touchmove', (e) => {
+    if (e.touches && e.touches[0]) {
+      const currentY = e.touches[0].clientY;
+      // Moving finger downwards drags content down -> viewport moves UP towards earlier messages
+      if (currentY - userTouchStartY > 10) {
+        isAutoScrollActive = false;
+      }
+    }
+  }, { passive: true });
+
+  // Floating scroll-to-bottom button click handler
+  scrollBottomBtn?.addEventListener('click', (e) => {
+    e.stopPropagation();
+    scrollToChatBottom(true);
+  });
 
   // Global delegation for dynamic message buttons (Edit, Rewind, Swipes, Speak, Copy, Delete, Lightbox)
   document.addEventListener('click', (e) => {
