@@ -39,10 +39,10 @@ import {
   aria-modal="true"
   aria-labelledby="showcase-name"
 >
-  <!-- Modal Dialog Container (Tall mobile bottom sheet with 94vh height) -->
+  <!-- Modal Dialog Container (Ergonomic mobile bottom sheet with 90dvh height) -->
   <div 
     id="showcase-modal-dialog"
-    class="w-full h-[94vh] max-h-[94vh] sm:h-auto sm:max-h-[88vh] rounded-t-3xl sm:rounded-3xl border-t sm:border border-white/[0.1] bg-[#090b16] flex flex-col overflow-hidden shadow-2xl shadow-purple-950/80 transform translate-y-full sm:translate-y-0 sm:scale-95 transition-all duration-300 ease-out sm:max-w-xl sm:mx-auto"
+    class="w-full h-[90dvh] max-h-[90dvh] sm:h-auto sm:max-h-[86vh] rounded-t-3xl sm:rounded-3xl border-t sm:border border-white/[0.1] bg-[#090b16] flex flex-col overflow-hidden shadow-2xl shadow-purple-950/80 transform translate-y-full sm:translate-y-0 sm:scale-95 transition-all duration-300 ease-out sm:max-w-xl sm:mx-auto"
   >
     <!-- Mobile Pull Drag Indicator -->
     <div class="w-12 h-1.5 rounded-full bg-white/20 mx-auto my-2 shrink-0 sm:hidden"></div>
@@ -120,8 +120,8 @@ import {
       </div>
     </header>
 
-    <!-- Scrollable Showcase Body (Unified Single Scroll Area) -->
-    <div id="showcase-body" class="flex-1 overflow-y-auto p-4 sm:p-5 space-y-4 custom-scrollbar">
+    <!-- Scrollable Showcase Body (Unified Single Scroll Area with Ample Bottom Clearance) -->
+    <div id="showcase-body" class="flex-1 overflow-y-auto p-4 sm:p-5 space-y-4 custom-scrollbar overscroll-contain pb-32 sm:pb-8">
       
       <!-- Chub-Style Hero Profile Summary (Open & Breathable) -->
       <div class="space-y-2.5">
@@ -236,38 +236,38 @@ import {
       <div class="min-h-[140px] pt-1">
         
         <!-- Panel 1: Description (Full Story & Lore with Prominent Show More) -->
-        <div id="showcase-panel-desc" class="showcase-panel space-y-3">
-          <div id="showcase-desc-wrapper" class="relative">
-            <!-- Text container clamped at max-h-60 with smooth expansion -->
+        <div id="showcase-panel-desc" class="showcase-panel space-y-2">
+          <!-- Text Box with Contained Fade Mask (strictly isolated from the button) -->
+          <div class="relative rounded-2xl bg-white/[0.02] border border-white/[0.06] p-3.5 sm:p-4">
             <div 
               id="showcase-description" 
-              class="text-xs sm:text-sm text-slate-300 font-normal leading-relaxed card-rich-content relative overflow-hidden transition-all duration-300 max-h-60"
+              class="text-xs sm:text-sm text-slate-200 font-normal leading-relaxed card-rich-content overflow-hidden transition-[max-height] duration-300 max-h-56"
             >
               Character backstory...
             </div>
 
-            <!-- Bottom gradient fade mask when collapsed -->
+            <!-- Bottom gradient fade mask (strictly covers text only, never the button!) -->
             <div 
               id="showcase-desc-fade" 
-              class="absolute bottom-0 inset-x-0 h-16 bg-gradient-to-t from-[#090b16] to-transparent pointer-events-none transition-opacity duration-300"
+              class="absolute inset-x-0 bottom-0 h-20 rounded-b-2xl bg-gradient-to-t from-[#090b16] via-[#090b16]/90 to-transparent pointer-events-none transition-opacity duration-300 z-10"
             ></div>
+          </div>
 
-            <!-- Show More / Show Less Toggle Button (Prominent, High-Contrast, Full Width) -->
-            <div id="showcase-desc-toggle-wrapper" class="pt-3 flex justify-center">
-              <button 
-                type="button" 
-                id="showcase-desc-toggle" 
-                class="w-full py-2.5 px-4 rounded-xl bg-purple-600/20 hover:bg-purple-600/30 border border-purple-500/35 text-xs font-bold text-purple-200 hover:text-white flex items-center justify-center gap-2 transition active:scale-[0.99] shadow-lg shadow-purple-950/40 cursor-pointer"
-              >
-                <span id="showcase-desc-toggle-text">Show Full Description</span>
-                <ChevronDown id="showcase-desc-toggle-icon" class="w-4 h-4 text-purple-300 transition-transform duration-300" />
-              </button>
-            </div>
+          <!-- Show More / Show Less Toggle Button (Completely outside fade mask: 100% visible, high-contrast, crystal-clear) -->
+          <div id="showcase-desc-toggle-wrapper" class="pt-1">
+            <button 
+              type="button" 
+              id="showcase-desc-toggle" 
+              class="w-full py-2.5 px-4 rounded-xl bg-purple-600/30 hover:bg-purple-600/40 border border-purple-400/50 text-white font-bold text-xs flex items-center justify-center gap-2 transition active:scale-[0.98] shadow-md shadow-purple-950/50 cursor-pointer"
+            >
+              <span id="showcase-desc-toggle-text" class="text-white font-bold tracking-wide">Show Full Description</span>
+              <ChevronDown id="showcase-desc-toggle-icon" class="w-4 h-4 text-purple-200 transition-transform duration-300 shrink-0" />
+            </button>
           </div>
         </div>
 
         <!-- Panel 2: Greetings (Opening Scene with Alternate Switcher & Show More) -->
-        <div id="showcase-panel-greetings" class="showcase-panel hidden space-y-3">
+        <div id="showcase-panel-greetings" class="showcase-panel hidden space-y-2">
           <!-- Alternate Greetings Switcher Bar (Visible when >1 greeting) -->
           <div id="greeting-switcher" class="hidden items-center justify-between p-2.5 rounded-xl bg-purple-950/25 border border-purple-500/20">
             <div class="flex items-center gap-2">
@@ -294,32 +294,31 @@ import {
             </div>
           </div>
 
-          <!-- Greeting Content Box with Show More / Show Less -->
-          <div id="showcase-greeting-wrapper" class="relative">
+          <!-- Greeting Content Box with Contained Fade Mask -->
+          <div class="relative rounded-2xl bg-white/[0.02] border border-white/[0.06] p-3.5 sm:p-4">
             <div 
               id="showcase-greeting" 
-              class="text-xs sm:text-sm text-purple-200 font-normal leading-relaxed relative overflow-hidden transition-all duration-300 max-h-60 space-y-1.5"
+              class="text-xs sm:text-sm text-cyan-200 font-normal leading-relaxed card-rich-content overflow-hidden transition-[max-height] duration-300 max-h-56 space-y-1.5"
             >
               "*Awaits your first message...*"
             </div>
 
-            <!-- Bottom gradient fade mask when collapsed -->
             <div 
               id="showcase-greeting-fade" 
-              class="absolute bottom-0 inset-x-0 h-16 bg-gradient-to-t from-[#090b16] to-transparent pointer-events-none transition-opacity duration-300"
+              class="absolute inset-x-0 bottom-0 h-20 rounded-b-2xl bg-gradient-to-t from-[#090b16] via-[#090b16]/90 to-transparent pointer-events-none transition-opacity duration-300 z-10"
             ></div>
+          </div>
 
-            <!-- Show More / Show Less Toggle Button -->
-            <div id="showcase-greeting-toggle-wrapper" class="pt-3 flex justify-center">
-              <button 
-                type="button" 
-                id="showcase-greeting-toggle" 
-                class="w-full py-2.5 px-4 rounded-xl bg-cyan-600/20 hover:bg-cyan-600/30 border border-cyan-500/35 text-xs font-bold text-cyan-200 hover:text-white flex items-center justify-center gap-2 transition active:scale-[0.99] shadow-lg shadow-cyan-950/40 cursor-pointer"
-              >
-                <span id="showcase-greeting-toggle-text">Show Full Greeting</span>
-                <ChevronDown id="showcase-greeting-toggle-icon" class="w-4 h-4 text-cyan-300 transition-transform duration-300" />
-              </button>
-            </div>
+          <!-- Greeting Show More / Show Less Toggle Button -->
+          <div id="showcase-greeting-toggle-wrapper" class="pt-1">
+            <button 
+              type="button" 
+              id="showcase-greeting-toggle" 
+              class="w-full py-2.5 px-4 rounded-xl bg-cyan-600/30 hover:bg-cyan-600/40 border border-cyan-400/50 text-white font-bold text-xs flex items-center justify-center gap-2 transition active:scale-[0.98] shadow-md shadow-cyan-950/50 cursor-pointer"
+            >
+              <span id="showcase-greeting-toggle-text" class="text-white font-bold tracking-wide">Show Full Greeting</span>
+              <ChevronDown id="showcase-greeting-toggle-icon" class="w-4 h-4 text-cyan-200 transition-transform duration-300 shrink-0" />
+            </button>
           </div>
         </div>
 
@@ -620,15 +619,15 @@ import {
     }
   }
 
-  // Description Show More / Show Less Logic (Generous 240px clamp)
+  // Description Show More / Show Less Logic (224px clamp with complete unconstrained expansion)
   function setupDescriptionClamp() {
     if (!showcaseDescription) return;
     isDescExpanded = false;
-    showcaseDescription.classList.remove('max-h-[5000px]');
-    showcaseDescription.classList.add('max-h-60');
+    showcaseDescription.style.maxHeight = '';
+    showcaseDescription.classList.add('max-h-56');
 
     requestAnimationFrame(() => {
-      const isOverflowing = showcaseDescription.scrollHeight > 250;
+      const isOverflowing = showcaseDescription.scrollHeight > 230;
       if (isOverflowing) {
         showcaseDescFade?.classList.remove('opacity-0', 'hidden');
         showcaseDescFade?.classList.add('opacity-100');
@@ -648,15 +647,15 @@ import {
     isDescExpanded = !isDescExpanded;
 
     if (isDescExpanded) {
-      showcaseDescription.classList.remove('max-h-60');
-      showcaseDescription.classList.add('max-h-[5000px]');
-      showcaseDescFade?.classList.add('opacity-0');
+      showcaseDescription.classList.remove('max-h-56');
+      showcaseDescription.style.maxHeight = 'none';
+      showcaseDescFade?.classList.add('opacity-0', 'hidden');
       if (showcaseDescToggleText) showcaseDescToggleText.textContent = 'Show Less';
       if (showcaseDescToggleIcon) showcaseDescToggleIcon.classList.add('rotate-180');
     } else {
-      showcaseDescription.classList.remove('max-h-[5000px]');
-      showcaseDescription.classList.add('max-h-60');
-      showcaseDescFade?.classList.remove('opacity-0');
+      showcaseDescription.style.maxHeight = '';
+      showcaseDescription.classList.add('max-h-56');
+      showcaseDescFade?.classList.remove('opacity-0', 'hidden');
       if (showcaseDescToggleText) showcaseDescToggleText.textContent = 'Show Full Description';
       if (showcaseDescToggleIcon) showcaseDescToggleIcon.classList.remove('rotate-180');
       showcaseDescription.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
@@ -667,11 +666,11 @@ import {
   function setupGreetingClamp() {
     if (!showcaseGreeting) return;
     isGreetingExpanded = false;
-    showcaseGreeting.classList.remove('max-h-[5000px]');
-    showcaseGreeting.classList.add('max-h-60');
+    showcaseGreeting.style.maxHeight = '';
+    showcaseGreeting.classList.add('max-h-56');
 
     requestAnimationFrame(() => {
-      const isOverflowing = showcaseGreeting.scrollHeight > 250;
+      const isOverflowing = showcaseGreeting.scrollHeight > 230;
       if (isOverflowing) {
         showcaseGreetingFade?.classList.remove('opacity-0', 'hidden');
         showcaseGreetingFade?.classList.add('opacity-100');
@@ -691,15 +690,15 @@ import {
     isGreetingExpanded = !isGreetingExpanded;
 
     if (isGreetingExpanded) {
-      showcaseGreeting.classList.remove('max-h-60');
-      showcaseGreeting.classList.add('max-h-[5000px]');
-      showcaseGreetingFade?.classList.add('opacity-0');
+      showcaseGreeting.classList.remove('max-h-56');
+      showcaseGreeting.style.maxHeight = 'none';
+      showcaseGreetingFade?.classList.add('opacity-0', 'hidden');
       if (showcaseGreetingToggleText) showcaseGreetingToggleText.textContent = 'Show Less';
       if (showcaseGreetingToggleIcon) showcaseGreetingToggleIcon.classList.add('rotate-180');
     } else {
-      showcaseGreeting.classList.remove('max-h-[5000px]');
-      showcaseGreeting.classList.add('max-h-60');
-      showcaseGreetingFade?.classList.remove('opacity-0');
+      showcaseGreeting.style.maxHeight = '';
+      showcaseGreeting.classList.add('max-h-56');
+      showcaseGreetingFade?.classList.remove('opacity-0', 'hidden');
       if (showcaseGreetingToggleText) showcaseGreetingToggleText.textContent = 'Show Full Greeting';
       if (showcaseGreetingToggleIcon) showcaseGreetingToggleIcon.classList.remove('rotate-180');
       showcaseGreeting.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
@@ -917,9 +916,14 @@ import {
     // Render Tags with Truncation
     renderTags(false);
 
-    // Populate Tab 1: Clean Public Description (Complete story, traits, and notes)
+    // Populate Tab 1: Clean Public Description (Complete story, traits, scenario, and notes)
     if (showcaseDescription) {
-      const publicText = cleanPublicDescription(char.description, char.creatorNotes || char.creator_notes);
+      let rawMainDesc = char.description || '';
+      const charScen = char.scenario || '';
+      if (charScen && (!rawMainDesc || !rawMainDesc.includes(charScen.slice(0, 30)))) {
+        rawMainDesc = rawMainDesc ? `${rawMainDesc}\n\n${charScen}` : charScen;
+      }
+      const publicText = cleanPublicDescription(rawMainDesc, char.creatorNotes || char.creator_notes);
       showcaseDescription.innerHTML = formatRichDescription(publicText);
       setupDescriptionClamp();
     }
@@ -997,7 +1001,12 @@ import {
           }
           if (idbChar.description || idbChar.scenario || char.description || char.scenario) {
             if (showcaseDescription) {
-              const fullDesc = idbChar.description || idbChar.scenario || char.description || char.scenario || 'No detailed background provided.';
+              let fullDesc = idbChar.description || '';
+              const idbScen = idbChar.scenario || char.scenario || '';
+              if (idbScen && (!fullDesc || !fullDesc.includes(idbScen.slice(0, 30)))) {
+                fullDesc = fullDesc ? `${fullDesc}\n\n${idbScen}` : idbScen;
+              }
+              if (!fullDesc) fullDesc = char.description || 'No detailed background provided.';
               const cleanText = cleanPublicDescription(fullDesc, idbChar.creator_notes || idbChar.creatorNotes || char.creatorNotes);
               showcaseDescription.innerHTML = formatRichDescription(cleanText);
               setupDescriptionClamp();

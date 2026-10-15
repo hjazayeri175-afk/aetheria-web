@@ -261,10 +261,9 @@ export function cleanPublicDescription(rawDesc?: string | null, creatorNotes?: s
   // 2. Remove pure system directives like [System: ...], [Guidelines: ...], [Rule: ...]
   desc = desc.replace(/\[\s*(?:System|Guidelines?|Rules?|Instructions?|Constraints?)[^\]]*\]/gi, '');
 
-  // 3. Remove standard boilerplate model guardrails
-  desc = desc.replace(/(?:Character\s+dialogue\s+and\s+)?(?:system\s+instructions|roleplay\s+guidelines|behavior\s+constraints|formatting\s+rules)[\s\S]*?(?=\n\s*\n|$)/gi, '');
-  desc = desc.replace(/(?:[^\n]*\b(?:forbidden to narrate|do not speak for|never speak for|will not speak for|avoid speaking for)\s+(?:\{\{user\}\}|the user)\b[^\n]*)/gi, '');
-  desc = desc.replace(/(?:^|\n)\s*[-*•]\s*(?:write in third person|never speak for|always respond|stay in character)[^\n]*/gi, '');
+  // 3. Remove standard boilerplate model guardrails (strictly line-by-line, never eating character lore)
+  desc = desc.replace(/^[ \t]*(?:Character\s+dialogue\s+and\s+)?(?:system(?:\s+instructions)?|roleplay\s+guidelines?|behavior\s+constraints?|formatting\s+rules?)[:\s]*$/gim, '');
+  desc = desc.replace(/^[ \t]*[-*•]?\s*(?:(?:always\s+|never\s+)?(?:stay in character|respond in character|write in third person)|(?:do not|never|avoid|forbidden to)\s+(?:speak|narrate|act)\s+for\s+(?:\{\{user\}\}|the user|user))[^\n]*$/gim, '');
 
   // 4. Normalize whitespace
   desc = desc.replace(/[\r\n]{3,}/g, '\n\n').trim();
