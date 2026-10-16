@@ -1917,7 +1917,7 @@ import {
     const wrapper = document.getElementById('persona-cards-wrapper');
     if (!wrapper) return;
 
-    const isDay = document.documentElement.getAttribute('data-base-mode') === 'day' || (window as any).AetheriaTheme?.get()?.baseMode === 'day';
+    const isDay = document.documentElement.getAttribute('data-base-mode') === 'day' || document.documentElement.classList.contains('day-mode') || (window as any).AetheriaTheme?.getSettings?.(null)?.baseMode === 'day';
 
     let cardsHtml = '';
 
@@ -3443,7 +3443,8 @@ import {
         // Update counts
         const count = sessions.length;
         if (summaryCountEl) {
-          summaryCountEl.innerHTML = `<span class="text-white">${count} Active Session${count === 1 ? '' : 's'}</span> <span class="text-white/30">•</span> <span class="text-emerald-400 font-medium">Cloudflare Global Edge</span>`;
+          const isDayMode = document.documentElement.getAttribute('data-base-mode') === 'day' || document.documentElement.classList.contains('day-mode');
+          summaryCountEl.innerHTML = `<span class="${isDayMode ? 'text-slate-900 font-bold' : 'text-white'}">${count} Active Session${count === 1 ? '' : 's'}</span> <span class="${isDayMode ? 'text-slate-400' : 'text-white/30'}">•</span> <span class="text-emerald-500 font-medium">Cloudflare Global Edge</span>`;
         }
         if (hubSubtitle) {
           hubSubtitle.textContent = `${count} session${count === 1 ? '' : 's'} • Hardware secure`;
