@@ -52,8 +52,13 @@ const {
             if (parsed && (parsed.baseMode === 'day' || parsed.dayNightMode === 'day')) {
               document.documentElement.setAttribute('data-base-mode', 'day');
               document.documentElement.classList.add('day-mode');
+              document.documentElement.classList.remove('dark');
               document.documentElement.style.setProperty('--bg-primary', '#f8fafc');
               document.documentElement.style.setProperty('--bg-secondary', '#f1f5f9');
+              document.documentElement.style.setProperty('--theme-chat-bg', 'linear-gradient(to bottom, #f8fafc, #f1f5f9)');
+              document.documentElement.style.setProperty('--theme-bubble-char-bg', '#ffffff');
+              document.documentElement.style.setProperty('--theme-bubble-char-text', '#1e293b');
+              document.documentElement.style.setProperty('--theme-bubble-char-border', 'rgba(0, 0, 0, 0.08)');
             }
           }
         } catch(e) {}
@@ -763,6 +768,15 @@ const {
             if (!theme.charBubbleBg) {
               root.style.setProperty('--theme-bubble-char-bg', '#ffffff');
             }
+            if (!theme.charBubbleText) {
+              root.style.setProperty('--theme-bubble-char-text', '#1e293b');
+            }
+            if (!theme.charBubbleBorder) {
+              root.style.setProperty('--theme-bubble-char-border', 'rgba(0, 0, 0, 0.08)');
+            }
+            root.style.setProperty('--theme-thought-bg', `rgba(${rgb}, 0.08)`);
+            root.style.setProperty('--theme-thought-border', `rgba(${rgb}, 0.22)`);
+            root.style.setProperty('--theme-thought-text', '#334155');
           } else {
             root.setAttribute('data-base-mode', 'dark');
             root.classList.remove('day-mode');
@@ -793,7 +807,7 @@ const {
           }
 
           // Chat Stream Wallpaper & Background
-          const wpVal = theme.chatWallpaper || theme.chatBg || 'linear-gradient(to bottom, #090a12, #0e1122, #07080f)';
+          const wpVal = theme.chatWallpaper || theme.chatBg || (isDay ? 'linear-gradient(to bottom, #f8fafc, #f1f5f9)' : 'linear-gradient(to bottom, #090a12, #0e1122, #07080f)');
           root.style.setProperty('--theme-chat-bg', wpVal);
           root.style.setProperty('--theme-chat-wallpaper', wpVal.startsWith('http') || wpVal.startsWith('data:') ? `url("${wpVal}")` : wpVal);
 
@@ -801,13 +815,13 @@ const {
           const blurVal = theme.chatBlur ? 'blur(12px)' : 'none';
           root.style.setProperty('--theme-chat-blur', blurVal);
 
-          const dimVal = theme.chatDim !== undefined ? theme.chatDim : 0.20;
+          const dimVal = theme.chatDim !== undefined ? theme.chatDim : (isDay ? 0 : 0.20);
           root.style.setProperty('--theme-chat-dim', dimVal.toString());
 
           // Doodle Pattern
           const patId = theme.chatPatternId || (theme.id ? ('pattern-' + theme.id.replace('-mode', '').replace('-corner', '').replace('-luxury', '')) : 'pattern-gamer');
           const patObj = DOODLE_PATTERNS[patId] || DOODLE_PATTERNS['pattern-gamer'] || DOODLE_PATTERNS['none'];
-          const patOpacity = theme.chatPatternOpacity !== undefined ? theme.chatPatternOpacity : 0.16;
+          const patOpacity = theme.chatPatternOpacity !== undefined ? theme.chatPatternOpacity : (isDay ? 0.08 : 0.16);
 
           root.style.setProperty('--theme-chat-pattern', patObj.pattern);
           root.style.setProperty('--theme-chat-pattern-size', patObj.patternSize);
@@ -870,7 +884,21 @@ const {
               el.style.setProperty('--theme-bubble-radius', `${radius}px`);
               el.style.setProperty('--theme-msg-font-size', `${fontSize}px`);
               if (theme.userBubbleBg) el.style.setProperty('--theme-bubble-user-bg', theme.userBubbleBg);
-              if (theme.charBubbleBg) el.style.setProperty('--theme-bubble-char-bg', theme.charBubbleBg);
+              if (theme.charBubbleBg) {
+                el.style.setProperty('--theme-bubble-char-bg', theme.charBubbleBg);
+              } else if (isDay) {
+                el.style.setProperty('--theme-bubble-char-bg', '#ffffff');
+              }
+              if (theme.charBubbleText) {
+                el.style.setProperty('--theme-bubble-char-text', theme.charBubbleText);
+              } else if (isDay) {
+                el.style.setProperty('--theme-bubble-char-text', '#1e293b');
+              }
+              if (theme.charBubbleBorder) {
+                el.style.setProperty('--theme-bubble-char-border', theme.charBubbleBorder);
+              } else if (isDay) {
+                el.style.setProperty('--theme-bubble-char-border', 'rgba(0, 0, 0, 0.08)');
+              }
             }
           });
         }

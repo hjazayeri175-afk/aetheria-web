@@ -842,26 +842,26 @@ html.power-saving-oled .chat-msg-bubble-user {
   color: var(--theme-thought-text, #f1f5f9) !important;
 }
 
-/* Light / Day Mode Adaptation: Guarantee high contrast against dark message bubbles */
+/* Light / Day Mode Adaptation: Guarantee high contrast against message bubbles */
 html[data-base-mode="day"] .thought-block,
 html.day-mode .thought-block {
-  background: rgba(var(--theme-accent-rgb, 168, 85, 247), 0.12) !important;
-  border-color: rgba(var(--theme-accent-rgb, 168, 85, 247), 0.38) !important;
-  border-left-color: var(--theme-accent, #c084fc) !important;
-  color: #fef3c7 !important;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+  background: #f8fafc !important;
+  border-color: rgba(var(--theme-accent-rgb, 147, 51, 234), 0.25) !important;
+  border-left-color: var(--theme-accent, #9333ea) !important;
+  color: #334155 !important;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04) !important;
 }
 
 html[data-base-mode="day"] .thought-block .thought-header,
 html.day-mode .thought-block .thought-header {
-  color: var(--theme-accent, #e9d5ff) !important;
+  color: var(--theme-accent, #6b21a8) !important;
 }
 
 html[data-base-mode="day"] .thought-inline,
 html.day-mode .thought-inline {
-  background: rgba(var(--theme-accent-rgb, 168, 85, 247), 0.15) !important;
-  border-color: rgba(var(--theme-accent-rgb, 168, 85, 247), 0.4) !important;
-  color: #fef3c7 !important;
+  background: rgba(var(--theme-accent-rgb, 147, 51, 234), 0.08) !important;
+  border-color: rgba(var(--theme-accent-rgb, 147, 51, 234), 0.22) !important;
+  color: #334155 !important;
 }
 
 /* Deep Dark OLED Mode: pure black, crisp subtle borders */
@@ -955,6 +955,35 @@ html.power-saving-oled .thought-inline {
 
 .room-starter-pill:hover .room-starter-pill-text {
   color: #ffffff !important;
+}
+
+/* Light / Day Mode Adaptation: Starter & Smart Idea Pills */
+html[data-base-mode="day"] .room-starter-pill,
+html.day-mode .room-starter-pill {
+  background-color: #ffffff !important;
+  background-image: none !important;
+  border-color: rgba(0, 0, 0, 0.1) !important;
+  color: #334155 !important;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.04) !important;
+}
+
+html[data-base-mode="day"] .room-starter-pill:hover,
+html.day-mode .room-starter-pill:hover {
+  background-color: #f8fafc !important;
+  background-image: none !important;
+  border-color: #9333ea !important;
+  color: #0f172a !important;
+  box-shadow: 0 4px 12px rgba(147, 51, 234, 0.15) !important;
+}
+
+html[data-base-mode="day"] .room-starter-pill-text,
+html.day-mode .room-starter-pill-text {
+  color: #334155 !important;
+}
+
+html[data-base-mode="day"] .room-starter-pill:hover .room-starter-pill-text,
+html.day-mode .room-starter-pill:hover .room-starter-pill-text {
+  color: #0f172a !important;
 }
 
 
@@ -2096,12 +2125,610 @@ html.power-saving-oled #chat-sidebar-desc em {
   color: #e9d5ff !important;
 }
 
-html.power-saving-oled #def-personality-content,
-html.power-saving-oled #def-scenario-content,
-html.power-saving-oled #def-system-content,
-html.power-saving-oled #def-mes-example-content {
-  color: #f8fafc !important;
+/* ==========================================================================
+   AETHERIA DAY MODE - PHASE 3: IMMERSIVE CHAT ROOM & CONVERSATION SUITE
+   Isolation: Strictly scoped under html[data-base-mode="day"] & html.day-mode
+   Zero Dark/OLED regressions, high-contrast typography, premium glass aesthetics
+   ========================================================================== */
+
+/* 1. Chat Root Layout & Feed Section */
+html[data-base-mode="day"] #chat-root-container,
+html.day-mode #chat-root-container {
+  background-color: #f8fafc !important;
+  color: #0f172a !important;
 }
+
+html[data-base-mode="day"] #chat-viewport-section,
+html.day-mode #chat-viewport-section {
+  background: var(--theme-chat-bg, linear-gradient(to bottom, #f8fafc, #f1f5f9)) !important;
+}
+
+html[data-base-mode="day"] #chat-wallpaper-dimmer,
+html.day-mode #chat-wallpaper-dimmer {
+  opacity: var(--theme-chat-dim, 0) !important;
+}
+
+html[data-base-mode="day"] #chat-wallpaper-overlay,
+html.day-mode #chat-wallpaper-overlay {
+  opacity: var(--theme-chat-pattern-opacity, 0.08) !important;
+}
+
+/* 2. Top Navigation Header & Buttons */
+html[data-base-mode="day"] #chat-header,
+html.day-mode #chat-header {
+  background-color: rgba(255, 255, 255, 0.9) !important;
+  border-bottom-color: rgba(0, 0, 0, 0.08) !important;
+  backdrop-filter: blur(20px) !important;
+  -webkit-backdrop-filter: blur(20px) !important;
+}
+
+html[data-base-mode="day"] #chat-back-btn,
+html.day-mode #chat-back-btn,
+html[data-base-mode="day"] #chat-sessions-btn,
+html.day-mode #chat-sessions-btn,
+html[data-base-mode="day"] #chat-header-overflow-btn,
+html.day-mode #chat-header-overflow-btn,
+html[data-base-mode="day"] #toggle-sidebar-btn,
+html.day-mode #toggle-sidebar-btn,
+html[data-base-mode="day"] #toggle-tts-btn,
+html.day-mode #toggle-tts-btn,
+html[data-base-mode="day"] #export-chat-btn,
+html.day-mode #export-chat-btn,
+html[data-base-mode="day"] #clear-chat-btn,
+html.day-mode #clear-chat-btn {
+  background-color: rgba(0, 0, 0, 0.04) !important;
+  border-color: rgba(0, 0, 0, 0.08) !important;
+  color: #334155 !important;
+}
+
+html[data-base-mode="day"] #chat-back-btn:hover,
+html.day-mode #chat-back-btn:hover,
+html[data-base-mode="day"] #chat-sessions-btn:hover,
+html.day-mode #chat-sessions-btn:hover,
+html[data-base-mode="day"] #chat-header-overflow-btn:hover,
+html.day-mode #chat-header-overflow-btn:hover,
+html[data-base-mode="day"] #toggle-sidebar-btn:hover,
+html.day-mode #toggle-sidebar-btn:hover,
+html[data-base-mode="day"] #toggle-tts-btn:hover,
+html.day-mode #toggle-tts-btn:hover,
+html[data-base-mode="day"] #export-chat-btn:hover,
+html.day-mode #export-chat-btn:hover,
+html[data-base-mode="day"] #clear-chat-btn:hover,
+html.day-mode #clear-chat-btn:hover {
+  background-color: rgba(0, 0, 0, 0.08) !important;
+  color: #0f172a !important;
+  border-color: rgba(147, 51, 234, 0.35) !important;
+}
+
+html[data-base-mode="day"] #chat-header-name,
+html.day-mode #chat-header-name {
+  color: #0f172a !important;
+}
+
+html[data-base-mode="day"] #chat-header-subtext,
+html.day-mode #chat-header-subtext,
+html[data-base-mode="day"] #chat-model-indicator,
+html.day-mode #chat-model-indicator {
+  color: #64748b !important;
+}
+
+/* 3. Header Dropdowns (Sessions & Overflow Menu) */
+html[data-base-mode="day"] #sessions-dropdown,
+html.day-mode #sessions-dropdown,
+html[data-base-mode="day"] #chat-header-overflow-menu,
+html.day-mode #chat-header-overflow-menu {
+  background-color: rgba(255, 255, 255, 0.98) !important;
+  border-color: rgba(0, 0, 0, 0.1) !important;
+  box-shadow: 0 16px 40px rgba(0, 0, 0, 0.12) !important;
+  color: #0f172a !important;
+}
+
+html[data-base-mode="day"] #sessions-dropdown h4,
+html.day-mode #sessions-dropdown h4,
+html[data-base-mode="day"] #sessions-dropdown span,
+html.day-mode #sessions-dropdown span,
+html[data-base-mode="day"] #chat-header-overflow-menu span,
+html.day-mode #chat-header-overflow-menu span {
+  color: #334155 !important;
+}
+
+html[data-base-mode="day"] #chat-header-overflow-menu button,
+html.day-mode #chat-header-overflow-menu button {
+  color: #334155 !important;
+}
+
+html[data-base-mode="day"] #chat-header-overflow-menu button:hover,
+html.day-mode #chat-header-overflow-menu button:hover {
+  background-color: #f1f5f9 !important;
+  color: #0f172a !important;
+}
+
+html[data-base-mode="day"] #chat-header-overflow-menu button svg,
+html.day-mode #chat-header-overflow-menu button svg {
+  color: #64748b !important;
+}
+
+html[data-base-mode="day"] #chat-header-overflow-menu button:hover svg,
+html.day-mode #chat-header-overflow-menu button:hover svg {
+  color: #0f172a !important;
+}
+
+html[data-base-mode="day"] #sessions-dropdown .session-item,
+html.day-mode #sessions-dropdown .session-item {
+  background-color: #f8fafc !important;
+  border-color: rgba(0, 0, 0, 0.08) !important;
+  color: #1e293b !important;
+}
+
+html[data-base-mode="day"] #sessions-dropdown .session-item:hover,
+html.day-mode #sessions-dropdown .session-item:hover {
+  background-color: #f1f5f9 !important;
+  border-color: rgba(147, 51, 234, 0.3) !important;
+}
+
+html[data-base-mode="day"] #new-session-btn,
+html.day-mode #new-session-btn {
+  background-color: #f1f5f9 !important;
+  border-color: rgba(0, 0, 0, 0.1) !important;
+  color: #334155 !important;
+}
+
+html[data-base-mode="day"] #new-session-btn:hover,
+html.day-mode #new-session-btn:hover {
+  background-color: rgba(147, 51, 234, 0.1) !important;
+  color: #7e22ce !important;
+  border-color: #9333ea !important;
+}
+
+/* 4. Character Sidebar Drawer */
+html[data-base-mode="day"] #character-sidebar,
+html.day-mode #character-sidebar {
+  background-color: #ffffff !important;
+  border-right-color: rgba(0, 0, 0, 0.08) !important;
+  box-shadow: 4px 0 24px rgba(0, 0, 0, 0.06) !important;
+  color: #0f172a !important;
+}
+
+html[data-base-mode="day"] #character-sidebar h2,
+html.day-mode #character-sidebar h2,
+html[data-base-mode="day"] #character-sidebar h3,
+html.day-mode #character-sidebar h3,
+html[data-base-mode="day"] #character-sidebar h4,
+html.day-mode #character-sidebar h4 {
+  color: #0f172a !important;
+}
+
+html[data-base-mode="day"] #chat-sidebar-desc,
+html.day-mode #chat-sidebar-desc {
+  background-color: #f8fafc !important;
+  border-color: rgba(0, 0, 0, 0.08) !important;
+  color: #1e293b !important;
+}
+
+html[data-base-mode="day"] #chat-sidebar-desc span[class*="text-white"],
+html.day-mode #chat-sidebar-desc span[class*="text-white"] {
+  color: #0f172a !important;
+  font-weight: 600 !important;
+}
+
+html[data-base-mode="day"] #chat-sidebar-desc em,
+html.day-mode #chat-sidebar-desc em {
+  color: #6b21a8 !important;
+  font-style: italic !important;
+}
+
+/* 5. Message Feed & Bubbles */
+html[data-base-mode="day"] .chat-msg-bubble-char,
+html.day-mode .chat-msg-bubble-char {
+  background: #ffffff !important;
+  border: 1px solid rgba(0, 0, 0, 0.08) !important;
+  color: #1e293b !important;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.04) !important;
+}
+
+html[data-base-mode="day"] .chat-msg-bubble-char p,
+html.day-mode .chat-msg-bubble-char p,
+html[data-base-mode="day"] .chat-msg-bubble-char li,
+html.day-mode .chat-msg-bubble-char li,
+html[data-base-mode="day"] .chat-msg-bubble-char span:not(.thought-header),
+html.day-mode .chat-msg-bubble-char span:not(.thought-header) {
+  color: #1e293b !important;
+}
+
+html[data-base-mode="day"] .chat-msg-bubble-char strong,
+html.day-mode .chat-msg-bubble-char strong,
+html[data-base-mode="day"] .chat-msg-bubble-char b,
+html.day-mode .chat-msg-bubble-char b {
+  color: #0f172a !important;
+  font-weight: 600 !important;
+}
+
+html[data-base-mode="day"] .chat-msg-bubble-char em,
+html.day-mode .chat-msg-bubble-char em,
+html[data-base-mode="day"] .chat-msg-bubble-char i,
+html.day-mode .chat-msg-bubble-char i {
+  color: #6b21a8 !important;
+  font-style: italic !important;
+}
+
+html[data-base-mode="day"] .chat-msg-bubble-char code,
+html.day-mode .chat-msg-bubble-char code {
+  background-color: #f1f5f9 !important;
+  border: 1px solid rgba(0, 0, 0, 0.08) !important;
+  color: #0f172a !important;
+}
+
+html[data-base-mode="day"] .chat-msg-bubble-char blockquote,
+html.day-mode .chat-msg-bubble-char blockquote {
+  border-left-color: #9333ea !important;
+  background-color: rgba(147, 51, 234, 0.04) !important;
+  color: #475569 !important;
+}
+
+html[data-base-mode="day"] .chat-msg-bubble-user,
+html.day-mode .chat-msg-bubble-user {
+  box-shadow: 0 4px 14px rgba(124, 58, 237, 0.2) !important;
+}
+
+/* Action Buttons Under Messages */
+html[data-base-mode="day"] .msg-speak-btn,
+html.day-mode .msg-speak-btn,
+html[data-base-mode="day"] .msg-copy-btn,
+html.day-mode .msg-copy-btn,
+html[data-base-mode="day"] .msg-regenerate-btn,
+html.day-mode .msg-regenerate-btn,
+html[data-base-mode="day"] .msg-edit-btn,
+html.day-mode .msg-edit-btn,
+html[data-base-mode="day"] .msg-rewind-btn,
+html.day-mode .msg-rewind-btn,
+html[data-base-mode="day"] .msg-more-btn,
+html.day-mode .msg-more-btn {
+  color: #64748b !important;
+}
+
+html[data-base-mode="day"] .msg-speak-btn:hover,
+html.day-mode .msg-speak-btn:hover,
+html[data-base-mode="day"] .msg-copy-btn:hover,
+html.day-mode .msg-copy-btn:hover,
+html[data-base-mode="day"] .msg-regenerate-btn:hover,
+html.day-mode .msg-regenerate-btn:hover,
+html[data-base-mode="day"] .msg-edit-btn:hover,
+html.day-mode .msg-edit-btn:hover,
+html[data-base-mode="day"] .msg-rewind-btn:hover,
+html.day-mode .msg-rewind-btn:hover,
+html[data-base-mode="day"] .msg-more-btn:hover,
+html.day-mode .msg-more-btn:hover {
+  background-color: rgba(0, 0, 0, 0.06) !important;
+  color: #0f172a !important;
+}
+
+html[data-base-mode="day"] .msg-speak-btn svg,
+html.day-mode .msg-speak-btn svg,
+html[data-base-mode="day"] .msg-copy-btn svg,
+html.day-mode .msg-copy-btn svg,
+html[data-base-mode="day"] .msg-regenerate-btn svg,
+html.day-mode .msg-regenerate-btn svg,
+html[data-base-mode="day"] .msg-edit-btn svg,
+html.day-mode .msg-edit-btn svg,
+html[data-base-mode="day"] .msg-rewind-btn svg,
+html.day-mode .msg-rewind-btn svg,
+html[data-base-mode="day"] .msg-more-btn svg,
+html.day-mode .msg-more-btn svg {
+  color: #64748b !important;
+}
+
+html[data-base-mode="day"] .msg-speak-btn:hover svg,
+html.day-mode .msg-speak-btn:hover svg,
+html[data-base-mode="day"] .msg-copy-btn:hover svg,
+html.day-mode .msg-copy-btn:hover svg,
+html[data-base-mode="day"] .msg-regenerate-btn:hover svg,
+html.day-mode .msg-regenerate-btn:hover svg,
+html[data-base-mode="day"] .msg-edit-btn:hover svg,
+html.day-mode .msg-edit-btn:hover svg,
+html[data-base-mode="day"] .msg-rewind-btn:hover svg,
+html.day-mode .msg-rewind-btn:hover svg,
+html[data-base-mode="day"] .msg-more-btn:hover svg,
+html.day-mode .msg-more-btn:hover svg {
+  color: #0f172a !important;
+}
+
+html[data-base-mode="day"] .msg-swipe-btn,
+html.day-mode .msg-swipe-btn,
+html[data-base-mode="day"] .msg-swipe-indicator,
+html.day-mode .msg-swipe-indicator {
+  color: #64748b !important;
+}
+
+html[data-base-mode="day"] .msg-swipe-btn:hover,
+html.day-mode .msg-swipe-btn:hover {
+  background-color: rgba(0, 0, 0, 0.06) !important;
+  color: #0f172a !important;
+}
+
+/* 6. Typing Indicator & Scroll-to-Bottom */
+html[data-base-mode="day"] #full-typing-indicator > div,
+html.day-mode #full-typing-indicator > div {
+  background-color: #ffffff !important;
+  border-color: rgba(0, 0, 0, 0.08) !important;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.04) !important;
+  color: #64748b !important;
+}
+
+html[data-base-mode="day"] #chat-typing-name,
+html.day-mode #chat-typing-name {
+  color: #475569 !important;
+}
+
+html[data-base-mode="day"] #chat-scroll-bottom-btn,
+html.day-mode #chat-scroll-bottom-btn {
+  background-color: rgba(255, 255, 255, 0.95) !important;
+  border-color: rgba(0, 0, 0, 0.1) !important;
+  color: #334155 !important;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.1) !important;
+}
+
+html[data-base-mode="day"] #chat-scroll-bottom-btn:hover,
+html.day-mode #chat-scroll-bottom-btn:hover {
+  background-color: #9333ea !important;
+  border-color: #9333ea !important;
+  color: #ffffff !important;
+}
+
+/* 7. Smart Prompts Bar */
+html[data-base-mode="day"] #smart-prompts-bar,
+html.day-mode #smart-prompts-bar {
+  background-color: rgba(248, 250, 252, 0.95) !important;
+  border-top: 1px solid rgba(0, 0, 0, 0.06) !important;
+}
+
+html[data-base-mode="day"] #refresh-smart-prompts-btn,
+html.day-mode #refresh-smart-prompts-btn {
+  background-color: rgba(0, 0, 0, 0.04) !important;
+  border-color: rgba(0, 0, 0, 0.08) !important;
+  color: #64748b !important;
+}
+
+html[data-base-mode="day"] #refresh-smart-prompts-btn:hover,
+html.day-mode #refresh-smart-prompts-btn:hover {
+  background-color: rgba(0, 0, 0, 0.08) !important;
+  color: #0f172a !important;
+}
+
+/* 8. Bottom Chat Input Bar & Unified Capsule */
+html[data-base-mode="day"] #chat-input-bar-container,
+html.day-mode #chat-input-bar-container {
+  background-color: rgba(255, 255, 255, 0.94) !important;
+  border-top-color: rgba(0, 0, 0, 0.08) !important;
+  backdrop-filter: blur(20px) !important;
+  -webkit-backdrop-filter: blur(20px) !important;
+}
+
+html[data-base-mode="day"] #room-input-container,
+html.day-mode #room-input-container {
+  background-color: #f1f5f9 !important;
+  border-color: rgba(0, 0, 0, 0.1) !important;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.04) !important;
+}
+
+html[data-base-mode="day"] #room-input-container:hover,
+html.day-mode #room-input-container:hover {
+  background-color: #eef2f6 !important;
+  border-color: rgba(0, 0, 0, 0.14) !important;
+}
+
+html[data-base-mode="day"] #room-input-container:focus-within,
+html.day-mode #room-input-container:focus-within {
+  background-color: #ffffff !important;
+  border-color: rgba(147, 51, 234, 0.45) !important;
+  box-shadow: 0 4px 20px rgba(147, 51, 234, 0.12) !important;
+}
+
+html[data-base-mode="day"] #room-input,
+html.day-mode #room-input {
+  color: #0f172a !important;
+  caret-color: #9333ea !important;
+}
+
+html[data-base-mode="day"] #room-input::placeholder,
+html.day-mode #room-input::placeholder {
+  color: #94a3b8 !important;
+}
+
+html[data-base-mode="day"] #chat-input-plus-btn,
+html.day-mode #chat-input-plus-btn,
+html[data-base-mode="day"] #chat-input-expand-btn,
+html.day-mode #chat-input-expand-btn,
+html[data-base-mode="day"] #chat-input-mic-btn,
+html.day-mode #chat-input-mic-btn {
+  color: #64748b !important;
+}
+
+html[data-base-mode="day"] #chat-input-plus-btn:hover,
+html.day-mode #chat-input-plus-btn:hover,
+html[data-base-mode="day"] #chat-input-expand-btn:hover,
+html.day-mode #chat-input-expand-btn:hover,
+html[data-base-mode="day"] #chat-input-mic-btn:hover,
+html.day-mode #chat-input-mic-btn:hover {
+  color: #0f172a !important;
+  background-color: rgba(0, 0, 0, 0.06) !important;
+}
+
+html[data-base-mode="day"] #room-send-btn,
+html.day-mode #room-send-btn {
+  background-color: #9333ea !important;
+  color: #ffffff !important;
+  box-shadow: 0 4px 12px rgba(147, 51, 234, 0.3) !important;
+}
+
+html[data-base-mode="day"] #room-send-btn:hover,
+html.day-mode #room-send-btn:hover {
+  background-color: #7e22ce !important;
+}
+
+/* 9. Floating Plus Menu */
+html[data-base-mode="day"] #chat-plus-menu,
+html.day-mode #chat-plus-menu {
+  background-color: rgba(255, 255, 255, 0.98) !important;
+  border-color: rgba(0, 0, 0, 0.1) !important;
+  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.15) !important;
+  ring-color: rgba(0, 0, 0, 0.05) !important;
+}
+
+html[data-base-mode="day"] #chat-plus-menu .border-white\/\[0\.08\],
+html.day-mode #chat-plus-menu .border-white\/\[0\.08\] {
+  border-color: rgba(0, 0, 0, 0.08) !important;
+}
+
+html[data-base-mode="day"] #chat-plus-menu button,
+html.day-mode #chat-plus-menu button {
+  color: #1e293b !important;
+}
+
+html[data-base-mode="day"] #plus-action-photos,
+html.day-mode #plus-action-photos,
+html[data-base-mode="day"] #plus-action-camera,
+html.day-mode #plus-action-camera,
+html[data-base-mode="day"] #plus-action-files,
+html.day-mode #plus-action-files {
+  background-color: #f8fafc !important;
+  border-color: rgba(0, 0, 0, 0.08) !important;
+}
+
+html[data-base-mode="day"] #plus-action-photos:hover,
+html.day-mode #plus-action-photos:hover,
+html[data-base-mode="day"] #plus-action-camera:hover,
+html.day-mode #plus-action-camera:hover,
+html[data-base-mode="day"] #plus-action-files:hover,
+html.day-mode #plus-action-files:hover {
+  background-color: #f1f5f9 !important;
+  border-color: rgba(147, 51, 234, 0.3) !important;
+}
+
+html[data-base-mode="day"] #chat-plus-menu span.text-slate-200,
+html.day-mode #chat-plus-menu span.text-slate-200 {
+  color: #334155 !important;
+}
+
+html[data-base-mode="day"] #chat-plus-menu div.text-slate-400,
+html.day-mode #chat-plus-menu div.text-slate-400 {
+  color: #64748b !important;
+}
+
+html[data-base-mode="day"] #chat-plus-menu div.text-white,
+html.day-mode #chat-plus-menu div.text-white {
+  color: #0f172a !important;
+}
+
+html[data-base-mode="day"] #plus-mode-images:hover,
+html.day-mode #plus-mode-images:hover,
+html[data-base-mode="day"] #plus-mode-videos:hover,
+html.day-mode #plus-mode-videos:hover,
+html[data-base-mode="day"] #plus-mode-voice:hover,
+html.day-mode #plus-mode-voice:hover {
+  background-color: #f1f5f9 !important;
+}
+
+html[data-base-mode="day"] #plus-persona-row,
+html.day-mode #plus-persona-row {
+  background-color: #f8fafc !important;
+  border-color: rgba(0, 0, 0, 0.08) !important;
+}
+
+html[data-base-mode="day"] #plus-persona-row:hover,
+html.day-mode #plus-persona-row:hover {
+  background-color: #f1f5f9 !important;
+}
+
+/* 10. Voice Recording Overlay */
+html[data-base-mode="day"] #voice-recording-overlay,
+html.day-mode #voice-recording-overlay {
+  background-color: rgba(255, 255, 255, 0.98) !important;
+  border-color: rgba(244, 63, 94, 0.4) !important;
+  box-shadow: 0 4px 16px rgba(244, 63, 94, 0.1) !important;
+}
+
+html[data-base-mode="day"] #voice-recording-hint,
+html.day-mode #voice-recording-hint {
+  color: #64748b !important;
+}
+
+/* 11. Modals & Settings Trays in Chat Room */
+html[data-base-mode="day"] #chat-byok-tray > div,
+html.day-mode #chat-byok-tray > div,
+html[data-base-mode="day"] #chat-appearance-modal > div,
+html.day-mode #chat-appearance-modal > div,
+html[data-base-mode="day"] #fullscreen-composer-modal > div,
+html.day-mode #fullscreen-composer-modal > div,
+html[data-base-mode="day"] #voice-engine-modal > div,
+html.day-mode #voice-engine-modal > div,
+html[data-base-mode="day"] #lorebook-modal > div,
+html.day-mode #lorebook-modal > div,
+html[data-base-mode="day"] #model-search-modal > div,
+html.day-mode #model-search-modal > div {
+  background-color: #ffffff !important;
+  border-color: rgba(0, 0, 0, 0.1) !important;
+  box-shadow: 0 24px 60px rgba(0, 0, 0, 0.16) !important;
+  color: #0f172a !important;
+}
+
+html[data-base-mode="day"] #chat-byok-tray .bg-\[\#090c1b\],
+html.day-mode #chat-byok-tray .bg-\[\#090c1b\],
+html[data-base-mode="day"] #chat-byok-tray .bg-\[\#0a0d1e\],
+html.day-mode #chat-byok-tray .bg-\[\#0a0d1e\],
+html[data-base-mode="day"] #chat-appearance-modal .bg-white\/\[0\.02\],
+html.day-mode #chat-appearance-modal .bg-white\/\[0\.02\] {
+  background-color: #f8fafc !important;
+  border-bottom-color: rgba(0, 0, 0, 0.08) !important;
+}
+
+html[data-base-mode="day"] #chat-byok-tray h3,
+html.day-mode #chat-byok-tray h3,
+html[data-base-mode="day"] #chat-appearance-modal h3,
+html.day-mode #chat-appearance-modal h3 {
+  color: #0f172a !important;
+}
+
+html[data-base-mode="day"] #close-chat-byok,
+html.day-mode #close-chat-byok,
+html[data-base-mode="day"] #chat-appearance-close-btn,
+html.day-mode #chat-appearance-close-btn {
+  background-color: rgba(0, 0, 0, 0.05) !important;
+  color: #64748b !important;
+}
+
+html[data-base-mode="day"] #close-chat-byok:hover,
+html.day-mode #close-chat-byok:hover,
+html[data-base-mode="day"] #chat-appearance-close-btn:hover,
+html.day-mode #chat-appearance-close-btn:hover {
+  background-color: rgba(0, 0, 0, 0.1) !important;
+  color: #0f172a !important;
+}
+
+html[data-base-mode="day"] #chat-byok-tray input,
+html.day-mode #chat-byok-tray input,
+html[data-base-mode="day"] #chat-byok-tray select,
+html.day-mode #chat-byok-tray select,
+html[data-base-mode="day"] #chat-byok-tray textarea,
+html.day-mode #chat-byok-tray textarea,
+html[data-base-mode="day"] #fullscreen-composer-textarea,
+html.day-mode #fullscreen-composer-textarea {
+  background-color: #f8fafc !important;
+  border-color: rgba(0, 0, 0, 0.12) !important;
+  color: #0f172a !important;
+}
+
+html[data-base-mode="day"] #chat-byok-tray input:focus,
+html.day-mode #chat-byok-tray input:focus,
+html[data-base-mode="day"] #chat-byok-tray select:focus,
+html.day-mode #chat-byok-tray select:focus,
+html[data-base-mode="day"] #chat-byok-tray textarea:focus,
+html.day-mode #chat-byok-tray textarea:focus,
+html[data-base-mode="day"] #fullscreen-composer-textarea:focus,
+html.day-mode #fullscreen-composer-textarea:focus {
+  background-color: #ffffff !important;
+  border-color: #9333ea !important;
+}
+
 
 
 
