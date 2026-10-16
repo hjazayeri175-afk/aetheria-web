@@ -785,6 +785,15 @@ const {
             overlay.style.opacity = patOpacity.toString();
           }
 
+          // Force Pure Black & Hide Wallpaper/Pattern when OLED is active
+          if (root.classList.contains('power-saving-oled')) {
+            root.style.setProperty('--theme-chat-bg', '#000000');
+            if (overlayLayer) overlayLayer.style.display = 'none';
+            if (imgLayer) imgLayer.style.display = 'none';
+            if (dimLayer) dimLayer.style.display = 'none';
+            if (overlay) overlay.style.display = 'none';
+          }
+
           const chatMessages = document.getElementById('chat-messages-container');
           if (chatMessages) {
             chatMessages.style.setProperty('--theme-bubble-radius', `${radius}px`);
@@ -919,7 +928,33 @@ const {
           root.classList.toggle('power-saving-no-glows', Boolean(settings.disableGlows || settings.master));
 
           // 4. Deep Dark OLED True Black Mode
-          root.classList.toggle('power-saving-oled', Boolean(settings.deepDarkOLED || settings.master));
+          const isOled = Boolean(settings.deepDarkOLED || settings.master);
+          const wasOled = root.classList.contains('power-saving-oled');
+          root.classList.toggle('power-saving-oled', isOled);
+
+          // Direct DOM updates for Chat Wallpaper Layers (Pure Black OLED)
+          const wpOverlay = document.getElementById('chat-wallpaper-overlay');
+          const wpImg = document.getElementById('chat-wallpaper-image-layer');
+          const wpDim = document.getElementById('chat-wallpaper-dimmer');
+          const chatViewport = document.getElementById('chat-viewport-section');
+          const chatRoot = document.getElementById('chat-root-container');
+
+          if (isOled) {
+            if (wpOverlay) wpOverlay.style.display = 'none';
+            if (wpImg) wpImg.style.display = 'none';
+            if (wpDim) wpDim.style.display = 'none';
+            if (chatViewport) chatViewport.style.background = '#000000';
+            if (chatRoot) chatRoot.style.background = '#000000';
+          } else {
+            if (wpOverlay) wpOverlay.style.display = '';
+            if (wpImg) wpImg.style.display = '';
+            if (wpDim) wpDim.style.display = '';
+            if (chatViewport) chatViewport.style.background = '';
+            if (chatRoot) chatRoot.style.background = '';
+            if (wasOled && window.AetheriaTheme?.apply) {
+              window.AetheriaTheme.apply(window.AetheriaTheme.getSettings());
+            }
+          }
 
           // 5. Freeze Animated Avatars & Loops
           root.classList.toggle('power-saving-freeze-avatars', Boolean(settings.freezeAvatars || settings.master));

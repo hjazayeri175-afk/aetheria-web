@@ -83,7 +83,7 @@ const { character } = Astro.props;
 ---
 
 <Layout title={`${character.name} — Immersive Roleplay Chat | Aetheria AI`} noScroll={true}>
-  <div class="h-[100dvh] max-h-[100dvh] w-full max-w-[100vw] flex flex-col bg-[#070913] text-slate-100 overflow-hidden font-sans">
+  <div id="chat-root-container" class="h-[100dvh] max-h-[100dvh] w-full max-w-[100vw] flex flex-col bg-[#070913] text-slate-100 overflow-hidden font-sans">
     
     <!-- Top Navigation Header -->
     <header class="h-14 sm:h-16 border-b border-white/[0.08] bg-[#090b17]/95 backdrop-blur-xl px-2 sm:px-6 flex items-center justify-between z-30 shrink-0 w-full max-w-full overflow-visible">
@@ -18093,6 +18093,33 @@ const { character } = Astro.props;
     updateChatMaskLabel();
     renderAllMessages();
   });
+
+  // Live sync with Power Saving OLED state (Mutes wallpaper pattern for pure #000000 black)
+  function syncChatOLEDBackground() {
+    const isOled = document.documentElement.classList.contains('power-saving-oled');
+    const wpOverlay = document.getElementById('chat-wallpaper-overlay');
+    const wpImg = document.getElementById('chat-wallpaper-image-layer');
+    const wpDim = document.getElementById('chat-wallpaper-dimmer');
+    const chatViewport = document.getElementById('chat-viewport-section');
+    const chatRoot = document.getElementById('chat-root-container');
+
+    if (isOled) {
+      if (wpOverlay) wpOverlay.style.display = 'none';
+      if (wpImg) wpImg.style.display = 'none';
+      if (wpDim) wpDim.style.display = 'none';
+      if (chatViewport) chatViewport.style.background = '#000000';
+      if (chatRoot) chatRoot.style.background = '#000000';
+    } else {
+      if (wpOverlay) wpOverlay.style.display = '';
+      if (wpImg) wpImg.style.display = '';
+      if (wpDim) wpDim.style.display = '';
+      if (chatViewport) chatViewport.style.background = '';
+      if (chatRoot) chatRoot.style.background = '';
+    }
+  }
+
+  window.addEventListener('aetheria:power-saving-change', syncChatOLEDBackground);
+  syncChatOLEDBackground();
 
   selfieBtn?.addEventListener('click', handleGenerateSelfie);
   videoBtn?.addEventListener('click', handleGenerateVideo);
