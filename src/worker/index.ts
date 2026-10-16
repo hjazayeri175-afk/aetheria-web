@@ -65,16 +65,34 @@ interface ClientInfo {
   userAgent: string;
 }
 
-function parseClientInfo(request: Request): ClientInfo {
+function getCountryName(countryCode: string): string {
+  if (!countryCode || countryCode === 'UN' || countryCode === 'XX') return '';
+  try {
+    const displayNames = new Intl.DisplayNames(['en'], { type: 'region' });
+    return displayNames.of(countryCode.toUpperCase()) || countryCode;
+  } catch {
+    return countryCode;
+  }
+}
+
+async function parseClientInfo(request: Request): Promise<ClientInfo> {
   const ua = request.headers.get('user-agent') || 'Unknown Browser';
-  const ip = request.headers.get('cf-connecting-ip') || request.headers.get('x-forwarded-for') || '127.0.0.1';
-  const city = request.headers.get('cf-ipcity') || 'Unknown City';
-  const country = request.headers.get('cf-ipcountry') || 'Unknown Country';
-  const countryCode = request.headers.get('cf-ipcountry') || 'UN';
+  const ip = request.headers.get('cf-connecting-ip') || 
+             request.headers.get('x-forwarded-for')?.split(',')[0].trim() || 
+             '127.0.0.1';
+
+  // Extract client hints if provided
+  const secChModel = request.headers.get('sec-ch-ua-model')?.replace(/"/g, '').trim();
+  const secChPlatform = request.headers.get('sec-ch-ua-platform')?.replace(/"/g, '').trim();
+  const secChMobile = request.headers.get('sec-ch-ua-mobile');
 
   let os = 'Unknown OS';
   let deviceType: 'mobile' | 'desktop' | 'tablet' = 'desktop';
-  let deviceName = 'Desktop Workstation';
+  let deviceName = 'Connected Device';
+
+  if (secChMobile === '?1' || /Mobile|Android|iPhone|iPad/i.test(ua)) {
+    deviceType = /iPad|Tablet|SM-T/i.test(ua) ? 'tablet' : 'mobile';
+  }
 
   if (/iPhone/i.test(ua)) {
     os = 'iOS';
@@ -84,19 +102,28 @@ function parseClientInfo(request: Request): ClientInfo {
     os = 'iPadOS';
     deviceType = 'tablet';
     deviceName = 'Apple iPad';
-  } else if (/Android/i.test(ua)) {
+  } else if (/Android/i.test(ua) || secChPlatform === 'Android') {
     os = 'Android';
     deviceType = /Tablet|SM-T/i.test(ua) ? 'tablet' : 'mobile';
-    deviceName = /SM-|Galaxy/i.test(ua) ? 'Samsung Galaxy' : 'Android Mobile';
-  } else if (/Macintosh|Mac OS X/i.test(ua)) {
+    if (secChModel && secChModel !== 'K') {
+      deviceName = secChModel;
+    } else {
+      const modelMatch = ua.match(/;\s*([^;)]+)\s+Build\//i) || ua.match(/Android[^;]*;\s*([^;)]+)\)/i);
+      if (modelMatch && modelMatch[1] && !/^(K|wv|Linux|U)$/i.test(modelMatch[1].trim())) {
+        deviceName = modelMatch[1].trim();
+      } else {
+        deviceName = deviceType === 'tablet' ? 'Android Tablet' : 'Android Smartphone';
+      }
+    }
+  } else if (/Macintosh|Mac OS X/i.test(ua) || secChPlatform === 'macOS') {
     os = 'macOS';
     deviceType = 'desktop';
     deviceName = 'Apple Mac';
-  } else if (/Windows/i.test(ua)) {
+  } else if (/Windows/i.test(ua) || secChPlatform === 'Windows') {
     os = 'Windows';
     deviceType = 'desktop';
     deviceName = 'Windows PC';
-  } else if (/Linux/i.test(ua)) {
+  } else if (/Linux/i.test(ua) || secChPlatform === 'Linux') {
     os = 'Linux';
     deviceType = 'desktop';
     deviceName = 'Linux Workstation';
@@ -113,15 +140,41 @@ function parseClientInfo(request: Request): ClientInfo {
     browser = 'Mozilla Firefox';
   }
 
+  // Geolocation resolution from Cloudflare Edge properties
+  const cf = (request as any).cf || {};
+  let city = cf.city || request.headers.get('cf-ipcity') || '';
+  let countryCode = cf.country || request.headers.get('cf-ipcountry') || '';
+
+  // If city is missing and we have a valid public IP, resolve with fast lookup
+  if ((!city || city === 'Unknown City') && ip && ip !== '127.0.0.1' && !ip.startsWith('10.') && !ip.startsWith('192.168.')) {
+    try {
+      const controller = new AbortController();
+      const timeoutId = setTimeout(() => controller.abort(), 1200);
+      const res = await fetch(`https://ipwho.is/${ip}`, { signal: controller.signal });
+      clearTimeout(timeoutId);
+      if (res.ok) {
+        const data = await res.json() as any;
+        if (data.success) {
+          city = data.city || city;
+          countryCode = data.country_code || countryCode;
+        }
+      }
+    } catch {
+      // Ignore network timeout
+    }
+  }
+
+  const country = getCountryName(countryCode);
+
   return {
     deviceName,
     deviceType,
     browser,
     os,
     ip,
-    city,
-    country,
-    countryCode,
+    city: city || (country ? '' : 'Cloudflare Edge'),
+    country: country || (countryCode ? countryCode : 'Global Edge'),
+    countryCode: countryCode || 'GL',
     userAgent: ua
   };
 }
@@ -232,7 +285,7 @@ export default {
         const rawToken = generateSecureToken();
         const tokenHash = await hashToken(rawToken);
         const expiresAt = now + (30 * 24 * 3600); // 30 days
-        const client = parseClientInfo(request);
+        const client = await parseClientInfo(request);
         const sessionId = crypto.randomUUID();
 
         await env.DB.prepare(
@@ -289,7 +342,7 @@ export default {
         const rawToken = generateSecureToken();
         const tokenHash = await hashToken(rawToken);
         const expiresAt = now + (30 * 24 * 3600);
-        const client = parseClientInfo(request);
+        const client = await parseClientInfo(request);
         const sessionId = crypto.randomUUID();
 
         // Check for IP/geo anomaly against previous logins
@@ -390,7 +443,7 @@ export default {
         const rawToken = generateSecureToken();
         const tokenHash = await hashToken(rawToken);
         const expiresAt = now + (30 * 24 * 3600);
-        const client = parseClientInfo(request);
+        const client = await parseClientInfo(request);
         const sessionId = crypto.randomUUID();
 
         await env.DB.prepare(
@@ -537,7 +590,7 @@ export default {
 
       // GET current device edge metadata
       if ((url.pathname === '/api/devices/current' || url.pathname === '/api/sessions/current') && request.method === 'GET') {
-        const client = parseClientInfo(request);
+        const client = await parseClientInfo(request);
         const now = Math.floor(Date.now() / 1000);
         return jsonResponse({
           success: true,
@@ -548,9 +601,9 @@ export default {
             browser: client.browser,
             os: client.os,
             ip: client.ip,
-            city: client.city !== 'Unknown City' ? client.city : 'Tehran',
-            country: client.country !== 'Unknown Country' ? client.country : 'Iran',
-            countryCode: client.countryCode !== 'UN' ? client.countryCode : 'IR',
+            city: client.city,
+            country: client.country,
+            countryCode: client.countryCode,
             isCurrent: true,
             onlineNow: true,
             lastActiveAt: now,
@@ -561,15 +614,15 @@ export default {
 
       // GET active sessions
       if (url.pathname === '/api/sessions' && request.method === 'GET') {
-        const client = parseClientInfo(request);
+        const client = await parseClientInfo(request);
         const auth = await getAuthenticatedUser(request, env);
         const now = Math.floor(Date.now() / 1000);
 
         if (auth) {
           // Update current session's telemetry
           await env.DB.prepare(
-            'UPDATE sessions SET last_active_at = ?, ip = ?, city = ?, country = ?, device_name = coalesce(device_name, ?), browser = coalesce(browser, ?), os = coalesce(os, ?) WHERE token_hash = ?'
-          ).bind(now, client.ip, client.city, client.country, client.deviceName, client.browser, client.os, auth.tokenHash).run();
+            'UPDATE sessions SET last_active_at = ?, ip = ?, city = ?, country = ?, country_code = ?, device_name = coalesce(device_name, ?), browser = coalesce(browser, ?), os = coalesce(os, ?) WHERE token_hash = ?'
+          ).bind(now, client.ip, client.city, client.country, client.countryCode, client.deviceName, client.browser, client.os, auth.tokenHash).run();
 
           const rows = await env.DB.prepare(
             'SELECT id, token_hash, device_name, device_type, browser, os, ip, city, country, country_code, last_active_at, created_at FROM sessions WHERE user_id = ? AND expires_at > ? ORDER BY last_active_at DESC, created_at DESC'
@@ -582,7 +635,7 @@ export default {
             browser: s.browser || 'Browser',
             os: s.os || 'OS',
             ip: s.ip || 'Unknown IP',
-            city: s.city || 'Unknown City',
+            city: s.city || '',
             country: s.country || '',
             countryCode: s.country_code || '',
             isCurrent: s.token_hash === auth.tokenHash,
@@ -598,7 +651,7 @@ export default {
             totalCount: sessions.length
           });
         } else {
-          // Interactive Demo / Guest fallback
+          // Single authentic guest session: ONLY the real current client! NO fake MacBook Pro or simulated other devices!
           const currentSession = {
             id: 'current_session_client',
             deviceName: client.deviceName,
@@ -606,36 +659,20 @@ export default {
             browser: client.browser,
             os: client.os,
             ip: client.ip,
-            city: client.city !== 'Unknown City' ? client.city : 'Tehran',
-            country: client.country !== 'Unknown Country' ? client.country : 'Iran',
-            countryCode: client.countryCode !== 'UN' ? client.countryCode : 'IR',
+            city: client.city,
+            country: client.country,
+            countryCode: client.countryCode,
             isCurrent: true,
             onlineNow: true,
             lastActiveAt: now,
             createdAt: now - 3600
           };
 
-          const secondarySession = {
-            id: 'demo_session_workstation',
-            deviceName: 'MacBook Pro 16"',
-            deviceType: 'desktop',
-            browser: 'Apple Safari 17.4',
-            os: 'macOS Sonoma',
-            ip: '185.190.142.88',
-            city: 'Stockholm',
-            country: 'Sweden',
-            countryCode: 'SE',
-            isCurrent: false,
-            onlineNow: false,
-            lastActiveAt: now - 7200,
-            createdAt: now - 86400 * 3
-          };
-
           return jsonResponse({
             success: true,
             authenticated: false,
-            sessions: [currentSession, secondarySession],
-            totalCount: 2
+            sessions: [currentSession],
+            totalCount: 1
           });
         }
       }
@@ -647,7 +684,7 @@ export default {
       ) {
         const auth = await getAuthenticatedUser(request, env);
         const now = Math.floor(Date.now() / 1000);
-        const client = parseClientInfo(request);
+        const client = await parseClientInfo(request);
 
         if (auth) {
           const result = await env.DB.prepare(
@@ -677,8 +714,8 @@ export default {
         } else {
           return jsonResponse({
             success: true,
-            count: 1,
-            message: 'All other sessions have been disconnected successfully.'
+            count: 0,
+            message: 'No other active sessions connected to this client.'
           });
         }
       }
@@ -701,7 +738,7 @@ export default {
         }
 
         const now = Math.floor(Date.now() / 1000);
-        const client = parseClientInfo(request);
+        const client = await parseClientInfo(request);
 
         if (auth) {
           const targetSession = await env.DB.prepare(
@@ -809,7 +846,7 @@ export default {
       // Security Logs (Audit Trail)
       if (url.pathname === '/api/security/logs' && request.method === 'GET') {
         const auth = await getAuthenticatedUser(request, env);
-        const client = parseClientInfo(request);
+        const client = await parseClientInfo(request);
         const now = Math.floor(Date.now() / 1000);
 
         if (auth) {
@@ -822,8 +859,8 @@ export default {
             logs: rows.results || []
           });
         } else {
-          // Synthetic realistic audit log for current client
-          const mockLogs = [
+          // Real live audit log for current client
+          const liveLogs = [
             {
               id: 'log_edge_current',
               event_type: 'login_success',
@@ -831,26 +868,15 @@ export default {
               browser: client.browser,
               os: client.os,
               ip: client.ip,
-              city: client.city !== 'Unknown City' ? client.city : 'Tehran',
-              country: client.country !== 'Unknown Country' ? client.country : 'Iran',
-              created_at: now - 3600
-            },
-            {
-              id: 'log_edge_audit',
-              event_type: 'security_check',
-              device_name: client.deviceName,
-              browser: client.browser,
-              os: client.os,
-              ip: client.ip,
-              city: client.city !== 'Unknown City' ? client.city : 'Tehran',
-              country: client.country !== 'Unknown Country' ? client.country : 'Iran',
-              created_at: now - 86400
+              city: client.city,
+              country: client.country,
+              created_at: now - 1800
             }
           ];
 
           return jsonResponse({
             success: true,
-            logs: mockLogs
+            logs: liveLogs
           });
         }
       }

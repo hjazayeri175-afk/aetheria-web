@@ -2616,12 +2616,28 @@ import {
 
         // Separate current session from other sessions
         const currentSession = sessions.find((s: any) => s.isCurrent) || sessions[0];
-        const otherSessions = sessions.filter((s: any) => s !== currentSession);
+        const otherSessions = sessions.filter((s: any) => !s.isCurrent && s.id !== currentSession?.id);
+
+        // High-accuracy device model detection on client side
+        let clientModelName = currentSession?.deviceName || 'Connected Device';
+        try {
+          const ua = navigator.userAgent;
+          if (/Android/i.test(ua)) {
+            const m = ua.match(/;\s*([^;)]+)\s+Build\//i) || ua.match(/Android[^;]*;\s*([^;)]+)\)/i);
+            if (m && m[1] && !/^(K|wv|Linux|U)$/i.test(m[1].trim())) {
+              clientModelName = m[1].trim();
+            }
+          }
+        } catch {}
 
         // Render Current Device
         if (currentContainer && currentSession) {
           const maskedIp = maskIpAddress(currentSession.ip);
           const iconSvg = getDeviceIconSvg(currentSession.deviceType);
+          const locationDisplay = currentSession.city 
+            ? `${currentSession.city}${currentSession.country ? ', ' + currentSession.country : ''}`
+            : (currentSession.country || 'Cloudflare Edge');
+
           currentContainer.innerHTML = `
             <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
               <div class="flex items-start gap-3.5">
@@ -2630,7 +2646,7 @@ import {
                 </div>
                 <div class="space-y-1">
                   <div class="flex items-center gap-2 flex-wrap">
-                    <span class="text-sm font-bold text-white tracking-wide">${currentSession.deviceName || 'Personal Hardware'}</span>
+                    <span id="current-device-display-name" class="text-sm font-bold text-white tracking-wide">${clientModelName}</span>
                     <span class="text-[11px] font-semibold text-emerald-300 bg-emerald-500/10 px-2 py-0.5 rounded-full border border-emerald-500/20">
                       This Device • ${String(currentSession.deviceType || 'device').toUpperCase()}
                     </span>
@@ -2643,7 +2659,7 @@ import {
                   <div class="flex items-center gap-3 text-[11px] text-slate-400 flex-wrap pt-0.5">
                     <span class="flex items-center gap-1 text-slate-300">
                       <svg class="w-3 h-3 text-emerald-400" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
-                      ${currentSession.city || 'Edge Location'}${currentSession.country ? ', ' + currentSession.country : ''}
+                      ${locationDisplay}
                     </span>
                     <span class="text-white/20">•</span>
                     <span class="font-mono text-slate-400">${maskedIp}</span>
@@ -2661,6 +2677,26 @@ import {
               </div>
             </div>
           `;
+
+          // Query high entropy client hints if browser supports it
+          if ((navigator as any).userAgentData?.getHighEntropyValues) {
+            (navigator as any).userAgentData.getHighEntropyValues(['model']).then((data: any) => {
+              if (data?.model && data.model !== 'K') {
+                const devSpan = document.getElementById('current-device-display-name');
+                if (devSpan) devSpan.textContent = data.model;
+              }
+            }).catch(() => {});
+          }
+        }
+
+        // Update terminate others button availability
+        const termBtn = document.getElementById('btn-terminate-other-sessions');
+        if (termBtn) {
+          if (otherSessions.length === 0) {
+            termBtn.classList.add('opacity-40', 'cursor-not-allowed');
+          } else {
+            termBtn.classList.remove('opacity-40', 'cursor-not-allowed');
+          }
         }
 
         // Render Other Sessions
@@ -2829,6 +2865,13 @@ import {
 
     // Terminate All Other Sessions Handler
     document.getElementById('btn-terminate-other-sessions')?.addEventListener('click', async () => {
+      const otherContainer = document.getElementById('other-sessions-container');
+      const hasOtherSessions = otherContainer && otherContainer.querySelector('.btn-revoke-session');
+      if (!hasOtherSessions) {
+        showToast('No other active sessions connected to your account.', 'info');
+        return;
+      }
+
       const confirmed = await showConfirm(
         'Logout of All Other Devices?',
         'Are you sure you want to terminate all other active sessions? All connected phones, laptops, and web sessions (except this current device) will be immediately logged out.'
