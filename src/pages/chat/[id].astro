@@ -5085,7 +5085,12 @@ const { character } = Astro.props;
     const sCat = document.getElementById('chat-sidebar-category');
     if (sCat) sCat.textContent = activeChar.category || 'Custom';
     const sDesc = document.getElementById('chat-sidebar-desc');
-    if (sDesc) sDesc.innerHTML = safeRenderDescription(formatMacroText(activeChar.description || ''));
+    if (sDesc) {
+      sDesc.innerHTML = safeRenderDescription(formatMacroText(activeChar.description || ''));
+      if (typeof window.resolveAdaptiveContrast === 'function') {
+        window.resolveAdaptiveContrast(sDesc);
+      }
+    }
 
     const tAvatar = document.getElementById('chat-typing-avatar');
     if (tAvatar) tAvatar.src = activeChar.avatarUrl;
@@ -21027,6 +21032,10 @@ Requirements:
   window.addEventListener('aetheria-theme-change', (e) => {
     if (e.detail) {
       updateLivePreview(e.detail);
+    }
+    const sDesc = document.getElementById('chat-sidebar-desc');
+    if (sDesc && typeof window.resolveAdaptiveContrast === 'function') {
+      window.resolveAdaptiveContrast(sDesc);
     }
   });
 

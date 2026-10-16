@@ -397,9 +397,167 @@ export function extractCardDefinition(char: any) {
   };
 }
 
+function parseRgbColor(colorStr: string | null | undefined): { r: number; g: number; b: number; a: number } | null {
+  if (!colorStr) return null;
+  const s = colorStr.trim().toLowerCase();
+  if (s === 'transparent' || s === 'inherit' || s === 'initial' || s === 'unset') return null;
+
+  if (s.startsWith('#')) {
+    let hex = s.slice(1);
+    if (hex.length === 3) hex = hex.split('').map(c => c + c).join('');
+    if (hex.length >= 6) {
+      return {
+        r: parseInt(hex.slice(0, 2), 16),
+        g: parseInt(hex.slice(2, 4), 16),
+        b: parseInt(hex.slice(4, 6), 16),
+        a: 1
+      };
+    }
+  }
+
+  const match = s.match(/rgba?\s*\(\s*(\d+)\s*,\s*(\d+)\s*,\s*(\d+)(?:\s*,\s*([\d\.]+))?\s*\)/);
+  if (match) {
+    return {
+      r: parseInt(match[1], 10),
+      g: parseInt(match[2], 10),
+      b: parseInt(match[3], 10),
+      a: match[4] !== undefined ? parseFloat(match[4]) : 1
+    };
+  }
+  return null;
+}
+
+function calculateLuminance(r: number, g: number, b: number): number {
+  return 0.299 * r + 0.587 * g + 0.114 * b;
+}
+
+/**
+ * Adaptive Contrast & Luminance Engine for Rich Character Content
+ * Dynamically reconciles author skins, background images, and custom dark boxes in Day Mode.
+ */
+export function resolveAdaptiveContrast(container?: HTMLElement | null): void {
+  if (!container || typeof window === 'undefined') return;
+
+  const isDayMode = 
+    document.documentElement.getAttribute('data-base-mode') === 'day' ||
+    document.documentElement.classList.contains('day-mode');
+
+  // If not Day mode (standard dark theme), revert day mode cleared styles
+  if (!isDayMode) {
+    const cleared = container.querySelectorAll('.day-mode-card-cleared');
+    cleared.forEach((el: any) => {
+      el.classList.remove('day-mode-card-cleared');
+      if (el.dataset.origBg !== undefined) el.style.backgroundColor = el.dataset.origBg;
+      if (el.dataset.origBorder !== undefined) el.style.borderColor = el.dataset.origBorder;
+      if (el.dataset.origColor !== undefined) el.style.color = el.dataset.origColor;
+    });
+    const darkDetected = container.querySelectorAll('.dark-surface-detected, .light-surface-detected');
+    darkDetected.forEach((el: any) => {
+      el.classList.remove('dark-surface-detected', 'light-surface-detected');
+    });
+    return;
+  }
+
+  // In Day Mode:
+  const elements = Array.from(container.querySelectorAll('*')) as HTMLElement[];
+  elements.unshift(container);
+
+  for (const el of elements) {
+    if (!el || !(el instanceof HTMLElement)) continue;
+
+    // 1. Check for background image (in inline style or computedStyle)
+    const inlineStyle = el.getAttribute('style') || '';
+    const compStyle = window.getComputedStyle(el);
+    const bgImg = el.style.backgroundImage || compStyle.backgroundImage || '';
+
+    const hasBgImage = 
+      /url\(['"]?[^'"]+['"]?\)/i.test(bgImg) || 
+      /background(?:-image)?:\s*url\(/i.test(inlineStyle);
+
+    if (hasBgImage) {
+      el.setAttribute('data-has-bg-image', 'true');
+      el.classList.add('dark-surface-detected');
+      el.classList.remove('light-surface-detected');
+
+      // Extract URL for luminance measurement
+      const match = bgImg.match(/url\(['"]?([^'"]+)['"]?\)/i) || inlineStyle.match(/url\(['"]?([^'"]+)['"]?\)/i);
+      if (match && match[1]) {
+        const url = match[1];
+        try {
+          const img = new Image();
+          img.crossOrigin = 'anonymous';
+          img.onload = () => {
+            try {
+              const canvas = document.createElement('canvas');
+              canvas.width = 16;
+              canvas.height = 16;
+              const ctx = canvas.getContext('2d');
+              if (ctx) {
+                ctx.drawImage(img, 0, 0, 16, 16);
+                const data = ctx.getImageData(0, 0, 16, 16).data;
+                let totalLum = 0;
+                let count = 0;
+                for (let i = 0; i < data.length; i += 4) {
+                  if (data[i + 3] < 32) continue;
+                  totalLum += 0.299 * data[i] + 0.587 * data[i + 1] + 0.114 * data[i + 2];
+                  count++;
+                }
+                const avgLum = count > 0 ? totalLum / count : 0;
+                if (avgLum >= 140) {
+                  el.classList.remove('dark-surface-detected');
+                  el.classList.add('light-surface-detected');
+                } else {
+                  el.classList.add('dark-surface-detected');
+                  el.classList.remove('light-surface-detected');
+                }
+              }
+            } catch (e) {
+              // CORS or tainted canvas -> keep dark-surface-detected for safe contrast
+              el.classList.add('dark-surface-detected');
+            }
+          };
+          img.onerror = () => {
+            el.classList.add('dark-surface-detected');
+          };
+          img.src = url;
+        } catch (_) {
+          el.classList.add('dark-surface-detected');
+        }
+      }
+      continue;
+    }
+
+    // 2. Check for dark background colors WITHOUT background-image
+    if (el.closest('.dark-surface-detected')) {
+      continue;
+    }
+
+    const inlineBg = el.style.backgroundColor || el.style.background || '';
+    const compBg = compStyle.backgroundColor;
+    const colorToTest = inlineBg || compBg;
+
+    const parsed = parseRgbColor(colorToTest);
+    if (parsed && parsed.a > 0.3) {
+      const lum = calculateLuminance(parsed.r, parsed.g, parsed.b);
+      // Dark box (Luminance < 110 out of 255)
+      if (lum < 110) {
+        if (el.dataset.origBg === undefined) el.dataset.origBg = el.style.backgroundColor || '';
+        if (el.dataset.origBorder === undefined) el.dataset.origBorder = el.style.borderColor || '';
+        if (el.dataset.origColor === undefined) el.dataset.origColor = el.style.color || '';
+
+        el.classList.add('day-mode-card-cleared');
+        el.style.backgroundColor = '#f8fafc';
+        el.style.borderColor = '#cbd5e1';
+        el.style.color = '#1e293b';
+      }
+    }
+  }
+}
+
 if (typeof window !== 'undefined') {
   (window as any).sanitizeTitle = sanitizeTitle;
   (window as any).estimateTokens = estimateTokens;
   (window as any).cleanPublicDescription = cleanPublicDescription;
   (window as any).extractCardDefinition = extractCardDefinition;
+  (window as any).resolveAdaptiveContrast = resolveAdaptiveContrast;
 }

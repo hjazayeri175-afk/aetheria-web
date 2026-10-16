@@ -448,7 +448,8 @@ import {
     formatRichGreeting,
     cleanPublicDescription,
     estimateTokens,
-    extractCardDefinition
+    extractCardDefinition,
+    resolveAdaptiveContrast
   } from '../utils/cardFormatter';
 
   // Elements
@@ -612,6 +613,12 @@ import {
         }
       }
     });
+
+    if (tab === 'desc' && showcaseDescription) {
+      resolveAdaptiveContrast(showcaseDescription as HTMLElement);
+    } else if (tab === 'greetings' && showcaseGreeting) {
+      resolveAdaptiveContrast(showcaseGreeting as HTMLElement);
+    }
   }
 
   tabBtnDesc?.addEventListener('click', () => switchTab('desc'));
@@ -680,6 +687,7 @@ import {
 
     const activeGreetingText = currentGreetings[currentGreetingIndex] || '*Awaits your first message...*';
     showcaseGreeting.innerHTML = formatRichGreeting(activeGreetingText, activeCharacter?.name);
+    resolveAdaptiveContrast(showcaseGreeting as HTMLElement);
   }
 
   greetingPrevBtn?.addEventListener('click', (e) => {
@@ -876,6 +884,7 @@ import {
       }
       const publicText = cleanPublicDescription(rawMainDesc, char.creatorNotes || char.creator_notes);
       showcaseDescription.innerHTML = formatRichDescription(publicText, char.name);
+      resolveAdaptiveContrast(showcaseDescription as HTMLElement);
     }
 
     // Populate Tab 2: Greetings & Alternates
@@ -970,6 +979,7 @@ import {
               if (!fullDesc) fullDesc = char.description || 'No detailed background provided.';
               const cleanText = cleanPublicDescription(fullDesc, idbChar.creator_notes || idbChar.creatorNotes || char.creatorNotes);
               showcaseDescription.innerHTML = formatRichDescription(cleanText, idbChar.name || char.name);
+              resolveAdaptiveContrast(showcaseDescription as HTMLElement);
             }
           }
           if (idbChar.greeting || idbChar.first_mes) {
@@ -998,6 +1008,8 @@ import {
     if (showcaseBody) showcaseBody.scrollTop = 0;
     requestAnimationFrame(() => {
       if (showcaseBody) showcaseBody.scrollTop = 0;
+      if (showcaseDescription) resolveAdaptiveContrast(showcaseDescription as HTMLElement);
+      if (showcaseGreeting) resolveAdaptiveContrast(showcaseGreeting as HTMLElement);
     });
   }
 
@@ -1314,5 +1326,10 @@ import {
       const charId = card.getAttribute('data-character-id');
       if (charId) openShowcase(charId);
     }
+  });
+
+  window.addEventListener('aetheria-theme-change', () => {
+    if (showcaseDescription) resolveAdaptiveContrast(showcaseDescription as HTMLElement);
+    if (showcaseGreeting) resolveAdaptiveContrast(showcaseGreeting as HTMLElement);
   });
 </script>

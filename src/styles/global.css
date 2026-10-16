@@ -3930,6 +3930,88 @@ html.day-mode #chat-sidebar-desc details {
   border-radius: 0.75rem !important;
 }
 
+/* ==========================================================================
+   AETHERIA ADAPTIVE CONTRAST & LUMINANCE ENGINE
+   Guarantees perfect visibility for author image backgrounds and custom skins
+   ========================================================================== */
+
+/* 1. When an author surface is detected as dark (e.g. background image or dark overlay),
+      keep crystal-clear brilliant white text with deep drop-shadow in Day Mode */
+html[data-base-mode="day"] .dark-surface-detected,
+html[data-base-mode="day"] .dark-surface-detected *,
+html.day-mode .dark-surface-detected,
+html.day-mode .dark-surface-detected * {
+  color: #ffffff !important;
+  text-shadow: 0 1px 4px rgba(0, 0, 0, 0.95), 0 0 2px rgba(0, 0, 0, 0.9) !important;
+}
+
+html[data-base-mode="day"] .dark-surface-detected em,
+html[data-base-mode="day"] .dark-surface-detected i,
+html.day-mode .dark-surface-detected em,
+html.day-mode .dark-surface-detected i {
+  color: #e9d5ff !important;
+  font-style: italic !important;
+  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.9) !important;
+}
+
+html[data-base-mode="day"] .dark-surface-detected strong,
+html[data-base-mode="day"] .dark-surface-detected b,
+html.day-mode .dark-surface-detected strong,
+html.day-mode .dark-surface-detected b {
+  color: #ffffff !important;
+  font-weight: 700 !important;
+  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.95) !important;
+}
+
+html[data-base-mode="day"] .dark-surface-detected a,
+html.day-mode .dark-surface-detected a {
+  color: #c084fc !important;
+  text-decoration: underline !important;
+  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.9) !important;
+}
+
+/* 2. Protective Readability Scrim for Author Background Images */
+html[data-base-mode="day"] [data-has-bg-image="true"].dark-surface-detected,
+html.day-mode [data-has-bg-image="true"].dark-surface-detected {
+  position: relative !important;
+  background-color: rgba(15, 23, 42, 0.68) !important;
+  background-blend-mode: overlay !important;
+  border-radius: 0.75rem !important;
+  padding: 0.85rem !important;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.35) !important;
+}
+
+/* 3. Dark Author Boxes without images converted to Day Mode Light Cards */
+html[data-base-mode="day"] .day-mode-card-cleared,
+html.day-mode .day-mode-card-cleared {
+  background-color: #f8fafc !important;
+  border: 1px solid #cbd5e1 !important;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04) !important;
+}
+
+html[data-base-mode="day"] .day-mode-card-cleared *,
+html.day-mode .day-mode-card-cleared * {
+  color: #1e293b !important;
+  text-shadow: none !important;
+}
+
+html[data-base-mode="day"] .day-mode-card-cleared em,
+html[data-base-mode="day"] .day-mode-card-cleared i,
+html.day-mode .day-mode-card-cleared em,
+html.day-mode .day-mode-card-cleared i {
+  color: #6b21a8 !important;
+  font-style: italic !important;
+}
+
+html[data-base-mode="day"] .day-mode-card-cleared strong,
+html[data-base-mode="day"] .day-mode-card-cleared b,
+html.day-mode .day-mode-card-cleared strong,
+html.day-mode .day-mode-card-cleared b {
+  color: #0f172a !important;
+  font-weight: 700 !important;
+}
+
+
 
 
 
