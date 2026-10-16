@@ -1917,10 +1917,25 @@ import {
     const wrapper = document.getElementById('persona-cards-wrapper');
     if (!wrapper) return;
 
+    const isDay = document.documentElement.getAttribute('data-base-mode') === 'day' || (window as any).AetheriaTheme?.get()?.baseMode === 'day';
+
     let cardsHtml = '';
 
     // Corner Filigree SVG Template
-    const filigreeSvg = `
+    const filigreeSvg = isDay ? `
+      <div class="absolute top-2.5 left-2.5 w-3.5 h-3.5 text-purple-600/40 pointer-events-none z-20">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M2 9V4a2 2 0 0 1 2-2h5M2 2l5 5"/></svg>
+      </div>
+      <div class="absolute top-2.5 right-2.5 w-3.5 h-3.5 text-purple-600/40 pointer-events-none z-20">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 9V4a2 2 0 0 0-2-2h-5M22 2l-5 5"/></svg>
+      </div>
+      <div class="absolute bottom-2.5 left-2.5 w-3.5 h-3.5 text-purple-600/40 pointer-events-none z-20">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M2 15v5a2 2 0 0 0 2 2h5M2 22l5-5"/></svg>
+      </div>
+      <div class="absolute bottom-2.5 right-2.5 w-3.5 h-3.5 text-purple-600/40 pointer-events-none z-20">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 15v5a2 2 0 0 1-2 2h-5M22 22l-5-5"/></svg>
+      </div>
+    ` : `
       <div class="absolute top-2.5 left-2.5 w-3.5 h-3.5 text-purple-400/50 pointer-events-none z-20">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M2 9V4a2 2 0 0 1 2-2h5M2 2l5 5"/></svg>
       </div>
@@ -1956,7 +1971,9 @@ import {
       const isCustomPronoun = !!rawPronouns && !isHe && !isShe && !isThey;
 
       const activePillClass = 'bg-purple-600 text-white font-semibold rounded-lg shadow-[0_0_10px_var(--theme-accent-glow,rgba(147,51,234,0.4))] transition-all duration-200 text-xs flex-1 py-1.5 text-center cursor-pointer select-none whitespace-nowrap';
-      const inactivePillClass = 'text-gray-400 hover:text-white text-xs flex-1 py-1.5 text-center transition-colors cursor-pointer select-none rounded-lg hover:bg-white/5 whitespace-nowrap';
+      const inactivePillClass = isDay 
+        ? 'text-slate-600 hover:text-slate-900 hover:bg-slate-100 text-xs flex-1 py-1.5 text-center transition-colors cursor-pointer select-none rounded-lg border border-slate-200 whitespace-nowrap'
+        : 'text-gray-400 hover:text-white text-xs flex-1 py-1.5 text-center transition-colors cursor-pointer select-none rounded-lg hover:bg-white/5 whitespace-nowrap';
 
       const tokens = p.tokenCount || estimateTokens((p.about || '') + ' ' + (p.additionalInstructions || ''));
 
@@ -1972,28 +1989,28 @@ import {
             style="transform-style: preserve-3d; transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1);"
           >
             <!-- ================= FRONT: VIEWER (Theme-Adaptive) ================= -->
-            <div class="absolute inset-0 backface-hidden rounded-3xl p-5 flex flex-col justify-between border ${p.isActive ? 'border-purple-500/60 shadow-2xl ring-1 ring-purple-400/40' : 'border-purple-500/30 shadow-2xl shadow-black/90'} bg-gradient-to-b from-[#141726]/98 via-[#0c0e18]/98 to-[#06070e]/98 backdrop-blur-2xl overflow-hidden">
+            <div class="absolute inset-0 backface-hidden rounded-3xl p-5 flex flex-col justify-between border ${p.isActive ? (isDay ? 'border-purple-500/50 shadow-xl ring-1 ring-purple-400/30' : 'border-purple-500/60 shadow-2xl ring-1 ring-purple-400/40') : (isDay ? 'border-slate-200 shadow-md' : 'border-purple-500/30 shadow-2xl shadow-black/90')} ${isDay ? 'bg-gradient-to-b from-white via-slate-50 to-slate-100' : 'bg-gradient-to-b from-[#141726]/98 via-[#0c0e18]/98 to-[#06070e]/98'} backdrop-blur-2xl overflow-hidden">
               
               ${filigreeSvg}
 
               <!-- Subtle Ambient Radial Glow (inherits theme accent) -->
-              <div class="absolute -top-16 -right-16 w-44 h-44 rounded-full ${p.isActive ? 'bg-purple-500/20' : 'bg-white/[0.02]'} blur-3xl pointer-events-none"></div>
+              <div class="absolute -top-16 -right-16 w-44 h-44 rounded-full ${p.isActive ? (isDay ? 'bg-purple-200/50' : 'bg-purple-500/20') : (isDay ? 'bg-slate-200/40' : 'bg-white/[0.02]')} blur-3xl pointer-events-none"></div>
 
               <!-- Top-Right Stacked Token Badge -->
               <div class="flex items-center justify-end z-10 w-full">
-                <div class="px-2.5 py-1.5 rounded-xl bg-black/70 border ${tokens > 500 ? 'border-red-400 bg-red-500/20' : 'border-purple-500/40'} flex flex-col items-center justify-center min-w-[54px] shadow-sm">
-                  <span class="text-xs font-bold ${tokens > 500 ? 'text-red-400' : 'text-purple-300'} font-mono leading-none">${tokens}</span>
-                  <span class="text-[10px] text-gray-300 font-sans font-medium leading-none mt-1">tokens</span>
+                <div class="px-2.5 py-1.5 rounded-xl ${isDay ? 'bg-slate-100 border border-slate-200 shadow-xs' : 'bg-black/70 border ' + (tokens > 500 ? 'border-red-400 bg-red-500/20' : 'border-purple-500/40') + ' shadow-sm'} flex flex-col items-center justify-center min-w-[54px]">
+                  <span class="text-xs font-bold ${tokens > 500 ? (isDay ? 'text-red-600' : 'text-red-400') : (isDay ? 'text-purple-700' : 'text-purple-300')} font-mono leading-none">${tokens}</span>
+                  <span class="text-[10px] ${isDay ? 'text-slate-500 font-medium' : 'text-gray-300 font-medium'} font-sans leading-none mt-1">tokens</span>
                 </div>
               </div>
 
               <!-- Center Avatar & Identity -->
               <div class="flex flex-col items-center text-center my-auto py-1 z-10">
-                <div class="relative w-24 h-24 sm:w-26 sm:h-26 rounded-full overflow-hidden border-2 ${p.isActive ? 'border-purple-400 ring-2 ring-purple-500/30 gilded-avatar-glow' : 'border-purple-500/30'} bg-black/60 flex items-center justify-center mb-2 transition">
+                <div class="relative w-24 h-24 sm:w-26 sm:h-26 rounded-full overflow-hidden border-2 ${p.isActive ? (isDay ? 'border-purple-500 ring-2 ring-purple-400/30' : 'border-purple-400 ring-2 ring-purple-500/30 gilded-avatar-glow') : (isDay ? 'border-slate-300' : 'border-purple-500/30')} ${isDay ? 'bg-slate-100' : 'bg-black/60'} flex items-center justify-center mb-2 transition">
                   ${p.avatar ? `
                     <img src="${p.avatar}" alt="${displayName}" class="w-full h-full object-cover" />
                   ` : `
-                    <div class="w-full h-full flex items-center justify-center text-purple-300 font-bold text-3xl bg-gradient-to-tr from-purple-950/60 to-stone-900/60">
+                    <div class="w-full h-full flex items-center justify-center ${isDay ? 'text-purple-700 bg-purple-100' : 'text-purple-300 bg-gradient-to-tr from-purple-950/60 to-stone-900/60'} font-bold text-3xl">
                       ${(displayName.charAt(0) || 'H').toUpperCase()}
                     </div>
                   `}
@@ -2001,13 +2018,13 @@ import {
 
                 <!-- Name & ACTIVE Badge -->
                 <div class="flex items-center justify-center gap-2 mt-1">
-                  <h2 class="text-xl sm:text-2xl font-bold text-white tracking-tight truncate max-w-[200px]">${displayName}</h2>
+                  <h2 class="text-xl sm:text-2xl font-bold ${isDay ? 'text-slate-900' : 'text-white'} tracking-tight truncate max-w-[200px]">${displayName}</h2>
                   ${p.isActive ? `
-                    <span class="px-2.5 py-0.5 rounded-full border border-purple-400/80 bg-purple-950/80 text-purple-300 text-[10px] font-bold tracking-wider uppercase shadow-[0_0_8px_var(--theme-accent-glow,rgba(147,51,234,0.3))]">
+                    <span class="px-2.5 py-0.5 rounded-full border ${isDay ? 'border-purple-300 bg-purple-100 text-purple-700' : 'border-purple-400/80 bg-purple-950/80 text-purple-300 shadow-[0_0_8px_var(--theme-accent-glow,rgba(147,51,234,0.3))]'} text-[10px] font-bold tracking-wider uppercase">
                       ACTIVE
                     </span>
                   ` : `
-                    <button type="button" class="btn-card-activate px-2 py-0.5 rounded-full border border-stone-600 bg-stone-900/80 text-stone-400 hover:text-purple-200 hover:border-purple-500/50 text-[10px] font-bold tracking-wider uppercase transition cursor-pointer" data-id="${p.id}" title="Set as active persona">
+                    <button type="button" class="btn-card-activate px-2 py-0.5 rounded-full border ${isDay ? 'border-slate-300 bg-slate-100 text-slate-700 hover:bg-slate-200' : 'border-stone-600 bg-stone-900/80 text-stone-400 hover:text-purple-200 hover:border-purple-500/50'} text-[10px] font-bold tracking-wider uppercase transition cursor-pointer" data-id="${p.id}" title="Set as active persona">
                       SET ACTIVE
                     </button>
                   `}
@@ -2016,7 +2033,7 @@ import {
                 <!-- Demographic Tag Pill: ONLY if user entered age or pronouns! -->
                 ${demographicText ? `
                   <div class="flex items-center justify-center mt-1.5">
-                    <span class="px-3 py-1 rounded-full bg-white/[0.08] border border-white/15 text-xs text-stone-200 font-semibold tracking-wide backdrop-blur-md shadow-sm">
+                    <span class="px-3 py-1 rounded-full ${isDay ? 'bg-slate-100 border border-slate-200 text-slate-700' : 'bg-white/[0.08] border border-white/15 text-stone-200'} text-xs font-semibold tracking-wide backdrop-blur-md shadow-sm">
                       ${demographicText}
                     </span>
                   </div>
@@ -2025,19 +2042,19 @@ import {
                 <!-- Bio Description Text -->
                 <div class="my-auto py-2.5 px-3">
                   ${aboutText ? `
-                    <p class="text-xs sm:text-sm text-stone-200 leading-relaxed text-center italic line-clamp-3">
+                    <p class="text-xs sm:text-sm ${isDay ? 'text-slate-600' : 'text-stone-200'} leading-relaxed text-center italic line-clamp-3">
                       "${aboutText}"
                     </p>
                   ` : `
-                    <p class="text-xs text-stone-400 leading-relaxed text-center italic">
+                    <p class="text-xs ${isDay ? 'text-slate-400' : 'text-stone-400'} leading-relaxed text-center italic">
                       No description provided. Tap Edit to add traits and details.
                     </p>
                   `}
                 </div>
 
                 <!-- Luminous Center Pip Glow Divider -->
-                <div class="w-full h-[1px] bg-gradient-to-r from-transparent via-purple-500/40 to-transparent relative my-2 flex items-center justify-center">
-                  <span class="w-1.5 h-1.5 rounded-full bg-purple-400 shadow-[0_0_8px_var(--theme-accent-glow,rgba(147,51,234,0.6))]"></span>
+                <div class="w-full h-[1px] ${isDay ? 'bg-gradient-to-r from-transparent via-purple-300 to-transparent' : 'bg-gradient-to-r from-transparent via-purple-500/40 to-transparent'} relative my-2 flex items-center justify-center">
+                  <span class="w-1.5 h-1.5 rounded-full ${isDay ? 'bg-purple-500' : 'bg-purple-400 shadow-[0_0_8px_var(--theme-accent-glow,rgba(147,51,234,0.6))]'}"></span>
                 </div>
               </div>
 
@@ -2046,10 +2063,10 @@ import {
                 <!-- Edit Button (Primary Action) -->
                 <button 
                   type="button" 
-                  class="btn-trigger-flip-edit flex-1 h-11 rounded-xl bg-white/[0.03] hover:bg-purple-500/10 border border-purple-500/30 hover:border-purple-400/60 flex items-center justify-center gap-2 text-xs font-medium text-white whitespace-nowrap transition-all active:scale-95 cursor-pointer shadow-sm" 
+                  class="btn-trigger-flip-edit flex-1 h-11 rounded-xl ${isDay ? 'bg-slate-100 hover:bg-slate-200 border border-slate-200 text-slate-800' : 'bg-white/[0.03] hover:bg-purple-500/10 border border-purple-500/30 hover:border-purple-400/60 text-white'} flex items-center justify-center gap-2 text-xs font-medium whitespace-nowrap transition-all active:scale-95 cursor-pointer shadow-sm" 
                   data-id="${p.id}"
                 >
-                  <svg class="w-4 h-4 text-purple-300 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <svg class="w-4 h-4 ${isDay ? 'text-purple-600' : 'text-purple-300'} shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                     <path d="M17 3a2.85 2.83 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5Z"/>
                     <path d="m15 5 4 4"/>
                   </svg>
@@ -2059,10 +2076,10 @@ import {
                 <!-- Link Chat Button (Secondary Action — Single Line!) -->
                 <button 
                   type="button" 
-                  class="btn-card-bind flex-1 h-11 rounded-xl bg-white/[0.03] hover:bg-purple-500/10 border border-purple-500/30 hover:border-purple-400/60 flex items-center justify-center gap-2 text-xs font-medium text-white whitespace-nowrap transition-all active:scale-95 cursor-pointer shadow-sm" 
+                  class="btn-card-bind flex-1 h-11 rounded-xl ${isDay ? 'bg-slate-100 hover:bg-slate-200 border border-slate-200 text-slate-800' : 'bg-white/[0.03] hover:bg-purple-500/10 border border-purple-500/30 hover:border-purple-400/60 text-white'} flex items-center justify-center gap-2 text-xs font-medium whitespace-nowrap transition-all active:scale-95 cursor-pointer shadow-sm" 
                   data-id="${p.id}"
                 >
-                  <svg class="w-4 h-4 text-purple-300 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <svg class="w-4 h-4 ${isDay ? 'text-purple-600' : 'text-purple-300'} shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                     <path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/>
                     <path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/>
                   </svg>
@@ -2072,7 +2089,7 @@ import {
                 <!-- Delete Button (Compact Square Icon Button) -->
                 <button 
                   type="button" 
-                  class="btn-card-delete w-11 h-11 shrink-0 rounded-xl bg-red-500/10 hover:bg-red-500/20 border border-red-500/25 flex items-center justify-center text-red-400 transition-all active:scale-95 cursor-pointer shadow-sm" 
+                  class="btn-card-delete w-11 h-11 shrink-0 rounded-xl ${isDay ? 'bg-red-50 hover:bg-red-100 border border-red-200 text-red-600' : 'bg-red-500/10 hover:bg-red-500/20 border border-red-500/25 text-red-400'} flex items-center justify-center transition-all active:scale-95 cursor-pointer shadow-sm" 
                   data-id="${p.id}" 
                   title="Delete Persona"
                 >
@@ -2087,17 +2104,17 @@ import {
             </div>
 
             <!-- ================= BACK: EDITOR (Theme-Adaptive) ================= -->
-            <div class="absolute inset-0 backface-hidden rotate-y-180 rounded-3xl p-4 sm:p-5 flex flex-col justify-start border border-purple-500/40 bg-gradient-to-b from-[#141726]/98 via-[#0c0e18]/98 to-[#06070e]/98 backdrop-blur-2xl shadow-2xl overflow-y-auto no-scrollbar ${p.isActive ? 'gilded-card-halo-active' : 'gilded-card-halo'}">
+            <div class="absolute inset-0 backface-hidden rotate-y-180 rounded-3xl p-4 sm:p-5 flex flex-col justify-start border ${isDay ? 'border-purple-300 bg-gradient-to-b from-white via-slate-50 to-slate-100 shadow-xl' : 'border-purple-500/40 bg-gradient-to-b from-[#141726]/98 via-[#0c0e18]/98 to-[#06070e]/98 shadow-2xl'} backdrop-blur-2xl overflow-y-auto no-scrollbar ${p.isActive ? 'gilded-card-halo-active' : 'gilded-card-halo'}">
               
               ${filigreeSvg}
 
               <!-- Row 1 — Compact Top Action Bar (Header) -->
-              <div class="flex items-center justify-between pb-3 mb-3 border-b border-purple-500/20 z-10 shrink-0">
-                <span class="text-sm font-bold text-white whitespace-nowrap tracking-wide">Edit Persona</span>
+              <div class="flex items-center justify-between pb-3 mb-3 border-b ${isDay ? 'border-slate-200' : 'border-purple-500/20'} z-10 shrink-0">
+                <span class="text-sm font-bold ${isDay ? 'text-slate-900' : 'text-white'} whitespace-nowrap tracking-wide">Edit Persona</span>
                 <div class="flex items-center gap-2">
                   <button 
                     type="button" 
-                    class="btn-trigger-flip-back px-2.5 py-1 text-xs text-gray-400 hover:text-white transition-colors whitespace-nowrap flex items-center gap-1 cursor-pointer" 
+                    class="btn-trigger-flip-back px-2.5 py-1 text-xs ${isDay ? 'text-slate-500 hover:text-slate-900' : 'text-gray-400 hover:text-white'} transition-colors whitespace-nowrap flex items-center gap-1 cursor-pointer" 
                     data-id="${p.id}"
                   >
                     <span>Cancel</span>
@@ -2122,25 +2139,25 @@ import {
                     data-id="${p.id}" 
                     title="Upload portrait"
                   >
-                    <div class="w-14 h-14 rounded-full overflow-hidden border-2 border-purple-400/60 gilded-avatar-glow bg-black/60 flex items-center justify-center transition group-hover:border-purple-300">
+                    <div class="w-14 h-14 rounded-full overflow-hidden border-2 ${isDay ? 'border-purple-400 bg-slate-100' : 'border-purple-400/60 gilded-avatar-glow bg-black/60'} flex items-center justify-center transition group-hover:border-purple-300">
                       ${p.avatar ? `
                         <img src="${p.avatar}" class="w-full h-full object-cover" />
                       ` : `
-                        <svg class="w-6 h-6 text-purple-300/80" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M14.5 4h-5L7 7H4a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-3l-2.5-3z"/><circle cx="12" cy="13" r="3"/></svg>
+                        <svg class="w-6 h-6 ${isDay ? 'text-purple-600' : 'text-purple-300/80'}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M14.5 4h-5L7 7H4a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-3l-2.5-3z"/><circle cx="12" cy="13" r="3"/></svg>
                       `}
                     </div>
                     <!-- Mini Edit Badge (✎) -->
-                    <div class="absolute -bottom-0.5 -right-0.5 w-5 h-5 rounded-full bg-[#121422] border border-purple-400 flex items-center justify-center text-purple-300 shadow-md">
+                    <div class="absolute -bottom-0.5 -right-0.5 w-5 h-5 rounded-full ${isDay ? 'bg-white border-purple-400 text-purple-700 shadow-sm' : 'bg-[#121422] border border-purple-400 text-purple-300 shadow-md'} flex items-center justify-center">
                       <svg class="w-2.5 h-2.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M17 3a2.85 2.83 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5Z"/></svg>
                     </div>
                   </div>
 
                   <!-- Name Field -->
                   <div class="flex-1 min-w-0">
-                    <label class="text-xs text-gray-300 mb-1 block font-semibold">Name</label>
+                    <label class="text-xs ${isDay ? 'text-slate-700' : 'text-gray-300'} mb-1 block font-semibold">Name</label>
                     <input 
                       type="text" 
-                      class="card-edit-name w-full h-[42px] px-3 py-2 rounded-xl bg-black/60 border border-purple-500/35 text-white placeholder-stone-400 text-xs sm:text-sm font-medium focus:outline-none focus:border-purple-400 focus:ring-1 focus:ring-purple-400/50 transition box-border" 
+                      class="card-edit-name w-full h-[42px] px-3 py-2 rounded-xl ${isDay ? 'bg-white border border-slate-300 text-slate-900 placeholder-slate-400' : 'bg-black/60 border border-purple-500/35 text-white placeholder-stone-400'} text-xs sm:text-sm font-medium focus:outline-none focus:border-purple-400 focus:ring-1 focus:ring-purple-400/50 transition box-border" 
                       placeholder="Name (e.g. Hossein)" 
                       value="${displayName === 'Untitled Persona' ? '' : displayName}" 
                     />
@@ -2150,19 +2167,19 @@ import {
                 <!-- Age & Pronouns Row (Clean 50/50 Grid, Inline Segmented Pill Selector) -->
                 <div class="grid grid-cols-2 gap-3">
                   <div>
-                    <label class="block text-xs font-semibold text-stone-200 mb-1.5">Age</label>
+                    <label class="block text-xs font-semibold ${isDay ? 'text-slate-700' : 'text-stone-200'} mb-1.5">Age</label>
                     <input 
                       type="text" 
-                      inputmode="numeric"
-                      class="card-edit-age w-full h-[42px] px-3 py-2 rounded-xl bg-black/60 border border-purple-500/35 text-white placeholder-stone-400 text-xs sm:text-sm font-medium focus:outline-none focus:border-purple-400 focus:ring-1 focus:ring-purple-400/50 transition box-border" 
+                      inputmode="numeric" 
+                      class="card-edit-age w-full h-[42px] px-3 py-2 rounded-xl ${isDay ? 'bg-white border border-slate-300 text-slate-900 placeholder-slate-400' : 'bg-black/60 border border-purple-500/35 text-white placeholder-stone-400'} text-xs sm:text-sm font-medium focus:outline-none focus:border-purple-400 focus:ring-1 focus:ring-purple-400/50 transition box-border" 
                       placeholder="e.g. 24 (optional)" 
                       value="${escapeHtml(p.age || '')}" 
                     />
                   </div>
                   <div>
-                    <label class="block text-xs font-semibold text-stone-200 mb-1.5">Pronouns</label>
+                    <label class="block text-xs font-semibold ${isDay ? 'text-slate-700' : 'text-stone-200'} mb-1.5">Pronouns</label>
                     <div 
-                      class="pronouns-pill-selector h-[42px] w-full rounded-xl bg-[#12131a] border border-purple-500/30 p-1 flex items-center justify-between gap-1 relative box-border"
+                      class="pronouns-pill-selector h-[42px] w-full rounded-xl ${isDay ? 'bg-slate-100 border border-slate-200' : 'bg-[#12131a] border border-purple-500/30'} p-1 flex items-center justify-between gap-1 relative box-border"
                       onpointerdown="event.stopPropagation();"
                       ontouchstart="event.stopPropagation();"
                     >
@@ -2196,13 +2213,13 @@ import {
                       <div class="pronouns-custom-bar ${isCustomPronoun ? 'flex' : 'hidden'} items-center w-full h-full px-1">
                         <input 
                           type="text" 
-                          class="pronouns-custom-input bg-transparent text-white text-xs w-full px-2 focus:outline-none" 
+                          class="pronouns-custom-input bg-transparent ${isDay ? 'text-slate-900' : 'text-white'} text-xs w-full px-2 focus:outline-none" 
                           placeholder="e.g. xe/xem" 
                           value="${isCustomPronoun ? escapeHtml(rawPronouns) : ''}" 
                         />
                         <button 
                           type="button" 
-                          class="pronouns-custom-clear w-6 h-6 rounded-md flex items-center justify-center text-stone-400 hover:text-white hover:bg-white/10 text-base leading-none shrink-0 cursor-pointer transition-colors"
+                          class="pronouns-custom-clear w-6 h-6 rounded-md flex items-center justify-center ${isDay ? 'text-slate-500 hover:text-slate-900 hover:bg-slate-200' : 'text-stone-400 hover:text-white hover:bg-white/10'} text-base leading-none shrink-0 cursor-pointer transition-colors"
                           title="Clear and return to presets"
                         >×</button>
                       </div>
@@ -2213,46 +2230,46 @@ import {
                 <!-- About Persona with AI Generate -->
                 <div>
                   <div class="flex items-center justify-between mb-1.5">
-                    <label class="block text-xs font-semibold text-stone-200">About Persona</label>
+                    <label class="block text-xs font-semibold ${isDay ? 'text-slate-700' : 'text-stone-200'}">About Persona</label>
                     <button 
                       type="button" 
-                      class="btn-ai-generate px-2.5 py-1 rounded-full bg-purple-500/20 hover:bg-purple-500/30 border border-purple-400/50 text-white font-semibold text-xs flex items-center gap-1.5 shadow-[0_0_10px_var(--theme-accent-glow,rgba(147,51,234,0.25))] hover:scale-102 active:scale-95 transition cursor-pointer" 
+                      class="btn-ai-generate px-2.5 py-1 rounded-full ${isDay ? 'bg-purple-100 hover:bg-purple-200 border border-purple-300 text-purple-700' : 'bg-purple-500/20 hover:bg-purple-500/30 border border-purple-400/50 text-white shadow-[0_0_10px_var(--theme-accent-glow,rgba(147,51,234,0.25))]'} font-semibold text-xs flex items-center gap-1.5 hover:scale-102 active:scale-95 transition cursor-pointer" 
                       data-id="${p.id}"
                     >
-                      <svg class="w-3.5 h-3.5 text-purple-300" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m12 3-1.9 5.8a2 2 0 0 1-1.3 1.3L3 12l5.8 1.9a2 2 0 0 1 1.3 1.3L12 21l1.9-5.8a2 2 0 0 1 1.3-1.3L21 12l-5.8-1.9a2 2 0 0 1-1.3-1.3Z"/></svg>
+                      <svg class="w-3.5 h-3.5 ${isDay ? 'text-purple-600' : 'text-purple-300'}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m12 3-1.9 5.8a2 2 0 0 1-1.3 1.3L3 12l5.8 1.9a2 2 0 0 1 1.3 1.3L12 21l1.9-5.8a2 2 0 0 1 1.3-1.3L21 12l-5.8-1.9a2 2 0 0 1-1.3-1.3Z"/></svg>
                       <span>AI Generate ✨</span>
                     </button>
                   </div>
                   <textarea 
                     rows="3" 
-                    class="card-edit-about w-full px-3 py-2 rounded-xl bg-black/60 border border-purple-500/35 text-white placeholder-stone-400 text-xs sm:text-sm font-medium focus:outline-none focus:border-purple-400 focus:ring-1 focus:ring-purple-400/50 transition resize-none leading-relaxed" 
+                    class="card-edit-about w-full px-3 py-2 rounded-xl ${isDay ? 'bg-white border border-slate-300 text-slate-900 placeholder-slate-400' : 'bg-black/60 border border-purple-500/35 text-white placeholder-stone-400'} text-xs sm:text-sm font-medium focus:outline-none focus:border-purple-400 focus:ring-1 focus:ring-purple-400/50 transition resize-none leading-relaxed" 
                     placeholder="Describe your appearance, personality, or background..."
                   >${aboutText}</textarea>
                 </div>
 
                 <!-- Accordion: Additional Instructions with Tokens Counter -->
-                <details class="group rounded-xl border border-purple-500/35 bg-purple-950/20 p-2.5 text-xs">
-                  <summary class="flex items-center justify-between cursor-pointer text-xs font-semibold text-stone-200 group-hover:text-white transition list-none">
+                <details class="group rounded-xl border ${isDay ? 'border-slate-300 bg-slate-50' : 'border-purple-500/35 bg-purple-950/20'} p-2.5 text-xs">
+                  <summary class="flex items-center justify-between cursor-pointer text-xs font-semibold ${isDay ? 'text-slate-700 group-hover:text-slate-900' : 'text-stone-200 group-hover:text-white'} transition list-none">
                     <span>Additional Instructions</span>
                     <div class="flex items-center gap-1.5">
-                      <span class="live-token-pill px-2.5 py-0.5 rounded-full text-[11px] font-mono bg-black/60 border border-purple-500/40 text-purple-200 font-semibold">
+                      <span class="live-token-pill px-2.5 py-0.5 rounded-full text-[11px] font-mono ${isDay ? 'bg-slate-200/80 border border-slate-300 text-purple-700' : 'bg-black/60 border border-purple-500/40 text-purple-200'} font-semibold">
                         ${tokens} tokens / 500
                       </span>
-                      <svg class="w-4 h-4 text-purple-300 group-open:rotate-180 transition-transform" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m6 9 6 6 6-6"/></svg>
+                      <svg class="w-4 h-4 ${isDay ? 'text-purple-600' : 'text-purple-300'} group-open:rotate-180 transition-transform" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m6 9 6 6 6-6"/></svg>
                     </div>
                   </summary>
                   <div class="pt-2">
                     <textarea 
                       rows="2" 
-                      class="card-edit-directives w-full px-2.5 py-1.5 rounded-xl bg-black/60 border border-purple-500/35 text-white placeholder-stone-400 text-xs sm:text-sm font-medium focus:outline-none focus:border-purple-400 focus:ring-1 focus:ring-purple-400/50 transition resize-none leading-relaxed" 
+                      class="card-edit-directives w-full px-2.5 py-1.5 rounded-xl ${isDay ? 'bg-white border border-slate-300 text-slate-900 placeholder-slate-400' : 'bg-black/60 border border-purple-500/35 text-white placeholder-stone-400'} text-xs sm:text-sm font-medium focus:outline-none focus:border-purple-400 focus:ring-1 focus:ring-purple-400/50 transition resize-none leading-relaxed" 
                       placeholder="e.g. Never narrate actions for the user. Speak in 1st person."
                     >${directivesText}</textarea>
                   </div>
                 </details>
 
                 <!-- Luminous Divider -->
-                <div class="h-[1px] bg-gradient-to-r from-transparent via-purple-500/40 to-transparent relative my-1 flex items-center justify-center">
-                  <span class="w-1.5 h-1.5 rounded-full bg-purple-400 shadow-[0_0_8px_var(--theme-accent-glow,rgba(147,51,234,0.6))]"></span>
+                <div class="h-[1px] ${isDay ? 'bg-gradient-to-r from-transparent via-purple-300 to-transparent' : 'bg-gradient-to-r from-transparent via-purple-500/40 to-transparent'} relative my-1 flex items-center justify-center">
+                  <span class="w-1.5 h-1.5 rounded-full ${isDay ? 'bg-purple-500' : 'bg-purple-400 shadow-[0_0_8px_var(--theme-accent-glow,rgba(147,51,234,0.6))]'}"></span>
                 </div>
 
                 <!-- Bottom Action Row: Set as Active Toggle -->
@@ -4799,6 +4816,7 @@ function renderPresets() {
         updatePreview();
         saveAndApply();
         renderPresets();
+        render3DCarousel();
       });
 
       btnToggleWallpaperDrawer?.addEventListener('click', () => {

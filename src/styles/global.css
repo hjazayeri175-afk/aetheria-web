@@ -3133,41 +3133,258 @@ html.day-mode #badge-day-night {
   font-weight: 700 !important;
 }
 
-/* Back button and carousel chevrons */
-html[data-base-mode="day"] #btn-back-from-appearance,
+/* Back button and carousel chevrons across all subviews */
+html[data-base-mode="day"] [id^="btn-back-from-"],
 html[data-base-mode="day"] #btn-prev-theme,
 html[data-base-mode="day"] #btn-next-theme,
-html.day-mode #btn-back-from-appearance,
+html.day-mode [id^="btn-back-from-"],
 html.day-mode #btn-prev-theme,
 html.day-mode #btn-next-theme {
   background-color: #f1f5f9 !important;
   border: 1px solid rgba(0, 0, 0, 0.08) !important;
-  color: #334155 !important;
+  color: #0f172a !important;
 }
-html[data-base-mode="day"] #btn-back-from-appearance:hover,
+html[data-base-mode="day"] [id^="btn-back-from-"]:hover,
 html[data-base-mode="day"] #btn-prev-theme:hover,
 html[data-base-mode="day"] #btn-next-theme:hover,
-html.day-mode #btn-back-from-appearance:hover,
+html.day-mode [id^="btn-back-from-"]:hover,
 html.day-mode #btn-prev-theme:hover,
 html.day-mode #btn-next-theme:hover {
   background-color: #e2e8f0 !important;
+  color: #000000 !important;
+}
+html[data-base-mode="day"] [id^="btn-back-from-"] span,
+html.day-mode [id^="btn-back-from-"] span {
   color: #0f172a !important;
 }
 
-/* Toggle Switches */
-html[data-base-mode="day"] #view-appearance .peer:not(:checked) + div,
-html.day-mode #view-appearance .peer:not(:checked) + div {
+/* Sticky sub-headers in all profile views (Power, Devices, etc.) */
+html[data-base-mode="day"] #profile-main-container .sticky,
+html.day-mode #profile-main-container .sticky {
+  background-color: rgba(248, 250, 252, 0.95) !important;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.08) !important;
+  backdrop-filter: blur(12px) !important;
+  -webkit-backdrop-filter: blur(12px) !important;
+}
+
+/* All Toggle Switches across entire Profile & Subviews */
+html[data-base-mode="day"] #profile-main-container .peer:not(:checked) + div,
+html.day-mode #profile-main-container .peer:not(:checked) + div {
   background-color: #cbd5e1 !important;
+  border: 1px solid #94a3b8 !important;
+}
+html[data-base-mode="day"] #profile-main-container .peer:checked + div,
+html.day-mode #profile-main-container .peer:checked + div {
+  border-color: transparent !important;
 }
 
 /* Slider Track & Dot Notches */
-html[data-base-mode="day"] #view-appearance .telegram-slider,
-html.day-mode #view-appearance .telegram-slider {
+html[data-base-mode="day"] #profile-main-container .telegram-slider,
+html.day-mode #profile-main-container .telegram-slider {
   background-color: #e2e8f0 !important;
 }
-html[data-base-mode="day"] #view-appearance .bg-white\/20,
-html.day-mode #view-appearance .bg-white\/20 {
+html[data-base-mode="day"] #profile-main-container .bg-white\/20,
+html.day-mode #profile-main-container .bg-white\/20 {
   background-color: rgba(0, 0, 0, 0.15) !important;
+}
+
+/* Subtitle and stone/slate descriptions */
+html[data-base-mode="day"] #profile-main-container .text-stone-300,
+html[data-base-mode="day"] #profile-main-container .text-stone-200,
+html[data-base-mode="day"] #profile-main-container .text-slate-300,
+html[data-base-mode="day"] #profile-main-container .text-slate-400,
+html.day-mode #profile-main-container .text-stone-300,
+html.day-mode #profile-main-container .text-stone-200,
+html.day-mode #profile-main-container .text-slate-300,
+html.day-mode #profile-main-container .text-slate-400 {
+  color: #475569 !important;
+}
+
+/* Hero Cards & Feature Containers across All Subviews */
+html[data-base-mode="day"] #view-power-saving .bg-gradient-to-br,
+html.day-mode #view-power-saving .bg-gradient-to-br {
+  background: linear-gradient(135deg, #fffbeb 0%, #ffffff 100%) !important;
+  border: 1px solid rgba(245, 158, 11, 0.35) !important;
+  box-shadow: 0 4px 20px rgba(245, 158, 11, 0.08) !important;
+}
+
+html[data-base-mode="day"] #view-devices .bg-gradient-to-br,
+html.day-mode #view-devices .bg-gradient-to-br {
+  background: linear-gradient(135deg, #f0fdf4 0%, #ffffff 100%) !important;
+  border: 1px solid rgba(16, 185, 129, 0.25) !important;
+  box-shadow: 0 4px 20px rgba(16, 185, 129, 0.06) !important;
+}
+
+html[data-base-mode="day"] #view-personas .bg-\[\#0c0e18\]\/90,
+html.day-mode #view-personas .bg-\[\#0c0e18\]\/90 {
+  background: #ffffff !important;
+  border: 1px solid rgba(147, 51, 234, 0.25) !important;
+  box-shadow: 0 4px 20px rgba(147, 51, 234, 0.06) !important;
+}
+
+html[data-base-mode="day"] #profile-main-container .bg-\[\#101422\]\/90,
+html[data-base-mode="day"] #profile-main-container .bg-\[\#141824\],
+html.day-mode #profile-main-container .bg-\[\#101422\]\/90,
+html.day-mode #profile-main-container .bg-\[\#141824\] {
+  background-color: #ffffff !important;
+  border-color: rgba(0, 0, 0, 0.08) !important;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.04) !important;
+}
+
+/* Personas: Master Toggle Row */
+html[data-base-mode="day"] #persona-toggle-icon,
+html.day-mode #persona-toggle-icon {
+  background-color: #f3e8ff !important;
+  border-color: #d8b4fe !important;
+  color: #7e22ce !important;
+}
+html[data-base-mode="day"] #personas-count-badge,
+html.day-mode #personas-count-badge {
+  background-color: #f3e8ff !important;
+  border-color: #d8b4fe !important;
+  color: #7e22ce !important;
+  font-weight: 700 !important;
+}
+
+/* Personas: Carousel Controls */
+html[data-base-mode="day"] #carousel-btn-prev,
+html[data-base-mode="day"] #carousel-btn-next,
+html.day-mode #carousel-btn-prev,
+html.day-mode #carousel-btn-next {
+  background-color: #f1f5f9 !important;
+  border: 1px solid rgba(0, 0, 0, 0.08) !important;
+  color: #334155 !important;
+}
+html[data-base-mode="day"] #carousel-btn-prev:hover,
+html[data-base-mode="day"] #carousel-btn-next:hover,
+html.day-mode #carousel-btn-prev:hover,
+html.day-mode #carousel-btn-next:hover {
+  background-color: #e2e8f0 !important;
+  color: #0f172a !important;
+}
+html[data-base-mode="day"] #carousel-btn-prev svg,
+html[data-base-mode="day"] #carousel-btn-next svg,
+html.day-mode #carousel-btn-prev svg,
+html.day-mode #carousel-btn-next svg {
+  color: #7c3aed !important;
+}
+html[data-base-mode="day"] #carousel-page-indicator,
+html.day-mode #carousel-page-indicator {
+  color: #0f172a !important;
+  font-weight: 700 !important;
+}
+html[data-base-mode="day"] #carousel-controls-bar .bg-purple-500\/10,
+html.day-mode #carousel-controls-bar .bg-purple-500\/10 {
+  background-color: #f3e8ff !important;
+  border-color: #d8b4fe !important;
+  color: #7e22ce !important;
+  font-weight: 600 !important;
+}
+
+/* Power Saving: Master Hero Card Components */
+html[data-base-mode="day"] #view-power-saving .w-12.h-12.bg-amber-500\/20,
+html.day-mode #view-power-saving .w-12.h-12.bg-amber-500\/20 {
+  background-color: #fef3c7 !important;
+  border-color: #fde68a !important;
+  color: #d97706 !important;
+  box-shadow: none !important;
+}
+html[data-base-mode="day"] #badge-master-status,
+html.day-mode #badge-master-status {
+  background-color: #f1f5f9 !important;
+  border: 1px solid #cbd5e1 !important;
+  color: #64748b !important;
+  font-weight: 600 !important;
+}
+html[data-base-mode="day"] #power-badge-status,
+html.day-mode #power-badge-status {
+  background-color: #f1f5f9 !important;
+  border: 1px solid #cbd5e1 !important;
+  color: #334155 !important;
+}
+html[data-base-mode="day"] #power-badge-dot,
+html.day-mode #power-badge-dot {
+  background-color: #64748b !important;
+}
+html[data-base-mode="day"] #view-power-saving span[class*="text-slate-400 bg-white/5"],
+html[data-base-mode="day"] #view-power-saving span[class*="text-slate-300 bg-white/5"],
+html.day-mode #view-power-saving span[class*="text-slate-400 bg-white/5"],
+html.day-mode #view-power-saving span[class*="text-slate-300 bg-white/5"] {
+  background-color: #f1f5f9 !important;
+  border: 1px solid #cbd5e1 !important;
+  color: #334155 !important;
+  font-weight: 600 !important;
+}
+
+/* Devices & Security: Active Security Card & Buttons */
+html[data-base-mode="day"] #btn-terminate-other-sessions,
+html.day-mode #btn-terminate-other-sessions {
+  background-color: #fff1f2 !important;
+  border: 1px solid #fecdd3 !important;
+  color: #e11d48 !important;
+  box-shadow: none !important;
+  font-weight: 600 !important;
+}
+html[data-base-mode="day"] #btn-terminate-other-sessions:hover,
+html.day-mode #btn-terminate-other-sessions:hover {
+  background-color: #ffe4e6 !important;
+}
+html[data-base-mode="day"] #btn-terminate-other-sessions *,
+html.day-mode #btn-terminate-other-sessions * {
+  color: #e11d48 !important;
+}
+html[data-base-mode="day"] #devices-summary-count,
+html.day-mode #devices-summary-count {
+  color: #0f172a !important;
+}
+html[data-base-mode="day"] #devices-summary-count .text-white,
+html.day-mode #devices-summary-count .text-white {
+  color: #0f172a !important;
+}
+html[data-base-mode="day"] #devices-summary-count .text-white\/30,
+html.day-mode #devices-summary-count .text-white\/30 {
+  color: #94a3b8 !important;
+}
+html[data-base-mode="day"] #current-device-container,
+html[data-base-mode="day"] #other-sessions-container,
+html.day-mode #current-device-container,
+html.day-mode #other-sessions-container {
+  background-color: #ffffff !important;
+  border: 1px solid rgba(16, 185, 129, 0.3) !important;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.04) !important;
+}
+html[data-base-mode="day"] #current-device-display-name,
+html.day-mode #current-device-display-name {
+  color: #0f172a !important;
+  font-weight: 700 !important;
+}
+html[data-base-mode="day"] #view-devices span[class*="text-emerald-300"],
+html[data-base-mode="day"] #view-devices span[class*="text-emerald-400"],
+html.day-mode #view-devices span[class*="text-emerald-300"],
+html.day-mode #view-devices span[class*="text-emerald-400"] {
+  background-color: #ecfdf5 !important;
+  border-color: #a7f3d0 !important;
+  color: #047857 !important;
+  font-weight: 600 !important;
+}
+html[data-base-mode="day"] #view-devices .w-11.h-11.bg-emerald-500\/15,
+html.day-mode #view-devices .w-11.h-11.bg-emerald-500\/15 {
+  background-color: #ecfdf5 !important;
+  border-color: #a7f3d0 !important;
+  color: #059669 !important;
+  box-shadow: none !important;
+}
+
+/* Rename Device Button */
+html[data-base-mode="day"] #btn-rename-device,
+html.day-mode #btn-rename-device {
+  background-color: rgba(124, 58, 237, 0.08) !important;
+  border-color: rgba(124, 58, 237, 0.25) !important;
+  color: #7c3aed !important;
+}
+html[data-base-mode="day"] #btn-rename-device svg,
+html.day-mode #btn-rename-device svg {
+  color: #7c3aed !important;
 }
 
 /* Name Color Pill */
@@ -3212,6 +3429,19 @@ html[data-base-mode="day"] .preset-theme-card div.shadow-inner,
 html.day-mode .preset-theme-card div.shadow-inner {
   background-color: #f8fafc !important;
   border-color: rgba(0, 0, 0, 0.06) !important;
+}
+
+/* BottomNav Create button in Day Mode */
+html[data-base-mode="day"] #mobile-bottom-nav #nav-btn-create .bg-\[\#0a0d18\],
+html.day-mode #mobile-bottom-nav #nav-btn-create .bg-\[\#0a0d18\] {
+  background-color: #7c3aed !important;
+  color: #ffffff !important;
+  box-shadow: 0 4px 14px rgba(124, 58, 237, 0.35) !important;
+}
+html[data-base-mode="day"] #mobile-bottom-nav #nav-btn-create + span,
+html.day-mode #mobile-bottom-nav #nav-btn-create + span {
+  color: #7c3aed !important;
+  font-weight: 700 !important;
 }
 
 /* --- 3. Character Studio & Creator Page --- */
