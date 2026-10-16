@@ -1267,9 +1267,9 @@ import {
 
               <!-- Top-Right Stacked Token Badge -->
               <div class="flex items-center justify-end z-10 w-full">
-                <div class="px-2.5 py-1 rounded-xl bg-black/60 border ${tokens > 500 ? 'border-red-400 bg-red-500/20' : 'border-purple-500/40'} flex flex-col items-center justify-center min-w-[52px] shadow-sm">
-                  <span class="text-xs font-bold text-purple-300 font-mono leading-none">${tokens}</span>
-                  <span class="text-[9px] text-purple-200/70 font-sans leading-none mt-0.5">tokens</span>
+                <div class="px-2.5 py-1.5 rounded-xl bg-black/70 border ${tokens > 500 ? 'border-red-400 bg-red-500/20' : 'border-amber-500/30'} flex flex-col items-center justify-center min-w-[54px] shadow-sm">
+                  <span class="text-xs font-bold ${tokens > 500 ? 'text-red-400' : 'text-amber-400'} font-mono leading-none">${tokens}</span>
+                  <span class="text-[10px] text-gray-300 font-sans font-medium leading-none mt-1">tokens</span>
                 </div>
               </div>
 
@@ -1327,33 +1327,58 @@ import {
                 </div>
               </div>
 
-              <!-- Card Front Footer Actions: 3 Beveled Buttons (Edit, Bind to Chat, Delete) -->
-              <div class="grid grid-cols-3 gap-2 pt-1 z-10">
-                <button type="button" class="btn-trigger-flip-edit py-2.5 px-1 rounded-xl bg-[#10121d] hover:bg-purple-500/20 border border-purple-500/40 hover:border-purple-400 text-stone-200 hover:text-white text-xs font-semibold flex items-center justify-center gap-1.5 transition active:scale-95 cursor-pointer shadow-sm" data-id="${p.id}">
-                  <svg class="w-3.5 h-3.5 text-purple-300" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 3a2.85 2.83 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5Z"/><path d="m15 5 4 4"/></svg>
-                  <span>Edit</span>
+              <!-- Card Front Footer Actions: Asymmetric Single-Line Flex Row -->
+              <div class="flex items-center gap-2.5 w-full pt-1 z-10">
+                <!-- Edit Button (Primary Action) -->
+                <button 
+                  type="button" 
+                  class="btn-trigger-flip-edit flex-1 h-11 rounded-xl bg-white/[0.03] hover:bg-white/[0.07] border border-amber-500/25 flex items-center justify-center gap-2 text-xs font-medium text-white whitespace-nowrap transition-all active:scale-95 cursor-pointer shadow-sm" 
+                  data-id="${p.id}"
+                >
+                  <svg class="w-4 h-4 text-amber-300 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M17 3a2.85 2.83 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5Z"/>
+                    <path d="m15 5 4 4"/>
+                  </svg>
+                  <span class="whitespace-nowrap">Edit</span>
                 </button>
 
-                <button type="button" class="btn-card-bind py-2.5 px-1 rounded-xl bg-[#10121d] hover:bg-purple-500/20 border border-purple-500/40 hover:border-purple-400 text-stone-200 hover:text-white text-xs font-semibold flex items-center justify-center gap-1.5 transition active:scale-95 cursor-pointer shadow-sm" data-id="${p.id}">
-                  <svg class="w-3.5 h-3.5 text-purple-300" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg>
-                  <span>Bind to Chat</span>
+                <!-- Link Chat Button (Secondary Action — Single Line!) -->
+                <button 
+                  type="button" 
+                  class="btn-card-bind flex-1 h-11 rounded-xl bg-white/[0.03] hover:bg-white/[0.07] border border-amber-500/25 flex items-center justify-center gap-2 text-xs font-medium text-white whitespace-nowrap transition-all active:scale-95 cursor-pointer shadow-sm" 
+                  data-id="${p.id}"
+                >
+                  <svg class="w-4 h-4 text-amber-300 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/>
+                    <path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/>
+                  </svg>
+                  <span class="whitespace-nowrap">Link Chat</span>
                 </button>
 
-                <button type="button" class="btn-card-delete py-2.5 px-1 rounded-xl bg-[#1c1214] hover:bg-red-950/40 border border-red-500/40 hover:border-red-400 text-red-300 hover:text-red-200 text-xs font-semibold flex items-center justify-center gap-1.5 transition active:scale-95 cursor-pointer shadow-sm" data-id="${p.id}">
-                  <svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18"/><path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"/><path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"/></svg>
-                  <span>Delete</span>
+                <!-- Delete Button (Compact Square Icon Button) -->
+                <button 
+                  type="button" 
+                  class="btn-card-delete w-11 h-11 shrink-0 rounded-xl bg-red-500/10 hover:bg-red-500/20 border border-red-500/25 flex items-center justify-center text-red-400 transition-all active:scale-95 cursor-pointer shadow-sm" 
+                  data-id="${p.id}" 
+                  title="Delete Persona"
+                >
+                  <svg class="w-4 h-4 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M3 6h18"/>
+                    <path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"/>
+                    <path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"/>
+                  </svg>
                 </button>
               </div>
 
             </div>
 
             <!-- ================= BACK: EDITOR (Theme-Adaptive) ================= -->
-            <div class="absolute inset-0 backface-hidden rotate-y-180 rounded-3xl p-4 sm:p-5 flex flex-col justify-between border border-purple-500/40 bg-gradient-to-b from-[#141726]/98 via-[#0c0e18]/98 to-[#06070e]/98 backdrop-blur-2xl shadow-2xl overflow-y-auto no-scrollbar">
+            <div class="absolute inset-0 backface-hidden rotate-y-180 rounded-3xl p-4 sm:p-5 flex flex-col justify-start border border-amber-500/25 bg-gradient-to-b from-[#141726]/98 via-[#0c0e18]/98 to-[#06070e]/98 backdrop-blur-2xl shadow-2xl overflow-y-auto no-scrollbar">
               
               ${filigreeSvg}
 
               <!-- Row 1 — Compact Top Action Bar (Header) -->
-              <div class="flex items-center justify-between pb-3 mb-3 border-b border-amber-500/15 z-10">
+              <div class="flex items-center justify-between pb-3 mb-3 border-b border-amber-500/15 z-10 shrink-0">
                 <span class="text-sm font-bold text-white whitespace-nowrap tracking-wide">Edit Persona</span>
                 <div class="flex items-center gap-2">
                   <button 
@@ -1374,9 +1399,9 @@ import {
               </div>
 
               <!-- Form Inputs Container -->
-              <div class="space-y-2.5 my-1 z-10">
+              <div class="flex flex-col justify-start gap-3.5 z-10 flex-1 w-full">
                 <!-- Row 2 — Merged Avatar + Name Input (Space-Saving Hero Row) -->
-                <div class="flex items-center gap-3 mb-3 z-10">
+                <div class="flex items-center gap-3 z-10">
                   <!-- Avatar Trigger -->
                   <div 
                     class="relative w-14 h-14 rounded-full shrink-0 cursor-pointer avatar-click-target group" 
@@ -1512,12 +1537,12 @@ import {
                 </details>
 
                 <!-- Luminous Divider -->
-                <div class="h-[1px] bg-gradient-to-r from-transparent via-purple-500/40 to-transparent relative my-2 flex items-center justify-center">
+                <div class="h-[1px] bg-gradient-to-r from-transparent via-purple-500/40 to-transparent relative my-1 flex items-center justify-center">
                   <span class="w-1.5 h-1.5 rounded-full bg-purple-400 shadow-[0_0_8px_var(--theme-accent-glow,rgba(147,51,234,0.6))]"></span>
                 </div>
 
-                <!-- Bottom Action Row: Set as Active Toggle + Delete Button -->
-                <div class="flex items-center justify-between px-1 pt-1 z-10">
+                <!-- Bottom Action Row: Set as Active Toggle -->
+                <div class="flex items-center justify-between px-1 mt-auto pt-2 z-10">
                   <div class="flex items-center gap-2.5">
                     <label class="relative inline-flex items-center cursor-pointer shrink-0">
                       <input 
@@ -1532,20 +1557,6 @@ import {
                       Set as Active
                     </label>
                   </div>
-
-                  ${personas.length > 1 ? `
-                    <button 
-                      type="button" 
-                      class="btn-card-delete flex items-center gap-1.5 text-xs text-stone-400 hover:text-red-400 px-2.5 py-1.5 rounded-lg hover:bg-red-950/30 transition-colors cursor-pointer group active:scale-95" 
-                      data-id="${p.id}"
-                      title="Delete Persona"
-                    >
-                      <svg class="w-3.5 h-3.5 text-stone-400 group-hover:text-red-400 transition-colors" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                        <path d="M3 6h18"/><path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"/><path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"/>
-                      </svg>
-                      <span class="font-medium">Delete</span>
-                    </button>
-                  ` : `<div></div>`}
                 </div>
 
               </div>
