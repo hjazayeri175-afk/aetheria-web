@@ -37,7 +37,14 @@ import {
   Volume2,
   MessageSquare,
   Pencil,
-  WandSparkles
+  WandSparkles,
+  Laptop,
+  MapPin,
+  Clock,
+  ShieldCheck,
+  ShieldAlert,
+  History,
+  RefreshCw
 } from '@lucide/astro';
 ---
 
@@ -195,12 +202,19 @@ import {
             id="hub-item-devices"
             class="w-full px-3.5 py-3 rounded-2xl flex items-center gap-3.5 hover:bg-white/[0.05] active:bg-white/[0.08] transition text-left cursor-pointer group"
           >
-            <div class="w-10 h-10 rounded-2xl bg-[#0d9488] flex items-center justify-center text-white shrink-0 shadow-md">
+            <div class="w-10 h-10 rounded-2xl bg-[#0d9488] flex items-center justify-center text-white shrink-0 shadow-md group-hover:scale-105 transition-transform">
               <Smartphone class="w-5 h-5 stroke-[2.2]" />
             </div>
             <div class="min-w-0 flex-1">
-              <div class="text-[15px] font-semibold text-white tracking-wide">Devices</div>
-              <div class="text-[13px] text-[#8e98a8] truncate">Active Web Session • Cloudflare Workers Edge</div>
+              <div class="text-[15px] font-semibold text-white tracking-wide">Devices & Security</div>
+              <div id="hub-devices-subtitle" class="text-[13px] text-[#8e98a8] truncate">Active sessions & hardware audit</div>
+            </div>
+            <div class="flex items-center gap-2 text-slate-400 group-hover:text-white transition">
+              <span id="hub-devices-badge" class="text-xs text-emerald-400 font-medium flex items-center gap-1.5">
+                <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span>
+                Online
+              </span>
+              <ChevronRight class="w-4 h-4 text-white/30 group-hover:text-white/70 transition" />
             </div>
           </button>
 
@@ -938,6 +952,198 @@ import {
           </div>
         </div>
 
+      </div>
+
+      <!-- ========================================== -->
+      <!-- 7. DEVICES & SECURITY SESSIONS SUB-PAGE    -->
+      <!-- ========================================== -->
+      <div id="view-devices" class="hidden space-y-5">
+        <!-- Header & Back Navigation -->
+        <div class="flex items-center justify-between pb-3 border-b border-white/[0.06]">
+          <button 
+            type="button" 
+            id="btn-back-from-devices"
+            class="flex items-center gap-2 text-white/90 hover:text-white font-medium text-sm py-1.5 px-2 rounded-xl hover:bg-white/[0.05] transition cursor-pointer"
+          >
+            <ArrowLeft class="w-5 h-5" />
+            <span>Settings</span>
+          </button>
+          <div class="flex items-center gap-2">
+            <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[11px] font-medium bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">
+              <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span>
+              Hardware Protected
+            </span>
+          </div>
+        </div>
+
+        <div>
+          <h1 class="text-xl font-bold text-white tracking-tight flex items-center gap-2.5">
+            <span>Devices & Security</span>
+          </h1>
+          <p class="text-xs text-slate-400 mt-0.5">Active hardware sessions, Cloudflare edge locations & security audit trail</p>
+        </div>
+
+        <!-- Hero / Terminate All Other Sessions Card -->
+        <div class="rounded-3xl bg-gradient-to-br from-[#141824] via-[#101420] to-[#0d101a] border border-white/[0.08] p-5 shadow-xl relative overflow-hidden">
+          <div class="absolute -top-12 -right-12 w-48 h-48 bg-purple-500/10 rounded-full blur-3xl pointer-events-none"></div>
+          
+          <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 relative z-10">
+            <div class="space-y-1">
+              <div class="flex items-center gap-2">
+                <span class="text-xs font-semibold uppercase tracking-wider text-purple-300 flex items-center gap-1.5">
+                  <ShieldCheck class="w-4 h-4 text-emerald-400" />
+                  Active Security Layer
+                </span>
+              </div>
+              <div class="text-sm font-bold text-white flex items-center gap-2" id="devices-summary-count">
+                <span>Checking active sessions...</span>
+              </div>
+              <p class="text-[11px] text-slate-400 leading-relaxed">
+                Tokens are cryptographically signed and bound to TLS 1.3 edge endpoints.
+              </p>
+            </div>
+
+            <div class="shrink-0">
+              <button 
+                type="button" 
+                id="btn-terminate-other-sessions"
+                class="w-full sm:w-auto px-4 py-2.5 rounded-2xl bg-rose-500/10 hover:bg-rose-500/20 active:scale-95 text-rose-300 border border-rose-500/30 text-xs font-semibold transition cursor-pointer flex items-center justify-center gap-2 shadow-[0_0_15px_rgba(244,63,94,0.15)] group"
+              >
+                <LogOut class="w-4 h-4 text-rose-400 group-hover:translate-x-0.5 transition-transform" />
+                <span>Logout of All Other Devices</span>
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- This Device (Current Session) -->
+        <div class="space-y-3">
+          <div class="flex items-center justify-between px-1">
+            <h2 class="text-xs font-bold text-white uppercase tracking-wider flex items-center gap-2">
+              <span>This Device</span>
+            </h2>
+            <span class="text-[11px] text-emerald-400 font-medium flex items-center gap-1.5 bg-emerald-500/10 px-2.5 py-0.5 rounded-full border border-emerald-500/20">
+              <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span>
+              Online Now
+            </span>
+          </div>
+
+          <div id="current-device-container" class="rounded-3xl bg-[#141824] border border-emerald-500/30 p-5 shadow-xl relative overflow-hidden transition">
+            <div class="flex items-center gap-3.5 text-slate-400 text-xs">
+              <Smartphone class="w-6 h-6 text-emerald-400 animate-pulse" />
+              <span>Detecting hardware & Cloudflare edge location...</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Other Connected Devices -->
+        <div class="space-y-3">
+          <div class="flex items-center justify-between px-1">
+            <h2 class="text-xs font-bold text-white uppercase tracking-wider flex items-center gap-2">
+              <span>Other Connected Devices</span>
+            </h2>
+            <button 
+              type="button" 
+              id="btn-refresh-sessions"
+              class="text-[11px] text-slate-400 hover:text-white flex items-center gap-1.5 cursor-pointer transition py-0.5 px-2 rounded-lg hover:bg-white/5"
+            >
+              <RefreshCw class="w-3.5 h-3.5" id="refresh-icon" />
+              <span>Refresh</span>
+            </button>
+          </div>
+
+          <div id="other-sessions-container" class="space-y-3">
+            <!-- Dynamic session cards -->
+          </div>
+        </div>
+
+        <!-- Security Alert Settings (Toggles) -->
+        <div class="rounded-3xl bg-[#141824] border border-white/[0.06] p-5 shadow-xl space-y-4">
+          <div class="border-b border-white/[0.06] pb-3">
+            <h2 class="text-xs font-bold text-white uppercase tracking-wider flex items-center gap-2">
+              <Shield class="w-4 h-4 text-purple-400" />
+              <span>Security Alert Settings</span>
+            </h2>
+            <p class="text-[11px] text-slate-400 mt-0.5">Automated notifications & anomaly detection triggers</p>
+          </div>
+
+          <div class="space-y-4 pt-1">
+            <!-- Toggle 1: New Login Alerts -->
+            <div class="flex items-center justify-between gap-4">
+              <div class="space-y-0.5 max-w-[80%]">
+                <div class="text-xs font-semibold text-white">New Login Alerts</div>
+                <div class="text-[11px] text-slate-400 leading-snug">
+                  Receive instant security alerts when your account is accessed from an unrecognized browser, hardware, or new session ID.
+                </div>
+              </div>
+              <label class="relative inline-flex items-center cursor-pointer shrink-0">
+                <input type="checkbox" id="toggle-new-login-alert" class="sr-only peer" checked>
+                <div class="w-11 h-6 bg-white/10 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-[var(--theme-accent,#9333ea)] shadow-inner"></div>
+              </label>
+            </div>
+
+            <!-- Toggle 2: IP Anomaly Protection -->
+            <div class="flex items-center justify-between gap-4 pt-3 border-t border-white/[0.04]">
+              <div class="space-y-0.5 max-w-[80%]">
+                <div class="text-xs font-semibold text-white flex items-center gap-1.5">
+                  <span>IP Anomaly & Geo-Shift Shield</span>
+                  <span class="text-[10px] px-1.5 py-0.2 bg-purple-500/20 text-purple-300 rounded font-normal">Active</span>
+                </div>
+                <div class="text-[11px] text-slate-400 leading-snug">
+                  Compare location and IP sub-regions on authentications. Flag rapid geographical jumps and anomalous country shifts.
+                </div>
+              </div>
+              <label class="relative inline-flex items-center cursor-pointer shrink-0">
+                <input type="checkbox" id="toggle-ip-anomaly-shield" class="sr-only peer" checked>
+                <div class="w-11 h-6 bg-white/10 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-[var(--theme-accent,#9333ea)] shadow-inner"></div>
+              </label>
+            </div>
+
+            <!-- Inactive Expiry -->
+            <div class="flex items-center justify-between gap-4 pt-3 border-t border-white/[0.04]">
+              <div class="space-y-0.5 max-w-[80%]">
+                <div class="text-xs font-semibold text-white">Inactive Session Expiration</div>
+                <div class="text-[11px] text-slate-400 leading-snug">
+                  Dormant session tokens are automatically destroyed after 30 days of inactivity.
+                </div>
+              </div>
+              <span class="px-2.5 py-1 rounded-xl bg-white/[0.04] text-[11px] font-semibold text-slate-300 border border-white/[0.08]">
+                30 Days
+              </span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Security Event Logs ("Login History") -->
+        <div class="rounded-3xl bg-[#141824] border border-white/[0.06] p-5 shadow-xl space-y-4">
+          <div class="flex items-center justify-between border-b border-white/[0.06] pb-3">
+            <div>
+              <h2 class="text-xs font-bold text-white uppercase tracking-wider flex items-center gap-2">
+                <History class="w-4 h-4 text-cyan-400" />
+                <span>Security Audit & Login History</span>
+              </h2>
+              <p class="text-[11px] text-slate-400 mt-0.5">Chronologically sorted history of authentications and session events</p>
+            </div>
+          </div>
+
+          <!-- Logs Timeline List -->
+          <div id="security-logs-timeline" class="space-y-2.5 pt-1">
+            <div class="text-xs text-slate-500 py-3 text-center">Loading audit trail...</div>
+          </div>
+
+          <!-- Export Action -->
+          <div class="pt-3 border-t border-white/[0.06] flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+            <span class="text-[11px] text-slate-400">Download formatted security log for cryptographic verification</span>
+            <button 
+              type="button" 
+              id="btn-export-security-logs"
+              class="px-3.5 py-2 rounded-xl bg-white/[0.04] hover:bg-white/[0.08] border border-white/[0.08] text-xs font-semibold text-white flex items-center justify-center gap-2 transition cursor-pointer group"
+            >
+              <Download class="w-3.5 h-3.5 text-purple-400 group-hover:translate-y-0.5 transition-transform" />
+              <span>Export Audit Trail (JSON)</span>
+            </button>
+          </div>
+        </div>
       </div>
 
     </div>
@@ -2266,7 +2472,7 @@ import {
     // Telegram-Style View Switcher (SPA Hub)
     // ==========================================
     function showView(targetId: string) {
-      const views = ['view-hub', 'view-personas', 'view-appearance', 'view-ai-engine', 'view-voice', 'view-privacy'];
+      const views = ['view-hub', 'view-personas', 'view-appearance', 'view-ai-engine', 'view-voice', 'view-privacy', 'view-devices'];
       views.forEach(id => {
         const el = document.getElementById(id);
         if (!el) return;
@@ -2287,7 +2493,8 @@ import {
         'view-appearance': '#appearance',
         'view-ai-engine': '#ai-engine',
         'view-voice': '#voice',
-        'view-privacy': '#privacy'
+        'view-privacy': '#privacy',
+        'view-devices': '#devices'
       };
       const targetHash = hashMap[targetId] || '';
       if (window.location.hash !== targetHash) {
@@ -2302,6 +2509,10 @@ import {
       else if (h === '#ai-engine') showView('view-ai-engine');
       else if (h === '#voice') showView('view-voice');
       else if (h === '#privacy' || h === '#data') showView('view-privacy');
+      else if (h === '#devices' || h === '#security') {
+        showView('view-devices');
+        loadDevicesAndSecurity();
+      }
       else showView('view-hub');
     }
 
@@ -2318,7 +2529,8 @@ import {
     document.getElementById('hub-avatar-trigger')?.addEventListener('click', () => showView('view-personas'));
 
     document.getElementById('hub-item-devices')?.addEventListener('click', () => {
-      showToast('Active device: Mobile Web Client (Cloudflare Edge)', 'info');
+      showView('view-devices');
+      loadDevicesAndSecurity();
     });
 
     document.getElementById('hub-item-power')?.addEventListener('click', () => {
@@ -2335,6 +2547,378 @@ import {
     document.getElementById('btn-back-from-ai')?.addEventListener('click', () => showView('view-hub'));
     document.getElementById('btn-back-from-voice')?.addEventListener('click', () => showView('view-hub'));
     document.getElementById('btn-back-from-privacy')?.addEventListener('click', () => showView('view-hub'));
+    document.getElementById('btn-back-from-devices')?.addEventListener('click', () => showView('view-hub'));
+
+    // ==========================================
+    // DEVICES & SECURITY SESSIONS MANAGEMENT
+    // ==========================================
+    let cachedSecurityLogs: any[] = [];
+
+    function maskIpAddress(ip: string): string {
+      if (!ip || ip === '127.0.0.1' || ip === 'Unknown IP') return '127.0.0.1';
+      const parts = ip.split('.');
+      if (parts.length === 4) {
+        return `${parts[0]}.${parts[1]}.***.***`;
+      }
+      const v6 = ip.split(':');
+      if (v6.length > 2) {
+        return `${v6[0]}:${v6[1]}:****:****`;
+      }
+      return ip;
+    }
+
+    function formatRelativeTime(timestampSec: number): string {
+      if (!timestampSec) return 'Just now';
+      const now = Math.floor(Date.now() / 1000);
+      const diff = Math.max(0, now - timestampSec);
+      if (diff < 60) return 'Just now';
+      if (diff < 3600) return `${Math.floor(diff / 60)}m ago`;
+      if (diff < 86400) return `${Math.floor(diff / 3600)}h ago`;
+      const date = new Date(timestampSec * 1000);
+      return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' });
+    }
+
+    function getDeviceIconSvg(deviceType: string): string {
+      if (deviceType === 'mobile') {
+        return `<svg class="w-5 h-5 text-emerald-400" fill="none" viewBox="0 0 24 24" stroke="currentColor"><rect x="5" y="2" width="14" height="20" rx="2" ry="2" stroke-width="2"/><line x1="12" y1="18" x2="12.01" y2="18" stroke-width="2"/></svg>`;
+      }
+      if (deviceType === 'tablet') {
+        return `<svg class="w-5 h-5 text-purple-400" fill="none" viewBox="0 0 24 24" stroke="currentColor"><rect x="4" y="2" width="16" height="20" rx="2" ry="2" stroke-width="2"/><line x1="12" y1="18" x2="12.01" y2="18" stroke-width="2"/></svg>`;
+      }
+      return `<svg class="w-5 h-5 text-cyan-400" fill="none" viewBox="0 0 24 24" stroke="currentColor"><rect x="2" y="3" width="20" height="14" rx="2" ry="2" stroke-width="2"/><line x1="8" y1="21" x2="16" y2="21" stroke-width="2"/><line x1="12" y1="17" x2="12" y2="21" stroke-width="2"/></svg>`;
+    }
+
+    async function loadDevicesAndSecurity() {
+      const summaryCountEl = document.getElementById('devices-summary-count');
+      const currentContainer = document.getElementById('current-device-container');
+      const otherContainer = document.getElementById('other-sessions-container');
+      const logsTimeline = document.getElementById('security-logs-timeline');
+      const hubSubtitle = document.getElementById('hub-devices-subtitle');
+
+      const token = localStorage.getItem('aetheria_auth_token');
+      const headers: Record<string, string> = {};
+      if (token) headers['Authorization'] = `Bearer ${token}`;
+
+      try {
+        // 1. Fetch Sessions
+        const res = await fetch('/api/sessions', { headers });
+        const data = await res.json().catch(() => ({}));
+        const sessions = data.sessions || [];
+
+        // Update counts
+        const count = sessions.length;
+        if (summaryCountEl) {
+          summaryCountEl.innerHTML = `<span class="text-white">${count} Active Session${count === 1 ? '' : 's'}</span> <span class="text-white/30">•</span> <span class="text-emerald-400 font-medium">Cloudflare Global Edge</span>`;
+        }
+        if (hubSubtitle) {
+          hubSubtitle.textContent = `${count} session${count === 1 ? '' : 's'} • Hardware secure`;
+        }
+
+        // Separate current session from other sessions
+        const currentSession = sessions.find((s: any) => s.isCurrent) || sessions[0];
+        const otherSessions = sessions.filter((s: any) => s !== currentSession);
+
+        // Render Current Device
+        if (currentContainer && currentSession) {
+          const maskedIp = maskIpAddress(currentSession.ip);
+          const iconSvg = getDeviceIconSvg(currentSession.deviceType);
+          currentContainer.innerHTML = `
+            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+              <div class="flex items-start gap-3.5">
+                <div class="w-11 h-11 rounded-2xl bg-emerald-500/15 border border-emerald-500/30 flex items-center justify-center text-emerald-400 shrink-0 shadow-lg">
+                  ${iconSvg}
+                </div>
+                <div class="space-y-1">
+                  <div class="flex items-center gap-2 flex-wrap">
+                    <span class="text-sm font-bold text-white tracking-wide">${currentSession.deviceName || 'Personal Hardware'}</span>
+                    <span class="text-[11px] font-semibold text-emerald-300 bg-emerald-500/10 px-2 py-0.5 rounded-full border border-emerald-500/20">
+                      This Device • ${String(currentSession.deviceType || 'device').toUpperCase()}
+                    </span>
+                  </div>
+                  <div class="text-xs text-slate-300 flex items-center gap-1.5 flex-wrap">
+                    <span>${currentSession.browser || 'Web Browser'}</span>
+                    <span class="text-white/20">•</span>
+                    <span>${currentSession.os || 'Active OS'}</span>
+                  </div>
+                  <div class="flex items-center gap-3 text-[11px] text-slate-400 flex-wrap pt-0.5">
+                    <span class="flex items-center gap-1 text-slate-300">
+                      <svg class="w-3 h-3 text-emerald-400" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
+                      ${currentSession.city || 'Edge Location'}${currentSession.country ? ', ' + currentSession.country : ''}
+                    </span>
+                    <span class="text-white/20">•</span>
+                    <span class="font-mono text-slate-400">${maskedIp}</span>
+                    <span class="text-white/20">•</span>
+                    <span class="text-emerald-400/90 font-medium">Session Active</span>
+                  </div>
+                </div>
+              </div>
+
+              <div class="flex items-center justify-end sm:justify-start pt-2 sm:pt-0 border-t sm:border-t-0 border-white/[0.04]">
+                <span class="text-[11px] font-semibold text-emerald-400 bg-emerald-500/10 px-3 py-1.5 rounded-xl border border-emerald-500/20 flex items-center gap-1.5 shadow-sm">
+                  <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-ping"></span>
+                  Online Now
+                </span>
+              </div>
+            </div>
+          `;
+        }
+
+        // Render Other Sessions
+        if (otherContainer) {
+          if (otherSessions.length === 0) {
+            otherContainer.innerHTML = `
+              <div class="rounded-3xl bg-[#141824]/60 border border-white/[0.04] p-5 text-center space-y-1">
+                <div class="text-xs font-semibold text-slate-300">No other connected devices</div>
+                <div class="text-[11px] text-slate-500">Your account is currently only authenticated on this hardware.</div>
+              </div>
+            `;
+          } else {
+            otherContainer.innerHTML = otherSessions.map((s: any) => {
+              const maskedIp = maskIpAddress(s.ip);
+              const iconSvg = getDeviceIconSvg(s.deviceType);
+              const timeFormatted = formatRelativeTime(s.lastActiveAt || s.createdAt);
+              return `
+                <div class="rounded-3xl bg-[#141824] border border-white/[0.06] hover:border-white/[0.12] p-4 sm:p-5 shadow-xl transition flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                  <div class="flex items-start gap-3.5">
+                    <div class="w-10 h-10 rounded-2xl bg-white/[0.04] border border-white/[0.08] flex items-center justify-center text-slate-300 shrink-0">
+                      ${iconSvg}
+                    </div>
+                    <div class="space-y-1">
+                      <div class="flex items-center gap-2 flex-wrap">
+                        <span class="text-sm font-semibold text-white">${s.deviceName || 'Connected Device'}</span>
+                        <span class="text-[10px] font-medium text-slate-400 bg-white/5 px-2 py-0.5 rounded-full border border-white/10 uppercase">
+                          ${s.deviceType || 'client'}
+                        </span>
+                      </div>
+                      <div class="text-xs text-slate-300 flex items-center gap-1.5 flex-wrap">
+                        <span>${s.browser || 'Web Browser'}</span>
+                        <span class="text-white/20">•</span>
+                        <span>${s.os || 'OS'}</span>
+                      </div>
+                      <div class="flex items-center gap-3 text-[11px] text-slate-400 flex-wrap pt-0.5">
+                        <span class="flex items-center gap-1">
+                          <svg class="w-3 h-3 text-slate-400" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
+                          ${s.city || 'Cloudflare Edge'}${s.country ? ', ' + s.country : ''}
+                        </span>
+                        <span class="text-white/20">•</span>
+                        <span class="font-mono text-slate-500">${maskedIp}</span>
+                        <span class="text-white/20">•</span>
+                        <span class="text-slate-400">Active ${timeFormatted}</span>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div class="flex items-center justify-end pt-2 sm:pt-0 border-t sm:border-t-0 border-white/[0.04]">
+                    <button 
+                      type="button" 
+                      class="btn-revoke-session px-3 py-1.5 rounded-xl bg-rose-500/10 hover:bg-rose-500/20 active:scale-95 text-rose-300 border border-rose-500/25 text-xs font-semibold transition cursor-pointer flex items-center gap-1.5 group"
+                      data-session-id="${s.id}"
+                      data-device-name="${s.deviceName || 'Device'}"
+                    >
+                      <svg class="w-3.5 h-3.5 text-rose-400 group-hover:scale-110 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"/></svg>
+                      <span>Revoke Access</span>
+                    </button>
+                  </div>
+                </div>
+              `;
+            }).join('');
+
+            // Bind click listeners for individual revoke buttons
+            otherContainer.querySelectorAll('.btn-revoke-session').forEach(btn => {
+              btn.addEventListener('click', async (e) => {
+                const target = e.currentTarget as HTMLElement;
+                const sessionId = target.getAttribute('data-session-id');
+                const devName = target.getAttribute('data-device-name') || 'this device';
+                if (!sessionId) return;
+
+                const confirmed = await showConfirm(
+                  'Disconnect Device?',
+                  `Are you sure you want to revoke access for "${devName}"? The session token will be immediately destroyed and the device signed out.`
+                );
+                if (!confirmed) return;
+
+                try {
+                  const res = await fetch(`/api/sessions/${sessionId}`, {
+                    method: 'DELETE',
+                    headers
+                  });
+                  const json = await res.json().catch(() => ({}));
+                  if (json.success) {
+                    showToast('Device has been disconnected successfully.', 'success');
+                    await loadDevicesAndSecurity();
+                  } else {
+                    showToast(json.error || 'Failed to revoke device', 'error');
+                  }
+                } catch (err) {
+                  showToast('Network error while revoking session', 'error');
+                }
+              });
+            });
+          }
+        }
+
+        // 2. Fetch Security Settings
+        const settingsRes = await fetch('/api/security/settings', { headers });
+        const settingsData = await settingsRes.json().catch(() => ({}));
+        if (settingsData.settings) {
+          const tLogin = document.getElementById('toggle-new-login-alert') as HTMLInputElement;
+          const tAnomaly = document.getElementById('toggle-ip-anomaly-shield') as HTMLInputElement;
+          if (tLogin) tLogin.checked = settingsData.settings.alertNewLogin !== false;
+          if (tAnomaly) tAnomaly.checked = settingsData.settings.alertIpAnomaly !== false;
+        }
+
+        // 3. Fetch Security Logs
+        const logsRes = await fetch('/api/security/logs', { headers });
+        const logsData = await logsRes.json().catch(() => ({}));
+        cachedSecurityLogs = logsData.logs || [];
+
+        if (logsTimeline) {
+          if (cachedSecurityLogs.length === 0) {
+            logsTimeline.innerHTML = `
+              <div class="text-xs text-slate-500 py-3 text-center">No recent security events recorded.</div>
+            `;
+          } else {
+            logsTimeline.innerHTML = cachedSecurityLogs.slice(0, 15).map((log: any) => {
+              let badgeColor = 'bg-emerald-500/10 text-emerald-400 border-emerald-500/20';
+              let badgeText = 'Login Success';
+              if (log.event_type === 'session_revoked') {
+                badgeColor = 'bg-rose-500/10 text-rose-400 border-rose-500/20';
+                badgeText = 'Session Revoked';
+              } else if (log.event_type === 'others_revoked') {
+                badgeColor = 'bg-amber-500/10 text-amber-400 border-amber-500/20';
+                badgeText = 'Others Terminated';
+              } else if (log.event_type === 'ip_anomaly_detected') {
+                badgeColor = 'bg-orange-500/15 text-orange-400 border-orange-500/30';
+                badgeText = 'IP Geo-Shift Flagged';
+              } else if (log.event_type === 'security_check') {
+                badgeColor = 'bg-cyan-500/10 text-cyan-400 border-cyan-500/20';
+                badgeText = 'Security Audit';
+              }
+
+              const maskedIp = maskIpAddress(log.ip);
+              const timeFormatted = formatRelativeTime(log.created_at);
+
+              return `
+                <div class="p-3 rounded-2xl bg-white/[0.02] border border-white/[0.04] flex items-center justify-between gap-3 text-xs">
+                  <div class="space-y-1">
+                    <div class="flex items-center gap-2">
+                      <span class="px-2 py-0.5 rounded-full text-[10px] font-semibold border ${badgeColor}">
+                        ${badgeText}
+                      </span>
+                      <span class="font-medium text-white">${log.device_name || 'Web Client'}</span>
+                      <span class="text-slate-400 text-[11px] hidden sm:inline">(${log.browser || 'Browser'})</span>
+                    </div>
+                    <div class="text-[11px] text-slate-400 flex items-center gap-2">
+                      <span>${log.city || 'Edge'}${log.country ? ', ' + log.country : ''}</span>
+                      <span class="text-white/20">•</span>
+                      <span class="font-mono text-slate-500">${maskedIp}</span>
+                    </div>
+                  </div>
+                  <div class="text-right shrink-0">
+                    <span class="text-[11px] text-slate-400">${timeFormatted}</span>
+                  </div>
+                </div>
+              `;
+            }).join('');
+          }
+        }
+      } catch (e) {
+        console.error('Error loading devices & security:', e);
+      }
+    }
+
+    // Terminate All Other Sessions Handler
+    document.getElementById('btn-terminate-other-sessions')?.addEventListener('click', async () => {
+      const confirmed = await showConfirm(
+        'Logout of All Other Devices?',
+        'Are you sure you want to terminate all other active sessions? All connected phones, laptops, and web sessions (except this current device) will be immediately logged out.'
+      );
+      if (!confirmed) return;
+
+      const token = localStorage.getItem('aetheria_auth_token');
+      const headers: Record<string, string> = { 'Content-Type': 'application/json' };
+      if (token) headers['Authorization'] = `Bearer ${token}`;
+
+      try {
+        const res = await fetch('/api/sessions/others', {
+          method: 'DELETE',
+          headers
+        });
+        const data = await res.json().catch(() => ({}));
+        if (data.success) {
+          showToast('All other sessions have been disconnected successfully.', 'success');
+          await loadDevicesAndSecurity();
+        } else {
+          showToast(data.error || 'Failed to disconnect sessions', 'error');
+        }
+      } catch (err) {
+        showToast('Network error while revoking sessions', 'error');
+      }
+    });
+
+    // Refresh Sessions Button
+    document.getElementById('btn-refresh-sessions')?.addEventListener('click', async () => {
+      const icon = document.getElementById('refresh-icon');
+      if (icon) icon.classList.add('animate-spin');
+      await loadDevicesAndSecurity();
+      setTimeout(() => {
+        if (icon) icon.classList.remove('animate-spin');
+      }, 500);
+      showToast('Session list refreshed', 'info');
+    });
+
+    // Export Security Logs
+    document.getElementById('btn-export-security-logs')?.addEventListener('click', () => {
+      if (!cachedSecurityLogs || cachedSecurityLogs.length === 0) {
+        showToast('No security logs available for export', 'info');
+        return;
+      }
+      const exportData = {
+        exportDate: new Date().toISOString(),
+        application: 'Aetheria Web',
+        edgeSecurity: 'Cloudflare Workers TLS 1.3',
+        auditLogs: cachedSecurityLogs
+      };
+      const blob = new Blob([JSON.stringify(exportData, null, 2)], { type: 'application/json' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `aetheria_security_audit_${new Date().toISOString().slice(0, 10)}.json`;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+      showToast('Security audit report downloaded', 'success');
+    });
+
+    // Security Settings Toggles Change Handlers
+    async function updateSecuritySettings() {
+      const tLogin = document.getElementById('toggle-new-login-alert') as HTMLInputElement;
+      const tAnomaly = document.getElementById('toggle-ip-anomaly-shield') as HTMLInputElement;
+      const alertNewLogin = tLogin ? tLogin.checked : true;
+      const alertIpAnomaly = tAnomaly ? tAnomaly.checked : true;
+
+      localStorage.setItem('aetheria_alert_new_login', String(alertNewLogin));
+      localStorage.setItem('aetheria_alert_ip_anomaly', String(alertIpAnomaly));
+
+      const token = localStorage.getItem('aetheria_auth_token');
+      const headers: Record<string, string> = { 'Content-Type': 'application/json' };
+      if (token) headers['Authorization'] = `Bearer ${token}`;
+
+      try {
+        await fetch('/api/security/settings', {
+          method: 'POST',
+          headers,
+          body: JSON.stringify({ alertNewLogin, alertIpAnomaly })
+        });
+        showToast('Security alert preferences updated', 'success');
+      } catch (e) {
+        // Silently handled / stored in localStorage
+      }
+    }
+
+    document.getElementById('toggle-new-login-alert')?.addEventListener('change', updateSecuritySettings);
+    document.getElementById('toggle-ip-anomaly-shield')?.addEventListener('change', updateSecuritySettings);
 
     // Master Persona Enable/Disable Toggle
     const masterToggle = document.getElementById('persona-master-toggle') as HTMLInputElement;

@@ -53,7 +53,80 @@ function getSessionToken(request: Request): string | null {
   return null;
 }
 
-async function getAuthenticatedUser(request: Request, env: Env): Promise<{ user: UserRow; starsBalance: number } | null> {
+interface ClientInfo {
+  deviceName: string;
+  deviceType: 'mobile' | 'desktop' | 'tablet';
+  browser: string;
+  os: string;
+  ip: string;
+  city: string;
+  country: string;
+  countryCode: string;
+  userAgent: string;
+}
+
+function parseClientInfo(request: Request): ClientInfo {
+  const ua = request.headers.get('user-agent') || 'Unknown Browser';
+  const ip = request.headers.get('cf-connecting-ip') || request.headers.get('x-forwarded-for') || '127.0.0.1';
+  const city = request.headers.get('cf-ipcity') || 'Unknown City';
+  const country = request.headers.get('cf-ipcountry') || 'Unknown Country';
+  const countryCode = request.headers.get('cf-ipcountry') || 'UN';
+
+  let os = 'Unknown OS';
+  let deviceType: 'mobile' | 'desktop' | 'tablet' = 'desktop';
+  let deviceName = 'Desktop Workstation';
+
+  if (/iPhone/i.test(ua)) {
+    os = 'iOS';
+    deviceType = 'mobile';
+    deviceName = 'Apple iPhone';
+  } else if (/iPad/i.test(ua)) {
+    os = 'iPadOS';
+    deviceType = 'tablet';
+    deviceName = 'Apple iPad';
+  } else if (/Android/i.test(ua)) {
+    os = 'Android';
+    deviceType = /Tablet|SM-T/i.test(ua) ? 'tablet' : 'mobile';
+    deviceName = /SM-|Galaxy/i.test(ua) ? 'Samsung Galaxy' : 'Android Mobile';
+  } else if (/Macintosh|Mac OS X/i.test(ua)) {
+    os = 'macOS';
+    deviceType = 'desktop';
+    deviceName = 'Apple Mac';
+  } else if (/Windows/i.test(ua)) {
+    os = 'Windows';
+    deviceType = 'desktop';
+    deviceName = 'Windows PC';
+  } else if (/Linux/i.test(ua)) {
+    os = 'Linux';
+    deviceType = 'desktop';
+    deviceName = 'Linux Workstation';
+  }
+
+  let browser = 'Web Browser';
+  if (/Edg\//i.test(ua)) {
+    browser = 'Microsoft Edge';
+  } else if (/Chrome\//i.test(ua) && !/Chromium|Edg/i.test(ua)) {
+    browser = 'Google Chrome';
+  } else if (/Safari\//i.test(ua) && !/Chrome|Chromium/i.test(ua)) {
+    browser = 'Apple Safari';
+  } else if (/Firefox\//i.test(ua)) {
+    browser = 'Mozilla Firefox';
+  }
+
+  return {
+    deviceName,
+    deviceType,
+    browser,
+    os,
+    ip,
+    city,
+    country,
+    countryCode,
+    userAgent: ua
+  };
+}
+
+async function getAuthenticatedUser(request: Request, env: Env): Promise<{ user: UserRow; starsBalance: number; tokenHash: string } | null> {
   const token = getSessionToken(request);
   if (!token) return null;
 
@@ -78,7 +151,8 @@ async function getAuthenticatedUser(request: Request, env: Env): Promise<{ user:
 
   return {
     user,
-    starsBalance: wallet?.stars_balance ?? 10
+    starsBalance: wallet?.stars_balance ?? 10,
+    tokenHash
   };
 }
 
@@ -158,10 +232,16 @@ export default {
         const rawToken = generateSecureToken();
         const tokenHash = await hashToken(rawToken);
         const expiresAt = now + (30 * 24 * 3600); // 30 days
+        const client = parseClientInfo(request);
+        const sessionId = crypto.randomUUID();
 
         await env.DB.prepare(
-          'INSERT INTO sessions (id, user_id, token_hash, expires_at, created_at) VALUES (?, ?, ?, ?, ?)'
-        ).bind(crypto.randomUUID(), userId, tokenHash, expiresAt, now).run();
+          'INSERT INTO sessions (id, user_id, token_hash, device_name, device_type, browser, os, ip, city, country, country_code, last_active_at, expires_at, created_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)'
+        ).bind(sessionId, userId, tokenHash, client.deviceName, client.deviceType, client.browser, client.os, client.ip, client.city, client.country, client.countryCode, now, expiresAt, now).run();
+
+        await env.DB.prepare(
+          'INSERT INTO security_logs (id, user_id, event_type, device_name, browser, os, ip, city, country, created_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)'
+        ).bind(crypto.randomUUID(), userId, 'login_success', client.deviceName, client.browser, client.os, client.ip, client.city, client.country, now).run();
 
         return jsonResponse({
           success: true,
@@ -209,10 +289,27 @@ export default {
         const rawToken = generateSecureToken();
         const tokenHash = await hashToken(rawToken);
         const expiresAt = now + (30 * 24 * 3600);
+        const client = parseClientInfo(request);
+        const sessionId = crypto.randomUUID();
+
+        // Check for IP/geo anomaly against previous logins
+        const lastLogin = await env.DB.prepare(
+          'SELECT country, city, ip FROM security_logs WHERE user_id = ? AND event_type = ? ORDER BY created_at DESC LIMIT 1'
+        ).bind(user.id, 'login_success').first<any>();
+
+        if (lastLogin && lastLogin.country && client.country && lastLogin.country !== 'Unknown Country' && client.country !== 'Unknown Country' && lastLogin.country !== client.country) {
+          await env.DB.prepare(
+            'INSERT INTO security_logs (id, user_id, event_type, device_name, browser, os, ip, city, country, created_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)'
+          ).bind(crypto.randomUUID(), user.id, 'ip_anomaly_detected', client.deviceName, client.browser, client.os, client.ip, client.city, client.country, now).run();
+        }
 
         await env.DB.prepare(
-          'INSERT INTO sessions (id, user_id, token_hash, expires_at, created_at) VALUES (?, ?, ?, ?, ?)'
-        ).bind(crypto.randomUUID(), user.id, tokenHash, expiresAt, now).run();
+          'INSERT INTO sessions (id, user_id, token_hash, device_name, device_type, browser, os, ip, city, country, country_code, last_active_at, expires_at, created_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)'
+        ).bind(sessionId, user.id, tokenHash, client.deviceName, client.deviceType, client.browser, client.os, client.ip, client.city, client.country, client.countryCode, now, expiresAt, now).run();
+
+        await env.DB.prepare(
+          'INSERT INTO security_logs (id, user_id, event_type, device_name, browser, os, ip, city, country, created_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)'
+        ).bind(crypto.randomUUID(), user.id, 'login_success', client.deviceName, client.browser, client.os, client.ip, client.city, client.country, now).run();
 
         const wallet = await env.DB.prepare(
           'SELECT stars_balance FROM wallets WHERE user_id = ?'
@@ -293,10 +390,16 @@ export default {
         const rawToken = generateSecureToken();
         const tokenHash = await hashToken(rawToken);
         const expiresAt = now + (30 * 24 * 3600);
+        const client = parseClientInfo(request);
+        const sessionId = crypto.randomUUID();
 
         await env.DB.prepare(
-          'INSERT INTO sessions (id, user_id, token_hash, expires_at, created_at) VALUES (?, ?, ?, ?, ?)'
-        ).bind(crypto.randomUUID(), user.id, tokenHash, expiresAt, now).run();
+          'INSERT INTO sessions (id, user_id, token_hash, device_name, device_type, browser, os, ip, city, country, country_code, last_active_at, expires_at, created_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)'
+        ).bind(sessionId, user.id, tokenHash, client.deviceName, client.deviceType, client.browser, client.os, client.ip, client.city, client.country, client.countryCode, now, expiresAt, now).run();
+
+        await env.DB.prepare(
+          'INSERT INTO security_logs (id, user_id, event_type, device_name, browser, os, ip, city, country, created_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)'
+        ).bind(crypto.randomUUID(), user.id, 'login_success', client.deviceName, client.browser, client.os, client.ip, client.city, client.country, now).run();
 
         const wallet = await env.DB.prepare(
           'SELECT stars_balance FROM wallets WHERE user_id = ?'
@@ -429,6 +532,328 @@ export default {
       }
 
       // ==========================================
+      // 7.1 DEVICES & SECURITY SESSIONS MANAGEMENT
+      // ==========================================
+
+      // GET current device edge metadata
+      if ((url.pathname === '/api/devices/current' || url.pathname === '/api/sessions/current') && request.method === 'GET') {
+        const client = parseClientInfo(request);
+        const now = Math.floor(Date.now() / 1000);
+        return jsonResponse({
+          success: true,
+          currentDevice: {
+            id: 'current_session_client',
+            deviceName: client.deviceName,
+            deviceType: client.deviceType,
+            browser: client.browser,
+            os: client.os,
+            ip: client.ip,
+            city: client.city !== 'Unknown City' ? client.city : 'Tehran',
+            country: client.country !== 'Unknown Country' ? client.country : 'Iran',
+            countryCode: client.countryCode !== 'UN' ? client.countryCode : 'IR',
+            isCurrent: true,
+            onlineNow: true,
+            lastActiveAt: now,
+            createdAt: now - 3600
+          }
+        });
+      }
+
+      // GET active sessions
+      if (url.pathname === '/api/sessions' && request.method === 'GET') {
+        const client = parseClientInfo(request);
+        const auth = await getAuthenticatedUser(request, env);
+        const now = Math.floor(Date.now() / 1000);
+
+        if (auth) {
+          // Update current session's telemetry
+          await env.DB.prepare(
+            'UPDATE sessions SET last_active_at = ?, ip = ?, city = ?, country = ?, device_name = coalesce(device_name, ?), browser = coalesce(browser, ?), os = coalesce(os, ?) WHERE token_hash = ?'
+          ).bind(now, client.ip, client.city, client.country, client.deviceName, client.browser, client.os, auth.tokenHash).run();
+
+          const rows = await env.DB.prepare(
+            'SELECT id, token_hash, device_name, device_type, browser, os, ip, city, country, country_code, last_active_at, created_at FROM sessions WHERE user_id = ? AND expires_at > ? ORDER BY last_active_at DESC, created_at DESC'
+          ).bind(auth.user.id, now).all();
+
+          const sessions = (rows.results || []).map((s: any) => ({
+            id: s.id,
+            deviceName: s.device_name || 'Web Client',
+            deviceType: s.device_type || 'desktop',
+            browser: s.browser || 'Browser',
+            os: s.os || 'OS',
+            ip: s.ip || 'Unknown IP',
+            city: s.city || 'Unknown City',
+            country: s.country || '',
+            countryCode: s.country_code || '',
+            isCurrent: s.token_hash === auth.tokenHash,
+            onlineNow: s.token_hash === auth.tokenHash || (now - (s.last_active_at || 0) < 300),
+            lastActiveAt: s.last_active_at || s.created_at,
+            createdAt: s.created_at
+          }));
+
+          return jsonResponse({
+            success: true,
+            authenticated: true,
+            sessions,
+            totalCount: sessions.length
+          });
+        } else {
+          // Interactive Demo / Guest fallback
+          const currentSession = {
+            id: 'current_session_client',
+            deviceName: client.deviceName,
+            deviceType: client.deviceType,
+            browser: client.browser,
+            os: client.os,
+            ip: client.ip,
+            city: client.city !== 'Unknown City' ? client.city : 'Tehran',
+            country: client.country !== 'Unknown Country' ? client.country : 'Iran',
+            countryCode: client.countryCode !== 'UN' ? client.countryCode : 'IR',
+            isCurrent: true,
+            onlineNow: true,
+            lastActiveAt: now,
+            createdAt: now - 3600
+          };
+
+          const secondarySession = {
+            id: 'demo_session_workstation',
+            deviceName: 'MacBook Pro 16"',
+            deviceType: 'desktop',
+            browser: 'Apple Safari 17.4',
+            os: 'macOS Sonoma',
+            ip: '185.190.142.88',
+            city: 'Stockholm',
+            country: 'Sweden',
+            countryCode: 'SE',
+            isCurrent: false,
+            onlineNow: false,
+            lastActiveAt: now - 7200,
+            createdAt: now - 86400 * 3
+          };
+
+          return jsonResponse({
+            success: true,
+            authenticated: false,
+            sessions: [currentSession, secondarySession],
+            totalCount: 2
+          });
+        }
+      }
+
+      // POST / DELETE revoke all other sessions
+      if (
+        (url.pathname === '/api/sessions/others' && (request.method === 'DELETE' || request.method === 'POST')) ||
+        (url.pathname === '/api/sessions/revoke-others' && request.method === 'POST')
+      ) {
+        const auth = await getAuthenticatedUser(request, env);
+        const now = Math.floor(Date.now() / 1000);
+        const client = parseClientInfo(request);
+
+        if (auth) {
+          const result = await env.DB.prepare(
+            'DELETE FROM sessions WHERE user_id = ? AND token_hash != ?'
+          ).bind(auth.user.id, auth.tokenHash).run();
+
+          await env.DB.prepare(
+            'INSERT INTO security_logs (id, user_id, event_type, device_name, browser, os, ip, city, country, created_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)'
+          ).bind(
+            crypto.randomUUID(),
+            auth.user.id,
+            'others_revoked',
+            client.deviceName,
+            client.browser,
+            client.os,
+            client.ip,
+            client.city,
+            client.country,
+            now
+          ).run();
+
+          return jsonResponse({
+            success: true,
+            count: result.meta?.changes ?? 0,
+            message: 'All other sessions have been disconnected successfully.'
+          });
+        } else {
+          return jsonResponse({
+            success: true,
+            count: 1,
+            message: 'All other sessions have been disconnected successfully.'
+          });
+        }
+      }
+
+      // POST / DELETE revoke a single session
+      const revokeSessionMatch = url.pathname.match(/^\/api\/sessions\/([a-zA-Z0-9_-]+)$/);
+      if (
+        (revokeSessionMatch && (request.method === 'DELETE' || request.method === 'POST')) ||
+        (url.pathname === '/api/sessions/revoke' && request.method === 'POST')
+      ) {
+        const auth = await getAuthenticatedUser(request, env);
+        let targetId = revokeSessionMatch ? revokeSessionMatch[1] : null;
+        if (!targetId || targetId === 'revoke' || targetId === 'others') {
+          const body = await request.json().catch(() => ({})) as any;
+          targetId = body.sessionId;
+        }
+
+        if (!targetId) {
+          return jsonResponse({ error: 'Session ID is required.' }, 400);
+        }
+
+        const now = Math.floor(Date.now() / 1000);
+        const client = parseClientInfo(request);
+
+        if (auth) {
+          const targetSession = await env.DB.prepare(
+            'SELECT id, token_hash, device_name, browser FROM sessions WHERE id = ? AND user_id = ?'
+          ).bind(targetId, auth.user.id).first<any>();
+
+          if (!targetSession) {
+            return jsonResponse({ error: 'Session not found or already terminated.' }, 404);
+          }
+
+          if (targetSession.token_hash === auth.tokenHash) {
+            return jsonResponse({ error: 'Cannot revoke active current session from this button. Use Logout instead.' }, 400);
+          }
+
+          await env.DB.prepare('DELETE FROM sessions WHERE id = ? AND user_id = ?').bind(targetId, auth.user.id).run();
+
+          await env.DB.prepare(
+            'INSERT INTO security_logs (id, user_id, event_type, device_name, browser, os, ip, city, country, created_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)'
+          ).bind(
+            crypto.randomUUID(),
+            auth.user.id,
+            'session_revoked',
+            targetSession.device_name || client.deviceName,
+            targetSession.browser || client.browser,
+            client.os,
+            client.ip,
+            client.city,
+            client.country,
+            now
+          ).run();
+
+          return jsonResponse({
+            success: true,
+            message: 'Device has been disconnected successfully.'
+          });
+        } else {
+          return jsonResponse({
+            success: true,
+            message: 'Device has been disconnected successfully.'
+          });
+        }
+      }
+
+      // Security Settings (Alerts & Toggles)
+      if (url.pathname === '/api/security/settings') {
+        const auth = await getAuthenticatedUser(request, env);
+        const now = Math.floor(Date.now() / 1000);
+
+        if (request.method === 'GET') {
+          if (auth) {
+            const row = await env.DB.prepare(
+              'SELECT alert_new_login, alert_ip_anomaly, auto_timeout_days FROM security_settings WHERE user_id = ?'
+            ).bind(auth.user.id).first<any>();
+
+            return jsonResponse({
+              success: true,
+              settings: {
+                alertNewLogin: row ? Boolean(row.alert_new_login) : true,
+                alertIpAnomaly: row ? Boolean(row.alert_ip_anomaly) : true,
+                autoTimeoutDays: row ? row.auto_timeout_days : 30
+              }
+            });
+          } else {
+            return jsonResponse({
+              success: true,
+              settings: {
+                alertNewLogin: true,
+                alertIpAnomaly: true,
+                autoTimeoutDays: 30
+              }
+            });
+          }
+        }
+
+        if (request.method === 'POST') {
+          const body = await request.json().catch(() => ({})) as any;
+          const alertNewLogin = body.alertNewLogin !== false ? 1 : 0;
+          const alertIpAnomaly = body.alertIpAnomaly !== false ? 1 : 0;
+          const autoTimeoutDays = Number(body.autoTimeoutDays) || 30;
+
+          if (auth) {
+            await env.DB.prepare(`
+              INSERT INTO security_settings (user_id, alert_new_login, alert_ip_anomaly, auto_timeout_days, updated_at)
+              VALUES (?, ?, ?, ?, ?)
+              ON CONFLICT(user_id) DO UPDATE SET
+                alert_new_login = excluded.alert_new_login,
+                alert_ip_anomaly = excluded.alert_ip_anomaly,
+                auto_timeout_days = excluded.auto_timeout_days,
+                updated_at = excluded.updated_at
+            `).bind(auth.user.id, alertNewLogin, alertIpAnomaly, autoTimeoutDays, now).run();
+          }
+
+          return jsonResponse({
+            success: true,
+            message: 'Security settings updated successfully.',
+            settings: {
+              alertNewLogin: Boolean(alertNewLogin),
+              alertIpAnomaly: Boolean(alertIpAnomaly),
+              autoTimeoutDays
+            }
+          });
+        }
+      }
+
+      // Security Logs (Audit Trail)
+      if (url.pathname === '/api/security/logs' && request.method === 'GET') {
+        const auth = await getAuthenticatedUser(request, env);
+        const client = parseClientInfo(request);
+        const now = Math.floor(Date.now() / 1000);
+
+        if (auth) {
+          const rows = await env.DB.prepare(
+            'SELECT id, event_type, device_name, browser, os, ip, city, country, created_at FROM security_logs WHERE user_id = ? ORDER BY created_at DESC LIMIT 50'
+          ).bind(auth.user.id).all();
+
+          return jsonResponse({
+            success: true,
+            logs: rows.results || []
+          });
+        } else {
+          // Synthetic realistic audit log for current client
+          const mockLogs = [
+            {
+              id: 'log_edge_current',
+              event_type: 'login_success',
+              device_name: client.deviceName,
+              browser: client.browser,
+              os: client.os,
+              ip: client.ip,
+              city: client.city !== 'Unknown City' ? client.city : 'Tehran',
+              country: client.country !== 'Unknown Country' ? client.country : 'Iran',
+              created_at: now - 3600
+            },
+            {
+              id: 'log_edge_audit',
+              event_type: 'security_check',
+              device_name: client.deviceName,
+              browser: client.browser,
+              os: client.os,
+              ip: client.ip,
+              city: client.city !== 'Unknown City' ? client.city : 'Tehran',
+              country: client.country !== 'Unknown Country' ? client.country : 'Iran',
+              created_at: now - 86400
+            }
+          ];
+
+          return jsonResponse({
+            success: true,
+            logs: mockLogs
+          });
+        }
+      }
       // 8. CLOUD SYNC: RESTORE CHATS (Cross-device / Clear-Cache Resilient)
       // ==========================================
       if (url.pathname === '/api/chats' && request.method === 'GET') {

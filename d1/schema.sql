@@ -35,6 +35,15 @@ CREATE TABLE IF NOT EXISTS sessions (
     id TEXT PRIMARY KEY,
     user_id TEXT NOT NULL,
     token_hash TEXT UNIQUE NOT NULL,
+    device_name TEXT,
+    device_type TEXT, -- 'mobile', 'desktop', 'tablet', etc.
+    browser TEXT,
+    os TEXT,
+    ip TEXT,
+    city TEXT,
+    country TEXT,
+    country_code TEXT,
+    last_active_at INTEGER,
     expires_at INTEGER NOT NULL,
     created_at INTEGER NOT NULL,
     FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
@@ -42,6 +51,33 @@ CREATE TABLE IF NOT EXISTS sessions (
 
 CREATE INDEX IF NOT EXISTS idx_sessions_token ON sessions(token_hash);
 CREATE INDEX IF NOT EXISTS idx_sessions_expires ON sessions(expires_at);
+
+-- 3.1 Security Logs (Audit Trail)
+CREATE TABLE IF NOT EXISTS security_logs (
+    id TEXT PRIMARY KEY,
+    user_id TEXT NOT NULL,
+    event_type TEXT NOT NULL, -- 'login_success', 'session_revoked', 'others_revoked'
+    device_name TEXT,
+    browser TEXT,
+    os TEXT,
+    ip TEXT,
+    city TEXT,
+    country TEXT,
+    created_at INTEGER NOT NULL,
+    FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
+);
+
+CREATE INDEX IF NOT EXISTS idx_security_logs_user ON security_logs(user_id, created_at DESC);
+
+-- 3.2 Security Alert Settings
+CREATE TABLE IF NOT EXISTS security_settings (
+    user_id TEXT PRIMARY KEY,
+    alert_new_login INTEGER DEFAULT 1,
+    alert_ip_anomaly INTEGER DEFAULT 1,
+    auto_timeout_days INTEGER DEFAULT 30,
+    updated_at INTEGER NOT NULL,
+    FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
+);
 
 -- 4. Password Reset Requests
 CREATE TABLE IF NOT EXISTS password_resets (
