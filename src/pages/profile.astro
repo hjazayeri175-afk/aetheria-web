@@ -1241,7 +1241,7 @@ import {
       const isThey = lowerPronouns === 'they/them';
       const isCustomPronoun = !!rawPronouns && !isHe && !isShe && !isThey;
 
-      const activePillClass = 'bg-amber-400 text-black font-semibold rounded-lg shadow-sm transition-all duration-200 text-xs flex-1 py-1.5 text-center cursor-pointer select-none whitespace-nowrap';
+      const activePillClass = 'bg-purple-600 text-white font-semibold rounded-lg shadow-[0_0_10px_var(--theme-accent-glow,rgba(147,51,234,0.4))] transition-all duration-200 text-xs flex-1 py-1.5 text-center cursor-pointer select-none whitespace-nowrap';
       const inactivePillClass = 'text-gray-400 hover:text-white text-xs flex-1 py-1.5 text-center transition-colors cursor-pointer select-none rounded-lg hover:bg-white/5 whitespace-nowrap';
 
       const tokens = p.tokenCount || estimateTokens((p.about || '') + ' ' + (p.additionalInstructions || ''));
@@ -1267,8 +1267,8 @@ import {
 
               <!-- Top-Right Stacked Token Badge -->
               <div class="flex items-center justify-end z-10 w-full">
-                <div class="px-2.5 py-1.5 rounded-xl bg-black/70 border ${tokens > 500 ? 'border-red-400 bg-red-500/20' : 'border-amber-500/30'} flex flex-col items-center justify-center min-w-[54px] shadow-sm">
-                  <span class="text-xs font-bold ${tokens > 500 ? 'text-red-400' : 'text-amber-400'} font-mono leading-none">${tokens}</span>
+                <div class="px-2.5 py-1.5 rounded-xl bg-black/70 border ${tokens > 500 ? 'border-red-400 bg-red-500/20' : 'border-purple-500/40'} flex flex-col items-center justify-center min-w-[54px] shadow-sm">
+                  <span class="text-xs font-bold ${tokens > 500 ? 'text-red-400' : 'text-purple-300'} font-mono leading-none">${tokens}</span>
                   <span class="text-[10px] text-gray-300 font-sans font-medium leading-none mt-1">tokens</span>
                 </div>
               </div>
@@ -1332,10 +1332,10 @@ import {
                 <!-- Edit Button (Primary Action) -->
                 <button 
                   type="button" 
-                  class="btn-trigger-flip-edit flex-1 h-11 rounded-xl bg-white/[0.03] hover:bg-white/[0.07] border border-amber-500/25 flex items-center justify-center gap-2 text-xs font-medium text-white whitespace-nowrap transition-all active:scale-95 cursor-pointer shadow-sm" 
+                  class="btn-trigger-flip-edit flex-1 h-11 rounded-xl bg-white/[0.03] hover:bg-purple-500/10 border border-purple-500/30 hover:border-purple-400/60 flex items-center justify-center gap-2 text-xs font-medium text-white whitespace-nowrap transition-all active:scale-95 cursor-pointer shadow-sm" 
                   data-id="${p.id}"
                 >
-                  <svg class="w-4 h-4 text-amber-300 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <svg class="w-4 h-4 text-purple-300 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                     <path d="M17 3a2.85 2.83 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5Z"/>
                     <path d="m15 5 4 4"/>
                   </svg>
@@ -1345,10 +1345,10 @@ import {
                 <!-- Link Chat Button (Secondary Action — Single Line!) -->
                 <button 
                   type="button" 
-                  class="btn-card-bind flex-1 h-11 rounded-xl bg-white/[0.03] hover:bg-white/[0.07] border border-amber-500/25 flex items-center justify-center gap-2 text-xs font-medium text-white whitespace-nowrap transition-all active:scale-95 cursor-pointer shadow-sm" 
+                  class="btn-card-bind flex-1 h-11 rounded-xl bg-white/[0.03] hover:bg-purple-500/10 border border-purple-500/30 hover:border-purple-400/60 flex items-center justify-center gap-2 text-xs font-medium text-white whitespace-nowrap transition-all active:scale-95 cursor-pointer shadow-sm" 
                   data-id="${p.id}"
                 >
-                  <svg class="w-4 h-4 text-amber-300 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <svg class="w-4 h-4 text-purple-300 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                     <path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/>
                     <path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/>
                   </svg>
@@ -1373,12 +1373,12 @@ import {
             </div>
 
             <!-- ================= BACK: EDITOR (Theme-Adaptive) ================= -->
-            <div class="absolute inset-0 backface-hidden rotate-y-180 rounded-3xl p-4 sm:p-5 flex flex-col justify-start border border-amber-500/25 bg-gradient-to-b from-[#141726]/98 via-[#0c0e18]/98 to-[#06070e]/98 backdrop-blur-2xl shadow-2xl overflow-y-auto no-scrollbar">
+            <div class="absolute inset-0 backface-hidden rotate-y-180 rounded-3xl p-4 sm:p-5 flex flex-col justify-start border border-purple-500/40 bg-gradient-to-b from-[#141726]/98 via-[#0c0e18]/98 to-[#06070e]/98 backdrop-blur-2xl shadow-2xl overflow-y-auto no-scrollbar ${p.isActive ? 'gilded-card-halo-active' : 'gilded-card-halo'}">
               
               ${filigreeSvg}
 
               <!-- Row 1 — Compact Top Action Bar (Header) -->
-              <div class="flex items-center justify-between pb-3 mb-3 border-b border-amber-500/15 z-10 shrink-0">
+              <div class="flex items-center justify-between pb-3 mb-3 border-b border-purple-500/20 z-10 shrink-0">
                 <span class="text-sm font-bold text-white whitespace-nowrap tracking-wide">Edit Persona</span>
                 <div class="flex items-center gap-2">
                   <button 
@@ -1390,7 +1390,7 @@ import {
                   </button>
                   <button 
                     type="button" 
-                    class="btn-card-save px-3.5 py-1 text-xs font-semibold bg-amber-400 hover:bg-amber-300 text-black rounded-full shadow-sm whitespace-nowrap transition cursor-pointer active:scale-95" 
+                    class="btn-card-save px-3.5 py-1 text-xs font-semibold bg-purple-600 hover:bg-purple-500 text-white rounded-full shadow-[0_0_12px_var(--theme-accent-glow,rgba(147,51,234,0.4))] whitespace-nowrap transition cursor-pointer active:scale-95" 
                     data-id="${p.id}"
                   >
                     Save
@@ -1408,15 +1408,15 @@ import {
                     data-id="${p.id}" 
                     title="Upload portrait"
                   >
-                    <div class="w-14 h-14 rounded-full overflow-hidden border-2 border-amber-400/60 gilded-avatar-glow bg-black/60 flex items-center justify-center transition group-hover:border-amber-300">
+                    <div class="w-14 h-14 rounded-full overflow-hidden border-2 border-purple-400/60 gilded-avatar-glow bg-black/60 flex items-center justify-center transition group-hover:border-purple-300">
                       ${p.avatar ? `
                         <img src="${p.avatar}" class="w-full h-full object-cover" />
                       ` : `
-                        <svg class="w-6 h-6 text-amber-200/80" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M14.5 4h-5L7 7H4a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-3l-2.5-3z"/><circle cx="12" cy="13" r="3"/></svg>
+                        <svg class="w-6 h-6 text-purple-300/80" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M14.5 4h-5L7 7H4a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-3l-2.5-3z"/><circle cx="12" cy="13" r="3"/></svg>
                       `}
                     </div>
                     <!-- Mini Edit Badge (✎) -->
-                    <div class="absolute -bottom-0.5 -right-0.5 w-5 h-5 rounded-full bg-[#121422] border border-amber-400 flex items-center justify-center text-amber-300 shadow-md">
+                    <div class="absolute -bottom-0.5 -right-0.5 w-5 h-5 rounded-full bg-[#121422] border border-purple-400 flex items-center justify-center text-purple-300 shadow-md">
                       <svg class="w-2.5 h-2.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M17 3a2.85 2.83 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5Z"/></svg>
                     </div>
                   </div>
@@ -1448,7 +1448,7 @@ import {
                   <div>
                     <label class="block text-xs font-semibold text-stone-200 mb-1.5">Pronouns</label>
                     <div 
-                      class="pronouns-pill-selector h-[42px] w-full rounded-xl bg-[#12131a] border border-amber-500/20 p-1 flex items-center justify-between gap-1 relative box-border"
+                      class="pronouns-pill-selector h-[42px] w-full rounded-xl bg-[#12131a] border border-purple-500/30 p-1 flex items-center justify-between gap-1 relative box-border"
                       onpointerdown="event.stopPropagation();"
                       ontouchstart="event.stopPropagation();"
                     >
@@ -1905,7 +1905,7 @@ import {
     const customTriggerBtn = container.querySelector('.pronoun-pill-custom-trigger') as HTMLButtonElement;
     const pillBtns = container.querySelectorAll('.pronoun-pill-btn') as NodeListOf<HTMLButtonElement>;
 
-    const activeClass = 'bg-amber-400 text-black font-semibold rounded-lg shadow-sm transition-all duration-200 text-xs flex-1 py-1.5 text-center cursor-pointer select-none whitespace-nowrap';
+    const activeClass = 'bg-purple-600 text-white font-semibold rounded-lg shadow-[0_0_10px_var(--theme-accent-glow,rgba(147,51,234,0.4))] transition-all duration-200 text-xs flex-1 py-1.5 text-center cursor-pointer select-none whitespace-nowrap';
     const inactiveClass = 'text-gray-400 hover:text-white text-xs flex-1 py-1.5 text-center transition-colors cursor-pointer select-none rounded-lg hover:bg-white/5 whitespace-nowrap';
 
     // Step 4: Gesture Isolation - prevent touch & pointer events from triggering parent 3D Card Carousel swipe/flip
