@@ -274,6 +274,73 @@ html.power-saving-oled .chat-msg-bubble-user {
 }
 
 /* ==========================================================================
+   Roleplay Thoughts & Inner Monologues Engine
+   Inherits --theme-thought-bg, --theme-thought-border, --theme-thought-accent, --theme-thought-text
+   Seamlessly adapts to Active Themes (Coffee Corner, Amore, Cyberpunk, etc.), Day Mode, Dark Mode & OLED
+   ========================================================================== */
+.thought-block {
+  background: var(--theme-thought-bg, rgba(var(--theme-accent-rgb, 168, 85, 247), 0.08)) !important;
+  border: 1px solid var(--theme-thought-border, rgba(var(--theme-accent-rgb, 168, 85, 247), 0.25)) !important;
+  border-left: 3.5px solid var(--theme-thought-accent, var(--theme-accent, #a855f7)) !important;
+  color: var(--theme-thought-text, #f1f5f9) !important;
+  box-shadow: 0 4px 14px -3px rgba(0, 0, 0, 0.25);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+}
+
+.thought-block .thought-header {
+  color: var(--theme-thought-accent, var(--theme-accent, #c084fc)) !important;
+}
+
+.thought-inline {
+  background: var(--theme-thought-bg, rgba(var(--theme-accent-rgb, 168, 85, 247), 0.1)) !important;
+  border: 1px solid var(--theme-thought-border, rgba(var(--theme-accent-rgb, 168, 85, 247), 0.28)) !important;
+  color: var(--theme-thought-text, #f1f5f9) !important;
+}
+
+/* Light / Day Mode Adaptation */
+html[data-base-mode="day"] .thought-block,
+html.day-mode .thought-block {
+  background: rgba(var(--theme-accent-rgb, 168, 85, 247), 0.07) !important;
+  border-color: rgba(var(--theme-accent-rgb, 168, 85, 247), 0.3) !important;
+  border-left-color: var(--theme-accent, #7c3aed) !important;
+  color: #1e293b !important;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+}
+
+html[data-base-mode="day"] .thought-block .thought-header,
+html.day-mode .thought-block .thought-header {
+  color: var(--theme-accent, #7c3aed) !important;
+}
+
+html[data-base-mode="day"] .thought-inline,
+html.day-mode .thought-inline {
+  background: rgba(var(--theme-accent-rgb, 168, 85, 247), 0.09) !important;
+  border-color: rgba(var(--theme-accent-rgb, 168, 85, 247), 0.35) !important;
+  color: #1e293b !important;
+}
+
+/* Deep Dark OLED Mode: pure black, crisp subtle borders */
+html.power-saving-oled .thought-block {
+  background: #030303 !important;
+  border: 1px solid rgba(255, 255, 255, 0.12) !important;
+  border-left: 3.5px solid rgba(255, 255, 255, 0.4) !important;
+  color: #f8fafc !important;
+  box-shadow: none !important;
+  backdrop-filter: none !important;
+}
+
+html.power-saving-oled .thought-block .thought-header {
+  color: #cbd5e1 !important;
+}
+
+html.power-saving-oled .thought-inline {
+  background: #040404 !important;
+  border: 1px solid rgba(255, 255, 255, 0.15) !important;
+  color: #f8fafc !important;
+}
+
+/* ==========================================================================
    Telegram-Grade Dynamic Theme Reactive Smart Prompts Bar & Quick Reply Chips
    Inherits --theme-accent, --theme-accent-rgb, --theme-accent-glow, --theme-bubble-radius
    ========================================================================== */

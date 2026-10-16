@@ -710,6 +710,13 @@ const {
           root.style.setProperty('--theme-purple-600', accent);
           root.style.setProperty('--theme-purple-700', accent);
 
+          // Roleplay Thoughts & Monologues dynamic theming
+          const isDay = (theme.dayNightMode === 'day' || theme.baseMode === 'day');
+          root.style.setProperty('--theme-thought-accent', accent);
+          root.style.setProperty('--theme-thought-bg', `rgba(${rgb}, ${isDay ? 0.08 : 0.09})`);
+          root.style.setProperty('--theme-thought-border', `rgba(${rgb}, ${isDay ? 0.35 : 0.28})`);
+          root.style.setProperty('--theme-thought-text', isDay ? '#1e293b' : '#f1f5f9');
+
           const radius = theme.bubbleRadius !== undefined ? theme.bubbleRadius : 16;
           root.style.setProperty('--theme-bubble-radius', `${radius}px`);
 
@@ -790,6 +797,10 @@ const {
             root.style.setProperty('--theme-chat-bg', '#000000');
             root.style.setProperty('--theme-bubble-char-bg', '#070707');
             root.style.setProperty('--theme-bubble-user-bg', '#10131d');
+            root.style.setProperty('--theme-thought-bg', '#020202');
+            root.style.setProperty('--theme-thought-border', 'rgba(255, 255, 255, 0.12)');
+            root.style.setProperty('--theme-thought-text', '#f8fafc');
+            root.style.setProperty('--theme-thought-accent', 'rgba(255, 255, 255, 0.4)');
             if (overlayLayer) overlayLayer.style.display = 'none';
             if (imgLayer) imgLayer.style.display = 'none';
             if (dimLayer) dimLayer.style.display = 'none';
