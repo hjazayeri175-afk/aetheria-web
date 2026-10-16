@@ -5692,6 +5692,7 @@ const { character } = Astro.props;
   let isProgrammaticScroll = false;
   let lastKnownScrollTop = 0;
   let scrollAnimationFrame = null;
+  let needsScrollOnResume = false;
 
   const scrollBottomBtn = document.getElementById('chat-scroll-bottom-btn');
   const scrollBottomBadge = document.getElementById('scroll-bottom-badge');
@@ -5719,6 +5720,11 @@ const { character } = Astro.props;
     if (!chatStream) return;
     if (!isAutoScrollActive || userScrolledUp || isUserTouching || isUserWheeling) {
       if (scrollBottomBadge) scrollBottomBadge.classList.remove('hidden');
+      return;
+    }
+    // Phase 5 Background Throttling: Skip continuous rAF scrolling if tab is throttled in background
+    if (window.AetheriaPowerSaving && window.AetheriaPowerSaving.isBackgroundThrottled && window.AetheriaPowerSaving.isBackgroundThrottled()) {
+      needsScrollOnResume = true;
       return;
     }
     if (scrollAnimationFrame) return;
@@ -17820,7 +17826,9 @@ const { character } = Astro.props;
 
         let videoUrl = '';
         for (let i = 0; i < 25; i++) {
-          await new Promise(r => setTimeout(r, 4000));
+          const isThrottled = window.AetheriaPowerSaving && window.AetheriaPowerSaving.isBackgroundThrottled && window.AetheriaPowerSaving.isBackgroundThrottled();
+          const pollDelay = isThrottled ? 10000 : 4000;
+          await new Promise(r => setTimeout(r, pollDelay));
           const checkRes = await fetch(`https://queue.fal.run/fal-ai/kling-video/requests/${requestId}/status`, {
             headers: { 'Authorization': `Key ${falKey}` }
           });
@@ -20259,13 +20267,30 @@ Requirements:
     }
   });
 
-  // Stop voice speech on page leave / backgrounding
+  // Stop voice speech on page leave / backgrounding & Phase 5 Throttling
   window.addEventListener('beforeunload', () => {
     stopSpeaking();
   });
   document.addEventListener('visibilitychange', () => {
     if (document.hidden) {
       stopSpeaking();
+      if (window.AetheriaPowerSaving && window.AetheriaPowerSaving.isBackgroundThrottled && window.AetheriaPowerSaving.isBackgroundThrottled()) {
+        if (typeof isRecordingChatAudio !== 'undefined' && isRecordingChatAudio && typeof stopChatAudioRecording === 'function') {
+          stopChatAudioRecording(true);
+        }
+      }
+    } else {
+      if (needsScrollOnResume) {
+        needsScrollOnResume = false;
+        scrollToChatBottom(false);
+      }
+    }
+  });
+
+  window.addEventListener('aetheria:visibility-throttle', (e) => {
+    if (e.detail && !e.detail.hidden && needsScrollOnResume) {
+      needsScrollOnResume = false;
+      scrollToChatBottom(false);
     }
   });
 

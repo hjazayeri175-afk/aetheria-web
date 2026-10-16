@@ -3218,6 +3218,8 @@ import {
         try {
           const battery: any = await (navigator as any).getBattery();
           function updateBatteryTelemetry() {
+            // Phase 5 Background Throttling: If tab is hidden and throttled, skip DOM rendering
+            if ((window as any).AetheriaPowerSaving?.isBackgroundThrottled?.()) return;
             const level = Math.round(battery.level * 100);
             pctEl.textContent = `${level}%`;
             gaugeEl.style.width = `${Math.max(5, level)}%`;
@@ -3254,6 +3256,11 @@ import {
           updateBatteryTelemetry();
           battery.addEventListener('levelchange', updateBatteryTelemetry);
           battery.addEventListener('chargingchange', updateBatteryTelemetry);
+          window.addEventListener('aetheria:visibility-throttle', (e: any) => {
+            if (!e.detail?.hidden) {
+              updateBatteryTelemetry();
+            }
+          });
         } catch {
           fallbackBatteryTelemetry();
         }

@@ -980,8 +980,50 @@ const {
           root.classList.toggle('power-saving-mute-sounds', Boolean(settings.disableSounds || settings.master));
           root.classList.toggle('power-saving-pause-voice', Boolean(settings.pauseVoiceAutoPlay || settings.master));
 
+          // 7. Background Throttling DOM flags
+          root.classList.toggle('power-saving-throttle-bg', Boolean(settings.throttleBackground || settings.master));
+          handleVisibilityThrottle(settings);
+
           // Dispatch custom event for reactive UI hooks
           window.dispatchEvent(new CustomEvent('aetheria:power-saving-change', { detail: settings }));
+        }
+
+        // Background Throttling Engine (Phase 5)
+        function handleVisibilityThrottle(settings) {
+          if (!settings) settings = getSettings();
+          const shouldThrottle = Boolean(settings.throttleBackground || settings.master);
+          const isHidden = document.hidden;
+          const isThrottled = shouldThrottle && isHidden;
+
+          window.__AETHERIA_BG_THROTTLED = isThrottled;
+          document.documentElement.classList.toggle('power-saving-tab-throttled', isThrottled);
+
+          if (isThrottled) {
+            try {
+              if (window.speechSynthesis && window.speechSynthesis.speaking) {
+                window.speechSynthesis.cancel();
+              }
+              const activeMedia = document.querySelectorAll('audio, video');
+              activeMedia.forEach(function(m) {
+                if (!m.paused) {
+                  m.dataset.wasPlayingBeforeThrottle = 'true';
+                  m.pause();
+                }
+              });
+            } catch (e) {}
+          } else if (!isHidden) {
+            try {
+              const pausedMedia = document.querySelectorAll('audio[data-was-playing-before-throttle="true"], video[data-was-playing-before-throttle="true"]');
+              pausedMedia.forEach(function(m) {
+                delete m.dataset.wasPlayingBeforeThrottle;
+                m.play().catch(function() {});
+              });
+            } catch (e) {}
+          }
+
+          window.dispatchEvent(new CustomEvent('aetheria:visibility-throttle', {
+            detail: { hidden: isHidden, throttled: isThrottled }
+          }));
         }
 
         // Apply immediately on first paint
@@ -999,15 +1041,7 @@ const {
 
         // Background Throttling Hook
         document.addEventListener('visibilitychange', function() {
-          const cfg = getSettings();
-          if (cfg.throttleBackground || cfg.master) {
-            window.__AETHERIA_BG_THROTTLED = document.hidden;
-            if (document.hidden) {
-              console.log('[POWER-SAVER] Background activity throttled while tab is inactive.');
-            }
-          } else {
-            window.__AETHERIA_BG_THROTTLED = false;
-          }
+          handleVisibilityThrottle();
         });
 
         // Global Audio Gatekeeper (Phase 4 Audio & Media Policies)
@@ -1060,6 +1094,14 @@ const {
           saveSettings,
           setSetting,
           applyToDOM,
+          isBackgroundThrottled: function() {
+            const cfg = getSettings();
+            return Boolean((cfg.throttleBackground || cfg.master) && document.hidden);
+          },
+          isThrottleBackgroundEnabled: function() {
+            const cfg = getSettings();
+            return Boolean(cfg.throttleBackground || cfg.master);
+          },
           subscribe: function(fn) {
             listeners.add(fn);
             return () => listeners.delete(fn);

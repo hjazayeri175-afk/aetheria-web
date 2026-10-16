@@ -1472,6 +1472,18 @@ html.power-saving-active [class*="transition"] {
 }
 
 /* ==========================================================================
+   Phase 5: Background Tab Throttling (Compositor & Animation Freeze)
+   When tab is hidden and throttleBackground/master is active, freeze all CSS
+   animations and transitions across the page to stop compositor CPU thread wakeups.
+   ========================================================================== */
+html.power-saving-tab-throttled *,
+html.power-saving-tab-throttled *::before,
+html.power-saving-tab-throttled *::after {
+  animation-play-state: paused !important;
+  transition: none !important;
+}
+
+/* ==========================================================================
    Character Profile & Showcase Typography & High Contrast Ergonomics Engine
    Optimized for long-session reading comfort in both Normal & Deep Dark OLED modes
    ========================================================================== */
