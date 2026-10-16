@@ -16850,7 +16850,7 @@ const { character } = Astro.props;
             saveChat();
             appendMessageToDOM(charMsg, conversation.length - 1);
             playChatChime('receive');
-            const canAutoPlay = !((window as any).AetheriaPowerSaving?.getSettings().pauseVoiceAutoPlay || (window as any).AetheriaPowerSaving?.getSettings().master);
+            const canAutoPlay = !(window.AetheriaPowerSaving?.getSettings?.().pauseVoiceAutoPlay || window.AetheriaPowerSaving?.getSettings?.().master);
             if (canAutoPlay && localStorage.getItem('aetheria_autoplay_voice') === 'true' && charMsg.text) {
               setTimeout(() => speak(charMsg.text), 350);
             }
@@ -18502,8 +18502,8 @@ const { character } = Astro.props;
 
   
   function playChatChime(type = 'send') {
-    const ps = (window as any).AetheriaPowerSaving;
-    if (ps && (ps.getSettings().disableSounds || ps.getSettings().master)) return;
+    const ps = window.AetheriaPowerSaving;
+    if (ps && (ps.getSettings?.().disableSounds || ps.getSettings?.().master)) return;
     if (localStorage.getItem('aetheria_sound_effects') !== 'true') return;
     try {
       const ctx = new (window.AudioContext || window.webkitAudioContext)();
