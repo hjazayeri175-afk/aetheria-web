@@ -44,7 +44,7 @@ import {
 <Layout title="Settings - Aetheria" activeNav="persona">
   <Header />
 
-  <main class="min-h-screen bg-[#07080d] text-slate-100 pb-28 pt-4 sm:pt-6 px-3 sm:px-4">
+  <main class="min-h-screen bg-[#07080d] text-slate-100 pb-28 pt-6 sm:pt-8 px-3 sm:px-4">
     <div class="max-w-xl mx-auto">
 
       <!-- ========================================== -->
@@ -241,7 +241,7 @@ import {
       <!-- ========================================== -->
       <!-- VIEW 2: PERSONAS (3D Coverflow Experience) -->
       <!-- ========================================== -->
-      <div id="view-personas" class="hidden space-y-4">
+      <div id="view-personas" class="hidden space-y-4 pt-2 sm:pt-3">
         
         <!-- Header Bar: Back to Settings + Persona Counter (Clean & Minimal) -->
         <div class="flex items-center justify-between pb-1 border-b border-white/[0.06]">
@@ -282,7 +282,7 @@ import {
         </div>
 
         <!-- 3D CAROUSEL CONTROLS BAR -->
-        <div class="flex items-center justify-between px-1 text-xs text-slate-400">
+        <div id="carousel-controls-bar" class="flex items-center justify-between px-1 pt-3 text-xs text-slate-400 transition-opacity duration-200">
           <div class="flex items-center gap-2">
             <span class="font-medium text-stone-300">Swipe or tap cards</span>
             <span class="text-[10px] text-purple-300/90 bg-purple-500/10 px-2 py-0.5 rounded-full border border-purple-500/25 font-mono">3D Coverflow</span>
@@ -1352,50 +1352,60 @@ import {
               
               ${filigreeSvg}
 
-              <!-- Editor Header (Avatar + Title + Cancel + Glowing Save Pill) -->
-              <div class="flex items-center justify-between pb-2 border-b border-purple-500/25 z-10">
-                <div class="flex items-center gap-2.5">
-                  <div class="relative group cursor-pointer avatar-click-target" data-id="${p.id}" title="Tap to upload portrait">
-                    <div class="w-12 h-12 rounded-full overflow-hidden border-2 border-purple-400 gilded-avatar-glow bg-black/60 flex items-center justify-center transition group-hover:border-purple-300">
-                      ${p.avatar ? `
-                        <img src="${p.avatar}" class="w-full h-full object-cover" />
-                      ` : `
-                        <svg class="w-5 h-5 text-purple-200/80" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M14.5 4h-5L7 7H4a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-3l-2.5-3z"/><circle cx="12" cy="13" r="3"/></svg>
-                      `}
-                    </div>
-                    <!-- Mini Edit Badge -->
-                    <div class="absolute -bottom-0.5 -right-0.5 w-4 h-4 rounded-full bg-[#121422] border border-purple-400 flex items-center justify-center text-purple-300 shadow-md">
-                      <svg class="w-2.5 h-2.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M17 3a2.85 2.83 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5Z"/></svg>
-                    </div>
-                  </div>
-                  <div>
-                    <h3 class="text-base sm:text-lg font-bold text-white tracking-tight leading-tight">Edit Persona</h3>
-                    <p class="text-[11px] text-stone-300 font-medium leading-tight">Tap to upload portrait</p>
-                  </div>
-                </div>
-
+              <!-- Row 1 — Compact Top Action Bar (Header) -->
+              <div class="flex items-center justify-between pb-3 mb-3 border-b border-amber-500/15 z-10">
+                <span class="text-sm font-bold text-white whitespace-nowrap tracking-wide">Edit Persona</span>
                 <div class="flex items-center gap-2">
-                  <button type="button" class="btn-trigger-flip-back px-2.5 py-1.5 rounded-lg text-xs font-semibold text-stone-300 hover:text-white hover:bg-white/10 flex items-center gap-1.5 transition cursor-pointer" data-id="${p.id}">
-                    <svg class="w-3.5 h-3.5 text-stone-300" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M18 6 6 18M6 6l12 12"/></svg>
+                  <button 
+                    type="button" 
+                    class="btn-trigger-flip-back px-2.5 py-1 text-xs text-gray-400 hover:text-white transition-colors whitespace-nowrap flex items-center gap-1 cursor-pointer" 
+                    data-id="${p.id}"
+                  >
                     <span>Cancel</span>
                   </button>
-                  <button type="button" class="btn-card-save rounded-full px-4 py-1.5 bg-gradient-to-r from-purple-500 to-indigo-600 text-white font-bold text-xs tracking-wide shadow-[0_0_15px_var(--theme-accent-glow,rgba(147,51,234,0.4))] hover:scale-105 active:scale-95 transition cursor-pointer" data-id="${p.id}">
+                  <button 
+                    type="button" 
+                    class="btn-card-save px-3.5 py-1 text-xs font-semibold bg-amber-400 hover:bg-amber-300 text-black rounded-full shadow-sm whitespace-nowrap transition cursor-pointer active:scale-95" 
+                    data-id="${p.id}"
+                  >
                     Save
                   </button>
                 </div>
               </div>
 
               <!-- Form Inputs Container -->
-              <div class="space-y-2.5 my-2 z-10">
-                <!-- Name Field -->
-                <div>
-                  <label class="block text-xs font-semibold text-stone-200 mb-1.5">Name</label>
-                  <input 
-                    type="text" 
-                    class="card-edit-name w-full px-3 py-2 rounded-xl bg-black/60 border border-purple-500/35 text-white placeholder-stone-400 text-xs sm:text-sm font-medium focus:outline-none focus:border-purple-400 focus:ring-1 focus:ring-purple-400/50 transition" 
-                    placeholder="Name (e.g. Hossein)" 
-                    value="${displayName === 'Untitled Persona' ? '' : displayName}" 
-                  />
+              <div class="space-y-2.5 my-1 z-10">
+                <!-- Row 2 — Merged Avatar + Name Input (Space-Saving Hero Row) -->
+                <div class="flex items-center gap-3 mb-3 z-10">
+                  <!-- Avatar Trigger -->
+                  <div 
+                    class="relative w-14 h-14 rounded-full shrink-0 cursor-pointer avatar-click-target group" 
+                    data-id="${p.id}" 
+                    title="Upload portrait"
+                  >
+                    <div class="w-14 h-14 rounded-full overflow-hidden border-2 border-amber-400/60 gilded-avatar-glow bg-black/60 flex items-center justify-center transition group-hover:border-amber-300">
+                      ${p.avatar ? `
+                        <img src="${p.avatar}" class="w-full h-full object-cover" />
+                      ` : `
+                        <svg class="w-6 h-6 text-amber-200/80" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M14.5 4h-5L7 7H4a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-3l-2.5-3z"/><circle cx="12" cy="13" r="3"/></svg>
+                      `}
+                    </div>
+                    <!-- Mini Edit Badge (✎) -->
+                    <div class="absolute -bottom-0.5 -right-0.5 w-5 h-5 rounded-full bg-[#121422] border border-amber-400 flex items-center justify-center text-amber-300 shadow-md">
+                      <svg class="w-2.5 h-2.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M17 3a2.85 2.83 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5Z"/></svg>
+                    </div>
+                  </div>
+
+                  <!-- Name Field -->
+                  <div class="flex-1 min-w-0">
+                    <label class="text-xs text-gray-300 mb-1 block font-semibold">Name</label>
+                    <input 
+                      type="text" 
+                      class="card-edit-name w-full h-[42px] px-3 py-2 rounded-xl bg-black/60 border border-purple-500/35 text-white placeholder-stone-400 text-xs sm:text-sm font-medium focus:outline-none focus:border-purple-400 focus:ring-1 focus:ring-purple-400/50 transition box-border" 
+                      placeholder="Name (e.g. Hossein)" 
+                      value="${displayName === 'Untitled Persona' ? '' : displayName}" 
+                    />
+                  </div>
                 </div>
 
                 <!-- Age & Pronouns Row (Clean 50/50 Grid, Inline Segmented Pill Selector) -->
@@ -1507,7 +1517,7 @@ import {
                 </div>
 
                 <!-- Bottom Action Row: Set as Active Toggle + Delete Button -->
-                <div class="flex items-center justify-between px-1 pt-0.5">
+                <div class="flex items-center justify-between px-1 pt-1 z-10">
                   <div class="flex items-center gap-2.5">
                     <label class="relative inline-flex items-center cursor-pointer shrink-0">
                       <input 
@@ -1518,15 +1528,22 @@ import {
                       />
                       <div class="w-10 h-5 bg-stone-800/90 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-[var(--theme-accent,#9333ea)] shadow-sm"></div>
                     </label>
-                    <label class="text-xs font-semibold text-stone-200 cursor-pointer" for="toggle-active-${p.id}">
+                    <label class="text-xs font-semibold text-stone-200 cursor-pointer select-none" for="toggle-active-${p.id}">
                       Set as Active
                     </label>
                   </div>
 
                   ${personas.length > 1 ? `
-                    <button type="button" class="btn-card-delete flex items-center gap-1.5 text-xs font-semibold text-[#f87171] hover:text-red-300 px-3 py-1.5 rounded-xl border border-red-500/40 bg-red-950/30 hover:bg-red-950/50 transition cursor-pointer active:scale-95 shadow-sm" data-id="${p.id}">
-                      <svg class="w-3.5 h-3.5 text-red-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18"/><path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"/><path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"/></svg>
-                      <span>Delete</span>
+                    <button 
+                      type="button" 
+                      class="btn-card-delete flex items-center gap-1.5 text-xs text-stone-400 hover:text-red-400 px-2.5 py-1.5 rounded-lg hover:bg-red-950/30 transition-colors cursor-pointer group active:scale-95" 
+                      data-id="${p.id}"
+                      title="Delete Persona"
+                    >
+                      <svg class="w-3.5 h-3.5 text-stone-400 group-hover:text-red-400 transition-colors" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M3 6h18"/><path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"/><path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"/>
+                      </svg>
+                      <span class="font-medium">Delete</span>
                     </button>
                   ` : `<div></div>`}
                 </div>
@@ -1570,6 +1587,13 @@ import {
     `;
 
     wrapper.innerHTML = cardsHtml;
+
+    const controlsBar = document.getElementById('carousel-controls-bar');
+    const anyEditing = Object.values(flippedCards).some(Boolean);
+    if (controlsBar) {
+      if (anyEditing) controlsBar.classList.add('hidden');
+      else controlsBar.classList.remove('hidden');
+    }
 
     attachCardListeners();
     update3DCardTransforms();
@@ -1690,14 +1714,21 @@ import {
     const innerEl = cardEl.querySelector('.persona-card-inner') as HTMLElement;
     if (!innerEl) return;
 
+    const controlsBar = document.getElementById('carousel-controls-bar');
+
     if (isEditing) {
       innerEl.classList.add('rotate-y-180');
+      if (controlsBar) controlsBar.classList.add('hidden');
       setTimeout(() => {
         const nameInput = cardEl.querySelector('.card-edit-name') as HTMLInputElement;
         if (nameInput && !nameInput.value) nameInput.focus();
       }, 300);
     } else {
       innerEl.classList.remove('rotate-y-180');
+      const anyEditing = Object.values(flippedCards).some(Boolean);
+      if (!anyEditing && controlsBar) {
+        controlsBar.classList.remove('hidden');
+      }
     }
   }
 
@@ -2078,9 +2109,11 @@ import {
       });
 
       // Delete persona
-      card.querySelector('.btn-card-delete')?.addEventListener('click', (e) => {
-        e.stopPropagation();
-        deleteCardPersona(personaId);
+      card.querySelectorAll('.btn-card-delete').forEach(btn => {
+        btn.addEventListener('click', (e) => {
+          e.stopPropagation();
+          deleteCardPersona(personaId);
+        });
       });
     });
   }
