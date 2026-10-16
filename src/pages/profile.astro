@@ -4767,6 +4767,11 @@ function renderPresets() {
 
       function playPreviewChime() {
         try {
+          const ps = (window as any).AetheriaPowerSaving;
+          const gate = (window as any).AetheriaAudio;
+          if ((gate && gate.isSoundMuted && gate.isSoundMuted()) || (ps && (ps.getSettings?.().disableSounds || ps.getSettings?.().master))) {
+            return;
+          }
           const ctx = new (window.AudioContext || (window as any).webkitAudioContext)();
           const osc = ctx.createOscillator();
           const gain = ctx.createGain();
@@ -4806,9 +4811,11 @@ function renderPresets() {
       }
 
       if (toggleAutoplayVoice) {
-        toggleAutoplayVoice.checked = localStorage.getItem('aetheria_autoplay_voice') === 'true';
+        toggleAutoplayVoice.checked = (localStorage.getItem('aetheria_autoplay_voice') === 'true' || localStorage.getItem('aetheria_voice_autoplay') === 'true');
         toggleAutoplayVoice.addEventListener('change', () => {
-          localStorage.setItem('aetheria_autoplay_voice', String(toggleAutoplayVoice.checked));
+          const val = String(toggleAutoplayVoice.checked);
+          localStorage.setItem('aetheria_autoplay_voice', val);
+          localStorage.setItem('aetheria_voice_autoplay', val);
         });
       }
 

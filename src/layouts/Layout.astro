@@ -976,6 +976,10 @@ const {
           // 5. Freeze Animated Avatars & Loops
           root.classList.toggle('power-saving-freeze-avatars', Boolean(settings.freezeAvatars || settings.master));
 
+          // 6. Audio & Media Policy DOM flags
+          root.classList.toggle('power-saving-mute-sounds', Boolean(settings.disableSounds || settings.master));
+          root.classList.toggle('power-saving-pause-voice', Boolean(settings.pauseVoiceAutoPlay || settings.master));
+
           // Dispatch custom event for reactive UI hooks
           window.dispatchEvent(new CustomEvent('aetheria:power-saving-change', { detail: settings }));
         }
@@ -1006,13 +1010,44 @@ const {
           }
         });
 
-        // Global Audio Gatekeeper
+        // Global Audio Gatekeeper (Phase 4 Audio & Media Policies)
         window.AetheriaAudio = {
-          playUI: function(soundType) {
+          isSoundMuted: function() {
             const cfg = getSettings();
-            if (cfg.disableSounds || cfg.master) {
-              return; // Muted by Power Saver
+            return Boolean(cfg.disableSounds || cfg.master);
+          },
+          playUI: function(soundType) {
+            if (this.isSoundMuted()) {
+              return; // Muted by Power Saver to prevent Audio thread wakeups
             }
+            if (localStorage.getItem('aetheria_sound_effects') !== 'true') {
+              return; // Muted by user sound settings
+            }
+            try {
+              const ctx = new (window.AudioContext || window.webkitAudioContext)();
+              const osc = ctx.createOscillator();
+              const gain = ctx.createGain();
+              osc.connect(gain);
+              gain.connect(ctx.destination);
+              const now = ctx.currentTime;
+              osc.type = 'sine';
+              if (soundType === 'chime') {
+                osc.frequency.setValueAtTime(520, now);
+                osc.frequency.exponentialRampToValueAtTime(880, now + 0.08);
+                gain.gain.setValueAtTime(0.03, now);
+                gain.gain.exponentialRampToValueAtTime(0.0001, now + 0.08);
+                osc.start(now);
+                osc.stop(now + 0.08);
+              } else {
+                osc.frequency.setValueAtTime(800, now);
+                osc.frequency.exponentialRampToValueAtTime(400, now + 0.03);
+                gain.gain.setValueAtTime(0.02, now);
+                gain.gain.exponentialRampToValueAtTime(0.0001, now + 0.03);
+                osc.start(now);
+                osc.stop(now + 0.03);
+              }
+              setTimeout(() => { ctx.close().catch(() => {}); }, 150);
+            } catch (e) {}
           },
           canAutoPlayVoice: function() {
             const cfg = getSettings();

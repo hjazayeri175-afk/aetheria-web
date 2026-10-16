@@ -16074,6 +16074,16 @@ const { character } = Astro.props;
 
   // Voice speech synthesis (ElevenLabs direct REST API or Browser Web Speech fallback)
   async function speak(text, triggerBtn = null, msgIdx = null) {
+    // If called automatically (no manual triggerBtn) but Voice Auto-Play is paused by Power Saver, abort
+    if (!triggerBtn) {
+      const audioGate = window.AetheriaAudio;
+      const ps = window.AetheriaPowerSaving;
+      const isAutoPlayBlocked = (audioGate && !audioGate.canAutoPlayVoice()) || (ps && (ps.getSettings?.().pauseVoiceAutoPlay || ps.getSettings?.().master));
+      if (isAutoPlayBlocked) {
+        return;
+      }
+    }
+
     // If the same message is currently being read aloud, toggle it off / stop immediately
     if (msgIdx !== null && currentSpeakingIdx === msgIdx) {
       stopSpeaking();
@@ -16888,8 +16898,9 @@ const { character } = Astro.props;
             saveChat();
             appendMessageToDOM(charMsg, conversation.length - 1);
             playChatChime('receive');
-            const canAutoPlay = !(window.AetheriaPowerSaving?.getSettings?.().pauseVoiceAutoPlay || window.AetheriaPowerSaving?.getSettings?.().master);
-            if (canAutoPlay && localStorage.getItem('aetheria_autoplay_voice') === 'true' && charMsg.text) {
+            const canAutoPlay = window.AetheriaAudio?.canAutoPlayVoice ? window.AetheriaAudio.canAutoPlayVoice() : !(window.AetheriaPowerSaving?.getSettings?.().pauseVoiceAutoPlay || window.AetheriaPowerSaving?.getSettings?.().master);
+            const isVoiceAutoEnabled = (localStorage.getItem('aetheria_autoplay_voice') === 'true' || localStorage.getItem('aetheria_voice_autoplay') === 'true');
+            if (canAutoPlay && isVoiceAutoEnabled && charMsg.text) {
               setTimeout(() => speak(charMsg.text), 350);
             }
           }
@@ -16947,7 +16958,9 @@ const { character } = Astro.props;
 
     if (typingIndicator) typingIndicator.classList.add('hidden');
 
-    if (ttsEnabled && localStorage.getItem('aetheria_voice_autoplay') === 'true') {
+    const canAutoPlayFallback = window.AetheriaAudio?.canAutoPlayVoice ? window.AetheriaAudio.canAutoPlayVoice() : !(window.AetheriaPowerSaving?.getSettings?.().pauseVoiceAutoPlay || window.AetheriaPowerSaving?.getSettings?.().master);
+    const isVoiceAutoEnabledFallback = (localStorage.getItem('aetheria_voice_autoplay') === 'true' || localStorage.getItem('aetheria_autoplay_voice') === 'true');
+    if (canAutoPlayFallback && ttsEnabled && isVoiceAutoEnabledFallback) {
       speak(replyText);
     }
 
@@ -18156,7 +18169,15 @@ const { character } = Astro.props;
     }
   }
 
-  window.addEventListener('aetheria:power-saving-change', syncChatOLEDBackground);
+  window.addEventListener('aetheria:power-saving-change', (e) => {
+    syncChatOLEDBackground();
+    const s = (e && e.detail) || window.AetheriaPowerSaving?.getSettings?.();
+    if (s && (s.pauseVoiceAutoPlay || s.master)) {
+      if (activeAudio || (window.speechSynthesis && window.speechSynthesis.speaking)) {
+        stopSpeaking();
+      }
+    }
+  });
   syncChatOLEDBackground();
 
   selfieBtn?.addEventListener('click', handleGenerateSelfie);
@@ -18567,6 +18588,7 @@ const { character } = Astro.props;
 
   
   function playChatChime(type = 'send') {
+    if (window.AetheriaAudio?.isSoundMuted && window.AetheriaAudio.isSoundMuted()) return;
     const ps = window.AetheriaPowerSaving;
     if (ps && (ps.getSettings?.().disableSounds || ps.getSettings?.().master)) return;
     if (localStorage.getItem('aetheria_sound_effects') !== 'true') return;
@@ -19605,13 +19627,21 @@ Requirements:
   // Toggle Voice TTS
   toggleTtsBtn?.addEventListener('click', () => {
     ttsEnabled = !ttsEnabled;
-    localStorage.setItem('aetheria_voice_autoplay', ttsEnabled ? 'true' : 'false');
+    const val = ttsEnabled ? 'true' : 'false';
+    localStorage.setItem('aetheria_voice_autoplay', val);
+    localStorage.setItem('aetheria_autoplay_voice', val);
     syncTtsUi();
+    const ps = window.AetheriaPowerSaving;
+    const isPowerSavingVoice = ps && (ps.getSettings?.().pauseVoiceAutoPlay || ps.getSettings?.().master);
     if (!ttsEnabled) {
       stopSpeaking();
       showNotification('Auto-read voice muted');
     } else {
-      showNotification('Auto-read voice enabled');
+      if (isPowerSavingVoice) {
+        showNotification('Voice auto-play is paused by Power Saver (tap ▶ on any bubble to listen)');
+      } else {
+        showNotification('Auto-read voice enabled');
+      }
     }
   });
 
