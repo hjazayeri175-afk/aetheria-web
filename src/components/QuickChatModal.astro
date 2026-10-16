@@ -247,7 +247,7 @@ import {
           <button 
             type="button"
             id="showcase-tab-desc"
-            class="showcase-tab-btn w-full flex items-center justify-center py-2 px-1 rounded-lg text-xs font-bold bg-purple-500/20 text-purple-100 border border-purple-500/40 transition cursor-pointer"
+            class="showcase-tab-btn w-full flex items-center justify-center py-2 px-1 rounded-lg text-xs font-bold bg-purple-600 text-white shadow-sm transition cursor-pointer"
             data-tab="desc"
           >
             Description
@@ -261,7 +261,7 @@ import {
             data-tab="greetings"
           >
             <span>Greetings</span>
-            <span id="showcase-greetings-count-badge" class="px-1.5 py-0.5 rounded-full text-[10px] font-mono font-bold bg-cyan-500/20 text-cyan-200 border border-cyan-500/40 shrink-0">
+            <span id="showcase-greetings-count-badge" class="px-1.5 py-0.5 rounded-full text-[10px] font-mono font-bold bg-white/10 text-slate-300 shrink-0">
               1
             </span>
           </button>
@@ -410,9 +410,8 @@ import {
         href="#"
         class="w-full flex items-center justify-center gap-2 py-3 px-5 rounded-xl bg-gradient-to-r from-purple-600 via-indigo-600 to-pink-600 hover:from-purple-500 hover:to-pink-500 text-white font-bold text-sm tracking-wide shadow-lg shadow-purple-900/40 hover:shadow-purple-900/60 active:scale-[0.98] transition duration-200 cursor-pointer"
       >
-        <Sparkles class="w-4 h-4 text-purple-200 animate-pulse" />
         <span id="showcase-chat-btn-text">Start Roleplay</span>
-        <ArrowRight class="w-4 h-4" />
+        <ArrowRight class="w-4 h-4 ml-0.5" />
       </a>
     </footer>
 
@@ -580,19 +579,37 @@ import {
   function switchTab(tab: 'desc' | 'greetings' | 'definition') {
     activeTab = tab;
 
+    const greetingsBadge = document.getElementById('showcase-greetings-count-badge');
+
     [
       { btn: tabBtnDesc, panel: panelDesc, key: 'desc' },
       { btn: tabBtnGreetings, panel: panelGreetings, key: 'greetings' },
       { btn: tabBtnDefinition, panel: panelDefinition, key: 'definition' }
     ].forEach(({ btn, panel, key }) => {
       if (key === tab) {
-        btn?.classList.remove('text-slate-300', 'text-slate-400', 'hover:text-slate-200', 'hover:bg-white/[0.03]');
-        btn?.classList.add('bg-purple-500/20', 'text-purple-100', 'border', 'border-purple-500/40', 'font-bold');
+        // Active Tab: Crisp solid purple pill with pure white text
+        btn?.classList.remove(
+          'text-slate-300', 'text-slate-400', 'hover:text-white', 'hover:bg-white/[0.06]', 
+          'font-semibold', 'font-medium', 'bg-purple-500/20', 'text-purple-100', 'border-purple-500/40'
+        );
+        btn?.classList.add('bg-purple-600', 'text-white', 'font-bold', 'shadow-sm');
         panel?.classList.remove('hidden');
+
+        if (key === 'greetings' && greetingsBadge) {
+          greetingsBadge.className = 'px-1.5 py-0.5 rounded-full text-[10px] font-mono font-bold bg-white/20 text-white shrink-0';
+        }
       } else {
-        btn?.classList.remove('bg-purple-500/20', 'text-purple-100', 'text-purple-200', 'border', 'border-purple-500/40', 'border-purple-500/30', 'font-bold');
+        // Inactive Tab: Clear slate-300 text with gentle hover
+        btn?.classList.remove(
+          'bg-purple-600', 'bg-purple-500/20', 'text-purple-100', 'text-purple-200', 'text-white', 
+          'border', 'border-purple-500/40', 'border-purple-500/30', 'font-bold', 'shadow-sm'
+        );
         btn?.classList.add('text-slate-300', 'hover:text-white', 'hover:bg-white/[0.06]', 'font-semibold');
         panel?.classList.add('hidden');
+
+        if (key === 'greetings' && greetingsBadge) {
+          greetingsBadge.className = 'px-1.5 py-0.5 rounded-full text-[10px] font-mono font-bold bg-white/10 text-slate-300 shrink-0';
+        }
       }
     });
   }
