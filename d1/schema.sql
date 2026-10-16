@@ -202,3 +202,23 @@ CREATE INDEX IF NOT EXISTS idx_reports_status ON reports(status);
 CREATE INDEX IF NOT EXISTS idx_reports_target ON reports(target_type, target_id);
 CREATE INDEX IF NOT EXISTS idx_reports_created ON reports(created_at DESC);
 
+-- 11. Security Notifications Dispatcher & Email Queue
+CREATE TABLE IF NOT EXISTS security_notifications (
+    id TEXT PRIMARY KEY,
+    user_id TEXT NOT NULL,
+    recipient_email TEXT NOT NULL,
+    notification_type TEXT NOT NULL, -- 'geo_shift_alert', 'new_login_alert', 'step_up_otp', 'simulated_alert'
+    channel TEXT DEFAULT 'email',    -- 'email', 'push', 'webhook'
+    status TEXT DEFAULT 'pending',   -- 'pending', 'dispatched', 'delivered', 'failed', 'simulated'
+    subject TEXT NOT NULL,
+    payload TEXT NOT NULL,           -- JSON string containing metadata: device, browser, os, prev_loc, new_loc, ip, code
+    provider TEXT DEFAULT 'mock',    -- 'resend', 'cloudflare_email', 'smtp', 'mock'
+    provider_response TEXT,
+    sent_at INTEGER,
+    created_at INTEGER NOT NULL
+);
+
+CREATE INDEX IF NOT EXISTS idx_sec_notif_user ON security_notifications(user_id, created_at DESC);
+CREATE INDEX IF NOT EXISTS idx_sec_notif_status ON security_notifications(status);
+
+

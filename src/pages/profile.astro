@@ -1074,7 +1074,10 @@ import {
             <div class="space-y-2.5">
               <div class="flex items-center justify-between gap-4">
                 <div class="space-y-0.5 max-w-[80%]">
-                  <div class="text-xs font-bold text-white">New Login Alerts</div>
+                  <div class="text-xs font-bold text-white flex items-center gap-2">
+                    <span>New Login Alerts</span>
+                    <span id="badge-new-login-status" class="text-xs px-2 py-0.5 rounded-md font-bold border shadow-xs transition-all duration-200" style="background: rgba(var(--theme-accent-rgb, 147, 51, 234), 0.16); color: var(--theme-accent-hover, #d8b4fe); border-color: rgba(var(--theme-accent-rgb, 147, 51, 234), 0.35);">Active</span>
+                  </div>
                   <div class="text-xs text-slate-200 leading-relaxed font-normal">
                     Receive instant security alerts when your account is accessed from an unrecognized browser, hardware, or new session ID.
                   </div>
@@ -1098,10 +1101,12 @@ import {
                 </button>
 
                 <div 
-                  class="flex items-center gap-1.5 px-3 py-1 rounded-xl text-xs font-semibold border bg-white/[0.04] text-slate-200 border-white/10"
+                  id="email-channel-badge"
+                  class="flex items-center gap-1.5 px-3 py-1 rounded-xl text-xs font-semibold border bg-white/[0.04] text-slate-200 border-white/10 transition-colors"
+                  title="Security alerts will be dispatched directly to your verified account email"
                 >
-                  <Mail class="w-3.5 h-3.5" style="color: var(--theme-accent, #9333ea);" />
-                  <span>Email / Webhook: Connected</span>
+                  <Mail class="w-3.5 h-3.5 shrink-0" style="color: var(--theme-accent, #9333ea);" />
+                  <span id="email-channel-label">Email Dispatch: Ready (Syncs with Account)</span>
                 </div>
               </div>
             </div>
@@ -1111,7 +1116,7 @@ import {
               <div class="space-y-0.5 max-w-[80%]">
                 <div class="text-xs font-bold text-white flex items-center gap-2">
                   <span>IP Anomaly & Geo-Shift Shield</span>
-                  <span class="text-xs px-2 py-0.5 rounded-md font-bold border shadow-xs" style="background: rgba(var(--theme-accent-rgb, 147, 51, 234), 0.16); color: var(--theme-accent-hover, #d8b4fe); border-color: rgba(var(--theme-accent-rgb, 147, 51, 234), 0.35);">Active</span>
+                  <span id="badge-ip-anomaly-status" class="text-xs px-2 py-0.5 rounded-md font-bold border shadow-xs transition-all duration-200" style="background: rgba(var(--theme-accent-rgb, 147, 51, 234), 0.16); color: var(--theme-accent-hover, #d8b4fe); border-color: rgba(var(--theme-accent-rgb, 147, 51, 234), 0.35);">Active</span>
                 </div>
                 <div class="text-xs text-slate-200 leading-relaxed font-normal">
                   Compare location and IP sub-regions on authentications. Flag rapid geographical jumps and anomalous country shifts.
@@ -3113,6 +3118,11 @@ import {
           if (settingsData.settings.trustedCountries) {
             updateTrustedCountriesBadge(settingsData.settings.trustedCountries);
           }
+          updateShieldStatusBadges();
+          updateAccountEmailChannelUI(settingsData.settings.userEmail);
+        } else {
+          updateShieldStatusBadges();
+          updateAccountEmailChannelUI();
         }
         updatePushNotificationBadge();
 
@@ -3421,6 +3431,65 @@ import {
       }
     }
 
+    function updateShieldStatusBadges() {
+      const tAnomaly = document.getElementById('toggle-ip-anomaly-shield') as HTMLInputElement;
+      const tLogin = document.getElementById('toggle-new-login-alert') as HTMLInputElement;
+      const anomalyBadge = document.getElementById('badge-ip-anomaly-status');
+      const loginBadge = document.getElementById('badge-new-login-status');
+
+      if (anomalyBadge && tAnomaly) {
+        if (tAnomaly.checked) {
+          anomalyBadge.textContent = 'Active';
+          anomalyBadge.style.background = 'rgba(var(--theme-accent-rgb, 147, 51, 234), 0.16)';
+          anomalyBadge.style.color = 'var(--theme-accent-hover, #d8b4fe)';
+          anomalyBadge.style.borderColor = 'rgba(var(--theme-accent-rgb, 147, 51, 234), 0.35)';
+        } else {
+          anomalyBadge.textContent = 'Disabled';
+          anomalyBadge.style.background = 'rgba(255, 255, 255, 0.05)';
+          anomalyBadge.style.color = '#94a3b8';
+          anomalyBadge.style.borderColor = 'rgba(255, 255, 255, 0.1)';
+        }
+      }
+
+      if (loginBadge && tLogin) {
+        if (tLogin.checked) {
+          loginBadge.textContent = 'Active';
+          loginBadge.style.background = 'rgba(var(--theme-accent-rgb, 147, 51, 234), 0.16)';
+          loginBadge.style.color = 'var(--theme-accent-hover, #d8b4fe)';
+          loginBadge.style.borderColor = 'rgba(var(--theme-accent-rgb, 147, 51, 234), 0.35)';
+        } else {
+          loginBadge.textContent = 'Disabled';
+          loginBadge.style.background = 'rgba(255, 255, 255, 0.05)';
+          loginBadge.style.color = '#94a3b8';
+          loginBadge.style.borderColor = 'rgba(255, 255, 255, 0.1)';
+        }
+      }
+    }
+
+    function updateAccountEmailChannelUI(email?: string | null) {
+      const emailLabel = document.getElementById('email-channel-label');
+      const emailBadge = document.getElementById('email-channel-badge');
+      if (!emailLabel || !emailBadge) return;
+
+      let resolvedEmail = email;
+      if (!resolvedEmail) {
+        try {
+          const userObj = JSON.parse(localStorage.getItem('aetheria_user') || '{}');
+          if (userObj?.email) resolvedEmail = userObj.email;
+        } catch {}
+      }
+
+      if (resolvedEmail) {
+        emailLabel.textContent = `Email Alerts: ${resolvedEmail} (Synced)`;
+        emailBadge.classList.remove('bg-white/[0.04]', 'text-slate-200', 'border-white/10');
+        emailBadge.classList.add('bg-emerald-500/15', 'text-emerald-200', 'border-emerald-500/30');
+      } else {
+        emailLabel.textContent = 'Email Dispatch: Ready (Syncs with Account)';
+        emailBadge.classList.remove('bg-emerald-500/15', 'text-emerald-200', 'border-emerald-500/30');
+        emailBadge.classList.add('bg-white/[0.04]', 'text-slate-200', 'border-white/10');
+      }
+    }
+
     document.getElementById('policy-pill-alert')?.addEventListener('click', async () => {
       updateGeoPolicyUI('alert_only');
       await updateSecuritySettings();
@@ -3438,6 +3507,9 @@ import {
       const tAnomaly = document.getElementById('toggle-ip-anomaly-shield') as HTMLInputElement;
       const alertNewLogin = tLogin ? tLogin.checked : true;
       const alertIpAnomaly = tAnomaly ? tAnomaly.checked : true;
+
+      // Update badge status immediately for instant feedback
+      updateShieldStatusBadges();
 
       const channelsContainer = document.getElementById('alert-channels-container');
       if (channelsContainer) {
@@ -3503,10 +3575,25 @@ import {
       }
 
       if (statusMsg) {
+        let recipientEmail = data.recipientEmail;
+        if (!recipientEmail) {
+          try {
+            const userObj = JSON.parse(localStorage.getItem('aetheria_user') || '{}');
+            if (userObj?.email) recipientEmail = userObj.email;
+          } catch {}
+        }
+
         if (data.simulated || data.hint) {
-          statusMsg.innerHTML = `<span class="font-bold text-xs px-3 py-1.5 rounded-xl border shadow-xs inline-block" style="background: rgba(var(--theme-accent-rgb, 147, 51, 234), 0.18); border-color: rgba(var(--theme-accent-rgb, 147, 51, 234), 0.45); color: var(--theme-accent-hover, #d8b4fe);">🧪 Preview Code: <span class="font-mono text-white tracking-widest font-extrabold text-sm ml-1">749215</span></span>`;
+          statusMsg.innerHTML = `
+            <div class="space-y-1.5">
+              <span class="font-bold text-xs px-3 py-1.5 rounded-xl border shadow-xs inline-block" style="background: rgba(var(--theme-accent-rgb, 147, 51, 234), 0.18); border-color: rgba(var(--theme-accent-rgb, 147, 51, 234), 0.45); color: var(--theme-accent-hover, #d8b4fe);">🧪 Preview Code: <span class="font-mono text-white tracking-widest font-extrabold text-sm ml-1">749215</span></span>
+              <div class="text-[11px] text-slate-300">
+                Email Dispatch Queue: <span class="font-mono text-cyan-300 font-semibold">${recipientEmail || 'account-sync@aetheria.app'}</span>
+              </div>
+            </div>
+          `;
         } else {
-          statusMsg.textContent = 'A 6-digit verification code has been dispatched to your email.';
+          statusMsg.innerHTML = `A 6-digit verification code has been dispatched to <span class="font-semibold text-white font-mono">${recipientEmail || 'your registered account email'}</span>.`;
         }
       }
 
