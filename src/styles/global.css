@@ -1029,7 +1029,71 @@ html.power-saving-oled .chat-history-card {
   border-color: rgba(255, 255, 255, 0.08) !important;
 }
 
-/* 2. Disable Glows, Neon Borders & Backdrop Blurs */
+/* ==================================================== */
+/* OLED True Black for Profile Views & Sub-pages        */
+/* ==================================================== */
+
+/* All Views and Containers in Profile */
+html.power-saving-oled div[id^="view-"],
+html.power-saving-oled #view-hub,
+html.power-saving-oled #view-personas,
+html.power-saving-oled #view-appearance,
+html.power-saving-oled #view-ai-engine,
+html.power-saving-oled #view-voice,
+html.power-saving-oled #view-privacy,
+html.power-saving-oled #view-devices,
+html.power-saving-oled #view-power-saving {
+  background-color: #000000 !important;
+}
+
+/* Sticky Top Navigation Headers across all Views */
+html.power-saving-oled div[id^="view-"] div[class*="sticky"],
+html.power-saving-oled #view-devices div[class*="sticky"],
+html.power-saving-oled #view-power-saving div[class*="sticky"] {
+  background-color: #000000 !important;
+  border-color: rgba(255, 255, 255, 0.08) !important;
+}
+
+/* All Cards, Hero Sections & Containers in Profile Sub-pages (Devices, Power Saving, Personas, Privacy, etc.) */
+html.power-saving-oled #view-hub .rounded-3xl,
+html.power-saving-oled #view-hub .rounded-2xl,
+html.power-saving-oled #view-personas .rounded-3xl,
+html.power-saving-oled #view-personas .rounded-2xl,
+html.power-saving-oled #view-appearance .rounded-3xl,
+html.power-saving-oled #view-appearance .rounded-2xl,
+html.power-saving-oled #view-ai-engine .rounded-3xl,
+html.power-saving-oled #view-ai-engine .rounded-2xl,
+html.power-saving-oled #view-voice .rounded-3xl,
+html.power-saving-oled #view-voice .rounded-2xl,
+html.power-saving-oled #view-privacy .rounded-3xl,
+html.power-saving-oled #view-privacy .rounded-2xl,
+html.power-saving-oled #view-devices .rounded-3xl,
+html.power-saving-oled #view-devices .rounded-2xl,
+html.power-saving-oled #view-power-saving .rounded-3xl,
+html.power-saving-oled #view-power-saving .rounded-2xl,
+html.power-saving-oled #hub-settings-group {
+  background-color: #040404 !important;
+  background-image: none !important;
+  border-color: rgba(255, 255, 255, 0.08) !important;
+}
+
+/* Persona 3D Cards Front & Back in OLED */
+html.power-saving-oled .persona-3d-card .rounded-3xl {
+  background-color: #030303 !important;
+  background-image: none !important;
+  border-color: rgba(255, 255, 255, 0.1) !important;
+}
+
+/* 2. Disable Glows, Neon Borders & Ambient Blur Orbs */
+html.power-saving-no-glows div.rounded-full.pointer-events-none.blur-3xl,
+html.power-saving-no-glows div.rounded-full.pointer-events-none.blur-2xl,
+html.power-saving-no-glows div.rounded-full.pointer-events-none.blur-xl,
+html.power-saving-oled div.rounded-full.pointer-events-none.blur-3xl,
+html.power-saving-oled div.rounded-full.pointer-events-none.blur-2xl,
+html.power-saving-oled div.rounded-full.pointer-events-none.blur-xl {
+  display: none !important;
+}
+
 html.power-saving-no-glows .gilded-card-halo,
 html.power-saving-no-glows .gilded-card-halo-active,
 html.power-saving-no-glows .gilded-avatar-glow,
@@ -1038,35 +1102,36 @@ html.power-saving-no-glows .glow-purple,
 html.power-saving-no-glows .glow-subtle,
 html.power-saving-no-glows [style*="box-shadow"],
 html.power-saving-no-glows .shadow-2xl,
-html.power-saving-no-glows .shadow-xl {
+html.power-saving-no-glows .shadow-xl,
+html.power-saving-oled .gilded-card-halo,
+html.power-saving-oled .gilded-card-halo-active {
   box-shadow: none !important;
-}
-
-html.power-saving-no-glows .blur-3xl,
-html.power-saving-no-glows .blur-2xl,
-html.power-saving-no-glows .blur-xl,
-html.power-saving-no-glows .backdrop-blur-md,
-html.power-saving-no-glows .backdrop-blur-sm,
-html.power-saving-no-glows .backdrop-blur-lg,
-html.power-saving-no-glows [class*="backdrop-blur"] {
-  backdrop-filter: none !important;
-  -webkit-backdrop-filter: none !important;
   filter: none !important;
 }
 
-/* 3. Freeze Animated Avatars & Keyframes */
+html.power-saving-no-glows [class*="backdrop-blur"] {
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+}
+
+/* 3. Freeze Animated Avatars, Pulses & Keyframes */
 html.power-saving-freeze-avatars .animate-pulse,
+html.power-saving-freeze-avatars .animate-ping,
 html.power-saving-freeze-avatars .animate-spin,
 html.power-saving-freeze-avatars .animate-bounce,
 html.power-saving-freeze-avatars .animate-sheet-up,
-html.power-saving-freeze-avatars .animate-modal-fade {
+html.power-saving-freeze-avatars .animate-modal-fade,
+html.power-saving-active .animate-pulse,
+html.power-saving-active .animate-ping,
+html.power-saving-active .animate-spin {
   animation: none !important;
   animation-play-state: paused !important;
 }
 
 /* 4. Disable 3D Matrix Transforms & Accelerate Transitions */
 html.power-saving-disable-3d .perspective-1200,
-html.power-saving-disable-3d [class*="perspective"] {
+html.power-saving-disable-3d [class*="perspective"],
+html.power-saving-disable-3d #persona-cards-wrapper {
   perspective: none !important;
   -webkit-perspective: none !important;
 }

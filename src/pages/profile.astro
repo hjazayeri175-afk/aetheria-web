@@ -3353,6 +3353,12 @@ import {
     syncPowerSavingUI();
     initBatteryDiagnostics();
 
+    // Listen for reactive power saving changes across tabs & components
+    window.addEventListener('aetheria:power-saving-change', () => {
+      syncPowerSavingUI();
+      render3DCarousel();
+    });
+
     // ==========================================
     // DEVICES & SECURITY SESSIONS MANAGEMENT
     // ==========================================
