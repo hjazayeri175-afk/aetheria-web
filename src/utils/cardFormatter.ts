@@ -171,41 +171,41 @@ function processRichContent(
 
   // 11. Markdown Headers & lists (for description mode)
   if (mode === 'description') {
-    masked = masked.replace(/^### (.*$)/gim, (_, c) => addToken(`<h3 class="font-bold text-white text-sm my-2">${c}</h3>`));
-    masked = masked.replace(/^## (.*$)/gim, (_, c) => addToken(`<h2 class="font-bold text-white text-sm sm:text-base my-2">${c}</h2>`));
-    masked = masked.replace(/^# (.*$)/gim, (_, c) => addToken(`<h1 class="font-black text-white text-base my-2.5">${c}</h1>`));
-    masked = masked.replace(/^[\*\-] (.*$)/gim, (_, c) => addToken(`<li class="leading-relaxed">${c}</li>`));
+    masked = masked.replace(/^### (.*$)/gim, (_, c) => addToken(`<h3 class="font-bold text-slate-900 dark:text-white text-sm my-2">${c}</h3>`));
+    masked = masked.replace(/^## (.*$)/gim, (_, c) => addToken(`<h2 class="font-bold text-slate-900 dark:text-white text-sm sm:text-base my-2">${c}</h2>`));
+    masked = masked.replace(/^# (.*$)/gim, (_, c) => addToken(`<h1 class="font-black text-slate-900 dark:text-white text-base my-2.5">${c}</h1>`));
+    masked = masked.replace(/^[\*\-] (.*$)/gim, (_, c) => addToken(`<li class="leading-relaxed text-slate-800 dark:text-slate-200">${c}</li>`));
   }
 
   // 12. Markdown Bold: **text** or __text__
   masked = masked.replace(/\*\*([^\*\n]+)\*\*/g, (_, content) => {
-    return addToken(`<strong class="text-white font-semibold">${content}</strong>`);
+    return addToken(`<strong class="text-slate-900 dark:text-white font-semibold">${content}</strong>`);
   });
   masked = masked.replace(/__([^_\n]+)__/g, (_, content) => {
-    return addToken(`<strong class="text-white font-semibold">${content}</strong>`);
+    return addToken(`<strong class="text-slate-900 dark:text-white font-semibold">${content}</strong>`);
   });
 
   // 13. Markdown Strikethrough: ~~text~~
   masked = masked.replace(/~~([^~\n]+)~~/g, (_, content) => {
-    return addToken(`<del class="text-slate-400 line-through">${content}</del>`);
+    return addToken(`<del class="text-slate-500 dark:text-slate-400 line-through">${content}</del>`);
   });
 
   // 14. Markdown Italics (actions / narration): *text* or _text_
   masked = masked.replace(/(^|[^\*])\*([^\*\n]+)\*([^\*]|$)/g, (_, p1, content, p2) => {
-    const cls = mode === 'greeting' ? 'text-purple-300 italic' : 'text-purple-200/90 italic';
+    const cls = mode === 'greeting' ? 'text-purple-700 dark:text-purple-300 italic' : 'text-purple-700 dark:text-purple-200/90 italic';
     return `${p1}${addToken(`<em class="${cls}">${content}</em>`)}${p2}`;
   });
 
   // 15. Dialogue Quotes (for greetings and story dialogue)
   if (mode === 'greeting') {
     masked = masked.replace(/"([^"\n]+)"/g, (_, speech) => {
-      return addToken(`<span translate="yes" class="text-white font-medium">"${speech}"</span>`);
+      return addToken(`<span translate="yes" class="text-slate-900 dark:text-white font-medium">"${speech}"</span>`);
     });
     masked = masked.replace(/“([^”\n]+)”/g, (_, speech) => {
-      return addToken(`<span translate="yes" class="text-white font-medium">“${speech}”</span>`);
+      return addToken(`<span translate="yes" class="text-slate-900 dark:text-white font-medium">“${speech}”</span>`);
     });
     masked = masked.replace(/«([^»\n]+)»/g, (_, speech) => {
-      return addToken(`<span translate="yes" class="text-white font-medium">«${speech}»</span>`);
+      return addToken(`<span translate="yes" class="text-slate-900 dark:text-white font-medium">«${speech}»</span>`);
     });
   }
 
@@ -218,7 +218,7 @@ function processRichContent(
         .map(p => {
           const trimmed = p.trim();
           if (trimmed.includes('\x00TOKEN_') && tokens.some(t => t.startsWith('<li'))) {
-            return `<ul class="list-disc list-inside space-y-1.5 my-2 text-slate-300">${trimmed}</ul>`;
+            return `<ul class="list-disc list-inside space-y-1.5 my-2 text-slate-700 dark:text-slate-300">${trimmed}</ul>`;
           }
           return `<p class="mb-2.5 last:mb-0 leading-relaxed">${trimmed.replace(/\n/g, '<br/>')}</p>`;
         })
