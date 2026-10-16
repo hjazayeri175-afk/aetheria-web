@@ -1273,24 +1273,26 @@ html.power-saving-active #showcase-chat-btn .animate-pulse {
    Phase 3: Disable Glows, Neon Borders & Ambient Blur Orbs
    Eliminates GPU-heavy backdrop filter passes, blur convolutions, and colored box-shadows.
    Restores solid opaque dark surfaces for headers/navbars to preserve high legibility.
+   Targets ONLY ambient circular background blur divs (never navigation or cards).
    ========================================================================== */
-html.power-saving-no-glows div.rounded-full.pointer-events-none.blur-3xl,
-html.power-saving-no-glows div.rounded-full.pointer-events-none.blur-2xl,
-html.power-saving-no-glows div.rounded-full.pointer-events-none.blur-xl,
-html.power-saving-no-glows .pointer-events-none[class*="blur-"],
-html.power-saving-no-glows [class*="blur-3xl"],
-html.power-saving-no-glows [class*="blur-2xl"],
-html.power-saving-active div.rounded-full.pointer-events-none.blur-3xl,
-html.power-saving-active div.rounded-full.pointer-events-none.blur-2xl,
-html.power-saving-active div.rounded-full.pointer-events-none.blur-xl,
-html.power-saving-active .pointer-events-none[class*="blur-"],
-html.power-saving-active [class*="blur-3xl"],
-html.power-saving-active [class*="blur-2xl"],
-html.power-saving-oled div.rounded-full.pointer-events-none.blur-3xl,
-html.power-saving-oled div.rounded-full.pointer-events-none.blur-2xl,
-html.power-saving-oled div.rounded-full.pointer-events-none.blur-xl,
-html.power-saving-oled .pointer-events-none[class*="blur-"] {
+html.power-saving-no-glows div.absolute.rounded-full.pointer-events-none,
+html.power-saving-active div.absolute.rounded-full.pointer-events-none,
+html.power-saving-oled div.absolute.rounded-full.pointer-events-none {
   display: none !important;
+}
+
+/* Guarantee Mobile Bottom Navigation Bar is ALWAYS visible and interactive on mobile devices */
+@media (max-width: 639px) {
+  #mobile-bottom-nav,
+  html.power-saving-no-glows #mobile-bottom-nav,
+  html.power-saving-active #mobile-bottom-nav,
+  html.power-saving-oled #mobile-bottom-nav {
+    display: block !important;
+    visibility: visible !important;
+    opacity: 1 !important;
+    pointer-events: auto !important;
+    z-index: 50 !important;
+  }
 }
 
 html.power-saving-no-glows .gilded-card-halo,
@@ -1346,14 +1348,21 @@ html.power-saving-active div.sticky[class*="backdrop-blur"] {
 }
 
 html.power-saving-no-glows nav.fixed[class*="backdrop-blur"],
-html.power-saving-active nav.fixed[class*="backdrop-blur"] {
+html.power-saving-active nav.fixed[class*="backdrop-blur"],
+html.power-saving-no-glows #mobile-bottom-nav,
+html.power-saving-active #mobile-bottom-nav {
   background-color: #070913 !important;
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
 }
 
 html.power-saving-oled header[class*="backdrop-blur"],
 html.power-saving-oled nav[class*="backdrop-blur"],
-html.power-saving-oled div.sticky[class*="backdrop-blur"] {
+html.power-saving-oled div.sticky[class*="backdrop-blur"],
+html.power-saving-oled #mobile-bottom-nav {
   background-color: #000000 !important;
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
 }
 
 /* 3. Freeze Animated Avatars, Pulses & Keyframes */
