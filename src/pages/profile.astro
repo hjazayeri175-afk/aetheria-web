@@ -961,69 +961,6 @@ import {
     </div>
   </div>
 
-  <!-- Custom Cyberpunk Pronouns Bottom Sheet Modal -->
-  <div 
-    id="pronouns-bottom-sheet" 
-    class="fixed inset-0 z-50 flex items-end sm:items-center justify-center p-0 sm:p-4 bg-black/80 backdrop-blur-md transition-all duration-300 opacity-0 pointer-events-none"
-    role="dialog"
-    aria-modal="true"
-  >
-    <div 
-      id="pronouns-sheet-dialog" 
-      class="w-full sm:max-w-md rounded-t-[32px] sm:rounded-3xl bg-gradient-to-b from-[#141728]/98 via-[#0c0e1a]/98 to-[#060710]/98 border-t sm:border p-5 sm:p-6 backdrop-blur-2xl transform translate-y-full sm:translate-y-0 sm:scale-95 transition-all duration-300 text-left select-none max-h-[85vh] flex flex-col"
-      style="border-color: rgba(var(--accent-rgb, 147, 51, 234), 0.35); box-shadow: 0 -15px 45px rgba(0, 0, 0, 0.9), 0 0 30px var(--theme-accent-glow, rgba(147, 51, 234, 0.15));"
-    >
-      <!-- Mobile Pull Bar Indicator -->
-      <div class="w-12 h-1.5 rounded-full bg-white/20 mx-auto mb-3 sm:hidden shrink-0"></div>
-
-      <!-- Header -->
-      <div class="flex items-center justify-between pb-3.5 border-b border-purple-500/25 shrink-0">
-        <div class="flex items-center gap-2.5">
-          <div class="w-9 h-9 rounded-xl bg-purple-500/20 border border-purple-400/40 flex items-center justify-center text-purple-300 shadow-[0_0_12px_var(--theme-accent-glow,rgba(147,51,234,0.3))]">
-            <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-              <path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/>
-              <circle cx="12" cy="7" r="4"/>
-            </svg>
-          </div>
-          <div>
-            <h3 class="text-base font-bold text-white tracking-tight">Select Pronouns</h3>
-            <p class="text-[11px] text-stone-300 font-medium">How characters should address you in chat</p>
-          </div>
-        </div>
-        <button 
-          id="btn-close-pronouns-sheet" 
-          type="button" 
-          class="w-8 h-8 rounded-full bg-white/5 hover:bg-white/10 text-stone-300 hover:text-white flex items-center justify-center transition cursor-pointer"
-        >
-          <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6 6 18M6 6l12 12"/></svg>
-        </button>
-      </div>
-
-      <!-- Options Container -->
-      <div id="pronouns-options-list" class="overflow-y-auto no-scrollbar py-3 space-y-2 flex-1"></div>
-
-      <!-- Custom Input Section -->
-      <div id="sheet-custom-pronouns-wrap" class="hidden pt-3 border-t border-purple-500/25 space-y-2 shrink-0">
-        <label class="block text-xs font-semibold text-stone-200">Custom Pronoun</label>
-        <div class="flex items-center gap-2">
-          <input 
-            type="text" 
-            id="sheet-custom-pronouns-input" 
-            placeholder="e.g. ze/zir, fae/faer..." 
-            class="flex-1 px-3.5 py-2.5 rounded-xl bg-black/60 border border-purple-500/40 text-white placeholder-stone-400 text-xs sm:text-sm font-medium focus:outline-none focus:border-purple-400 focus:ring-1 focus:ring-purple-400/50 transition" 
-          />
-          <button 
-            type="button" 
-            id="sheet-custom-pronouns-apply" 
-            class="px-4 py-2.5 rounded-xl bg-gradient-to-r from-purple-500 to-indigo-600 hover:from-purple-400 hover:to-indigo-500 text-white font-bold text-xs shadow-md shadow-purple-950/50 active:scale-95 transition cursor-pointer shrink-0"
-          >
-            Apply
-          </button>
-        </div>
-      </div>
-    </div>
-  </div>
-
   <!-- Toast Notification Container -->
   <div id="toast-container" class="fixed bottom-24 left-1/2 -translate-x-1/2 z-50 flex flex-col items-center gap-2 pointer-events-none w-full max-w-xs"></div>
 
@@ -1298,6 +1235,14 @@ import {
       const demographicText = demographicParts.join(' • ');
 
       const rawPronouns = (p.pronouns || '').trim();
+      const lowerPronouns = rawPronouns.toLowerCase();
+      const isHe = lowerPronouns === 'he/him';
+      const isShe = lowerPronouns === 'she/her';
+      const isThey = lowerPronouns === 'they/them';
+      const isCustomPronoun = !!rawPronouns && !isHe && !isShe && !isThey;
+
+      const activePillClass = 'bg-amber-400 text-black font-semibold rounded-lg shadow-sm transition-all duration-200 text-xs flex-1 py-1.5 text-center cursor-pointer select-none whitespace-nowrap';
+      const inactivePillClass = 'text-gray-400 hover:text-white text-xs flex-1 py-1.5 text-center transition-colors cursor-pointer select-none rounded-lg hover:bg-white/5 whitespace-nowrap';
 
       const tokens = p.tokenCount || estimateTokens((p.about || '') + ' ' + (p.additionalInstructions || ''));
 
@@ -1453,33 +1398,66 @@ import {
                   />
                 </div>
 
-                <!-- Age & Pronouns Row (Clean 50/50 Grid, Dropdown for Pronouns) -->
+                <!-- Age & Pronouns Row (Clean 50/50 Grid, Inline Segmented Pill Selector) -->
                 <div class="grid grid-cols-2 gap-3">
                   <div>
                     <label class="block text-xs font-semibold text-stone-200 mb-1.5">Age</label>
                     <input 
                       type="text" 
                       inputmode="numeric"
-                      class="card-edit-age w-full px-3 py-2 rounded-xl bg-black/60 border border-purple-500/35 text-white placeholder-stone-400 text-xs sm:text-sm font-medium focus:outline-none focus:border-purple-400 focus:ring-1 focus:ring-purple-400/50 transition" 
+                      class="card-edit-age w-full h-[42px] px-3 py-2 rounded-xl bg-black/60 border border-purple-500/35 text-white placeholder-stone-400 text-xs sm:text-sm font-medium focus:outline-none focus:border-purple-400 focus:ring-1 focus:ring-purple-400/50 transition box-border" 
                       placeholder="e.g. 24 (optional)" 
                       value="${escapeHtml(p.age || '')}" 
                     />
                   </div>
                   <div>
                     <label class="block text-xs font-semibold text-stone-200 mb-1.5">Pronouns</label>
-                    <button 
-                      type="button" 
-                      class="btn-open-pronouns-sheet w-full px-3 py-2 rounded-xl bg-black/60 border border-purple-500/35 hover:border-purple-400 text-white text-xs sm:text-sm font-medium flex items-center justify-between transition cursor-pointer shadow-inner group"
-                      data-id="${p.id}"
+                    <div 
+                      class="pronouns-pill-selector h-[42px] w-full rounded-xl bg-[#12131a] border border-amber-500/20 p-1 flex items-center justify-between gap-1 relative box-border"
+                      onpointerdown="event.stopPropagation();"
+                      ontouchstart="event.stopPropagation();"
                     >
-                      <span class="pronoun-display-label truncate ${p.pronouns ? 'text-white' : 'text-stone-400'}">
-                        ${escapeHtml(formatPronounLabel(p.pronouns || ''))}
-                      </span>
-                      <svg class="w-4 h-4 text-purple-300 shrink-0 ml-1 group-hover:text-purple-200 transition-colors" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                        <path d="m6 9 6 6 6-6"/>
-                      </svg>
-                    </button>
-                    <input type="hidden" class="card-edit-pronouns-value" value="${escapeHtml(p.pronouns || '')}" />
+                      <input type="hidden" class="card-edit-pronouns-value" value="${escapeHtml(rawPronouns)}" />
+
+                      <!-- 4 Pills View -->
+                      <div class="pronouns-pills-bar ${isCustomPronoun ? 'hidden' : 'flex'} items-center justify-between gap-1 w-full h-full">
+                        <button 
+                          type="button" 
+                          class="pronoun-pill-btn ${isHe ? activePillClass : inactivePillClass}"
+                          data-val="he/him"
+                        >He</button>
+                        <button 
+                          type="button" 
+                          class="pronoun-pill-btn ${isShe ? activePillClass : inactivePillClass}"
+                          data-val="she/her"
+                        >She</button>
+                        <button 
+                          type="button" 
+                          class="pronoun-pill-btn ${isThey ? activePillClass : inactivePillClass}"
+                          data-val="they/them"
+                        >They</button>
+                        <button 
+                          type="button" 
+                          class="pronoun-pill-custom-trigger ${inactivePillClass}"
+                          title="Custom pronoun"
+                        >✎</button>
+                      </div>
+
+                      <!-- Inline Custom Text Input Mode -->
+                      <div class="pronouns-custom-bar ${isCustomPronoun ? 'flex' : 'hidden'} items-center w-full h-full px-1">
+                        <input 
+                          type="text" 
+                          class="pronouns-custom-input bg-transparent text-white text-xs w-full px-2 focus:outline-none" 
+                          placeholder="e.g. xe/xem" 
+                          value="${isCustomPronoun ? escapeHtml(rawPronouns) : ''}" 
+                        />
+                        <button 
+                          type="button" 
+                          class="pronouns-custom-clear w-6 h-6 rounded-md flex items-center justify-center text-stone-400 hover:text-white hover:bg-white/10 text-base leading-none shrink-0 cursor-pointer transition-colors"
+                          title="Clear and return to presets"
+                        >×</button>
+                      </div>
+                    </div>
                   </div>
                 </div>
 
@@ -1873,182 +1851,93 @@ import {
     }
   }
 
-  let activePronounTarget: { personaId: string; cardEl: HTMLElement } | null = null;
+  function setupPronounPillSelector(cardEl: HTMLElement) {
+    const container = cardEl.querySelector('.pronouns-pill-selector') as HTMLElement;
+    if (!container) return;
 
-  const PRONOUN_PRESETS = [
-    { value: '', label: 'Not specified', subtitle: 'Do not specify pronouns in chat', badge: '—' },
-    { value: 'he/him', label: 'He / Him', subtitle: 'Masculine (he / him / his)', badge: 'He' },
-    { value: 'she/her', label: 'She / Her', subtitle: 'Feminine (she / her / hers)', badge: 'She' },
-    { value: 'they/them', label: 'They / Them', subtitle: 'Gender-neutral (they / them / theirs)', badge: 'They' },
-    { value: 'any', label: 'Any / All', subtitle: 'Any pronouns are welcome', badge: 'All' },
-    { value: 'custom', label: 'Custom...', subtitle: 'Type your own specific pronouns', badge: '✎' }
-  ];
+    const hiddenInput = container.querySelector('.card-edit-pronouns-value') as HTMLInputElement;
+    const pillsBar = container.querySelector('.pronouns-pills-bar') as HTMLElement;
+    const customBar = container.querySelector('.pronouns-custom-bar') as HTMLElement;
+    const customInput = container.querySelector('.pronouns-custom-input') as HTMLInputElement;
+    const customClearBtn = container.querySelector('.pronouns-custom-clear') as HTMLButtonElement;
+    const customTriggerBtn = container.querySelector('.pronoun-pill-custom-trigger') as HTMLButtonElement;
+    const pillBtns = container.querySelectorAll('.pronoun-pill-btn') as NodeListOf<HTMLButtonElement>;
 
-  function openPronounsSheet(personaId: string, cardEl: HTMLElement) {
-    activePronounTarget = { personaId, cardEl };
-    const sheet = document.getElementById('pronouns-bottom-sheet');
-    const dialog = document.getElementById('pronouns-sheet-dialog');
-    const listEl = document.getElementById('pronouns-options-list');
-    const customWrap = document.getElementById('sheet-custom-pronouns-wrap');
-    const customInput = document.getElementById('sheet-custom-pronouns-input') as HTMLInputElement;
+    const activeClass = 'bg-amber-400 text-black font-semibold rounded-lg shadow-sm transition-all duration-200 text-xs flex-1 py-1.5 text-center cursor-pointer select-none whitespace-nowrap';
+    const inactiveClass = 'text-gray-400 hover:text-white text-xs flex-1 py-1.5 text-center transition-colors cursor-pointer select-none rounded-lg hover:bg-white/5 whitespace-nowrap';
 
-    if (!sheet || !dialog || !listEl) return;
+    // Step 4: Gesture Isolation - prevent touch & pointer events from triggering parent 3D Card Carousel swipe/flip
+    ['pointerdown', 'touchstart', 'touchend', 'touchmove', 'mousedown'].forEach(evt => {
+      container.addEventListener(evt, (e) => e.stopPropagation());
+    });
 
-    const currentVal = ((cardEl.querySelector('.card-edit-pronouns-value') as HTMLInputElement)?.value || '').trim();
-    const currentLower = currentVal.toLowerCase();
-    const isStandard = ['he/him', 'she/her', 'they/them', 'any', 'any/all'].includes(currentLower);
-    const isNone = currentVal === '';
-    const isCustom = !isNone && !isStandard;
-
-    // Render options with cybernetic styling
-    listEl.innerHTML = PRONOUN_PRESETS.map(opt => {
-      let isSelected = false;
-      if (opt.value === '' && isNone) isSelected = true;
-      else if (opt.value === 'custom' && isCustom) isSelected = true;
-      else if (opt.value && opt.value !== 'custom') {
-        isSelected = (currentLower === opt.value || (opt.value === 'any' && currentLower === 'any/all'));
-      }
-
-      const activeStyle = isSelected 
-        ? `background: rgba(var(--accent-rgb, 147, 51, 234), 0.22); border-color: rgba(var(--accent-rgb, 147, 51, 234), 0.85); box-shadow: 0 0 20px var(--theme-accent-glow, rgba(147, 51, 234, 0.35));`
-        : '';
-      const badgeStyle = isSelected
-        ? `background: var(--theme-accent, #9333ea);`
-        : '';
-      const radioStyle = isSelected
-        ? `background: var(--theme-accent, #9333ea); border-color: #fff; box-shadow: 0 0 10px var(--theme-accent-glow, rgba(147, 51, 234, 0.8));`
-        : '';
-
-      return `
-        <button 
-          type="button" 
-          class="sheet-pronoun-option w-full p-3.5 rounded-2xl border transition-all duration-200 flex items-center justify-between group cursor-pointer text-left ${isSelected ? 'text-white' : 'bg-white/[0.03] hover:bg-white/[0.08] border-white/10 hover:border-purple-500/40'}"
-          style="${activeStyle}"
-          data-val="${opt.value}"
-        >
-          <div class="flex items-center gap-3">
-            <div class="w-8 h-8 rounded-xl ${isSelected ? 'text-white shadow-md' : 'bg-white/5 text-stone-400 group-hover:text-stone-200'} flex items-center justify-center font-bold text-xs transition-colors shrink-0" style="${badgeStyle}">
-              ${opt.badge}
-            </div>
-            <div>
-              <div class="text-xs sm:text-sm font-bold ${isSelected ? 'text-white' : 'text-stone-200 group-hover:text-white'} transition-colors">
-                ${opt.label}
-              </div>
-              <div class="text-[11px] text-stone-400 font-medium">
-                ${opt.subtitle}
-              </div>
-            </div>
-          </div>
-
-          <div class="w-5 h-5 rounded-full border ${isSelected ? '' : 'border-stone-600 group-hover:border-stone-400'} flex items-center justify-center transition-all shrink-0" style="${radioStyle}">
-            ${isSelected ? '<svg class="w-3.5 h-3.5 text-white" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg>' : ''}
-          </div>
-        </button>
-      `;
-    }).join('');
-
-    // Handle Custom wrap visibility
-    if (isCustom) {
-      customWrap?.classList.remove('hidden');
-      if (customInput) customInput.value = currentVal;
-    } else {
-      customWrap?.classList.add('hidden');
-      if (customInput) customInput.value = '';
-    }
-
-    // Attach click handlers to rendered options
-    listEl.querySelectorAll('.sheet-pronoun-option').forEach(btn => {
+    // Step 2: Pill Options click handlers (He, She, They)
+    pillBtns.forEach(btn => {
       btn.addEventListener('click', (e) => {
         e.stopPropagation();
-        const val = (btn as HTMLElement).dataset.val || '';
-        if (val === 'custom') {
-          customWrap?.classList.remove('hidden');
-          customInput?.focus();
+        const val = btn.dataset.val || '';
+        const currentVal = (hiddenInput?.value || '').trim().toLowerCase();
+
+        if (currentVal === val.toLowerCase()) {
+          // Deselect if already active -> reset to ''
+          if (hiddenInput) hiddenInput.value = '';
+          btn.className = `pronoun-pill-btn ${inactiveClass}`;
         } else {
-          customWrap?.classList.add('hidden');
-          const opt = PRONOUN_PRESETS.find(x => x.value === val);
-          applyPronounSelection(val, opt ? opt.label : 'Not specified');
+          // Select clicked pill
+          if (hiddenInput) hiddenInput.value = val;
+          pillBtns.forEach(b => {
+            b.className = `pronoun-pill-btn ${inactiveClass}`;
+          });
+          btn.className = `pronoun-pill-btn ${activeClass}`;
         }
       });
     });
 
-    // Show sheet
-    sheet.classList.remove('opacity-0', 'pointer-events-none');
-    sheet.classList.add('opacity-100', 'pointer-events-auto');
-    requestAnimationFrame(() => {
-      dialog.classList.remove('translate-y-full', 'sm:scale-95');
-      dialog.classList.add('translate-y-0', 'sm:scale-100');
-    });
-  }
-
-  function closePronounsSheet() {
-    const sheet = document.getElementById('pronouns-bottom-sheet');
-    const dialog = document.getElementById('pronouns-sheet-dialog');
-    if (!sheet || !dialog) return;
-
-    dialog.classList.remove('translate-y-0', 'sm:scale-100');
-    dialog.classList.add('translate-y-full', 'sm:scale-95');
-    sheet.classList.remove('opacity-100', 'pointer-events-auto');
-    sheet.classList.add('opacity-0', 'pointer-events-none');
-    activePronounTarget = null;
-  }
-
-  function applyPronounSelection(val: string, displayLabel: string) {
-    if (!activePronounTarget) return;
-    const { cardEl } = activePronounTarget;
-    const hiddenVal = cardEl.querySelector('.card-edit-pronouns-value') as HTMLInputElement;
-    const displaySpan = cardEl.querySelector('.pronoun-display-label') as HTMLElement;
-
-    if (hiddenVal) hiddenVal.value = val;
-    if (displaySpan) {
-      displaySpan.textContent = displayLabel;
-      if (val) {
-        displaySpan.classList.remove('text-stone-400');
-        displaySpan.classList.add('text-white');
-      } else {
-        displaySpan.classList.remove('text-white');
-        displaySpan.classList.add('text-stone-400');
-      }
-    }
-
-    closePronounsSheet();
-  }
-
-  function setupPronounsSheet() {
-    const sheet = document.getElementById('pronouns-bottom-sheet');
-    const btnClose = document.getElementById('btn-close-pronouns-sheet');
-    const customApplyBtn = document.getElementById('sheet-custom-pronouns-apply');
-    const customInput = document.getElementById('sheet-custom-pronouns-input') as HTMLInputElement;
-
-    btnClose?.addEventListener('click', (e) => {
+    // Step 3: Switch into Custom Input Mode (✎)
+    customTriggerBtn?.addEventListener('click', (e) => {
       e.stopPropagation();
-      closePronounsSheet();
-    });
-
-    sheet?.addEventListener('click', (e) => {
-      if (e.target === sheet) {
-        closePronounsSheet();
+      pillsBar.classList.add('hidden');
+      pillsBar.classList.remove('flex');
+      customBar.classList.remove('hidden');
+      customBar.classList.add('flex');
+      if (customInput) {
+        const cur = (hiddenInput?.value || '').trim();
+        const isPreset = ['he/him', 'she/her', 'they/them'].includes(cur.toLowerCase());
+        customInput.value = isPreset ? '' : cur;
+        customInput.focus();
       }
     });
 
-    customApplyBtn?.addEventListener('click', (e) => {
+    // Custom input typing
+    customInput?.addEventListener('input', (e) => {
       e.stopPropagation();
-      const customVal = customInput?.value.trim() || '';
-      applyPronounSelection(customVal, customVal || 'Not specified');
+      if (hiddenInput) {
+        hiddenInput.value = customInput.value.trim();
+      }
     });
 
     customInput?.addEventListener('keydown', (e) => {
+      e.stopPropagation();
       if (e.key === 'Enter') {
         e.preventDefault();
-        const customVal = customInput?.value.trim() || '';
-        applyPronounSelection(customVal, customVal || 'Not specified');
+        customInput.blur();
       }
     });
 
-    document.addEventListener('keydown', (e) => {
-      if (e.key === 'Escape' && sheet && !sheet.classList.contains('pointer-events-none')) {
-        closePronounsSheet();
-      }
+    // Custom clear button (×) - clears custom text and returns to 4-pill view
+    customClearBtn?.addEventListener('click', (e) => {
+      e.stopPropagation();
+      if (customInput) customInput.value = '';
+      if (hiddenInput) hiddenInput.value = '';
+
+      pillBtns.forEach(b => {
+        b.className = `pronoun-pill-btn ${inactiveClass}`;
+      });
+
+      customBar.classList.add('hidden');
+      customBar.classList.remove('flex');
+      pillsBar.classList.remove('hidden');
+      pillsBar.classList.add('flex');
     });
   }
 
@@ -2170,11 +2059,8 @@ import {
         handleAiGenerate(personaId, e.currentTarget as HTMLButtonElement);
       });
 
-      // Pronoun bottom sheet trigger
-      card.querySelector('.btn-open-pronouns-sheet')?.addEventListener('click', (e) => {
-        e.stopPropagation();
-        openPronounsSheet(personaId, card);
-      });
+      // Pronoun segmented pill selector
+      setupPronounPillSelector(card);
 
       // Live token counter
       setupTokenCounter(card);
@@ -2330,7 +2216,6 @@ import {
     loadPersonas();
     render3DCarousel();
     setupGestures();
-    setupPronounsSheet();
     updateHubProfileSummary();
 
     // ==========================================
