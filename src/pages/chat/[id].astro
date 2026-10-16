@@ -417,20 +417,20 @@ const { character } = Astro.props;
           </div>
         </button>
 
-        <!-- Bio & Lore -->
+        <!-- Bio & Lore (High Readability & Visual Comfort) -->
         <div class="space-y-2">
-          <h2 class="text-xs uppercase tracking-wider text-slate-400 font-bold">About Character</h2>
-          <div id="chat-sidebar-desc" class="text-xs text-slate-300 leading-relaxed bg-white/[0.02] p-3.5 rounded-xl border border-white/[0.05] max-h-80 overflow-y-auto card-rich-content">
+          <h2 class="text-xs uppercase tracking-wider text-slate-300 font-bold">About Character</h2>
+          <div id="chat-sidebar-desc" class="text-[14px] text-slate-100 leading-[1.7] bg-white/[0.04] p-4 rounded-xl border border-white/10 max-h-80 overflow-y-auto card-rich-content shadow-sm">
             <Fragment set:html={formatRichDescription(character.description || '')} />
           </div>
         </div>
 
         <!-- Tags -->
         <div class="space-y-2">
-          <h2 class="text-xs uppercase tracking-wider text-slate-400 font-bold">Tags & Archetypes</h2>
+          <h2 class="text-xs uppercase tracking-wider text-slate-300 font-bold">Tags & Archetypes</h2>
           <div class="flex flex-wrap gap-1.5">
             {character.tags.map((tag) => (
-              <span class="px-2.5 py-1 rounded-lg bg-white/[0.04] text-[11px] text-slate-300 border border-white/[0.06]">
+              <span class="px-2.5 py-1 rounded-lg bg-white/[0.06] text-xs font-medium text-slate-200 border border-white/10">
                 #{tag}
               </span>
             ))}
@@ -448,7 +448,7 @@ const { character } = Astro.props;
               0 Entries
             </span>
           </div>
-          <p class="text-[11px] text-slate-400 leading-relaxed">
+          <p class="text-xs text-slate-300 leading-relaxed">
             Dynamic context injection. Triggers secret lore when matching keywords appear in conversation.
           </p>
           <div class="flex items-center gap-2">
