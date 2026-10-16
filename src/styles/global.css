@@ -1269,13 +1269,27 @@ html.power-saving-active #showcase-chat-btn .animate-pulse {
   animation: none !important;
 }
 
-/* 2. Disable Glows, Neon Borders & Ambient Blur Orbs */
+/* ==========================================================================
+   Phase 3: Disable Glows, Neon Borders & Ambient Blur Orbs
+   Eliminates GPU-heavy backdrop filter passes, blur convolutions, and colored box-shadows.
+   Restores solid opaque dark surfaces for headers/navbars to preserve high legibility.
+   ========================================================================== */
 html.power-saving-no-glows div.rounded-full.pointer-events-none.blur-3xl,
 html.power-saving-no-glows div.rounded-full.pointer-events-none.blur-2xl,
 html.power-saving-no-glows div.rounded-full.pointer-events-none.blur-xl,
+html.power-saving-no-glows .pointer-events-none[class*="blur-"],
+html.power-saving-no-glows [class*="blur-3xl"],
+html.power-saving-no-glows [class*="blur-2xl"],
+html.power-saving-active div.rounded-full.pointer-events-none.blur-3xl,
+html.power-saving-active div.rounded-full.pointer-events-none.blur-2xl,
+html.power-saving-active div.rounded-full.pointer-events-none.blur-xl,
+html.power-saving-active .pointer-events-none[class*="blur-"],
+html.power-saving-active [class*="blur-3xl"],
+html.power-saving-active [class*="blur-2xl"],
 html.power-saving-oled div.rounded-full.pointer-events-none.blur-3xl,
 html.power-saving-oled div.rounded-full.pointer-events-none.blur-2xl,
-html.power-saving-oled div.rounded-full.pointer-events-none.blur-xl {
+html.power-saving-oled div.rounded-full.pointer-events-none.blur-xl,
+html.power-saving-oled .pointer-events-none[class*="blur-"] {
   display: none !important;
 }
 
@@ -1286,17 +1300,60 @@ html.power-saving-no-glows .gold-btn-glow,
 html.power-saving-no-glows .glow-purple,
 html.power-saving-no-glows .glow-subtle,
 html.power-saving-no-glows [style*="box-shadow"],
+html.power-saving-no-glows [class*="shadow-purple"],
+html.power-saving-no-glows [class*="shadow-amber"],
+html.power-saving-no-glows [class*="shadow-rose"],
+html.power-saving-no-glows [class*="shadow-cyan"],
 html.power-saving-no-glows .shadow-2xl,
 html.power-saving-no-glows .shadow-xl,
+html.power-saving-active .gilded-card-halo,
+html.power-saving-active .gilded-card-halo-active,
+html.power-saving-active .gilded-avatar-glow,
+html.power-saving-active .gold-btn-glow,
+html.power-saving-active .glow-purple,
+html.power-saving-active .glow-subtle,
+html.power-saving-active [style*="box-shadow"],
+html.power-saving-active [class*="shadow-purple"],
+html.power-saving-active [class*="shadow-amber"],
+html.power-saving-active [class*="shadow-rose"],
+html.power-saving-active [class*="shadow-cyan"],
+html.power-saving-active .shadow-2xl,
+html.power-saving-active .shadow-xl,
 html.power-saving-oled .gilded-card-halo,
 html.power-saving-oled .gilded-card-halo-active {
   box-shadow: none !important;
+  text-shadow: none !important;
   filter: none !important;
+  --tw-ring-shadow: none !important;
+  --tw-shadow: 0 0 #0000 !important;
+  --tw-shadow-colored: 0 0 #0000 !important;
 }
 
-html.power-saving-no-glows [class*="backdrop-blur"] {
+html.power-saving-no-glows [class*="backdrop-blur"],
+html.power-saving-active [class*="backdrop-blur"] {
   backdrop-filter: none !important;
   -webkit-backdrop-filter: none !important;
+}
+
+/* Ensure sticky bars, floating menus, and headers remain fully opaque when blurs are disabled */
+html.power-saving-no-glows header[class*="backdrop-blur"],
+html.power-saving-no-glows nav[class*="backdrop-blur"],
+html.power-saving-no-glows div.sticky[class*="backdrop-blur"],
+html.power-saving-active header[class*="backdrop-blur"],
+html.power-saving-active nav[class*="backdrop-blur"],
+html.power-saving-active div.sticky[class*="backdrop-blur"] {
+  background-color: #07080d !important;
+}
+
+html.power-saving-no-glows nav.fixed[class*="backdrop-blur"],
+html.power-saving-active nav.fixed[class*="backdrop-blur"] {
+  background-color: #070913 !important;
+}
+
+html.power-saving-oled header[class*="backdrop-blur"],
+html.power-saving-oled nav[class*="backdrop-blur"],
+html.power-saving-oled div.sticky[class*="backdrop-blur"] {
+  background-color: #000000 !important;
 }
 
 /* 3. Freeze Animated Avatars, Pulses & Keyframes */
