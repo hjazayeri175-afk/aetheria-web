@@ -785,6 +785,15 @@ const {
             overlay.style.opacity = patOpacity.toString();
           }
 
+          // Respect OLED mode if active
+          if (document.documentElement.classList.contains('power-saving-oled')) {
+            root.style.setProperty('--theme-chat-bg', '#000000');
+            if (overlayLayer) overlayLayer.style.display = 'none';
+            if (imgLayer) imgLayer.style.display = 'none';
+            if (dimLayer) dimLayer.style.display = 'none';
+            if (overlay) overlay.style.display = 'none';
+          }
+
           const chatMessages = document.getElementById('chat-messages-container');
           if (chatMessages) {
             chatMessages.style.setProperty('--theme-bubble-radius', `${radius}px`);
@@ -919,7 +928,22 @@ const {
           root.classList.toggle('power-saving-no-glows', Boolean(settings.disableGlows || settings.master));
 
           // 4. Deep Dark OLED True Black Mode
-          root.classList.toggle('power-saving-oled', Boolean(settings.deepDarkOLED || settings.master));
+          const isOled = Boolean(settings.deepDarkOLED || settings.master);
+          const wasOled = root.classList.contains('power-saving-oled');
+          root.classList.toggle('power-saving-oled', isOled);
+
+          // Direct DOM live sync for chat wallpaper layers
+          const wpOverlay = document.getElementById('chat-wallpaper-overlay');
+          const wpImg = document.getElementById('chat-wallpaper-image-layer');
+          const wpDim = document.getElementById('chat-wallpaper-dimmer');
+          if (wpOverlay) wpOverlay.style.display = isOled ? 'none' : '';
+          if (wpImg) wpImg.style.display = isOled ? 'none' : '';
+          if (wpDim) wpDim.style.display = isOled ? 'none' : '';
+
+          // If OLED was just disabled, restore the theme's wallpaper & pattern
+          if (wasOled && !isOled && window.AetheriaTheme?.apply) {
+            window.AetheriaTheme.apply(window.AetheriaTheme.getSettings());
+          }
 
           // 5. Freeze Animated Avatars & Loops
           root.classList.toggle('power-saving-freeze-avatars', Boolean(settings.freezeAvatars || settings.master));

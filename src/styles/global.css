@@ -908,6 +908,12 @@ label[title*="Restore"]:hover svg {
 html.power-saving-oled,
 html.power-saving-oled body,
 html.power-saving-oled main,
+html.power-saving-oled header,
+html.power-saving-oled footer,
+html.power-saving-oled nav,
+html.power-saving-oled section,
+html.power-saving-oled aside,
+html.power-saving-oled #chat-viewport-section,
 html.power-saving-oled #view-hub,
 html.power-saving-oled #view-personas,
 html.power-saving-oled #view-appearance,
@@ -915,9 +921,7 @@ html.power-saving-oled #view-ai-engine,
 html.power-saving-oled #view-voice,
 html.power-saving-oled #view-privacy,
 html.power-saving-oled #view-devices,
-html.power-saving-oled #view-power-saving,
-html.power-saving-oled header,
-html.power-saving-oled nav {
+html.power-saving-oled #view-power-saving {
   background-color: #000000 !important;
   background-image: none !important;
 }
@@ -925,21 +929,59 @@ html.power-saving-oled nav {
 html.power-saving-oled {
   --bg-primary: #000000 !important;
   --bg-secondary: #000000 !important;
-  --bg-card: #050505 !important;
+  --bg-card: #040404 !important;
   --theme-chat-bg: #000000 !important;
 }
 
+/* Chat Wallpaper, Pattern Overlay & Dimmer Completely Muted in OLED */
+html.power-saving-oled #chat-wallpaper-overlay,
+html.power-saving-oled #chat-wallpaper-image-layer,
+html.power-saving-oled #chat-wallpaper-dimmer {
+  display: none !important;
+  opacity: 0 !important;
+  visibility: hidden !important;
+}
+
+/* Chat Layout & Components Pure Black */
+html.power-saving-oled #chat-messages-container,
+html.power-saving-oled #chat-input-toolbar,
+html.power-saving-oled #chat-drawer,
+html.power-saving-oled #chat-left-sidebar,
+html.power-saving-oled #chat-byok-tray > div {
+  background-color: #000000 !important;
+  border-color: rgba(255, 255, 255, 0.08) !important;
+}
+
+html.power-saving-oled .room-starter-pill {
+  background-color: #080808 !important;
+  border-color: rgba(255, 255, 255, 0.1) !important;
+}
+
+/* Site-wide Dark Neutral Cards & Panels */
 html.power-saving-oled .bg-\[\#07080d\],
 html.power-saving-oled .bg-\[\#141824\],
 html.power-saving-oled .bg-\[\#0d0f17\],
 html.power-saving-oled .bg-\[\#101420\],
 html.power-saving-oled .bg-\[\#12131a\],
+html.power-saving-oled .bg-\[\#090b16\],
+html.power-saving-oled .bg-\[\#0c0e1a\],
+html.power-saving-oled .bg-\[\#05060a\],
+html.power-saving-oled .bg-\[\#0e1222\],
 html.power-saving-oled .bg-\[\#101422\]\/90 {
-  background-color: #040404 !important;
+  background-color: #030303 !important;
   border-color: rgba(255, 255, 255, 0.08) !important;
 }
 
 /* 2. Disable Glows, Neon Borders & Backdrop Blurs */
+html.power-saving-no-glows .blur-3xl,
+html.power-saving-no-glows .blur-2xl,
+html.power-saving-no-glows .blur-xl,
+html.power-saving-no-glows [class*="blur-3xl"],
+html.power-saving-no-glows [class*="blur-2xl"],
+html.power-saving-no-glows [class*="blur-xl"] {
+  display: none !important;
+}
+
 html.power-saving-no-glows .gilded-card-halo,
 html.power-saving-no-glows .gilded-card-halo-active,
 html.power-saving-no-glows .gilded-avatar-glow,
@@ -947,21 +989,20 @@ html.power-saving-no-glows .gold-btn-glow,
 html.power-saving-no-glows .glow-purple,
 html.power-saving-no-glows .glow-subtle,
 html.power-saving-no-glows [style*="box-shadow"],
-html.power-saving-no-glows .shadow-2xl,
-html.power-saving-no-glows .shadow-xl {
+html.power-saving-no-glows [class*="shadow-"],
+html.power-saving-no-glows [class*="drop-shadow-"] {
   box-shadow: none !important;
+  filter: none !important;
+  -webkit-filter: none !important;
 }
 
-html.power-saving-no-glows .blur-3xl,
-html.power-saving-no-glows .blur-2xl,
-html.power-saving-no-glows .blur-xl,
 html.power-saving-no-glows .backdrop-blur-md,
 html.power-saving-no-glows .backdrop-blur-sm,
 html.power-saving-no-glows .backdrop-blur-lg,
+html.power-saving-no-glows .backdrop-blur-xl,
 html.power-saving-no-glows [class*="backdrop-blur"] {
   backdrop-filter: none !important;
   -webkit-backdrop-filter: none !important;
-  filter: none !important;
 }
 
 /* 3. Freeze Animated Avatars & Keyframes */
