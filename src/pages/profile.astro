@@ -335,6 +335,16 @@ import {
           <!-- Populated by JS -->
         </div>
 
+        <!-- + Create New Persona Button (as seen in image_12.png) -->
+        <button 
+          type="button" 
+          id="btn-create-persona-bottom"
+          class="w-full py-3 rounded-full border border-dashed border-amber-500/50 hover:border-amber-400 bg-amber-950/15 hover:bg-amber-950/25 text-amber-300 text-xs font-semibold flex items-center justify-center gap-2 transition cursor-pointer active:scale-98 shadow-sm"
+        >
+          <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M5 12h14"/><path d="M12 5v14"/></svg>
+          <span>Create New Persona</span>
+        </button>
+
         <!-- Hidden Global File Input for Persona Avatar Uploads -->
         <input type="file" id="avatar-file-input" accept="image/png,image/jpeg,image/webp,image/gif" class="hidden" />
 
@@ -1243,7 +1253,7 @@ import {
             class="persona-card-inner relative w-full h-full preserve-3d ${isFlipped ? 'rotate-y-180' : ''}" 
             style="transform-style: preserve-3d; transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1);"
           >
-            <!-- ================= FRONT: VIEWER (Gilded Obsidian) ================= -->
+            <!-- ================= FRONT: VIEWER (Exact Match to image_12.png) ================= -->
             <div class="absolute inset-0 backface-hidden rounded-3xl p-5 flex flex-col justify-between border ${p.isActive ? 'border-amber-500/60 shadow-2xl shadow-amber-950/60 ring-1 ring-amber-400/40' : 'border-amber-500/30 shadow-2xl shadow-black/90'} bg-gradient-to-b from-[#1b1612]/98 via-[#120f0d]/98 to-[#090807]/98 backdrop-blur-2xl overflow-hidden">
               
               ${filigreeSvg}
@@ -1251,92 +1261,75 @@ import {
               <!-- Subtle Ambient Radial Glow -->
               <div class="absolute -top-16 -right-16 w-44 h-44 rounded-full ${p.isActive ? 'bg-amber-500/20' : 'bg-white/[0.02]'} blur-3xl pointer-events-none"></div>
 
-              <!-- Top Status Bar -->
-              <div class="flex items-center justify-between z-10">
-                ${p.isActive ? `
-                  <div class="px-2.5 py-1 rounded-full bg-amber-500/15 border border-amber-500/40 text-amber-300 text-[10px] font-bold flex items-center gap-1.5 shadow-sm">
-                    <span class="w-1.5 h-1.5 rounded-full bg-amber-400 animate-pulse shadow-[0_0_6px_#f59e0b]"></span>
-                    <span>Active in Roleplay</span>
-                  </div>
-                ` : `
-                  <button type="button" class="btn-card-activate px-2.5 py-1 rounded-full bg-stone-900/60 hover:bg-amber-500/20 border border-amber-500/30 text-amber-200/80 hover:text-amber-200 text-[10px] font-semibold transition cursor-pointer" data-id="${p.id}">
-                    <span>Set as Active</span>
-                  </button>
-                `}
-
-                <div class="flex items-center gap-1.5">
-                  <div class="px-2.5 py-0.5 rounded-full border text-[10px] font-mono font-medium ${tokens > 500 ? 'bg-amber-500/30 border-amber-400 text-amber-200 font-bold shadow-[0_0_8px_rgba(245,158,11,0.5)]' : 'bg-amber-950/40 border-amber-500/30 text-amber-300'}">
-                    ~${tokens} tok
-                  </div>
-                  <button type="button" class="btn-trigger-flip-edit w-7 h-7 rounded-xl bg-amber-500/15 hover:bg-amber-500/30 text-amber-300 hover:text-amber-100 border border-amber-500/40 flex items-center justify-center transition active:scale-95 cursor-pointer shadow-md" data-id="${p.id}" title="Edit Persona">
-                    <svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 3a2.85 2.83 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5Z"/><path d="m15 5 4 4"/></svg>
-                  </button>
+              <!-- Top-Right Stacked Token Badge (as in image_12.png) -->
+              <div class="flex items-center justify-end z-10 w-full">
+                <div class="px-2.5 py-1 rounded-xl bg-black/60 border ${tokens > 500 ? 'border-amber-400 bg-amber-500/20' : 'border-amber-500/40'} flex flex-col items-center justify-center min-w-[52px] shadow-sm">
+                  <span class="text-xs font-bold text-amber-300 font-mono leading-none">${tokens}</span>
+                  <span class="text-[9px] text-amber-200/70 font-sans leading-none mt-0.5">tokens</span>
                 </div>
               </div>
 
-              <!-- Center Avatar & Identity -->
-              <div class="flex flex-col items-center text-center my-auto py-2 z-10">
-                <div class="relative w-20 h-20 sm:w-22 sm:h-22 rounded-full overflow-hidden border-2 ${p.isActive ? 'border-amber-400 ring-2 ring-amber-500/30 gilded-avatar-glow' : 'border-amber-500/30'} bg-black/60 flex items-center justify-center mb-2.5 transition">
+              <!-- Center Avatar & Identity (image_12.png) -->
+              <div class="flex flex-col items-center text-center my-auto py-1 z-10">
+                <div class="relative w-24 h-24 sm:w-26 sm:h-26 rounded-full overflow-hidden border-2 ${p.isActive ? 'border-amber-400 ring-2 ring-amber-500/30 gilded-avatar-glow' : 'border-amber-500/30'} bg-black/60 flex items-center justify-center mb-2 transition">
                   ${p.avatar ? `
                     <img src="${p.avatar}" alt="${displayName}" class="w-full h-full object-cover" />
                   ` : `
-                    <div class="w-full h-full flex items-center justify-center text-amber-300 font-bold text-2xl bg-gradient-to-tr from-amber-950/60 to-stone-900/60">
+                    <div class="w-full h-full flex items-center justify-center text-amber-300 font-bold text-3xl bg-gradient-to-tr from-amber-950/60 to-stone-900/60">
                       ${(displayName.charAt(0) || 'H').toUpperCase()}
                     </div>
                   `}
                 </div>
 
-                <h2 class="text-xl sm:text-2xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-amber-100 via-amber-200 to-amber-400 tracking-tight truncate max-w-[260px]">${displayName}</h2>
+                <!-- Name & ACTIVE Badge -->
+                <div class="flex items-center justify-center gap-2 mt-1">
+                  <h2 class="text-xl sm:text-2xl font-bold text-white tracking-tight truncate max-w-[200px]">${displayName}</h2>
+                  ${p.isActive ? `
+                    <span class="px-2.5 py-0.5 rounded-full border border-amber-400/80 bg-amber-950/80 text-amber-300 text-[10px] font-bold tracking-wider uppercase shadow-[0_0_8px_rgba(245,158,11,0.3)]">
+                      ACTIVE
+                    </span>
+                  ` : `
+                    <button type="button" class="btn-card-activate px-2 py-0.5 rounded-full border border-stone-600 bg-stone-900/80 text-stone-400 hover:text-amber-200 hover:border-amber-500/50 text-[10px] font-bold tracking-wider uppercase transition cursor-pointer" data-id="${p.id}" title="Set as active persona">
+                      SET ACTIVE
+                    </button>
+                  `}
+                </div>
                 
-                <!-- Badges Row -->
-                <div class="flex flex-wrap items-center justify-center gap-1.5 mt-2">
-                  <span class="px-2 py-0.5 rounded-lg bg-amber-500/10 border border-amber-500/25 text-[10px] font-medium text-amber-200/90">
-                    ${ageDisplay}
-                  </span>
-                  <span class="px-2 py-0.5 rounded-lg bg-amber-500/15 border border-amber-500/35 text-[10px] font-semibold text-amber-300">
-                    ${pronounsDisplay}
-                  </span>
-                  <span class="px-2 py-0.5 rounded-lg bg-stone-900/60 border border-white/5 text-[10px] text-stone-400">
-                    ${boundDisplay}
+                <!-- Demographic Tag Pill: age • pronouns -->
+                <div class="flex items-center justify-center mt-1.5">
+                  <span class="px-3 py-1 rounded-full bg-stone-900/80 border border-stone-700/60 text-xs text-stone-300 font-medium">
+                    ${p.age ? escapeHtml(p.age) : '22'} • ${p.pronouns ? escapeHtml(p.pronouns).toLowerCase() : 'he/him'}
                   </span>
                 </div>
-              </div>
 
-              <!-- About & Directives Snippet Box -->
-              <div class="space-y-2 z-10">
-                <div class="bg-black/40 border border-amber-500/25 rounded-2xl p-3 min-h-[75px] max-h-[110px] overflow-y-auto no-scrollbar">
-                  <div class="flex items-center justify-between text-[10px] font-bold uppercase tracking-wider text-amber-400/90 mb-1">
-                    <span>About Persona</span>
-                    <span class="text-[9px] text-stone-500 font-normal">Viewer</span>
-                  </div>
-                  <p class="text-xs text-amber-100/90 leading-relaxed line-clamp-3">
-                    ${aboutText || '<span class="italic text-stone-500">No description provided yet. Flip to customize.</span>'}
+                <!-- Bio Description Text -->
+                <div class="my-auto py-2.5 px-3">
+                  <p class="text-xs text-stone-300/90 leading-relaxed text-center italic line-clamp-3">
+                    "${aboutText || 'A quiet, observant guy who loves cafes, coding, and late-night talks.'}"
                   </p>
                 </div>
 
-                ${directivesText ? `
-                  <div class="px-3 py-1.5 rounded-xl bg-amber-950/30 border border-amber-500/30 flex items-center justify-between text-[11px] text-amber-200">
-                    <span class="truncate max-w-[220px]">📌 ${directivesText}</span>
-                    <span class="text-[9px] text-amber-400/80 font-mono">Rule</span>
-                  </div>
-                ` : ''}
+                <!-- Golden Center Pip Glow Divider -->
+                <div class="w-full h-[1px] bg-gradient-to-r from-transparent via-amber-500/40 to-transparent relative my-2 flex items-center justify-center">
+                  <span class="w-1.5 h-1.5 rounded-full bg-amber-300 shadow-[0_0_8px_#f59e0b]"></span>
+                </div>
               </div>
 
-              <!-- Card Front Footer Actions -->
-              <div class="pt-3 border-t border-amber-500/20 flex items-center gap-2 z-10">
-                ${p.isActive ? `
-                  <div class="flex-1 py-2 px-3 rounded-xl bg-amber-500/10 border border-amber-500/30 text-amber-300 text-xs font-semibold text-center select-none shadow-sm">
-                    Currently Active ✓
-                  </div>
-                ` : `
-                  <button type="button" class="btn-card-activate flex-1 py-2 px-3 rounded-xl bg-gradient-to-r from-amber-400 via-amber-400 to-amber-500 hover:from-amber-300 hover:to-amber-400 text-stone-950 text-xs font-bold shadow-md shadow-amber-950/60 transition active:scale-95 cursor-pointer text-center" data-id="${p.id}">
-                    Set as Active
-                  </button>
-                `}
-                
-                <button type="button" class="btn-trigger-flip-edit py-2 px-3 rounded-xl bg-stone-900/60 hover:bg-amber-500/15 text-amber-200/90 hover:text-amber-100 border border-amber-500/30 text-xs font-medium flex items-center justify-center gap-1.5 transition active:scale-95 cursor-pointer shrink-0" data-id="${p.id}">
-                  <svg class="w-3.5 h-3.5 text-amber-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 3a2.85 2.83 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5Z"/><path d="m15 5 4 4"/></svg>
+              <!-- Card Front Footer Actions: 3 Beveled Buttons (Edit, Bind to Chat, Delete) -->
+              <div class="grid grid-cols-3 gap-2 pt-1 z-10">
+                <button type="button" class="btn-trigger-flip-edit py-2.5 px-1 rounded-xl bg-[#181512] hover:bg-amber-500/15 border border-amber-500/35 hover:border-amber-400 text-amber-200 text-xs font-semibold flex items-center justify-center gap-1.5 transition active:scale-95 cursor-pointer shadow-sm" data-id="${p.id}">
+                  <svg class="w-3.5 h-3.5 text-amber-300" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 3a2.85 2.83 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5Z"/><path d="m15 5 4 4"/></svg>
                   <span>Edit</span>
+                </button>
+
+                <button type="button" class="btn-card-bind py-2.5 px-1 rounded-xl bg-[#181512] hover:bg-amber-500/15 border border-amber-500/35 hover:border-amber-400 text-amber-200 text-xs font-semibold flex items-center justify-center gap-1.5 transition active:scale-95 cursor-pointer shadow-sm" data-id="${p.id}">
+                  <svg class="w-3.5 h-3.5 text-amber-300" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg>
+                  <span>Bind to Chat</span>
+                </button>
+
+                <button type="button" class="btn-card-delete py-2.5 px-1 rounded-xl bg-[#1c1214] hover:bg-red-950/40 border border-red-500/35 hover:border-red-400 text-[#e06c60] hover:text-red-300 text-xs font-semibold flex items-center justify-center gap-1.5 transition active:scale-95 cursor-pointer shadow-sm" data-id="${p.id}">
+                  <svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18"/><path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"/><path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"/></svg>
+                  <span>Delete</span>
                 </button>
               </div>
 
@@ -1977,12 +1970,41 @@ import {
         saveCardForm(personaId);
       });
 
+      // Bind persona to chat
+      card.querySelector('.btn-card-bind')?.addEventListener('click', (e) => {
+        e.stopPropagation();
+        handleBindToChat(personaId);
+      });
+
       // Delete persona
       card.querySelector('.btn-card-delete')?.addEventListener('click', (e) => {
         e.stopPropagation();
         deleteCardPersona(personaId);
       });
     });
+  }
+
+  function handleBindToChat(personaId: string) {
+    const p = personas.find(x => x.id === personaId);
+    if (!p) return;
+
+    const currentBindings = (p.boundChatIds || []).join(', ');
+    const promptText = `Bind "${p.name || 'Persona'}" to specific character chats.\n\nCurrent bound chats: ${currentBindings || 'All chats (Unrestricted)'}\n\nEnter comma-separated Character IDs to lock to specific chats, or leave empty for All Chats:`;
+
+    const input = window.prompt(promptText, currentBindings);
+    if (input === null) return; // User cancelled
+
+    const trimmed = input.trim();
+    if (!trimmed) {
+      p.boundChatIds = [];
+      showToast(`"${p.name}" active in ALL chats`, 'info');
+    } else {
+      p.boundChatIds = trimmed.split(',').map(s => s.trim()).filter(Boolean);
+      showToast(`Bound to ${p.boundChatIds.length} chat(s)`, 'success');
+    }
+
+    savePersonas();
+    render3DCarousel();
   }
 
   function setupGestures() {
@@ -2064,6 +2086,11 @@ import {
 
     // Global "+ New Persona" button in top bar
     document.getElementById('btn-carousel-add-new')?.addEventListener('click', () => {
+      createNewPersona();
+    });
+
+    // Bottom "+ Create New Persona" button (image_12.png)
+    document.getElementById('btn-create-persona-bottom')?.addEventListener('click', () => {
       createNewPersona();
     });
   }
