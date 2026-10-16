@@ -4496,14 +4496,19 @@ import {
 
       function updatePreview() {
         if (!previewViewport) return;
+        const isDay = document.documentElement.getAttribute('data-base-mode') === 'day' || settings.baseMode === 'day';
 
         // 1. Wallpaper background
-        if (settings.chatWallpaper) {
+        if (settings.chatWallpaper && (settings.chatWallpaper.startsWith('url(') || settings.chatWallpaper.startsWith('data:'))) {
+          previewViewport.style.background = settings.chatWallpaper;
+          previewViewport.style.backgroundSize = 'cover';
+          previewViewport.style.backgroundPosition = 'center';
+        } else if (settings.chatWallpaper && !isDay) {
           previewViewport.style.background = settings.chatWallpaper;
           previewViewport.style.backgroundSize = 'cover';
           previewViewport.style.backgroundPosition = 'center';
         } else {
-          previewViewport.style.background = '#0a0d16';
+          previewViewport.style.background = isDay ? 'linear-gradient(to bottom, #f8fafc, #f1f5f9)' : '#0a0d16';
         }
 
         // 1.5 Wallpaper pattern overlay
@@ -4513,7 +4518,7 @@ import {
           if (patObj && patObj.pattern && patObj.pattern !== 'none') {
             previewPattern.style.backgroundImage = patObj.pattern;
             previewPattern.style.backgroundSize = patObj.patternSize;
-            previewPattern.style.opacity = (settings.chatPatternOpacity !== undefined ? settings.chatPatternOpacity : 0.16).toString();
+            previewPattern.style.opacity = (settings.chatPatternOpacity !== undefined ? settings.chatPatternOpacity : (isDay ? 0.06 : 0.16)).toString();
           } else {
             previewPattern.style.backgroundImage = 'none';
           }
@@ -4532,8 +4537,18 @@ import {
         if (previewCharBubble) {
           const radius = settings.bubbleRadius !== undefined ? settings.bubbleRadius : 16;
           previewCharBubble.style.borderRadius = `${radius}px`;
-          if (settings.charBubbleBg) {
-            previewCharBubble.style.background = settings.charBubbleBg;
+          if (isDay) {
+            previewCharBubble.style.background = '#ffffff';
+            previewCharBubble.style.borderColor = 'rgba(0, 0, 0, 0.08)';
+            previewCharBubble.style.boxShadow = '0 2px 8px rgba(0, 0, 0, 0.04)';
+          } else {
+            previewCharBubble.style.background = settings.charBubbleBg || '#181d2c';
+            previewCharBubble.style.borderColor = 'rgba(255, 255, 255, 0.1)';
+            previewCharBubble.style.boxShadow = '';
+          }
+          const charMsgText = previewCharBubble.querySelector('p');
+          if (charMsgText) {
+            charMsgText.style.color = isDay ? '#0f172a' : '#ffffff';
           }
         }
 
@@ -4557,7 +4572,7 @@ import {
         if (badgeDayNight) {
           badgeDayNight.textContent = isDayMode ? 'Day' : 'Dark';
           if (isDayMode) {
-            badgeDayNight.className = 'text-xs text-amber-400 font-semibold capitalize px-2.5 py-0.5 rounded-full bg-amber-500/10 border border-amber-500/20';
+            badgeDayNight.className = 'text-xs text-amber-700 font-bold capitalize px-2.5 py-0.5 rounded-full bg-amber-100 border border-amber-300 shadow-xs';
           } else {
             badgeDayNight.className = 'text-xs text-slate-400 capitalize px-2.5 py-0.5 rounded-full bg-white/[0.04]';
           }
@@ -4593,6 +4608,7 @@ function renderPresets() {
         if (!presetsGrid) return;
         const presets = (window as any).AetheriaTheme?.PRESETS || [];
         const activePresetId = settings.id || 'gamer-mode';
+        const isDay = document.documentElement.getAttribute('data-base-mode') === 'day' || settings.baseMode === 'day';
 
         presetsGrid.innerHTML = presets.map((p: any) => {
           const isSelected = p.id === activePresetId;
@@ -4600,10 +4616,26 @@ function renderPresets() {
           const floatingHtml = THEME_FLOATING_ELEMENTS[p.id] || '';
           const accentColor = p.accent || '#8E9AB6';
 
+          const cardBg = isDay 
+            ? `radial-gradient(circle at 50% 10%, ${accentColor}14 0%, #ffffff 75%)`
+            : `radial-gradient(circle at 50% 10%, ${accentColor}18 0%, #13161c 70%)`;
+          const cardBorder = isSelected 
+            ? `2px solid ${accentColor}`
+            : (isDay ? '1px solid rgba(0, 0, 0, 0.08)' : '1px solid rgba(255, 255, 255, 0.08)');
+          const cardShadow = isSelected 
+            ? (isDay ? `0 0 0 2px ${accentColor}33, 0 8px 20px ${accentColor}25, 0 4px 12px rgba(0,0,0,0.06)` : `0 0 0 2px ${accentColor}88, 0 0 20px ${accentColor}35, 0 12px 24px rgba(0,0,0,0.7)`)
+            : (isDay ? '0 4px 14px rgba(0, 0, 0, 0.04)' : '0 6px 18px rgba(0, 0, 0, 0.4)');
+          const taglineColor = isDay ? '#475569' : '#E1E3E8';
+          const mockChatBg = isDay ? '#f8fafc' : `${p.charBubbleBg}99`;
+          const mockChatBorder = isDay ? '1px solid rgba(0,0,0,0.06)' : '1px solid rgba(255,255,255,0.06)';
+          const mockCharBubbleBg = isDay ? '#ffffff' : p.charBubbleBg;
+          const mockCharBubbleBorder = isDay ? '1px solid rgba(0,0,0,0.08)' : '1px solid rgba(255,255,255,0.12)';
+          const mockSublineBg = isDay ? 'rgba(0,0,0,0.12)' : 'rgba(255,255,255,0.25)';
+
           return `
             <div 
               class="preset-theme-card shrink-0 w-[122px] sm:w-[138px] md:w-[152px] h-[225px] sm:h-[240px] rounded-[22px] p-2.5 flex flex-col justify-between relative overflow-hidden transition-all duration-300 cursor-pointer select-none group" 
-              style="background: radial-gradient(circle at 50% 10%, ${accentColor}18 0%, #13161c 70%); border: ${isSelected ? `2px solid ${accentColor}` : '1px solid rgba(255, 255, 255, 0.08)'}; box-shadow: ${isSelected ? `0 0 0 2px ${accentColor}88, 0 0 20px ${accentColor}35, 0 12px 24px rgba(0,0,0,0.7)` : '0 6px 18px rgba(0, 0, 0, 0.4)'};"
+              style="background: ${cardBg}; border: ${cardBorder}; box-shadow: ${cardShadow};"
               data-preset-id="${p.id}"
             >
               <!-- Selected Checkmark Badge (Top-Right) -->
@@ -4627,22 +4659,22 @@ function renderPresets() {
 
               <!-- 3. Headline / Tagline Text -->
               <div class="text-center px-0.5 mb-1">
-                <div class="text-[9px] sm:text-[10px] font-normal text-[#E1E3E8] leading-tight line-clamp-2 opacity-90">
+                <div class="text-[9px] sm:text-[10px] font-normal leading-tight line-clamp-2 opacity-90" style="color: ${taglineColor};">
                   ${p.tagline || p.description}
                 </div>
               </div>
 
               <!-- 4. Mock Chat Interface Container -->
-              <div class="w-full rounded-xl p-1.5 relative overflow-hidden flex flex-col justify-between h-[52px] sm:h-[56px] shadow-inner" style="background: ${p.charBubbleBg}99; backdrop-filter: blur(8px); border: 1px solid rgba(255,255,255,0.06);">
+              <div class="w-full rounded-xl p-1.5 relative overflow-hidden flex flex-col justify-between h-[52px] sm:h-[56px] shadow-inner" style="background: ${mockChatBg}; backdrop-filter: blur(8px); border: ${mockChatBorder};">
                 <!-- Floating Theme Micro-Elements -->
                 <div class="absolute inset-0 pointer-events-none overflow-hidden select-none text-[10px]">
                   ${floatingHtml}
                 </div>
                 
                 <!-- Left/Incoming Chat Bubble -->
-                <div class="self-start max-w-[85%] rounded-lg px-1.5 py-0.5 shadow-xs relative z-10" style="background: ${p.charBubbleBg}; border: 1px solid rgba(255,255,255,0.12);">
+                <div class="self-start max-w-[85%] rounded-lg px-1.5 py-0.5 shadow-xs relative z-10" style="background: ${mockCharBubbleBg}; border: ${mockCharBubbleBorder};">
                   <div class="h-1 w-8 sm:w-10 rounded-full mb-0.5" style="background: ${accentColor}99;"></div>
-                  <div class="h-1 w-5 sm:w-6 rounded-full" style="background: rgba(255,255,255,0.25);"></div>
+                  <div class="h-1 w-5 sm:w-6 rounded-full" style="background: ${mockSublineBg};"></div>
                 </div>
 
                 <!-- Right/Outgoing Chat Bubble -->
@@ -4659,7 +4691,11 @@ function renderPresets() {
           card.addEventListener('click', () => {
             const found = presets.find((p: any) => p.id === card.dataset.presetId);
             if (!found) return;
+            const currentBaseMode = settings.baseMode;
             settings = { ...settings, ...found };
+            if (currentBaseMode) {
+              settings.baseMode = currentBaseMode;
+            }
             syncInputs();
             updatePreview();
             saveAndApply();
@@ -4726,7 +4762,9 @@ function renderPresets() {
         const val = parseFloat(slider.value) || 0;
         const percent = Math.min(Math.max(((val - min) / (max - min)) * 100, 0), 100);
         const activeColor = settings.accent || 'var(--theme-accent, #8E9AB6)';
-        slider.style.background = `linear-gradient(to right, ${activeColor} 0%, ${activeColor} ${percent}%, rgba(255, 255, 255, 0.14) ${percent}%, rgba(255, 255, 255, 0.14) 100%)`;
+        const isDay = document.documentElement.getAttribute('data-base-mode') === 'day' || settings.baseMode === 'day';
+        const trackColor = isDay ? '#e2e8f0' : 'rgba(255, 255, 255, 0.14)';
+        slider.style.background = `linear-gradient(to right, ${activeColor} 0%, ${activeColor} ${percent}%, ${trackColor} ${percent}%, ${trackColor} 100%)`;
       }
 
       function syncInputs() {
@@ -4757,8 +4795,10 @@ function renderPresets() {
 
       btnSwitchDayNight?.addEventListener('click', () => {
         settings.baseMode = settings.baseMode === 'day' ? 'dark' : 'day';
+        syncInputs();
         updatePreview();
         saveAndApply();
+        renderPresets();
       });
 
       btnToggleWallpaperDrawer?.addEventListener('click', () => {

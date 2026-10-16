@@ -210,14 +210,21 @@ html.day-mode #header-user-profile-btn:hover {
 
 html[data-base-mode="day"] #header-signin-btn,
 html.day-mode #header-signin-btn {
-  background-color: #0f172a !important;
-  border-color: #0f172a !important;
-  color: #ffffff !important;
+  background-color: rgba(124, 58, 237, 0.08) !important;
+  border-color: rgba(124, 58, 237, 0.22) !important;
+  color: #7c3aed !important;
 }
 
 html[data-base-mode="day"] #header-signin-btn:hover,
 html.day-mode #header-signin-btn:hover {
-  background-color: #1e293b !important;
+  background-color: rgba(124, 58, 237, 0.16) !important;
+  border-color: rgba(124, 58, 237, 0.35) !important;
+  color: #6d28d9 !important;
+}
+
+html[data-base-mode="day"] #header-signin-btn svg,
+html.day-mode #header-signin-btn svg {
+  color: #7c3aed !important;
 }
 
 html[data-base-mode="day"] #header-user-profile-btn .ring-\[\#070913\],
@@ -3023,9 +3030,188 @@ html.day-mode #profile-main-container .text-white {
   color: #0f172a !important;
 }
 
+html[data-base-mode="day"] #profile-main-container .text-\[\#8E9AB6\],
 html[data-base-mode="day"] #profile-main-container .text-\[\#8e98a8\],
+html.day-mode #profile-main-container .text-\[\#8E9AB6\],
 html.day-mode #profile-main-container .text-\[\#8e98a8\] {
+  color: #334155 !important;
+}
+
+/* Headings and primary titles */
+html[data-base-mode="day"] #profile-main-container h2,
+html[data-base-mode="day"] #profile-main-container h3,
+html[data-base-mode="day"] #profile-main-container h4,
+html[data-base-mode="day"] #profile-main-container .text-slate-100,
+html[data-base-mode="day"] #profile-main-container .text-slate-200,
+html.day-mode #profile-main-container h2,
+html.day-mode #profile-main-container h3,
+html.day-mode #profile-main-container h4,
+html.day-mode #profile-main-container .text-slate-100,
+html.day-mode #profile-main-container .text-slate-200 {
+  color: #0f172a !important;
+}
+
+/* Captions and secondary text */
+html[data-base-mode="day"] #profile-main-container .text-slate-400,
+html[data-base-mode="day"] #profile-main-container .text-white\/70,
+html[data-base-mode="day"] #profile-main-container .text-white\/60,
+html.day-mode #profile-main-container .text-slate-400,
+html.day-mode #profile-main-container .text-white\/70,
+html.day-mode #profile-main-container .text-white\/60 {
   color: #64748b !important;
+}
+
+/* Prevent white-on-white text during hover */
+html[data-base-mode="day"] #profile-main-container .group:hover .group-hover\:text-white,
+html.day-mode #profile-main-container .group:hover .group-hover\:text-white {
+  color: #7c3aed !important;
+}
+
+/* Icons with #8E9AB6 */
+html[data-base-mode="day"] #view-appearance svg.text-\[\#8E9AB6\],
+html.day-mode #view-appearance svg.text-\[\#8E9AB6\] {
+  color: #7c3aed !important;
+}
+
+/* Borders inside profile subview cards */
+html[data-base-mode="day"] #profile-main-container .border-white\/\[0\.04\],
+html[data-base-mode="day"] #profile-main-container .border-white\/\[0\.06\],
+html[data-base-mode="day"] #profile-main-container .border-white\/\[0\.08\],
+html[data-base-mode="day"] #profile-main-container .border-white\/10,
+html.day-mode #profile-main-container .border-white\/\[0\.04\],
+html.day-mode #profile-main-container .border-white\/\[0\.06\],
+html.day-mode #profile-main-container .border-white\/\[0\.08\],
+html.day-mode #profile-main-container .border-white\/10 {
+  border-color: rgba(0, 0, 0, 0.06) !important;
+}
+
+/* Rows and nested card items */
+html[data-base-mode="day"] #profile-main-container .bg-white\/\[0\.02\],
+html[data-base-mode="day"] #profile-main-container .bg-white\/\[0\.03\],
+html[data-base-mode="day"] #profile-main-container .bg-white\/\[0\.04\],
+html[data-base-mode="day"] #profile-main-container .bg-white\/\[0\.06\],
+html.day-mode #profile-main-container .bg-white\/\[0\.02\],
+html.day-mode #profile-main-container .bg-white\/\[0\.03\],
+html.day-mode #profile-main-container .bg-white\/\[0\.04\],
+html.day-mode #profile-main-container .bg-white\/\[0\.06\] {
+  background-color: #f8fafc !important;
+}
+
+html[data-base-mode="day"] #profile-main-container .hover\:bg-white\/\[0\.04\]:hover,
+html[data-base-mode="day"] #profile-main-container .hover\:bg-white\/\[0\.06\]:hover,
+html[data-base-mode="day"] #profile-main-container .hover\:bg-white\/\[0\.08\]:hover,
+html.day-mode #profile-main-container .hover\:bg-white\/\[0\.04\]:hover,
+html.day-mode #profile-main-container .hover\:bg-white\/\[0\.06\]:hover,
+html.day-mode #profile-main-container .hover\:bg-white\/\[0\.08\]:hover {
+  background-color: #f1f5f9 !important;
+}
+
+/* Gradient and solid colored action buttons keep pure white text */
+html[data-base-mode="day"] #profile-main-container button.bg-gradient-to-r,
+html[data-base-mode="day"] #profile-main-container button.bg-purple-600,
+html[data-base-mode="day"] #profile-main-container a.bg-gradient-to-r,
+html[data-base-mode="day"] #profile-main-container [class*="bg-purple-600"],
+html.day-mode #profile-main-container button.bg-gradient-to-r,
+html.day-mode #profile-main-container button.bg-purple-600,
+html.day-mode #profile-main-container a.bg-gradient-to-r,
+html.day-mode #profile-main-container [class*="bg-purple-600"] {
+  color: #ffffff !important;
+}
+html[data-base-mode="day"] #profile-main-container button.bg-gradient-to-r *,
+html[data-base-mode="day"] #profile-main-container button.bg-purple-600 *,
+html.day-mode #profile-main-container button.bg-gradient-to-r *,
+html.day-mode #profile-main-container button.bg-purple-600 * {
+  color: #ffffff !important;
+}
+
+/* Day / Night switch badge */
+html[data-base-mode="day"] #badge-day-night,
+html.day-mode #badge-day-night {
+  background-color: #fef3c7 !important;
+  color: #b45309 !important;
+  border: 1px solid #fde68a !important;
+  font-weight: 700 !important;
+}
+
+/* Back button and carousel chevrons */
+html[data-base-mode="day"] #btn-back-from-appearance,
+html[data-base-mode="day"] #btn-prev-theme,
+html[data-base-mode="day"] #btn-next-theme,
+html.day-mode #btn-back-from-appearance,
+html.day-mode #btn-prev-theme,
+html.day-mode #btn-next-theme {
+  background-color: #f1f5f9 !important;
+  border: 1px solid rgba(0, 0, 0, 0.08) !important;
+  color: #334155 !important;
+}
+html[data-base-mode="day"] #btn-back-from-appearance:hover,
+html[data-base-mode="day"] #btn-prev-theme:hover,
+html[data-base-mode="day"] #btn-next-theme:hover,
+html.day-mode #btn-back-from-appearance:hover,
+html.day-mode #btn-prev-theme:hover,
+html.day-mode #btn-next-theme:hover {
+  background-color: #e2e8f0 !important;
+  color: #0f172a !important;
+}
+
+/* Toggle Switches */
+html[data-base-mode="day"] #view-appearance .peer:not(:checked) + div,
+html.day-mode #view-appearance .peer:not(:checked) + div {
+  background-color: #cbd5e1 !important;
+}
+
+/* Slider Track & Dot Notches */
+html[data-base-mode="day"] #view-appearance .telegram-slider,
+html.day-mode #view-appearance .telegram-slider {
+  background-color: #e2e8f0 !important;
+}
+html[data-base-mode="day"] #view-appearance .bg-white\/20,
+html.day-mode #view-appearance .bg-white\/20 {
+  background-color: rgba(0, 0, 0, 0.15) !important;
+}
+
+/* Name Color Pill */
+html[data-base-mode="day"] #profile-name-pill,
+html.day-mode #profile-name-pill {
+  background-color: rgba(124, 58, 237, 0.08) !important;
+  border: 1px solid rgba(124, 58, 237, 0.2) !important;
+}
+
+/* Live Chat Preview in Card 1 */
+html[data-base-mode="day"] #profile-preview-viewport,
+html.day-mode #profile-preview-viewport {
+  background: linear-gradient(to bottom, #f8fafc, #f1f5f9) !important;
+  border-color: rgba(0, 0, 0, 0.08) !important;
+}
+html[data-base-mode="day"] #profile-preview-char-bubble,
+html.day-mode #profile-preview-char-bubble {
+  background-color: #ffffff !important;
+  border-color: rgba(0, 0, 0, 0.08) !important;
+  color: #0f172a !important;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.05) !important;
+}
+html[data-base-mode="day"] #profile-preview-char-bubble p,
+html[data-base-mode="day"] #profile-preview-char-bubble span,
+html.day-mode #profile-preview-char-bubble p,
+html.day-mode #profile-preview-char-bubble span {
+  color: #0f172a !important;
+}
+
+/* Theme Preset Carousel Cards in Day Mode */
+html[data-base-mode="day"] .preset-theme-card,
+html.day-mode .preset-theme-card {
+  background-color: #ffffff !important;
+  border-color: rgba(0, 0, 0, 0.08) !important;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.04) !important;
+}
+html[data-base-mode="day"] .preset-theme-card .text-\[\#E1E3E8\],
+html.day-mode .preset-theme-card .text-\[\#E1E3E8\] {
+  color: #475569 !important;
+}
+html[data-base-mode="day"] .preset-theme-card div.shadow-inner,
+html.day-mode .preset-theme-card div.shadow-inner {
+  background-color: #f8fafc !important;
+  border-color: rgba(0, 0, 0, 0.06) !important;
 }
 
 /* --- 3. Character Studio & Creator Page --- */
