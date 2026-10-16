@@ -260,8 +260,8 @@ import {
         </div>
 
         <div>
-          <h1 class="text-xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-white via-purple-100 to-purple-400 tracking-tight">Personas</h1>
-          <p class="text-xs text-stone-400 mt-0.5">Customize how characters perceive you in chat with 3D cards</p>
+          <h1 class="text-xl font-bold text-white tracking-tight">Personas</h1>
+          <p class="text-xs text-stone-300 mt-0.5">Customize how characters perceive you in chat with 3D cards</p>
         </div>
 
         <!-- Master Enable / Disable Toggle -->
@@ -1224,6 +1224,11 @@ import {
       if (p.pronouns && p.pronouns.trim()) demographicParts.push(escapeHtml(p.pronouns.trim()).toLowerCase());
       const demographicText = demographicParts.join(' • ');
 
+      const rawPronouns = (p.pronouns || '').trim();
+      const pPronounsLower = rawPronouns.toLowerCase();
+      const isStandardPronoun = ['he/him', 'she/her', 'they/them', 'any', 'any/all'].includes(pPronounsLower);
+      const isCustomPronoun = rawPronouns !== '' && !isStandardPronoun;
+
       const tokens = p.tokenCount || estimateTokens((p.about || '') + ' ' + (p.additionalInstructions || ''));
 
       cardsHtml += `
@@ -1282,7 +1287,7 @@ import {
                 <!-- Demographic Tag Pill: ONLY if user entered age or pronouns! -->
                 ${demographicText ? `
                   <div class="flex items-center justify-center mt-1.5">
-                    <span class="px-3 py-1 rounded-full bg-stone-900/80 border border-stone-700/60 text-xs text-stone-300 font-medium">
+                    <span class="px-3 py-1 rounded-full bg-white/[0.08] border border-white/15 text-xs text-stone-200 font-semibold tracking-wide backdrop-blur-md shadow-sm">
                       ${demographicText}
                     </span>
                   </div>
@@ -1291,11 +1296,11 @@ import {
                 <!-- Bio Description Text -->
                 <div class="my-auto py-2.5 px-3">
                   ${aboutText ? `
-                    <p class="text-xs text-stone-300/90 leading-relaxed text-center italic line-clamp-3">
+                    <p class="text-xs sm:text-sm text-stone-200 leading-relaxed text-center italic line-clamp-3">
                       "${aboutText}"
                     </p>
                   ` : `
-                    <p class="text-xs text-stone-500/80 leading-relaxed text-center italic">
+                    <p class="text-xs text-stone-400 leading-relaxed text-center italic">
                       No description provided. Tap Edit to add traits and details.
                     </p>
                   `}
@@ -1309,17 +1314,17 @@ import {
 
               <!-- Card Front Footer Actions: 3 Beveled Buttons (Edit, Bind to Chat, Delete) -->
               <div class="grid grid-cols-3 gap-2 pt-1 z-10">
-                <button type="button" class="btn-trigger-flip-edit py-2.5 px-1 rounded-xl bg-[#10121d] hover:bg-purple-500/15 border border-purple-500/35 hover:border-purple-400 text-purple-200 text-xs font-semibold flex items-center justify-center gap-1.5 transition active:scale-95 cursor-pointer shadow-sm" data-id="${p.id}">
+                <button type="button" class="btn-trigger-flip-edit py-2.5 px-1 rounded-xl bg-[#10121d] hover:bg-purple-500/20 border border-purple-500/40 hover:border-purple-400 text-stone-200 hover:text-white text-xs font-semibold flex items-center justify-center gap-1.5 transition active:scale-95 cursor-pointer shadow-sm" data-id="${p.id}">
                   <svg class="w-3.5 h-3.5 text-purple-300" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 3a2.85 2.83 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5Z"/><path d="m15 5 4 4"/></svg>
                   <span>Edit</span>
                 </button>
 
-                <button type="button" class="btn-card-bind py-2.5 px-1 rounded-xl bg-[#10121d] hover:bg-purple-500/15 border border-purple-500/35 hover:border-purple-400 text-purple-200 text-xs font-semibold flex items-center justify-center gap-1.5 transition active:scale-95 cursor-pointer shadow-sm" data-id="${p.id}">
+                <button type="button" class="btn-card-bind py-2.5 px-1 rounded-xl bg-[#10121d] hover:bg-purple-500/20 border border-purple-500/40 hover:border-purple-400 text-stone-200 hover:text-white text-xs font-semibold flex items-center justify-center gap-1.5 transition active:scale-95 cursor-pointer shadow-sm" data-id="${p.id}">
                   <svg class="w-3.5 h-3.5 text-purple-300" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg>
                   <span>Bind to Chat</span>
                 </button>
 
-                <button type="button" class="btn-card-delete py-2.5 px-1 rounded-xl bg-[#1c1214] hover:bg-red-950/40 border border-red-500/35 hover:border-red-400 text-[#e06c60] hover:text-red-300 text-xs font-semibold flex items-center justify-center gap-1.5 transition active:scale-95 cursor-pointer shadow-sm" data-id="${p.id}">
+                <button type="button" class="btn-card-delete py-2.5 px-1 rounded-xl bg-[#1c1214] hover:bg-red-950/40 border border-red-500/40 hover:border-red-400 text-red-300 hover:text-red-200 text-xs font-semibold flex items-center justify-center gap-1.5 transition active:scale-95 cursor-pointer shadow-sm" data-id="${p.id}">
                   <svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18"/><path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"/><path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"/></svg>
                   <span>Delete</span>
                 </button>
@@ -1349,14 +1354,14 @@ import {
                     </div>
                   </div>
                   <div>
-                    <h3 class="text-base font-bold bg-clip-text text-transparent bg-gradient-to-r from-white via-purple-100 to-purple-400 leading-tight">Edit Persona</h3>
-                    <p class="text-[10px] text-purple-200/60 leading-tight">Tap to upload portrait</p>
+                    <h3 class="text-base sm:text-lg font-bold text-white tracking-tight leading-tight">Edit Persona</h3>
+                    <p class="text-[11px] text-stone-300 font-medium leading-tight">Tap to upload portrait</p>
                   </div>
                 </div>
 
                 <div class="flex items-center gap-2">
-                  <button type="button" class="btn-trigger-flip-back text-xs font-medium text-stone-400 hover:text-white flex items-center gap-1 transition cursor-pointer" data-id="${p.id}">
-                    <svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6 6 18M6 6l12 12"/></svg>
+                  <button type="button" class="btn-trigger-flip-back px-2.5 py-1.5 rounded-lg text-xs font-semibold text-stone-300 hover:text-white hover:bg-white/10 flex items-center gap-1.5 transition cursor-pointer" data-id="${p.id}">
+                    <svg class="w-3.5 h-3.5 text-stone-300" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M18 6 6 18M6 6l12 12"/></svg>
                     <span>Cancel</span>
                   </button>
                   <button type="button" class="btn-card-save rounded-full px-4 py-1.5 bg-gradient-to-r from-purple-500 to-indigo-600 text-white font-bold text-xs tracking-wide shadow-[0_0_15px_var(--theme-accent-glow,rgba(147,51,234,0.4))] hover:scale-105 active:scale-95 transition cursor-pointer" data-id="${p.id}">
@@ -1366,82 +1371,97 @@ import {
               </div>
 
               <!-- Form Inputs Container -->
-              <div class="space-y-2.5 my-1.5 z-10">
+              <div class="space-y-2.5 my-2 z-10">
                 <!-- Name Field -->
                 <div>
-                  <label class="block text-[11px] font-semibold text-stone-300 mb-1">Name</label>
+                  <label class="block text-xs font-semibold text-stone-200 mb-1.5">Name</label>
                   <input 
                     type="text" 
-                    class="card-edit-name w-full px-3 py-2 rounded-xl bg-black/45 border border-purple-500/35 text-white placeholder-stone-500/70 text-xs focus:outline-none focus:border-purple-400 focus:ring-1 focus:ring-purple-400/50 transition" 
+                    class="card-edit-name w-full px-3 py-2 rounded-xl bg-black/60 border border-purple-500/35 text-white placeholder-stone-400 text-xs sm:text-sm font-medium focus:outline-none focus:border-purple-400 focus:ring-1 focus:ring-purple-400/50 transition" 
                     placeholder="Name (e.g. Hossein)" 
                     value="${displayName === 'Untitled Persona' ? '' : displayName}" 
                   />
                 </div>
 
-                <!-- Age & Pronouns Row -->
-                <div class="grid grid-cols-12 gap-2">
-                  <div class="col-span-4">
-                    <label class="block text-[11px] font-semibold text-stone-300 mb-1">Age</label>
+                <!-- Age & Pronouns Row (Clean 50/50 Grid, Dropdown for Pronouns) -->
+                <div class="grid grid-cols-2 gap-3">
+                  <div>
+                    <label class="block text-xs font-semibold text-stone-200 mb-1.5">Age</label>
                     <input 
                       type="text" 
-                      class="card-edit-age w-full px-3 py-2 rounded-xl bg-black/45 border border-purple-500/35 text-white placeholder-stone-500/70 text-xs focus:outline-none focus:border-purple-400 focus:ring-1 focus:ring-purple-400/50 transition" 
-                      placeholder="e.g. 24" 
+                      inputmode="numeric"
+                      class="card-edit-age w-full px-3 py-2 rounded-xl bg-black/60 border border-purple-500/35 text-white placeholder-stone-400 text-xs sm:text-sm font-medium focus:outline-none focus:border-purple-400 focus:ring-1 focus:ring-purple-400/50 transition" 
+                      placeholder="e.g. 24 (optional)" 
                       value="${escapeHtml(p.age || '')}" 
                     />
                   </div>
-                  <div class="col-span-8">
-                    <div class="flex items-center justify-between mb-1">
-                      <label class="block text-[11px] font-semibold text-stone-300">Pronouns</label>
-                      <div class="flex items-center gap-1">
-                        <button type="button" class="pronoun-chip px-2 py-0.5 rounded-full text-[9px] font-medium transition cursor-pointer ${(p.pronouns || '').toLowerCase() === 'he/him' ? 'bg-purple-600 text-white font-semibold border border-purple-400 shadow-[0_0_8px_var(--theme-accent-glow,rgba(147,51,234,0.4))]' : 'bg-purple-500/10 text-purple-200/90 border border-purple-500/30'}" data-val="He/Him">he/him</button>
-                        <button type="button" class="pronoun-chip px-2 py-0.5 rounded-full text-[9px] font-medium transition cursor-pointer ${(p.pronouns || '').toLowerCase() === 'she/her' ? 'bg-purple-600 text-white font-semibold border border-purple-400 shadow-[0_0_8px_var(--theme-accent-glow,rgba(147,51,234,0.4))]' : 'bg-purple-500/10 text-purple-200/90 border border-purple-500/30'}" data-val="She/Her">she/her</button>
-                        <button type="button" class="pronoun-chip px-2 py-0.5 rounded-full text-[9px] font-medium transition cursor-pointer ${(p.pronouns || '').toLowerCase() === 'they/them' ? 'bg-purple-600 text-white font-semibold border border-purple-400 shadow-[0_0_8px_var(--theme-accent-glow,rgba(147,51,234,0.4))]' : 'bg-purple-500/10 text-purple-200/90 border border-purple-500/30'}" data-val="They/Them">they/them</button>
+                  <div>
+                    <label class="block text-xs font-semibold text-stone-200 mb-1.5">Pronouns</label>
+                    <div class="relative">
+                      <select 
+                        class="card-edit-pronouns-select w-full appearance-none px-3 py-2 pr-8 rounded-xl bg-black/60 border border-purple-500/35 text-white text-xs sm:text-sm font-medium focus:outline-none focus:border-purple-400 focus:ring-1 focus:ring-purple-400/50 transition cursor-pointer"
+                        data-id="${p.id}"
+                      >
+                        <option value="" class="bg-[#121422] text-stone-400" ${!pPronounsLower ? 'selected' : ''}>Not specified</option>
+                        <option value="he/him" class="bg-[#121422] text-white" ${pPronounsLower === 'he/him' ? 'selected' : ''}>He / Him</option>
+                        <option value="she/her" class="bg-[#121422] text-white" ${pPronounsLower === 'she/her' ? 'selected' : ''}>She / Her</option>
+                        <option value="they/them" class="bg-[#121422] text-white" ${pPronounsLower === 'they/them' ? 'selected' : ''}>They / Them</option>
+                        <option value="any" class="bg-[#121422] text-white" ${pPronounsLower === 'any' || pPronounsLower === 'any/all' ? 'selected' : ''}>Any / All</option>
+                        <option value="custom" class="bg-[#121422] text-purple-300 font-semibold" ${isCustomPronoun ? 'selected' : ''}>Custom...</option>
+                      </select>
+                      <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-2.5 text-stone-400">
+                        <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg>
                       </div>
                     </div>
-                    <input 
-                      type="text" 
-                      class="card-edit-pronouns w-full px-2.5 py-1.5 rounded-xl bg-black/45 border border-purple-500/35 text-white placeholder-stone-500/70 text-xs focus:outline-none focus:border-purple-400 focus:ring-1 focus:ring-purple-400/50 transition" 
-                      placeholder="he/him, she/her, custom..." 
-                      value="${escapeHtml(p.pronouns || '')}" 
-                    />
                   </div>
+                </div>
+
+                <!-- Custom Pronouns Input (Revealed only if 'Custom...' is selected in dropdown) -->
+                <div class="card-edit-custom-pronouns-wrap ${isCustomPronoun ? '' : 'hidden'} transition-all duration-200">
+                  <label class="block text-[11px] font-semibold text-purple-200/90 mb-1">Custom Pronouns</label>
+                  <input 
+                    type="text" 
+                    class="card-edit-pronouns-custom w-full px-3 py-1.5 rounded-xl bg-black/60 border border-purple-400/50 text-white placeholder-stone-400 text-xs font-medium focus:outline-none focus:border-purple-400 focus:ring-1 focus:ring-purple-400/50 transition" 
+                    placeholder="Type custom pronouns (e.g. xe/xem, it/its)..." 
+                    value="${isCustomPronoun ? escapeHtml(rawPronouns) : ''}" 
+                  />
                 </div>
 
                 <!-- About Persona with AI Generate -->
                 <div>
-                  <div class="flex items-center justify-between mb-1">
-                    <label class="block text-[11px] font-semibold text-stone-300">About Persona</label>
+                  <div class="flex items-center justify-between mb-1.5">
+                    <label class="block text-xs font-semibold text-stone-200">About Persona</label>
                     <button 
                       type="button" 
-                      class="btn-ai-generate px-2.5 py-0.5 rounded-full bg-gradient-to-r from-purple-500/20 to-indigo-500/10 border border-purple-400/50 text-purple-200 font-semibold text-[10px] flex items-center gap-1 shadow-[0_0_10px_var(--theme-accent-glow,rgba(147,51,234,0.25))] hover:from-purple-500/30 active:scale-95 transition cursor-pointer" 
+                      class="btn-ai-generate px-2.5 py-1 rounded-full bg-purple-500/20 hover:bg-purple-500/30 border border-purple-400/50 text-white font-semibold text-xs flex items-center gap-1.5 shadow-[0_0_10px_var(--theme-accent-glow,rgba(147,51,234,0.25))] hover:scale-102 active:scale-95 transition cursor-pointer" 
                       data-id="${p.id}"
                     >
-                      <svg class="w-3 h-3 text-purple-300" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m12 3-1.9 5.8a2 2 0 0 1-1.3 1.3L3 12l5.8 1.9a2 2 0 0 1 1.3 1.3L12 21l1.9-5.8a2 2 0 0 1 1.3-1.3L21 12l-5.8-1.9a2 2 0 0 1-1.3-1.3Z"/></svg>
+                      <svg class="w-3.5 h-3.5 text-purple-300" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m12 3-1.9 5.8a2 2 0 0 1-1.3 1.3L3 12l5.8 1.9a2 2 0 0 1 1.3 1.3L12 21l1.9-5.8a2 2 0 0 1 1.3-1.3L21 12l-5.8-1.9a2 2 0 0 1-1.3-1.3Z"/></svg>
                       <span>AI Generate ✨</span>
                     </button>
                   </div>
                   <textarea 
                     rows="3" 
-                    class="card-edit-about w-full px-3 py-2 rounded-xl bg-black/45 border border-purple-500/35 text-white placeholder-stone-500/70 text-xs focus:outline-none focus:border-purple-400 focus:ring-1 focus:ring-purple-400/50 transition resize-none leading-relaxed" 
+                    class="card-edit-about w-full px-3 py-2 rounded-xl bg-black/60 border border-purple-500/35 text-white placeholder-stone-400 text-xs sm:text-sm font-medium focus:outline-none focus:border-purple-400 focus:ring-1 focus:ring-purple-400/50 transition resize-none leading-relaxed" 
                     placeholder="Describe your appearance, personality, or background..."
                   >${aboutText}</textarea>
                 </div>
 
                 <!-- Accordion: Additional Instructions with Tokens Counter -->
                 <details class="group rounded-xl border border-purple-500/35 bg-purple-950/20 p-2.5 text-xs">
-                  <summary class="flex items-center justify-between cursor-pointer text-[11px] font-semibold text-stone-300 group-hover:text-white transition list-none">
+                  <summary class="flex items-center justify-between cursor-pointer text-xs font-semibold text-stone-200 group-hover:text-white transition list-none">
                     <span>Additional Instructions</span>
                     <div class="flex items-center gap-1.5">
-                      <span class="live-token-pill px-2.5 py-0.5 rounded-full text-[10px] font-mono bg-purple-950/60 border border-purple-500/40 text-purple-300 font-medium">
+                      <span class="live-token-pill px-2.5 py-0.5 rounded-full text-[11px] font-mono bg-black/60 border border-purple-500/40 text-purple-200 font-semibold">
                         ${tokens} tokens / 500
                       </span>
-                      <svg class="w-3.5 h-3.5 text-purple-400/70 group-open:rotate-180 transition-transform" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m6 9 6 6 6-6"/></svg>
+                      <svg class="w-4 h-4 text-purple-300 group-open:rotate-180 transition-transform" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m6 9 6 6 6-6"/></svg>
                     </div>
                   </summary>
                   <div class="pt-2">
                     <textarea 
                       rows="2" 
-                      class="card-edit-directives w-full px-2.5 py-1.5 rounded-xl bg-black/45 border border-purple-500/35 text-white placeholder-stone-500/70 text-xs focus:outline-none focus:border-purple-400 focus:ring-1 focus:ring-purple-400/50 transition resize-none" 
+                      class="card-edit-directives w-full px-2.5 py-1.5 rounded-xl bg-black/60 border border-purple-500/35 text-white placeholder-stone-400 text-xs sm:text-sm font-medium focus:outline-none focus:border-purple-400 focus:ring-1 focus:ring-purple-400/50 transition resize-none leading-relaxed" 
                       placeholder="e.g. Never narrate actions for the user. Speak in 1st person."
                     >${directivesText}</textarea>
                   </div>
@@ -1452,7 +1472,7 @@ import {
                   <span class="w-1.5 h-1.5 rounded-full bg-purple-400 shadow-[0_0_8px_var(--theme-accent-glow,rgba(147,51,234,0.6))]"></span>
                 </div>
 
-                <!-- Bottom Action Row: Set as Active Toggle + Terracotta Delete Button -->
+                <!-- Bottom Action Row: Set as Active Toggle + Delete Button -->
                 <div class="flex items-center justify-between px-1 pt-0.5">
                   <div class="flex items-center gap-2.5">
                     <label class="relative inline-flex items-center cursor-pointer shrink-0">
@@ -1464,14 +1484,14 @@ import {
                       />
                       <div class="w-10 h-5 bg-stone-800/90 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-[var(--theme-accent,#9333ea)] shadow-sm"></div>
                     </label>
-                    <label class="text-[11px] font-semibold text-stone-300 cursor-pointer" for="toggle-active-${p.id}">
+                    <label class="text-xs font-semibold text-stone-200 cursor-pointer" for="toggle-active-${p.id}">
                       Set as Active
                     </label>
                   </div>
 
                   ${personas.length > 1 ? `
-                    <button type="button" class="btn-card-delete flex items-center gap-1.5 text-xs font-semibold text-[#e06c60] hover:text-red-300 px-3 py-1 rounded-xl border border-red-500/30 bg-red-950/20 hover:bg-red-950/40 transition cursor-pointer active:scale-95" data-id="${p.id}">
-                      <svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18"/><path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"/><path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"/></svg>
+                    <button type="button" class="btn-card-delete flex items-center gap-1.5 text-xs font-semibold text-[#f87171] hover:text-red-300 px-3 py-1.5 rounded-xl border border-red-500/40 bg-red-950/30 hover:bg-red-950/50 transition cursor-pointer active:scale-95 shadow-sm" data-id="${p.id}">
+                      <svg class="w-3.5 h-3.5 text-red-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18"/><path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"/><path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"/></svg>
                       <span>Delete</span>
                     </button>
                   ` : `<div></div>`}
@@ -1502,8 +1522,8 @@ import {
             <svg class="w-7 h-7" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="M12 5v14"/></svg>
           </div>
 
-          <h3 class="text-lg font-bold bg-clip-text text-transparent bg-gradient-to-r from-white via-purple-100 to-purple-400 mb-1.5">Create New Persona</h3>
-          <p class="text-xs text-stone-400 max-w-[220px] leading-relaxed mb-5">
+          <h3 class="text-lg font-bold text-white mb-1.5">Create New Persona</h3>
+          <p class="text-xs text-stone-300 max-w-[220px] leading-relaxed mb-5">
             Add a distinctive identity with unique traits and directives for rich roleplay journeys.
           </p>
 
@@ -1697,14 +1717,24 @@ import {
 
     const nameInput = cardEl.querySelector('.card-edit-name') as HTMLInputElement;
     const ageInput = cardEl.querySelector('.card-edit-age') as HTMLInputElement;
-    const pronounsInput = cardEl.querySelector('.card-edit-pronouns') as HTMLInputElement;
+    const selectEl = cardEl.querySelector('.card-edit-pronouns-select') as HTMLSelectElement;
+    const customInput = cardEl.querySelector('.card-edit-pronouns-custom') as HTMLInputElement;
     const aboutTextarea = cardEl.querySelector('.card-edit-about') as HTMLTextAreaElement;
     const directivesTextarea = cardEl.querySelector('.card-edit-directives') as HTMLTextAreaElement;
     const activeToggle = cardEl.querySelector('.card-edit-active-toggle') as HTMLInputElement;
 
     p.name = nameInput?.value.trim() || '';
     p.age = ageInput?.value.trim() || '';
-    p.pronouns = pronounsInput?.value.trim() || '';
+
+    let finalPronouns = '';
+    if (selectEl) {
+      if (selectEl.value === 'custom') {
+        finalPronouns = customInput?.value.trim() || '';
+      } else {
+        finalPronouns = selectEl.value.trim();
+      }
+    }
+    p.pronouns = finalPronouns;
     p.about = aboutTextarea?.value.trim() || '';
     p.additionalInstructions = directivesTextarea?.value.trim() || '';
 
@@ -1749,12 +1779,13 @@ import {
 
     const nameInput = cardEl.querySelector('.card-edit-name') as HTMLInputElement;
     const ageInput = cardEl.querySelector('.card-edit-age') as HTMLInputElement;
-    const pronounsInput = cardEl.querySelector('.card-edit-pronouns') as HTMLInputElement;
+    const selectEl = cardEl.querySelector('.card-edit-pronouns-select') as HTMLSelectElement;
+    const customInput = cardEl.querySelector('.card-edit-pronouns-custom') as HTMLInputElement;
     const aboutTextarea = cardEl.querySelector('.card-edit-about') as HTMLTextAreaElement;
 
     const nameVal = nameInput?.value.trim() || 'Roleplayer';
     const ageVal = ageInput?.value.trim() || '';
-    const pronounsVal = pronounsInput?.value.trim() || '';
+    const pronounsVal = selectEl?.value === 'custom' ? (customInput?.value.trim() || '') : (selectEl?.value.trim() || '');
     const currentPrompt = aboutTextarea?.value.trim() || '';
 
     const originalContent = btn.innerHTML;
@@ -1797,39 +1828,21 @@ import {
     }
   }
 
-  function setupPronounChips(cardEl: HTMLElement) {
-    const chips = cardEl.querySelectorAll('.pronoun-chip');
-    const pronounsInput = cardEl.querySelector('.card-edit-pronouns') as HTMLInputElement;
-    if (!pronounsInput) return;
+  function setupPronounDropdown(cardEl: HTMLElement) {
+    const selectEl = cardEl.querySelector('.card-edit-pronouns-select') as HTMLSelectElement;
+    const customWrap = cardEl.querySelector('.card-edit-custom-pronouns-wrap') as HTMLElement;
+    const customInput = cardEl.querySelector('.card-edit-pronouns-custom') as HTMLInputElement;
+    if (!selectEl) return;
 
-    chips.forEach(chip => {
-      chip.addEventListener('click', (e) => {
-        e.preventDefault();
-        const val = chip.getAttribute('data-val') || '';
-        if (pronounsInput.value.toLowerCase() === val.toLowerCase()) {
-          pronounsInput.value = '';
-        } else {
-          pronounsInput.value = val;
-        }
-        updateChipStyles();
-      });
+    selectEl.addEventListener('change', () => {
+      if (selectEl.value === 'custom') {
+        customWrap?.classList.remove('hidden');
+        customInput?.focus();
+      } else {
+        customWrap?.classList.add('hidden');
+        if (customInput) customInput.value = '';
+      }
     });
-
-    pronounsInput.addEventListener('input', updateChipStyles);
-
-    function updateChipStyles() {
-      const current = (pronounsInput.value || '').trim().toLowerCase();
-      chips.forEach(chip => {
-        const cVal = (chip.getAttribute('data-val') || '').toLowerCase();
-        if (current === cVal) {
-          chip.className = 'pronoun-chip px-2 py-0.5 rounded-full text-[9px] font-semibold bg-purple-600 text-white border border-purple-400 shadow-[0_0_8px_var(--theme-accent-glow,rgba(147,51,234,0.4))] transition cursor-pointer active:scale-95';
-        } else {
-          chip.className = 'pronoun-chip px-2 py-0.5 rounded-full text-[9px] font-medium bg-purple-500/10 text-purple-200/90 border border-purple-500/30 hover:bg-purple-500/20 transition cursor-pointer active:scale-95';
-        }
-      });
-    }
-
-    updateChipStyles();
   }
 
   function setupTokenCounter(cardEl: HTMLElement) {
@@ -1950,8 +1963,8 @@ import {
         handleAiGenerate(personaId, e.currentTarget as HTMLButtonElement);
       });
 
-      // Pronoun chips
-      setupPronounChips(card);
+      // Pronoun selector
+      setupPronounDropdown(card);
 
       // Live token counter
       setupTokenCounter(card);
