@@ -710,12 +710,11 @@ const {
           root.style.setProperty('--theme-purple-600', accent);
           root.style.setProperty('--theme-purple-700', accent);
 
-          // Roleplay Thoughts & Monologues dynamic theming
-          const isDay = (theme.dayNightMode === 'day' || theme.baseMode === 'day');
+          // Roleplay Thoughts & Monologues dynamic theming (always high contrast on dark message bubbles)
           root.style.setProperty('--theme-thought-accent', accent);
-          root.style.setProperty('--theme-thought-bg', `rgba(${rgb}, ${isDay ? 0.08 : 0.09})`);
-          root.style.setProperty('--theme-thought-border', `rgba(${rgb}, ${isDay ? 0.35 : 0.28})`);
-          root.style.setProperty('--theme-thought-text', isDay ? '#1e293b' : '#f1f5f9');
+          root.style.setProperty('--theme-thought-bg', `rgba(${rgb}, 0.12)`);
+          root.style.setProperty('--theme-thought-border', `rgba(${rgb}, 0.32)`);
+          root.style.setProperty('--theme-thought-text', '#fef3c7');
 
           const radius = theme.bubbleRadius !== undefined ? theme.bubbleRadius : 16;
           root.style.setProperty('--theme-bubble-radius', `${radius}px`);

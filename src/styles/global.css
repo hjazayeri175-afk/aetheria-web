@@ -298,26 +298,26 @@ html.power-saving-oled .chat-msg-bubble-user {
   color: var(--theme-thought-text, #f1f5f9) !important;
 }
 
-/* Light / Day Mode Adaptation */
+/* Light / Day Mode Adaptation: Guarantee high contrast against dark message bubbles */
 html[data-base-mode="day"] .thought-block,
 html.day-mode .thought-block {
-  background: rgba(var(--theme-accent-rgb, 168, 85, 247), 0.07) !important;
-  border-color: rgba(var(--theme-accent-rgb, 168, 85, 247), 0.3) !important;
-  border-left-color: var(--theme-accent, #7c3aed) !important;
-  color: #1e293b !important;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+  background: rgba(var(--theme-accent-rgb, 168, 85, 247), 0.12) !important;
+  border-color: rgba(var(--theme-accent-rgb, 168, 85, 247), 0.38) !important;
+  border-left-color: var(--theme-accent, #c084fc) !important;
+  color: #fef3c7 !important;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
 }
 
 html[data-base-mode="day"] .thought-block .thought-header,
 html.day-mode .thought-block .thought-header {
-  color: var(--theme-accent, #7c3aed) !important;
+  color: var(--theme-accent, #e9d5ff) !important;
 }
 
 html[data-base-mode="day"] .thought-inline,
 html.day-mode .thought-inline {
-  background: rgba(var(--theme-accent-rgb, 168, 85, 247), 0.09) !important;
-  border-color: rgba(var(--theme-accent-rgb, 168, 85, 247), 0.35) !important;
-  color: #1e293b !important;
+  background: rgba(var(--theme-accent-rgb, 168, 85, 247), 0.15) !important;
+  border-color: rgba(var(--theme-accent-rgb, 168, 85, 247), 0.4) !important;
+  color: #fef3c7 !important;
 }
 
 /* Deep Dark OLED Mode: pure black, crisp subtle borders */
