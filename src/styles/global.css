@@ -1171,6 +1171,107 @@ html.power-saving-oled .persona-3d-card .rounded-3xl {
   border-color: rgba(255, 255, 255, 0.1) !important;
 }
 
+/* ==================================================== */
+/* Character Profile & Showcase Modal / Drawer in OLED   */
+/* ==================================================== */
+
+/* Backdrops & Lightboxes */
+html.power-saving-oled #character-showcase-modal,
+html.power-saving-oled #showcase-avatar-lightbox,
+html.power-saving-oled #sidebar-backdrop,
+html.power-saving-oled #lorebook-modal {
+  background-color: rgba(0, 0, 0, 0.96) !important;
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+}
+
+/* Modal Dialog & Sidebar Drawer Root Containers */
+html.power-saving-oled #showcase-modal-dialog,
+html.power-saving-oled #character-sidebar,
+html.power-saving-oled #lorebook-modal > div {
+  background-color: #000000 !important;
+  background-image: none !important;
+  border-color: rgba(255, 255, 255, 0.1) !important;
+  box-shadow: none !important;
+}
+
+/* Header, Footer & Sticky Tab Bars */
+html.power-saving-oled #showcase-modal-dialog header,
+html.power-saving-oled #showcase-modal-dialog footer,
+html.power-saving-oled #showcase-modal-dialog div[class*="sticky"],
+html.power-saving-oled #showcase-body div[class*="sticky"],
+html.power-saving-oled #character-sidebar > div[class*="border-b"],
+html.power-saving-oled #character-sidebar > div[class*="border-t"] {
+  background-color: #000000 !important;
+  background-image: none !important;
+  border-color: rgba(255, 255, 255, 0.08) !important;
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+}
+
+/* Tab Segmented Control Container & Active Tabs */
+html.power-saving-oled #showcase-body .grid.grid-cols-3 {
+  background-color: #040404 !important;
+  border-color: rgba(255, 255, 255, 0.08) !important;
+}
+html.power-saving-oled .showcase-tab-btn[class*="bg-purple"] {
+  background-color: #121212 !important;
+  border-color: rgba(255, 255, 255, 0.22) !important;
+  color: #ffffff !important;
+}
+
+/* Inner Cards, Panels & Boxes in Character Profile */
+html.power-saving-oled #showcase-body .rounded-2xl,
+html.power-saving-oled #showcase-body .rounded-xl,
+html.power-saving-oled #showcase-avatar-wrapper,
+html.power-saving-oled #character-sidebar .rounded-2xl,
+html.power-saving-oled #character-sidebar .rounded-xl,
+html.power-saving-oled #def-mes-example-box,
+html.power-saving-oled #greeting-switcher,
+html.power-saving-oled #pinned-note-input,
+html.power-saving-oled #chat-sidebar-desc,
+html.power-saving-oled #open-lightbox-sidebar-btn,
+html.power-saving-oled #showcase-download-menu,
+html.power-saving-oled #lorebook-modal .rounded-2xl,
+html.power-saving-oled #lorebook-modal .rounded-xl {
+  background-color: #040404 !important;
+  background-image: none !important;
+  border-color: rgba(255, 255, 255, 0.09) !important;
+  box-shadow: none !important;
+}
+
+/* Primary CTA Button in Character Profile Showcase */
+html.power-saving-oled #showcase-chat-btn {
+  background: #0d101d !important;
+  background-image: none !important;
+  border: 1px solid rgba(255, 255, 255, 0.18) !important;
+  box-shadow: none !important;
+  color: #ffffff !important;
+}
+
+/* Gradient strips in Sidebar Drawer (Lorebook & Pinned Note strips) */
+html.power-saving-oled #character-sidebar div[class*="bg-gradient-to-b"] {
+  background-color: #030303 !important;
+  background-image: none !important;
+  border-color: rgba(255, 255, 255, 0.1) !important;
+  box-shadow: none !important;
+}
+
+/* Freeze Avatars & Animations in Character Profile */
+html.power-saving-freeze-avatars #showcase-avatar,
+html.power-saving-freeze-avatars #chat-sidebar-avatar,
+html.power-saving-freeze-avatars #lightbox-image,
+html.power-saving-active #showcase-avatar,
+html.power-saving-active #chat-sidebar-avatar {
+  transform: none !important;
+  transition: none !important;
+}
+
+html.power-saving-freeze-avatars #showcase-chat-btn .animate-pulse,
+html.power-saving-active #showcase-chat-btn .animate-pulse {
+  animation: none !important;
+}
+
 /* 2. Disable Glows, Neon Borders & Ambient Blur Orbs */
 html.power-saving-no-glows div.rounded-full.pointer-events-none.blur-3xl,
 html.power-saving-no-glows div.rounded-full.pointer-events-none.blur-2xl,
