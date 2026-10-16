@@ -1302,14 +1302,14 @@ import {
 
           <div class="relative z-10 space-y-4">
             <div class="flex items-center justify-between gap-4">
-              <div class="flex items-center gap-3.5">
+              <div class="flex items-center gap-3.5 min-w-0 flex-1">
                 <div class="w-12 h-12 rounded-2xl bg-amber-500/20 border border-amber-500/40 flex items-center justify-center text-amber-400 shrink-0 shadow-lg shadow-amber-950/40">
                   <BatteryCharging class="w-6 h-6 stroke-[2.2] animate-pulse" />
                 </div>
-                <div>
-                  <div class="text-sm font-bold text-white tracking-wide flex items-center gap-2">
+                <div class="min-w-0 flex-1">
+                  <div class="text-sm font-bold text-white tracking-wide flex items-center gap-2 flex-wrap">
                     <span>Master Power Saving Mode</span>
-                    <span class="text-[10px] font-extrabold uppercase px-2 py-0.5 rounded-md bg-amber-500/20 text-amber-300 border border-amber-500/40 tracking-wider">High Efficiency</span>
+                    <span id="badge-master-status" class="whitespace-nowrap shrink-0 px-2.5 py-0.5 text-[11px] font-bold rounded-md bg-white/5 text-slate-400 border border-white/10 tracking-wider transition-colors">Standby</span>
                   </div>
                   <div class="text-xs text-slate-200 mt-0.5 leading-relaxed font-normal">Forcefully sets all performance toggles active for maximum battery longevity and lower CPU/GPU usage.</div>
                 </div>
@@ -1340,13 +1340,13 @@ import {
 
           <div class="space-y-4 pt-1">
             <!-- 1. Disable 3D Carousel & Transitions -->
-            <div class="flex items-center justify-between gap-4">
-              <div class="space-y-0.5 max-w-[80%]">
-                <div class="text-xs font-bold text-white flex items-center gap-2">
-                  <span>Disable 3D Carousel & Transforms</span>
-                  <span id="badge-3d-status" class="text-[10px] px-2 py-0.5 rounded-md font-bold bg-white/5 text-slate-300 border border-white/10">Standard 3D</span>
+            <div class="flex items-center justify-between gap-3">
+              <div class="space-y-1 min-w-0 flex-1 pr-2">
+                <div class="flex items-center gap-2 flex-wrap">
+                  <span class="text-xs font-bold text-white">Disable 3D Carousel & Transforms</span>
+                  <span id="badge-3d-status" class="whitespace-nowrap shrink-0 px-2.5 py-0.5 text-[11px] rounded-md font-bold bg-white/5 text-slate-300 border border-white/10 transition-colors">3D Active</span>
                 </div>
-                <div class="text-xs text-slate-200 leading-relaxed font-normal">Replaces 3D Coverflow perspective transformations with a quick flat list view. Eliminates GPU matrix computations.</div>
+                <div class="text-xs text-slate-300 leading-relaxed font-normal">Replaces 3D Coverflow perspective transformations with a quick flat list view. Eliminates GPU matrix computations.</div>
               </div>
               <label class="relative inline-flex items-center cursor-pointer shrink-0">
                 <input type="checkbox" id="toggle-disable-3d" class="sr-only peer">
@@ -1355,13 +1355,13 @@ import {
             </div>
 
             <!-- 2. Disable Glows & Neon Effects -->
-            <div class="flex items-center justify-between gap-4 pt-3 border-t border-white/10">
-              <div class="space-y-0.5 max-w-[80%]">
-                <div class="text-xs font-bold text-white flex items-center gap-2">
-                  <span>Disable Glows & Neon Halos</span>
-                  <span id="badge-glows-status" class="text-[10px] px-2 py-0.5 rounded-md font-bold bg-white/5 text-slate-300 border border-white/10">Active</span>
+            <div class="flex items-center justify-between gap-3 pt-3 border-t border-white/10">
+              <div class="space-y-1 min-w-0 flex-1 pr-2">
+                <div class="flex items-center gap-2 flex-wrap">
+                  <span class="text-xs font-bold text-white">Disable Glows & Neon Halos</span>
+                  <span id="badge-glows-status" class="whitespace-nowrap shrink-0 px-2.5 py-0.5 text-[11px] rounded-md font-bold bg-white/5 text-slate-300 border border-white/10 transition-colors">FX On</span>
                 </div>
-                <div class="text-xs text-slate-200 leading-relaxed font-normal">Removes box-shadow glow halos, background light orbs, and GPU-intensive backdrop blur filters.</div>
+                <div class="text-xs text-slate-300 leading-relaxed font-normal">Removes box-shadow glow halos, background light orbs, and GPU-intensive backdrop blur filters.</div>
               </div>
               <label class="relative inline-flex items-center cursor-pointer shrink-0">
                 <input type="checkbox" id="toggle-disable-glows" class="sr-only peer">
@@ -1370,16 +1370,13 @@ import {
             </div>
 
             <!-- 3. Deep Dark OLED Mode -->
-            <div class="flex items-center justify-between gap-4 pt-3 border-t border-white/10">
-              <div class="space-y-0.5 max-w-[80%]">
-                <div class="text-xs font-bold text-white flex items-center gap-2">
-                  <span class="flex items-center gap-1.5">
-                    <Moon class="w-3.5 h-3.5 text-purple-400" />
-                    Deep Dark OLED Mode
-                  </span>
-                  <span id="badge-oled-status" class="text-[10px] px-2 py-0.5 rounded-md font-bold bg-white/5 text-slate-300 border border-white/10">Off</span>
+            <div class="flex items-center justify-between gap-3 pt-3 border-t border-white/10">
+              <div class="space-y-1 min-w-0 flex-1 pr-2">
+                <div class="flex items-center gap-2 flex-wrap">
+                  <span class="text-xs font-bold text-white">Deep Dark OLED Mode</span>
+                  <span id="badge-oled-status" class="whitespace-nowrap shrink-0 px-2.5 py-0.5 text-[11px] rounded-md font-bold bg-white/5 text-slate-300 border border-white/10 transition-colors">Default Theme</span>
                 </div>
-                <div class="text-xs text-slate-200 leading-relaxed font-normal">Substitutes midnight blue gradients with pure #000000 true black. Completely turns off illuminated pixels on OLED & AMOLED panels.</div>
+                <div class="text-xs text-slate-300 leading-relaxed font-normal">Substitutes midnight blue gradients with pure #000000 true black. Completely turns off illuminated pixels on OLED & AMOLED panels.</div>
               </div>
               <label class="relative inline-flex items-center cursor-pointer shrink-0">
                 <input type="checkbox" id="toggle-deep-dark-oled" class="sr-only peer">
@@ -1388,13 +1385,13 @@ import {
             </div>
 
             <!-- 4. Freeze Animated Avatars -->
-            <div class="flex items-center justify-between gap-4 pt-3 border-t border-white/10">
-              <div class="space-y-0.5 max-w-[80%]">
-                <div class="text-xs font-bold text-white flex items-center gap-2">
-                  <span>Freeze Animated Avatars</span>
-                  <span id="badge-avatars-status" class="text-[10px] px-2 py-0.5 rounded-md font-bold bg-white/5 text-slate-300 border border-white/10">Playing</span>
+            <div class="flex items-center justify-between gap-3 pt-3 border-t border-white/10">
+              <div class="space-y-1 min-w-0 flex-1 pr-2">
+                <div class="flex items-center gap-2 flex-wrap">
+                  <span class="text-xs font-bold text-white">Freeze Animated Avatars</span>
+                  <span id="badge-avatars-status" class="whitespace-nowrap shrink-0 px-2.5 py-0.5 text-[11px] rounded-md font-bold bg-white/5 text-slate-300 border border-white/10 transition-colors">Animated</span>
                 </div>
-                <div class="text-xs text-slate-200 leading-relaxed font-normal">Halts keyframe animations, pulsing effects, and animated character avatar frames to reduce rendering loops.</div>
+                <div class="text-xs text-slate-300 leading-relaxed font-normal">Halts keyframe animations, pulsing effects, and animated character avatar frames to reduce rendering loops.</div>
               </div>
               <label class="relative inline-flex items-center cursor-pointer shrink-0">
                 <input type="checkbox" id="toggle-freeze-avatars" class="sr-only peer">
@@ -1413,13 +1410,13 @@ import {
 
           <div class="space-y-4 pt-1">
             <!-- 5. Disable Sound Effects -->
-            <div class="flex items-center justify-between gap-4">
-              <div class="space-y-0.5 max-w-[80%]">
-                <div class="text-xs font-bold text-white flex items-center gap-2">
-                  <span>Disable UI Sound Effects</span>
-                  <span id="badge-sounds-status" class="text-[10px] px-2 py-0.5 rounded-md font-bold bg-white/5 text-slate-300 border border-white/10">Enabled</span>
+            <div class="flex items-center justify-between gap-3">
+              <div class="space-y-1 min-w-0 flex-1 pr-2">
+                <div class="flex items-center gap-2 flex-wrap">
+                  <span class="text-xs font-bold text-white">Disable UI Sound Effects</span>
+                  <span id="badge-sounds-status" class="whitespace-nowrap shrink-0 px-2.5 py-0.5 text-[11px] rounded-md font-bold bg-white/5 text-slate-300 border border-white/10 transition-colors">Sounds On</span>
                 </div>
-                <div class="text-xs text-slate-200 leading-relaxed font-normal">Mutes interactive click ticks, message send haptics, and system chimes to prevent Web Audio thread wakeups.</div>
+                <div class="text-xs text-slate-300 leading-relaxed font-normal">Mutes interactive click ticks, message send haptics, and system chimes to prevent Web Audio thread wakeups.</div>
               </div>
               <label class="relative inline-flex items-center cursor-pointer shrink-0">
                 <input type="checkbox" id="toggle-disable-sounds" class="sr-only peer">
@@ -1428,13 +1425,13 @@ import {
             </div>
 
             <!-- 6. Pause Voice Auto-Play -->
-            <div class="flex items-center justify-between gap-4 pt-3 border-t border-white/10">
-              <div class="space-y-0.5 max-w-[80%]">
-                <div class="text-xs font-bold text-white flex items-center gap-2">
-                  <span>Pause Voice Auto-Play</span>
-                  <span id="badge-voice-status" class="text-[10px] px-2 py-0.5 rounded-md font-bold bg-white/5 text-slate-300 border border-white/10">Auto</span>
+            <div class="flex items-center justify-between gap-3 pt-3 border-t border-white/10">
+              <div class="space-y-1 min-w-0 flex-1 pr-2">
+                <div class="flex items-center gap-2 flex-wrap">
+                  <span class="text-xs font-bold text-white">Pause Voice Auto-Play</span>
+                  <span id="badge-voice-status" class="whitespace-nowrap shrink-0 px-2.5 py-0.5 text-[11px] rounded-md font-bold bg-white/5 text-slate-300 border border-white/10 transition-colors">Auto-Play</span>
                 </div>
-                <div class="text-xs text-slate-200 leading-relaxed font-normal">Prevents incoming AI character voice messages from streaming automatically until tapped manually.</div>
+                <div class="text-xs text-slate-300 leading-relaxed font-normal">Prevents incoming AI character voice messages from streaming automatically until tapped manually.</div>
               </div>
               <label class="relative inline-flex items-center cursor-pointer shrink-0">
                 <input type="checkbox" id="toggle-pause-voice-autoplay" class="sr-only peer">
@@ -1453,13 +1450,13 @@ import {
 
           <div class="space-y-4 pt-1">
             <!-- 7. Throttle Background Activity -->
-            <div class="flex items-center justify-between gap-4">
-              <div class="space-y-0.5 max-w-[80%]">
-                <div class="text-xs font-bold text-white flex items-center gap-2">
-                  <span>Throttle Background Activity</span>
-                  <span id="badge-throttle-status" class="text-[10px] px-2 py-0.5 rounded-md font-bold bg-white/5 text-slate-300 border border-white/10">Normal</span>
+            <div class="flex items-center justify-between gap-3">
+              <div class="space-y-1 min-w-0 flex-1 pr-2">
+                <div class="flex items-center gap-2 flex-wrap">
+                  <span class="text-xs font-bold text-white">Throttle Background Activity</span>
+                  <span id="badge-throttle-status" class="whitespace-nowrap shrink-0 px-2.5 py-0.5 text-[11px] rounded-md font-bold bg-white/5 text-slate-300 border border-white/10 transition-colors">Normal</span>
                 </div>
-                <div class="text-xs text-slate-200 leading-relaxed font-normal">Halts background polling, interval fetches, and active streaming timers when the browser tab is hidden or minimized.</div>
+                <div class="text-xs text-slate-300 leading-relaxed font-normal">Halts background polling, interval fetches, and active streaming timers when the browser tab is hidden or minimized.</div>
               </div>
               <label class="relative inline-flex items-center cursor-pointer shrink-0">
                 <input type="checkbox" id="toggle-throttle-background" class="sr-only peer">
@@ -1491,6 +1488,21 @@ import {
               </span>
               <span id="battery-charging-text" class="text-slate-400 font-mono">Standby</span>
             </div>
+          </div>
+
+          <!-- Auto-Enable on Low Battery Trigger -->
+          <div class="border-t border-white/5 pt-3 mt-3 flex items-center justify-between gap-3">
+            <div class="space-y-0.5 min-w-0 flex-1 pr-2">
+              <div class="flex items-center gap-2 flex-wrap">
+                <span class="text-xs font-bold text-white">Auto-Enable on Low Battery</span>
+                <span id="badge-auto-battery" class="whitespace-nowrap shrink-0 px-2.5 py-0.5 text-[11px] rounded-md font-bold bg-amber-500/20 text-amber-300 border border-amber-500/40 shadow-xs transition-colors">Armed (&le;20%)</span>
+              </div>
+              <div class="text-xs text-slate-300 leading-relaxed font-normal">Automatically activate Master Power Saving when battery drops below 20% and unplugged.</div>
+            </div>
+            <label class="relative inline-flex items-center cursor-pointer shrink-0">
+              <input type="checkbox" id="toggle-auto-low-battery" class="sr-only peer" checked>
+              <div class="w-11 h-6 bg-white/10 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-amber-500 shadow-inner"></div>
+            </label>
           </div>
         </div>
 
@@ -3099,6 +3111,7 @@ import {
       // Master Toggle & Banner
       const tMaster = document.getElementById('toggle-master-power-saving') as HTMLInputElement;
       const banner = document.getElementById('master-power-banner');
+      const badgeMaster = document.getElementById('badge-master-status');
       const badgeStatus = document.getElementById('power-badge-status');
       const badgeDot = document.getElementById('power-badge-dot');
       const badgeText = document.getElementById('power-badge-text');
@@ -3106,6 +3119,16 @@ import {
       const hubPill = document.getElementById('hub-power-pill');
 
       if (tMaster) tMaster.checked = Boolean(settings.master);
+
+      if (badgeMaster) {
+        if (settings.master) {
+          badgeMaster.textContent = '⚡ High Efficiency';
+          badgeMaster.className = 'whitespace-nowrap shrink-0 px-2.5 py-0.5 text-[11px] font-bold rounded-md bg-amber-500/20 text-amber-300 border border-amber-500/40 shadow-xs tracking-wider transition-colors';
+        } else {
+          badgeMaster.textContent = 'Standby';
+          badgeMaster.className = 'whitespace-nowrap shrink-0 px-2.5 py-0.5 text-[11px] font-bold rounded-md bg-white/5 text-slate-400 border border-white/10 tracking-wider transition-colors';
+        }
+      }
 
       if (settings.master) {
         if (banner) banner.classList.remove('hidden');
@@ -3138,12 +3161,12 @@ import {
 
       // Sub-toggles
       const subToggles: { id: string; key: string; badgeId: string; activeText: string; inactiveText: string }[] = [
-        { id: 'toggle-disable-3d', key: 'disable3D', badgeId: 'badge-3d-status', activeText: 'Flat 2D', inactiveText: 'Standard 3D' },
-        { id: 'toggle-disable-glows', key: 'disableGlows', badgeId: 'badge-glows-status', activeText: 'Glows Stripped', inactiveText: 'Active' },
-        { id: 'toggle-deep-dark-oled', key: 'deepDarkOLED', badgeId: 'badge-oled-status', activeText: 'Pure #000000', inactiveText: 'Off' },
-        { id: 'toggle-freeze-avatars', key: 'freezeAvatars', badgeId: 'badge-avatars-status', activeText: 'Frozen', inactiveText: 'Playing' },
-        { id: 'toggle-disable-sounds', key: 'disableSounds', badgeId: 'badge-sounds-status', activeText: 'Muted', inactiveText: 'Enabled' },
-        { id: 'toggle-pause-voice-autoplay', key: 'pauseVoiceAutoPlay', badgeId: 'badge-voice-status', activeText: 'Manual Only', inactiveText: 'Auto' },
+        { id: 'toggle-disable-3d', key: 'disable3D', badgeId: 'badge-3d-status', activeText: '2D Flat', inactiveText: '3D Active' },
+        { id: 'toggle-disable-glows', key: 'disableGlows', badgeId: 'badge-glows-status', activeText: 'FX Muted', inactiveText: 'FX On' },
+        { id: 'toggle-deep-dark-oled', key: 'deepDarkOLED', badgeId: 'badge-oled-status', activeText: 'Pure #000000', inactiveText: 'Default Theme' },
+        { id: 'toggle-freeze-avatars', key: 'freezeAvatars', badgeId: 'badge-avatars-status', activeText: 'Frozen', inactiveText: 'Animated' },
+        { id: 'toggle-disable-sounds', key: 'disableSounds', badgeId: 'badge-sounds-status', activeText: 'Muted', inactiveText: 'Sounds On' },
+        { id: 'toggle-pause-voice-autoplay', key: 'pauseVoiceAutoPlay', badgeId: 'badge-voice-status', activeText: 'Manual Tap', inactiveText: 'Auto-Play' },
         { id: 'toggle-throttle-background', key: 'throttleBackground', badgeId: 'badge-throttle-status', activeText: 'Throttled', inactiveText: 'Normal' }
       ];
 
@@ -3157,15 +3180,29 @@ import {
         }
 
         if (badgeEl) {
+          badgeEl.textContent = isChecked ? item.activeText : item.inactiveText;
           if (isChecked) {
-            badgeEl.textContent = item.activeText;
-            badgeEl.className = 'text-[10px] px-2 py-0.5 rounded-md font-bold bg-amber-500/20 text-amber-300 border border-amber-500/40 shadow-xs transition-colors';
+            badgeEl.className = 'whitespace-nowrap shrink-0 px-2.5 py-0.5 text-[11px] rounded-md font-bold bg-amber-500/20 text-amber-300 border border-amber-500/40 shadow-xs transition-colors';
           } else {
-            badgeEl.textContent = item.inactiveText;
-            badgeEl.className = 'text-[10px] px-2 py-0.5 rounded-md font-bold bg-white/5 text-slate-300 border border-white/10 transition-colors';
+            badgeEl.className = 'whitespace-nowrap shrink-0 px-2.5 py-0.5 text-[11px] rounded-md font-bold bg-white/5 text-slate-300 border border-white/10 transition-colors';
           }
         }
       });
+
+      // Auto Low Battery Toggle sync
+      const autoSaverEl = document.getElementById('toggle-auto-low-battery') as HTMLInputElement;
+      const autoSaverBadge = document.getElementById('badge-auto-battery');
+      const isAutoSaverArmed = localStorage.getItem('aetheria_auto_low_battery') !== 'false';
+      if (autoSaverEl) autoSaverEl.checked = isAutoSaverArmed;
+      if (autoSaverBadge) {
+        if (isAutoSaverArmed) {
+          autoSaverBadge.textContent = 'Armed (≤20%)';
+          autoSaverBadge.className = 'whitespace-nowrap shrink-0 px-2.5 py-0.5 text-[11px] rounded-md font-bold bg-amber-500/20 text-amber-300 border border-amber-500/40 shadow-xs transition-colors';
+        } else {
+          autoSaverBadge.textContent = 'Disabled';
+          autoSaverBadge.className = 'whitespace-nowrap shrink-0 px-2.5 py-0.5 text-[11px] rounded-md font-bold bg-white/5 text-slate-400 border border-white/10 transition-colors';
+        }
+      }
     }
 
     // Battery Telemetry Diagnostics Reader
@@ -3200,6 +3237,18 @@ import {
               if (stateEl) stateEl.innerHTML = '<span class="w-1.5 h-1.5 rounded-full bg-emerald-400"></span> Status: Operating on Battery';
               if (chargingEl) chargingEl.textContent = `${level}% Remaining`;
             }
+
+            // Auto-saver trigger: check if armed, unplugged and level <= 20%
+            const isAutoArmed = localStorage.getItem('aetheria_auto_low_battery') !== 'false';
+            if (isAutoArmed && battery.level <= 0.20 && !battery.charging) {
+              const ps = (window as any).AetheriaPowerSaving;
+              if (ps && !ps.getSettings().master) {
+                ps.setSetting('master', true);
+                syncPowerSavingUI();
+                render3DCarousel();
+                showToast('⚡ Low battery (≤20%): Master Power Saving auto-engaged', 'warning');
+              }
+            }
           }
 
           updateBatteryTelemetry();
@@ -3232,6 +3281,29 @@ import {
           isChecked ? '⚡ Master Power Saving Mode Activated' : 'Power Saving Mode Deactivated',
           isChecked ? 'success' : 'info'
         );
+      }
+    });
+
+    document.getElementById('toggle-auto-low-battery')?.addEventListener('change', (e) => {
+      const isChecked = (e.target as HTMLInputElement).checked;
+      localStorage.setItem('aetheria_auto_low_battery', isChecked ? 'true' : 'false');
+      syncPowerSavingUI();
+      showToast(
+        isChecked ? 'Auto-enable on low battery (≤20%) armed' : 'Auto-enable on low battery disabled',
+        'info'
+      );
+      if (isChecked && 'getBattery' in navigator) {
+        (navigator as any).getBattery().then((battery: any) => {
+          if (battery.level <= 0.20 && !battery.charging) {
+            const ps = (window as any).AetheriaPowerSaving;
+            if (ps && !ps.getSettings().master) {
+              ps.setSetting('master', true);
+              syncPowerSavingUI();
+              render3DCarousel();
+              showToast('⚡ Low battery detected: Master Power Saving activated', 'warning');
+            }
+          }
+        }).catch(() => {});
       }
     });
 
