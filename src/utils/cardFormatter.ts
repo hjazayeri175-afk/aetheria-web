@@ -451,14 +451,39 @@ export function resolveAdaptiveContrast(container?: HTMLElement | null): void {
       if (el.dataset.origBorder !== undefined) el.style.borderColor = el.dataset.origBorder;
       if (el.dataset.origColor !== undefined) el.style.color = el.dataset.origColor;
     });
-    const darkDetected = container.querySelectorAll('.dark-surface-detected, .light-surface-detected');
+    const darkDetected = container.querySelectorAll('.dark-surface-detected, .light-surface-detected, [data-on-dark-surface], [data-has-bg-image]');
     darkDetected.forEach((el: any) => {
       el.classList.remove('dark-surface-detected', 'light-surface-detected');
+      el.removeAttribute('data-on-dark-surface');
+      el.removeAttribute('data-has-bg-image');
     });
     return;
   }
 
   // In Day Mode:
+  // Phase 1: Detect <img> tags acting as full banners or absolute background illustrations
+  const imgElements = Array.from(container.querySelectorAll('img')) as HTMLImageElement[];
+  for (const img of imgElements) {
+    const inline = img.getAttribute('style') || '';
+    const imgStyle = window.getComputedStyle(img);
+    const isAbsolute = 
+      imgStyle.position === 'absolute' || 
+      imgStyle.position === 'fixed' || 
+      inline.includes('position: absolute') || 
+      inline.includes('position:absolute');
+    
+    if (isAbsolute && img.parentElement) {
+      img.parentElement.setAttribute('data-has-bg-image', 'true');
+      img.parentElement.classList.add('dark-surface-detected');
+      const childTexts = img.parentElement.querySelectorAll('p, li, div, span, strong, b, h1, h2, h3, h4, h5, h6, a');
+      childTexts.forEach((c) => {
+        c.classList.add('dark-surface-detected');
+        c.setAttribute('data-on-dark-surface', 'true');
+      });
+    }
+  }
+
+  // Phase 2: Traverse elements for background-image, dark box backgrounds, or custom author skins
   const elements = Array.from(container.querySelectorAll('*')) as HTMLElement[];
   elements.unshift(container);
 
@@ -471,13 +496,20 @@ export function resolveAdaptiveContrast(container?: HTMLElement | null): void {
     const bgImg = el.style.backgroundImage || compStyle.backgroundImage || '';
 
     const hasBgImage = 
-      /url\(['"]?[^'"]+['"]?\)/i.test(bgImg) || 
-      /background(?:-image)?:\s*url\(/i.test(inlineStyle);
+      /url\s*\(/i.test(bgImg) || 
+      /\bbackground(?:-image)?\s*:[^;]*url\s*\(/i.test(inlineStyle);
 
     if (hasBgImage) {
       el.setAttribute('data-has-bg-image', 'true');
       el.classList.add('dark-surface-detected');
       el.classList.remove('light-surface-detected');
+
+      // Mark all descendant text nodes with data-on-dark-surface="true"
+      const descendants = el.querySelectorAll('p, li, div, span, strong, b, h1, h2, h3, h4, h5, h6, a');
+      descendants.forEach((child) => {
+        child.classList.add('dark-surface-detected');
+        child.setAttribute('data-on-dark-surface', 'true');
+      });
 
       // Extract URL for luminance measurement
       const match = bgImg.match(/url\(['"]?([^'"]+)['"]?\)/i) || inlineStyle.match(/url\(['"]?([^'"]+)['"]?\)/i);
@@ -506,32 +538,40 @@ export function resolveAdaptiveContrast(container?: HTMLElement | null): void {
                 if (avgLum >= 140) {
                   el.classList.remove('dark-surface-detected');
                   el.classList.add('light-surface-detected');
+                  descendants.forEach((c) => c.removeAttribute('data-on-dark-surface'));
                 } else {
                   el.classList.add('dark-surface-detected');
                   el.classList.remove('light-surface-detected');
+                  descendants.forEach((c) => c.setAttribute('data-on-dark-surface', 'true'));
                 }
               }
             } catch (e) {
-              // CORS or tainted canvas -> keep dark-surface-detected for safe contrast
+              // CORS or tainted canvas -> keep dark-surface-detected for safe high contrast
               el.classList.add('dark-surface-detected');
+              descendants.forEach((c) => c.setAttribute('data-on-dark-surface', 'true'));
             }
           };
           img.onerror = () => {
             el.classList.add('dark-surface-detected');
+            descendants.forEach((c) => c.setAttribute('data-on-dark-surface', 'true'));
           };
           img.src = url;
         } catch (_) {
           el.classList.add('dark-surface-detected');
+          descendants.forEach((c) => c.setAttribute('data-on-dark-surface', 'true'));
         }
       }
       continue;
     }
 
-    // 2. Check for dark background colors WITHOUT background-image
-    if (el.closest('.dark-surface-detected')) {
+    // 2. If this element is inside an element with background image, mark and continue
+    if (el.closest('.dark-surface-detected, [data-has-bg-image="true"], [data-on-dark-surface="true"]')) {
+      el.classList.add('dark-surface-detected');
+      el.setAttribute('data-on-dark-surface', 'true');
       continue;
     }
 
+    // 3. Check for dark background colors WITHOUT background-image
     const inlineBg = el.style.backgroundColor || el.style.background || '';
     const compBg = compStyle.backgroundColor;
     const colorToTest = inlineBg || compBg;
