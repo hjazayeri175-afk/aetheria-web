@@ -44,6 +44,20 @@ const {
     <!-- Telegram-Inspired Instant Zero-Latency Global Theming Engine (Step 3: Cohesive Presets, Per-Char Themes & Advanced Customization) -->
     <script is:inline>
       (function() {
+        // Immediate early baseMode detection to avoid FOUC
+        try {
+          const rawTheme = localStorage.getItem('aetheria_theme_settings');
+          if (rawTheme) {
+            const parsed = JSON.parse(rawTheme);
+            if (parsed && (parsed.baseMode === 'day' || parsed.dayNightMode === 'day')) {
+              document.documentElement.setAttribute('data-base-mode', 'day');
+              document.documentElement.classList.add('day-mode');
+              document.documentElement.style.setProperty('--bg-primary', '#f8fafc');
+              document.documentElement.style.setProperty('--bg-secondary', '#f1f5f9');
+            }
+          }
+        } catch(e) {}
+
         const DOODLE_PATTERNS = {
   'none': { id: 'none', name: 'None', pattern: 'none', patternSize: 'auto' },
   'pattern-amore': {
@@ -729,6 +743,48 @@ const {
             root.style.setProperty('--theme-bubble-char-bg', theme.charBubbleBg);
           }
 
+          // Base Mode (Day / Dark) Handling
+          const isDay = (theme.baseMode === 'day' || theme.dayNightMode === 'day');
+          if (isDay) {
+            root.setAttribute('data-base-mode', 'day');
+            root.classList.add('day-mode');
+            root.classList.remove('dark');
+            root.style.setProperty('--bg-primary', '#f8fafc');
+            root.style.setProperty('--bg-secondary', '#f1f5f9');
+            root.style.setProperty('--bg-card', 'rgba(255, 255, 255, 0.9)');
+            root.style.setProperty('--border-subtle', 'rgba(0, 0, 0, 0.08)');
+            root.style.setProperty('--text-primary', '#0f172a');
+            root.style.setProperty('--text-secondary', '#475569');
+            root.style.setProperty('--text-muted', '#64748b');
+
+            if (!theme.chatWallpaper && !theme.chatBg) {
+              root.style.setProperty('--theme-chat-bg', 'linear-gradient(to bottom, #f8fafc, #f1f5f9)');
+            }
+            if (!theme.charBubbleBg) {
+              root.style.setProperty('--theme-bubble-char-bg', '#ffffff');
+            }
+          } else {
+            root.setAttribute('data-base-mode', 'dark');
+            root.classList.remove('day-mode');
+            root.classList.add('dark');
+            root.style.setProperty('--bg-primary', '#07080d');
+            root.style.setProperty('--bg-secondary', '#0d0f17');
+            root.style.setProperty('--bg-card', 'rgba(18, 20, 31, 0.7)');
+            root.style.setProperty('--border-subtle', 'rgba(255, 255, 255, 0.07)');
+            root.style.setProperty('--text-primary', '#f1f5f9');
+            root.style.setProperty('--text-secondary', '#8E9AB6');
+            root.style.setProperty('--text-muted', '#64748b');
+          }
+
+          // Dynamic Meta theme-color update for browser header/status bar
+          try {
+            const metaTheme = document.querySelector('meta[name="theme-color"]');
+            if (metaTheme) {
+              const isOled = !isDay && root.classList.contains('power-saving-oled');
+              metaTheme.setAttribute('content', isDay ? '#f8fafc' : (isOled ? '#000000' : '#07080d'));
+            }
+          } catch(e) {}
+
           // Density
           if (theme.chatDensity === 'compact') {
             root.setAttribute('data-chat-density', 'compact');
@@ -792,7 +848,7 @@ const {
           }
 
           // Force Pure Black & Hide Wallpaper/Pattern when OLED is active
-          if (root.classList.contains('power-saving-oled')) {
+          if (!isDay && root.classList.contains('power-saving-oled')) {
             root.style.setProperty('--theme-chat-bg', '#000000');
             root.style.setProperty('--theme-bubble-char-bg', '#070707');
             root.style.setProperty('--theme-bubble-user-bg', '#10131d');
@@ -1338,7 +1394,7 @@ const {
       })();
     </script>
 </head>
-  <body class={`bg-[#07080d] text-slate-100 selection:bg-purple-500/30 selection:text-purple-200 antialiased overflow-x-hidden w-full max-w-[100vw] ${noScroll ? 'h-[100dvh] max-h-[100dvh] overflow-hidden' : 'min-h-screen'}`}>
+  <body class={`bg-[var(--bg-primary,#07080d)] text-slate-100 selection:bg-purple-500/30 selection:text-purple-200 antialiased overflow-x-hidden w-full max-w-[100vw] ${noScroll ? 'h-[100dvh] max-h-[100dvh] overflow-hidden' : 'min-h-screen'}`}>
     <div class={`relative w-full ${noScroll ? 'h-[100dvh] max-h-[100dvh] overflow-hidden flex flex-col' : 'min-h-screen flex flex-col justify-between'}`}>
       <!-- Ambient background neon lighting -->
       <div class="fixed top-0 left-1/2 -translate-x-1/2 w-full max-w-7xl h-[450px] bg-gradient-to-b from-purple-900/10 via-indigo-950/5 to-transparent blur-[120px] pointer-events-none -z-10"></div>

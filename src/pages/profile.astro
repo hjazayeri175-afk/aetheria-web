@@ -541,7 +541,8 @@ import {
               class="w-full flex items-center justify-between py-2 px-1 text-left cursor-pointer group transition"
             >
               <div class="flex items-center gap-3">
-                <Sun class="w-5 h-5 text-[#8E9AB6] group-hover:text-white transition-colors" id="icon-day-night" />
+                <Sun class="w-5 h-5 text-amber-400 transition-colors" id="icon-sun" />
+                <Moon class="w-5 h-5 text-indigo-400 transition-colors hidden" id="icon-moon" />
                 <span id="label-day-night" class="text-sm font-medium text-[#8E9AB6] group-hover:text-white transition-colors">Switch to Day Mode</span>
               </div>
               <span id="badge-day-night" class="text-xs text-slate-400 capitalize px-2.5 py-0.5 rounded-full bg-white/[0.04]">Dark</span>
@@ -4550,8 +4551,28 @@ import {
         }
 
         // 6. Day / Night mode badge button
+        const isDayMode = settings.baseMode === 'day';
+        const iconSun = document.getElementById('icon-sun');
+        const iconMoon = document.getElementById('icon-moon');
+        if (badgeDayNight) {
+          badgeDayNight.textContent = isDayMode ? 'Day' : 'Dark';
+          if (isDayMode) {
+            badgeDayNight.className = 'text-xs text-amber-400 font-semibold capitalize px-2.5 py-0.5 rounded-full bg-amber-500/10 border border-amber-500/20';
+          } else {
+            badgeDayNight.className = 'text-xs text-slate-400 capitalize px-2.5 py-0.5 rounded-full bg-white/[0.04]';
+          }
+        }
         if (labelDayNight) {
-          labelDayNight.textContent = settings.baseMode === 'day' ? 'Day' : 'Dark';
+          labelDayNight.textContent = isDayMode ? 'Switch to Dark Mode' : 'Switch to Day Mode';
+        }
+        if (iconSun && iconMoon) {
+          if (isDayMode) {
+            iconSun.classList.add('hidden');
+            iconMoon.classList.remove('hidden');
+          } else {
+            iconSun.classList.remove('hidden');
+            iconMoon.classList.add('hidden');
+          }
         }
       }
 
