@@ -1060,13 +1060,13 @@ import {
         </div>
 
         <!-- Security Alert Settings (Toggles) -->
-        <div class="rounded-3xl bg-[#141824] border border-white/[0.06] p-5 shadow-xl space-y-4">
-          <div class="border-b border-white/[0.06] pb-3">
+        <div class="rounded-3xl bg-[#101422]/90 border border-white/10 p-5 shadow-xl space-y-4">
+          <div class="border-b border-white/10 pb-3">
             <h2 class="text-xs font-bold text-white uppercase tracking-wider flex items-center gap-2">
-              <Shield class="w-4 h-4 text-purple-400" />
+              <Shield class="w-4 h-4" style="color: var(--theme-accent, #9333ea);" />
               <span>Security Alert Settings</span>
             </h2>
-            <p class="text-[11px] text-slate-400 mt-0.5">Automated notifications & anomaly detection triggers</p>
+            <p class="text-xs text-slate-200 mt-0.5 font-normal">Automated notifications & anomaly detection triggers</p>
           </div>
 
           <div class="space-y-4 pt-1">
@@ -1074,8 +1074,8 @@ import {
             <div class="space-y-2.5">
               <div class="flex items-center justify-between gap-4">
                 <div class="space-y-0.5 max-w-[80%]">
-                  <div class="text-xs font-semibold text-white">New Login Alerts</div>
-                  <div class="text-[11px] text-slate-400 leading-snug">
+                  <div class="text-xs font-bold text-white">New Login Alerts</div>
+                  <div class="text-xs text-slate-200 leading-relaxed font-normal">
                     Receive instant security alerts when your account is accessed from an unrecognized browser, hardware, or new session ID.
                   </div>
                 </div>
@@ -1090,7 +1090,7 @@ import {
                 <button 
                   type="button" 
                   id="btn-channel-browser-push"
-                  class="flex items-center gap-1.5 px-2.5 py-1 rounded-xl text-[11px] font-medium transition cursor-pointer border bg-emerald-500/10 text-emerald-300 border-emerald-500/20 hover:bg-emerald-500/20 active:scale-95"
+                  class="flex items-center gap-1.5 px-3 py-1 rounded-xl text-xs font-semibold transition cursor-pointer border bg-emerald-500/15 text-emerald-200 border-emerald-500/30 hover:bg-emerald-500/25 active:scale-95 shadow-xs"
                   title="Click to check or request notification permissions"
                 >
                   <Bell class="w-3.5 h-3.5 text-emerald-400" id="push-channel-icon" />
@@ -1098,22 +1098,22 @@ import {
                 </button>
 
                 <div 
-                  class="flex items-center gap-1.5 px-2.5 py-1 rounded-xl text-[11px] font-medium border bg-white/[0.03] text-slate-300 border-white/[0.08]"
+                  class="flex items-center gap-1.5 px-3 py-1 rounded-xl text-xs font-semibold border bg-white/[0.04] text-slate-200 border-white/10"
                 >
-                  <Mail class="w-3.5 h-3.5 text-purple-400" />
+                  <Mail class="w-3.5 h-3.5" style="color: var(--theme-accent, #9333ea);" />
                   <span>Email / Webhook: Connected</span>
                 </div>
               </div>
             </div>
 
             <!-- Toggle 2: IP Anomaly Protection -->
-            <div class="flex items-center justify-between gap-4 pt-3 border-t border-white/[0.04]">
+            <div class="flex items-center justify-between gap-4 pt-3 border-t border-white/10">
               <div class="space-y-0.5 max-w-[80%]">
-                <div class="text-xs font-semibold text-white flex items-center gap-1.5">
+                <div class="text-xs font-bold text-white flex items-center gap-2">
                   <span>IP Anomaly & Geo-Shift Shield</span>
-                  <span class="text-[10px] px-1.5 py-0.2 bg-purple-500/20 text-purple-300 rounded font-normal">Active</span>
+                  <span class="text-xs px-2 py-0.5 rounded-md font-bold border shadow-xs" style="background: rgba(var(--theme-accent-rgb, 147, 51, 234), 0.16); color: var(--theme-accent-hover, #d8b4fe); border-color: rgba(var(--theme-accent-rgb, 147, 51, 234), 0.35);">Active</span>
                 </div>
-                <div class="text-[11px] text-slate-400 leading-snug">
+                <div class="text-xs text-slate-200 leading-relaxed font-normal">
                   Compare location and IP sub-regions on authentications. Flag rapid geographical jumps and anomalous country shifts.
                 </div>
               </div>
@@ -1124,36 +1124,38 @@ import {
             </div>
 
             <!-- Geo-Shift Policy Sub-Row (visible when IP Anomaly toggle is ON) -->
-            <div id="geo-shift-policy-card" class="mt-2.5 p-3.5 rounded-2xl bg-white/[0.02] border border-white/[0.06] space-y-3 transition-all">
+            <div id="geo-shift-policy-card" class="mt-3 p-4 rounded-2xl bg-black/40 border border-white/10 space-y-3.5 transition-all shadow-inner">
               <div class="flex items-center justify-between gap-2 flex-wrap">
-                <span class="text-[11px] font-semibold text-slate-200 flex items-center gap-1.5">
-                  <span class="w-1.5 h-1.5 rounded-full bg-cyan-400"></span>
+                <span class="text-xs font-bold text-white flex items-center gap-2">
+                  <span class="w-2 h-2 rounded-full" style="background: var(--theme-accent, #06b6d4); box-shadow: 0 0 8px var(--theme-accent-glow, rgba(6, 182, 212, 0.4));"></span>
                   Enforcement Policy on Country Jump
                 </span>
                 <!-- Simulate Test Button -->
                 <button
                   type="button"
                   id="btn-simulate-geo-shift"
-                  class="text-[10px] px-2.5 py-1 rounded-xl bg-purple-500/10 hover:bg-purple-500/20 active:scale-95 text-purple-300 border border-purple-500/30 transition flex items-center gap-1.5 cursor-pointer font-medium shadow-sm"
+                  class="text-xs px-3 py-1.5 rounded-xl transition flex items-center gap-1.5 cursor-pointer font-bold shadow-sm active:scale-95"
+                  style="background: rgba(var(--theme-accent-rgb, 147, 51, 234), 0.15); border: 1px solid rgba(var(--theme-accent-rgb, 147, 51, 234), 0.4); color: var(--theme-accent-text, #ffffff);"
                   title="Simulate sudden IP/Country shift to preview Step-Up Verification challenge"
                 >
-                  <ShieldAlert class="w-3.5 h-3.5 text-purple-400" />
+                  <ShieldAlert class="w-3.5 h-3.5" style="color: var(--theme-accent-hover, #c084fc);" />
                   <span>Simulate Geo-Shift Alert</span>
                 </button>
               </div>
 
               <!-- Segmented/Pill Selector -->
-              <div class="grid grid-cols-2 gap-2 bg-[#0c101b] p-1 rounded-xl border border-white/[0.06]">
+              <div class="grid grid-cols-2 gap-2 bg-black/60 p-1.5 rounded-xl border border-white/10">
                 <button
                   type="button"
                   id="policy-pill-alert"
                   data-policy="alert_only"
-                  class="flex items-center justify-center gap-2 py-1.5 px-2.5 rounded-lg text-xs font-medium transition cursor-pointer bg-white/10 text-white shadow-sm"
+                  class="flex items-center justify-center gap-2 py-2 px-3 rounded-lg text-xs font-semibold transition cursor-pointer border"
+                  style="background: rgba(var(--theme-accent-rgb, 147, 51, 234), 0.22); border-color: rgba(var(--theme-accent-rgb, 147, 51, 234), 0.45); color: #ffffff;"
                 >
                   <span class="text-xs">🔔</span>
                   <div class="text-left">
-                    <div class="text-[11px] font-semibold leading-tight">Alert Only</div>
-                    <div class="text-[9px] text-slate-400 leading-tight">Logs event & notification</div>
+                    <div class="text-xs font-bold leading-tight">Alert Only</div>
+                    <div class="text-[10px] text-slate-300 leading-tight font-medium">Logs event & notification</div>
                   </div>
                 </button>
 
@@ -1161,68 +1163,68 @@ import {
                   type="button"
                   id="policy-pill-otp"
                   data-policy="require_otp"
-                  class="flex items-center justify-center gap-2 py-1.5 px-2.5 rounded-lg text-xs font-medium transition cursor-pointer text-slate-400 hover:text-white hover:bg-white/[0.04]"
+                  class="flex items-center justify-center gap-2 py-2 px-3 rounded-lg text-xs font-semibold transition cursor-pointer border border-transparent text-slate-300 hover:text-white hover:bg-white/[0.04]"
                 >
                   <span class="text-xs">🔒</span>
                   <div class="text-left">
-                    <div class="text-[11px] font-semibold leading-tight">Require Email Code</div>
-                    <div class="text-[9px] text-slate-400 leading-tight">Locks session with OTP</div>
+                    <div class="text-xs font-bold leading-tight">Require Email Code</div>
+                    <div class="text-[10px] text-slate-300 leading-tight font-medium">Locks session with OTP</div>
                   </div>
                 </button>
               </div>
 
               <!-- Trusted Countries Info Badge -->
-              <div class="flex items-center justify-between text-[11px] text-slate-400 pt-1 border-t border-white/[0.04] flex-wrap gap-2">
-                <span class="text-[10px] text-slate-400 flex items-center gap-1.5">
-                  <span class="text-slate-400 font-medium">VPN Memory:</span>
-                  <span id="trusted-countries-badge" class="font-mono text-cyan-300 font-semibold bg-cyan-500/10 px-2 py-0.5 rounded-md border border-cyan-500/20 text-[10px]">
+              <div class="flex items-center justify-between text-xs text-slate-300 pt-1.5 border-t border-white/10 flex-wrap gap-2">
+                <span class="text-xs text-slate-200 flex items-center gap-2">
+                  <span class="font-bold text-white">VPN Memory:</span>
+                  <span id="trusted-countries-badge" class="font-mono font-bold text-xs px-2.5 py-0.5 rounded-lg border shadow-xs" style="background: rgba(var(--theme-accent-rgb, 147, 51, 234), 0.15); color: var(--theme-accent-hover, #67e8f9); border-color: rgba(var(--theme-accent-rgb, 147, 51, 234), 0.35);">
                     Trusted: [FI, DE]
                   </span>
                 </span>
-                <span class="text-[10px] text-slate-500">Auto-remembers verified VPN countries</span>
+                <span class="text-xs text-slate-300 font-medium">Auto-remembers verified VPN countries</span>
               </div>
             </div>
 
             <!-- Inactive Expiry Selector (Fixed single-line & interactive) -->
-            <div class="flex items-center justify-between gap-4 pt-3 border-t border-white/[0.04]">
+            <div class="flex items-center justify-between gap-4 pt-3 border-t border-white/10">
               <div class="space-y-0.5 max-w-[68%] sm:max-w-[75%]">
-                <div class="text-xs font-semibold text-white">Inactive Session Expiration</div>
-                <div id="session-expiry-desc" class="text-[11px] text-slate-400 leading-snug">
+                <div class="text-xs font-bold text-white">Inactive Session Expiration</div>
+                <div id="session-expiry-desc" class="text-xs text-slate-200 leading-relaxed font-normal">
                   Dormant session tokens are automatically destroyed after 30 days of inactivity.
                 </div>
               </div>
               <button 
                 type="button" 
                 id="btn-session-expiry-selector"
-                class="whitespace-nowrap shrink-0 flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-white/[0.04] border border-white/10 text-xs font-medium text-white cursor-pointer hover:border-cyan-500/40 transition active:scale-95 group shadow-sm"
+                class="whitespace-nowrap shrink-0 flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-white/[0.06] border border-white/15 text-xs font-bold text-white cursor-pointer hover:border-cyan-400/50 transition active:scale-95 group shadow-sm"
                 title="Tap to cycle session expiration window"
               >
                 <span id="session-expiry-val">30 Days</span>
-                <ChevronDown class="w-3.5 h-3.5 text-slate-400 group-hover:text-cyan-400 transition-transform" />
+                <ChevronDown class="w-3.5 h-3.5 text-slate-300 group-hover:text-cyan-400 transition-transform" />
               </button>
             </div>
           </div>
         </div>
 
         <!-- Security Event Logs ("Login History") -->
-        <div class="rounded-3xl bg-[#141824] border border-white/[0.06] p-5 shadow-xl space-y-4">
+        <div class="rounded-3xl bg-[#101422]/90 border border-white/10 p-5 shadow-xl space-y-4">
           <div class="flex items-center justify-between flex-wrap gap-2">
             <h2 class="text-xs font-bold text-white uppercase tracking-wider flex items-center gap-2">
-              <History class="w-4 h-4 text-cyan-400" />
+              <History class="w-4 h-4" style="color: var(--theme-accent, #06b6d4);" />
               <span>Security Audit & Login History</span>
             </h2>
 
             <div class="flex items-center gap-2">
-              <span id="security-logs-count-badge" class="px-2 py-0.5 rounded-full text-[10px] font-semibold bg-cyan-500/10 text-cyan-400 border border-cyan-500/20">
+              <span id="security-logs-count-badge" class="px-2.5 py-0.5 rounded-full text-xs font-bold border shadow-xs" style="background: rgba(var(--theme-accent-rgb, 147, 51, 234), 0.15); color: var(--theme-accent-hover, #67e8f9); border-color: rgba(var(--theme-accent-rgb, 147, 51, 234), 0.35);">
                 1 event
               </span>
               <button 
                 type="button" 
                 id="btn-clear-security-history"
-                class="text-[11px] text-slate-400 hover:text-rose-400 flex items-center gap-1.5 py-1 px-2 rounded-lg hover:bg-rose-500/10 transition cursor-pointer border border-transparent hover:border-rose-500/20 active:scale-95"
+                class="text-xs font-bold text-rose-300 hover:text-rose-200 flex items-center gap-1.5 py-1.5 px-3 rounded-xl bg-rose-500/15 hover:bg-rose-500/25 transition cursor-pointer border border-rose-500/30 active:scale-95 shadow-xs"
                 title="Clear audit trail"
               >
-                <Trash class="w-3.5 h-3.5 text-slate-400 group-hover:text-rose-400" />
+                <Trash class="w-3.5 h-3.5 text-rose-400" />
                 <span>Clear History</span>
               </button>
             </div>
@@ -1230,18 +1232,19 @@ import {
 
           <!-- Logs Timeline List -->
           <div id="security-logs-timeline" class="space-y-2.5">
-            <div class="text-xs text-slate-500 py-3 text-center">Loading audit trail...</div>
+            <div class="text-xs text-slate-300 py-3 text-center">Loading audit trail...</div>
           </div>
 
           <!-- Export Action -->
-          <div class="pt-3 border-t border-white/[0.06] flex flex-col sm:flex-row sm:items-center justify-between gap-3">
-            <span class="text-[11px] text-slate-400">Download formatted security log for cryptographic verification</span>
+          <div class="pt-3 border-t border-white/10 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+            <span class="text-xs text-slate-200 font-medium">Download formatted security log for cryptographic verification</span>
             <button 
               type="button" 
               id="btn-export-security-logs"
-              class="px-3.5 py-2 rounded-xl bg-white/[0.04] hover:bg-white/[0.08] border border-white/[0.08] text-xs font-semibold text-white flex items-center justify-center gap-2 transition cursor-pointer group"
+              class="px-4 py-2.5 rounded-xl border text-xs font-bold text-white flex items-center justify-center gap-2 transition cursor-pointer group shadow-sm active:scale-95"
+              style="background: rgba(var(--theme-accent-rgb, 147, 51, 234), 0.15); border-color: rgba(var(--theme-accent-rgb, 147, 51, 234), 0.35);"
             >
-              <Download class="w-3.5 h-3.5 text-purple-400 group-hover:translate-y-0.5 transition-transform" />
+              <Download class="w-3.5 h-3.5 group-hover:translate-y-0.5 transition-transform" style="color: var(--theme-accent-hover, #c084fc);" />
               <span>Export Audit Trail (JSON)</span>
             </button>
           </div>
@@ -1278,33 +1281,33 @@ import {
     role="dialog"
     aria-modal="true"
   >
-    <div class="relative w-full max-w-md rounded-3xl bg-[#0e121e] border border-rose-500/30 p-6 shadow-2xl shadow-rose-950/50 text-slate-100 overflow-hidden space-y-5">
+    <div class="relative w-full max-w-md rounded-3xl bg-[#0b0e17]/95 border border-white/15 p-6 shadow-2xl text-slate-100 overflow-hidden space-y-5" style="box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.85), 0 0 35px -5px var(--theme-accent-glow, rgba(147, 51, 234, 0.35));">
       <!-- Glow ambient lights -->
-      <div class="absolute -top-16 -right-16 w-36 h-36 bg-rose-500/20 rounded-full blur-3xl pointer-events-none"></div>
-      <div class="absolute -bottom-16 -left-16 w-36 h-36 bg-purple-500/15 rounded-full blur-3xl pointer-events-none"></div>
+      <div class="absolute -top-16 -right-16 w-40 h-40 rounded-full blur-3xl pointer-events-none" style="background: var(--theme-accent-glow, rgba(147, 51, 234, 0.3));"></div>
+      <div class="absolute -bottom-16 -left-16 w-40 h-40 bg-rose-500/20 rounded-full blur-3xl pointer-events-none"></div>
 
       <!-- Header: Shield alert icon + Title -->
       <div class="flex items-start gap-4">
-        <div class="w-12 h-12 rounded-2xl bg-rose-500/15 border border-rose-500/30 flex items-center justify-center text-rose-400 shrink-0 shadow-lg shadow-rose-500/10">
+        <div class="w-12 h-12 rounded-2xl bg-rose-500/15 border border-rose-500/35 flex items-center justify-center text-rose-300 shrink-0 shadow-lg shadow-rose-500/15">
           <ShieldAlert class="w-6 h-6 animate-pulse" />
         </div>
         <div class="space-y-1">
           <div class="flex items-center gap-2">
             <h3 class="text-base font-bold text-white tracking-wide">Unusual Location Detected</h3>
-            <span class="text-[10px] uppercase font-bold tracking-wider px-2 py-0.5 rounded-full bg-rose-500/20 text-rose-300 border border-rose-500/30">Step-Up Auth</span>
+            <span class="text-[10px] uppercase font-bold tracking-wider px-2.5 py-0.5 rounded-full border shadow-xs" style="background: rgba(var(--theme-accent-rgb, 147, 51, 234), 0.2); border-color: rgba(var(--theme-accent-rgb, 147, 51, 234), 0.45); color: var(--theme-accent-hover, #d8b4fe);">Step-Up Auth</span>
           </div>
-          <p class="text-xs text-slate-400 leading-relaxed">
+          <p class="text-xs text-slate-200 leading-relaxed font-normal">
             Your connection endpoint hopped geographic regions. To secure your account against session hijacking, please verify your identity.
           </p>
         </div>
       </div>
 
       <!-- Details Box: Shows the jump clearly -->
-      <div class="p-4 rounded-2xl bg-[#141828] border border-white/[0.08] space-y-2.5 text-xs">
-        <div class="flex items-center justify-between text-slate-400 text-[11px] pb-1.5 border-b border-white/5">
-          <span class="font-medium">Geographic Anomaly Vector</span>
-          <span class="text-rose-400 font-mono flex items-center gap-1 font-semibold">
-            <span class="w-1.5 h-1.5 rounded-full bg-rose-500 animate-ping"></span>
+      <div class="p-4 rounded-2xl bg-black/60 border border-white/15 space-y-3 text-xs shadow-inner">
+        <div class="flex items-center justify-between text-slate-200 text-xs pb-1.5 border-b border-white/10">
+          <span class="font-bold">Geographic Anomaly Vector</span>
+          <span class="text-rose-300 font-mono flex items-center gap-1.5 font-bold">
+            <span class="w-2 h-2 rounded-full bg-rose-500 animate-ping"></span>
             COUNTRY SHIFT
           </span>
         </div>
@@ -1312,22 +1315,22 @@ import {
         <div class="flex items-center justify-between gap-2 pt-1">
           <!-- Previous Location -->
           <div class="space-y-0.5 flex-1 min-w-0">
-            <span class="text-[10px] text-slate-500 uppercase tracking-wider block font-semibold">Previous</span>
-            <div id="geo-modal-prev-location" class="font-bold text-slate-200 text-xs truncate">Tehran, Iran</div>
-            <div id="geo-modal-prev-code" class="text-[10px] text-slate-400 font-mono">IR (Verified)</div>
+            <span class="text-[10px] text-slate-300 uppercase tracking-wider block font-bold">Previous</span>
+            <div id="geo-modal-prev-location" class="font-bold text-white text-sm truncate">Tehran, Iran</div>
+            <div id="geo-modal-prev-code" class="text-xs text-slate-300 font-mono font-medium">IR (Verified Baseline)</div>
           </div>
 
           <!-- Arrow Jump Badge -->
           <div class="flex flex-col items-center justify-center px-2 shrink-0">
-            <span class="text-slate-400 text-base">➔</span>
-            <span class="text-[9px] text-rose-400 font-mono font-bold tracking-wider">SHIELDED</span>
+            <span class="text-white text-base font-bold">➔</span>
+            <span class="text-[10px] text-rose-200 bg-rose-500/25 border border-rose-500/40 font-mono font-bold px-1.5 py-0.5 rounded tracking-wider">SHIELDED</span>
           </div>
 
           <!-- New Location -->
           <div class="space-y-0.5 flex-1 min-w-0 text-right">
-            <span class="text-[10px] text-slate-500 uppercase tracking-wider block font-semibold">New Endpoint</span>
-            <div id="geo-modal-new-location" class="font-bold text-emerald-300 text-xs truncate">Helsinki, Finland</div>
-            <div id="geo-modal-new-ip" class="text-[10px] text-cyan-400 font-mono">138.124.***.***</div>
+            <span class="text-[10px] text-slate-300 uppercase tracking-wider block font-bold">New Endpoint</span>
+            <div id="geo-modal-new-location" class="font-bold text-emerald-300 text-sm truncate">Helsinki, Finland</div>
+            <div id="geo-modal-new-ip" class="text-xs text-cyan-300 font-mono font-semibold">138.124.***.***</div>
           </div>
         </div>
       </div>
@@ -1335,13 +1338,14 @@ import {
       <!-- 6-digit OTP Input -->
       <div class="space-y-2">
         <div class="flex items-center justify-between">
-          <label for="geo-otp-code-input" class="text-xs font-semibold text-slate-300">
+          <label for="geo-otp-code-input" class="text-xs font-bold text-white">
             6-Digit Email Verification Code (OTP)
           </label>
           <button
             type="button"
             id="btn-resend-geo-otp"
-            class="text-[11px] text-cyan-400 hover:text-cyan-300 font-medium transition cursor-pointer flex items-center gap-1 hover:underline"
+            class="text-xs font-semibold transition cursor-pointer flex items-center gap-1 hover:underline"
+            style="color: var(--theme-accent-hover, #67e8f9);"
           >
             <span>Resend Code</span>
           </button>
@@ -1356,23 +1360,24 @@ import {
             pattern="[0-9]*"
             autocomplete="one-time-code"
             placeholder="· · · · · ·"
-            class="w-full text-center text-2xl font-mono tracking-[0.4em] font-bold py-3 px-4 rounded-2xl bg-white/[0.04] border border-white/10 text-white placeholder:text-slate-600 focus:outline-none focus:border-rose-500 focus:ring-1 focus:ring-rose-500/50 transition"
+            class="w-full text-center text-2xl font-mono tracking-[0.45em] font-bold py-3.5 px-4 rounded-2xl bg-black/60 border border-white/20 text-white placeholder:text-slate-500 focus:outline-none transition shadow-inner"
+            style="border-color: rgba(var(--theme-accent-rgb, 147, 51, 234), 0.5);"
           />
         </div>
-        <p id="geo-otp-status-msg" class="text-[11px] text-slate-400 text-center min-h-[1rem]"></p>
+        <p id="geo-otp-status-msg" class="text-xs text-slate-200 text-center min-h-[1.25rem] font-medium"></p>
       </div>
 
       <!-- VPN-Friendly Checkbox -->
-      <label class="flex items-start gap-2.5 p-3 rounded-2xl bg-white/[0.02] border border-white/[0.06] cursor-pointer hover:bg-white/[0.04] transition group">
+      <label class="flex items-start gap-3 p-3.5 rounded-2xl bg-white/[0.04] border border-white/10 hover:border-white/20 cursor-pointer transition group shadow-sm">
         <input 
           type="checkbox" 
           id="cb-trust-geo-location" 
-          class="rounded border-slate-700 text-emerald-500 focus:ring-emerald-500/30 bg-slate-900 mt-0.5 cursor-pointer"
+          class="rounded border-slate-600 text-emerald-500 focus:ring-emerald-500/30 bg-slate-900 mt-1 cursor-pointer w-4 h-4"
           checked 
         />
-        <div class="text-[11px] leading-snug">
-          <span class="text-white font-semibold group-hover:text-emerald-300 transition-colors">Trust this location for future VPN connections</span>
-          <p class="text-slate-400 text-[10px] mt-0.5">Remembers this country endpoint in your trusted shield list so reconnecting doesn't re-trigger step-up verification.</p>
+        <div class="text-xs leading-relaxed">
+          <span class="text-white font-bold group-hover:text-emerald-300 transition-colors">Trust this location for future VPN connections</span>
+          <p class="text-slate-200 text-[11px] mt-0.5 font-normal leading-relaxed">Remembers this country endpoint in your trusted shield list so reconnecting doesn't re-trigger step-up verification.</p>
         </div>
       </label>
 
@@ -1381,7 +1386,8 @@ import {
         <button
           type="button"
           id="btn-verify-geo-otp"
-          class="flex-1 py-2.5 px-4 rounded-xl bg-emerald-500 hover:bg-emerald-400 active:scale-95 text-slate-950 font-bold text-xs transition cursor-pointer flex items-center justify-center gap-2 shadow-lg shadow-emerald-500/20"
+          class="flex-1 py-3 px-4 rounded-xl font-bold text-xs transition cursor-pointer flex items-center justify-center gap-2 active:scale-95 shadow-lg"
+          style="background: var(--theme-accent, #10b981); color: var(--theme-accent-text, #ffffff); box-shadow: 0 4px 20px -2px var(--theme-accent-glow, rgba(16, 185, 129, 0.4));"
         >
           <ShieldCheck class="w-4 h-4" />
           <span>Verify & Continue</span>
@@ -1389,7 +1395,7 @@ import {
         <button
           type="button"
           id="btn-lock-logout-account"
-          class="py-2.5 px-4 rounded-xl bg-rose-500/10 hover:bg-rose-500/20 active:scale-95 text-rose-300 border border-rose-500/30 font-semibold text-xs transition cursor-pointer flex items-center justify-center gap-1.5"
+          class="py-3 px-4 rounded-xl bg-rose-500/15 hover:bg-rose-500/25 active:scale-95 text-rose-200 border border-rose-500/40 font-bold text-xs transition cursor-pointer flex items-center justify-center gap-1.5 shadow-sm"
         >
           <LogOut class="w-3.5 h-3.5" />
           <span>Lock Account & Logout</span>
@@ -2911,18 +2917,19 @@ import {
               </div>
 
               <!-- Metadata Footer Row: Session started + Rename Device -->
-              <div class="flex items-center justify-between pt-2.5 mt-2.5 border-t border-white/5 text-xs text-gray-400">
-                <span class="flex items-center gap-1.5 text-slate-400 text-[11px]">
-                  <svg class="w-3.5 h-3.5 text-slate-500" fill="none" viewBox="0 0 24 24" stroke="currentColor"><circle cx="12" cy="12" r="10" stroke-width="2"/><polyline points="12 6 12 12 16 14" stroke-width="2"/></svg>
-                  Session started: <span class="text-slate-300 font-medium">${formatRelativeTime(currentSession.createdAt || (Date.now() / 1000 - 3600))}</span>
+              <div class="flex items-center justify-between pt-3 mt-3 border-t border-white/10 text-xs">
+                <span class="flex items-center gap-1.5 text-slate-200 text-xs font-normal">
+                  <svg class="w-3.5 h-3.5 text-slate-300" fill="none" viewBox="0 0 24 24" stroke="currentColor"><circle cx="12" cy="12" r="10" stroke-width="2"/><polyline points="12 6 12 12 16 14" stroke-width="2"/></svg>
+                  Session started: <span class="text-white font-bold">${formatRelativeTime(currentSession.createdAt || (Date.now() / 1000 - 3600))}</span>
                 </span>
                 <button 
                   type="button" 
                   id="btn-rename-device"
-                  class="text-cyan-400 hover:text-cyan-300 flex items-center gap-1 text-[11px] font-medium transition cursor-pointer py-1 px-2 rounded-lg hover:bg-cyan-500/10 active:scale-95 border border-cyan-500/20"
+                  class="flex items-center gap-1.5 text-xs font-bold transition cursor-pointer py-1.5 px-3 rounded-xl active:scale-95 border shadow-xs"
+                  style="background: rgba(var(--theme-accent-rgb, 147, 51, 234), 0.12); border-color: rgba(var(--theme-accent-rgb, 147, 51, 234), 0.35); color: var(--theme-accent-hover, #67e8f9);"
                   title="Set friendly name for this hardware"
                 >
-                  <svg class="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"/></svg>
+                  <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"/></svg>
                   <span>Rename Device</span>
                 </button>
               </div>
@@ -2998,9 +3005,9 @@ import {
         if (otherContainer) {
           if (otherSessions.length === 0) {
             otherContainer.innerHTML = `
-              <div class="rounded-3xl bg-[#141824]/60 border border-white/[0.04] p-5 text-center space-y-1">
-                <div class="text-xs font-semibold text-slate-300">No other connected devices</div>
-                <div class="text-[11px] text-slate-500">Your account is currently only authenticated on this hardware.</div>
+              <div class="rounded-3xl bg-[#101422]/70 border border-white/10 p-6 text-center space-y-1.5 shadow-lg">
+                <div class="text-xs font-bold text-white">No other connected devices</div>
+                <div class="text-xs text-slate-300 font-normal">Your account is currently only authenticated on this hardware.</div>
               </div>
             `;
           } else {
@@ -3009,37 +3016,37 @@ import {
               const iconSvg = getDeviceIconSvg(s.deviceType);
               const timeFormatted = formatRelativeTime(s.lastActiveAt || s.createdAt);
               return `
-                <div class="rounded-3xl bg-[#141824] border border-white/[0.06] hover:border-white/[0.12] p-4 sm:p-5 shadow-xl transition flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                <div class="rounded-3xl bg-[#101422]/90 border border-white/10 hover:border-white/20 p-4 sm:p-5 shadow-xl transition flex flex-col sm:flex-row sm:items-center justify-between gap-4">
                   <div class="flex items-start gap-3.5">
-                    <div class="w-10 h-10 rounded-2xl bg-white/[0.04] border border-white/[0.08] flex items-center justify-center text-slate-300 shrink-0">
+                    <div class="w-10 h-10 rounded-2xl bg-white/[0.04] border border-white/[0.08] flex items-center justify-center text-slate-200 shrink-0 shadow-inner">
                       ${iconSvg}
                     </div>
                     <div class="space-y-1">
                       <div class="flex items-center gap-2 flex-wrap">
-                        <span class="text-sm font-semibold text-white">${s.deviceName || 'Connected Device'}</span>
-                        <span class="text-[10px] font-medium text-slate-400 bg-white/5 px-2 py-0.5 rounded-full border border-white/10 uppercase">
+                        <span class="text-sm font-bold text-white tracking-wide">${s.deviceName || 'Connected Device'}</span>
+                        <span class="text-[10px] font-bold text-slate-300 bg-white/10 px-2 py-0.5 rounded-full border border-white/15 uppercase tracking-wider">
                           ${s.deviceType || 'client'}
                         </span>
                       </div>
-                      <div class="text-xs text-slate-300 flex items-center gap-1.5 flex-wrap">
+                      <div class="text-xs text-slate-200 flex items-center gap-1.5 flex-wrap">
                         <span>${s.browser || 'Web Browser'}</span>
                         <span class="text-white/20">•</span>
-                        <span>${s.os || 'OS'}</span>
+                        <span class="font-medium text-slate-200">${s.subtitleBadge || s.os || 'OS'}</span>
                       </div>
-                      <div class="flex items-center gap-3 text-[11px] text-slate-400 flex-wrap pt-0.5">
-                        <span class="flex items-center gap-1">
-                          <svg class="w-3 h-3 text-slate-400" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
+                      <div class="flex items-center gap-3 text-xs text-slate-300 flex-wrap pt-0.5 font-normal">
+                        <span class="flex items-center gap-1 text-slate-200 font-medium">
+                          <svg class="w-3.5 h-3.5 text-slate-300" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
                           ${s.city || 'Cloudflare Edge'}${s.country ? ', ' + s.country : ''}
                         </span>
                         <span class="text-white/20">•</span>
-                        <span class="font-mono text-slate-500">${maskedIp}</span>
+                        <span class="font-mono text-slate-200 font-medium">${maskedIp}</span>
                         <span class="text-white/20">•</span>
-                        <span class="text-slate-400">Active ${timeFormatted}</span>
+                        <span class="text-slate-300">Active ${timeFormatted}</span>
                       </div>
                     </div>
                   </div>
 
-                  <div class="flex items-center justify-end pt-2 sm:pt-0 border-t sm:border-t-0 border-white/[0.04]">
+                  <div class="flex items-center justify-end pt-2 sm:pt-0 border-t sm:border-t-0 border-white/10">
                     <button 
                       type="button" 
                       class="btn-revoke-session px-3 py-1.5 rounded-xl bg-rose-500/10 hover:bg-rose-500/20 active:scale-95 text-rose-300 border border-rose-500/25 text-xs font-semibold transition cursor-pointer flex items-center gap-1.5 group"
@@ -3153,23 +3160,23 @@ import {
               const timeFormatted = formatRelativeTime(log.created_at);
 
               return `
-                <div class="p-3 rounded-2xl bg-white/[0.02] border border-white/[0.04] flex items-center justify-between gap-3 text-xs">
+                <div class="p-3.5 rounded-2xl bg-white/[0.03] border border-white/10 hover:border-white/20 flex items-center justify-between gap-3 text-xs transition shadow-xs">
                   <div class="space-y-1">
                     <div class="flex items-center gap-2">
-                      <span class="px-2 py-0.5 rounded-full text-[10px] font-semibold border ${badgeColor}">
+                      <span class="px-2.5 py-0.5 rounded-full text-[10px] font-bold border tracking-wide ${badgeColor}">
                         ${badgeText}
                       </span>
-                      <span class="font-medium text-white">${log.device_name || 'Web Client'}</span>
-                      <span class="text-slate-400 text-[11px] hidden sm:inline">(${log.browser || 'Browser'})</span>
+                      <span class="font-bold text-white">${log.device_name || 'Web Client'}</span>
+                      <span class="text-slate-300 text-xs hidden sm:inline font-normal">(${log.browser || 'Browser'})</span>
                     </div>
-                    <div class="text-[11px] text-slate-400 flex items-center gap-2">
-                      <span>${log.city || 'Edge'}${log.country ? ', ' + log.country : ''}</span>
+                    <div class="text-xs text-slate-300 flex items-center gap-2 font-normal">
+                      <span class="text-slate-200 font-medium">${log.city || 'Edge'}${log.country ? ', ' + log.country : ''}</span>
                       <span class="text-white/20">•</span>
-                      <span class="font-mono text-slate-500">${maskedIp}</span>
+                      <span class="font-mono text-slate-200 font-medium">${maskedIp}</span>
                     </div>
                   </div>
                   <div class="text-right shrink-0">
-                    <span class="text-[11px] text-slate-400">${timeFormatted}</span>
+                    <span class="text-xs text-slate-200 font-semibold">${timeFormatted}</span>
                   </div>
                 </div>
               `;
@@ -3372,11 +3379,35 @@ import {
       const btnAlert = document.getElementById('policy-pill-alert');
       const btnOtp = document.getElementById('policy-pill-otp');
       if (policy === 'alert_only') {
-        if (btnAlert) btnAlert.className = 'flex items-center justify-center gap-2 py-1.5 px-2.5 rounded-lg text-xs font-medium transition cursor-pointer bg-white/10 text-white shadow-sm border border-white/10';
-        if (btnOtp) btnOtp.className = 'flex items-center justify-center gap-2 py-1.5 px-2.5 rounded-lg text-xs font-medium transition cursor-pointer text-slate-400 hover:text-white hover:bg-white/[0.04] border border-transparent';
+        if (btnAlert) {
+          btnAlert.style.background = 'rgba(var(--theme-accent-rgb, 147, 51, 234), 0.22)';
+          btnAlert.style.borderColor = 'rgba(var(--theme-accent-rgb, 147, 51, 234), 0.5)';
+          btnAlert.style.color = '#ffffff';
+          btnAlert.classList.add('shadow-md');
+          btnAlert.classList.remove('border-transparent');
+        }
+        if (btnOtp) {
+          btnOtp.style.background = 'transparent';
+          btnOtp.style.borderColor = 'transparent';
+          btnOtp.style.color = '#cbd5e1'; // slate-300
+          btnOtp.classList.remove('shadow-md');
+          btnOtp.classList.add('border-transparent');
+        }
       } else {
-        if (btnOtp) btnOtp.className = 'flex items-center justify-center gap-2 py-1.5 px-2.5 rounded-lg text-xs font-medium transition cursor-pointer bg-purple-600/25 text-purple-200 shadow-sm border border-purple-500/30';
-        if (btnAlert) btnAlert.className = 'flex items-center justify-center gap-2 py-1.5 px-2.5 rounded-lg text-xs font-medium transition cursor-pointer text-slate-400 hover:text-white hover:bg-white/[0.04] border border-transparent';
+        if (btnOtp) {
+          btnOtp.style.background = 'rgba(var(--theme-accent-rgb, 147, 51, 234), 0.25)';
+          btnOtp.style.borderColor = 'rgba(var(--theme-accent-rgb, 147, 51, 234), 0.55)';
+          btnOtp.style.color = '#ffffff';
+          btnOtp.classList.add('shadow-md');
+          btnOtp.classList.remove('border-transparent');
+        }
+        if (btnAlert) {
+          btnAlert.style.background = 'transparent';
+          btnAlert.style.borderColor = 'transparent';
+          btnAlert.style.color = '#cbd5e1'; // slate-300
+          btnAlert.classList.remove('shadow-md');
+          btnAlert.classList.add('border-transparent');
+        }
       }
     }
 
@@ -3384,6 +3415,9 @@ import {
       const badge = document.getElementById('trusted-countries-badge');
       if (badge) {
         badge.textContent = `Trusted: [${countries.join(', ')}]`;
+        badge.style.background = 'rgba(var(--theme-accent-rgb, 147, 51, 234), 0.15)';
+        badge.style.borderColor = 'rgba(var(--theme-accent-rgb, 147, 51, 234), 0.4)';
+        badge.style.color = 'var(--theme-accent-hover, #67e8f9)';
       }
     }
 
@@ -3470,7 +3504,7 @@ import {
 
       if (statusMsg) {
         if (data.simulated || data.hint) {
-          statusMsg.innerHTML = `<span class="text-purple-300 font-semibold bg-purple-500/10 px-2.5 py-1 rounded-xl border border-purple-500/20 inline-block">🧪 Preview Code: <span class="font-mono text-white tracking-widest font-bold">749215</span></span>`;
+          statusMsg.innerHTML = `<span class="font-bold text-xs px-3 py-1.5 rounded-xl border shadow-xs inline-block" style="background: rgba(var(--theme-accent-rgb, 147, 51, 234), 0.18); border-color: rgba(var(--theme-accent-rgb, 147, 51, 234), 0.45); color: var(--theme-accent-hover, #d8b4fe);">🧪 Preview Code: <span class="font-mono text-white tracking-widest font-extrabold text-sm ml-1">749215</span></span>`;
         } else {
           statusMsg.textContent = 'A 6-digit verification code has been dispatched to your email.';
         }
