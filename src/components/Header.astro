@@ -1,8 +1,12 @@
 ---
 import { Search, Sparkles, Plus, Compass, Flame, KeyRound, User, Command, MessageSquare, SlidersHorizontal, Star, LogIn } from '@lucide/astro';
+
+const pathname = Astro.url.pathname.replace(/\/$/, '') || '/';
+const isHome = pathname === '/';
+const isLibrary = pathname.startsWith('/library');
 ---
 
-<header class="sticky top-0 z-50 w-full border-b border-white/[0.06] bg-[#07080d]/80 backdrop-blur-xl transition-all">
+<header id="site-header" class="sticky top-0 z-50 w-full border-b border-white/[0.06] bg-[#07080d]/80 backdrop-blur-xl transition-all">
   <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
     <div class="flex items-center justify-between h-16 sm:h-18 gap-3 sm:gap-6">
       
@@ -33,15 +37,33 @@ import { Search, Sparkles, Plus, Compass, Flame, KeyRound, User, Command, Messag
 
         <!-- Desktop Navigation Items -->
         <nav class="hidden lg:flex items-center gap-1">
-          <a href="/" class="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-sm font-medium text-white bg-white/[0.05] border border-white/[0.08] transition">
+          <a 
+            href="/" 
+            class={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-sm font-medium transition ${
+              isHome 
+                ? 'header-nav-active text-white bg-white/[0.05] border border-white/[0.08]' 
+                : 'header-nav-link text-slate-400 hover:text-white hover:bg-white/[0.04]'
+            }`}
+          >
             <Compass class="w-4 h-4 text-purple-400" />
             <span>Discover</span>
           </a>
-          <a href="#trending" class="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-sm font-medium text-slate-400 hover:text-white hover:bg-white/[0.04] transition">
+          <a 
+            href="/?cat=trending" 
+            class="header-nav-link flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-sm font-medium text-slate-400 hover:text-white hover:bg-white/[0.04] transition"
+          >
             <Flame class="w-4 h-4 text-slate-400 group-hover:text-amber-400" />
             <span>Trending</span>
           </a>
-          <a href="/library" class="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-sm font-medium text-slate-400 hover:text-white hover:bg-white/[0.04] transition" title="Conversation Archives & Storylines">
+          <a 
+            href="/library" 
+            class={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-sm font-medium transition ${
+              isLibrary 
+                ? 'header-nav-active text-white bg-white/[0.05] border border-white/[0.08]' 
+                : 'header-nav-link text-slate-400 hover:text-white hover:bg-white/[0.04]'
+            }`} 
+            title="Conversation Archives & Storylines"
+          >
             <MessageSquare class="w-4 h-4 text-cyan-400" />
             <span>Library</span>
           </a>

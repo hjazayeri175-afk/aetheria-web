@@ -109,6 +109,516 @@ html.day-mode ::-webkit-scrollbar-thumb:hover {
   background: rgba(0, 0, 0, 0.25);
 }
 
+/* Day Mode Phase 2: Navigation, Header, Hero, Cards & Library */
+html[data-base-mode="day"] #site-header,
+html.day-mode #site-header {
+  background-color: rgba(255, 255, 255, 0.88) !important;
+  border-bottom-color: rgba(0, 0, 0, 0.08) !important;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.03) !important;
+  backdrop-filter: blur(16px) !important;
+  -webkit-backdrop-filter: blur(16px) !important;
+}
+
+html[data-base-mode="day"] #site-header .bg-\[\#090b12\],
+html.day-mode #site-header .bg-\[\#090b12\] {
+  background-color: #ffffff !important;
+}
+
+html[data-base-mode="day"] #site-header a.group span.text-transparent,
+html.day-mode #site-header a.group span.text-transparent {
+  background-image: linear-gradient(to right, #0f172a, #334155, #64748b) !important;
+}
+
+html[data-base-mode="day"] #site-header nav a,
+html.day-mode #site-header nav a {
+  color: #475569 !important;
+  background-color: transparent !important;
+  border-color: transparent !important;
+}
+
+html[data-base-mode="day"] #site-header nav a:hover,
+html.day-mode #site-header nav a:hover {
+  color: #0f172a !important;
+  background-color: rgba(0, 0, 0, 0.04) !important;
+}
+
+html[data-base-mode="day"] #site-header nav a.header-nav-active,
+html.day-mode #site-header nav a.header-nav-active {
+  color: var(--theme-accent, #7e22ce) !important;
+  background-color: rgba(var(--theme-accent-rgb, 147, 51, 234), 0.08) !important;
+  border-color: rgba(var(--theme-accent-rgb, 147, 51, 234), 0.2) !important;
+}
+
+html[data-base-mode="day"] #search-input,
+html.day-mode #search-input,
+html[data-base-mode="day"] #mobile-search-input,
+html.day-mode #mobile-search-input {
+  background-color: rgba(241, 245, 249, 0.9) !important;
+  border-color: rgba(0, 0, 0, 0.1) !important;
+  color: #0f172a !important;
+}
+
+html[data-base-mode="day"] #search-input::placeholder,
+html.day-mode #search-input::placeholder,
+html[data-base-mode="day"] #mobile-search-input::placeholder,
+html.day-mode #mobile-search-input::placeholder {
+  color: #94a3b8 !important;
+}
+
+html[data-base-mode="day"] #search-input:focus,
+html.day-mode #search-input:focus,
+html[data-base-mode="day"] #mobile-search-input:focus,
+html.day-mode #mobile-search-input:focus {
+  background-color: #ffffff !important;
+  border-color: rgba(var(--theme-accent-rgb, 147, 51, 234), 0.5) !important;
+  box-shadow: 0 0 0 3px rgba(var(--theme-accent-rgb, 147, 51, 234), 0.12) !important;
+}
+
+html[data-base-mode="day"] #site-header kbd,
+html.day-mode #site-header kbd {
+  background-color: #ffffff !important;
+  border-color: rgba(0, 0, 0, 0.1) !important;
+  color: #64748b !important;
+}
+
+html[data-base-mode="day"] #mobile-search-drawer,
+html.day-mode #mobile-search-drawer {
+  background-color: rgba(255, 255, 255, 0.96) !important;
+  border-bottom-color: rgba(0, 0, 0, 0.08) !important;
+}
+
+html[data-base-mode="day"] #byok-modal-btn,
+html.day-mode #byok-modal-btn,
+html[data-base-mode="day"] #mobile-search-btn,
+html.day-mode #mobile-search-btn,
+html[data-base-mode="day"] #header-user-profile-btn,
+html.day-mode #header-user-profile-btn {
+  background-color: rgba(0, 0, 0, 0.04) !important;
+  border-color: rgba(0, 0, 0, 0.08) !important;
+  color: #334155 !important;
+}
+
+html[data-base-mode="day"] #byok-modal-btn:hover,
+html.day-mode #byok-modal-btn:hover,
+html[data-base-mode="day"] #mobile-search-btn:hover,
+html.day-mode #mobile-search-btn:hover,
+html[data-base-mode="day"] #header-user-profile-btn:hover,
+html.day-mode #header-user-profile-btn:hover {
+  background-color: rgba(0, 0, 0, 0.08) !important;
+  color: #0f172a !important;
+}
+
+html[data-base-mode="day"] #header-signin-btn,
+html.day-mode #header-signin-btn {
+  background-color: #0f172a !important;
+  border-color: #0f172a !important;
+  color: #ffffff !important;
+}
+
+html[data-base-mode="day"] #header-signin-btn:hover,
+html.day-mode #header-signin-btn:hover {
+  background-color: #1e293b !important;
+}
+
+html[data-base-mode="day"] #header-user-profile-btn .ring-\[\#070913\],
+html.day-mode #header-user-profile-btn .ring-\[\#070913\] {
+  --tw-ring-color: #ffffff !important;
+}
+
+/* 2. Mobile Floating Bottom Navigation */
+html[data-base-mode="day"] #mobile-bottom-nav,
+html.day-mode #mobile-bottom-nav {
+  background-color: rgba(255, 255, 255, 0.92) !important;
+  border-top-color: rgba(0, 0, 0, 0.08) !important;
+  box-shadow: 0 -4px 25px rgba(0, 0, 0, 0.06) !important;
+  backdrop-filter: blur(16px) !important;
+  -webkit-backdrop-filter: blur(16px) !important;
+}
+
+html[data-base-mode="day"] #mobile-bottom-nav .nav-item:not(.nav-active),
+html.day-mode #mobile-bottom-nav .nav-item:not(.nav-active) {
+  color: #64748b !important;
+}
+
+html[data-base-mode="day"] #mobile-bottom-nav .nav-item:not(.nav-active):hover,
+html.day-mode #mobile-bottom-nav .nav-item:not(.nav-active):hover {
+  color: #0f172a !important;
+}
+
+html[data-base-mode="day"] #mobile-bottom-nav .nav-item.nav-active,
+html.day-mode #mobile-bottom-nav .nav-item.nav-active {
+  color: var(--theme-accent, #7e22ce) !important;
+}
+
+html[data-base-mode="day"] #mobile-bottom-nav #nav-btn-create .bg-\[\#0a0d18\],
+html.day-mode #mobile-bottom-nav #nav-btn-create .bg-\[\#0a0d18\] {
+  background-color: #0f172a !important;
+  color: #ffffff !important;
+}
+
+/* 3. Category Sticky Bar & Pills */
+html[data-base-mode="day"] #category-pills-bar,
+html.day-mode #category-pills-bar {
+  background-color: rgba(248, 250, 252, 0.9) !important;
+  border-bottom-color: rgba(0, 0, 0, 0.08) !important;
+  backdrop-filter: blur(12px) !important;
+  -webkit-backdrop-filter: blur(12px) !important;
+}
+
+html[data-base-mode="day"] .category-fade-left,
+html.day-mode .category-fade-left {
+  background: linear-gradient(to right, #f8fafc, transparent) !important;
+}
+
+html[data-base-mode="day"] .category-fade-right,
+html.day-mode .category-fade-right {
+  background: linear-gradient(to left, #f8fafc, transparent) !important;
+}
+
+html[data-base-mode="day"] .category-pill:not(.active-pill),
+html.day-mode .category-pill:not(.active-pill) {
+  background-color: rgba(0, 0, 0, 0.04) !important;
+  color: #475569 !important;
+  border-color: rgba(0, 0, 0, 0.06) !important;
+}
+
+html[data-base-mode="day"] .category-pill:not(.active-pill) svg,
+html.day-mode .category-pill:not(.active-pill) svg {
+  color: #64748b !important;
+}
+
+html[data-base-mode="day"] .category-pill:not(.active-pill):hover,
+html.day-mode .category-pill:not(.active-pill):hover {
+  background-color: rgba(0, 0, 0, 0.08) !important;
+  color: #0f172a !important;
+}
+
+html[data-base-mode="day"] .category-pill.active-pill,
+html.day-mode .category-pill.active-pill {
+  background-color: rgba(var(--theme-accent-rgb, 147, 51, 234), 0.12) !important;
+  color: var(--theme-accent, #7e22ce) !important;
+  border-color: rgba(var(--theme-accent-rgb, 147, 51, 234), 0.3) !important;
+  box-shadow: 0 1px 3px rgba(var(--theme-accent-rgb, 147, 51, 234), 0.15) !important;
+}
+
+html[data-base-mode="day"] .category-pill.active-pill svg,
+html.day-mode .category-pill.active-pill svg {
+  color: var(--theme-accent, #7e22ce) !important;
+}
+
+/* 4. Character Poster Cards */
+html[data-base-mode="day"] .character-card,
+html.day-mode .character-card {
+  background-color: #ffffff !important;
+  border-color: rgba(0, 0, 0, 0.08) !important;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.04) !important;
+}
+
+html[data-base-mode="day"] .character-card:hover,
+html.day-mode .character-card:hover {
+  border-color: rgba(var(--theme-accent-rgb, 147, 51, 234), 0.4) !important;
+  box-shadow: 0 16px 32px rgba(var(--theme-accent-rgb, 147, 51, 234), 0.12), 0 4px 12px rgba(0, 0, 0, 0.04) !important;
+}
+
+html[data-base-mode="day"] .character-card .bg-\[\#090b12\],
+html.day-mode .character-card .bg-\[\#090b12\] {
+  background-color: #f1f5f9 !important;
+}
+
+html[data-base-mode="day"] .character-card h3,
+html.day-mode .character-card h3 {
+  color: #ffffff !important;
+}
+
+html[data-base-mode="day"] .character-card:hover h3,
+html.day-mode .character-card:hover h3 {
+  color: #e9d5ff !important;
+}
+
+html[data-base-mode="day"] main h1.text-white,
+html.day-mode main h1.text-white,
+html[data-base-mode="day"] main h2.text-white,
+html.day-mode main h2.text-white {
+  color: #0f172a !important;
+}
+
+/* 5. Home Hero Banner & Controls */
+html[data-base-mode="day"] #home-hero-banner,
+html.day-mode #home-hero-banner {
+  background-image: linear-gradient(180deg, rgba(255, 255, 255, 0.95) 0%, rgba(241, 245, 249, 0.75) 100%) !important;
+  border-color: rgba(0, 0, 0, 0.08) !important;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.03) !important;
+}
+
+html[data-base-mode="day"] #home-hero-banner h1,
+html.day-mode #home-hero-banner h1 {
+  color: #0f172a !important;
+}
+
+html[data-base-mode="day"] #home-hero-banner p,
+html.day-mode #home-hero-banner p {
+  color: #475569 !important;
+}
+
+html[data-base-mode="day"] #home-hero-banner a.bg-white\/\[0\.05\],
+html.day-mode #home-hero-banner a.bg-white\/\[0\.05\] {
+  background-color: #ffffff !important;
+  border-color: rgba(0, 0, 0, 0.1) !important;
+  color: #0f172a !important;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05) !important;
+}
+
+html[data-base-mode="day"] #home-hero-banner a.bg-white\/\[0\.05\]:hover,
+html.day-mode #home-hero-banner a.bg-white\/\[0\.05\]:hover {
+  background-color: #f8fafc !important;
+}
+
+html[data-base-mode="day"] #home-hero-banner .text-slate-300 div,
+html.day-mode #home-hero-banner .text-slate-300 div {
+  background-color: rgba(255, 255, 255, 0.85) !important;
+  border-color: rgba(0, 0, 0, 0.08) !important;
+  color: #334155 !important;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.04) !important;
+}
+
+/* 6. Character Grid Section & Controls */
+html[data-base-mode="day"] #character-counter,
+html.day-mode #character-counter {
+  background-color: rgba(0, 0, 0, 0.04) !important;
+  border-color: rgba(0, 0, 0, 0.08) !important;
+  color: #475569 !important;
+}
+
+html[data-base-mode="day"] #characters-grid-section h2,
+html.day-mode #characters-grid-section h2 {
+  color: #0f172a !important;
+}
+
+html[data-base-mode="day"] #characters-grid-section p.text-slate-400,
+html.day-mode #characters-grid-section p.text-slate-400 {
+  color: #64748b !important;
+}
+
+html[data-base-mode="day"] #sort-selector,
+html.day-mode #sort-selector {
+  color: #0f172a !important;
+  background-color: #ffffff !important;
+}
+
+html[data-base-mode="day"] #sort-selector option,
+html.day-mode #sort-selector option {
+  background-color: #ffffff !important;
+  color: #0f172a !important;
+}
+
+html[data-base-mode="day"] div:has(> #sort-selector),
+html.day-mode div:has(> #sort-selector) {
+  background-color: #ffffff !important;
+  border-color: rgba(0, 0, 0, 0.1) !important;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04) !important;
+}
+
+html[data-base-mode="day"] .quick-tag-btn:not(.active-tag),
+html.day-mode .quick-tag-btn:not(.active-tag) {
+  background-color: rgba(0, 0, 0, 0.04) !important;
+  border-color: rgba(0, 0, 0, 0.08) !important;
+  color: #475569 !important;
+}
+
+html[data-base-mode="day"] .quick-tag-btn:not(.active-tag):hover,
+html.day-mode .quick-tag-btn:not(.active-tag):hover {
+  background-color: rgba(0, 0, 0, 0.08) !important;
+  color: #0f172a !important;
+}
+
+html[data-base-mode="day"] .quick-tag-btn.active-tag,
+html.day-mode .quick-tag-btn.active-tag {
+  background-color: rgba(var(--theme-accent-rgb, 147, 51, 234), 0.12) !important;
+  border-color: rgba(var(--theme-accent-rgb, 147, 51, 234), 0.3) !important;
+  color: var(--theme-accent, #7e22ce) !important;
+}
+
+/* 7. Footer */
+html[data-base-mode="day"] #site-footer,
+html.day-mode #site-footer {
+  background-color: #f1f5f9 !important;
+  border-top-color: rgba(0, 0, 0, 0.08) !important;
+  color: #64748b !important;
+}
+
+html[data-base-mode="day"] #site-footer .text-slate-300,
+html.day-mode #site-footer .text-slate-300 {
+  color: #0f172a !important;
+}
+
+/* 8. Library Page & Storyline Cards */
+html[data-base-mode="day"] #library-search-input,
+html.day-mode #library-search-input {
+  background-color: #ffffff !important;
+  border-color: rgba(0, 0, 0, 0.1) !important;
+  color: #0f172a !important;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04) !important;
+}
+
+html[data-base-mode="day"] #library-search-input::placeholder,
+html.day-mode #library-search-input::placeholder {
+  color: #94a3b8 !important;
+}
+
+html[data-base-mode="day"] #backup-all-btn,
+html.day-mode #backup-all-btn,
+html[data-base-mode="day"] label[title*="Restore"],
+html.day-mode label[title*="Restore"] {
+  background-color: #ffffff !important;
+  border-color: rgba(0, 0, 0, 0.1) !important;
+  color: #334155 !important;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04) !important;
+}
+
+html[data-base-mode="day"] #backup-all-btn:hover,
+html.day-mode #backup-all-btn:hover,
+html[data-base-mode="day"] label[title*="Restore"]:hover,
+html.day-mode label[title*="Restore"]:hover {
+  background-color: #f8fafc !important;
+  color: #0f172a !important;
+}
+
+html[data-base-mode="day"] .lib-filter-pill:not(.active),
+html.day-mode .lib-filter-pill:not(.active) {
+  background-color: #ffffff !important;
+  border-color: rgba(0, 0, 0, 0.08) !important;
+  color: #475569 !important;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.03) !important;
+}
+
+html[data-base-mode="day"] .lib-filter-pill:not(.active):hover,
+html.day-mode .lib-filter-pill:not(.active):hover {
+  background-color: #f8fafc !important;
+  color: #0f172a !important;
+}
+
+html[data-base-mode="day"] .lib-filter-pill.active,
+html.day-mode .lib-filter-pill.active {
+  background-color: rgba(var(--theme-accent-rgb, 147, 51, 234), 0.12) !important;
+  background-image: none !important;
+  border-color: rgba(var(--theme-accent-rgb, 147, 51, 234), 0.3) !important;
+  color: var(--theme-accent, #7e22ce) !important;
+  box-shadow: 0 1px 3px rgba(var(--theme-accent-rgb, 147, 51, 234), 0.15) !important;
+}
+
+html[data-base-mode="day"] .chat-history-card,
+html.day-mode .chat-history-card {
+  background-color: #ffffff !important;
+  border-color: rgba(0, 0, 0, 0.08) !important;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.04) !important;
+}
+
+html[data-base-mode="day"] .chat-history-card:hover,
+html.day-mode .chat-history-card:hover {
+  background-color: #ffffff !important;
+  border-color: rgba(var(--theme-accent-rgb, 147, 51, 234), 0.35) !important;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.07) !important;
+}
+
+html[data-base-mode="day"] .chat-history-card .chat-card-title,
+html.day-mode .chat-history-card .chat-card-title {
+  color: #0f172a !important;
+}
+
+html[data-base-mode="day"] .chat-history-card p.text-slate-300\/85,
+html.day-mode .chat-history-card p.text-slate-300\/85 {
+  color: #475569 !important;
+}
+
+html[data-base-mode="day"] .chat-history-card .border-t,
+html.day-mode .chat-history-card .border-t {
+  border-top-color: rgba(0, 0, 0, 0.06) !important;
+}
+
+html[data-base-mode="day"] .chat-history-card .bg-white\/\[0\.04\],
+html.day-mode .chat-history-card .bg-white\/\[0\.04\] {
+  background-color: rgba(0, 0, 0, 0.04) !important;
+  border-color: rgba(0, 0, 0, 0.06) !important;
+  color: #334155 !important;
+}
+
+html[data-base-mode="day"] .chat-history-card .bg-white\/\[0\.03\],
+html.day-mode .chat-history-card .bg-white\/\[0\.03\] {
+  background-color: rgba(0, 0, 0, 0.04) !important;
+  color: #64748b !important;
+}
+
+html[data-base-mode="day"] .chat-history-card .ring-\[\#15161c\],
+html.day-mode .chat-history-card .ring-\[\#15161c\] {
+  --tw-ring-color: #ffffff !important;
+}
+
+html[data-base-mode="day"] #library-empty-state,
+html.day-mode #library-empty-state {
+  background-color: #ffffff !important;
+  border-color: rgba(0, 0, 0, 0.08) !important;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.04) !important;
+}
+
+html[data-base-mode="day"] #library-empty-state h3,
+html.day-mode #library-empty-state h3 {
+  color: #0f172a !important;
+}
+
+/* 9. Quick Chat Showcase Modal */
+html[data-base-mode="day"] #showcase-modal-dialog,
+html.day-mode #showcase-modal-dialog {
+  background-color: #ffffff !important;
+  border-color: rgba(0, 0, 0, 0.1) !important;
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25) !important;
+}
+
+html[data-base-mode="day"] #showcase-modal-dialog header,
+html.day-mode #showcase-modal-dialog header {
+  background-color: rgba(248, 250, 252, 0.95) !important;
+  border-bottom-color: rgba(0, 0, 0, 0.08) !important;
+}
+
+html[data-base-mode="day"] #showcase-modal-dialog header h2,
+html.day-mode #showcase-modal-dialog header h2,
+html[data-base-mode="day"] #showcase-name,
+html.day-mode #showcase-name {
+  color: #0f172a !important;
+}
+
+html[data-base-mode="day"] #showcase-download-menu,
+html.day-mode #showcase-download-menu {
+  background-color: #ffffff !important;
+  border-color: rgba(0, 0, 0, 0.1) !important;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.12) !important;
+}
+
+html[data-base-mode="day"] #showcase-download-menu button,
+html.day-mode #showcase-download-menu button {
+  color: #0f172a !important;
+}
+
+html[data-base-mode="day"] #showcase-download-menu button:hover,
+html.day-mode #showcase-download-menu button:hover {
+  background-color: #f1f5f9 !important;
+}
+
+html[data-base-mode="day"] #showcase-greeting-box,
+html.day-mode #showcase-greeting-box,
+html[data-base-mode="day"] #showcase-persona-box,
+html.day-mode #showcase-persona-box {
+  background-color: #f8fafc !important;
+  border-color: rgba(0, 0, 0, 0.08) !important;
+}
+
+html[data-base-mode="day"] #showcase-greeting-text,
+html.day-mode #showcase-greeting-text,
+html[data-base-mode="day"] #showcase-description,
+html.day-mode #showcase-description {
+  color: #334155 !important;
+}
+
+
 body {
   background-color: var(--bg-primary);
   color: #f1f5f9;

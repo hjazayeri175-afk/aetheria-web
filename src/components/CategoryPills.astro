@@ -24,13 +24,13 @@ const categories = [
 ];
 ---
 
-<div class="relative w-full border-b border-white/[0.06] bg-[#07080d]/90 backdrop-blur-md sticky top-16 sm:top-18 z-40">
+<div id="category-pills-bar" class="relative w-full border-b border-white/[0.06] bg-[#07080d]/90 backdrop-blur-md sticky top-16 sm:top-18 z-40">
   <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
     <div class="relative flex items-center py-3">
       
       <!-- Left/Right Scroll fade gradients for sleek mobile feeling -->
-      <div class="pointer-events-none absolute left-0 top-0 bottom-0 w-6 bg-gradient-to-r from-[#07080d] to-transparent z-10 sm:hidden"></div>
-      <div class="pointer-events-none absolute right-0 top-0 bottom-0 w-8 bg-gradient-to-l from-[#07080d] to-transparent z-10 sm:hidden"></div>
+      <div class="category-fade-left pointer-events-none absolute left-0 top-0 bottom-0 w-6 bg-gradient-to-r from-[#07080d] to-transparent z-10 sm:hidden"></div>
+      <div class="category-fade-right pointer-events-none absolute right-0 top-0 bottom-0 w-8 bg-gradient-to-l from-[#07080d] to-transparent z-10 sm:hidden"></div>
 
       <!-- Scrollable Pills Row -->
       <div 
