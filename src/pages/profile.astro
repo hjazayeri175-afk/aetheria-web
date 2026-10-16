@@ -1123,6 +1123,66 @@ import {
               </label>
             </div>
 
+            <!-- Geo-Shift Policy Sub-Row (visible when IP Anomaly toggle is ON) -->
+            <div id="geo-shift-policy-card" class="mt-2.5 p-3.5 rounded-2xl bg-white/[0.02] border border-white/[0.06] space-y-3 transition-all">
+              <div class="flex items-center justify-between gap-2 flex-wrap">
+                <span class="text-[11px] font-semibold text-slate-200 flex items-center gap-1.5">
+                  <span class="w-1.5 h-1.5 rounded-full bg-cyan-400"></span>
+                  Enforcement Policy on Country Jump
+                </span>
+                <!-- Simulate Test Button -->
+                <button
+                  type="button"
+                  id="btn-simulate-geo-shift"
+                  class="text-[10px] px-2.5 py-1 rounded-xl bg-purple-500/10 hover:bg-purple-500/20 active:scale-95 text-purple-300 border border-purple-500/30 transition flex items-center gap-1.5 cursor-pointer font-medium shadow-sm"
+                  title="Simulate sudden IP/Country shift to preview Step-Up Verification challenge"
+                >
+                  <ShieldAlert class="w-3.5 h-3.5 text-purple-400" />
+                  <span>Simulate Geo-Shift Alert</span>
+                </button>
+              </div>
+
+              <!-- Segmented/Pill Selector -->
+              <div class="grid grid-cols-2 gap-2 bg-[#0c101b] p-1 rounded-xl border border-white/[0.06]">
+                <button
+                  type="button"
+                  id="policy-pill-alert"
+                  data-policy="alert_only"
+                  class="flex items-center justify-center gap-2 py-1.5 px-2.5 rounded-lg text-xs font-medium transition cursor-pointer bg-white/10 text-white shadow-sm"
+                >
+                  <span class="text-xs">🔔</span>
+                  <div class="text-left">
+                    <div class="text-[11px] font-semibold leading-tight">Alert Only</div>
+                    <div class="text-[9px] text-slate-400 leading-tight">Logs event & notification</div>
+                  </div>
+                </button>
+
+                <button
+                  type="button"
+                  id="policy-pill-otp"
+                  data-policy="require_otp"
+                  class="flex items-center justify-center gap-2 py-1.5 px-2.5 rounded-lg text-xs font-medium transition cursor-pointer text-slate-400 hover:text-white hover:bg-white/[0.04]"
+                >
+                  <span class="text-xs">🔒</span>
+                  <div class="text-left">
+                    <div class="text-[11px] font-semibold leading-tight">Require Email Code</div>
+                    <div class="text-[9px] text-slate-400 leading-tight">Locks session with OTP</div>
+                  </div>
+                </button>
+              </div>
+
+              <!-- Trusted Countries Info Badge -->
+              <div class="flex items-center justify-between text-[11px] text-slate-400 pt-1 border-t border-white/[0.04] flex-wrap gap-2">
+                <span class="text-[10px] text-slate-400 flex items-center gap-1.5">
+                  <span class="text-slate-400 font-medium">VPN Memory:</span>
+                  <span id="trusted-countries-badge" class="font-mono text-cyan-300 font-semibold bg-cyan-500/10 px-2 py-0.5 rounded-md border border-cyan-500/20 text-[10px]">
+                    Trusted: [FI, DE]
+                  </span>
+                </span>
+                <span class="text-[10px] text-slate-500">Auto-remembers verified VPN countries</span>
+              </div>
+            </div>
+
             <!-- Inactive Expiry Selector (Fixed single-line & interactive) -->
             <div class="flex items-center justify-between gap-4 pt-3 border-t border-white/[0.04]">
               <div class="space-y-0.5 max-w-[68%] sm:max-w-[75%]">
@@ -1209,6 +1269,135 @@ import {
     </div>
   </div>
 
+  <!-- ========================================== -->
+  <!-- GEO-SHIFT STEP-UP VERIFICATION CHALLENGE MODAL -->
+  <!-- ========================================== -->
+  <div 
+    id="geo-shift-challenge-modal" 
+    class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/85 backdrop-blur-md hidden transition-all duration-300"
+    role="dialog"
+    aria-modal="true"
+  >
+    <div class="relative w-full max-w-md rounded-3xl bg-[#0e121e] border border-rose-500/30 p-6 shadow-2xl shadow-rose-950/50 text-slate-100 overflow-hidden space-y-5">
+      <!-- Glow ambient lights -->
+      <div class="absolute -top-16 -right-16 w-36 h-36 bg-rose-500/20 rounded-full blur-3xl pointer-events-none"></div>
+      <div class="absolute -bottom-16 -left-16 w-36 h-36 bg-purple-500/15 rounded-full blur-3xl pointer-events-none"></div>
+
+      <!-- Header: Shield alert icon + Title -->
+      <div class="flex items-start gap-4">
+        <div class="w-12 h-12 rounded-2xl bg-rose-500/15 border border-rose-500/30 flex items-center justify-center text-rose-400 shrink-0 shadow-lg shadow-rose-500/10">
+          <ShieldAlert class="w-6 h-6 animate-pulse" />
+        </div>
+        <div class="space-y-1">
+          <div class="flex items-center gap-2">
+            <h3 class="text-base font-bold text-white tracking-wide">Unusual Location Detected</h3>
+            <span class="text-[10px] uppercase font-bold tracking-wider px-2 py-0.5 rounded-full bg-rose-500/20 text-rose-300 border border-rose-500/30">Step-Up Auth</span>
+          </div>
+          <p class="text-xs text-slate-400 leading-relaxed">
+            Your connection endpoint hopped geographic regions. To secure your account against session hijacking, please verify your identity.
+          </p>
+        </div>
+      </div>
+
+      <!-- Details Box: Shows the jump clearly -->
+      <div class="p-4 rounded-2xl bg-[#141828] border border-white/[0.08] space-y-2.5 text-xs">
+        <div class="flex items-center justify-between text-slate-400 text-[11px] pb-1.5 border-b border-white/5">
+          <span class="font-medium">Geographic Anomaly Vector</span>
+          <span class="text-rose-400 font-mono flex items-center gap-1 font-semibold">
+            <span class="w-1.5 h-1.5 rounded-full bg-rose-500 animate-ping"></span>
+            COUNTRY SHIFT
+          </span>
+        </div>
+
+        <div class="flex items-center justify-between gap-2 pt-1">
+          <!-- Previous Location -->
+          <div class="space-y-0.5 flex-1 min-w-0">
+            <span class="text-[10px] text-slate-500 uppercase tracking-wider block font-semibold">Previous</span>
+            <div id="geo-modal-prev-location" class="font-bold text-slate-200 text-xs truncate">Tehran, Iran</div>
+            <div id="geo-modal-prev-code" class="text-[10px] text-slate-400 font-mono">IR (Verified)</div>
+          </div>
+
+          <!-- Arrow Jump Badge -->
+          <div class="flex flex-col items-center justify-center px-2 shrink-0">
+            <span class="text-slate-400 text-base">➔</span>
+            <span class="text-[9px] text-rose-400 font-mono font-bold tracking-wider">SHIELDED</span>
+          </div>
+
+          <!-- New Location -->
+          <div class="space-y-0.5 flex-1 min-w-0 text-right">
+            <span class="text-[10px] text-slate-500 uppercase tracking-wider block font-semibold">New Endpoint</span>
+            <div id="geo-modal-new-location" class="font-bold text-emerald-300 text-xs truncate">Helsinki, Finland</div>
+            <div id="geo-modal-new-ip" class="text-[10px] text-cyan-400 font-mono">138.124.***.***</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 6-digit OTP Input -->
+      <div class="space-y-2">
+        <div class="flex items-center justify-between">
+          <label for="geo-otp-code-input" class="text-xs font-semibold text-slate-300">
+            6-Digit Email Verification Code (OTP)
+          </label>
+          <button
+            type="button"
+            id="btn-resend-geo-otp"
+            class="text-[11px] text-cyan-400 hover:text-cyan-300 font-medium transition cursor-pointer flex items-center gap-1 hover:underline"
+          >
+            <span>Resend Code</span>
+          </button>
+        </div>
+
+        <div class="relative">
+          <input
+            type="text"
+            id="geo-otp-code-input"
+            maxlength="6"
+            inputmode="numeric"
+            pattern="[0-9]*"
+            autocomplete="one-time-code"
+            placeholder="· · · · · ·"
+            class="w-full text-center text-2xl font-mono tracking-[0.4em] font-bold py-3 px-4 rounded-2xl bg-white/[0.04] border border-white/10 text-white placeholder:text-slate-600 focus:outline-none focus:border-rose-500 focus:ring-1 focus:ring-rose-500/50 transition"
+          />
+        </div>
+        <p id="geo-otp-status-msg" class="text-[11px] text-slate-400 text-center min-h-[1rem]"></p>
+      </div>
+
+      <!-- VPN-Friendly Checkbox -->
+      <label class="flex items-start gap-2.5 p-3 rounded-2xl bg-white/[0.02] border border-white/[0.06] cursor-pointer hover:bg-white/[0.04] transition group">
+        <input 
+          type="checkbox" 
+          id="cb-trust-geo-location" 
+          class="rounded border-slate-700 text-emerald-500 focus:ring-emerald-500/30 bg-slate-900 mt-0.5 cursor-pointer"
+          checked 
+        />
+        <div class="text-[11px] leading-snug">
+          <span class="text-white font-semibold group-hover:text-emerald-300 transition-colors">Trust this location for future VPN connections</span>
+          <p class="text-slate-400 text-[10px] mt-0.5">Remembers this country endpoint in your trusted shield list so reconnecting doesn't re-trigger step-up verification.</p>
+        </div>
+      </label>
+
+      <!-- Action Buttons -->
+      <div class="flex flex-col sm:flex-row gap-2.5 pt-1">
+        <button
+          type="button"
+          id="btn-verify-geo-otp"
+          class="flex-1 py-2.5 px-4 rounded-xl bg-emerald-500 hover:bg-emerald-400 active:scale-95 text-slate-950 font-bold text-xs transition cursor-pointer flex items-center justify-center gap-2 shadow-lg shadow-emerald-500/20"
+        >
+          <ShieldCheck class="w-4 h-4" />
+          <span>Verify & Continue</span>
+        </button>
+        <button
+          type="button"
+          id="btn-lock-logout-account"
+          class="py-2.5 px-4 rounded-xl bg-rose-500/10 hover:bg-rose-500/20 active:scale-95 text-rose-300 border border-rose-500/30 font-semibold text-xs transition cursor-pointer flex items-center justify-center gap-1.5"
+        >
+          <LogOut class="w-3.5 h-3.5" />
+          <span>Lock Account & Logout</span>
+        </button>
+      </div>
+    </div>
+  </div>
+
   <!-- Toast Notification Container -->
   <div id="toast-container" class="fixed bottom-24 left-1/2 -translate-x-1/2 z-50 flex flex-col items-center gap-2 pointer-events-none w-full max-w-xs"></div>
 
@@ -1216,6 +1405,8 @@ import {
 </Layout>
 
 <script>
+  import { resolveFriendlyDeviceName, maskIp } from '../utils/deviceModelMap';
+
   interface Persona {
     id: string; // uuid
     name: string;
@@ -2660,19 +2851,26 @@ import {
         const currentSession = sessions.find((s: any) => s.isCurrent) || sessions[0];
         const otherSessions = sessions.filter((s: any) => !s.isCurrent && s.id !== currentSession?.id);
 
-        // Friendly device naming: check stored alias first, else detect from user agent
+        // 3-Layer Smart Device Resolution
+        const clientUa = navigator.userAgent;
+        const resolvedHardware = resolveFriendlyDeviceName({
+          userAgent: clientUa,
+          browser: currentSession?.browser,
+          platform: currentSession?.os
+        });
+
+        // Check stored alias first, else marketing name
         const savedFriendlyName = localStorage.getItem('aetheria_custom_device_name');
-        let clientModelName = savedFriendlyName || currentSession?.deviceName || 'Connected Device';
-        if (!savedFriendlyName) {
-          try {
-            const ua = navigator.userAgent;
-            if (/Android/i.test(ua)) {
-              const m = ua.match(/;\s*([^;)]+)\s+Build\//i) || ua.match(/Android[^;]*;\s*([^;)]+)\)/i);
-              if (m && m[1] && !/^(K|wv|Linux|U)$/i.test(m[1].trim())) {
-                clientModelName = m[1].trim();
-              }
-            }
-          } catch {}
+        let clientModelName = savedFriendlyName || currentSession?.deviceName || resolvedHardware.marketingName;
+
+        // Subtitle badge text with factory build code preserved as secondary metadata
+        let secondaryBadge = resolvedHardware.subtitleBadge;
+        if (currentSession?.subtitleBadge) {
+          secondaryBadge = currentSession.subtitleBadge;
+        } else if (resolvedHardware.rawModelCode) {
+          secondaryBadge = resolvedHardware.isKnownMarketingModel
+            ? `Android (${resolvedHardware.rawModelCode})`
+            : `Android (Model: ${resolvedHardware.rawModelCode})`;
         }
 
         // Render Current Device
@@ -2696,10 +2894,10 @@ import {
                       This Device • ${String(currentSession.deviceType || 'device').toUpperCase()}
                     </span>
                   </div>
-                  <div class="text-xs text-slate-300 flex items-center gap-1.5 flex-wrap">
+                  <div id="current-device-secondary-meta" class="text-xs text-slate-300 flex items-center gap-1.5 flex-wrap">
                     <span>${currentSession.browser || 'Web Browser'}</span>
                     <span class="text-white/20">•</span>
-                    <span>${currentSession.os || 'Active OS'}</span>
+                    <span class="text-slate-300 font-medium">${secondaryBadge || currentSession.os || 'Active OS'}</span>
                   </div>
                   <div class="flex items-center gap-3 text-[11px] text-slate-400 flex-wrap pt-0.5">
                     <span class="flex items-center gap-1 text-slate-300">
@@ -2745,18 +2943,42 @@ import {
               } else {
                 localStorage.removeItem('aetheria_custom_device_name');
                 const nameEl = document.getElementById('current-device-display-name');
-                if (nameEl) nameEl.textContent = currentSession?.deviceName || 'Personal Hardware';
+                if (nameEl) nameEl.textContent = currentSession?.deviceName || resolvedHardware.marketingName;
                 showToast('Device alias reset to default hardware name', 'info');
               }
             }
           });
 
-          // Query high entropy client hints if browser supports it and no custom alias set
-          if ((navigator as any).userAgentData?.getHighEntropyValues && !savedFriendlyName) {
-            (navigator as any).userAgentData.getHighEntropyValues(['model']).then((data: any) => {
-              if (data?.model && data.model !== 'K' && !localStorage.getItem('aetheria_custom_device_name')) {
-                const devSpan = document.getElementById('current-device-display-name');
-                if (devSpan) devSpan.textContent = data.model;
+          // Layer 1 — High-Entropy Client Hints API (Frontend)
+          if ((navigator as any).userAgentData?.getHighEntropyValues) {
+            (navigator as any).userAgentData.getHighEntropyValues(['model', 'platform', 'platformVersion']).then((data: any) => {
+              if (data?.model && data.model !== 'K') {
+                const hintResolved = resolveFriendlyDeviceName({
+                  userAgent: clientUa,
+                  modelCode: data.model,
+                  platform: data.platform
+                });
+
+                if (!localStorage.getItem('aetheria_custom_device_name')) {
+                  const devSpan = document.getElementById('current-device-display-name');
+                  if (devSpan) devSpan.textContent = hintResolved.marketingName;
+
+                  const secMeta = document.getElementById('current-device-secondary-meta');
+                  if (secMeta) {
+                    secMeta.innerHTML = `
+                      <span>${currentSession?.browser || 'Web Browser'}</span>
+                      <span class="text-white/20">•</span>
+                      <span class="text-slate-300 font-medium">${hintResolved.subtitleBadge}</span>
+                    `;
+                  }
+                }
+
+                // Sync high-entropy hints to backend session
+                fetch('/api/devices/sync-client-hints', {
+                  method: 'POST',
+                  headers: { 'Content-Type': 'application/json', ...headers },
+                  body: JSON.stringify({ model: data.model, platform: data.platform })
+                }).catch(() => {});
               }
             }).catch(() => {});
           }
@@ -2874,6 +3096,16 @@ import {
           const tAnomaly = document.getElementById('toggle-ip-anomaly-shield') as HTMLInputElement;
           if (tLogin) tLogin.checked = settingsData.settings.alertNewLogin !== false;
           if (tAnomaly) tAnomaly.checked = settingsData.settings.alertIpAnomaly !== false;
+
+          const policyCard = document.getElementById('geo-shift-policy-card');
+          if (policyCard) {
+            policyCard.style.display = tAnomaly?.checked ? 'block' : 'none';
+          }
+          const policy = settingsData.settings.geoShiftPolicy || 'alert_only';
+          updateGeoPolicyUI(policy);
+          if (settingsData.settings.trustedCountries) {
+            updateTrustedCountriesBadge(settingsData.settings.trustedCountries);
+          }
         }
         updatePushNotificationBadge();
 
@@ -2903,9 +3135,15 @@ import {
               } else if (log.event_type === 'others_revoked') {
                 badgeColor = 'bg-amber-500/10 text-amber-400 border-amber-500/20';
                 badgeText = 'Others Terminated';
-              } else if (log.event_type === 'ip_anomaly_detected') {
+              } else if (log.event_type === 'ip_anomaly_detected' || log.event_type === 'geo_shift_detected') {
                 badgeColor = 'bg-orange-500/15 text-orange-400 border-orange-500/30';
                 badgeText = 'IP Geo-Shift Flagged';
+              } else if (log.event_type === 'geo_shift_challenge') {
+                badgeColor = 'bg-rose-500/20 text-rose-300 border-rose-500/30';
+                badgeText = 'Geo Challenge Issued';
+              } else if (log.event_type === 'geo_verification_success' || log.event_type === 'geo_shift_verified') {
+                badgeColor = 'bg-cyan-500/20 text-cyan-300 border-cyan-500/30';
+                badgeText = 'Geo OTP Verified';
               } else if (log.event_type === 'security_check') {
                 badgeColor = 'bg-cyan-500/10 text-cyan-400 border-cyan-500/20';
                 badgeText = 'Security Audit';
@@ -3127,6 +3365,40 @@ import {
     });
 
     // Security Settings Toggles Change Handlers
+    let currentGeoShiftPolicy: 'alert_only' | 'require_otp' = 'alert_only';
+
+    function updateGeoPolicyUI(policy: 'alert_only' | 'require_otp') {
+      currentGeoShiftPolicy = policy;
+      const btnAlert = document.getElementById('policy-pill-alert');
+      const btnOtp = document.getElementById('policy-pill-otp');
+      if (policy === 'alert_only') {
+        if (btnAlert) btnAlert.className = 'flex items-center justify-center gap-2 py-1.5 px-2.5 rounded-lg text-xs font-medium transition cursor-pointer bg-white/10 text-white shadow-sm border border-white/10';
+        if (btnOtp) btnOtp.className = 'flex items-center justify-center gap-2 py-1.5 px-2.5 rounded-lg text-xs font-medium transition cursor-pointer text-slate-400 hover:text-white hover:bg-white/[0.04] border border-transparent';
+      } else {
+        if (btnOtp) btnOtp.className = 'flex items-center justify-center gap-2 py-1.5 px-2.5 rounded-lg text-xs font-medium transition cursor-pointer bg-purple-600/25 text-purple-200 shadow-sm border border-purple-500/30';
+        if (btnAlert) btnAlert.className = 'flex items-center justify-center gap-2 py-1.5 px-2.5 rounded-lg text-xs font-medium transition cursor-pointer text-slate-400 hover:text-white hover:bg-white/[0.04] border border-transparent';
+      }
+    }
+
+    function updateTrustedCountriesBadge(countries: string[]) {
+      const badge = document.getElementById('trusted-countries-badge');
+      if (badge) {
+        badge.textContent = `Trusted: [${countries.join(', ')}]`;
+      }
+    }
+
+    document.getElementById('policy-pill-alert')?.addEventListener('click', async () => {
+      updateGeoPolicyUI('alert_only');
+      await updateSecuritySettings();
+      showToast('Geo-Shift policy set to Alert Only (Log & Notify).', 'info');
+    });
+
+    document.getElementById('policy-pill-otp')?.addEventListener('click', async () => {
+      updateGeoPolicyUI('require_otp');
+      await updateSecuritySettings();
+      showToast('Geo-Shift policy set to Require Email Code (Step-Up OTP).', 'success');
+    });
+
     async function updateSecuritySettings() {
       const tLogin = document.getElementById('toggle-new-login-alert') as HTMLInputElement;
       const tAnomaly = document.getElementById('toggle-ip-anomaly-shield') as HTMLInputElement;
@@ -3142,8 +3414,14 @@ import {
         }
       }
 
+      const policyCard = document.getElementById('geo-shift-policy-card');
+      if (policyCard) {
+        policyCard.style.display = alertIpAnomaly ? 'block' : 'none';
+      }
+
       localStorage.setItem('aetheria_alert_new_login', String(alertNewLogin));
       localStorage.setItem('aetheria_alert_ip_anomaly', String(alertIpAnomaly));
+      localStorage.setItem('aetheria_geo_shift_policy', currentGeoShiftPolicy);
 
       const token = localStorage.getItem('aetheria_auth_token');
       const headers: Record<string, string> = { 'Content-Type': 'application/json' };
@@ -3153,7 +3431,11 @@ import {
         await fetch('/api/security/settings', {
           method: 'POST',
           headers,
-          body: JSON.stringify({ alertNewLogin, alertIpAnomaly })
+          body: JSON.stringify({ 
+            alertNewLogin, 
+            alertIpAnomaly, 
+            geoShiftPolicy: currentGeoShiftPolicy 
+          })
         });
         showToast('Security alert preferences updated', 'success');
       } catch (e) {
@@ -3163,6 +3445,171 @@ import {
 
     document.getElementById('toggle-new-login-alert')?.addEventListener('change', updateSecuritySettings);
     document.getElementById('toggle-ip-anomaly-shield')?.addEventListener('change', updateSecuritySettings);
+
+    // Step-Up Geo-Shift Verification Challenge Modal
+    function openGeoShiftChallengeModal(data: any) {
+      const modal = document.getElementById('geo-shift-challenge-modal');
+      if (!modal) return;
+
+      const prevLoc = document.getElementById('geo-modal-prev-location');
+      const prevCode = document.getElementById('geo-modal-prev-code');
+      const newLoc = document.getElementById('geo-modal-new-location');
+      const newIp = document.getElementById('geo-modal-new-ip');
+      const otpInput = document.getElementById('geo-otp-code-input') as HTMLInputElement;
+      const statusMsg = document.getElementById('geo-otp-status-msg');
+
+      if (prevLoc) prevLoc.textContent = data.previousCity ? `${data.previousCity}, ${data.previousCountry || 'IR'}` : (data.previousCountry || 'Tehran, Iran');
+      if (prevCode) prevCode.textContent = `${data.previousCountry || 'IR'} (Verified Baseline)`;
+      if (newLoc) newLoc.textContent = data.newCity ? `${data.newCity}, ${data.newCountry || 'FI'}` : (data.newCountry || 'Helsinki, Finland');
+      if (newIp) newIp.textContent = data.maskedIp || '138.124.***.***';
+
+      if (otpInput) {
+        otpInput.value = '';
+        setTimeout(() => otpInput.focus(), 150);
+      }
+
+      if (statusMsg) {
+        if (data.simulated || data.hint) {
+          statusMsg.innerHTML = `<span class="text-purple-300 font-semibold bg-purple-500/10 px-2.5 py-1 rounded-xl border border-purple-500/20 inline-block">🧪 Preview Code: <span class="font-mono text-white tracking-widest font-bold">749215</span></span>`;
+        } else {
+          statusMsg.textContent = 'A 6-digit verification code has been dispatched to your email.';
+        }
+      }
+
+      modal.dataset.newCountry = data.newCountry || 'FI';
+      modal.classList.remove('hidden');
+    }
+
+    // Simulate Button Listener
+    document.getElementById('btn-simulate-geo-shift')?.addEventListener('click', async () => {
+      const token = localStorage.getItem('aetheria_auth_token');
+      const headers: Record<string, string> = { 'Content-Type': 'application/json' };
+      if (token) headers['Authorization'] = `Bearer ${token}`;
+
+      try {
+        const res = await fetch('/api/security/simulate-geo-challenge', {
+          method: 'POST',
+          headers
+        });
+        const data = await res.json().catch(() => ({}));
+        openGeoShiftChallengeModal(data);
+      } catch {
+        openGeoShiftChallengeModal({
+          previousCountry: 'IR',
+          previousCity: 'Tehran',
+          newCountry: 'FI',
+          newCity: 'Helsinki',
+          maskedIp: '138.124.***.***',
+          simulated: true,
+          hint: 'Simulated OTP: 749215'
+        });
+      }
+    });
+
+    // Verify & Continue Button
+    document.getElementById('btn-verify-geo-otp')?.addEventListener('click', async () => {
+      const modal = document.getElementById('geo-shift-challenge-modal');
+      const otpInput = document.getElementById('geo-otp-code-input') as HTMLInputElement;
+      const statusMsg = document.getElementById('geo-otp-status-msg');
+      const trustCb = document.getElementById('cb-trust-geo-location') as HTMLInputElement;
+      const newCountry = modal?.dataset.newCountry || 'FI';
+
+      const code = (otpInput?.value || '').trim();
+      if (code.length !== 6) {
+        if (statusMsg) {
+          statusMsg.innerHTML = '<span class="text-rose-400 font-medium">Please enter a valid 6-digit code.</span>';
+        }
+        return;
+      }
+
+      if (statusMsg) {
+        statusMsg.innerHTML = '<span class="text-slate-300 animate-pulse">Verifying step-up challenge...</span>';
+      }
+
+      const token = localStorage.getItem('aetheria_auth_token');
+      const headers: Record<string, string> = { 'Content-Type': 'application/json' };
+      if (token) headers['Authorization'] = `Bearer ${token}`;
+
+      try {
+        const res = await fetch('/api/security/verify-geo-otp', {
+          method: 'POST',
+          headers,
+          body: JSON.stringify({
+            code,
+            trustLocation: trustCb ? trustCb.checked : true,
+            countryToTrust: newCountry
+          })
+        });
+        const data = await res.json().catch(() => ({}));
+
+        if (res.ok && data.success) {
+          modal?.classList.add('hidden');
+          showToast('Identity verified! Location added to trusted shield.', 'success');
+          if (data.trustedCountries) {
+            updateTrustedCountriesBadge(data.trustedCountries);
+          }
+          await loadDevicesAndSecurity();
+        } else {
+          if (statusMsg) {
+            statusMsg.innerHTML = `<span class="text-rose-400 font-medium">${data.message || 'Invalid or expired code. Please retry.'}</span>`;
+          }
+        }
+      } catch (err) {
+        if (statusMsg) {
+          statusMsg.innerHTML = '<span class="text-rose-400 font-medium">Network error verifying code.</span>';
+        }
+      }
+    });
+
+    // Resend Code Button
+    document.getElementById('btn-resend-geo-otp')?.addEventListener('click', async () => {
+      const statusMsg = document.getElementById('geo-otp-status-msg');
+      const token = localStorage.getItem('aetheria_auth_token');
+      const headers: Record<string, string> = { 'Content-Type': 'application/json' };
+      if (token) headers['Authorization'] = `Bearer ${token}`;
+
+      try {
+        const res = await fetch('/api/security/resend-geo-otp', { method: 'POST', headers });
+        const data = await res.json().catch(() => ({}));
+        if (statusMsg) {
+          statusMsg.innerHTML = `<span class="text-emerald-400 font-medium">${data.message || 'A new code has been dispatched.'}</span>`;
+        }
+      } catch {
+        if (statusMsg) {
+          statusMsg.innerHTML = '<span class="text-purple-300 font-medium">Demo Mode Code: 749215</span>';
+        }
+      }
+    });
+
+    // Lock Account & Logout Button
+    document.getElementById('btn-lock-logout-account')?.addEventListener('click', async () => {
+      const token = localStorage.getItem('aetheria_auth_token');
+      if (token) {
+        fetch('/api/auth/logout', {
+          method: 'POST',
+          headers: { 'Authorization': `Bearer ${token}` }
+        }).catch(() => {});
+      }
+      localStorage.removeItem('aetheria_auth_token');
+      localStorage.removeItem('aetheria_user');
+      sessionStorage.clear();
+      window.location.href = '/auth?locked=1';
+    });
+
+    // Global fetch interceptor for GEO_SHIFT_CHALLENGE
+    const originalFetch = window.fetch;
+    window.fetch = async (...args) => {
+      const response = await originalFetch(...args);
+      if (response.status === 403) {
+        const clone = response.clone();
+        clone.json().then(data => {
+          if (data && data.error === 'GEO_SHIFT_CHALLENGE') {
+            openGeoShiftChallengeModal(data);
+          }
+        }).catch(() => {});
+      }
+      return response;
+    };
 
     // Master Persona Enable/Disable Toggle
     const masterToggle = document.getElementById('persona-master-toggle') as HTMLInputElement;

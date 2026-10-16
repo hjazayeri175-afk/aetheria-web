@@ -44,6 +44,10 @@ CREATE TABLE IF NOT EXISTS sessions (
     country TEXT,
     country_code TEXT,
     last_active_at INTEGER,
+    last_verified_country TEXT,
+    pending_geo_verification INTEGER DEFAULT 0,
+    geo_otp_code TEXT,
+    geo_otp_expires_at INTEGER,
     expires_at INTEGER NOT NULL,
     created_at INTEGER NOT NULL,
     FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
@@ -75,6 +79,8 @@ CREATE TABLE IF NOT EXISTS security_settings (
     alert_new_login INTEGER DEFAULT 1,
     alert_ip_anomaly INTEGER DEFAULT 1,
     auto_timeout_days INTEGER DEFAULT 30,
+    geo_shift_policy TEXT DEFAULT 'alert_only', -- 'alert_only', 'require_otp'
+    trusted_countries TEXT DEFAULT '[]', -- JSON string array e.g. '["FI","DE"]'
     updated_at INTEGER NOT NULL,
     FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
 );
