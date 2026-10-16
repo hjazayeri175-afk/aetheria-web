@@ -829,6 +829,157 @@ const {
         };
       })();
 
+      // ==========================================
+      // Aetheria Power Saving & Performance Engine
+      // ==========================================
+      (function() {
+        const STORAGE_KEY = 'aetheria_power_saving';
+        const MASTER_KEY = 'master_power_saving';
+        const listeners = new Set();
+
+        const DEFAULT_SETTINGS = {
+          master: false,
+          disable3D: false,
+          disableGlows: false,
+          deepDarkOLED: false,
+          freezeAvatars: false,
+          disableSounds: false,
+          pauseVoiceAutoPlay: false,
+          throttleBackground: false
+        };
+
+        function getSettings() {
+          try {
+            const raw = localStorage.getItem(STORAGE_KEY);
+            const parsed = raw ? JSON.parse(raw) : {};
+            const isMaster = localStorage.getItem(MASTER_KEY) === 'true' || parsed.master === true;
+            return {
+              master: isMaster,
+              disable3D: isMaster ? true : (parsed.disable3D === true),
+              disableGlows: isMaster ? true : (parsed.disableGlows === true),
+              deepDarkOLED: isMaster ? true : (parsed.deepDarkOLED === true),
+              freezeAvatars: isMaster ? true : (parsed.freezeAvatars === true),
+              disableSounds: isMaster ? true : (parsed.disableSounds === true),
+              pauseVoiceAutoPlay: isMaster ? true : (parsed.pauseVoiceAutoPlay === true),
+              throttleBackground: isMaster ? true : (parsed.throttleBackground === true)
+            };
+          } catch (e) {
+            return { ...DEFAULT_SETTINGS };
+          }
+        }
+
+        function saveSettings(settings) {
+          try {
+            localStorage.setItem(STORAGE_KEY, JSON.stringify(settings));
+            localStorage.setItem(MASTER_KEY, settings.master ? 'true' : 'false');
+          } catch (e) {}
+          applyToDOM(settings);
+          notify(settings);
+        }
+
+        function setSetting(key, val) {
+          const current = getSettings();
+          current[key] = val;
+          if (key === 'master') {
+            if (val === true) {
+              current.disable3D = true;
+              current.disableGlows = true;
+              current.deepDarkOLED = true;
+              current.freezeAvatars = true;
+              current.disableSounds = true;
+              current.pauseVoiceAutoPlay = true;
+              current.throttleBackground = true;
+            }
+          } else {
+            // If any sub-setting is turned off, master is turned off
+            if (val === false && current.master) {
+              current.master = false;
+            }
+          }
+          saveSettings(current);
+        }
+
+        function notify(settings) {
+          listeners.forEach(fn => {
+            try { fn(settings); } catch (e) {}
+          });
+        }
+
+        function applyToDOM(settings) {
+          if (!settings) settings = getSettings();
+          const root = document.documentElement;
+
+          // 1. Master indicator class
+          root.classList.toggle('power-saving-active', Boolean(settings.master));
+
+          // 2. 3D Transforms & Perspective
+          root.classList.toggle('power-saving-disable-3d', Boolean(settings.disable3D || settings.master));
+
+          // 3. Glows & Backdrop Blurs
+          root.classList.toggle('power-saving-no-glows', Boolean(settings.disableGlows || settings.master));
+
+          // 4. Deep Dark OLED True Black Mode
+          root.classList.toggle('power-saving-oled', Boolean(settings.deepDarkOLED || settings.master));
+
+          // 5. Freeze Animated Avatars & Loops
+          root.classList.toggle('power-saving-freeze-avatars', Boolean(settings.freezeAvatars || settings.master));
+
+          // Dispatch custom event for reactive UI hooks
+          window.dispatchEvent(new CustomEvent('aetheria:power-saving-change', { detail: settings }));
+        }
+
+        // Apply immediately on first paint
+        const initial = getSettings();
+        applyToDOM(initial);
+
+        // Cross-tab sync
+        window.addEventListener('storage', function(e) {
+          if (e.key === STORAGE_KEY || e.key === MASTER_KEY) {
+            const updated = getSettings();
+            applyToDOM(updated);
+            notify(updated);
+          }
+        });
+
+        // Background Throttling Hook
+        document.addEventListener('visibilitychange', function() {
+          const cfg = getSettings();
+          if (cfg.throttleBackground || cfg.master) {
+            window.__AETHERIA_BG_THROTTLED = document.hidden;
+            if (document.hidden) {
+              console.log('[POWER-SAVER] Background activity throttled while tab is inactive.');
+            }
+          } else {
+            window.__AETHERIA_BG_THROTTLED = false;
+          }
+        });
+
+        // Global Audio Gatekeeper
+        window.AetheriaAudio = {
+          playUI: function(soundType) {
+            const cfg = getSettings();
+            if (cfg.disableSounds || cfg.master) {
+              return; // Muted by Power Saver
+            }
+          },
+          canAutoPlayVoice: function() {
+            const cfg = getSettings();
+            return !(cfg.pauseVoiceAutoPlay || cfg.master);
+          }
+        };
+
+        window.AetheriaPowerSaving = {
+          getSettings,
+          saveSettings,
+          setSetting,
+          applyToDOM,
+          subscribe: function(fn) {
+            listeners.add(fn);
+            return () => listeners.delete(fn);
+          }
+        };
+      })();
+
       // Native IndexedDB Engine: Unlimited Local Storage & Lossless High-Fidelity Images
       (function() {
         const DB_NAME = 'aetheria_vault';

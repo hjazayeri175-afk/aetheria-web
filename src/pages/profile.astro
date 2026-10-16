@@ -46,7 +46,13 @@ import {
   History,
   RefreshCw,
   Bell,
-  Mail
+  Mail,
+  Battery,
+  BatteryCharging,
+  Moon,
+  Layers,
+  VolumeX,
+  Activity
 } from '@lucide/astro';
 ---
 
@@ -226,13 +232,17 @@ import {
             id="hub-item-power"
             class="w-full px-3.5 py-3 rounded-2xl flex items-center gap-3.5 hover:bg-white/[0.05] active:bg-white/[0.08] transition text-left cursor-pointer group"
           >
-            <div class="w-10 h-10 rounded-2xl bg-[#ea580c] flex items-center justify-center text-white shrink-0 shadow-md">
+            <div class="w-10 h-10 rounded-2xl bg-[#ea580c] flex items-center justify-center text-white shrink-0 shadow-md group-hover:scale-105 transition-transform">
               <Zap class="w-5 h-5 stroke-[2.2]" />
             </div>
             <div class="min-w-0 flex-1">
-              <div class="text-[15px] font-semibold text-white tracking-wide">Power Saving</div>
-              <div class="text-[13px] text-[#8e98a8] truncate">Animations, vector doodles, sound effects</div>
+              <div class="text-[15px] font-semibold text-white tracking-wide flex items-center gap-2">
+                <span>Power Saving</span>
+                <span id="hub-power-pill" class="text-[10px] px-1.5 py-0.5 rounded-md font-bold bg-white/5 text-slate-400 border border-white/10">Balanced</span>
+              </div>
+              <div class="text-[13px] text-[#8e98a8] truncate" id="hub-power-summary">Animations, OLED dark mode, 3D & sound policies</div>
             </div>
+            <ChevronRight class="w-4 h-4 text-white/30 group-hover:text-white/70 transition" />
           </button>
 
           <!-- 9. Language -->
@@ -1256,6 +1266,247 @@ import {
         </div>
       </div>
 
+      <!-- ========================================== -->
+      <!-- VIEW 8: POWER SAVING & PERFORMANCE SUB-PAGE -->
+      <!-- ========================================== -->
+      <div id="view-power-saving" class="hidden space-y-5">
+        <!-- Header & Back Navigation (Sticky Bar) -->
+        <div class="sticky top-16 sm:top-18 z-30 -mx-3 sm:-mx-4 px-3 sm:px-4 py-3 bg-[#07080d]/95 backdrop-blur-md border-b border-white/[0.06] flex items-center justify-between transition-all">
+          <button 
+            type="button" 
+            id="btn-back-from-power"
+            class="flex items-center gap-2 text-white/90 hover:text-white font-medium text-sm py-1.5 px-2.5 rounded-xl hover:bg-white/[0.08] transition cursor-pointer active:scale-95"
+          >
+            <ArrowLeft class="w-5 h-5 text-amber-400" />
+            <span>Settings</span>
+          </button>
+          <div class="flex items-center gap-2">
+            <span id="power-badge-status" class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-bold bg-white/5 text-slate-300 border border-white/10 transition-colors">
+              <span id="power-badge-dot" class="w-2 h-2 rounded-full bg-slate-400"></span>
+              <span id="power-badge-text">Standard Performance</span>
+            </span>
+          </div>
+        </div>
+
+        <div>
+          <h1 class="text-xl font-bold text-white tracking-tight flex items-center gap-2.5">
+            <Zap class="w-6 h-6 text-amber-400" />
+            <span>Power Saving & Performance</span>
+          </h1>
+          <p class="text-xs text-slate-300 mt-1 leading-relaxed">Control graphics rendering pipelines, 3D animations, true OLED deep blacks, and sound policies.</p>
+        </div>
+
+        <!-- Master Power Saving Mode Hero Card -->
+        <div class="rounded-3xl bg-gradient-to-br from-[#1c1917]/90 via-[#141824] to-[#0a0a0f] border border-amber-500/30 p-5 shadow-2xl relative overflow-hidden transition-all duration-300">
+          <div class="absolute -top-12 -right-12 w-48 h-48 bg-amber-500/15 rounded-full blur-3xl pointer-events-none"></div>
+
+          <div class="relative z-10 space-y-4">
+            <div class="flex items-center justify-between gap-4">
+              <div class="flex items-center gap-3.5">
+                <div class="w-12 h-12 rounded-2xl bg-amber-500/20 border border-amber-500/40 flex items-center justify-center text-amber-400 shrink-0 shadow-lg shadow-amber-950/40">
+                  <BatteryCharging class="w-6 h-6 stroke-[2.2] animate-pulse" />
+                </div>
+                <div>
+                  <div class="text-sm font-bold text-white tracking-wide flex items-center gap-2">
+                    <span>Master Power Saving Mode</span>
+                    <span class="text-[10px] font-extrabold uppercase px-2 py-0.5 rounded-md bg-amber-500/20 text-amber-300 border border-amber-500/40 tracking-wider">High Efficiency</span>
+                  </div>
+                  <div class="text-xs text-slate-200 mt-0.5 leading-relaxed font-normal">Forcefully sets all performance toggles active for maximum battery longevity and lower CPU/GPU usage.</div>
+                </div>
+              </div>
+              <label class="relative inline-flex items-center cursor-pointer shrink-0">
+                <input type="checkbox" id="toggle-master-power-saving" class="sr-only peer">
+                <div class="w-12 h-6 bg-white/10 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-amber-500 shadow-inner"></div>
+              </label>
+            </div>
+
+            <!-- Aesthetic Battery Saver Active Banner -->
+            <div id="master-power-banner" class="hidden rounded-2xl bg-amber-500/15 border border-amber-500/40 p-3.5 text-xs text-amber-200 font-medium flex items-center gap-3 transition-all duration-300 shadow-sm">
+              <span class="text-base shrink-0">⚡</span>
+              <div class="flex-1 text-[11px] leading-relaxed">
+                <strong class="text-white block font-bold text-xs mb-0.5">Ultra-Efficiency Mode Active</strong>
+                3D transformations bypassed, background glows stripped, true OLED deep black engaged, and sound playback throttled.
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Section 1: Visual & Graphics Optimizations -->
+        <div class="rounded-3xl bg-[#101422]/90 border border-white/10 p-5 space-y-4 shadow-xl">
+          <div class="flex items-center gap-2 pb-2 border-b border-white/10">
+            <Layers class="w-4 h-4 text-cyan-400" />
+            <h2 class="text-xs font-bold text-white tracking-wider uppercase">Visual & Graphics Optimizations</h2>
+          </div>
+
+          <div class="space-y-4 pt-1">
+            <!-- 1. Disable 3D Carousel & Transitions -->
+            <div class="flex items-center justify-between gap-4">
+              <div class="space-y-0.5 max-w-[80%]">
+                <div class="text-xs font-bold text-white flex items-center gap-2">
+                  <span>Disable 3D Carousel & Transforms</span>
+                  <span id="badge-3d-status" class="text-[10px] px-2 py-0.5 rounded-md font-bold bg-white/5 text-slate-300 border border-white/10">Standard 3D</span>
+                </div>
+                <div class="text-xs text-slate-200 leading-relaxed font-normal">Replaces 3D Coverflow perspective transformations with a quick flat list view. Eliminates GPU matrix computations.</div>
+              </div>
+              <label class="relative inline-flex items-center cursor-pointer shrink-0">
+                <input type="checkbox" id="toggle-disable-3d" class="sr-only peer">
+                <div class="w-11 h-6 bg-white/10 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-[var(--theme-accent,#9333ea)] shadow-inner"></div>
+              </label>
+            </div>
+
+            <!-- 2. Disable Glows & Neon Effects -->
+            <div class="flex items-center justify-between gap-4 pt-3 border-t border-white/10">
+              <div class="space-y-0.5 max-w-[80%]">
+                <div class="text-xs font-bold text-white flex items-center gap-2">
+                  <span>Disable Glows & Neon Halos</span>
+                  <span id="badge-glows-status" class="text-[10px] px-2 py-0.5 rounded-md font-bold bg-white/5 text-slate-300 border border-white/10">Active</span>
+                </div>
+                <div class="text-xs text-slate-200 leading-relaxed font-normal">Removes box-shadow glow halos, background light orbs, and GPU-intensive backdrop blur filters.</div>
+              </div>
+              <label class="relative inline-flex items-center cursor-pointer shrink-0">
+                <input type="checkbox" id="toggle-disable-glows" class="sr-only peer">
+                <div class="w-11 h-6 bg-white/10 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-[var(--theme-accent,#9333ea)] shadow-inner"></div>
+              </label>
+            </div>
+
+            <!-- 3. Deep Dark OLED Mode -->
+            <div class="flex items-center justify-between gap-4 pt-3 border-t border-white/10">
+              <div class="space-y-0.5 max-w-[80%]">
+                <div class="text-xs font-bold text-white flex items-center gap-2">
+                  <span class="flex items-center gap-1.5">
+                    <Moon class="w-3.5 h-3.5 text-purple-400" />
+                    Deep Dark OLED Mode
+                  </span>
+                  <span id="badge-oled-status" class="text-[10px] px-2 py-0.5 rounded-md font-bold bg-white/5 text-slate-300 border border-white/10">Off</span>
+                </div>
+                <div class="text-xs text-slate-200 leading-relaxed font-normal">Substitutes midnight blue gradients with pure #000000 true black. Completely turns off illuminated pixels on OLED & AMOLED panels.</div>
+              </div>
+              <label class="relative inline-flex items-center cursor-pointer shrink-0">
+                <input type="checkbox" id="toggle-deep-dark-oled" class="sr-only peer">
+                <div class="w-11 h-6 bg-white/10 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-[var(--theme-accent,#9333ea)] shadow-inner"></div>
+              </label>
+            </div>
+
+            <!-- 4. Freeze Animated Avatars -->
+            <div class="flex items-center justify-between gap-4 pt-3 border-t border-white/10">
+              <div class="space-y-0.5 max-w-[80%]">
+                <div class="text-xs font-bold text-white flex items-center gap-2">
+                  <span>Freeze Animated Avatars</span>
+                  <span id="badge-avatars-status" class="text-[10px] px-2 py-0.5 rounded-md font-bold bg-white/5 text-slate-300 border border-white/10">Playing</span>
+                </div>
+                <div class="text-xs text-slate-200 leading-relaxed font-normal">Halts keyframe animations, pulsing effects, and animated character avatar frames to reduce rendering loops.</div>
+              </div>
+              <label class="relative inline-flex items-center cursor-pointer shrink-0">
+                <input type="checkbox" id="toggle-freeze-avatars" class="sr-only peer">
+                <div class="w-11 h-6 bg-white/10 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-[var(--theme-accent,#9333ea)] shadow-inner"></div>
+              </label>
+            </div>
+          </div>
+        </div>
+
+        <!-- Section 2: Audio & Media Policies -->
+        <div class="rounded-3xl bg-[#101422]/90 border border-white/10 p-5 space-y-4 shadow-xl">
+          <div class="flex items-center gap-2 pb-2 border-b border-white/10">
+            <VolumeX class="w-4 h-4 text-emerald-400" />
+            <h2 class="text-xs font-bold text-white tracking-wider uppercase">Audio & Media Policies</h2>
+          </div>
+
+          <div class="space-y-4 pt-1">
+            <!-- 5. Disable Sound Effects -->
+            <div class="flex items-center justify-between gap-4">
+              <div class="space-y-0.5 max-w-[80%]">
+                <div class="text-xs font-bold text-white flex items-center gap-2">
+                  <span>Disable UI Sound Effects</span>
+                  <span id="badge-sounds-status" class="text-[10px] px-2 py-0.5 rounded-md font-bold bg-white/5 text-slate-300 border border-white/10">Enabled</span>
+                </div>
+                <div class="text-xs text-slate-200 leading-relaxed font-normal">Mutes interactive click ticks, message send haptics, and system chimes to prevent Web Audio thread wakeups.</div>
+              </div>
+              <label class="relative inline-flex items-center cursor-pointer shrink-0">
+                <input type="checkbox" id="toggle-disable-sounds" class="sr-only peer">
+                <div class="w-11 h-6 bg-white/10 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-[var(--theme-accent,#9333ea)] shadow-inner"></div>
+              </label>
+            </div>
+
+            <!-- 6. Pause Voice Auto-Play -->
+            <div class="flex items-center justify-between gap-4 pt-3 border-t border-white/10">
+              <div class="space-y-0.5 max-w-[80%]">
+                <div class="text-xs font-bold text-white flex items-center gap-2">
+                  <span>Pause Voice Auto-Play</span>
+                  <span id="badge-voice-status" class="text-[10px] px-2 py-0.5 rounded-md font-bold bg-white/5 text-slate-300 border border-white/10">Auto</span>
+                </div>
+                <div class="text-xs text-slate-200 leading-relaxed font-normal">Prevents incoming AI character voice messages from streaming automatically until tapped manually.</div>
+              </div>
+              <label class="relative inline-flex items-center cursor-pointer shrink-0">
+                <input type="checkbox" id="toggle-pause-voice-autoplay" class="sr-only peer">
+                <div class="w-11 h-6 bg-white/10 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-[var(--theme-accent,#9333ea)] shadow-inner"></div>
+              </label>
+            </div>
+          </div>
+        </div>
+
+        <!-- Section 3: Network & Background Throttling -->
+        <div class="rounded-3xl bg-[#101422]/90 border border-white/10 p-5 space-y-4 shadow-xl">
+          <div class="flex items-center gap-2 pb-2 border-b border-white/10">
+            <Activity class="w-4 h-4 text-purple-400" />
+            <h2 class="text-xs font-bold text-white tracking-wider uppercase">Network & Background Throttling</h2>
+          </div>
+
+          <div class="space-y-4 pt-1">
+            <!-- 7. Throttle Background Activity -->
+            <div class="flex items-center justify-between gap-4">
+              <div class="space-y-0.5 max-w-[80%]">
+                <div class="text-xs font-bold text-white flex items-center gap-2">
+                  <span>Throttle Background Activity</span>
+                  <span id="badge-throttle-status" class="text-[10px] px-2 py-0.5 rounded-md font-bold bg-white/5 text-slate-300 border border-white/10">Normal</span>
+                </div>
+                <div class="text-xs text-slate-200 leading-relaxed font-normal">Halts background polling, interval fetches, and active streaming timers when the browser tab is hidden or minimized.</div>
+              </div>
+              <label class="relative inline-flex items-center cursor-pointer shrink-0">
+                <input type="checkbox" id="toggle-throttle-background" class="sr-only peer">
+                <div class="w-11 h-6 bg-white/10 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-[var(--theme-accent,#9333ea)] shadow-inner"></div>
+              </label>
+            </div>
+          </div>
+        </div>
+
+        <!-- Section 4: Live Device Diagnostics & Battery Telemetry -->
+        <div class="rounded-3xl bg-[#101422]/90 border border-white/10 p-5 space-y-3 shadow-xl">
+          <div class="flex items-center justify-between pb-2 border-b border-white/10">
+            <div class="flex items-center gap-2">
+              <Battery class="w-4 h-4 text-amber-400" />
+              <h2 class="text-xs font-bold text-white tracking-wider uppercase">Device Diagnostics & Battery Telemetry</h2>
+            </div>
+            <span id="battery-level-pct" class="text-xs font-mono font-bold text-amber-300 bg-amber-500/10 px-2 py-0.5 rounded-lg border border-amber-500/30">Detecting...</span>
+          </div>
+
+          <div class="space-y-2 pt-1">
+            <!-- Battery gauge bar -->
+            <div class="w-full h-2 rounded-full bg-white/10 overflow-hidden">
+              <div id="battery-gauge-bar" class="h-full bg-gradient-to-r from-amber-500 to-emerald-400 transition-all duration-500" style="width: 100%;"></div>
+            </div>
+            <div class="flex items-center justify-between text-[11px] text-slate-300">
+              <span id="battery-state-text" class="flex items-center gap-1.5">
+                <span class="w-1.5 h-1.5 rounded-full bg-emerald-400"></span>
+                Status: System Managed
+              </span>
+              <span id="battery-charging-text" class="text-slate-400 font-mono">Standby</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Section 5: Reset Defaults -->
+        <div class="flex items-center justify-between pt-2">
+          <button 
+            type="button" 
+            id="btn-reset-power-settings"
+            class="w-full py-3 px-4 rounded-2xl bg-white/[0.04] hover:bg-white/[0.08] active:scale-98 text-xs font-semibold text-slate-300 hover:text-white border border-white/10 transition cursor-pointer flex items-center justify-center gap-2"
+          >
+            <RotateCcw class="w-3.5 h-3.5 text-slate-400" />
+            <span>Reset to High Performance Defaults</span>
+          </button>
+        </div>
+      </div>
+
     </div>
   </main>
 
@@ -2064,6 +2315,9 @@ import {
     const cards = document.querySelectorAll<HTMLElement>('.persona-3d-card');
     const totalSlides = personas.length + 1;
 
+    const ps = (window as any).AetheriaPowerSaving;
+    const is3DDisabled = Boolean(ps?.getSettings().disable3D || ps?.getSettings().master);
+
     cards.forEach((card) => {
       const idx = parseInt(card.getAttribute('data-index') || '0', 10);
       const offset = idx - activeCardIndex;
@@ -2074,34 +2328,66 @@ import {
       let pointerEvents = 'none';
       let filterStr = 'none';
 
-      if (offset === 0) {
-        transformStr = 'translate3d(0, 0, 0) scale(1) rotateY(0deg)';
-        zIndex = 20;
-        opacity = 1;
-        pointerEvents = 'auto';
-        filterStr = 'drop-shadow(0 20px 25px rgba(0,0,0,0.7))';
-      } else if (offset === 1) {
-        transformStr = 'translate3d(58%, 0, -120px) scale(0.85) rotateY(-24deg)';
-        zIndex = 10;
-        opacity = 0.55;
-        pointerEvents = 'auto';
-        filterStr = 'drop-shadow(0 15px 20px rgba(0,0,0,0.5)) blur(0.4px)';
-      } else if (offset === -1) {
-        transformStr = 'translate3d(-58%, 0, -120px) scale(0.85) rotateY(24deg)';
-        zIndex = 10;
-        opacity = 0.55;
-        pointerEvents = 'auto';
-        filterStr = 'drop-shadow(0 15px 20px rgba(0,0,0,0.5)) blur(0.4px)';
-      } else if (offset > 1) {
-        transformStr = `translate3d(${58 + (offset - 1) * 35}%, 0, -240px) scale(0.7) rotateY(-32deg)`;
-        zIndex = Math.max(1, 10 - offset);
-        opacity = 0;
-        pointerEvents = 'none';
-      } else if (offset < -1) {
-        transformStr = `translate3d(${-58 + (offset + 1) * 35}%, 0, -240px) scale(0.7) rotateY(32deg)`;
-        zIndex = Math.max(1, 10 + offset);
-        opacity = 0;
-        pointerEvents = 'none';
+      if (is3DDisabled) {
+        // Flat 2D Mode (Power Saving - Zero rotateY / perspective overhead)
+        if (offset === 0) {
+          transformStr = 'translate3d(0, 0, 0) scale(1)';
+          zIndex = 20;
+          opacity = 1;
+          pointerEvents = 'auto';
+        } else if (offset === 1) {
+          transformStr = 'translate3d(62%, 0, 0) scale(0.88)';
+          zIndex = 10;
+          opacity = 0.55;
+          pointerEvents = 'auto';
+        } else if (offset === -1) {
+          transformStr = 'translate3d(-62%, 0, 0) scale(0.88)';
+          zIndex = 10;
+          opacity = 0.55;
+          pointerEvents = 'auto';
+        } else if (offset > 1) {
+          transformStr = `translate3d(${62 + (offset - 1) * 35}%, 0, 0) scale(0.7)`;
+          zIndex = Math.max(1, 10 - offset);
+          opacity = 0;
+          pointerEvents = 'none';
+        } else if (offset < -1) {
+          transformStr = `translate3d(${-62 + (offset + 1) * 35}%, 0, 0) scale(0.7)`;
+          zIndex = Math.max(1, 10 + offset);
+          opacity = 0;
+          pointerEvents = 'none';
+        }
+        filterStr = 'none';
+      } else {
+        // Full 3D Coverflow Perspective Mode
+        if (offset === 0) {
+          transformStr = 'translate3d(0, 0, 0) scale(1) rotateY(0deg)';
+          zIndex = 20;
+          opacity = 1;
+          pointerEvents = 'auto';
+          filterStr = 'drop-shadow(0 20px 25px rgba(0,0,0,0.7))';
+        } else if (offset === 1) {
+          transformStr = 'translate3d(58%, 0, -120px) scale(0.85) rotateY(-24deg)';
+          zIndex = 10;
+          opacity = 0.55;
+          pointerEvents = 'auto';
+          filterStr = 'drop-shadow(0 15px 20px rgba(0,0,0,0.5)) blur(0.4px)';
+        } else if (offset === -1) {
+          transformStr = 'translate3d(-58%, 0, -120px) scale(0.85) rotateY(24deg)';
+          zIndex = 10;
+          opacity = 0.55;
+          pointerEvents = 'auto';
+          filterStr = 'drop-shadow(0 15px 20px rgba(0,0,0,0.5)) blur(0.4px)';
+        } else if (offset > 1) {
+          transformStr = `translate3d(${58 + (offset - 1) * 35}%, 0, -240px) scale(0.7) rotateY(-32deg)`;
+          zIndex = Math.max(1, 10 - offset);
+          opacity = 0;
+          pointerEvents = 'none';
+        } else if (offset < -1) {
+          transformStr = `translate3d(${-58 + (offset + 1) * 35}%, 0, -240px) scale(0.7) rotateY(32deg)`;
+          zIndex = Math.max(1, 10 + offset);
+          opacity = 0;
+          pointerEvents = 'none';
+        }
       }
 
       card.style.transform = transformStr;
@@ -2716,7 +3002,7 @@ import {
     // Telegram-Style View Switcher (SPA Hub)
     // ==========================================
     function showView(targetId: string) {
-      const views = ['view-hub', 'view-personas', 'view-appearance', 'view-ai-engine', 'view-voice', 'view-privacy', 'view-devices'];
+      const views = ['view-hub', 'view-personas', 'view-appearance', 'view-ai-engine', 'view-voice', 'view-privacy', 'view-devices', 'view-power-saving'];
       views.forEach(id => {
         const el = document.getElementById(id);
         if (!el) return;
@@ -2725,6 +3011,8 @@ import {
           window.scrollTo({ top: 0, behavior: 'instant' });
           if (id === 'view-personas') {
             render3DCarousel();
+          } else if (id === 'view-power-saving') {
+            syncPowerSavingUI();
           }
         } else {
           el.classList.add('hidden');
@@ -2738,7 +3026,8 @@ import {
         'view-ai-engine': '#ai-engine',
         'view-voice': '#voice',
         'view-privacy': '#privacy',
-        'view-devices': '#devices'
+        'view-devices': '#devices',
+        'view-power-saving': '#power'
       };
       const targetHash = hashMap[targetId] || '';
       if (window.location.hash !== targetHash) {
@@ -2756,6 +3045,10 @@ import {
       else if (h === '#devices' || h === '#security') {
         showView('view-devices');
         loadDevicesAndSecurity();
+      }
+      else if (h === '#power' || h === '#power-saving' || h === '#performance') {
+        showView('view-power-saving');
+        syncPowerSavingUI();
       }
       else showView('view-hub');
     }
@@ -2778,7 +3071,8 @@ import {
     });
 
     document.getElementById('hub-item-power')?.addEventListener('click', () => {
-      showToast('Power saving: Standard performance active', 'info');
+      showView('view-power-saving');
+      syncPowerSavingUI();
     });
 
     document.getElementById('hub-item-language')?.addEventListener('click', () => {
@@ -2792,6 +3086,200 @@ import {
     document.getElementById('btn-back-from-voice')?.addEventListener('click', () => showView('view-hub'));
     document.getElementById('btn-back-from-privacy')?.addEventListener('click', () => showView('view-hub'));
     document.getElementById('btn-back-from-devices')?.addEventListener('click', () => showView('view-hub'));
+    document.getElementById('btn-back-from-power')?.addEventListener('click', () => showView('view-hub'));
+
+    // ==========================================
+    // POWER SAVING & PERFORMANCE CONTROLLER
+    // ==========================================
+    function syncPowerSavingUI() {
+      const ps = (window as any).AetheriaPowerSaving;
+      if (!ps) return;
+      const settings = ps.getSettings();
+
+      // Master Toggle & Banner
+      const tMaster = document.getElementById('toggle-master-power-saving') as HTMLInputElement;
+      const banner = document.getElementById('master-power-banner');
+      const badgeStatus = document.getElementById('power-badge-status');
+      const badgeDot = document.getElementById('power-badge-dot');
+      const badgeText = document.getElementById('power-badge-text');
+      const hubSummary = document.getElementById('hub-power-summary');
+      const hubPill = document.getElementById('hub-power-pill');
+
+      if (tMaster) tMaster.checked = Boolean(settings.master);
+
+      if (settings.master) {
+        if (banner) banner.classList.remove('hidden');
+        if (badgeStatus) {
+          badgeStatus.className = 'inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-bold bg-amber-500/15 text-amber-300 border border-amber-500/40 shadow-xs';
+        }
+        if (badgeDot) badgeDot.className = 'w-2 h-2 rounded-full bg-amber-400 animate-pulse';
+        if (badgeText) badgeText.textContent = 'Battery Saver Active';
+        if (hubSummary) hubSummary.textContent = 'Ultra-efficiency mode active (All throttled)';
+        if (hubPill) {
+          hubPill.textContent = 'Saver Active';
+          hubPill.className = 'text-[10px] px-1.5 py-0.5 rounded-md font-bold bg-amber-500/20 text-amber-300 border border-amber-500/40';
+        }
+      } else {
+        if (banner) banner.classList.add('hidden');
+        const anyActive = settings.disable3D || settings.disableGlows || settings.deepDarkOLED || settings.freezeAvatars || settings.disableSounds || settings.pauseVoiceAutoPlay || settings.throttleBackground;
+        if (badgeStatus) {
+          badgeStatus.className = 'inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-bold bg-white/5 text-slate-300 border border-white/10';
+        }
+        if (badgeDot) badgeDot.className = anyActive ? 'w-2 h-2 rounded-full bg-cyan-400' : 'w-2 h-2 rounded-full bg-slate-400';
+        if (badgeText) badgeText.textContent = anyActive ? 'Custom Profile' : 'Standard Performance';
+        if (hubSummary) hubSummary.textContent = anyActive ? 'Custom power optimizations enabled' : 'Balanced (Full 3D & visual effects)';
+        if (hubPill) {
+          hubPill.textContent = anyActive ? 'Custom' : 'Balanced';
+          hubPill.className = anyActive 
+            ? 'text-[10px] px-1.5 py-0.5 rounded-md font-bold bg-purple-500/20 text-purple-300 border border-purple-500/30'
+            : 'text-[10px] px-1.5 py-0.5 rounded-md font-bold bg-white/5 text-slate-400 border border-white/10';
+        }
+      }
+
+      // Sub-toggles
+      const subToggles: { id: string; key: string; badgeId: string; activeText: string; inactiveText: string }[] = [
+        { id: 'toggle-disable-3d', key: 'disable3D', badgeId: 'badge-3d-status', activeText: 'Flat 2D', inactiveText: 'Standard 3D' },
+        { id: 'toggle-disable-glows', key: 'disableGlows', badgeId: 'badge-glows-status', activeText: 'Glows Stripped', inactiveText: 'Active' },
+        { id: 'toggle-deep-dark-oled', key: 'deepDarkOLED', badgeId: 'badge-oled-status', activeText: 'Pure #000000', inactiveText: 'Off' },
+        { id: 'toggle-freeze-avatars', key: 'freezeAvatars', badgeId: 'badge-avatars-status', activeText: 'Frozen', inactiveText: 'Playing' },
+        { id: 'toggle-disable-sounds', key: 'disableSounds', badgeId: 'badge-sounds-status', activeText: 'Muted', inactiveText: 'Enabled' },
+        { id: 'toggle-pause-voice-autoplay', key: 'pauseVoiceAutoPlay', badgeId: 'badge-voice-status', activeText: 'Manual Only', inactiveText: 'Auto' },
+        { id: 'toggle-throttle-background', key: 'throttleBackground', badgeId: 'badge-throttle-status', activeText: 'Throttled', inactiveText: 'Normal' }
+      ];
+
+      subToggles.forEach(item => {
+        const toggleEl = document.getElementById(item.id) as HTMLInputElement;
+        const badgeEl = document.getElementById(item.badgeId);
+        const isChecked = Boolean(settings[item.key]);
+
+        if (toggleEl) {
+          toggleEl.checked = isChecked;
+        }
+
+        if (badgeEl) {
+          if (isChecked) {
+            badgeEl.textContent = item.activeText;
+            badgeEl.className = 'text-[10px] px-2 py-0.5 rounded-md font-bold bg-amber-500/20 text-amber-300 border border-amber-500/40 shadow-xs transition-colors';
+          } else {
+            badgeEl.textContent = item.inactiveText;
+            badgeEl.className = 'text-[10px] px-2 py-0.5 rounded-md font-bold bg-white/5 text-slate-300 border border-white/10 transition-colors';
+          }
+        }
+      });
+    }
+
+    // Battery Telemetry Diagnostics Reader
+    async function initBatteryDiagnostics() {
+      const pctEl = document.getElementById('battery-level-pct');
+      const gaugeEl = document.getElementById('battery-gauge-bar');
+      const stateEl = document.getElementById('battery-state-text');
+      const chargingEl = document.getElementById('battery-charging-text');
+
+      if (!pctEl || !gaugeEl) return;
+
+      if ('getBattery' in navigator) {
+        try {
+          const battery: any = await (navigator as any).getBattery();
+          function updateBatteryTelemetry() {
+            const level = Math.round(battery.level * 100);
+            pctEl.textContent = `${level}%`;
+            gaugeEl.style.width = `${Math.max(5, level)}%`;
+
+            if (level <= 20) {
+              gaugeEl.className = 'h-full bg-gradient-to-r from-red-500 to-amber-500 transition-all duration-500';
+              pctEl.className = 'text-xs font-mono font-bold text-red-300 bg-red-500/10 px-2 py-0.5 rounded-lg border border-red-500/30';
+            } else {
+              gaugeEl.className = 'h-full bg-gradient-to-r from-amber-500 to-emerald-400 transition-all duration-500';
+              pctEl.className = 'text-xs font-mono font-bold text-amber-300 bg-amber-500/10 px-2 py-0.5 rounded-lg border border-amber-500/30';
+            }
+
+            if (battery.charging) {
+              if (stateEl) stateEl.innerHTML = '<span class="w-1.5 h-1.5 rounded-full bg-amber-400 animate-ping"></span> Status: AC Connected (Charging ⚡)';
+              if (chargingEl) chargingEl.textContent = 'Fast Charge Active';
+            } else {
+              if (stateEl) stateEl.innerHTML = '<span class="w-1.5 h-1.5 rounded-full bg-emerald-400"></span> Status: Operating on Battery';
+              if (chargingEl) chargingEl.textContent = `${level}% Remaining`;
+            }
+          }
+
+          updateBatteryTelemetry();
+          battery.addEventListener('levelchange', updateBatteryTelemetry);
+          battery.addEventListener('chargingchange', updateBatteryTelemetry);
+        } catch {
+          fallbackBatteryTelemetry();
+        }
+      } else {
+        fallbackBatteryTelemetry();
+      }
+
+      function fallbackBatteryTelemetry() {
+        if (pctEl) pctEl.textContent = 'Optimal';
+        if (gaugeEl) gaugeEl.style.width = '100%';
+        if (stateEl) stateEl.innerHTML = '<span class="w-1.5 h-1.5 rounded-full bg-emerald-400"></span> Status: System Hardware Managed';
+        if (chargingEl) chargingEl.textContent = 'Hardware Tuned';
+      }
+    }
+
+    // Attach Power Saving Event Listeners
+    document.getElementById('toggle-master-power-saving')?.addEventListener('change', (e) => {
+      const isChecked = (e.target as HTMLInputElement).checked;
+      const ps = (window as any).AetheriaPowerSaving;
+      if (ps) {
+        ps.setSetting('master', isChecked);
+        syncPowerSavingUI();
+        render3DCarousel();
+        showToast(
+          isChecked ? '⚡ Master Power Saving Mode Activated' : 'Power Saving Mode Deactivated',
+          isChecked ? 'success' : 'info'
+        );
+      }
+    });
+
+    const subToggleKeys: [string, string][] = [
+      ['toggle-disable-3d', 'disable3D'],
+      ['toggle-disable-glows', 'disableGlows'],
+      ['toggle-deep-dark-oled', 'deepDarkOLED'],
+      ['toggle-freeze-avatars', 'freezeAvatars'],
+      ['toggle-disable-sounds', 'disableSounds'],
+      ['toggle-pause-voice-autoplay', 'pauseVoiceAutoPlay'],
+      ['toggle-throttle-background', 'throttleBackground']
+    ];
+
+    subToggleKeys.forEach(([id, key]) => {
+      document.getElementById(id)?.addEventListener('change', (e) => {
+        const isChecked = (e.target as HTMLInputElement).checked;
+        const ps = (window as any).AetheriaPowerSaving;
+        if (ps) {
+          ps.setSetting(key, isChecked);
+          syncPowerSavingUI();
+          if (key === 'disable3D') render3DCarousel();
+          showToast(`Updated performance setting: ${key}`, 'info');
+        }
+      });
+    });
+
+    document.getElementById('btn-reset-power-settings')?.addEventListener('click', () => {
+      const ps = (window as any).AetheriaPowerSaving;
+      if (ps) {
+        ps.saveSettings({
+          master: false,
+          disable3D: false,
+          disableGlows: false,
+          deepDarkOLED: false,
+          freezeAvatars: false,
+          disableSounds: false,
+          pauseVoiceAutoPlay: false,
+          throttleBackground: false
+        });
+        syncPowerSavingUI();
+        render3DCarousel();
+        showToast('Restored High Performance defaults', 'success');
+      }
+    });
+
+    // Initialize telemetry and UI on page load
+    syncPowerSavingUI();
+    initBatteryDiagnostics();
 
     // ==========================================
     // DEVICES & SECURITY SESSIONS MANAGEMENT

@@ -900,5 +900,97 @@ label[title*="Restore"]:hover svg {
   box-shadow: 0 0 16px 2px rgba(var(--theme-accent-rgb, 147, 51, 234), 0.45);
 }
 
+/* ==================================================== */
+/* Power Saving & Performance Optimizations Classes   */
+/* ==================================================== */
+
+/* 1. Deep Dark OLED Pure #000000 Overrides */
+html.power-saving-oled,
+html.power-saving-oled body,
+html.power-saving-oled main,
+html.power-saving-oled #view-hub,
+html.power-saving-oled #view-personas,
+html.power-saving-oled #view-appearance,
+html.power-saving-oled #view-ai-engine,
+html.power-saving-oled #view-voice,
+html.power-saving-oled #view-privacy,
+html.power-saving-oled #view-devices,
+html.power-saving-oled #view-power-saving,
+html.power-saving-oled header,
+html.power-saving-oled nav {
+  background-color: #000000 !important;
+  background-image: none !important;
+}
+
+html.power-saving-oled {
+  --bg-primary: #000000 !important;
+  --bg-secondary: #000000 !important;
+  --bg-card: #050505 !important;
+  --theme-chat-bg: #000000 !important;
+}
+
+html.power-saving-oled .bg-\[\#07080d\],
+html.power-saving-oled .bg-\[\#141824\],
+html.power-saving-oled .bg-\[\#0d0f17\],
+html.power-saving-oled .bg-\[\#101420\],
+html.power-saving-oled .bg-\[\#12131a\],
+html.power-saving-oled .bg-\[\#101422\]\/90 {
+  background-color: #040404 !important;
+  border-color: rgba(255, 255, 255, 0.08) !important;
+}
+
+/* 2. Disable Glows, Neon Borders & Backdrop Blurs */
+html.power-saving-no-glows .gilded-card-halo,
+html.power-saving-no-glows .gilded-card-halo-active,
+html.power-saving-no-glows .gilded-avatar-glow,
+html.power-saving-no-glows .gold-btn-glow,
+html.power-saving-no-glows .glow-purple,
+html.power-saving-no-glows .glow-subtle,
+html.power-saving-no-glows [style*="box-shadow"],
+html.power-saving-no-glows .shadow-2xl,
+html.power-saving-no-glows .shadow-xl {
+  box-shadow: none !important;
+}
+
+html.power-saving-no-glows .blur-3xl,
+html.power-saving-no-glows .blur-2xl,
+html.power-saving-no-glows .blur-xl,
+html.power-saving-no-glows .backdrop-blur-md,
+html.power-saving-no-glows .backdrop-blur-sm,
+html.power-saving-no-glows .backdrop-blur-lg,
+html.power-saving-no-glows [class*="backdrop-blur"] {
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+  filter: none !important;
+}
+
+/* 3. Freeze Animated Avatars & Keyframes */
+html.power-saving-freeze-avatars .animate-pulse,
+html.power-saving-freeze-avatars .animate-spin,
+html.power-saving-freeze-avatars .animate-bounce,
+html.power-saving-freeze-avatars .animate-sheet-up,
+html.power-saving-freeze-avatars .animate-modal-fade {
+  animation: none !important;
+  animation-play-state: paused !important;
+}
+
+/* 4. Disable 3D Matrix Transforms & Accelerate Transitions */
+html.power-saving-disable-3d .perspective-1200,
+html.power-saving-disable-3d [class*="perspective"] {
+  perspective: none !important;
+  -webkit-perspective: none !important;
+}
+
+html.power-saving-disable-3d .preserve-3d {
+  transform-style: flat !important;
+  -webkit-transform-style: flat !important;
+}
+
+html.power-saving-disable-3d .transition-all,
+html.power-saving-disable-3d .transition-transform {
+  transition-duration: 0.05s !important;
+}
+
+
 
 
