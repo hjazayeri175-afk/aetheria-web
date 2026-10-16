@@ -2729,6 +2729,418 @@ html.day-mode #fullscreen-composer-textarea:focus {
   border-color: #9333ea !important;
 }
 
+/* ==========================================================================
+   AETHERIA DAY MODE - PHASE 4: QUICK CHAT SHOWCASE, PROFILE, STUDIO & AUTH
+   Isolation: Strictly scoped under html[data-base-mode="day"] and html.day-mode
+   Zero impact on default Dark Mode and OLED Power-Saving modes
+   ========================================================================== */
+
+/* --- 1. Quick Chat & Character Showcase Modal --- */
+html[data-base-mode="day"] #showcase-modal-dialog,
+html.day-mode #showcase-modal-dialog {
+  background-color: #ffffff !important;
+  border-color: rgba(0, 0, 0, 0.1) !important;
+  box-shadow: 0 25px 60px rgba(0, 0, 0, 0.16) !important;
+  color: #0f172a !important;
+}
+
+html[data-base-mode="day"] #showcase-modal-dialog header,
+html.day-mode #showcase-modal-dialog header {
+  background-color: #f8fafc !important;
+  border-bottom-color: rgba(0, 0, 0, 0.08) !important;
+}
+
+html[data-base-mode="day"] #showcase-name,
+html.day-mode #showcase-name {
+  color: #0f172a !important;
+}
+
+html[data-base-mode="day"] #showcase-title,
+html.day-mode #showcase-title {
+  color: #7c3aed !important;
+}
+
+html[data-base-mode="day"] #showcase-author,
+html.day-mode #showcase-author {
+  color: #64748b !important;
+}
+
+html[data-base-mode="day"] #showcase-badge,
+html.day-mode #showcase-badge {
+  background-color: #f1f5f9 !important;
+  border-color: rgba(0, 0, 0, 0.08) !important;
+  color: #475569 !important;
+}
+
+html[data-base-mode="day"] #showcase-modal-dialog button[id*="showcase-"]:not(#showcase-star-btn):not(#showcase-chat-btn),
+html.day-mode #showcase-modal-dialog button[id*="showcase-"]:not(#showcase-star-btn):not(#showcase-chat-btn),
+html[data-base-mode="day"] #showcase-edit-btn,
+html.day-mode #showcase-edit-btn {
+  color: #475569 !important;
+}
+
+html[data-base-mode="day"] #showcase-modal-dialog button[id*="showcase-"]:not(#showcase-star-btn):not(#showcase-chat-btn):hover,
+html.day-mode #showcase-modal-dialog button[id*="showcase-"]:not(#showcase-star-btn):not(#showcase-chat-btn):hover,
+html[data-base-mode="day"] #showcase-edit-btn:hover,
+html.day-mode #showcase-edit-btn:hover {
+  background-color: rgba(0, 0, 0, 0.06) !important;
+  color: #0f172a !important;
+}
+
+html[data-base-mode="day"] #showcase-download-menu,
+html.day-mode #showcase-download-menu {
+  background-color: #ffffff !important;
+  border-color: rgba(0, 0, 0, 0.1) !important;
+  box-shadow: 0 16px 40px rgba(0, 0, 0, 0.15) !important;
+}
+
+html[data-base-mode="day"] #showcase-download-menu button,
+html.day-mode #showcase-download-menu button {
+  color: #1e293b !important;
+}
+
+html[data-base-mode="day"] #showcase-download-menu button:hover,
+html.day-mode #showcase-download-menu button:hover {
+  background-color: #f1f5f9 !important;
+  color: #0f172a !important;
+}
+
+html[data-base-mode="day"] #showcase-download-menu .text-slate-400,
+html.day-mode #showcase-download-menu .text-slate-400 {
+  color: #64748b !important;
+}
+
+html[data-base-mode="day"] #showcase-modal-dialog .sticky.top-0,
+html.day-mode #showcase-modal-dialog .sticky.top-0 {
+  background-color: rgba(255, 255, 255, 0.95) !important;
+  border-bottom-color: rgba(0, 0, 0, 0.08) !important;
+}
+
+html[data-base-mode="day"] #showcase-modal-dialog .grid.grid-cols-3,
+html.day-mode #showcase-modal-dialog .grid.grid-cols-3 {
+  background-color: #f1f5f9 !important;
+  border-color: rgba(0, 0, 0, 0.08) !important;
+}
+
+html[data-base-mode="day"] .showcase-tab-btn:not(.bg-purple-600),
+html.day-mode .showcase-tab-btn:not(.bg-purple-600) {
+  color: #475569 !important;
+}
+
+html[data-base-mode="day"] .showcase-tab-btn:not(.bg-purple-600):hover,
+html.day-mode .showcase-tab-btn:not(.bg-purple-600):hover {
+  background-color: rgba(0, 0, 0, 0.05) !important;
+  color: #0f172a !important;
+}
+
+html[data-base-mode="day"] #showcase-greetings-count-badge,
+html.day-mode #showcase-greetings-count-badge {
+  background-color: rgba(0, 0, 0, 0.08) !important;
+  color: #475569 !important;
+}
+
+html[data-base-mode="day"] #showcase-panel-desc > div,
+html.day-mode #showcase-panel-desc > div,
+html[data-base-mode="day"] #showcase-panel-greetings > div:not(#greeting-switcher),
+html.day-mode #showcase-panel-greetings > div:not(#greeting-switcher) {
+  background-color: #f8fafc !important;
+  border-color: rgba(0, 0, 0, 0.08) !important;
+}
+
+html[data-base-mode="day"] #showcase-description,
+html.day-mode #showcase-description,
+html[data-base-mode="day"] #showcase-greeting,
+html.day-mode #showcase-greeting {
+  color: #1e293b !important;
+}
+
+html[data-base-mode="day"] #showcase-description p,
+html.day-mode #showcase-description p,
+html[data-base-mode="day"] #showcase-greeting p,
+html.day-mode #showcase-greeting p {
+  color: #1e293b !important;
+}
+
+html[data-base-mode="day"] #showcase-description span[class*="text-white"],
+html.day-mode #showcase-description span[class*="text-white"],
+html[data-base-mode="day"] #showcase-greeting span[class*="text-white"],
+html.day-mode #showcase-greeting span[class*="text-white"] {
+  color: #0f172a !important;
+  font-weight: 600 !important;
+}
+
+html[data-base-mode="day"] #showcase-description em,
+html.day-mode #showcase-description em,
+html[data-base-mode="day"] #showcase-greeting em,
+html.day-mode #showcase-greeting em {
+  color: #7c3aed !important;
+  font-style: italic !important;
+}
+
+html[data-base-mode="day"] #greeting-switcher,
+html.day-mode #greeting-switcher {
+  background-color: rgba(147, 51, 234, 0.06) !important;
+  border-color: rgba(147, 51, 234, 0.2) !important;
+}
+
+html[data-base-mode="day"] #greeting-index-label,
+html.day-mode #greeting-index-label {
+  color: #0f172a !important;
+}
+
+html[data-base-mode="day"] #greeting-prev-btn,
+html.day-mode #greeting-prev-btn,
+html[data-base-mode="day"] #greeting-next-btn,
+html.day-mode #greeting-next-btn {
+  background-color: #ffffff !important;
+  border: 1px solid rgba(0, 0, 0, 0.08) !important;
+  color: #334155 !important;
+}
+
+html[data-base-mode="day"] #greeting-prev-btn:hover,
+html.day-mode #greeting-prev-btn:hover,
+html[data-base-mode="day"] #greeting-next-btn:hover,
+html.day-mode #greeting-next-btn:hover {
+  background-color: #f1f5f9 !important;
+  color: #0f172a !important;
+}
+
+html[data-base-mode="day"] #def-personality-box,
+html.day-mode #def-personality-box,
+html[data-base-mode="day"] #def-scenario-box,
+html.day-mode #def-scenario-box,
+html[data-base-mode="day"] #def-system-box,
+html.day-mode #def-system-box,
+html[data-base-mode="day"] #def-mes-example-box,
+html.day-mode #def-mes-example-box,
+html[data-base-mode="day"] #showcase-panel-definition .grid-cols-3,
+html.day-mode #showcase-panel-definition .grid-cols-3 {
+  background-color: #f8fafc !important;
+  border-color: rgba(0, 0, 0, 0.08) !important;
+}
+
+html[data-base-mode="day"] #def-total-tokens,
+html.day-mode #def-total-tokens {
+  color: #0f172a !important;
+}
+
+html[data-base-mode="day"] #def-perm-tokens,
+html.day-mode #def-perm-tokens {
+  color: #7c3aed !important;
+}
+
+html[data-base-mode="day"] #def-greeting-tokens,
+html.day-mode #def-greeting-tokens {
+  color: #0284c7 !important;
+}
+
+html[data-base-mode="day"] #def-personality-content,
+html.day-mode #def-personality-content,
+html[data-base-mode="day"] #def-scenario-content,
+html.day-mode #def-scenario-content,
+html[data-base-mode="day"] #def-system-content,
+html.day-mode #def-system-content,
+html[data-base-mode="day"] #def-mes-example-content,
+html.day-mode #def-mes-example-content {
+  color: #1e293b !important;
+  background-color: #f1f5f9 !important;
+  border-radius: 8px;
+  padding: 8px 10px;
+}
+
+html[data-base-mode="day"] #def-copy-btn,
+html.day-mode #def-copy-btn {
+  background-color: #ffffff !important;
+  border-color: rgba(0, 0, 0, 0.1) !important;
+  color: #334155 !important;
+}
+
+html[data-base-mode="day"] #def-copy-btn:hover,
+html.day-mode #def-copy-btn:hover {
+  background-color: #f1f5f9 !important;
+  color: #0f172a !important;
+}
+
+html[data-base-mode="day"] #showcase-modal-dialog footer,
+html.day-mode #showcase-modal-dialog footer {
+  background-color: #f8fafc !important;
+  border-top-color: rgba(0, 0, 0, 0.08) !important;
+}
+
+/* --- 2. Profile Page & Subviews --- */
+html[data-base-mode="day"] #profile-main-container,
+html.day-mode #profile-main-container {
+  background-color: var(--bg-primary, #f8fafc) !important;
+  color: var(--text-primary, #0f172a) !important;
+}
+
+html[data-base-mode="day"] #view-hub .rounded-3xl,
+html.day-mode #view-hub .rounded-3xl,
+html[data-base-mode="day"] #view-personas .rounded-3xl,
+html.day-mode #view-personas .rounded-3xl,
+html[data-base-mode="day"] #view-appearance .rounded-3xl,
+html.day-mode #view-appearance .rounded-3xl,
+html[data-base-mode="day"] #view-ai-engine .rounded-3xl,
+html.day-mode #view-ai-engine .rounded-3xl,
+html[data-base-mode="day"] #view-voice .rounded-3xl,
+html.day-mode #view-voice .rounded-3xl,
+html[data-base-mode="day"] #view-privacy .rounded-3xl,
+html.day-mode #view-privacy .rounded-3xl,
+html[data-base-mode="day"] #view-devices .rounded-3xl,
+html.day-mode #view-devices .rounded-3xl,
+html[data-base-mode="day"] #view-power-saving .rounded-3xl,
+html.day-mode #view-power-saving .rounded-3xl {
+  background-color: #ffffff !important;
+  border-color: rgba(0, 0, 0, 0.08) !important;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.04) !important;
+}
+
+html[data-base-mode="day"] #profile-main-container input[type="text"],
+html.day-mode #profile-main-container input[type="text"],
+html[data-base-mode="day"] #profile-main-container input[type="password"],
+html.day-mode #profile-main-container input[type="password"],
+html[data-base-mode="day"] #profile-main-container select,
+html.day-mode #profile-main-container select,
+html[data-base-mode="day"] #profile-main-container textarea,
+html.day-mode #profile-main-container textarea {
+  background-color: #f8fafc !important;
+  border-color: rgba(0, 0, 0, 0.1) !important;
+  color: #0f172a !important;
+}
+
+html[data-base-mode="day"] #profile-main-container input:focus,
+html.day-mode #profile-main-container input:focus,
+html[data-base-mode="day"] #profile-main-container select:focus,
+html.day-mode #profile-main-container select:focus,
+html[data-base-mode="day"] #profile-main-container textarea:focus,
+html.day-mode #profile-main-container textarea:focus {
+  background-color: #ffffff !important;
+  border-color: #9333ea !important;
+}
+
+html[data-base-mode="day"] #profile-main-container .text-white,
+html.day-mode #profile-main-container .text-white {
+  color: #0f172a !important;
+}
+
+html[data-base-mode="day"] #profile-main-container .text-\[\#8e98a8\],
+html.day-mode #profile-main-container .text-\[\#8e98a8\] {
+  color: #64748b !important;
+}
+
+/* --- 3. Character Studio & Creator Page --- */
+html[data-base-mode="day"] #create-page-container,
+html.day-mode #create-page-container {
+  background-color: var(--bg-primary, #f8fafc) !important;
+  color: var(--text-primary, #0f172a) !important;
+}
+
+html[data-base-mode="day"] #create-header,
+html.day-mode #create-header {
+  background-color: rgba(255, 255, 255, 0.92) !important;
+  border-bottom-color: rgba(0, 0, 0, 0.08) !important;
+  backdrop-filter: blur(20px) !important;
+}
+
+html[data-base-mode="day"] #create-header h1,
+html.day-mode #create-header h1 {
+  color: #0f172a !important;
+}
+
+html[data-base-mode="day"] #create-back-btn,
+html.day-mode #create-back-btn {
+  background-color: rgba(0, 0, 0, 0.04) !important;
+  border-color: rgba(0, 0, 0, 0.08) !important;
+  color: #334155 !important;
+}
+
+html[data-base-mode="day"] #create-back-btn:hover,
+html.day-mode #create-back-btn:hover {
+  background-color: rgba(0, 0, 0, 0.08) !important;
+  color: #0f172a !important;
+}
+
+html[data-base-mode="day"] #create-page-container .bg-\[\#080a14\],
+html.day-mode #create-page-container .bg-\[\#080a14\],
+html[data-base-mode="day"] #create-page-container .bg-\[\#090b17\],
+html.day-mode #create-page-container .bg-\[\#090b17\] {
+  background-color: #ffffff !important;
+  border-color: rgba(0, 0, 0, 0.08) !important;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.04) !important;
+  color: #0f172a !important;
+}
+
+html[data-base-mode="day"] #create-page-container input,
+html.day-mode #create-page-container input,
+html[data-base-mode="day"] #create-page-container select,
+html.day-mode #create-page-container select,
+html[data-base-mode="day"] #create-page-container textarea,
+html.day-mode #create-page-container textarea {
+  background-color: #f8fafc !important;
+  border-color: rgba(0, 0, 0, 0.1) !important;
+  color: #0f172a !important;
+}
+
+html[data-base-mode="day"] #create-page-container input:focus,
+html.day-mode #create-page-container input:focus,
+html[data-base-mode="day"] #create-page-container select:focus,
+html.day-mode #create-page-container select:focus,
+html[data-base-mode="day"] #create-page-container textarea:focus,
+html.day-mode #create-page-container textarea:focus {
+  background-color: #ffffff !important;
+  border-color: #9333ea !important;
+}
+
+/* --- 4. Account & Auth Hub --- */
+html[data-base-mode="day"] #auth-card,
+html.day-mode #auth-card {
+  background-color: rgba(255, 255, 255, 0.96) !important;
+  border-color: rgba(0, 0, 0, 0.08) !important;
+  box-shadow: 0 25px 60px rgba(0, 0, 0, 0.12) !important;
+  color: #0f172a !important;
+}
+
+html[data-base-mode="day"] #auth-main-title,
+html.day-mode #auth-main-title {
+  color: #0f172a !important;
+}
+
+html[data-base-mode="day"] #auth-card input,
+html.day-mode #auth-card input {
+  background-color: #f8fafc !important;
+  border-color: rgba(0, 0, 0, 0.1) !important;
+  color: #0f172a !important;
+}
+
+html[data-base-mode="day"] #auth-card input:focus,
+html.day-mode #auth-card input:focus {
+  background-color: #ffffff !important;
+  border-color: #9333ea !important;
+}
+
+/* --- 5. Home Hero & Action Pills --- */
+html[data-base-mode="day"] #home-hero-banner a.bg-white\/\[0\.05\],
+html.day-mode #home-hero-banner a.bg-white\/\[0\.05\] {
+  background-color: #ffffff !important;
+  border-color: rgba(0, 0, 0, 0.1) !important;
+  color: #0f172a !important;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04) !important;
+}
+
+html[data-base-mode="day"] #home-hero-banner a.bg-white\/\[0\.05\]:hover,
+html.day-mode #home-hero-banner a.bg-white\/\[0\.05\]:hover {
+  background-color: #f8fafc !important;
+  border-color: #9333ea !important;
+}
+
+html[data-base-mode="day"] #home-hero-banner .bg-white\/\[0\.04\],
+html.day-mode #home-hero-banner .bg-white\/\[0\.04\] {
+  background-color: #ffffff !important;
+  border-color: rgba(0, 0, 0, 0.08) !important;
+  color: #334155 !important;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.03) !important;
+}
+
 
 
 
