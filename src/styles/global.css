@@ -1300,15 +1300,25 @@ html.power-saving-no-glows [class*="backdrop-blur"] {
 }
 
 /* 3. Freeze Animated Avatars, Pulses & Keyframes */
-html.power-saving-freeze-avatars .animate-pulse,
 html.power-saving-freeze-avatars .animate-ping,
-html.power-saving-freeze-avatars .animate-spin,
+html.power-saving-active .animate-ping {
+  display: none !important;
+  animation: none !important;
+}
+
+html.power-saving-freeze-avatars .animate-pulse,
+html.power-saving-active .animate-pulse {
+  animation: none !important;
+  animation-play-state: paused !important;
+  opacity: 1 !important;
+}
+
 html.power-saving-freeze-avatars .animate-bounce,
 html.power-saving-freeze-avatars .animate-sheet-up,
 html.power-saving-freeze-avatars .animate-modal-fade,
-html.power-saving-active .animate-pulse,
-html.power-saving-active .animate-ping,
-html.power-saving-active .animate-spin {
+html.power-saving-active .animate-bounce,
+html.power-saving-active .animate-sheet-up,
+html.power-saving-active .animate-modal-fade {
   animation: none !important;
   animation-play-state: paused !important;
 }
@@ -1316,19 +1326,83 @@ html.power-saving-active .animate-spin {
 /* 4. Disable 3D Matrix Transforms & Accelerate Transitions */
 html.power-saving-disable-3d .perspective-1200,
 html.power-saving-disable-3d [class*="perspective"],
-html.power-saving-disable-3d #persona-cards-wrapper {
+html.power-saving-disable-3d #persona-cards-wrapper,
+html.power-saving-active .perspective-1200,
+html.power-saving-active [class*="perspective"],
+html.power-saving-active #persona-cards-wrapper {
   perspective: none !important;
   -webkit-perspective: none !important;
 }
 
-html.power-saving-disable-3d .preserve-3d {
-  transform-style: flat !important;
-  -webkit-transform-style: flat !important;
+html.power-saving-disable-3d .persona-card-inner,
+html.power-saving-active .persona-card-inner {
+  transition: transform 0.15s linear !important;
 }
 
+/* Eliminate expensive card hover zooms & vertical displacement */
+html.power-saving-disable-3d .character-card,
+html.power-saving-disable-3d .character-card:hover,
+html.power-saving-active .character-card,
+html.power-saving-active .character-card:hover {
+  transform: none !important;
+}
+
+html.power-saving-disable-3d .character-card img,
+html.power-saving-active .character-card img {
+  transform: none !important;
+  transition: none !important;
+}
+
+/* Eliminate interactive button hover/active scaling */
+html.power-saving-disable-3d [class*="hover:scale-"]:hover,
+html.power-saving-disable-3d [class*="group-hover:scale-"]:hover,
+html.power-saving-disable-3d [class*="group-hover:rotate-"]:hover,
+html.power-saving-disable-3d [class*="active:scale-"]:active,
+html.power-saving-active [class*="hover:scale-"]:hover,
+html.power-saving-active [class*="group-hover:scale-"]:hover,
+html.power-saving-active [class*="group-hover:rotate-"]:hover,
+html.power-saving-active [class*="active:scale-"]:active {
+  transform: none !important;
+}
+
+/* Comprehensive UI Transition Acceleration (Snappy 50ms) */
+html.power-saving-disable-3d .transition,
 html.power-saving-disable-3d .transition-all,
-html.power-saving-disable-3d .transition-transform {
+html.power-saving-disable-3d .transition-transform,
+html.power-saving-disable-3d .transition-colors,
+html.power-saving-disable-3d .transition-opacity,
+html.power-saving-disable-3d [class*="transition"],
+html.power-saving-active .transition,
+html.power-saving-active .transition-all,
+html.power-saving-active .transition-transform,
+html.power-saving-active .transition-colors,
+html.power-saving-active .transition-opacity,
+html.power-saving-active [class*="transition"] {
   transition-duration: 0.05s !important;
+  transition-timing-function: linear !important;
+}
+
+/* 5. System-Level Accessibility: Respect OS Prefers-Reduced-Motion */
+@media (prefers-reduced-motion: reduce) {
+  .animate-pulse,
+  .animate-bounce {
+    animation: none !important;
+    animation-play-state: paused !important;
+    opacity: 1 !important;
+  }
+  .animate-ping {
+    display: none !important;
+    animation: none !important;
+  }
+  .character-card,
+  .character-card:hover,
+  .character-card img {
+    transform: none !important;
+    transition: none !important;
+  }
+  [class*="transition"] {
+    transition-duration: 0.05s !important;
+  }
 }
 
 /* ==========================================================================
