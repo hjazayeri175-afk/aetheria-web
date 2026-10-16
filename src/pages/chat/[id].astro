@@ -6774,9 +6774,17 @@ const { character } = Astro.props;
     // Single backticks `code` or `dialogue`
     s = s.replace(/`([^`]+)`/g, (_, code) => {
       const idx = codeBlocks.length;
-      codeBlocks.push(`<span translate="yes" class="px-1.5 py-0.5 rounded bg-white/10 text-cyan-300 font-mono text-[11px] inline-block">${code}</span>`);
+      const isShortDialogue = code.length < 120 && !code.includes('\n') && !/[{};=]/.test(code);
+      if (isShortDialogue) {
+        codeBlocks.push(`<span translate="yes" class="px-2 py-0.5 rounded-lg bg-white/10 text-amber-100 text-[13px] border border-white/10 inline-block my-0.5 font-sans">${code}</span>`);
+      } else {
+        codeBlocks.push(`<span translate="yes" class="px-1.5 py-0.5 rounded bg-white/10 text-cyan-300 font-mono text-[11px] inline-block">${code}</span>`);
+      }
       return `__CODE_BLOCK_${idx}__`;
     });
+
+    // Unescape AI model escaped asterisks (\* -> *) so narration is properly parsed
+    s = s.replace(/\\\*/g, '*');
 
     // 3. Triple asterisks ***bold italic***
     s = s.replace(/\*\*\*([^*]+)\*\*\*/g, '<strong class="font-bold text-purple-200"><em class="italic text-purple-300 font-serif">$1</em></strong>');

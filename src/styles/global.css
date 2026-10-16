@@ -243,6 +243,10 @@ input[type="checkbox"], input[type="radio"] {
   line-height: var(--theme-msg-line-height, 1.6) !important;
   transition: border-radius 0.15s ease, font-size 0.15s ease, background 0.2s ease;
 }
+.chat-msg-bubble p {
+  font-size: inherit !important;
+  line-height: inherit !important;
+}
 .chat-msg-bubble-user {
   background: var(--theme-bubble-user-bg, linear-gradient(135deg, var(--theme-accent) 0%, #6366f1 100%)) !important;
   color: var(--theme-bubble-user-text, #ffffff) !important;
@@ -251,6 +255,22 @@ input[type="checkbox"], input[type="radio"] {
   background: var(--theme-bubble-char-bg, #101426) !important;
   border: 1px solid var(--theme-bubble-char-border, rgba(255, 255, 255, 0.08)) !important;
   color: var(--theme-bubble-char-text, #f1f5f9) !important;
+}
+
+/* OLED Mode Overrides for Message Bubbles */
+html.power-saving-oled .chat-msg-bubble-char {
+  background: #080808 !important;
+  background-image: none !important;
+  border: 1px solid rgba(255, 255, 255, 0.12) !important;
+  color: #f8fafc !important;
+  box-shadow: none !important;
+}
+html.power-saving-oled .chat-msg-bubble-user {
+  background: #111420 !important;
+  background-image: none !important;
+  border: 1px solid rgba(255, 255, 255, 0.15) !important;
+  color: #ffffff !important;
+  box-shadow: none !important;
 }
 
 /* ==========================================================================

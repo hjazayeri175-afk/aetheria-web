@@ -788,19 +788,25 @@ const {
           // Force Pure Black & Hide Wallpaper/Pattern when OLED is active
           if (root.classList.contains('power-saving-oled')) {
             root.style.setProperty('--theme-chat-bg', '#000000');
+            root.style.setProperty('--theme-bubble-char-bg', '#070707');
+            root.style.setProperty('--theme-bubble-user-bg', '#10131d');
             if (overlayLayer) overlayLayer.style.display = 'none';
             if (imgLayer) imgLayer.style.display = 'none';
             if (dimLayer) dimLayer.style.display = 'none';
             if (overlay) overlay.style.display = 'none';
           }
 
-          const chatMessages = document.getElementById('chat-messages-container');
-          if (chatMessages) {
-            chatMessages.style.setProperty('--theme-bubble-radius', `${radius}px`);
-            chatMessages.style.setProperty('--theme-msg-font-size', `${fontSize}px`);
-            if (theme.userBubbleBg) chatMessages.style.setProperty('--theme-bubble-user-bg', theme.userBubbleBg);
-            if (theme.charBubbleBg) chatMessages.style.setProperty('--theme-bubble-char-bg', theme.charBubbleBg);
-          }
+          // Apply to live chat stream containers
+          const chatStreamEl = document.getElementById('chat-stream');
+          const chatViewportEl = document.getElementById('chat-viewport-section');
+          [chatStreamEl, chatViewportEl].forEach(el => {
+            if (el) {
+              el.style.setProperty('--theme-bubble-radius', `${radius}px`);
+              el.style.setProperty('--theme-msg-font-size', `${fontSize}px`);
+              if (theme.userBubbleBg) el.style.setProperty('--theme-bubble-user-bg', theme.userBubbleBg);
+              if (theme.charBubbleBg) el.style.setProperty('--theme-bubble-char-bg', theme.charBubbleBg);
+            }
+          });
         }
 
         // Apply immediately on first paint
