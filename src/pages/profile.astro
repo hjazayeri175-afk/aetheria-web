@@ -1551,159 +1551,7 @@ import {
         </div>
       </div>
 
-    </div>
-  </main>
-
-  <!-- Confirm Modal -->
-  <div id="confirm-modal" class="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm hidden items-center justify-center p-4">
-    <div class="w-full max-w-sm rounded-3xl bg-[#141824] border border-white/10 p-5 space-y-4 shadow-2xl">
-      <div>
-        <h3 id="confirm-title" class="text-base font-bold text-white">Confirm</h3>
-        <p id="confirm-message" class="text-xs text-slate-400 mt-1 leading-relaxed">Are you sure?</p>
-      </div>
-      <div class="flex items-center justify-end gap-2 pt-2">
-        <button id="confirm-cancel" type="button" class="px-4 py-2 rounded-xl bg-white/5 hover:bg-white/10 text-xs font-semibold text-slate-300 cursor-pointer transition">
-          Cancel
-        </button>
-        <button id="confirm-ok" type="button" class="px-4 py-2 rounded-xl bg-red-600 hover:bg-red-500 text-xs font-semibold text-white cursor-pointer transition shadow-md shadow-red-950/50">
-          Delete
-        </button>
-      </div>
-    </div>
-  </div>
-
-  <!-- ========================================== -->
-  <!-- GEO-SHIFT STEP-UP VERIFICATION CHALLENGE MODAL -->
-  <!-- ========================================== -->
-  <div 
-    id="geo-shift-challenge-modal" 
-    class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/85 backdrop-blur-md hidden transition-all duration-300"
-    role="dialog"
-    aria-modal="true"
-  >
-    <div class="relative w-full max-w-md rounded-3xl bg-[#0b0e17]/95 border border-white/15 p-6 shadow-2xl text-slate-100 overflow-hidden space-y-5" style="box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.85), 0 0 35px -5px var(--theme-accent-glow, rgba(147, 51, 234, 0.35));">
-      <!-- Glow ambient lights -->
-      <div class="absolute -top-16 -right-16 w-40 h-40 rounded-full blur-3xl pointer-events-none" style="background: var(--theme-accent-glow, rgba(147, 51, 234, 0.3));"></div>
-      <div class="absolute -bottom-16 -left-16 w-40 h-40 bg-rose-500/20 rounded-full blur-3xl pointer-events-none"></div>
-
-      <!-- Header: Shield alert icon + Title -->
-      <div class="flex items-start gap-4">
-        <div class="w-12 h-12 rounded-2xl bg-rose-500/15 border border-rose-500/35 flex items-center justify-center text-rose-300 shrink-0 shadow-lg shadow-rose-500/15">
-          <ShieldAlert class="w-6 h-6 animate-pulse" />
-        </div>
-        <div class="space-y-1">
-          <div class="flex items-center gap-2">
-            <h3 class="text-base font-bold text-white tracking-wide">Unusual Location Detected</h3>
-            <span class="text-[10px] uppercase font-bold tracking-wider px-2.5 py-0.5 rounded-full border shadow-xs" style="background: rgba(var(--theme-accent-rgb, 147, 51, 234), 0.2); border-color: rgba(var(--theme-accent-rgb, 147, 51, 234), 0.45); color: var(--theme-accent-hover, #d8b4fe);">Step-Up Auth</span>
-          </div>
-          <p class="text-xs text-slate-200 leading-relaxed font-normal">
-            Your connection endpoint hopped geographic regions. To secure your account against session hijacking, please verify your identity.
-          </p>
-        </div>
-      </div>
-
-      <!-- Details Box: Shows the jump clearly -->
-      <div class="p-4 rounded-2xl bg-black/60 border border-white/15 space-y-3 text-xs shadow-inner">
-        <div class="flex items-center justify-between text-slate-200 text-xs pb-1.5 border-b border-white/10">
-          <span class="font-bold">Geographic Anomaly Vector</span>
-          <span class="text-rose-300 font-mono flex items-center gap-1.5 font-bold">
-            <span class="w-2 h-2 rounded-full bg-rose-500 animate-ping"></span>
-            COUNTRY SHIFT
-          </span>
-        </div>
-
-        <div class="flex items-center justify-between gap-2 pt-1">
-          <!-- Previous Location -->
-          <div class="space-y-0.5 flex-1 min-w-0">
-            <span class="text-[10px] text-slate-300 uppercase tracking-wider block font-bold">Previous</span>
-            <div id="geo-modal-prev-location" class="font-bold text-white text-sm truncate">Tehran, Iran</div>
-            <div id="geo-modal-prev-code" class="text-xs text-slate-300 font-mono font-medium">IR (Verified Baseline)</div>
-          </div>
-
-          <!-- Arrow Jump Badge -->
-          <div class="flex flex-col items-center justify-center px-2 shrink-0">
-            <span class="text-white text-base font-bold">➔</span>
-            <span class="text-[10px] text-rose-200 bg-rose-500/25 border border-rose-500/40 font-mono font-bold px-1.5 py-0.5 rounded tracking-wider">SHIELDED</span>
-          </div>
-
-          <!-- New Location -->
-          <div class="space-y-0.5 flex-1 min-w-0 text-right">
-            <span class="text-[10px] text-slate-300 uppercase tracking-wider block font-bold">New Endpoint</span>
-            <div id="geo-modal-new-location" class="font-bold text-emerald-300 text-sm truncate">Helsinki, Finland</div>
-            <div id="geo-modal-new-ip" class="text-xs text-cyan-300 font-mono font-semibold">138.124.***.***</div>
-          </div>
-        </div>
-      </div>
-
-      <!-- 6-digit OTP Input -->
-      <div class="space-y-2">
-        <div class="flex items-center justify-between">
-          <label for="geo-otp-code-input" class="text-xs font-bold text-white">
-            6-Digit Email Verification Code (OTP)
-          </label>
-          <button
-            type="button"
-            id="btn-resend-geo-otp"
-            class="text-xs font-semibold transition cursor-pointer flex items-center gap-1 hover:underline"
-            style="color: var(--theme-accent-hover, #67e8f9);"
-          >
-            <span>Resend Code</span>
-          </button>
-        </div>
-
-        <div class="relative">
-          <input
-            type="text"
-            id="geo-otp-code-input"
-            maxlength="6"
-            inputmode="numeric"
-            pattern="[0-9]*"
-            autocomplete="one-time-code"
-            placeholder="· · · · · ·"
-            class="w-full text-center text-2xl font-mono tracking-[0.45em] font-bold py-3.5 px-4 rounded-2xl bg-black/60 border border-white/20 text-white placeholder:text-slate-500 focus:outline-none transition shadow-inner"
-            style="border-color: rgba(var(--theme-accent-rgb, 147, 51, 234), 0.5);"
-          />
-        </div>
-        <p id="geo-otp-status-msg" class="text-xs text-slate-200 text-center min-h-[1.25rem] font-medium"></p>
-      </div>
-
-      <!-- VPN-Friendly Checkbox -->
-      <label class="flex items-start gap-3 p-3.5 rounded-2xl bg-white/[0.04] border border-white/10 hover:border-white/20 cursor-pointer transition group shadow-sm">
-        <input 
-          type="checkbox" 
-          id="cb-trust-geo-location" 
-          class="rounded border-slate-600 text-emerald-500 focus:ring-emerald-500/30 bg-slate-900 mt-1 cursor-pointer w-4 h-4"
-          checked 
-        />
-        <div class="text-xs leading-relaxed">
-          <span class="text-white font-bold group-hover:text-emerald-300 transition-colors">Trust this location for future VPN connections</span>
-          <p class="text-slate-200 text-[11px] mt-0.5 font-normal leading-relaxed">Remembers this country endpoint in your trusted shield list so reconnecting doesn't re-trigger step-up verification.</p>
-        </div>
-      </label>
-
-      <!-- Action Buttons -->
-      <div class="flex flex-col sm:flex-row gap-2.5 pt-1">
-        <button
-          type="button"
-          id="btn-verify-geo-otp"
-          class="flex-1 py-3 px-4 rounded-xl font-bold text-xs transition cursor-pointer flex items-center justify-center gap-2 active:scale-95 shadow-lg"
-          style="background: var(--theme-accent, #10b981); color: var(--theme-accent-text, #ffffff); box-shadow: 0 4px 20px -2px var(--theme-accent-glow, rgba(16, 185, 129, 0.4));"
-        >
-          <ShieldCheck class="w-4 h-4" />
-          <span>Verify & Continue</span>
-        </button>
-        <button
-          type="button"
-          id="btn-lock-logout-account"
-          class="py-3 px-4 rounded-xl bg-rose-500/15 hover:bg-rose-500/25 active:scale-95 text-rose-200 border border-rose-500/40 font-bold text-xs transition cursor-pointer flex items-center justify-center gap-1.5 shadow-sm"
-        >
-          <LogOut class="w-3.5 h-3.5" />
-          <span>Lock Account & Logout</span>
-        </button>
-      </div>
-    </div>
-
-    <!-- ========================================== -->
+<!-- ========================================== -->
     <!-- VIEW 9: NAME COLOR & STYLE SUB-PAGE (FULL SCREEN) -->
     <!-- ========================================== -->
     <div id="view-name-color" class="hidden space-y-4">
@@ -1988,9 +1836,160 @@ import {
       </div>
 
     </div>
+
+    </div>
+  </main>
+
+  <!-- Confirm Modal -->
+  <div id="confirm-modal" class="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm hidden items-center justify-center p-4">
+    <div class="w-full max-w-sm rounded-3xl bg-[#141824] border border-white/10 p-5 space-y-4 shadow-2xl">
+      <div>
+        <h3 id="confirm-title" class="text-base font-bold text-white">Confirm</h3>
+        <p id="confirm-message" class="text-xs text-slate-400 mt-1 leading-relaxed">Are you sure?</p>
+      </div>
+      <div class="flex items-center justify-end gap-2 pt-2">
+        <button id="confirm-cancel" type="button" class="px-4 py-2 rounded-xl bg-white/5 hover:bg-white/10 text-xs font-semibold text-slate-300 cursor-pointer transition">
+          Cancel
+        </button>
+        <button id="confirm-ok" type="button" class="px-4 py-2 rounded-xl bg-red-600 hover:bg-red-500 text-xs font-semibold text-white cursor-pointer transition shadow-md shadow-red-950/50">
+          Delete
+        </button>
+      </div>
+    </div>
   </div>
 
+  <!-- ========================================== -->
+  <!-- GEO-SHIFT STEP-UP VERIFICATION CHALLENGE MODAL -->
+  <!-- ========================================== -->
+  <div 
+    id="geo-shift-challenge-modal" 
+    class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/85 backdrop-blur-md hidden transition-all duration-300"
+    role="dialog"
+    aria-modal="true"
+  >
+    <div class="relative w-full max-w-md rounded-3xl bg-[#0b0e17]/95 border border-white/15 p-6 shadow-2xl text-slate-100 overflow-hidden space-y-5" style="box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.85), 0 0 35px -5px var(--theme-accent-glow, rgba(147, 51, 234, 0.35));">
+      <!-- Glow ambient lights -->
+      <div class="absolute -top-16 -right-16 w-40 h-40 rounded-full blur-3xl pointer-events-none" style="background: var(--theme-accent-glow, rgba(147, 51, 234, 0.3));"></div>
+      <div class="absolute -bottom-16 -left-16 w-40 h-40 bg-rose-500/20 rounded-full blur-3xl pointer-events-none"></div>
 
+      <!-- Header: Shield alert icon + Title -->
+      <div class="flex items-start gap-4">
+        <div class="w-12 h-12 rounded-2xl bg-rose-500/15 border border-rose-500/35 flex items-center justify-center text-rose-300 shrink-0 shadow-lg shadow-rose-500/15">
+          <ShieldAlert class="w-6 h-6 animate-pulse" />
+        </div>
+        <div class="space-y-1">
+          <div class="flex items-center gap-2">
+            <h3 class="text-base font-bold text-white tracking-wide">Unusual Location Detected</h3>
+            <span class="text-[10px] uppercase font-bold tracking-wider px-2.5 py-0.5 rounded-full border shadow-xs" style="background: rgba(var(--theme-accent-rgb, 147, 51, 234), 0.2); border-color: rgba(var(--theme-accent-rgb, 147, 51, 234), 0.45); color: var(--theme-accent-hover, #d8b4fe);">Step-Up Auth</span>
+          </div>
+          <p class="text-xs text-slate-200 leading-relaxed font-normal">
+            Your connection endpoint hopped geographic regions. To secure your account against session hijacking, please verify your identity.
+          </p>
+        </div>
+      </div>
+
+      <!-- Details Box: Shows the jump clearly -->
+      <div class="p-4 rounded-2xl bg-black/60 border border-white/15 space-y-3 text-xs shadow-inner">
+        <div class="flex items-center justify-between text-slate-200 text-xs pb-1.5 border-b border-white/10">
+          <span class="font-bold">Geographic Anomaly Vector</span>
+          <span class="text-rose-300 font-mono flex items-center gap-1.5 font-bold">
+            <span class="w-2 h-2 rounded-full bg-rose-500 animate-ping"></span>
+            COUNTRY SHIFT
+          </span>
+        </div>
+
+        <div class="flex items-center justify-between gap-2 pt-1">
+          <!-- Previous Location -->
+          <div class="space-y-0.5 flex-1 min-w-0">
+            <span class="text-[10px] text-slate-300 uppercase tracking-wider block font-bold">Previous</span>
+            <div id="geo-modal-prev-location" class="font-bold text-white text-sm truncate">Tehran, Iran</div>
+            <div id="geo-modal-prev-code" class="text-xs text-slate-300 font-mono font-medium">IR (Verified Baseline)</div>
+          </div>
+
+          <!-- Arrow Jump Badge -->
+          <div class="flex flex-col items-center justify-center px-2 shrink-0">
+            <span class="text-white text-base font-bold">➔</span>
+            <span class="text-[10px] text-rose-200 bg-rose-500/25 border border-rose-500/40 font-mono font-bold px-1.5 py-0.5 rounded tracking-wider">SHIELDED</span>
+          </div>
+
+          <!-- New Location -->
+          <div class="space-y-0.5 flex-1 min-w-0 text-right">
+            <span class="text-[10px] text-slate-300 uppercase tracking-wider block font-bold">New Endpoint</span>
+            <div id="geo-modal-new-location" class="font-bold text-emerald-300 text-sm truncate">Helsinki, Finland</div>
+            <div id="geo-modal-new-ip" class="text-xs text-cyan-300 font-mono font-semibold">138.124.***.***</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 6-digit OTP Input -->
+      <div class="space-y-2">
+        <div class="flex items-center justify-between">
+          <label for="geo-otp-code-input" class="text-xs font-bold text-white">
+            6-Digit Email Verification Code (OTP)
+          </label>
+          <button
+            type="button"
+            id="btn-resend-geo-otp"
+            class="text-xs font-semibold transition cursor-pointer flex items-center gap-1 hover:underline"
+            style="color: var(--theme-accent-hover, #67e8f9);"
+          >
+            <span>Resend Code</span>
+          </button>
+        </div>
+
+        <div class="relative">
+          <input
+            type="text"
+            id="geo-otp-code-input"
+            maxlength="6"
+            inputmode="numeric"
+            pattern="[0-9]*"
+            autocomplete="one-time-code"
+            placeholder="· · · · · ·"
+            class="w-full text-center text-2xl font-mono tracking-[0.45em] font-bold py-3.5 px-4 rounded-2xl bg-black/60 border border-white/20 text-white placeholder:text-slate-500 focus:outline-none transition shadow-inner"
+            style="border-color: rgba(var(--theme-accent-rgb, 147, 51, 234), 0.5);"
+          />
+        </div>
+        <p id="geo-otp-status-msg" class="text-xs text-slate-200 text-center min-h-[1.25rem] font-medium"></p>
+      </div>
+
+      <!-- VPN-Friendly Checkbox -->
+      <label class="flex items-start gap-3 p-3.5 rounded-2xl bg-white/[0.04] border border-white/10 hover:border-white/20 cursor-pointer transition group shadow-sm">
+        <input 
+          type="checkbox" 
+          id="cb-trust-geo-location" 
+          class="rounded border-slate-600 text-emerald-500 focus:ring-emerald-500/30 bg-slate-900 mt-1 cursor-pointer w-4 h-4"
+          checked 
+        />
+        <div class="text-xs leading-relaxed">
+          <span class="text-white font-bold group-hover:text-emerald-300 transition-colors">Trust this location for future VPN connections</span>
+          <p class="text-slate-200 text-[11px] mt-0.5 font-normal leading-relaxed">Remembers this country endpoint in your trusted shield list so reconnecting doesn't re-trigger step-up verification.</p>
+        </div>
+      </label>
+
+      <!-- Action Buttons -->
+      <div class="flex flex-col sm:flex-row gap-2.5 pt-1">
+        <button
+          type="button"
+          id="btn-verify-geo-otp"
+          class="flex-1 py-3 px-4 rounded-xl font-bold text-xs transition cursor-pointer flex items-center justify-center gap-2 active:scale-95 shadow-lg"
+          style="background: var(--theme-accent, #10b981); color: var(--theme-accent-text, #ffffff); box-shadow: 0 4px 20px -2px var(--theme-accent-glow, rgba(16, 185, 129, 0.4));"
+        >
+          <ShieldCheck class="w-4 h-4" />
+          <span>Verify & Continue</span>
+        </button>
+        <button
+          type="button"
+          id="btn-lock-logout-account"
+          class="py-3 px-4 rounded-xl bg-rose-500/15 hover:bg-rose-500/25 active:scale-95 text-rose-200 border border-rose-500/40 font-bold text-xs transition cursor-pointer flex items-center justify-center gap-1.5 shadow-sm"
+        >
+          <LogOut class="w-3.5 h-3.5" />
+          <span>Lock Account & Logout</span>
+        </button>
+      </div>
+    </div>
+
+  </div>
 
   <!-- Toast Notification Container -->
   <div id="toast-container" class="fixed bottom-24 left-1/2 -translate-x-1/2 z-50 flex flex-col items-center gap-2 pointer-events-none w-full max-w-xs"></div>
@@ -3435,7 +3434,7 @@ import {
   });
 
   // Setup Event Handlers
-  document.addEventListener('DOMContentLoaded', () => {
+  function bootProfile() {
     loadPersonas();
     render3DCarousel();
     setupGestures();
@@ -5214,922 +5213,6 @@ function renderPresets() {
         if (presetsGrid) presetsGrid.scrollBy({ left: 140, behavior: 'smooth' });
       });
 
-      // ==========================================
-      // DYNAMIC PERSONALIZATION: NAME COLOR & STYLE SUB-PAGE (FULL SCREEN & 150+ BADGES)
-      // ==========================================
-      function initNameColorPage() {
-        const pageView = document.getElementById('view-name-color');
-        if (!pageView) return;
-
-        const btnBack = document.getElementById('btn-back-from-name-color');
-        const btnHeaderApply = document.getElementById('btn-header-apply-name-style');
-        const btnApply = document.getElementById('btn-apply-name-style');
-        const btnCancel = document.getElementById('btn-cancel-name-style');
-        const btnReset = document.getElementById('btn-reset-name-style');
-
-        const tabNameColors = document.getElementById('tab-toggle-name-colors');
-        const tabAvatarBorder = document.getElementById('tab-toggle-avatar-border');
-        const viewTabName = document.getElementById('view-tab-name');
-        const viewTabAvatar = document.getElementById('view-tab-avatar');
-
-        const gridColorMatrix = document.getElementById('grid-color-matrix');
-        const borderEffectsGrid = document.getElementById('border-effects-grid');
-        const gridGlowColors = document.getElementById('grid-border-glow-colors');
-        const toggleBadges = document.getElementById('toggle-name-badges') as HTMLInputElement | null;
-        const btnRemoveBadge = document.getElementById('btn-remove-badge');
-        const inputBadgeSearch = document.getElementById('input-badge-search') as HTMLInputElement | null;
-        const btnClearBadgeSearch = document.getElementById('btn-clear-badge-search');
-        const gridBadgesDisplay = document.getElementById('grid-badges-display');
-        const badgePickerCount = document.getElementById('badge-picker-count');
-        const wrapperBadgePickerContainer = document.getElementById('wrapper-badge-picker-container');
-
-        // 8 Solids (Row 1)
-        const SOLID_COLORS = [
-          { id: 'deep-blue', name: 'Deep Blue', value: '#2563eb' },
-          { id: 'forest-green', name: 'Forest Green', value: '#16a34a' },
-          { id: 'amber', name: 'Amber', value: '#f59e0b' },
-          { id: 'coral', name: 'Coral', value: '#f97316' },
-          { id: 'purple', name: 'Purple', value: '#a855f7' },
-          { id: 'cyan', name: 'Cyan', value: '#06b6d4' },
-          { id: 'ruby-red', name: 'Ruby Red', value: '#e11d48' },
-          { id: 'muted-slate', name: 'Muted Slate', value: '#94a3b8' }
-        ];
-
-        // 8 Dual Gradients with 45-deg diagonal split swatch (Row 2)
-        const GRADIENT_COLORS = [
-          { id: 'cyan-blue', name: 'Cyan / Blue', value: 'linear-gradient(135deg, #06b6d4 0%, #3b82f6 100%)', split: 'linear-gradient(135deg, #06b6d4 0%, #06b6d4 50%, #3b82f6 50%, #3b82f6 100%)' },
-          { id: 'lime-green', name: 'Lime / Green', value: 'linear-gradient(135deg, #84cc16 0%, #10b981 100%)', split: 'linear-gradient(135deg, #84cc16 0%, #84cc16 50%, #10b981 50%, #10b981 100%)' },
-          { id: 'orange-amber', name: 'Orange / Amber', value: 'linear-gradient(135deg, #f97316 0%, #fbbf24 100%)', split: 'linear-gradient(135deg, #f97316 0%, #f97316 50%, #fbbf24 50%, #fbbf24 100%)' },
-          { id: 'pink-gold', name: 'Pink / Gold', value: 'linear-gradient(135deg, #ec4899 0%, #f59e0b 100%)', split: 'linear-gradient(135deg, #ec4899 0%, #ec4899 50%, #f59e0b 50%, #f59e0b 100%)' },
-          { id: 'purple-blue', name: 'Purple / Blue', value: 'linear-gradient(135deg, #a855f7 0%, #3b82f6 100%)', split: 'linear-gradient(135deg, #a855f7 0%, #a855f7 50%, #3b82f6 50%, #3b82f6 100%)' },
-          { id: 'turquoise-aqua', name: 'Turquoise / Aqua', value: 'linear-gradient(135deg, #14b8a6 0%, #06b6d4 100%)', split: 'linear-gradient(135deg, #14b8a6 0%, #14b8a6 50%, #06b6d4 50%, #06b6d4 100%)' },
-          { id: 'rose-peach', name: 'Rose / Peach', value: 'linear-gradient(135deg, #f43f5e 0%, #fb923c 100%)', split: 'linear-gradient(135deg, #f43f5e 0%, #f43f5e 50%, #fb923c 50%, #fb923c 100%)' },
-          { id: 'silver-gray', name: 'Silver / Gray', value: 'linear-gradient(135deg, #e2e8f0 0%, #94a3b8 100%)', split: 'linear-gradient(135deg, #e2e8f0 0%, #e2e8f0 50%, #94a3b8 50%, #94a3b8 100%)' }
-        ];
-
-        // 4 Avatar Border Effects
-        const BORDER_EFFECTS = [
-          { id: 'none', name: 'None', desc: 'Clean Ring', effectClass: 'avatar-border-none' },
-          { id: 'glow', name: 'Neon Glow', desc: 'Halo', effectClass: 'avatar-border-glow' },
-          { id: 'dual-gradient', name: 'Dual Gradient', desc: 'Ring', effectClass: 'avatar-border-dual-gradient' },
-          { id: 'dynamic-sparkle', name: 'Dynamic Sparkle', desc: 'Shimmer', effectClass: 'avatar-border-dynamic-sparkle' }
-        ];
-
-        // 8 Avatar Halo Tint Colors
-        const GLOW_COLORS = [
-          { id: 'cyan', name: 'Cyan Glow', value: '#06b6d4' },
-          { id: 'purple', name: 'Purple Glow', value: '#a855f7' },
-          { id: 'pink', name: 'Pink Glow', value: '#ec4899' },
-          { id: 'amber', name: 'Amber Gold', value: '#f59e0b' },
-          { id: 'emerald', name: 'Emerald', value: '#10b981' },
-          { id: 'blue', name: 'Electric Blue', value: '#3b82f6' },
-          { id: 'rose', name: 'Rose Red', value: '#f43f5e' },
-          { id: 'silver', name: 'Silver White', value: '#f8fafc' }
-        ];
-
-        // 150+ Curated Badge & Animated Emoji Library
-        const BADGE_LIBRARY = [
-          // 1. POPULAR & ANIMATED (🔥)
-          { id: 'noto-fire', cat: 'popular', name: 'Fire Animated', url: 'https://fonts.gstatic.com/s/e/notoemoji/latest/1f525/512.webp' },
-          { id: 'noto-sparkles', cat: 'popular', name: 'Sparkles Animated', url: 'https://fonts.gstatic.com/s/e/notoemoji/latest/2728/512.webp' },
-          { id: 'noto-crown', cat: 'popular', name: 'Crown Animated', url: 'https://fonts.gstatic.com/s/e/notoemoji/latest/1f451/512.webp' },
-          { id: 'noto-rocket', cat: 'popular', name: 'Rocket Animated', url: 'https://fonts.gstatic.com/s/e/notoemoji/latest/1f680/512.webp' },
-          { id: 'noto-heart-fire', cat: 'popular', name: 'Heart on Fire', url: 'https://fonts.gstatic.com/s/e/notoemoji/latest/2764_fe0f_200d_1f525/512.webp' },
-          { id: 'noto-crystal', cat: 'popular', name: 'Crystal Ball', url: 'https://fonts.gstatic.com/s/e/notoemoji/latest/1f52e/512.webp' },
-          { id: 'noto-100', cat: 'popular', name: '100 Score', url: 'https://fonts.gstatic.com/s/e/notoemoji/latest/1f4af/512.webp' },
-          { id: 'noto-party', cat: 'popular', name: 'Party Popper', url: 'https://fonts.gstatic.com/s/e/notoemoji/latest/1f389/512.webp' },
-          { id: 'noto-star', cat: 'popular', name: 'Glowing Star', url: 'https://fonts.gstatic.com/s/e/notoemoji/latest/1f31f/512.webp' },
-          { id: 'noto-wand', cat: 'popular', name: 'Magic Wand', url: 'https://fonts.gstatic.com/s/e/notoemoji/latest/1fa84/512.webp' },
-          { id: 'noto-diamond', cat: 'popular', name: 'Diamond Animated', url: 'https://fonts.gstatic.com/s/e/notoemoji/latest/1f48e/512.webp' },
-          { id: 'noto-robot', cat: 'popular', name: 'Robot Animated', url: 'https://fonts.gstatic.com/s/e/notoemoji/latest/1f916/512.webp' },
-          { id: 'sol-verified', cat: 'popular', name: 'Verified Star', url: 'https://api.iconify.design/solar/verified-check-bold-duotone.svg?color=%2322d3ee' },
-          { id: 'sol-fire', cat: 'popular', name: 'Solar Fire', url: 'https://api.iconify.design/solar/fire-bold-duotone.svg?color=%23f97316' },
-          { id: 'sol-bolt', cat: 'popular', name: 'Solar Bolt', url: 'https://api.iconify.design/solar/bolt-bold-duotone.svg?color=%23eab308' },
-          { id: 'sol-magic-stick', cat: 'popular', name: 'Magic Stick', url: 'https://api.iconify.design/solar/magic-stick-3-bold-duotone.svg?color=%23ec4899' },
-          { id: 'sol-rocket', cat: 'popular', name: 'Solar Rocket', url: 'https://api.iconify.design/solar/rocket-2-bold-duotone.svg?color=%23a855f7' },
-          { id: 'sol-heart', cat: 'popular', name: 'Solar Heart', url: 'https://api.iconify.design/solar/heart-bold-duotone.svg?color=%23f43f5e' },
-          { id: 'sol-star', cat: 'popular', name: 'Solar Star', url: 'https://api.iconify.design/solar/star-bold-duotone.svg?color=%23f59e0b' },
-          { id: 'sol-sun', cat: 'popular', name: 'Solar Sun', url: 'https://api.iconify.design/solar/sun-2-bold-duotone.svg?color=%23f59e0b' },
-          { id: 'sol-moon', cat: 'popular', name: 'Solar Moon', url: 'https://api.iconify.design/solar/moon-bold-duotone.svg?color=%2338bdf8' },
-          { id: 'sol-target', cat: 'popular', name: 'Solar Target', url: 'https://api.iconify.design/solar/target-bold-duotone.svg?color=%23ef4444' },
-          { id: 'sol-bell', cat: 'popular', name: 'Solar Bell', url: 'https://api.iconify.design/solar/bell-bold-duotone.svg?color=%23fbbf24' },
-          { id: 'fl-zap', cat: 'popular', name: 'High Voltage', url: 'https://api.iconify.design/fluent-emoji-flat/high-voltage.svg' },
-          { id: 'fl-bomb', cat: 'popular', name: 'Bomb', url: 'https://api.iconify.design/fluent-emoji-flat/bomb.svg' },
-          { id: 'fl-bullseye', cat: 'popular', name: 'Bullseye', url: 'https://api.iconify.design/fluent-emoji-flat/bullseye.svg' },
-          { id: 'fl-sparkler', cat: 'popular', name: 'Sparkler', url: 'https://api.iconify.design/fluent-emoji-flat/sparkler.svg' },
-          { id: 'fl-dizzy', cat: 'popular', name: 'Dizzy Star', url: 'https://api.iconify.design/fluent-emoji-flat/dizzy.svg' },
-          { id: 'fl-collision', cat: 'popular', name: 'Collision', url: 'https://api.iconify.design/fluent-emoji-flat/collision.svg' },
-          { id: 'fl-sparkle-heart', cat: 'popular', name: 'Heart Sparkle', url: 'https://api.iconify.design/fluent-emoji-flat/sparkling-heart.svg' },
-          { id: 'fl-heart-fire', cat: 'popular', name: 'Fire Heart', url: 'https://api.iconify.design/fluent-emoji-flat/heart-on-fire.svg' },
-          { id: 'fl-crown', cat: 'popular', name: 'Crown Gold', url: 'https://api.iconify.design/fluent-emoji-flat/crown.svg' },
-
-          // 2. ROYAL & VIP (👑)
-          { id: 'fl-gem', cat: 'royal', name: 'Gem Stone', url: 'https://api.iconify.design/fluent-emoji-flat/gem-stone.svg' },
-          { id: 'fl-trophy', cat: 'royal', name: 'Gold Trophy', url: 'https://api.iconify.design/fluent-emoji-flat/trophy.svg' },
-          { id: 'fl-medal1', cat: 'royal', name: '1st Place Medal', url: 'https://api.iconify.design/fluent-emoji-flat/1st-place-medal.svg' },
-          { id: 'fl-medal2', cat: 'royal', name: '2nd Place Medal', url: 'https://api.iconify.design/fluent-emoji-flat/2nd-place-medal.svg' },
-          { id: 'fl-medal3', cat: 'royal', name: '3rd Place Medal', url: 'https://api.iconify.design/fluent-emoji-flat/3rd-place-medal.svg' },
-          { id: 'fl-mil-medal', cat: 'royal', name: 'Military Medal', url: 'https://api.iconify.design/fluent-emoji-flat/military-medal.svg' },
-          { id: 'fl-shield', cat: 'royal', name: 'Royal Shield', url: 'https://api.iconify.design/fluent-emoji-flat/shield.svg' },
-          { id: 'fl-swords', cat: 'royal', name: 'Crossed Swords', url: 'https://api.iconify.design/fluent-emoji-flat/crossed-swords.svg' },
-          { id: 'fl-dagger', cat: 'royal', name: 'Dagger', url: 'https://api.iconify.design/fluent-emoji-flat/dagger.svg' },
-          { id: 'fl-ring', cat: 'royal', name: 'Diamond Ring', url: 'https://api.iconify.design/fluent-emoji-flat/ring.svg' },
-          { id: 'fl-check', cat: 'royal', name: 'VIP Check', url: 'https://api.iconify.design/fluent-emoji-flat/check-mark-button.svg' },
-          { id: 'fl-coin', cat: 'royal', name: 'Gold Coin', url: 'https://api.iconify.design/fluent-emoji-flat/coin.svg' },
-          { id: 'fl-money-bag', cat: 'royal', name: 'Money Bag', url: 'https://api.iconify.design/fluent-emoji-flat/money-bag.svg' },
-          { id: 'fl-star', cat: 'royal', name: 'Golden Star', url: 'https://api.iconify.design/fluent-emoji-flat/star.svg' },
-          { id: 'sol-crown-gold', cat: 'royal', name: 'Solar Crown', url: 'https://api.iconify.design/solar/crown-bold-duotone.svg?color=%23f59e0b' },
-          { id: 'sol-crown-star', cat: 'royal', name: 'Solar Crown Star', url: 'https://api.iconify.design/solar/crown-star-bold-duotone.svg?color=%23f59e0b' },
-          { id: 'sol-shield-check', cat: 'royal', name: 'Solar Shield Check', url: 'https://api.iconify.design/solar/shield-check-bold-duotone.svg?color=%2310b981' },
-          { id: 'sol-shield-star', cat: 'royal', name: 'Solar Shield Star', url: 'https://api.iconify.design/solar/shield-star-bold-duotone.svg?color=%2310b981' },
-          { id: 'sol-cup-star', cat: 'royal', name: 'Solar Cup Star', url: 'https://api.iconify.design/solar/cup-star-bold-duotone.svg?color=%23eab308' },
-          { id: 'sol-ribbon', cat: 'royal', name: 'Ribbon Medal', url: 'https://api.iconify.design/solar/medal-ribbons-star-bold-duotone.svg?color=%23a855f7' },
-          { id: 'sol-diploma', cat: 'royal', name: 'Verified Badge', url: 'https://api.iconify.design/solar/diploma-verified-bold-duotone.svg?color=%2306b6d4' },
-          { id: 'sol-key', cat: 'royal', name: 'VIP Key', url: 'https://api.iconify.design/solar/key-bold-duotone.svg?color=%23fbbf24' },
-          { id: 'sol-safe', cat: 'royal', name: 'Solar Vault', url: 'https://api.iconify.design/solar/safe-square-bold-duotone.svg?color=%2310b981' },
-          { id: 'sol-stars', cat: 'royal', name: 'Triple Stars', url: 'https://api.iconify.design/solar/stars-bold-duotone.svg?color=%23fbbf24' },
-          { id: 'fl-fleur', cat: 'royal', name: 'Fleur-de-lis', url: 'https://api.iconify.design/fluent-emoji-flat/fleur-de-lis.svg' },
-          { id: 'sol-star-circle', cat: 'royal', name: 'Star Circle', url: 'https://api.iconify.design/solar/star-circle-bold-duotone.svg?color=%23eab308' },
-          { id: 'sol-shield-up', cat: 'royal', name: 'Royal Guard', url: 'https://api.iconify.design/solar/shield-up-bold-duotone.svg?color=%2306b6d4' },
-          { id: 'sol-scepter', cat: 'royal', name: 'Royal Scepter', url: 'https://api.iconify.design/solar/pen-new-square-bold-duotone.svg?color=%23f59e0b' },
-          { id: 'sol-magic-wand-vip', cat: 'royal', name: 'Diamond Wand', url: 'https://api.iconify.design/solar/magic-stick-bold-duotone.svg?color=%23a855f7' },
-          { id: 'fl-sparkles-vip', cat: 'royal', name: 'Golden Sparkles', url: 'https://api.iconify.design/fluent-emoji-flat/sparkles.svg' },
-
-          // 3. GAMING & CYBER (🎮)
-          { id: 'fl-gamepad', cat: 'gaming', name: 'Gamepad 3D', url: 'https://api.iconify.design/fluent-emoji-flat/video-game.svg' },
-          { id: 'fl-joystick', cat: 'gaming', name: 'Joystick', url: 'https://api.iconify.design/fluent-emoji-flat/joystick.svg' },
-          { id: 'fl-alien', cat: 'gaming', name: 'Alien', url: 'https://api.iconify.design/fluent-emoji-flat/alien.svg' },
-          { id: 'fl-monster', cat: 'gaming', name: 'Alien Monster', url: 'https://api.iconify.design/fluent-emoji-flat/alien-monster.svg' },
-          { id: 'fl-robot', cat: 'gaming', name: 'Robot Head', url: 'https://api.iconify.design/fluent-emoji-flat/robot.svg' },
-          { id: 'fl-skull', cat: 'gaming', name: 'Skull', url: 'https://api.iconify.design/fluent-emoji-flat/skull.svg' },
-          { id: 'fl-crossbones', cat: 'gaming', name: 'Crossbones', url: 'https://api.iconify.design/fluent-emoji-flat/skull-and-crossbones.svg' },
-          { id: 'fl-die', cat: 'gaming', name: 'Game Die', url: 'https://api.iconify.design/fluent-emoji-flat/game-die.svg' },
-          { id: 'fl-wand', cat: 'gaming', name: 'Magic Wand', url: 'https://api.iconify.design/fluent-emoji-flat/magic-wand.svg' },
-          { id: 'fl-orb', cat: 'gaming', name: 'Crystal Orb', url: 'https://api.iconify.design/fluent-emoji-flat/crystal-ball.svg' },
-          { id: 'fl-headphone', cat: 'gaming', name: 'Headphone', url: 'https://api.iconify.design/fluent-emoji-flat/headphone.svg' },
-          { id: 'fl-laptop', cat: 'gaming', name: 'Gaming Laptop', url: 'https://api.iconify.design/fluent-emoji-flat/laptop.svg' },
-          { id: 'fl-battery', cat: 'gaming', name: 'Full Battery', url: 'https://api.iconify.design/fluent-emoji-flat/battery.svg' },
-          { id: 'fl-radioactive', cat: 'gaming', name: 'Radioactive', url: 'https://api.iconify.design/fluent-emoji-flat/radioactive.svg' },
-          { id: 'fl-biohazard', cat: 'gaming', name: 'Biohazard', url: 'https://api.iconify.design/fluent-emoji-flat/biohazard.svg' },
-          { id: 'fl-antenna', cat: 'gaming', name: 'Satellite Dish', url: 'https://api.iconify.design/fluent-emoji-flat/satellite-antenna.svg' },
-          { id: 'fl-ufo', cat: 'gaming', name: 'Flying Saucer', url: 'https://api.iconify.design/fluent-emoji-flat/flying-saucer.svg' },
-          { id: 'sol-gamepad-cyan', cat: 'gaming', name: 'Solar Gamepad', url: 'https://api.iconify.design/solar/gamepad-bold-duotone.svg?color=%2306b6d4' },
-          { id: 'sol-game-charge', cat: 'gaming', name: 'Game Charge', url: 'https://api.iconify.design/solar/gamepad-charge-bold-duotone.svg?color=%238b5cf6' },
-          { id: 'sol-ghost', cat: 'gaming', name: 'Solar Ghost', url: 'https://api.iconify.design/solar/ghost-bold-duotone.svg?color=%23ec4899' },
-          { id: 'sol-cpu-bolt', cat: 'gaming', name: 'CPU Bolt', url: 'https://api.iconify.design/solar/cpu-bolt-bold-duotone.svg?color=%2306b6d4' },
-          { id: 'sol-headphones', cat: 'gaming', name: 'Pro Headset', url: 'https://api.iconify.design/solar/headphones-round-bold-duotone.svg?color=%2310b981' },
-          { id: 'sol-warning', cat: 'gaming', name: 'Cyber Warning', url: 'https://api.iconify.design/solar/shield-warning-bold-duotone.svg?color=%23f97316' },
-          { id: 'sol-widget', cat: 'gaming', name: 'Cyber Widget', url: 'https://api.iconify.design/solar/widget-5-bold-duotone.svg?color=%23a855f7' },
-          { id: 'sol-target-cyan', cat: 'gaming', name: 'Darts Target', url: 'https://api.iconify.design/solar/target-bold-duotone.svg?color=%2322d3ee' },
-          { id: 'sol-radar', cat: 'gaming', name: 'Radar Scanner', url: 'https://api.iconify.design/solar/radar-bold-duotone.svg?color=%2338bdf8' },
-          { id: 'sol-server', cat: 'gaming', name: 'Server Node', url: 'https://api.iconify.design/solar/server-square-bold-duotone.svg?color=%2310b981' },
-          { id: 'sol-lightning', cat: 'gaming', name: 'Cyber Lightning', url: 'https://api.iconify.design/solar/lightning-bold-duotone.svg?color=%23eab308' },
-          { id: 'fl-water-gun', cat: 'gaming', name: 'Laser Blaster', url: 'https://api.iconify.design/fluent-emoji-flat/water-pistol.svg' },
-          { id: 'fl-sparkler-game', cat: 'gaming', name: 'Magic Sparkler', url: 'https://api.iconify.design/fluent-emoji-flat/sparkler.svg' },
-
-          // 4. AESTHETIC & NATURE (✨)
-          { id: 'fl-crescent', cat: 'aesthetic', name: 'Crescent Moon', url: 'https://api.iconify.design/fluent-emoji-flat/crescent-moon.svg' },
-          { id: 'fl-full-moon', cat: 'aesthetic', name: 'Full Moon', url: 'https://api.iconify.design/fluent-emoji-flat/full-moon.svg' },
-          { id: 'fl-new-moon', cat: 'aesthetic', name: 'New Moon Face', url: 'https://api.iconify.design/fluent-emoji-flat/new-moon-face.svg' },
-          { id: 'fl-sun-face', cat: 'aesthetic', name: 'Sun Face', url: 'https://api.iconify.design/fluent-emoji-flat/sun-with-face.svg' },
-          { id: 'fl-planet', cat: 'aesthetic', name: 'Saturn Planet', url: 'https://api.iconify.design/fluent-emoji-flat/ringed-planet.svg' },
-          { id: 'fl-sakura', cat: 'aesthetic', name: 'Sakura Blossom', url: 'https://api.iconify.design/fluent-emoji-flat/cherry-blossom.svg' },
-          { id: 'fl-blossom', cat: 'aesthetic', name: 'Spring Blossom', url: 'https://api.iconify.design/fluent-emoji-flat/blossom.svg' },
-          { id: 'fl-rose', cat: 'aesthetic', name: 'Red Rose', url: 'https://api.iconify.design/fluent-emoji-flat/rose.svg' },
-          { id: 'fl-hibiscus', cat: 'aesthetic', name: 'Hibiscus', url: 'https://api.iconify.design/fluent-emoji-flat/hibiscus.svg' },
-          { id: 'fl-sunflower', cat: 'aesthetic', name: 'Sunflower', url: 'https://api.iconify.design/fluent-emoji-flat/sunflower.svg' },
-          { id: 'fl-butterfly', cat: 'aesthetic', name: 'Blue Butterfly', url: 'https://api.iconify.design/fluent-emoji-flat/butterfly.svg' },
-          { id: 'fl-feather', cat: 'aesthetic', name: 'White Feather', url: 'https://api.iconify.design/fluent-emoji-flat/feather.svg' },
-          { id: 'fl-snowflake', cat: 'aesthetic', name: 'Snowflake', url: 'https://api.iconify.design/fluent-emoji-flat/snowflake.svg' },
-          { id: 'fl-lotus', cat: 'aesthetic', name: 'Lotus Flower', url: 'https://api.iconify.design/fluent-emoji-flat/lotus.svg' },
-          { id: 'fl-sparkles-aes', cat: 'aesthetic', name: 'Aesthetic Sparkles', url: 'https://api.iconify.design/fluent-emoji-flat/sparkles.svg' },
-          { id: 'fl-coffee', cat: 'aesthetic', name: 'Coffee Cup', url: 'https://api.iconify.design/fluent-emoji-flat/hot-beverage.svg' },
-          { id: 'fl-clover', cat: 'aesthetic', name: 'Lucky Clover', url: 'https://api.iconify.design/fluent-emoji-flat/four-leaf-clover.svg' },
-          { id: 'fl-rainbow', cat: 'aesthetic', name: 'Rainbow', url: 'https://api.iconify.design/fluent-emoji-flat/rainbow.svg' },
-          { id: 'fl-heart-aes', cat: 'aesthetic', name: 'Sparkling Heart', url: 'https://api.iconify.design/fluent-emoji-flat/sparkling-heart.svg' },
-          { id: 'sol-moon-stars', cat: 'aesthetic', name: 'Moon Stars', url: 'https://api.iconify.design/solar/moon-stars-bold-duotone.svg?color=%2338bdf8' },
-          { id: 'sol-star-fall', cat: 'aesthetic', name: 'Shooting Star', url: 'https://api.iconify.design/solar/star-fall-2-bold-duotone.svg?color=%23f59e0b' },
-          { id: 'sol-leaf', cat: 'aesthetic', name: 'Green Leaf', url: 'https://api.iconify.design/solar/leaf-bold-duotone.svg?color=%2310b981' },
-          { id: 'sol-cloud-sun', cat: 'aesthetic', name: 'Cloud Sun', url: 'https://api.iconify.design/solar/cloud-sun-bold-duotone.svg?color=%2306b6d4' },
-          { id: 'sol-cup-hot', cat: 'aesthetic', name: 'Warm Cup', url: 'https://api.iconify.design/solar/cup-hot-bold-duotone.svg?color=%23ec4899' },
-          { id: 'sol-planet', cat: 'aesthetic', name: 'Galaxy Planet', url: 'https://api.iconify.design/solar/planet-bold-duotone.svg?color=%23a855f7' },
-          { id: 'sol-waterdrops', cat: 'aesthetic', name: 'Water Drops', url: 'https://api.iconify.design/solar/waterdrops-bold-duotone.svg?color=%2338bdf8' },
-          { id: 'sol-snow', cat: 'aesthetic', name: 'Solar Snowflake', url: 'https://api.iconify.design/solar/snowflake-bold-duotone.svg?color=%2306b6d4' },
-          { id: 'sol-sun-fog', cat: 'aesthetic', name: 'Golden Sun', url: 'https://api.iconify.design/solar/sun-fog-bold-duotone.svg?color=%23fbbf24' },
-          { id: 'fl-maple', cat: 'aesthetic', name: 'Maple Leaf', url: 'https://api.iconify.design/fluent-emoji-flat/maple-leaf.svg' },
-          { id: 'fl-crystal-aes', cat: 'aesthetic', name: 'Crystal Gem', url: 'https://api.iconify.design/fluent-emoji-flat/crystal-ball.svg' },
-
-          // 5. ANIMALS & MYTHIC (🐾)
-          { id: 'fl-dragon', cat: 'animals', name: 'Dragon', url: 'https://api.iconify.design/fluent-emoji-flat/dragon.svg' },
-          { id: 'fl-dragon-face', cat: 'animals', name: 'Dragon Face', url: 'https://api.iconify.design/fluent-emoji-flat/dragon-face.svg' },
-          { id: 'fl-fox', cat: 'animals', name: 'Fox', url: 'https://api.iconify.design/fluent-emoji-flat/fox.svg' },
-          { id: 'fl-wolf', cat: 'animals', name: 'Wolf', url: 'https://api.iconify.design/fluent-emoji-flat/wolf.svg' },
-          { id: 'fl-cat', cat: 'animals', name: 'Cute Cat', url: 'https://api.iconify.design/fluent-emoji-flat/cat.svg' },
-          { id: 'fl-black-cat', cat: 'animals', name: 'Black Cat', url: 'https://api.iconify.design/fluent-emoji-flat/black-cat.svg' },
-          { id: 'fl-owl', cat: 'animals', name: 'Night Owl', url: 'https://api.iconify.design/fluent-emoji-flat/owl.svg' },
-          { id: 'fl-unicorn', cat: 'animals', name: 'Unicorn', url: 'https://api.iconify.design/fluent-emoji-flat/unicorn.svg' },
-          { id: 'fl-bat', cat: 'animals', name: 'Vampire Bat', url: 'https://api.iconify.design/fluent-emoji-flat/bat.svg' },
-          { id: 'fl-snake', cat: 'animals', name: 'Snake', url: 'https://api.iconify.design/fluent-emoji-flat/snake.svg' },
-          { id: 'fl-eagle', cat: 'animals', name: 'Eagle', url: 'https://api.iconify.design/fluent-emoji-flat/eagle.svg' },
-          { id: 'fl-lion', cat: 'animals', name: 'Lion', url: 'https://api.iconify.design/fluent-emoji-flat/lion.svg' },
-          { id: 'fl-tiger', cat: 'animals', name: 'Tiger', url: 'https://api.iconify.design/fluent-emoji-flat/tiger.svg' },
-          { id: 'fl-bear', cat: 'animals', name: 'Bear', url: 'https://api.iconify.design/fluent-emoji-flat/bear.svg' },
-          { id: 'fl-panda', cat: 'animals', name: 'Panda', url: 'https://api.iconify.design/fluent-emoji-flat/panda.svg' },
-          { id: 'fl-dove', cat: 'animals', name: 'White Dove', url: 'https://api.iconify.design/fluent-emoji-flat/dove.svg' },
-          { id: 'fl-peacock', cat: 'animals', name: 'Peacock', url: 'https://api.iconify.design/fluent-emoji-flat/peacock.svg' },
-          { id: 'fl-spider', cat: 'animals', name: 'Spider', url: 'https://api.iconify.design/fluent-emoji-flat/spider.svg' },
-          { id: 'fl-scorpion', cat: 'animals', name: 'Scorpion', url: 'https://api.iconify.design/fluent-emoji-flat/scorpion.svg' },
-          { id: 'sol-bone', cat: 'animals', name: 'Solar Bone', url: 'https://api.iconify.design/solar/bone-bold-duotone.svg?color=%23f59e0b' },
-          { id: 'sol-paw', cat: 'animals', name: 'Solar Paw', url: 'https://api.iconify.design/solar/paw-bold-duotone.svg?color=%23ec4899' },
-          { id: 'sol-cat', cat: 'animals', name: 'Solar Cat', url: 'https://api.iconify.design/solar/cat-bold-duotone.svg?color=%2338bdf8' },
-          { id: 'sol-dog', cat: 'animals', name: 'Solar Dog', url: 'https://api.iconify.design/solar/dog-bold-duotone.svg?color=%2310b981' },
-          { id: 'sol-fish', cat: 'animals', name: 'Solar Fish', url: 'https://api.iconify.design/solar/fish-bold-duotone.svg?color=%2306b6d4' },
-          { id: 'sol-bug', cat: 'animals', name: 'Solar Bug', url: 'https://api.iconify.design/solar/bug-bold-duotone.svg?color=%2384cc16' },
-          { id: 'fl-dolphin', cat: 'animals', name: 'Dolphin', url: 'https://api.iconify.design/fluent-emoji-flat/dolphin.svg' },
-          { id: 'fl-shark', cat: 'animals', name: 'Shark', url: 'https://api.iconify.design/fluent-emoji-flat/shark.svg' },
-          { id: 'fl-flamingo', cat: 'animals', name: 'Flamingo', url: 'https://api.iconify.design/fluent-emoji-flat/flamingo.svg' },
-          { id: 'fl-honeybee', cat: 'animals', name: 'Honeybee', url: 'https://api.iconify.design/fluent-emoji-flat/honeybee.svg' },
-          { id: 'fl-phoenix', cat: 'animals', name: 'Phoenix Bird', url: 'https://api.iconify.design/fluent-emoji-flat/bird.svg' }
-        ];
-
-        let activeTab: 'name' | 'avatar' = 'name';
-        let activeBadgeCategory = 'popular';
-        let draftNameColor = '#a855f7';
-        let draftBorderEffect = 'none';
-        let draftGlowColor = '#a855f7';
-        let draftNameIcon = '';
-        let liveSearchDebounceTimer: any = null;
-
-        function switchTab(tab: 'name' | 'avatar') {
-          activeTab = tab;
-          const isName = tab === 'name';
-
-          if (tabNameColors && tabAvatarBorder) {
-            if (isName) {
-              tabNameColors.className = 'whitespace-nowrap text-xs font-semibold flex-1 py-2 px-3 rounded-xl flex items-center justify-center gap-2 transition-all cursor-pointer bg-purple-600 text-white shadow-sm';
-              tabAvatarBorder.className = 'whitespace-nowrap text-xs font-semibold flex-1 py-2 px-3 rounded-xl flex items-center justify-center gap-2 transition-all cursor-pointer text-slate-400 hover:text-white';
-            } else {
-              tabAvatarBorder.className = 'whitespace-nowrap text-xs font-semibold flex-1 py-2 px-3 rounded-xl flex items-center justify-center gap-2 transition-all cursor-pointer bg-purple-600 text-white shadow-sm';
-              tabNameColors.className = 'whitespace-nowrap text-xs font-semibold flex-1 py-2 px-3 rounded-xl flex items-center justify-center gap-2 transition-all cursor-pointer text-slate-400 hover:text-white';
-            }
-          }
-
-          if (viewTabName && viewTabAvatar) {
-            if (isName) {
-              viewTabName.classList.remove('hidden');
-              viewTabAvatar.classList.add('hidden');
-            } else {
-              viewTabName.classList.add('hidden');
-              viewTabAvatar.classList.remove('hidden');
-            }
-          }
-        }
-
-        tabNameColors?.addEventListener('click', () => switchTab('name'));
-        tabAvatarBorder?.addEventListener('click', () => switchTab('avatar'));
-
-        function applyNameToElement(el: HTMLElement | null, text: string, color: string) {
-          if (!el) return;
-          const isGrad = color && color.includes('gradient');
-          if (isGrad) {
-            el.style.backgroundImage = color;
-            el.style.webkitBackgroundClip = 'text';
-            el.style.backgroundClip = 'text';
-            el.style.webkitTextFillColor = 'transparent';
-            el.style.color = 'transparent';
-          } else {
-            el.style.backgroundImage = 'none';
-            el.style.webkitBackgroundClip = '';
-            el.style.backgroundClip = '';
-            el.style.webkitTextFillColor = '';
-            el.style.color = color || '#a855f7';
-          }
-          el.textContent = text || 'Hossein';
-        }
-
-        function updateLivePreview() {
-          const active = personas.find(p => p.isActive) || personas[0] || { name: 'Hossein' };
-          const userName = active.name || 'Hossein';
-
-          // 1. Pinned Preview Avatar & Name
-          const previewName = document.getElementById('preview-user-name');
-          const previewBadge = document.getElementById('preview-user-badge');
-          applyNameToElement(previewName, userName, draftNameColor);
-          if (previewBadge) {
-            previewBadge.innerHTML = renderBadgeHtml(draftNameIcon, 'w-4 h-4 inline-block object-contain align-middle ml-1 shrink-0');
-          }
-
-          // 2. Chat Bubble Sender Name & Badge
-          const bubbleName = document.getElementById('preview-bubble-name');
-          const bubbleBadge = document.getElementById('preview-bubble-badge');
-          applyNameToElement(bubbleName, userName, draftNameColor);
-          if (bubbleBadge) {
-            bubbleBadge.innerHTML = renderBadgeHtml(draftNameIcon, 'w-3.5 h-3.5 inline-block object-contain align-middle ml-1 shrink-0');
-          }
-
-          // 3. Pinned Avatar container border effect & glow color
-          const avatarContainer = document.getElementById('preview-avatar-container');
-          const avatarImg = document.getElementById('preview-avatar-img') as HTMLImageElement;
-          const avatarInitial = document.getElementById('preview-avatar-initial');
-
-          if (avatarContainer) {
-            avatarContainer.className = 'w-14 h-14 rounded-full p-[2px] transition-all duration-300 shrink-0 flex items-center justify-center mb-1.5';
-            avatarContainer.style.setProperty('--avatar-glow-color', draftGlowColor);
-            avatarContainer.style.setProperty('--avatar-border-color', draftGlowColor);
-
-            if (draftBorderEffect === 'glow') {
-              avatarContainer.classList.add('avatar-border-glow');
-            } else if (draftBorderEffect === 'dual-gradient') {
-              avatarContainer.classList.add('avatar-border-dual-gradient');
-            } else if (draftBorderEffect === 'dynamic-sparkle') {
-              avatarContainer.classList.add('avatar-border-dynamic-sparkle');
-            } else {
-              avatarContainer.classList.add('avatar-border-none');
-            }
-          }
-
-          if (avatarImg && avatarInitial) {
-            if (active.avatar) {
-              avatarImg.src = active.avatar;
-              avatarImg.classList.remove('hidden');
-              avatarInitial.classList.add('hidden');
-            } else {
-              avatarImg.src = '';
-              avatarImg.classList.add('hidden');
-              avatarInitial.classList.remove('hidden');
-              avatarInitial.textContent = (userName || 'H').charAt(0).toUpperCase();
-            }
-          }
-
-          // 4. Update Swatch Buttons (Telegram-Style 8x2 Matrix)
-          document.querySelectorAll('.swatch-trigger-btn').forEach((btn: any) => {
-            const val = btn.dataset.value;
-            const isSelected = (val === draftNameColor);
-            const check = btn.querySelector('.swatch-check');
-            if (isSelected) {
-              btn.className = 'swatch-trigger-btn relative w-8 h-8 rounded-full cursor-pointer transition-all active:scale-90 flex items-center justify-center shadow-md select-none ring-2 ring-offset-2 ring-offset-[#11141d] ring-cyan-400 scale-110 z-10';
-              check?.classList.remove('hidden');
-              check?.classList.add('flex');
-            } else {
-              btn.className = 'swatch-trigger-btn relative w-8 h-8 rounded-full cursor-pointer transition-all active:scale-90 flex items-center justify-center shadow-md select-none hover:scale-105';
-              check?.classList.add('hidden');
-              check?.classList.remove('flex');
-            }
-          });
-
-          // 5. Update Status Toggle Switch & Remove Badge Button
-          if (toggleBadges) {
-            toggleBadges.checked = !!draftNameIcon;
-          }
-          if (btnRemoveBadge) {
-            if (draftNameIcon) {
-              btnRemoveBadge.classList.remove('hidden');
-            } else {
-              btnRemoveBadge.classList.add('hidden');
-            }
-          }
-
-          // 6. Highlight active badge item in the grid
-          document.querySelectorAll('.badge-item-btn').forEach((btn: any) => {
-            const bUrl = btn.dataset.url;
-            const isSelected = (bUrl === draftNameIcon);
-            if (isSelected) {
-              btn.className = 'badge-item-btn relative w-9 h-9 rounded-xl bg-cyan-500/20 border border-cyan-400 ring-2 ring-cyan-400/50 flex items-center justify-center p-1.5 transition-all duration-150 active:scale-95 cursor-pointer select-none scale-105 shadow-sm z-10';
-            } else {
-              btn.className = 'badge-item-btn relative w-9 h-9 rounded-xl bg-white/[0.04] hover:bg-white/[0.1] border border-white/[0.08] flex items-center justify-center p-1.5 transition-all duration-150 active:scale-95 cursor-pointer select-none';
-            }
-          });
-
-          // 7. Update Border Effect Cards in 2x2 Grid
-          document.querySelectorAll('.border-effect-card').forEach((card: any) => {
-            const effectId = card.dataset.effect;
-            const isSelected = (effectId === draftBorderEffect);
-            const miniAvatar = card.querySelector('.card-mini-avatar-wrapper');
-            if (miniAvatar) {
-              miniAvatar.style.setProperty('--avatar-glow-color', draftGlowColor);
-              miniAvatar.style.setProperty('--avatar-border-color', draftGlowColor);
-            }
-            if (isSelected) {
-              card.className = 'border-effect-card p-2.5 sm:p-3 rounded-2xl border border-cyan-400 bg-cyan-500/10 ring-1 ring-cyan-400/40 shadow-sm transition-all cursor-pointer flex items-center gap-2 sm:gap-2.5 select-none';
-            } else {
-              card.className = 'border-effect-card p-2.5 sm:p-3 rounded-2xl border border-white/10 bg-white/[0.02] hover:bg-white/[0.05] transition-all cursor-pointer flex items-center gap-2 sm:gap-2.5 select-none';
-            }
-          });
-
-          // 8. Update Glow Color 8-dot strip
-          document.querySelectorAll('.glow-color-dot').forEach((btn: any) => {
-            const val = btn.dataset.value;
-            const isSelected = (val === draftGlowColor);
-            const check = btn.querySelector('.glow-check');
-            if (isSelected) {
-              btn.className = 'glow-color-dot relative w-8 h-8 rounded-full cursor-pointer transition-all active:scale-90 flex items-center justify-center shadow-md select-none ring-2 ring-offset-2 ring-offset-[#11141d] ring-cyan-400 scale-110 z-10';
-              check?.classList.remove('hidden');
-              check?.classList.add('flex');
-            } else {
-              btn.className = 'glow-color-dot relative w-8 h-8 rounded-full cursor-pointer transition-all active:scale-90 flex items-center justify-center shadow-md select-none hover:scale-105';
-              check?.classList.add('hidden');
-              check?.classList.remove('flex');
-            }
-          });
-        }
-
-        // Render Color Matrix (Row 1: 8 Solids, Row 2: 8 Dual Gradients)
-        if (gridColorMatrix) {
-          const all16 = [
-            ...SOLID_COLORS.map(c => ({ ...c, isGrad: false })),
-            ...GRADIENT_COLORS.map(g => ({ ...g, isGrad: true }))
-          ];
-          gridColorMatrix.innerHTML = all16.map(item => `
-            <button 
-              type="button" 
-              class="swatch-trigger-btn relative w-8 h-8 rounded-full cursor-pointer transition-all active:scale-90 flex items-center justify-center shadow-md select-none hover:scale-105"
-              data-value="${item.value}"
-              title="${item.name}"
-              style="background: ${(item as any).split || item.value};"
-            >
-              <span class="swatch-check hidden text-white text-[11px] font-bold drop-shadow-[0_1px_2px_rgba(0,0,0,0.8)] select-none pointer-events-none">✓</span>
-            </button>
-          `).join('');
-
-          gridColorMatrix.querySelectorAll('.swatch-trigger-btn').forEach((btn: any) => {
-            btn.addEventListener('click', () => {
-              draftNameColor = btn.dataset.value;
-              updateLivePreview();
-            });
-          });
-        }
-
-        // Render Badges in the 8-column grid
-        function renderBadges(badgesToRender: any[]) {
-          if (!gridBadgesDisplay) return;
-
-          if (badgesToRender.length === 0) {
-            gridBadgesDisplay.innerHTML = `
-              <div class="col-span-8 py-6 text-center text-xs text-slate-400">
-                <span>No badges found. Try another search term!</span>
-              </div>
-            `;
-            if (badgePickerCount) badgePickerCount.textContent = '0 badges';
-            return;
-          }
-
-          gridBadgesDisplay.innerHTML = badgesToRender.map(b => {
-            const isSelected = (b.url === draftNameIcon);
-            return `
-              <button 
-                type="button" 
-                class="badge-item-btn relative w-9 h-9 rounded-xl ${isSelected ? 'bg-cyan-500/20 border border-cyan-400 ring-2 ring-cyan-400/50 scale-105 shadow-sm z-10' : 'bg-white/[0.04] hover:bg-white/[0.1] border border-white/[0.08]'} flex items-center justify-center p-1.5 transition-all duration-150 active:scale-95 cursor-pointer select-none"
-                data-url="${b.url}"
-                data-name="${b.name}"
-                title="${b.name}"
-              >
-                <img src="${b.url}" alt="${b.name}" class="w-6 h-6 object-contain pointer-events-none" loading="lazy" />
-              </button>
-            `;
-          }).join('');
-
-          if (badgePickerCount) {
-            badgePickerCount.textContent = `Showing ${badgesToRender.length} badges`;
-          }
-
-          gridBadgesDisplay.querySelectorAll('.badge-item-btn').forEach((btn: any) => {
-            btn.addEventListener('click', () => {
-              const url = btn.dataset.url;
-              if (draftNameIcon === url) {
-                draftNameIcon = '';
-              } else {
-                draftNameIcon = url;
-              }
-              updateLivePreview();
-            });
-          });
-        }
-
-        function filterBadges() {
-          const query = inputBadgeSearch?.value.trim().toLowerCase() || '';
-          if (btnClearBadgeSearch) {
-            if (query) btnClearBadgeSearch.classList.remove('hidden');
-            else btnClearBadgeSearch.classList.add('hidden');
-          }
-
-          let matched = BADGE_LIBRARY;
-          if (query) {
-            matched = BADGE_LIBRARY.filter(b => b.name.toLowerCase().includes(query) || b.id.toLowerCase().includes(query));
-          } else {
-            matched = BADGE_LIBRARY.filter(b => b.cat === activeBadgeCategory);
-          }
-
-          renderBadges(matched);
-
-          // If query is present and user typed >= 2 characters, debounced live query to Iconify
-          if (query && query.length >= 2) {
-            clearTimeout(liveSearchDebounceTimer);
-            liveSearchDebounceTimer = setTimeout(async () => {
-              try {
-                const res = await fetch(`https://api.iconify.design/search?query=${encodeURIComponent(query)}&prefixes=fluent-emoji-flat,solar,lucide&limit=40`);
-                if (res.ok) {
-                  const data = await res.json();
-                  if (data && Array.isArray(data.icons) && data.icons.length > 0) {
-                    const onlineBadges = data.icons.map((iconSlug: string) => {
-                      const parts = iconSlug.split(':');
-                      const prefix = parts[0];
-                      const name = parts[1] || '';
-                      let url = `https://api.iconify.design/${prefix}/${name}.svg`;
-                      if (prefix === 'solar' || prefix === 'lucide') {
-                        url += '?color=%2322d3ee';
-                      }
-                      return {
-                        id: iconSlug,
-                        cat: 'search',
-                        name: name.replace(/-/g, ' '),
-                        url
-                      };
-                    });
-
-                    // Merge without duplicates
-                    const existingUrls = new Set(matched.map(m => m.url));
-                    const newOnes = onlineBadges.filter((b: any) => !existingUrls.has(b.url));
-                    if (newOnes.length > 0) {
-                      renderBadges([...matched, ...newOnes]);
-                    }
-                  }
-                }
-              } catch (e) {
-                // Ignore offline or search errors gracefully
-              }
-            }, 350);
-          }
-        }
-
-        inputBadgeSearch?.addEventListener('input', filterBadges);
-
-        btnClearBadgeSearch?.addEventListener('click', () => {
-          if (inputBadgeSearch) {
-            inputBadgeSearch.value = '';
-            filterBadges();
-            inputBadgeSearch.focus();
-          }
-        });
-
-        // Category Pills Handlers
-        document.querySelectorAll('.badge-cat-pill').forEach((pill: any) => {
-          pill.addEventListener('click', () => {
-            activeBadgeCategory = pill.dataset.cat || 'popular';
-            document.querySelectorAll('.badge-cat-pill').forEach((p: any) => {
-              if (p === pill) {
-                p.className = 'badge-cat-pill whitespace-nowrap px-3 py-1.5 rounded-xl font-medium text-xs transition cursor-pointer bg-purple-600 text-white shadow-sm';
-              } else {
-                p.className = 'badge-cat-pill whitespace-nowrap px-3 py-1.5 rounded-xl font-medium text-xs transition cursor-pointer text-slate-400 hover:text-white hover:bg-white/[0.05]';
-              }
-            });
-            if (inputBadgeSearch) inputBadgeSearch.value = '';
-            filterBadges();
-          });
-        });
-
-        // Remove Badge Button
-        btnRemoveBadge?.addEventListener('click', () => {
-          draftNameIcon = '';
-          updateLivePreview();
-        });
-
-        // Toggle Badges Switch
-        toggleBadges?.addEventListener('change', () => {
-          if (!toggleBadges.checked) {
-            draftNameIcon = '';
-          } else if (!draftNameIcon) {
-            draftNameIcon = BADGE_LIBRARY[0].url; // Default to first animated fire
-          }
-          updateLivePreview();
-        });
-
-        // Render 2x2 Grid of Border Effects
-        if (borderEffectsGrid) {
-          const active = personas.find(p => p.isActive) || personas[0] || { name: 'Hossein' };
-          borderEffectsGrid.innerHTML = BORDER_EFFECTS.map(eff => `
-            <div 
-              class="border-effect-card p-2.5 sm:p-3 rounded-2xl border border-white/10 bg-white/[0.02] hover:bg-white/[0.05] transition-all cursor-pointer flex items-center gap-2 sm:gap-2.5 select-none"
-              data-effect="${eff.id}"
-            >
-              <div class="card-mini-avatar-wrapper w-9 h-9 sm:w-10 sm:h-10 rounded-full p-[2px] flex items-center justify-center shrink-0 ${eff.effectClass}" style="--avatar-glow-color: ${draftGlowColor}; --avatar-border-color: ${draftGlowColor};">
-                ${active.avatar ? `
-                  <img src="${active.avatar}" alt="Avatar" class="w-full h-full rounded-full object-cover" />
-                ` : `
-                  <div class="w-full h-full rounded-full bg-gradient-to-tr from-purple-600 to-indigo-600 flex items-center justify-center text-white text-xs font-bold">
-                    ${(active.name || 'H').charAt(0).toUpperCase()}
-                  </div>
-                `}
-              </div>
-              <div class="flex-1 min-w-0">
-                <div class="text-xs font-semibold text-white whitespace-nowrap">${eff.name}</div>
-                <div class="text-[10px] text-slate-400 whitespace-nowrap truncate">${eff.desc}</div>
-              </div>
-            </div>
-          `).join('');
-
-          borderEffectsGrid.querySelectorAll('.border-effect-card').forEach((card: any) => {
-            card.addEventListener('click', () => {
-              draftBorderEffect = card.dataset.effect;
-              updateLivePreview();
-            });
-          });
-        }
-
-        // Render Border Glow Colors (8 dots)
-        if (gridGlowColors) {
-          gridGlowColors.innerHTML = GLOW_COLORS.map(c => `
-            <button 
-              type="button" 
-              class="glow-color-dot relative w-8 h-8 rounded-full cursor-pointer transition-all active:scale-90 flex items-center justify-center shadow-md select-none hover:scale-105"
-              data-value="${c.value}"
-              title="${c.name}"
-              style="background: ${c.value};"
-            >
-              <span class="glow-check hidden text-white text-[10px] font-bold drop-shadow-[0_1px_2px_rgba(0,0,0,0.8)] select-none pointer-events-none">✓</span>
-            </button>
-          `).join('');
-
-          gridGlowColors.querySelectorAll('.glow-color-dot').forEach((btn: any) => {
-            btn.addEventListener('click', () => {
-              draftGlowColor = btn.dataset.value;
-              updateLivePreview();
-            });
-          });
-        }
-
-        // Initialize state from active persona
-        const active = personas.find(p => p.isActive) || personas[0];
-        if (active) {
-          draftNameColor = active.nameColor || '#a855f7';
-          draftBorderEffect = active.avatarBorderEffect || 'none';
-          draftGlowColor = active.avatarGlowColor || '#a855f7';
-          draftNameIcon = active.nameIcon || '';
-        }
-
-        switchTab('name');
-        filterBadges();
-        updateLivePreview();
-
-        // Apply Logic
-        function applyStylesAndSave() {
-          const active = personas.find(p => p.isActive) || personas[0];
-          if (active) {
-            active.nameColor = draftNameColor;
-            active.avatarBorderEffect = draftBorderEffect as any;
-            active.avatarGlowColor = draftGlowColor;
-            active.nameIcon = draftNameIcon;
-
-            // Save to LocalStorage
-            savePersonas();
-
-            // Dispatch global events
-            window.dispatchEvent(new CustomEvent('aetheria:name-style-changed', {
-              detail: {
-                nameColor: draftNameColor,
-                avatarBorderEffect: draftBorderEffect,
-                avatarGlowColor: draftGlowColor,
-                nameIcon: draftNameIcon
-              }
-            }));
-
-            window.dispatchEvent(new CustomEvent('aetheria:persona-updated', {
-              detail: active
-            }));
-
-            updateHubProfileSummary();
-            render3DCarousel();
-            showToast('Name style & avatar halo applied! ✨', 'success');
-            showView('view-appearance');
-          }
-        }
-
-        btnHeaderApply?.addEventListener('click', applyStylesAndSave);
-        btnApply?.addEventListener('click', applyStylesAndSave);
-
-        btnCancel?.addEventListener('click', () => {
-          showView('view-appearance');
-        });
-
-        btnReset?.addEventListener('click', () => {
-          draftNameColor = '#a855f7';
-          draftBorderEffect = 'none';
-          draftGlowColor = '#a855f7';
-          draftNameIcon = '';
-          updateLivePreview();
-          showToast('Reset to default name style & border', 'info');
-        });
-      }
-      // Wallpapers
-      function renderWallpapers() {
-        if (!wallpapersGrid) return;
-        const wps = (window as any).AetheriaTheme?.WALLPAPERS || [];
-        wallpapersGrid.innerHTML = wps.slice(0, 6).map((w: any) => `
-          <div class="wp-card relative h-16 rounded-xl overflow-hidden border border-white/10 cursor-pointer group shadow-sm" data-wp="${w.css}">
-            <div class="absolute inset-0 bg-cover bg-center" style="background: ${w.css};"></div>
-            <div class="absolute inset-0 bg-black/40 group-hover:bg-black/10 transition flex items-center justify-center">
-              <span class="text-[9px] font-bold text-white">${w.name}</span>
-            </div>
-          </div>
-        `).join('');
-
-        wallpapersGrid.querySelectorAll('.wp-card').forEach((card: any) => {
-          card.addEventListener('click', () => {
-            settings.chatWallpaper = card.dataset.wp;
-            updatePreview();
-            saveAndApply();
-          });
-        });
-      }
-
-      function updateSliderProgress(slider: HTMLInputElement | null) {
-        if (!slider) return;
-        const min = parseFloat(slider.min) || 0;
-        const max = parseFloat(slider.max) || 100;
-        const val = parseFloat(slider.value) || 0;
-        const percent = Math.min(Math.max(((val - min) / (max - min)) * 100, 0), 100);
-        const activeColor = settings.accent || 'var(--theme-accent, #8E9AB6)';
-        const isDay = settings.baseMode === 'day';
-        const trackColor = isDay ? '#e2e8f0' : 'rgba(255, 255, 255, 0.14)';
-        slider.style.background = `linear-gradient(to right, ${activeColor} 0%, ${activeColor} ${percent}%, ${trackColor} ${percent}%, ${trackColor} 100%)`;
-      }
-
-      function syncInputs() {
-        if (fontSlider) fontSlider.value = String(settings.fontSize || 16);
-        if (fontVal) fontVal.textContent = String(settings.fontSize || 16);
-        if (radiusSlider) radiusSlider.value = String(settings.bubbleRadius !== undefined ? settings.bubbleRadius : 16);
-        if (radiusVal) radiusVal.textContent = `${settings.bubbleRadius !== undefined ? settings.bubbleRadius : 16}px`;
-        syncModeButtons(settings.baseMode || 'dark');
-        updateSliderProgress(fontSlider);
-        updateSliderProgress(radiusSlider);
-      }
-
-      // Event Listeners
-      fontSlider?.addEventListener('input', (e: any) => {
-        const val = parseInt(e.target.value, 10);
-        settings.fontSize = val;
-        if (fontVal) fontVal.textContent = String(val);
-        updatePreview();
-        saveAndApply();
-      });
-
-      radiusSlider?.addEventListener('input', (e: any) => {
-        const val = parseInt(e.target.value, 10);
-        settings.bubbleRadius = val;
-        if (radiusVal) radiusVal.textContent = `${val}px`;
-        updatePreview();
-        saveAndApply();
-      });
-
-      // Tri-State Mode Selector Buttons (Day / Dark / OLED)
-      const allModeButtons = document.querySelectorAll('#profile-base-mode-group .profile-mode-btn');
-      allModeButtons.forEach((btn: any) => {
-        btn.addEventListener('click', () => {
-          const targetMode = btn.getAttribute('data-mode') || 'dark';
-          settings.baseMode = targetMode;
-          settings.dayNightMode = targetMode === 'day' ? 'day' : 'dark';
-
-          saveAndApply();
-          syncModeButtons(targetMode);
-          updatePreview();
-          renderPresets();
-          render3DCarousel();
-        });
-      });
-
-      // Synchronize when Power Saving OLED toggle is changed from the battery tab
-      window.addEventListener('aetheria:power-saving-change', (e: any) => {
-        const psSettings = e.detail || (window as any).AetheriaPowerSaving?.getSettings?.();
-        if (psSettings) {
-          if (psSettings.deepDarkOLED || psSettings.master) {
-            settings.baseMode = 'oled';
-            settings.dayNightMode = 'dark';
-          } else if (settings.baseMode === 'oled') {
-            let prev = 'dark';
-            try {
-              const stored = localStorage.getItem('aetheria_prev_base_mode');
-              if (stored === 'day' || stored === 'dark') prev = stored;
-            } catch(e) {}
-            settings.baseMode = prev;
-            settings.dayNightMode = prev;
-          }
-          syncModeButtons(settings.baseMode || 'dark');
-          updatePreview();
-          renderPresets();
-          render3DCarousel();
-        }
-      });
-
-      // Synchronize when Theme changes from another origin/action
-      window.addEventListener('aetheria-theme-change', (e: any) => {
-        if (e.detail && e.detail.baseMode) {
-          settings.baseMode = e.detail.baseMode;
-          settings.dayNightMode = e.detail.baseMode === 'day' ? 'day' : 'dark';
-          syncModeButtons(settings.baseMode);
-          updatePreview();
-          renderPresets();
-          render3DCarousel();
-        }
-      });
-
-      btnSwitchDayNight?.addEventListener('click', () => {
-        const nextMode = settings.baseMode === 'day' ? 'dark' : 'day';
-        settings.baseMode = nextMode;
-        settings.dayNightMode = nextMode;
-        saveAndApply();
-        syncModeButtons(nextMode);
-        updatePreview();
-        renderPresets();
-        render3DCarousel();
-      });
-
-      btnToggleWallpaperDrawer?.addEventListener('click', () => {
-        const isHidden = drawerWallpaper?.classList.toggle('hidden');
-        chevronWallpaper?.classList.toggle('rotate-90', !isHidden);
-      });
-
-      photoBtn?.addEventListener('click', () => photoFileInput?.click());
-      photoFileInput?.addEventListener('change', (e: any) => {
-        const file = e.target.files?.[0];
-        if (!file) return;
-        const reader = new FileReader();
-        reader.onload = (re) => {
-          const res = re.target?.result as string;
-          settings.chatWallpaper = `url("${res}")`;
-          updatePreview();
-          saveAndApply();
-        };
-        reader.readAsDataURL(file);
-      });
-
-      // Card 3 & 4 Toggles Wiring
-      const toggleSendEnter = document.getElementById('setting-send-enter') as HTMLInputElement | null;
-      const toggleStreamTypewriter = document.getElementById('setting-stream-typewriter') as HTMLInputElement | null;
-      const toggleSoundEffects = document.getElementById('setting-sound-effects') as HTMLInputElement | null;
-      const toggleAutoplayVoice = document.getElementById('setting-autoplay-voice') as HTMLInputElement | null;
-      const toggleTapNextMedia = document.getElementById('setting-tap-next-media') as HTMLInputElement | null;
-      const toggleReduceMotion = document.getElementById('setting-reduce-motion') as HTMLInputElement | null;
-
-      function playPreviewChime() {
-        try {
-          const ps = (window as any).AetheriaPowerSaving;
-          const gate = (window as any).AetheriaAudio;
-          if ((gate && gate.isSoundMuted && gate.isSoundMuted()) || (ps && (ps.getSettings?.().disableSounds || ps.getSettings?.().master))) {
-            return;
-          }
-          const ctx = new (window.AudioContext || (window as any).webkitAudioContext)();
-          const osc = ctx.createOscillator();
-          const gain = ctx.createGain();
-          osc.connect(gain);
-          gain.connect(ctx.destination);
-          osc.frequency.setValueAtTime(587.33, ctx.currentTime);
-          osc.frequency.exponentialRampToValueAtTime(880, ctx.currentTime + 0.12);
-          gain.gain.setValueAtTime(0.08, ctx.currentTime);
-          gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.13);
-          osc.start();
-          osc.stop(ctx.currentTime + 0.13);
-        } catch(e) {}
-      }
-
-      if (toggleSendEnter) {
-        toggleSendEnter.checked = localStorage.getItem('aetheria_chat_send_key') !== 'ctrl_enter';
-        toggleSendEnter.addEventListener('change', () => {
-          localStorage.setItem('aetheria_chat_send_key', toggleSendEnter.checked ? 'enter' : 'ctrl_enter');
-        });
-      }
-
-      if (toggleStreamTypewriter) {
-        toggleStreamTypewriter.checked = localStorage.getItem('aetheria_stream_typewriter') !== 'false';
-        toggleStreamTypewriter.addEventListener('change', () => {
-          localStorage.setItem('aetheria_stream_typewriter', String(toggleStreamTypewriter.checked));
-        });
-      }
-
-      if (toggleSoundEffects) {
-        toggleSoundEffects.checked = localStorage.getItem('aetheria_sound_effects') === 'true';
-        toggleSoundEffects.addEventListener('change', () => {
-          localStorage.setItem('aetheria_sound_effects', String(toggleSoundEffects.checked));
-          if (toggleSoundEffects.checked) {
-            playPreviewChime();
-          }
-        });
-      }
-
-      if (toggleAutoplayVoice) {
-        toggleAutoplayVoice.checked = (localStorage.getItem('aetheria_autoplay_voice') === 'true' || localStorage.getItem('aetheria_voice_autoplay') === 'true');
-        toggleAutoplayVoice.addEventListener('change', () => {
-          const val = String(toggleAutoplayVoice.checked);
-          localStorage.setItem('aetheria_autoplay_voice', val);
-          localStorage.setItem('aetheria_voice_autoplay', val);
-        });
-      }
-
-      if (toggleTapNextMedia) {
-        toggleTapNextMedia.checked = localStorage.getItem('aetheria_tap_next_media') !== 'false';
-        toggleTapNextMedia.addEventListener('change', () => {
-          localStorage.setItem('aetheria_tap_next_media', String(toggleTapNextMedia.checked));
-        });
-      }
-
       if (toggleReduceMotion) {
         toggleReduceMotion.checked = localStorage.getItem('aetheria_reduce_motion') === 'true';
         toggleReduceMotion.addEventListener('change', () => {
@@ -6146,7 +5229,930 @@ function renderPresets() {
       renderWallpapers();
     }
 
-    // Call initProfileChatSettings
+    // ==========================================
+    // DYNAMIC PERSONALIZATION: NAME COLOR & STYLE SUB-PAGE (FULL SCREEN & 150+ BADGES)
+    // ==========================================
+    function initNameColorPage() {
+      const pageView = document.getElementById('view-name-color');
+      if (!pageView) return;
+
+      const btnBack = document.getElementById('btn-back-from-name-color');
+      const btnHeaderApply = document.getElementById('btn-header-apply-name-style');
+      const btnApply = document.getElementById('btn-apply-name-style');
+      const btnCancel = document.getElementById('btn-cancel-name-style');
+      const btnReset = document.getElementById('btn-reset-name-style');
+
+      const tabNameColors = document.getElementById('tab-toggle-name-colors');
+      const tabAvatarBorder = document.getElementById('tab-toggle-avatar-border');
+      const viewTabName = document.getElementById('view-tab-name');
+      const viewTabAvatar = document.getElementById('view-tab-avatar');
+
+      const gridColorMatrix = document.getElementById('grid-color-matrix');
+      const borderEffectsGrid = document.getElementById('border-effects-grid');
+      const gridGlowColors = document.getElementById('grid-border-glow-colors');
+      const toggleBadges = document.getElementById('toggle-name-badges') as HTMLInputElement | null;
+      const btnRemoveBadge = document.getElementById('btn-remove-badge');
+      const inputBadgeSearch = document.getElementById('input-badge-search') as HTMLInputElement | null;
+      const btnClearBadgeSearch = document.getElementById('btn-clear-badge-search');
+      const gridBadgesDisplay = document.getElementById('grid-badges-display');
+      const badgePickerCount = document.getElementById('badge-picker-count');
+      const wrapperBadgePickerContainer = document.getElementById('wrapper-badge-picker-container');
+
+      // 8 Solids (Row 1)
+      const SOLID_COLORS = [
+        { id: 'deep-blue', name: 'Deep Blue', value: '#2563eb' },
+        { id: 'forest-green', name: 'Forest Green', value: '#16a34a' },
+        { id: 'amber', name: 'Amber', value: '#f59e0b' },
+        { id: 'coral', name: 'Coral', value: '#f97316' },
+        { id: 'purple', name: 'Purple', value: '#a855f7' },
+        { id: 'cyan', name: 'Cyan', value: '#06b6d4' },
+        { id: 'ruby-red', name: 'Ruby Red', value: '#e11d48' },
+        { id: 'muted-slate', name: 'Muted Slate', value: '#94a3b8' }
+      ];
+
+      // 8 Dual Gradients with 45-deg diagonal split swatch (Row 2)
+      const GRADIENT_COLORS = [
+        { id: 'cyan-blue', name: 'Cyan / Blue', value: 'linear-gradient(135deg, #06b6d4 0%, #3b82f6 100%)', split: 'linear-gradient(135deg, #06b6d4 0%, #06b6d4 50%, #3b82f6 50%, #3b82f6 100%)' },
+        { id: 'lime-green', name: 'Lime / Green', value: 'linear-gradient(135deg, #84cc16 0%, #10b981 100%)', split: 'linear-gradient(135deg, #84cc16 0%, #84cc16 50%, #10b981 50%, #10b981 100%)' },
+        { id: 'orange-amber', name: 'Orange / Amber', value: 'linear-gradient(135deg, #f97316 0%, #fbbf24 100%)', split: 'linear-gradient(135deg, #f97316 0%, #f97316 50%, #fbbf24 50%, #fbbf24 100%)' },
+        { id: 'pink-gold', name: 'Pink / Gold', value: 'linear-gradient(135deg, #ec4899 0%, #f59e0b 100%)', split: 'linear-gradient(135deg, #ec4899 0%, #ec4899 50%, #f59e0b 50%, #f59e0b 100%)' },
+        { id: 'purple-blue', name: 'Purple / Blue', value: 'linear-gradient(135deg, #a855f7 0%, #3b82f6 100%)', split: 'linear-gradient(135deg, #a855f7 0%, #a855f7 50%, #3b82f6 50%, #3b82f6 100%)' },
+        { id: 'turquoise-aqua', name: 'Turquoise / Aqua', value: 'linear-gradient(135deg, #14b8a6 0%, #06b6d4 100%)', split: 'linear-gradient(135deg, #14b8a6 0%, #14b8a6 50%, #06b6d4 50%, #06b6d4 100%)' },
+        { id: 'rose-peach', name: 'Rose / Peach', value: 'linear-gradient(135deg, #f43f5e 0%, #fb923c 100%)', split: 'linear-gradient(135deg, #f43f5e 0%, #f43f5e 50%, #fb923c 50%, #fb923c 100%)' },
+        { id: 'silver-gray', name: 'Silver / Gray', value: 'linear-gradient(135deg, #e2e8f0 0%, #94a3b8 100%)', split: 'linear-gradient(135deg, #e2e8f0 0%, #e2e8f0 50%, #94a3b8 50%, #94a3b8 100%)' }
+      ];
+
+      // 4 Avatar Border Effects
+      const BORDER_EFFECTS = [
+        { id: 'none', name: 'None', desc: 'Clean Ring', effectClass: 'avatar-border-none' },
+        { id: 'glow', name: 'Neon Glow', desc: 'Halo', effectClass: 'avatar-border-glow' },
+        { id: 'dual-gradient', name: 'Dual Gradient', desc: 'Ring', effectClass: 'avatar-border-dual-gradient' },
+        { id: 'dynamic-sparkle', name: 'Dynamic Sparkle', desc: 'Shimmer', effectClass: 'avatar-border-dynamic-sparkle' }
+      ];
+
+      // 8 Avatar Halo Tint Colors
+      const GLOW_COLORS = [
+        { id: 'cyan', name: 'Cyan Glow', value: '#06b6d4' },
+        { id: 'purple', name: 'Purple Glow', value: '#a855f7' },
+        { id: 'pink', name: 'Pink Glow', value: '#ec4899' },
+        { id: 'amber', name: 'Amber Gold', value: '#f59e0b' },
+        { id: 'emerald', name: 'Emerald', value: '#10b981' },
+        { id: 'blue', name: 'Electric Blue', value: '#3b82f6' },
+        { id: 'rose', name: 'Rose Red', value: '#f43f5e' },
+        { id: 'silver', name: 'Silver White', value: '#f8fafc' }
+      ];
+
+      // 150+ Curated Badge & Animated Emoji Library
+      const BADGE_LIBRARY = [
+        // 1. POPULAR & ANIMATED (🔥)
+        { id: 'noto-fire', cat: 'popular', name: 'Fire Animated', url: 'https://fonts.gstatic.com/s/e/notoemoji/latest/1f525/512.webp' },
+        { id: 'noto-sparkles', cat: 'popular', name: 'Sparkles Animated', url: 'https://fonts.gstatic.com/s/e/notoemoji/latest/2728/512.webp' },
+        { id: 'noto-crown', cat: 'popular', name: 'Crown Animated', url: 'https://fonts.gstatic.com/s/e/notoemoji/latest/1f451/512.webp' },
+        { id: 'noto-rocket', cat: 'popular', name: 'Rocket Animated', url: 'https://fonts.gstatic.com/s/e/notoemoji/latest/1f680/512.webp' },
+        { id: 'noto-heart-fire', cat: 'popular', name: 'Heart on Fire', url: 'https://fonts.gstatic.com/s/e/notoemoji/latest/2764_fe0f_200d_1f525/512.webp' },
+        { id: 'noto-crystal', cat: 'popular', name: 'Crystal Ball', url: 'https://fonts.gstatic.com/s/e/notoemoji/latest/1f52e/512.webp' },
+        { id: 'noto-100', cat: 'popular', name: '100 Score', url: 'https://fonts.gstatic.com/s/e/notoemoji/latest/1f4af/512.webp' },
+        { id: 'noto-party', cat: 'popular', name: 'Party Popper', url: 'https://fonts.gstatic.com/s/e/notoemoji/latest/1f389/512.webp' },
+        { id: 'noto-star', cat: 'popular', name: 'Glowing Star', url: 'https://fonts.gstatic.com/s/e/notoemoji/latest/1f31f/512.webp' },
+        { id: 'noto-wand', cat: 'popular', name: 'Magic Wand', url: 'https://fonts.gstatic.com/s/e/notoemoji/latest/1fa84/512.webp' },
+        { id: 'noto-diamond', cat: 'popular', name: 'Diamond Animated', url: 'https://fonts.gstatic.com/s/e/notoemoji/latest/1f48e/512.webp' },
+        { id: 'noto-robot', cat: 'popular', name: 'Robot Animated', url: 'https://fonts.gstatic.com/s/e/notoemoji/latest/1f916/512.webp' },
+        { id: 'sol-verified', cat: 'popular', name: 'Verified Star', url: 'https://api.iconify.design/solar/verified-check-bold-duotone.svg?color=%2322d3ee' },
+        { id: 'sol-fire', cat: 'popular', name: 'Solar Fire', url: 'https://api.iconify.design/solar/fire-bold-duotone.svg?color=%23f97316' },
+        { id: 'sol-bolt', cat: 'popular', name: 'Solar Bolt', url: 'https://api.iconify.design/solar/bolt-bold-duotone.svg?color=%23eab308' },
+        { id: 'sol-magic-stick', cat: 'popular', name: 'Magic Stick', url: 'https://api.iconify.design/solar/magic-stick-3-bold-duotone.svg?color=%23ec4899' },
+        { id: 'sol-rocket', cat: 'popular', name: 'Solar Rocket', url: 'https://api.iconify.design/solar/rocket-2-bold-duotone.svg?color=%23a855f7' },
+        { id: 'sol-heart', cat: 'popular', name: 'Solar Heart', url: 'https://api.iconify.design/solar/heart-bold-duotone.svg?color=%23f43f5e' },
+        { id: 'sol-star', cat: 'popular', name: 'Solar Star', url: 'https://api.iconify.design/solar/star-bold-duotone.svg?color=%23f59e0b' },
+        { id: 'sol-sun', cat: 'popular', name: 'Solar Sun', url: 'https://api.iconify.design/solar/sun-2-bold-duotone.svg?color=%23f59e0b' },
+        { id: 'sol-moon', cat: 'popular', name: 'Solar Moon', url: 'https://api.iconify.design/solar/moon-bold-duotone.svg?color=%2338bdf8' },
+        { id: 'sol-target', cat: 'popular', name: 'Solar Target', url: 'https://api.iconify.design/solar/target-bold-duotone.svg?color=%23ef4444' },
+        { id: 'sol-bell', cat: 'popular', name: 'Solar Bell', url: 'https://api.iconify.design/solar/bell-bold-duotone.svg?color=%23fbbf24' },
+        { id: 'fl-zap', cat: 'popular', name: 'High Voltage', url: 'https://api.iconify.design/fluent-emoji-flat/high-voltage.svg' },
+        { id: 'fl-bomb', cat: 'popular', name: 'Bomb', url: 'https://api.iconify.design/fluent-emoji-flat/bomb.svg' },
+        { id: 'fl-bullseye', cat: 'popular', name: 'Bullseye', url: 'https://api.iconify.design/fluent-emoji-flat/bullseye.svg' },
+        { id: 'fl-sparkler', cat: 'popular', name: 'Sparkler', url: 'https://api.iconify.design/fluent-emoji-flat/sparkler.svg' },
+        { id: 'fl-dizzy', cat: 'popular', name: 'Dizzy Star', url: 'https://api.iconify.design/fluent-emoji-flat/dizzy.svg' },
+        { id: 'fl-collision', cat: 'popular', name: 'Collision', url: 'https://api.iconify.design/fluent-emoji-flat/collision.svg' },
+        { id: 'fl-sparkle-heart', cat: 'popular', name: 'Heart Sparkle', url: 'https://api.iconify.design/fluent-emoji-flat/sparkling-heart.svg' },
+        { id: 'fl-heart-fire', cat: 'popular', name: 'Fire Heart', url: 'https://api.iconify.design/fluent-emoji-flat/heart-on-fire.svg' },
+        { id: 'fl-crown', cat: 'popular', name: 'Crown Gold', url: 'https://api.iconify.design/fluent-emoji-flat/crown.svg' },
+
+        // 2. ROYAL & VIP (👑)
+        { id: 'fl-gem', cat: 'royal', name: 'Gem Stone', url: 'https://api.iconify.design/fluent-emoji-flat/gem-stone.svg' },
+        { id: 'fl-trophy', cat: 'royal', name: 'Gold Trophy', url: 'https://api.iconify.design/fluent-emoji-flat/trophy.svg' },
+        { id: 'fl-medal1', cat: 'royal', name: '1st Place Medal', url: 'https://api.iconify.design/fluent-emoji-flat/1st-place-medal.svg' },
+        { id: 'fl-medal2', cat: 'royal', name: '2nd Place Medal', url: 'https://api.iconify.design/fluent-emoji-flat/2nd-place-medal.svg' },
+        { id: 'fl-medal3', cat: 'royal', name: '3rd Place Medal', url: 'https://api.iconify.design/fluent-emoji-flat/3rd-place-medal.svg' },
+        { id: 'fl-mil-medal', cat: 'royal', name: 'Military Medal', url: 'https://api.iconify.design/fluent-emoji-flat/military-medal.svg' },
+        { id: 'fl-shield', cat: 'royal', name: 'Royal Shield', url: 'https://api.iconify.design/fluent-emoji-flat/shield.svg' },
+        { id: 'fl-swords', cat: 'royal', name: 'Crossed Swords', url: 'https://api.iconify.design/fluent-emoji-flat/crossed-swords.svg' },
+        { id: 'fl-dagger', cat: 'royal', name: 'Dagger', url: 'https://api.iconify.design/fluent-emoji-flat/dagger.svg' },
+        { id: 'fl-ring', cat: 'royal', name: 'Diamond Ring', url: 'https://api.iconify.design/fluent-emoji-flat/ring.svg' },
+        { id: 'fl-check', cat: 'royal', name: 'VIP Check', url: 'https://api.iconify.design/fluent-emoji-flat/check-mark-button.svg' },
+        { id: 'fl-coin', cat: 'royal', name: 'Gold Coin', url: 'https://api.iconify.design/fluent-emoji-flat/coin.svg' },
+        { id: 'fl-money-bag', cat: 'royal', name: 'Money Bag', url: 'https://api.iconify.design/fluent-emoji-flat/money-bag.svg' },
+        { id: 'fl-star', cat: 'royal', name: 'Golden Star', url: 'https://api.iconify.design/fluent-emoji-flat/star.svg' },
+        { id: 'sol-crown-gold', cat: 'royal', name: 'Solar Crown', url: 'https://api.iconify.design/solar/crown-bold-duotone.svg?color=%23f59e0b' },
+        { id: 'sol-crown-star', cat: 'royal', name: 'Solar Crown Star', url: 'https://api.iconify.design/solar/crown-star-bold-duotone.svg?color=%23f59e0b' },
+        { id: 'sol-shield-check', cat: 'royal', name: 'Solar Shield Check', url: 'https://api.iconify.design/solar/shield-check-bold-duotone.svg?color=%2310b981' },
+        { id: 'sol-shield-star', cat: 'royal', name: 'Solar Shield Star', url: 'https://api.iconify.design/solar/shield-star-bold-duotone.svg?color=%2310b981' },
+        { id: 'sol-cup-star', cat: 'royal', name: 'Solar Cup Star', url: 'https://api.iconify.design/solar/cup-star-bold-duotone.svg?color=%23eab308' },
+        { id: 'sol-ribbon', cat: 'royal', name: 'Ribbon Medal', url: 'https://api.iconify.design/solar/medal-ribbons-star-bold-duotone.svg?color=%23a855f7' },
+        { id: 'sol-diploma', cat: 'royal', name: 'Verified Badge', url: 'https://api.iconify.design/solar/diploma-verified-bold-duotone.svg?color=%2306b6d4' },
+        { id: 'sol-key', cat: 'royal', name: 'VIP Key', url: 'https://api.iconify.design/solar/key-bold-duotone.svg?color=%23fbbf24' },
+        { id: 'sol-safe', cat: 'royal', name: 'Solar Vault', url: 'https://api.iconify.design/solar/safe-square-bold-duotone.svg?color=%2310b981' },
+        { id: 'sol-stars', cat: 'royal', name: 'Triple Stars', url: 'https://api.iconify.design/solar/stars-bold-duotone.svg?color=%23fbbf24' },
+        { id: 'fl-fleur', cat: 'royal', name: 'Fleur-de-lis', url: 'https://api.iconify.design/fluent-emoji-flat/fleur-de-lis.svg' },
+        { id: 'sol-star-circle', cat: 'royal', name: 'Star Circle', url: 'https://api.iconify.design/solar/star-circle-bold-duotone.svg?color=%23eab308' },
+        { id: 'sol-shield-up', cat: 'royal', name: 'Royal Guard', url: 'https://api.iconify.design/solar/shield-up-bold-duotone.svg?color=%2306b6d4' },
+        { id: 'sol-scepter', cat: 'royal', name: 'Royal Scepter', url: 'https://api.iconify.design/solar/pen-new-square-bold-duotone.svg?color=%23f59e0b' },
+        { id: 'sol-magic-wand-vip', cat: 'royal', name: 'Diamond Wand', url: 'https://api.iconify.design/solar/magic-stick-bold-duotone.svg?color=%23a855f7' },
+        { id: 'fl-sparkles-vip', cat: 'royal', name: 'Golden Sparkles', url: 'https://api.iconify.design/fluent-emoji-flat/sparkles.svg' },
+
+        // 3. GAMING & CYBER (🎮)
+        { id: 'fl-gamepad', cat: 'gaming', name: 'Gamepad 3D', url: 'https://api.iconify.design/fluent-emoji-flat/video-game.svg' },
+        { id: 'fl-joystick', cat: 'gaming', name: 'Joystick', url: 'https://api.iconify.design/fluent-emoji-flat/joystick.svg' },
+        { id: 'fl-alien', cat: 'gaming', name: 'Alien', url: 'https://api.iconify.design/fluent-emoji-flat/alien.svg' },
+        { id: 'fl-monster', cat: 'gaming', name: 'Alien Monster', url: 'https://api.iconify.design/fluent-emoji-flat/alien-monster.svg' },
+        { id: 'fl-robot', cat: 'gaming', name: 'Robot Head', url: 'https://api.iconify.design/fluent-emoji-flat/robot.svg' },
+        { id: 'fl-skull', cat: 'gaming', name: 'Skull', url: 'https://api.iconify.design/fluent-emoji-flat/skull.svg' },
+        { id: 'fl-crossbones', cat: 'gaming', name: 'Crossbones', url: 'https://api.iconify.design/fluent-emoji-flat/skull-and-crossbones.svg' },
+        { id: 'fl-die', cat: 'gaming', name: 'Game Die', url: 'https://api.iconify.design/fluent-emoji-flat/game-die.svg' },
+        { id: 'fl-wand', cat: 'gaming', name: 'Magic Wand', url: 'https://api.iconify.design/fluent-emoji-flat/magic-wand.svg' },
+        { id: 'fl-orb', cat: 'gaming', name: 'Crystal Orb', url: 'https://api.iconify.design/fluent-emoji-flat/crystal-ball.svg' },
+        { id: 'fl-headphone', cat: 'gaming', name: 'Headphone', url: 'https://api.iconify.design/fluent-emoji-flat/headphone.svg' },
+        { id: 'fl-laptop', cat: 'gaming', name: 'Gaming Laptop', url: 'https://api.iconify.design/fluent-emoji-flat/laptop.svg' },
+        { id: 'fl-battery', cat: 'gaming', name: 'Full Battery', url: 'https://api.iconify.design/fluent-emoji-flat/battery.svg' },
+        { id: 'fl-radioactive', cat: 'gaming', name: 'Radioactive', url: 'https://api.iconify.design/fluent-emoji-flat/radioactive.svg' },
+        { id: 'fl-biohazard', cat: 'gaming', name: 'Biohazard', url: 'https://api.iconify.design/fluent-emoji-flat/biohazard.svg' },
+        { id: 'fl-antenna', cat: 'gaming', name: 'Satellite Dish', url: 'https://api.iconify.design/fluent-emoji-flat/satellite-antenna.svg' },
+        { id: 'fl-ufo', cat: 'gaming', name: 'Flying Saucer', url: 'https://api.iconify.design/fluent-emoji-flat/flying-saucer.svg' },
+        { id: 'sol-gamepad-cyan', cat: 'gaming', name: 'Solar Gamepad', url: 'https://api.iconify.design/solar/gamepad-bold-duotone.svg?color=%2306b6d4' },
+        { id: 'sol-game-charge', cat: 'gaming', name: 'Game Charge', url: 'https://api.iconify.design/solar/gamepad-charge-bold-duotone.svg?color=%238b5cf6' },
+        { id: 'sol-ghost', cat: 'gaming', name: 'Solar Ghost', url: 'https://api.iconify.design/solar/ghost-bold-duotone.svg?color=%23ec4899' },
+        { id: 'sol-cpu-bolt', cat: 'gaming', name: 'CPU Bolt', url: 'https://api.iconify.design/solar/cpu-bolt-bold-duotone.svg?color=%2306b6d4' },
+        { id: 'sol-headphones', cat: 'gaming', name: 'Pro Headset', url: 'https://api.iconify.design/solar/headphones-round-bold-duotone.svg?color=%2310b981' },
+        { id: 'sol-warning', cat: 'gaming', name: 'Cyber Warning', url: 'https://api.iconify.design/solar/shield-warning-bold-duotone.svg?color=%23f97316' },
+        { id: 'sol-widget', cat: 'gaming', name: 'Cyber Widget', url: 'https://api.iconify.design/solar/widget-5-bold-duotone.svg?color=%23a855f7' },
+        { id: 'sol-target-cyan', cat: 'gaming', name: 'Darts Target', url: 'https://api.iconify.design/solar/target-bold-duotone.svg?color=%2322d3ee' },
+        { id: 'sol-radar', cat: 'gaming', name: 'Radar Scanner', url: 'https://api.iconify.design/solar/radar-bold-duotone.svg?color=%2338bdf8' },
+        { id: 'sol-server', cat: 'gaming', name: 'Server Node', url: 'https://api.iconify.design/solar/server-square-bold-duotone.svg?color=%2310b981' },
+        { id: 'sol-lightning', cat: 'gaming', name: 'Cyber Lightning', url: 'https://api.iconify.design/solar/lightning-bold-duotone.svg?color=%23eab308' },
+        { id: 'fl-water-gun', cat: 'gaming', name: 'Laser Blaster', url: 'https://api.iconify.design/fluent-emoji-flat/water-pistol.svg' },
+        { id: 'fl-sparkler-game', cat: 'gaming', name: 'Magic Sparkler', url: 'https://api.iconify.design/fluent-emoji-flat/sparkler.svg' },
+
+        // 4. AESTHETIC & NATURE (✨)
+        { id: 'fl-crescent', cat: 'aesthetic', name: 'Crescent Moon', url: 'https://api.iconify.design/fluent-emoji-flat/crescent-moon.svg' },
+        { id: 'fl-full-moon', cat: 'aesthetic', name: 'Full Moon', url: 'https://api.iconify.design/fluent-emoji-flat/full-moon.svg' },
+        { id: 'fl-new-moon', cat: 'aesthetic', name: 'New Moon Face', url: 'https://api.iconify.design/fluent-emoji-flat/new-moon-face.svg' },
+        { id: 'fl-sun-face', cat: 'aesthetic', name: 'Sun Face', url: 'https://api.iconify.design/fluent-emoji-flat/sun-with-face.svg' },
+        { id: 'fl-planet', cat: 'aesthetic', name: 'Saturn Planet', url: 'https://api.iconify.design/fluent-emoji-flat/ringed-planet.svg' },
+        { id: 'fl-sakura', cat: 'aesthetic', name: 'Sakura Blossom', url: 'https://api.iconify.design/fluent-emoji-flat/cherry-blossom.svg' },
+        { id: 'fl-blossom', cat: 'aesthetic', name: 'Spring Blossom', url: 'https://api.iconify.design/fluent-emoji-flat/blossom.svg' },
+        { id: 'fl-rose', cat: 'aesthetic', name: 'Red Rose', url: 'https://api.iconify.design/fluent-emoji-flat/rose.svg' },
+        { id: 'fl-hibiscus', cat: 'aesthetic', name: 'Hibiscus', url: 'https://api.iconify.design/fluent-emoji-flat/hibiscus.svg' },
+        { id: 'fl-sunflower', cat: 'aesthetic', name: 'Sunflower', url: 'https://api.iconify.design/fluent-emoji-flat/sunflower.svg' },
+        { id: 'fl-butterfly', cat: 'aesthetic', name: 'Blue Butterfly', url: 'https://api.iconify.design/fluent-emoji-flat/butterfly.svg' },
+        { id: 'fl-feather', cat: 'aesthetic', name: 'White Feather', url: 'https://api.iconify.design/fluent-emoji-flat/feather.svg' },
+        { id: 'fl-snowflake', cat: 'aesthetic', name: 'Snowflake', url: 'https://api.iconify.design/fluent-emoji-flat/snowflake.svg' },
+        { id: 'fl-lotus', cat: 'aesthetic', name: 'Lotus Flower', url: 'https://api.iconify.design/fluent-emoji-flat/lotus.svg' },
+        { id: 'fl-sparkles-aes', cat: 'aesthetic', name: 'Aesthetic Sparkles', url: 'https://api.iconify.design/fluent-emoji-flat/sparkles.svg' },
+        { id: 'fl-coffee', cat: 'aesthetic', name: 'Coffee Cup', url: 'https://api.iconify.design/fluent-emoji-flat/hot-beverage.svg' },
+        { id: 'fl-clover', cat: 'aesthetic', name: 'Lucky Clover', url: 'https://api.iconify.design/fluent-emoji-flat/four-leaf-clover.svg' },
+        { id: 'fl-rainbow', cat: 'aesthetic', name: 'Rainbow', url: 'https://api.iconify.design/fluent-emoji-flat/rainbow.svg' },
+        { id: 'fl-heart-aes', cat: 'aesthetic', name: 'Sparkling Heart', url: 'https://api.iconify.design/fluent-emoji-flat/sparkling-heart.svg' },
+        { id: 'sol-moon-stars', cat: 'aesthetic', name: 'Moon Stars', url: 'https://api.iconify.design/solar/moon-stars-bold-duotone.svg?color=%2338bdf8' },
+        { id: 'sol-star-fall', cat: 'aesthetic', name: 'Shooting Star', url: 'https://api.iconify.design/solar/star-fall-2-bold-duotone.svg?color=%23f59e0b' },
+        { id: 'sol-leaf', cat: 'aesthetic', name: 'Green Leaf', url: 'https://api.iconify.design/solar/leaf-bold-duotone.svg?color=%2310b981' },
+        { id: 'sol-cloud-sun', cat: 'aesthetic', name: 'Cloud Sun', url: 'https://api.iconify.design/solar/cloud-sun-bold-duotone.svg?color=%2306b6d4' },
+        { id: 'sol-cup-hot', cat: 'aesthetic', name: 'Warm Cup', url: 'https://api.iconify.design/solar/cup-hot-bold-duotone.svg?color=%23ec4899' },
+        { id: 'sol-planet', cat: 'aesthetic', name: 'Galaxy Planet', url: 'https://api.iconify.design/solar/planet-bold-duotone.svg?color=%23a855f7' },
+        { id: 'sol-waterdrops', cat: 'aesthetic', name: 'Water Drops', url: 'https://api.iconify.design/solar/waterdrops-bold-duotone.svg?color=%2338bdf8' },
+        { id: 'sol-snow', cat: 'aesthetic', name: 'Solar Snowflake', url: 'https://api.iconify.design/solar/snowflake-bold-duotone.svg?color=%2306b6d4' },
+        { id: 'sol-sun-fog', cat: 'aesthetic', name: 'Golden Sun', url: 'https://api.iconify.design/solar/sun-fog-bold-duotone.svg?color=%23fbbf24' },
+        { id: 'fl-maple', cat: 'aesthetic', name: 'Maple Leaf', url: 'https://api.iconify.design/fluent-emoji-flat/maple-leaf.svg' },
+        { id: 'fl-crystal-aes', cat: 'aesthetic', name: 'Crystal Gem', url: 'https://api.iconify.design/fluent-emoji-flat/crystal-ball.svg' },
+
+        // 5. ANIMALS & MYTHIC (🐾)
+        { id: 'fl-dragon', cat: 'animals', name: 'Dragon', url: 'https://api.iconify.design/fluent-emoji-flat/dragon.svg' },
+        { id: 'fl-dragon-face', cat: 'animals', name: 'Dragon Face', url: 'https://api.iconify.design/fluent-emoji-flat/dragon-face.svg' },
+        { id: 'fl-fox', cat: 'animals', name: 'Fox', url: 'https://api.iconify.design/fluent-emoji-flat/fox.svg' },
+        { id: 'fl-wolf', cat: 'animals', name: 'Wolf', url: 'https://api.iconify.design/fluent-emoji-flat/wolf.svg' },
+        { id: 'fl-cat', cat: 'animals', name: 'Cute Cat', url: 'https://api.iconify.design/fluent-emoji-flat/cat.svg' },
+        { id: 'fl-black-cat', cat: 'animals', name: 'Black Cat', url: 'https://api.iconify.design/fluent-emoji-flat/black-cat.svg' },
+        { id: 'fl-owl', cat: 'animals', name: 'Night Owl', url: 'https://api.iconify.design/fluent-emoji-flat/owl.svg' },
+        { id: 'fl-unicorn', cat: 'animals', name: 'Unicorn', url: 'https://api.iconify.design/fluent-emoji-flat/unicorn.svg' },
+        { id: 'fl-bat', cat: 'animals', name: 'Vampire Bat', url: 'https://api.iconify.design/fluent-emoji-flat/bat.svg' },
+        { id: 'fl-snake', cat: 'animals', name: 'Snake', url: 'https://api.iconify.design/fluent-emoji-flat/snake.svg' },
+        { id: 'fl-eagle', cat: 'animals', name: 'Eagle', url: 'https://api.iconify.design/fluent-emoji-flat/eagle.svg' },
+        { id: 'fl-lion', cat: 'animals', name: 'Lion', url: 'https://api.iconify.design/fluent-emoji-flat/lion.svg' },
+        { id: 'fl-tiger', cat: 'animals', name: 'Tiger', url: 'https://api.iconify.design/fluent-emoji-flat/tiger.svg' },
+        { id: 'fl-bear', cat: 'animals', name: 'Bear', url: 'https://api.iconify.design/fluent-emoji-flat/bear.svg' },
+        { id: 'fl-panda', cat: 'animals', name: 'Panda', url: 'https://api.iconify.design/fluent-emoji-flat/panda.svg' },
+        { id: 'fl-dove', cat: 'animals', name: 'White Dove', url: 'https://api.iconify.design/fluent-emoji-flat/dove.svg' },
+        { id: 'fl-peacock', cat: 'animals', name: 'Peacock', url: 'https://api.iconify.design/fluent-emoji-flat/peacock.svg' },
+        { id: 'fl-spider', cat: 'animals', name: 'Spider', url: 'https://api.iconify.design/fluent-emoji-flat/spider.svg' },
+        { id: 'fl-scorpion', cat: 'animals', name: 'Scorpion', url: 'https://api.iconify.design/fluent-emoji-flat/scorpion.svg' },
+        { id: 'sol-bone', cat: 'animals', name: 'Solar Bone', url: 'https://api.iconify.design/solar/bone-bold-duotone.svg?color=%23f59e0b' },
+        { id: 'sol-paw', cat: 'animals', name: 'Solar Paw', url: 'https://api.iconify.design/solar/paw-bold-duotone.svg?color=%23ec4899' },
+        { id: 'sol-cat', cat: 'animals', name: 'Solar Cat', url: 'https://api.iconify.design/solar/cat-bold-duotone.svg?color=%2338bdf8' },
+        { id: 'sol-dog', cat: 'animals', name: 'Solar Dog', url: 'https://api.iconify.design/solar/dog-bold-duotone.svg?color=%2310b981' },
+        { id: 'sol-fish', cat: 'animals', name: 'Solar Fish', url: 'https://api.iconify.design/solar/fish-bold-duotone.svg?color=%2306b6d4' },
+        { id: 'sol-bug', cat: 'animals', name: 'Solar Bug', url: 'https://api.iconify.design/solar/bug-bold-duotone.svg?color=%2384cc16' },
+        { id: 'fl-dolphin', cat: 'animals', name: 'Dolphin', url: 'https://api.iconify.design/fluent-emoji-flat/dolphin.svg' },
+        { id: 'fl-shark', cat: 'animals', name: 'Shark', url: 'https://api.iconify.design/fluent-emoji-flat/shark.svg' },
+        { id: 'fl-flamingo', cat: 'animals', name: 'Flamingo', url: 'https://api.iconify.design/fluent-emoji-flat/flamingo.svg' },
+        { id: 'fl-honeybee', cat: 'animals', name: 'Honeybee', url: 'https://api.iconify.design/fluent-emoji-flat/honeybee.svg' },
+        { id: 'fl-phoenix', cat: 'animals', name: 'Phoenix Bird', url: 'https://api.iconify.design/fluent-emoji-flat/bird.svg' }
+      ];
+
+      let activeTab: 'name' | 'avatar' = 'name';
+      let activeBadgeCategory = 'popular';
+      let draftNameColor = '#a855f7';
+      let draftBorderEffect = 'none';
+      let draftGlowColor = '#a855f7';
+      let draftNameIcon = '';
+      let liveSearchDebounceTimer: any = null;
+
+      function switchTab(tab: 'name' | 'avatar') {
+        activeTab = tab;
+        const isName = tab === 'name';
+
+        if (tabNameColors && tabAvatarBorder) {
+          if (isName) {
+            tabNameColors.className = 'whitespace-nowrap text-xs font-semibold flex-1 py-2 px-3 rounded-xl flex items-center justify-center gap-2 transition-all cursor-pointer bg-purple-600 text-white shadow-sm';
+            tabAvatarBorder.className = 'whitespace-nowrap text-xs font-semibold flex-1 py-2 px-3 rounded-xl flex items-center justify-center gap-2 transition-all cursor-pointer text-slate-400 hover:text-white';
+          } else {
+            tabAvatarBorder.className = 'whitespace-nowrap text-xs font-semibold flex-1 py-2 px-3 rounded-xl flex items-center justify-center gap-2 transition-all cursor-pointer bg-purple-600 text-white shadow-sm';
+            tabNameColors.className = 'whitespace-nowrap text-xs font-semibold flex-1 py-2 px-3 rounded-xl flex items-center justify-center gap-2 transition-all cursor-pointer text-slate-400 hover:text-white';
+          }
+        }
+
+        if (viewTabName && viewTabAvatar) {
+          if (isName) {
+            viewTabName.classList.remove('hidden');
+            viewTabAvatar.classList.add('hidden');
+          } else {
+            viewTabName.classList.add('hidden');
+            viewTabAvatar.classList.remove('hidden');
+          }
+        }
+      }
+
+      tabNameColors?.addEventListener('click', () => switchTab('name'));
+      tabAvatarBorder?.addEventListener('click', () => switchTab('avatar'));
+
+      function applyNameToElement(el: HTMLElement | null, text: string, color: string) {
+        if (!el) return;
+        const isGrad = color && color.includes('gradient');
+        if (isGrad) {
+          el.style.backgroundImage = color;
+          el.style.webkitBackgroundClip = 'text';
+          el.style.backgroundClip = 'text';
+          el.style.webkitTextFillColor = 'transparent';
+          el.style.color = 'transparent';
+        } else {
+          el.style.backgroundImage = 'none';
+          el.style.webkitBackgroundClip = '';
+          el.style.backgroundClip = '';
+          el.style.webkitTextFillColor = '';
+          el.style.color = color || '#a855f7';
+        }
+        el.textContent = text || 'Hossein';
+      }
+
+      function updateLivePreview() {
+        const active = personas.find(p => p.isActive) || personas[0] || { name: 'Hossein' };
+        const userName = active.name || 'Hossein';
+
+        // 1. Pinned Preview Avatar & Name
+        const previewName = document.getElementById('preview-user-name');
+        const previewBadge = document.getElementById('preview-user-badge');
+        applyNameToElement(previewName, userName, draftNameColor);
+        if (previewBadge) {
+          previewBadge.innerHTML = renderBadgeHtml(draftNameIcon, 'w-4 h-4 inline-block object-contain align-middle ml-1 shrink-0');
+        }
+
+        // 2. Chat Bubble Sender Name & Badge
+        const bubbleName = document.getElementById('preview-bubble-name');
+        const bubbleBadge = document.getElementById('preview-bubble-badge');
+        applyNameToElement(bubbleName, userName, draftNameColor);
+        if (bubbleBadge) {
+          bubbleBadge.innerHTML = renderBadgeHtml(draftNameIcon, 'w-3.5 h-3.5 inline-block object-contain align-middle ml-1 shrink-0');
+        }
+
+        // 3. Pinned Avatar container border effect & glow color
+        const avatarContainer = document.getElementById('preview-avatar-container');
+        const avatarImg = document.getElementById('preview-avatar-img') as HTMLImageElement;
+        const avatarInitial = document.getElementById('preview-avatar-initial');
+
+        if (avatarContainer) {
+          avatarContainer.className = 'w-14 h-14 rounded-full p-[2px] transition-all duration-300 shrink-0 flex items-center justify-center mb-1.5';
+          avatarContainer.style.setProperty('--avatar-glow-color', draftGlowColor);
+          avatarContainer.style.setProperty('--avatar-border-color', draftGlowColor);
+
+          if (draftBorderEffect === 'glow') {
+            avatarContainer.classList.add('avatar-border-glow');
+          } else if (draftBorderEffect === 'dual-gradient') {
+            avatarContainer.classList.add('avatar-border-dual-gradient');
+          } else if (draftBorderEffect === 'dynamic-sparkle') {
+            avatarContainer.classList.add('avatar-border-dynamic-sparkle');
+          } else {
+            avatarContainer.classList.add('avatar-border-none');
+          }
+        }
+
+        if (avatarImg && avatarInitial) {
+          if (active.avatar) {
+            avatarImg.src = active.avatar;
+            avatarImg.classList.remove('hidden');
+            avatarInitial.classList.add('hidden');
+          } else {
+            avatarImg.src = '';
+            avatarImg.classList.add('hidden');
+            avatarInitial.classList.remove('hidden');
+            avatarInitial.textContent = (userName || 'H').charAt(0).toUpperCase();
+          }
+        }
+
+        // 4. Update Swatch Buttons (Telegram-Style 8x2 Matrix)
+        document.querySelectorAll('.swatch-trigger-btn').forEach((btn: any) => {
+          const val = btn.dataset.value;
+          const isSelected = (val === draftNameColor);
+          const check = btn.querySelector('.swatch-check');
+          if (isSelected) {
+            btn.className = 'swatch-trigger-btn relative w-8 h-8 rounded-full cursor-pointer transition-all active:scale-90 flex items-center justify-center shadow-md select-none ring-2 ring-offset-2 ring-offset-[#11141d] ring-cyan-400 scale-110 z-10';
+            check?.classList.remove('hidden');
+            check?.classList.add('flex');
+          } else {
+            btn.className = 'swatch-trigger-btn relative w-8 h-8 rounded-full cursor-pointer transition-all active:scale-90 flex items-center justify-center shadow-md select-none hover:scale-105';
+            check?.classList.add('hidden');
+            check?.classList.remove('flex');
+          }
+        });
+
+        // 5. Update Status Toggle Switch & Remove Badge Button
+        if (toggleBadges) {
+          toggleBadges.checked = !!draftNameIcon;
+        }
+        if (btnRemoveBadge) {
+          if (draftNameIcon) {
+            btnRemoveBadge.classList.remove('hidden');
+          } else {
+            btnRemoveBadge.classList.add('hidden');
+          }
+        }
+
+        // 6. Highlight active badge item in the grid
+        document.querySelectorAll('.badge-item-btn').forEach((btn: any) => {
+          const bUrl = btn.dataset.url;
+          const isSelected = (bUrl === draftNameIcon);
+          if (isSelected) {
+            btn.className = 'badge-item-btn relative w-9 h-9 rounded-xl bg-cyan-500/20 border border-cyan-400 ring-2 ring-cyan-400/50 flex items-center justify-center p-1.5 transition-all duration-150 active:scale-95 cursor-pointer select-none scale-105 shadow-sm z-10';
+          } else {
+            btn.className = 'badge-item-btn relative w-9 h-9 rounded-xl bg-white/[0.04] hover:bg-white/[0.1] border border-white/[0.08] flex items-center justify-center p-1.5 transition-all duration-150 active:scale-95 cursor-pointer select-none';
+          }
+        });
+
+        // 7. Update Border Effect Cards in 2x2 Grid
+        document.querySelectorAll('.border-effect-card').forEach((card: any) => {
+          const effectId = card.dataset.effect;
+          const isSelected = (effectId === draftBorderEffect);
+          const miniAvatar = card.querySelector('.card-mini-avatar-wrapper');
+          if (miniAvatar) {
+            miniAvatar.style.setProperty('--avatar-glow-color', draftGlowColor);
+            miniAvatar.style.setProperty('--avatar-border-color', draftGlowColor);
+          }
+          if (isSelected) {
+            card.className = 'border-effect-card p-2.5 sm:p-3 rounded-2xl border border-cyan-400 bg-cyan-500/10 ring-1 ring-cyan-400/40 shadow-sm transition-all cursor-pointer flex items-center gap-2 sm:gap-2.5 select-none';
+          } else {
+            card.className = 'border-effect-card p-2.5 sm:p-3 rounded-2xl border border-white/10 bg-white/[0.02] hover:bg-white/[0.05] transition-all cursor-pointer flex items-center gap-2 sm:gap-2.5 select-none';
+          }
+        });
+
+        // 8. Update Glow Color 8-dot strip
+        document.querySelectorAll('.glow-color-dot').forEach((btn: any) => {
+          const val = btn.dataset.value;
+          const isSelected = (val === draftGlowColor);
+          const check = btn.querySelector('.glow-check');
+          if (isSelected) {
+            btn.className = 'glow-color-dot relative w-8 h-8 rounded-full cursor-pointer transition-all active:scale-90 flex items-center justify-center shadow-md select-none ring-2 ring-offset-2 ring-offset-[#11141d] ring-cyan-400 scale-110 z-10';
+            check?.classList.remove('hidden');
+            check?.classList.add('flex');
+          } else {
+            btn.className = 'glow-color-dot relative w-8 h-8 rounded-full cursor-pointer transition-all active:scale-90 flex items-center justify-center shadow-md select-none hover:scale-105';
+            check?.classList.add('hidden');
+            check?.classList.remove('flex');
+          }
+        });
+      }
+
+      // Render Color Matrix (Row 1: 8 Solids, Row 2: 8 Dual Gradients)
+      if (gridColorMatrix) {
+        const all16 = [
+          ...SOLID_COLORS.map(c => ({ ...c, isGrad: false })),
+          ...GRADIENT_COLORS.map(g => ({ ...g, isGrad: true }))
+        ];
+        gridColorMatrix.innerHTML = all16.map(item => `
+          <button 
+            type="button" 
+            class="swatch-trigger-btn relative w-8 h-8 rounded-full cursor-pointer transition-all active:scale-90 flex items-center justify-center shadow-md select-none hover:scale-105"
+            data-value="${item.value}"
+            title="${item.name}"
+            style="background: ${(item as any).split || item.value};"
+          >
+            <span class="swatch-check hidden text-white text-[11px] font-bold drop-shadow-[0_1px_2px_rgba(0,0,0,0.8)] select-none pointer-events-none">✓</span>
+          </button>
+        `).join('');
+
+        gridColorMatrix.querySelectorAll('.swatch-trigger-btn').forEach((btn: any) => {
+          btn.addEventListener('click', () => {
+            draftNameColor = btn.dataset.value;
+            updateLivePreview();
+          });
+        });
+      }
+
+      // Render Badges in the 8-column grid
+      function renderBadges(badgesToRender: any[]) {
+        if (!gridBadgesDisplay) return;
+
+        if (badgesToRender.length === 0) {
+          gridBadgesDisplay.innerHTML = `
+            <div class="col-span-8 py-6 text-center text-xs text-slate-400">
+              <span>No badges found. Try another search term!</span>
+            </div>
+          `;
+          if (badgePickerCount) badgePickerCount.textContent = '0 badges';
+          return;
+        }
+
+        gridBadgesDisplay.innerHTML = badgesToRender.map(b => {
+          const isSelected = (b.url === draftNameIcon);
+          return `
+            <button 
+              type="button" 
+              class="badge-item-btn relative w-9 h-9 rounded-xl ${isSelected ? 'bg-cyan-500/20 border border-cyan-400 ring-2 ring-cyan-400/50 scale-105 shadow-sm z-10' : 'bg-white/[0.04] hover:bg-white/[0.1] border border-white/[0.08]'} flex items-center justify-center p-1.5 transition-all duration-150 active:scale-95 cursor-pointer select-none"
+              data-url="${b.url}"
+              data-name="${b.name}"
+              title="${b.name}"
+            >
+              <img src="${b.url}" alt="${b.name}" class="w-6 h-6 object-contain pointer-events-none" loading="lazy" />
+            </button>
+          `;
+        }).join('');
+
+        if (badgePickerCount) {
+          badgePickerCount.textContent = `Showing ${badgesToRender.length} badges`;
+        }
+
+        gridBadgesDisplay.querySelectorAll('.badge-item-btn').forEach((btn: any) => {
+          btn.addEventListener('click', () => {
+            const url = btn.dataset.url;
+            if (draftNameIcon === url) {
+              draftNameIcon = '';
+            } else {
+              draftNameIcon = url;
+            }
+            updateLivePreview();
+          });
+        });
+      }
+
+      function filterBadges() {
+        const query = inputBadgeSearch?.value.trim().toLowerCase() || '';
+        if (btnClearBadgeSearch) {
+          if (query) btnClearBadgeSearch.classList.remove('hidden');
+          else btnClearBadgeSearch.classList.add('hidden');
+        }
+
+        let matched = BADGE_LIBRARY;
+        if (query) {
+          matched = BADGE_LIBRARY.filter(b => b.name.toLowerCase().includes(query) || b.id.toLowerCase().includes(query));
+        } else {
+          matched = BADGE_LIBRARY.filter(b => b.cat === activeBadgeCategory);
+        }
+
+        renderBadges(matched);
+
+        // If query is present and user typed >= 2 characters, debounced live query to Iconify
+        if (query && query.length >= 2) {
+          clearTimeout(liveSearchDebounceTimer);
+          liveSearchDebounceTimer = setTimeout(async () => {
+            try {
+              const res = await fetch(`https://api.iconify.design/search?query=${encodeURIComponent(query)}&prefixes=fluent-emoji-flat,solar,lucide&limit=40`);
+              if (res.ok) {
+                const data = await res.json();
+                if (data && Array.isArray(data.icons) && data.icons.length > 0) {
+                  const onlineBadges = data.icons.map((iconSlug: string) => {
+                    const parts = iconSlug.split(':');
+                    const prefix = parts[0];
+                    const name = parts[1] || '';
+                    let url = `https://api.iconify.design/${prefix}/${name}.svg`;
+                    if (prefix === 'solar' || prefix === 'lucide') {
+                      url += '?color=%2322d3ee';
+                    }
+                    return {
+                      id: iconSlug,
+                      cat: 'search',
+                      name: name.replace(/-/g, ' '),
+                      url
+                    };
+                  });
+
+                  // Merge without duplicates
+                  const existingUrls = new Set(matched.map(m => m.url));
+                  const newOnes = onlineBadges.filter((b: any) => !existingUrls.has(b.url));
+                  if (newOnes.length > 0) {
+                    renderBadges([...matched, ...newOnes]);
+                  }
+                }
+              }
+            } catch (e) {
+              // Ignore offline or search errors gracefully
+            }
+          }, 350);
+        }
+      }
+
+      inputBadgeSearch?.addEventListener('input', filterBadges);
+
+      btnClearBadgeSearch?.addEventListener('click', () => {
+        if (inputBadgeSearch) {
+          inputBadgeSearch.value = '';
+          filterBadges();
+          inputBadgeSearch.focus();
+        }
+      });
+
+      // Category Pills Handlers
+      document.querySelectorAll('.badge-cat-pill').forEach((pill: any) => {
+        pill.addEventListener('click', () => {
+          activeBadgeCategory = pill.dataset.cat || 'popular';
+          document.querySelectorAll('.badge-cat-pill').forEach((p: any) => {
+            if (p === pill) {
+              p.className = 'badge-cat-pill whitespace-nowrap px-3 py-1.5 rounded-xl font-medium text-xs transition cursor-pointer bg-purple-600 text-white shadow-sm';
+            } else {
+              p.className = 'badge-cat-pill whitespace-nowrap px-3 py-1.5 rounded-xl font-medium text-xs transition cursor-pointer text-slate-400 hover:text-white hover:bg-white/[0.05]';
+            }
+          });
+          if (inputBadgeSearch) inputBadgeSearch.value = '';
+          filterBadges();
+        });
+      });
+
+      // Remove Badge Button
+      btnRemoveBadge?.addEventListener('click', () => {
+        draftNameIcon = '';
+        updateLivePreview();
+      });
+
+      // Toggle Badges Switch
+      toggleBadges?.addEventListener('change', () => {
+        if (!toggleBadges.checked) {
+          draftNameIcon = '';
+        } else if (!draftNameIcon) {
+          draftNameIcon = BADGE_LIBRARY[0].url; // Default to first animated fire
+        }
+        updateLivePreview();
+      });
+
+      // Render 2x2 Grid of Border Effects
+      if (borderEffectsGrid) {
+        const active = personas.find(p => p.isActive) || personas[0] || { name: 'Hossein' };
+        borderEffectsGrid.innerHTML = BORDER_EFFECTS.map(eff => `
+          <div 
+            class="border-effect-card p-2.5 sm:p-3 rounded-2xl border border-white/10 bg-white/[0.02] hover:bg-white/[0.05] transition-all cursor-pointer flex items-center gap-2 sm:gap-2.5 select-none"
+            data-effect="${eff.id}"
+          >
+            <div class="card-mini-avatar-wrapper w-9 h-9 sm:w-10 sm:h-10 rounded-full p-[2px] flex items-center justify-center shrink-0 ${eff.effectClass}" style="--avatar-glow-color: ${draftGlowColor}; --avatar-border-color: ${draftGlowColor};">
+              ${active.avatar ? `
+                <img src="${active.avatar}" alt="Avatar" class="w-full h-full rounded-full object-cover" />
+              ` : `
+                <div class="w-full h-full rounded-full bg-gradient-to-tr from-purple-600 to-indigo-600 flex items-center justify-center text-white text-xs font-bold">
+                  ${(active.name || 'H').charAt(0).toUpperCase()}
+                </div>
+              `}
+            </div>
+            <div class="flex-1 min-w-0">
+              <div class="text-xs font-semibold text-white whitespace-nowrap">${eff.name}</div>
+              <div class="text-[10px] text-slate-400 whitespace-nowrap truncate">${eff.desc}</div>
+            </div>
+          </div>
+        `).join('');
+
+        borderEffectsGrid.querySelectorAll('.border-effect-card').forEach((card: any) => {
+          card.addEventListener('click', () => {
+            draftBorderEffect = card.dataset.effect;
+            updateLivePreview();
+          });
+        });
+      }
+
+      // Render Border Glow Colors (8 dots)
+      if (gridGlowColors) {
+        gridGlowColors.innerHTML = GLOW_COLORS.map(c => `
+          <button 
+            type="button" 
+            class="glow-color-dot relative w-8 h-8 rounded-full cursor-pointer transition-all active:scale-90 flex items-center justify-center shadow-md select-none hover:scale-105"
+            data-value="${c.value}"
+            title="${c.name}"
+            style="background: ${c.value};"
+          >
+            <span class="glow-check hidden text-white text-[10px] font-bold drop-shadow-[0_1px_2px_rgba(0,0,0,0.8)] select-none pointer-events-none">✓</span>
+          </button>
+        `).join('');
+
+        gridGlowColors.querySelectorAll('.glow-color-dot').forEach((btn: any) => {
+          btn.addEventListener('click', () => {
+            draftGlowColor = btn.dataset.value;
+            updateLivePreview();
+          });
+        });
+      }
+
+      // Initialize state from active persona
+      const active = personas.find(p => p.isActive) || personas[0];
+      if (active) {
+        draftNameColor = active.nameColor || '#a855f7';
+        draftBorderEffect = active.avatarBorderEffect || 'none';
+        draftGlowColor = active.avatarGlowColor || '#a855f7';
+        draftNameIcon = active.nameIcon || '';
+      }
+
+      switchTab('name');
+      filterBadges();
+      updateLivePreview();
+
+      // Apply Logic
+      function applyStylesAndSave() {
+        const active = personas.find(p => p.isActive) || personas[0];
+        if (active) {
+          active.nameColor = draftNameColor;
+          active.avatarBorderEffect = draftBorderEffect as any;
+          active.avatarGlowColor = draftGlowColor;
+          active.nameIcon = draftNameIcon;
+
+          // Save to LocalStorage
+          savePersonas();
+
+          // Dispatch global events
+          window.dispatchEvent(new CustomEvent('aetheria:name-style-changed', {
+            detail: {
+              nameColor: draftNameColor,
+              avatarBorderEffect: draftBorderEffect,
+              avatarGlowColor: draftGlowColor,
+              nameIcon: draftNameIcon
+            }
+          }));
+
+          window.dispatchEvent(new CustomEvent('aetheria:persona-updated', {
+            detail: active
+          }));
+
+          updateHubProfileSummary();
+          render3DCarousel();
+          showToast('Name style & avatar halo applied! ✨', 'success');
+          showView('view-appearance');
+        }
+      }
+
+      btnHeaderApply?.addEventListener('click', applyStylesAndSave);
+      btnApply?.addEventListener('click', applyStylesAndSave);
+
+      btnCancel?.addEventListener('click', () => {
+        showView('view-appearance');
+      });
+
+      btnReset?.addEventListener('click', () => {
+        draftNameColor = '#a855f7';
+        draftBorderEffect = 'none';
+        draftGlowColor = '#a855f7';
+        draftNameIcon = '';
+        updateLivePreview();
+        showToast('Reset to default name style & border', 'info');
+      });
+    }
+    // Wallpapers
+    function renderWallpapers() {
+      if (!wallpapersGrid) return;
+      const wps = (window as any).AetheriaTheme?.WALLPAPERS || [];
+      wallpapersGrid.innerHTML = wps.slice(0, 6).map((w: any) => `
+        <div class="wp-card relative h-16 rounded-xl overflow-hidden border border-white/10 cursor-pointer group shadow-sm" data-wp="${w.css}">
+          <div class="absolute inset-0 bg-cover bg-center" style="background: ${w.css};"></div>
+          <div class="absolute inset-0 bg-black/40 group-hover:bg-black/10 transition flex items-center justify-center">
+            <span class="text-[9px] font-bold text-white">${w.name}</span>
+          </div>
+        </div>
+      `).join('');
+
+      wallpapersGrid.querySelectorAll('.wp-card').forEach((card: any) => {
+        card.addEventListener('click', () => {
+          settings.chatWallpaper = card.dataset.wp;
+          updatePreview();
+          saveAndApply();
+        });
+      });
+    }
+
+    function updateSliderProgress(slider: HTMLInputElement | null) {
+      if (!slider) return;
+      const min = parseFloat(slider.min) || 0;
+      const max = parseFloat(slider.max) || 100;
+      const val = parseFloat(slider.value) || 0;
+      const percent = Math.min(Math.max(((val - min) / (max - min)) * 100, 0), 100);
+      const activeColor = settings.accent || 'var(--theme-accent, #8E9AB6)';
+      const isDay = settings.baseMode === 'day';
+      const trackColor = isDay ? '#e2e8f0' : 'rgba(255, 255, 255, 0.14)';
+      slider.style.background = `linear-gradient(to right, ${activeColor} 0%, ${activeColor} ${percent}%, ${trackColor} ${percent}%, ${trackColor} 100%)`;
+    }
+
+    function syncInputs() {
+      if (fontSlider) fontSlider.value = String(settings.fontSize || 16);
+      if (fontVal) fontVal.textContent = String(settings.fontSize || 16);
+      if (radiusSlider) radiusSlider.value = String(settings.bubbleRadius !== undefined ? settings.bubbleRadius : 16);
+      if (radiusVal) radiusVal.textContent = `${settings.bubbleRadius !== undefined ? settings.bubbleRadius : 16}px`;
+      syncModeButtons(settings.baseMode || 'dark');
+      updateSliderProgress(fontSlider);
+      updateSliderProgress(radiusSlider);
+    }
+
+    // Event Listeners
+    fontSlider?.addEventListener('input', (e: any) => {
+      const val = parseInt(e.target.value, 10);
+      settings.fontSize = val;
+      if (fontVal) fontVal.textContent = String(val);
+      updatePreview();
+      saveAndApply();
+    });
+
+    radiusSlider?.addEventListener('input', (e: any) => {
+      const val = parseInt(e.target.value, 10);
+      settings.bubbleRadius = val;
+      if (radiusVal) radiusVal.textContent = `${val}px`;
+      updatePreview();
+      saveAndApply();
+    });
+
+    // Tri-State Mode Selector Buttons (Day / Dark / OLED)
+    const allModeButtons = document.querySelectorAll('#profile-base-mode-group .profile-mode-btn');
+    allModeButtons.forEach((btn: any) => {
+      btn.addEventListener('click', () => {
+        const targetMode = btn.getAttribute('data-mode') || 'dark';
+        settings.baseMode = targetMode;
+        settings.dayNightMode = targetMode === 'day' ? 'day' : 'dark';
+
+        saveAndApply();
+        syncModeButtons(targetMode);
+        updatePreview();
+        renderPresets();
+        render3DCarousel();
+      });
+    });
+
+    // Synchronize when Power Saving OLED toggle is changed from the battery tab
+    window.addEventListener('aetheria:power-saving-change', (e: any) => {
+      const psSettings = e.detail || (window as any).AetheriaPowerSaving?.getSettings?.();
+      if (psSettings) {
+        if (psSettings.deepDarkOLED || psSettings.master) {
+          settings.baseMode = 'oled';
+          settings.dayNightMode = 'dark';
+        } else if (settings.baseMode === 'oled') {
+          let prev = 'dark';
+          try {
+            const stored = localStorage.getItem('aetheria_prev_base_mode');
+            if (stored === 'day' || stored === 'dark') prev = stored;
+          } catch(e) {}
+          settings.baseMode = prev;
+          settings.dayNightMode = prev;
+        }
+        syncModeButtons(settings.baseMode || 'dark');
+        updatePreview();
+        renderPresets();
+        render3DCarousel();
+      }
+    });
+
+    // Synchronize when Theme changes from another origin/action
+    window.addEventListener('aetheria-theme-change', (e: any) => {
+      if (e.detail && e.detail.baseMode) {
+        settings.baseMode = e.detail.baseMode;
+        settings.dayNightMode = e.detail.baseMode === 'day' ? 'day' : 'dark';
+        syncModeButtons(settings.baseMode);
+        updatePreview();
+        renderPresets();
+        render3DCarousel();
+      }
+    });
+
+    btnSwitchDayNight?.addEventListener('click', () => {
+      const nextMode = settings.baseMode === 'day' ? 'dark' : 'day';
+      settings.baseMode = nextMode;
+      settings.dayNightMode = nextMode;
+      saveAndApply();
+      syncModeButtons(nextMode);
+      updatePreview();
+      renderPresets();
+      render3DCarousel();
+    });
+
+    btnToggleWallpaperDrawer?.addEventListener('click', () => {
+      const isHidden = drawerWallpaper?.classList.toggle('hidden');
+      chevronWallpaper?.classList.toggle('rotate-90', !isHidden);
+    });
+
+    photoBtn?.addEventListener('click', () => photoFileInput?.click());
+    photoFileInput?.addEventListener('change', (e: any) => {
+      const file = e.target.files?.[0];
+      if (!file) return;
+      const reader = new FileReader();
+      reader.onload = (re) => {
+        const res = re.target?.result as string;
+        settings.chatWallpaper = `url("${res}")`;
+        updatePreview();
+        saveAndApply();
+      };
+      reader.readAsDataURL(file);
+    });
+
+    // Card 3 & 4 Toggles Wiring
+    const toggleSendEnter = document.getElementById('setting-send-enter') as HTMLInputElement | null;
+    const toggleStreamTypewriter = document.getElementById('setting-stream-typewriter') as HTMLInputElement | null;
+    const toggleSoundEffects = document.getElementById('setting-sound-effects') as HTMLInputElement | null;
+    const toggleAutoplayVoice = document.getElementById('setting-autoplay-voice') as HTMLInputElement | null;
+    const toggleTapNextMedia = document.getElementById('setting-tap-next-media') as HTMLInputElement | null;
+    const toggleReduceMotion = document.getElementById('setting-reduce-motion') as HTMLInputElement | null;
+
+    function playPreviewChime() {
+      try {
+        const ps = (window as any).AetheriaPowerSaving;
+        const gate = (window as any).AetheriaAudio;
+        if ((gate && gate.isSoundMuted && gate.isSoundMuted()) || (ps && (ps.getSettings?.().disableSounds || ps.getSettings?.().master))) {
+          return;
+        }
+        const ctx = new (window.AudioContext || (window as any).webkitAudioContext)();
+        const osc = ctx.createOscillator();
+        const gain = ctx.createGain();
+        osc.connect(gain);
+        gain.connect(ctx.destination);
+        osc.frequency.setValueAtTime(587.33, ctx.currentTime);
+        osc.frequency.exponentialRampToValueAtTime(880, ctx.currentTime + 0.12);
+        gain.gain.setValueAtTime(0.08, ctx.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.13);
+        osc.start();
+        osc.stop(ctx.currentTime + 0.13);
+      } catch(e) {}
+    }
+
+    if (toggleSendEnter) {
+      toggleSendEnter.checked = localStorage.getItem('aetheria_chat_send_key') !== 'ctrl_enter';
+      toggleSendEnter.addEventListener('change', () => {
+        localStorage.setItem('aetheria_chat_send_key', toggleSendEnter.checked ? 'enter' : 'ctrl_enter');
+      });
+    }
+
+    if (toggleStreamTypewriter) {
+      toggleStreamTypewriter.checked = localStorage.getItem('aetheria_stream_typewriter') !== 'false';
+      toggleStreamTypewriter.addEventListener('change', () => {
+        localStorage.setItem('aetheria_stream_typewriter', String(toggleStreamTypewriter.checked));
+      });
+    }
+
+    if (toggleSoundEffects) {
+      toggleSoundEffects.checked = localStorage.getItem('aetheria_sound_effects') === 'true';
+      toggleSoundEffects.addEventListener('change', () => {
+        localStorage.setItem('aetheria_sound_effects', String(toggleSoundEffects.checked));
+        if (toggleSoundEffects.checked) {
+          playPreviewChime();
+        }
+      });
+    }
+
+    if (toggleAutoplayVoice) {
+      toggleAutoplayVoice.checked = (localStorage.getItem('aetheria_autoplay_voice') === 'true' || localStorage.getItem('aetheria_voice_autoplay') === 'true');
+      toggleAutoplayVoice.addEventListener('change', () => {
+        const val = String(toggleAutoplayVoice.checked);
+        localStorage.setItem('aetheria_autoplay_voice', val);
+        localStorage.setItem('aetheria_voice_autoplay', val);
+      });
+    }
+
+    if (toggleTapNextMedia) {
+      toggleTapNextMedia.checked = localStorage.getItem('aetheria_tap_next_media') !== 'false';
+      toggleTapNextMedia.addEventListener('change', () => {
+        localStorage.setItem('aetheria_tap_next_media', String(toggleTapNextMedia.checked));
+      });
+    }
+
+    // Call initProfileChatSettings & initNameColorPage
     initProfileChatSettings();
-  });
+    initNameColorPage();
+  }
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', bootProfile);
+  } else {
+    bootProfile();
+  }
 </script>
