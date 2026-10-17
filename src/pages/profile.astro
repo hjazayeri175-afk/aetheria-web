@@ -835,14 +835,14 @@ import {
       <div id="view-wallpaper-studio" class="hidden space-y-4 max-w-2xl mx-auto pb-24">
 
         <!-- Sticky Header Bar: Back, Segmented Presets|Custom, Reset -->
-        <div class="sticky top-14 z-20 bg-[#07080d]/95 backdrop-blur-md py-2.5 px-3 rounded-2xl border border-white/[0.08] flex items-center justify-between shadow-lg">
+        <div class="sticky top-16 sm:top-18 z-30 -mx-3 sm:-mx-4 px-3 sm:px-4 py-3 bg-[#07080d]/95 backdrop-blur-md border-b border-white/[0.08] flex items-center justify-between transition-all mb-2">
           <button 
             type="button" 
             id="btn-back-from-wallpaper-studio"
             class="flex items-center gap-1.5 text-white/90 hover:text-white font-medium text-xs sm:text-sm py-1.5 px-3 rounded-xl bg-white/[0.06] hover:bg-white/[0.1] border border-white/10 transition cursor-pointer active:scale-95 shadow-sm"
           >
             <ArrowLeft class="w-4 h-4 text-purple-400" />
-            <span>Chat Settings</span>
+            <span class="font-semibold">Chat Settings</span>
           </button>
 
           <!-- Segmented Mode Switch: Presets | Custom -->
@@ -850,14 +850,14 @@ import {
             <button 
               type="button" 
               id="btn-wp-mode-presets" 
-              class="px-3 py-1 rounded-lg font-semibold transition cursor-pointer bg-purple-600 text-white shadow-xs"
+              class="px-3.5 py-1.5 rounded-lg font-bold transition cursor-pointer bg-purple-600 text-white shadow-xs"
             >
               Presets
             </button>
             <button 
               type="button" 
               id="btn-wp-mode-custom" 
-              class="px-3 py-1 rounded-lg font-medium transition cursor-pointer text-slate-400 hover:text-white"
+              class="px-3.5 py-1.5 rounded-lg font-medium transition cursor-pointer text-slate-400 hover:text-white"
             >
               Custom
             </button>
@@ -902,28 +902,28 @@ import {
             <div class="relative z-10 space-y-2.5 max-w-sm w-full mx-auto sm:mx-0">
               <!-- Incoming Character Message -->
               <div class="flex items-end gap-2">
-                <div class="w-7 h-7 rounded-full overflow-hidden bg-purple-900 border border-purple-500/40 shrink-0 shadow-sm flex items-center justify-center text-[10px] text-purple-200 font-bold">
+                <div class="w-7 h-7 rounded-full overflow-hidden bg-purple-900 border border-purple-500/40 shrink-0 shadow-sm flex items-center justify-center text-[10px] text-purple-200 font-bold" style="color: #e9d5ff !important;">
                   HA
                 </div>
-                <div class="rounded-2xl rounded-bl-sm px-3.5 py-2 text-xs leading-relaxed max-w-[85%] shadow-md border border-white/10 backdrop-blur-xs bg-[#101426]/90 text-slate-200">
-                  <span class="text-[10px] font-bold text-purple-300 block mb-0.5">Helen & Anna</span>
-                  Good morning! How are you feeling today? ✨
+                <div class="chat-preview-char-box rounded-2xl rounded-bl-sm px-3.5 py-2 text-xs leading-relaxed max-w-[85%] shadow-md border border-purple-500/30 backdrop-blur-sm" style="background-color: #111526 !important;">
+                  <span class="chat-preview-char-name text-[10px] font-bold block mb-0.5" style="color: #c084fc !important;">Helen & Anna</span>
+                  <span class="chat-preview-char-text font-normal" style="color: #f8fafc !important;">Good morning! How are you feeling today? ✨</span>
                 </div>
               </div>
 
               <!-- Outgoing User Reply -->
               <div class="flex justify-end">
-                <div class="rounded-2xl rounded-br-sm px-3.5 py-2 text-xs leading-relaxed max-w-[85%] shadow-lg bg-gradient-to-r from-purple-600 to-indigo-600 text-white">
-                  Good morning! The atmospheric view looks amazing.
+                <div class="chat-preview-user-box rounded-2xl rounded-br-sm px-3.5 py-2 text-xs leading-relaxed max-w-[85%] shadow-lg" style="background: linear-gradient(135deg, #7c3aed 0%, #4f46e5 100%) !important;">
+                  <span class="chat-preview-user-text font-medium" style="color: #ffffff !important;">Good morning! The atmospheric view looks amazing.</span>
                 </div>
               </div>
             </div>
           </div>
 
           <!-- 3 Compact Live Sliders -->
-          <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 pt-1">
+          <div class="grid grid-cols-1 sm:grid-cols-3 gap-2.5 pt-1">
             <!-- Slider 1: Blur -->
-            <div class="p-3 rounded-2xl bg-white/[0.03] border border-white/[0.06] space-y-2">
+            <div class="p-3 rounded-2xl bg-white/[0.04] border border-white/[0.08] space-y-2">
               <div class="flex items-center justify-between text-xs">
                 <span class="text-slate-300 font-medium">Blur</span>
                 <span id="val-wp-blur" class="font-bold text-purple-300 text-[11px]">0px</span>
@@ -939,7 +939,7 @@ import {
             </div>
 
             <!-- Slider 2: Dim / Darkness -->
-            <div class="p-3 rounded-2xl bg-white/[0.03] border border-white/[0.06] space-y-2">
+            <div class="p-3 rounded-2xl bg-white/[0.04] border border-white/[0.08] space-y-2">
               <div class="flex items-center justify-between text-xs">
                 <span class="text-slate-300 font-medium">Darkness</span>
                 <span id="val-wp-dim" class="font-bold text-amber-300 text-[11px]">20%</span>
@@ -955,7 +955,7 @@ import {
             </div>
 
             <!-- Slider 3: Pattern / Overlay -->
-            <div class="p-3 rounded-2xl bg-white/[0.03] border border-white/[0.06] space-y-2">
+            <div class="p-3 rounded-2xl bg-white/[0.04] border border-white/[0.08] space-y-2">
               <div class="flex items-center justify-between text-xs">
                 <span class="text-slate-300 font-medium">Doodle Pattern</span>
                 <span id="val-wp-pattern" class="font-bold text-cyan-300 text-[11px]">15%</span>
@@ -4095,23 +4095,48 @@ import {
     }
 
     const WP_PRESET_GRADIENTS = [
-      { id: 'grad-midnight', name: 'Midnight Blue', value: 'linear-gradient(180deg, #09122c 0%, #111e42 50%, #060b1b 100%)' },
-      { id: 'grad-espresso', name: 'Golden Espresso', value: 'linear-gradient(180deg, #1f140e 0%, #362215 50%, #120a06 100%)' },
-      { id: 'grad-nebula', name: 'Deep Nebula', value: 'linear-gradient(180deg, #15092a 0%, #29124e 50%, #0a0416 100%)' },
-      { id: 'grad-cyberpunk', name: 'Cyberpunk Crimson', value: 'linear-gradient(180deg, #240a15 0%, #3d1024 50%, #100309 100%)' },
-      { id: 'grad-oled', name: 'Pure OLED Black', value: '#000000' }
+      { id: 'grad-sapphire', name: 'Midnight Sapphire', value: 'linear-gradient(135deg, #0a1838 0%, #163668 50%, #060e22 100%)', dot: '#38bdf8' },
+      { id: 'grad-amethyst', name: 'Royal Amethyst', value: 'linear-gradient(135deg, #2a0e4e 0%, #581c87 50%, #16072b 100%)', dot: '#c084fc' },
+      { id: 'grad-sunset', name: 'Cyber Crimson', value: 'linear-gradient(135deg, #3d0a26 0%, #7e1654 50%, #1c0512 100%)', dot: '#f43f5e' },
+      { id: 'grad-emerald', name: 'Emerald Twilight', value: 'linear-gradient(135deg, #05261d 0%, #065f46 50%, #021711 100%)', dot: '#34d399' },
+      { id: 'grad-espresso', name: 'Warm Espresso', value: 'linear-gradient(135deg, #2b1509 0%, #683719 50%, #180a04 100%)', dot: '#fbbf24' },
+      { id: 'grad-oled', name: 'Pure OLED Dark', value: 'linear-gradient(180deg, #181920 0%, #020305 100%)', dot: '#94a3b8' }
     ];
 
     const WP_ROLEPLAY_SCENES = [
-      { id: 'scene-library', name: 'Fantasy Library', value: 'https://images.unsplash.com/photo-1507842229451-7f01be837453?q=80&w=1080&auto=format&fit=crop' },
-      { id: 'scene-neon', name: 'Neon City', value: 'https://images.unsplash.com/photo-1518709268805-4e9042af9f23?q=80&w=1080&auto=format&fit=crop' },
-      { id: 'scene-starry', name: 'Starry Night', value: 'https://images.unsplash.com/photo-1506703719100-a0f3a48c0f86?q=80&w=1080&auto=format&fit=crop' },
-      { id: 'scene-cafe', name: 'Cozy Cafe', value: 'https://images.unsplash.com/photo-1501339847302-ac426a4a7cbb?q=80&w=1080&auto=format&fit=crop' }
+      { 
+        id: 'scene-library', 
+        name: 'Fantasy Library', 
+        value: 'https://images.unsplash.com/photo-1521587760476-6c12a4b040da?auto=format&fit=crop&w=1080&q=80',
+        fallback: 'linear-gradient(135deg, #21150c 0%, #452815 50%, #140a05 100%)',
+        icon: '📚'
+      },
+      { 
+        id: 'scene-neon', 
+        name: 'Neon Cyber City', 
+        value: 'https://images.unsplash.com/photo-1509198397868-475647b2a1e5?auto=format&fit=crop&w=1080&q=80',
+        fallback: 'linear-gradient(135deg, #0d1233 0%, #281745 50%, #4c0d3e 100%)',
+        icon: '🏙️'
+      },
+      { 
+        id: 'scene-starry', 
+        name: 'Starry Galaxy', 
+        value: 'https://images.unsplash.com/photo-1506703719100-a0f3a48c0f86?auto=format&fit=crop&w=1080&q=80',
+        fallback: 'linear-gradient(135deg, #050819 0%, #101c3d 50%, #1e1344 100%)',
+        icon: '✨'
+      },
+      { 
+        id: 'scene-cafe', 
+        name: 'Cozy Tavern & Cafe', 
+        value: 'https://images.unsplash.com/photo-1501339847302-ac426a4a7cbb?auto=format&fit=crop&w=1080&q=80',
+        fallback: 'linear-gradient(135deg, #22140a 0%, #462511 50%, #170b05 100%)',
+        icon: '☕'
+      }
     ];
 
     let draftWpConfig: WallpaperStudioConfig = {
       type: 'gradient',
-      value: 'linear-gradient(180deg, #09122c 0%, #111e42 50%, #060b1b 100%)',
+      value: 'linear-gradient(135deg, #0a1838 0%, #163668 50%, #060e22 100%)',
       blur: 0,
       dimness: 20,
       patternOpacity: 15,
@@ -4236,15 +4261,17 @@ import {
           return `
             <button 
               type="button" 
-              class="wp-preset-tile relative h-20 rounded-2xl overflow-hidden border p-2 flex flex-col justify-end transition cursor-pointer active:scale-95 text-left group ${isSelected ? 'ring-2 ring-amber-400 border-amber-400 shadow-lg shadow-amber-400/20' : 'border-white/10 hover:border-white/30'}"
+              class="wp-preset-tile relative h-20 rounded-2xl overflow-hidden border p-2 flex flex-col justify-between transition cursor-pointer active:scale-95 text-left group ${isSelected ? 'ring-2 ring-amber-400 border-amber-400 shadow-lg shadow-amber-400/25' : 'border-white/10 hover:border-white/30'}"
               data-type="gradient"
               data-value="${g.value}"
             >
               <div class="absolute inset-0 transition group-hover:scale-105" style="background: ${g.value};"></div>
-              <div class="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent"></div>
               <div class="relative z-10 flex items-center justify-between w-full">
-                <span class="text-[11px] font-semibold text-white drop-shadow truncate pr-1">${g.name}</span>
+                <span class="w-2.5 h-2.5 rounded-full border border-white/40 shadow-xs" style="background-color: ${g.dot};"></span>
                 <span class="wp-tile-check w-4 h-4 rounded-full bg-amber-500 text-slate-950 flex items-center justify-center text-[10px] font-black shrink-0 ${isSelected ? '' : 'hidden'}">✓</span>
+              </div>
+              <div class="absolute inset-x-0 bottom-0 p-2 bg-gradient-to-t from-black/95 via-black/60 to-transparent z-10 flex items-center justify-between w-full">
+                <span class="wp-preset-name wp-tile-label text-xs font-bold truncate pr-1" style="color: #ffffff !important; text-shadow: 0 1px 4px rgba(0,0,0,0.95);">${g.name}</span>
               </div>
             </button>
           `;
@@ -4257,15 +4284,24 @@ import {
           return `
             <button 
               type="button" 
-              class="wp-preset-tile relative h-24 rounded-2xl overflow-hidden border p-2 flex flex-col justify-end transition cursor-pointer active:scale-95 text-left group ${isSelected ? 'ring-2 ring-amber-400 border-amber-400 shadow-lg shadow-amber-400/20' : 'border-white/10 hover:border-white/30'}"
+              class="wp-preset-tile relative h-24 rounded-2xl overflow-hidden border p-2 flex flex-col justify-between transition cursor-pointer active:scale-95 text-left group ${isSelected ? 'ring-2 ring-amber-400 border-amber-400 shadow-lg shadow-amber-400/25' : 'border-white/10 hover:border-white/30'}"
               data-type="preset-scene"
               data-value="${s.value}"
             >
-              <img src="${s.value}" alt="${s.name}" class="absolute inset-0 w-full h-full object-cover transition group-hover:scale-105" />
-              <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/30 to-transparent"></div>
+              <div class="absolute inset-0 transition group-hover:scale-105" style="background: ${s.fallback};"></div>
+              <img 
+                src="${s.value}" 
+                alt="${s.name}" 
+                class="absolute inset-0 w-full h-full object-cover transition group-hover:scale-105" 
+                loading="lazy"
+                onerror="this.style.opacity='0';" 
+              />
               <div class="relative z-10 flex items-center justify-between w-full">
-                <span class="text-[11px] font-semibold text-white drop-shadow truncate pr-1">${s.name}</span>
+                <span class="text-xs drop-shadow">${s.icon}</span>
                 <span class="wp-tile-check w-4 h-4 rounded-full bg-amber-500 text-slate-950 flex items-center justify-center text-[10px] font-black shrink-0 ${isSelected ? '' : 'hidden'}">✓</span>
+              </div>
+              <div class="absolute inset-x-0 bottom-0 p-2 bg-gradient-to-t from-black/95 via-black/60 to-transparent z-10 flex items-center justify-between w-full">
+                <span class="wp-preset-name wp-tile-label text-xs font-bold truncate pr-1" style="color: #ffffff !important; text-shadow: 0 1px 4px rgba(0,0,0,0.95);">${s.name}</span>
               </div>
             </button>
           `;
@@ -4496,7 +4532,7 @@ import {
       document.getElementById('btn-reset-wallpaper')?.addEventListener('click', () => {
         draftWpConfig = {
           type: 'gradient',
-          value: 'linear-gradient(180deg, #09122c 0%, #111e42 50%, #060b1b 100%)',
+          value: 'linear-gradient(135deg, #0a1838 0%, #163668 50%, #060e22 100%)',
           blur: 0,
           dimness: 20,
           patternOpacity: 15,

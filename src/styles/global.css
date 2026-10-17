@@ -3919,7 +3919,11 @@ html.day-mode #view-privacy .rounded-3xl,
 html[data-base-mode="day"] #view-devices .rounded-3xl,
 html.day-mode #view-devices .rounded-3xl,
 html[data-base-mode="day"] #view-power-saving .rounded-3xl,
-html.day-mode #view-power-saving .rounded-3xl {
+html.day-mode #view-power-saving .rounded-3xl,
+html[data-base-mode="day"] #view-wallpaper-studio .rounded-3xl,
+html.day-mode #view-wallpaper-studio .rounded-3xl,
+html[data-base-mode="day"] #view-name-color .rounded-3xl,
+html.day-mode #view-name-color .rounded-3xl {
   background-color: #ffffff !important;
   border-color: rgba(0, 0, 0, 0.08) !important;
   box-shadow: 0 4px 20px rgba(0, 0, 0, 0.04) !important;
@@ -4121,6 +4125,75 @@ html.day-mode #profile-main-container .text-stone-200,
 html.day-mode #profile-main-container .text-slate-300,
 html.day-mode #profile-main-container .text-slate-400 {
   color: #475569 !important;
+}
+
+/* --- Wallpaper & Atmosphere Studio Day Mode Styling & Contrast Safety --- */
+html[data-base-mode="day"] #view-wallpaper-studio,
+html.day-mode #view-wallpaper-studio {
+  color: #0f172a !important;
+}
+
+/* Ensure wallpaper preset names and tile labels ALWAYS stay pure white on top of their dark backgrounds */
+html[data-base-mode="day"] #profile-main-container .wp-preset-name,
+html.day-mode #profile-main-container .wp-preset-name,
+html[data-base-mode="day"] #profile-main-container .wp-tile-label,
+html.day-mode #profile-main-container .wp-tile-label,
+html[data-base-mode="day"] #profile-main-container .wp-keep-white,
+html.day-mode #profile-main-container .wp-keep-white {
+  color: #ffffff !important;
+  text-shadow: 0 1px 4px rgba(0, 0, 0, 0.95) !important;
+}
+
+/* Ensure Live Chat Preview simulator text is ALWAYS readable and never overridden by day-mode black text */
+html[data-base-mode="day"] #profile-main-container #wp-preview-viewport .chat-preview-char-box,
+html.day-mode #profile-main-container #wp-preview-viewport .chat-preview-char-box {
+  background-color: #111526 !important;
+  border-color: rgba(168, 85, 247, 0.3) !important;
+}
+html[data-base-mode="day"] #profile-main-container #wp-preview-viewport .chat-preview-char-name,
+html.day-mode #profile-main-container #wp-preview-viewport .chat-preview-char-name {
+  color: #c084fc !important;
+}
+html[data-base-mode="day"] #profile-main-container #wp-preview-viewport .chat-preview-char-text,
+html.day-mode #profile-main-container #wp-preview-viewport .chat-preview-char-text {
+  color: #f8fafc !important;
+}
+html[data-base-mode="day"] #profile-main-container #wp-preview-viewport .chat-preview-user-text,
+html.day-mode #profile-main-container #wp-preview-viewport .chat-preview-user-text {
+  color: #ffffff !important;
+}
+
+/* Presets & Custom Tab Switch in Wallpaper Studio */
+html[data-base-mode="day"] #btn-wp-mode-presets.bg-purple-600,
+html.day-mode #btn-wp-mode-presets.bg-purple-600,
+html[data-base-mode="day"] #btn-wp-mode-custom.bg-purple-600,
+html.day-mode #btn-wp-mode-custom.bg-purple-600,
+html[data-base-mode="day"] #btn-wp-scope-all.bg-purple-600,
+html.day-mode #btn-wp-scope-all.bg-purple-600,
+html[data-base-mode="day"] #btn-wp-scope-specific.bg-purple-600,
+html.day-mode #btn-wp-scope-specific.bg-purple-600 {
+  background-color: #9333ea !important;
+  color: #ffffff !important;
+}
+html[data-base-mode="day"] #btn-wp-mode-presets:not(.bg-purple-600),
+html.day-mode #btn-wp-mode-presets:not(.bg-purple-600),
+html[data-base-mode="day"] #btn-wp-mode-custom:not(.bg-purple-600),
+html.day-mode #btn-wp-mode-custom:not(.bg-purple-600),
+html[data-base-mode="day"] #btn-wp-scope-all:not(.bg-purple-600),
+html.day-mode #btn-wp-scope-all:not(.bg-purple-600),
+html[data-base-mode="day"] #btn-wp-scope-specific:not(.bg-purple-600),
+html.day-mode #btn-wp-scope-specific:not(.bg-purple-600) {
+  color: #475569 !important;
+}
+
+/* Primary CTA Apply button text */
+html[data-base-mode="day"] #btn-apply-wallpaper-studio,
+html.day-mode #btn-apply-wallpaper-studio {
+  color: #020617 !important;
+}
+html[data-base-mode="day"] #btn-apply-wallpaper-studio *,
+html.day-mode #btn-apply-wallpaper-studio * {
+  color: #020617 !important;
 }
 
 /* Hero Cards & Feature Containers across All Subviews */
