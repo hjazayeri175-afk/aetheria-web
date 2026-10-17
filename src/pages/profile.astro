@@ -5604,18 +5604,15 @@ function renderPresets() {
           document.querySelectorAll('.border-effect-card').forEach((card: any) => {
             const effectId = card.dataset.effect;
             const isSelected = (effectId === draftBorderEffect);
-            const radioDot = card.querySelector('.effect-radio-dot');
             const miniAvatar = card.querySelector('.card-mini-avatar-wrapper');
             if (miniAvatar) {
               miniAvatar.style.setProperty('--avatar-glow-color', draftGlowColor);
               miniAvatar.style.setProperty('--avatar-border-color', draftGlowColor);
             }
             if (isSelected) {
-              card.className = 'border-effect-card p-3 rounded-2xl border border-cyan-400 bg-cyan-500/10 ring-1 ring-cyan-400/40 transition-all cursor-pointer flex items-center gap-2.5 select-none';
-              if (radioDot) radioDot.classList.remove('hidden');
+              card.className = 'border-effect-card p-2.5 sm:p-3 rounded-2xl border border-cyan-400 bg-cyan-500/10 ring-1 ring-cyan-400/40 shadow-sm transition-all cursor-pointer flex items-center gap-2 sm:gap-2.5 select-none';
             } else {
-              card.className = 'border-effect-card p-3 rounded-2xl border border-white/10 bg-white/[0.02] hover:bg-white/[0.05] transition-all cursor-pointer flex items-center gap-2.5 select-none';
-              if (radioDot) radioDot.classList.add('hidden');
+              card.className = 'border-effect-card p-2.5 sm:p-3 rounded-2xl border border-white/10 bg-white/[0.02] hover:bg-white/[0.05] transition-all cursor-pointer flex items-center gap-2 sm:gap-2.5 select-none';
             }
           });
 
@@ -5811,7 +5808,7 @@ function renderPresets() {
           const active = personas.find(p => p.isActive) || personas[0] || { name: 'Hossein' };
           borderEffectsGrid.innerHTML = BORDER_EFFECTS.map(eff => `
             <div 
-              class="border-effect-card p-3 rounded-2xl border border-white/10 bg-white/[0.02] hover:bg-white/[0.05] transition-all cursor-pointer flex items-center gap-2.5 select-none"
+              class="border-effect-card p-2.5 sm:p-3 rounded-2xl border border-white/10 bg-white/[0.02] hover:bg-white/[0.05] transition-all cursor-pointer flex items-center gap-2 sm:gap-2.5 select-none"
               data-effect="${eff.id}"
             >
               <div class="card-mini-avatar-wrapper w-9 h-9 sm:w-10 sm:h-10 rounded-full p-[2px] flex items-center justify-center shrink-0 ${eff.effectClass}" style="--avatar-glow-color: ${draftGlowColor}; --avatar-border-color: ${draftGlowColor};">
@@ -5824,11 +5821,8 @@ function renderPresets() {
                 `}
               </div>
               <div class="flex-1 min-w-0">
-                <div class="text-xs font-bold text-white truncate">${eff.name}</div>
-                <div class="text-[10px] text-slate-400 truncate">${eff.desc}</div>
-              </div>
-              <div class="w-4 h-4 rounded-full border border-white/20 flex items-center justify-center shrink-0">
-                <div class="effect-radio-dot w-2 h-2 rounded-full bg-cyan-400 hidden"></div>
+                <div class="text-xs font-semibold text-white whitespace-nowrap">${eff.name}</div>
+                <div class="text-[10px] text-slate-400 whitespace-nowrap truncate">${eff.desc}</div>
               </div>
             </div>
           `).join('');
