@@ -6141,6 +6141,17 @@ function renderPresets() {
             }
           });
 
+          // 9. Update Badge Selection in 8-column Grid
+          gridBadgesDisplay?.querySelectorAll('.badge-item-btn').forEach((btn: any) => {
+            const url = btn.dataset.url;
+            const isSelected = (!!url && url === draftNameIcon);
+            if (isSelected) {
+              btn.className = 'badge-item-btn relative w-9 h-9 rounded-xl bg-cyan-500/20 border border-cyan-400 ring-2 ring-cyan-400/50 scale-105 shadow-sm z-10 flex items-center justify-center p-1.5 transition-all duration-150 active:scale-95 cursor-pointer select-none';
+            } else {
+              btn.className = 'badge-item-btn relative w-9 h-9 rounded-xl bg-white/[0.04] hover:bg-white/[0.1] border border-white/[0.08] flex items-center justify-center p-1.5 transition-all duration-150 active:scale-95 cursor-pointer select-none';
+            }
+          });
+
           // Refresh and start 60fps canvas engine on all active elements
           refreshCanvasRegistry();
         }
