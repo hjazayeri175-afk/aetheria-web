@@ -990,13 +990,13 @@ const {
           if (sparkleCanvas) {
             if (isSparkleActive) {
               sparkleCanvas.classList.remove('hidden');
-              if (typeof (window as any).__initChatSparkles === 'function') {
-                (window as any).__initChatSparkles(sparkleCanvas);
+              if (typeof window.__initChatSparkles === 'function') {
+                window.__initChatSparkles(sparkleCanvas);
               }
             } else {
               sparkleCanvas.classList.add('hidden');
-              if (typeof (window as any).__stopChatSparkles === 'function') {
-                (window as any).__stopChatSparkles();
+              if (typeof window.__stopChatSparkles === 'function') {
+                window.__stopChatSparkles();
               }
             }
           }
