@@ -4661,6 +4661,170 @@ html:not([data-base-mode="day"]):not(.day-mode) #showcase-description.clean-read
   color: #c084fc !important;
 }
 
+/* ==========================================================================
+   Library Compact Chat Cards & Gestural Swipe Actions
+   ========================================================================== */
+
+.chat-card-swipe-container {
+  touch-action: pan-y pinch-zoom;
+  position: relative;
+  overflow: hidden;
+  border-radius: 1rem;
+}
+
+.chat-card-front {
+  position: relative;
+  z-index: 10;
+  will-change: transform;
+  user-select: none;
+  -webkit-user-select: none;
+}
+
+.chat-swipe-action-left,
+.chat-swipe-action-right {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: 100%;
+  pointer-events: auto;
+  user-select: none;
+  -webkit-user-select: none;
+}
+
+.chat-swipe-action-left {
+  left: 0;
+  background-color: #e11d48;
+}
+
+.chat-swipe-action-right {
+  right: 0;
+  background-color: #d97706;
+}
+
+/* Day Mode styling for Library Compact Cards & Archive */
+html[data-base-mode="day"] .chat-card-front,
+html.day-mode .chat-card-front {
+  background-color: #ffffff !important;
+  border-color: #e2e8f0 !important;
+  color: #0f172a !important;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05) !important;
+}
+
+html[data-base-mode="day"] .chat-card-front:hover,
+html.day-mode .chat-card-front:hover {
+  background-color: #f8fafc !important;
+  border-color: #cbd5e1 !important;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08) !important;
+}
+
+html[data-base-mode="day"] .chat-card-title,
+html.day-mode .chat-card-title {
+  color: #0f172a !important;
+}
+
+html[data-base-mode="day"] .chat-card-metrics,
+html.day-mode .chat-card-metrics {
+  color: #64748b !important;
+}
+
+html[data-base-mode="day"] .chat-card-teaser,
+html.day-mode .chat-card-teaser {
+  color: #475569 !important;
+}
+
+html[data-base-mode="day"] .chat-card-custom-badge,
+html.day-mode .chat-card-custom-badge {
+  background-color: #f1f5f9 !important;
+  color: #475569 !important;
+  border-color: #e2e8f0 !important;
+}
+
+/* Telegram Pull-Down Archive Drawer in Day Mode */
+html[data-base-mode="day"] #archive-drawer-inner,
+html.day-mode #archive-drawer-inner {
+  background: linear-gradient(135deg, #fffbeb, #fef3c7) !important;
+  border-color: #fde68a !important;
+  box-shadow: 0 4px 15px rgba(217, 119, 6, 0.08) !important;
+}
+
+html[data-base-mode="day"] #archive-drawer-inner span,
+html.day-mode #archive-drawer-inner span {
+  color: #92400e !important;
+}
+
+html[data-base-mode="day"] #archive-drawer-inner p,
+html.day-mode #archive-drawer-inner p {
+  color: #b45309 !important;
+}
+
+html[data-base-mode="day"] #archive-drawer-badge,
+html.day-mode #archive-drawer-badge {
+  background-color: #fde68a !important;
+  color: #92400e !important;
+  border-color: #fcd34d !important;
+}
+
+html[data-base-mode="day"] #archive-drawer-icon-box,
+html.day-mode #archive-drawer-icon-box {
+  background-color: #fef3c7 !important;
+  border-color: #fcd34d !important;
+  color: #d97706 !important;
+}
+
+/* Archive toggle button & Back button in Day Mode */
+html[data-base-mode="day"] #archive-toggle-btn,
+html.day-mode #archive-toggle-btn {
+  background-color: #fef3c7 !important;
+  border-color: #fde68a !important;
+  color: #92400e !important;
+}
+
+html[data-base-mode="day"] #archive-toggle-btn:hover,
+html.day-mode #archive-toggle-btn:hover {
+  background-color: #fde68a !important;
+  color: #78350f !important;
+}
+
+html[data-base-mode="day"] #archive-back-btn,
+html.day-mode #archive-back-btn {
+  background-color: #f1f5f9 !important;
+  border-color: #e2e8f0 !important;
+  color: #0f172a !important;
+}
+
+html[data-base-mode="day"] #archive-back-btn:hover,
+html.day-mode #archive-back-btn:hover {
+  background-color: #e2e8f0 !important;
+  color: #000000 !important;
+}
+
+/* Floating Toast in Day Mode */
+html[data-base-mode="day"] #library-toast,
+html.day-mode #library-toast {
+  background-color: #ffffff !important;
+  border-color: #e2e8f0 !important;
+  color: #0f172a !important;
+  box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.15) !important;
+}
+
+html[data-base-mode="day"] #library-toast-message,
+html.day-mode #library-toast-message {
+  color: #0f172a !important;
+}
+
+html[data-base-mode="day"] #library-toast-action,
+html.day-mode #library-toast-action {
+  background-color: #fef3c7 !important;
+  border-color: #fde68a !important;
+  color: #b45309 !important;
+}
+
+html[data-base-mode="day"] #library-toast-action:hover,
+html.day-mode #library-toast-action:hover {
+  background-color: #fde68a !important;
+  color: #78350f !important;
+}
+
 
 
 
