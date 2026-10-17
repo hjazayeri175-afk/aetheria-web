@@ -5884,6 +5884,24 @@ html[data-base-mode="oled"] #preview-hero-avatar-card {
   transition: color 0.3s ease, background-image 0.3s ease, filter 0.3s ease;
 }
 
+@keyframes spinSlow {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+@keyframes spinSlowReverse {
+  from { transform: rotate(360deg); }
+  to { transform: rotate(0deg); }
+}
+.animate-spin-slow {
+  animation: spinSlow 10s linear infinite;
+}
+.animate-spin-slower {
+  animation: spinSlow 18s linear infinite;
+}
+.animate-spin-slow-reverse {
+  animation: spinSlowReverse 12s linear infinite;
+}
+
 
 
 

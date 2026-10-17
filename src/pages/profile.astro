@@ -1782,8 +1782,8 @@ import {
                       H
                     </div>
                   </div>
-                  <!-- 2. Discord-Style Oversized Decoration Overlay (122px = 122% scale centered over circle) -->
-                  <div id="hero-avatar-deco-layer" class="absolute pointer-events-none z-20 flex items-center justify-center overflow-visible" style="width: 122px; height: 122px; top: -11px; left: -11px;">
+                  <!-- 2. Studio-Grade Oversized Decoration Overlay (120px = 120% scale centered over circle) -->
+                  <div id="hero-avatar-deco-layer" class="absolute pointer-events-none z-20 flex items-center justify-center overflow-visible" style="width: 120px; height: 120px; top: -10px; left: -10px; overflow: visible;">
                     <!-- Rendered live -->
                   </div>
                 </div>
@@ -1792,7 +1792,7 @@ import {
               <!-- Title & Decoration Badge -->
               <div class="mt-3 text-center z-10 flex flex-col items-center gap-1.5">
                 <div class="flex items-center gap-2">
-                  <span id="hero-user-name" class="font-bold text-base text-white truncate max-w-[200px] user-name-styled" style="text-shadow: 0 2px 10px rgba(0,0,0,0.9);">Hossein</span>
+                  <span id="hero-user-name" class="font-bold text-lg text-white truncate max-w-[200px] drop-shadow-md user-name-styled" style="color: #ffffff !important; text-shadow: 0 2px 10px rgba(0,0,0,0.95);">Hossein</span>
                   <span id="hero-user-badge" class="inline-flex items-center shrink-0"></span>
                 </div>
                 <div class="flex items-center gap-1.5">
@@ -5323,20 +5323,20 @@ function renderPresets() {
           'stardust-orbit': { title: 'Stardust Orbit', thumb: '/decorations/thumbs/stardust.webp', asset: '/decorations/stardust.png' },
         };
 
-        // Strictly 12 Curated Discord-Grade Animated Avatar Decoration Presets (4x3 Grid)
+        // Strictly 12 Curated Studio-Grade Shader, Particle & 3D WebP Decorations (4x3 Grid)
         const BORDER_EFFECTS = [
           { id: 'none', name: 'None' },
           { id: 'starlight-tiara', name: 'Starlight Tiara' },
-          { id: 'lunar-wolf', name: 'Lunar Wolf' },
-          { id: 'kitsune-flame', name: 'Kitsune Spirit' },
-          { id: 'seraphim-wings', name: 'Seraphim Wings' },
-          { id: 'sakura-garland', name: 'Sakura Garland' },
-          { id: 'hex-hat', name: "Hex's Witch Hat" },
-          { id: 'cyber-oni', name: 'Cyber Oni' },
-          { id: 'royal-dragon', name: 'Royal Dragon' },
-          { id: 'cat-ears', name: 'Pastel Cat Ears' },
-          { id: 'abyssal-blade', name: 'Blade Storm' },
-          { id: 'stardust-orbit', name: 'Stardust Orbit' }
+          { id: 'seraphim-light', name: 'Seraphim Halo & Light' },
+          { id: 'sakura-garland', name: 'Sakura Spirit' },
+          { id: 'solar-flare', name: 'Solar Supernova' },
+          { id: 'frost-crystal', name: 'Cryo Frost Aura' },
+          { id: 'cyber-glitch', name: 'Cyberpunk Glitch Matrix' },
+          { id: 'void-eclipse', name: 'Abyssal Void Eclipse' },
+          { id: 'emerald-pulse', name: 'Emerald Bio-Pulse' },
+          { id: 'royal-crown', name: 'Royal Sovereign' },
+          { id: 'kitsune-flame', name: 'Kitsune Spirit Fire' },
+          { id: 'cosmic-nebula', name: 'Cosmic Singularity' }
         ];
 
         // 8 Avatar Halo Tint Colors
@@ -5578,70 +5578,322 @@ function renderPresets() {
           el.textContent = text || 'Hossein';
         }
 
-        // Reusable Discord-Style Avatar Decoration Overlay Engine
-        // Reusable Discord-Grade Illustrated & Animated Avatar Decoration Engine
+        // Reusable Studio-Grade Shader, Particle & 3D WebP Avatar Decoration Engine
         function renderDecorationOverlayHtml(decoId: string, glowColor: string, customUrl?: string) {
           if (!decoId || decoId === 'none') return '';
-          if (decoId === 'custom') {
-            if (customUrl) {
-              return `<img src="${customUrl}" alt="Custom Decoration" class="w-full h-full object-contain pointer-events-none select-none" draggable="false" />`;
-            }
-            return `
-              <div class="w-full h-full rounded-full border-2 border-dashed border-pink-400/60 flex items-center justify-center text-pink-400 text-sm font-bold bg-pink-500/10">
-                🔗
-              </div>
-            `;
-          }
 
-          // Legacy alias mapping
+          // Normalize legacy IDs
           let normalized = decoId;
-          if (decoId === 'glow' || decoId === 'dual-gradient' || decoId === 'dynamic-sparkle' || decoId === 'royal-crown') normalized = 'starlight-tiara';
-          else if (decoId === 'plasma-vortex') normalized = 'cosmic-fire';
+          if (decoId === 'lunar-wolf') normalized = 'seraphim-light';
+          else if (decoId === 'seraphim-wings') normalized = 'seraphim-light';
+          else if (decoId === 'hex-hat') normalized = 'void-eclipse';
+          else if (decoId === 'cyber-oni') normalized = 'cyber-glitch';
+          else if (decoId === 'royal-dragon') normalized = 'solar-flare';
+          else if (decoId === 'cat-ears') normalized = 'sakura-garland';
+          else if (decoId === 'abyssal-blade') normalized = 'void-eclipse';
+          else if (decoId === 'prism-crown') normalized = 'royal-crown';
+          else if (decoId === 'cosmic-fire' || decoId === 'stardust-orbit' || decoId === 'plasma-vortex') normalized = 'cosmic-nebula';
+          else if (decoId === 'cyber-spin' || decoId === 'electric-arc') normalized = 'cyber-glitch';
           else if (decoId === 'sakura-drift') normalized = 'sakura-garland';
-          else if (decoId === 'solar-flare') normalized = 'kitsune-flame';
-          else if (decoId === 'emerald-pulse' || decoId === 'cyber-spin') normalized = 'cyber-oni';
-          else if (decoId === 'void-eclipse') normalized = 'abyssal-blade';
+          else if (decoId === 'glow' || decoId === 'dual-gradient' || decoId === 'dynamic-sparkle') normalized = 'starlight-tiara';
 
-          const deco = OFFICIAL_DECORATIONS[normalized];
-          if (deco) {
-            return `<img src="${deco.asset}" alt="${deco.title}" class="w-full h-full object-contain pointer-events-none select-none" draggable="false" />`;
+          switch (normalized) {
+            case 'starlight-tiara':
+              return `
+                <div class="w-full h-full relative flex items-center justify-center overflow-visible pointer-events-none" style="overflow: visible;">
+                  <div class="absolute inset-[-4px] rounded-full border border-amber-300/40 pointer-events-none animate-spin-slower" style="box-shadow: 0 0 16px rgba(251, 191, 36, 0.4), inset 0 0 8px rgba(245, 158, 11, 0.2);"></div>
+                  <svg viewBox="0 0 132 132" class="w-full h-full overflow-visible pointer-events-none" style="overflow: visible;">
+                    <defs>
+                      <filter id="tiaraBloomLive" x="-50%" y="-50%" width="200%" height="200%">
+                        <feGaussianBlur stdDeviation="3" result="blur"/>
+                        <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
+                      </filter>
+                      <linearGradient id="tiaraGoldLive" x1="0%" y1="0%" x2="100%" y2="100%">
+                        <stop offset="0%" stop-color="#fffbeb"/>
+                        <stop offset="30%" stop-color="#fde047"/>
+                        <stop offset="70%" stop-color="#eab308"/>
+                        <stop offset="100%" stop-color="#b45309"/>
+                      </linearGradient>
+                    </defs>
+                    <ellipse cx="66" cy="18" rx="44" ry="12" fill="none" stroke="url(#tiaraGoldLive)" stroke-width="2.5" opacity="0.9" filter="url(#tiaraBloomLive)"/>
+                    <ellipse cx="66" cy="18" rx="36" ry="9" fill="none" stroke="#fef08a" stroke-width="1.2" opacity="0.75"/>
+                    <g class="animate-tiara-shimmer" style="transform-origin: 66px 14px;">
+                      <polygon points="66,2 69,12 79,14 70,18 72,28 66,21 60,28 62,18 53,14 63,12" fill="url(#tiaraGoldLive)" filter="url(#tiaraBloomLive)"/>
+                      <circle cx="66" cy="14" r="2.5" fill="#ffffff" filter="drop-shadow(0 0 4px #38bdf8)"/>
+                    </g>
+                    <circle cx="24" cy="24" r="1.8" fill="#fef08a" class="animate-ping"/>
+                    <circle cx="108" cy="22" r="2" fill="#ffffff" filter="drop-shadow(0 0 6px #ffffff)"/>
+                    <path d="M112,68 Q115,72 119,72 Q115,72 115,76 Q115,72 111,72 Q115,72 112,68 Z" fill="#fde047" filter="drop-shadow(0 0 4px #facc15)"/>
+                    <path d="M18,74 Q21,77 24,77 Q21,77 21,80 Q21,77 18,77 Q21,77 18,74 Z" fill="#ffffff" filter="drop-shadow(0 0 4px #ffffff)"/>
+                  </svg>
+                </div>
+              `;
+
+            case 'cosmic-nebula':
+              return `
+                <div class="w-full h-full rounded-full relative flex items-center justify-center overflow-visible pointer-events-none" style="overflow: visible;">
+                  <div class="absolute inset-[-4px] rounded-full animate-plasma-cw opacity-90 pointer-events-none" style="background: conic-gradient(from 0deg, #06b6d4, #a855f7, #ec4899, #3b82f6, #06b6d4); -webkit-mask: radial-gradient(farthest-side, transparent calc(100% - 3.5px), black calc(100% - 3px)); mask: radial-gradient(farthest-side, transparent calc(100% - 3.5px), black calc(100% - 3px)); filter: drop-shadow(0 0 10px rgba(168, 85, 247, 0.9));"></div>
+                  <div class="absolute inset-[-1px] rounded-full animate-plasma-ccw opacity-80 pointer-events-none" style="background: conic-gradient(from 180deg, #f59e0b, #ec4899, #6366f1, #06b6d4, #f59e0b); -webkit-mask: radial-gradient(farthest-side, transparent calc(100% - 2.5px), black calc(100% - 2px)); mask: radial-gradient(farthest-side, transparent calc(100% - 2.5px), black calc(100% - 2px)); filter: drop-shadow(0 0 8px rgba(6, 182, 212, 0.8));"></div>
+                  <div class="absolute inset-[-6px] rounded-full animate-spin-slow pointer-events-none">
+                    <div class="absolute top-0 left-1/2 -translate-x-1/2 w-2 h-2 rounded-full bg-cyan-300 shadow-[0_0_8px_#22d3ee]"></div>
+                    <div class="absolute bottom-1 right-2 w-1.5 h-1.5 rounded-full bg-pink-400 shadow-[0_0_6px_#f472b6]"></div>
+                    <div class="absolute top-1/2 left-0 w-2 h-2 rounded-full bg-purple-300 shadow-[0_0_8px_#c084fc]"></div>
+                  </div>
+                </div>
+              `;
+
+            case 'sakura-garland':
+              return `
+                <div class="w-full h-full rounded-full relative flex items-center justify-center overflow-visible pointer-events-none" style="overflow: visible;">
+                  <div class="absolute inset-[-3px] rounded-full pointer-events-none" style="box-shadow: 0 0 14px rgba(244, 114, 182, 0.7), inset 0 0 6px rgba(251, 113, 133, 0.5); border: 2px solid #fda4af;"></div>
+                  <div class="absolute inset-[-1px] rounded-full animate-pulse opacity-70 pointer-events-none" style="background: radial-gradient(circle, transparent 65%, rgba(244, 114, 182, 0.3) 100%);"></div>
+                  <svg viewBox="0 0 132 132" class="w-full h-full overflow-visible pointer-events-none" style="overflow: visible;">
+                    <defs>
+                      <filter id="sakuraBloomLive" x="-50%" y="-50%" width="200%" height="200%">
+                        <feGaussianBlur stdDeviation="2.5" result="blur"/>
+                        <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
+                      </filter>
+                      <linearGradient id="sakuraGrad1Live" x1="0%" y1="0%" x2="100%" y2="100%">
+                        <stop offset="0%" stop-color="#fff1f2"/>
+                        <stop offset="50%" stop-color="#f472b6"/>
+                        <stop offset="100%" stop-color="#e11d48"/>
+                      </linearGradient>
+                      <linearGradient id="sakuraGrad2Live" x1="0%" y1="0%" x2="100%" y2="100%">
+                        <stop offset="0%" stop-color="#fdf2f8"/>
+                        <stop offset="60%" stop-color="#f43f5e"/>
+                        <stop offset="100%" stop-color="#9f1239"/>
+                      </linearGradient>
+                    </defs>
+                    <g class="animate-sakura-petal origin-center" style="transform-origin: 66px 10px;" filter="url(#sakuraBloomLive)">
+                      <path d="M66,0 C71,5 74,12 70,17 C66,22 61,19 61,14 C61,8 63,3 66,0 Z" fill="url(#sakuraGrad1Live)"/>
+                      <path d="M74,6 C79,11 80,18 75,22 C71,25 67,21 68,16 C69,11 72,8 74,6 Z" fill="url(#sakuraGrad2Live)" opacity="0.85"/>
+                    </g>
+                    <g class="animate-sakura-petal origin-center" style="transform-origin: 112px 105px;" filter="url(#sakuraBloomLive)">
+                      <path d="M112,96 C117,101 118,108 113,113 C108,118 103,114 104,109 C105,103 109,99 112,96 Z" fill="url(#sakuraGrad1Live)"/>
+                    </g>
+                    <g class="animate-sakura-petal origin-center" style="transform-origin: 14px 60px;" filter="url(#sakuraBloomLive)">
+                      <path d="M14,52 C19,56 19,63 15,68 C11,73 7,70 8,64 C9,58 12,54 14,52 Z" fill="url(#sakuraGrad2Live)"/>
+                    </g>
+                    <circle cx="35" cy="22" r="1.5" fill="#fbcfe8" class="animate-ping"/>
+                    <circle cx="100" cy="40" r="1.8" fill="#ffffff" filter="drop-shadow(0 0 4px #ffffff)"/>
+                    <circle cx="95" cy="115" r="1.5" fill="#fda4af"/>
+                  </svg>
+                </div>
+              `;
+
+            case 'solar-flare':
+              return `
+                <div class="w-full h-full rounded-full relative flex items-center justify-center overflow-visible pointer-events-none" style="overflow: visible;">
+                  <div class="absolute inset-[-5px] rounded-full animate-plasma-cw opacity-95 pointer-events-none" style="background: conic-gradient(from 0deg, #f59e0b, #ef4444, #b91c1c, #fbbf24, #f59e0b); -webkit-mask: radial-gradient(farthest-side, transparent calc(100% - 3.5px), black calc(100% - 3px)); mask: radial-gradient(farthest-side, transparent calc(100% - 3.5px), black calc(100% - 3px)); filter: drop-shadow(0 0 12px rgba(245, 158, 11, 0.95));"></div>
+                  <div class="absolute inset-[-2px] rounded-full animate-plasma-ccw opacity-85 pointer-events-none" style="background: conic-gradient(from 180deg, #dc2626, #fbbf24, #f97316, #ef4444, #dc2626); -webkit-mask: radial-gradient(farthest-side, transparent calc(100% - 2.5px), black calc(100% - 2px)); mask: radial-gradient(farthest-side, transparent calc(100% - 2.5px), black calc(100% - 2px)); filter: drop-shadow(0 0 8px rgba(239, 68, 68, 0.8));"></div>
+                  <svg viewBox="0 0 132 132" class="w-full h-full overflow-visible pointer-events-none" style="overflow: visible;">
+                    <defs>
+                      <filter id="solarBloomLive" x="-50%" y="-50%" width="200%" height="200%">
+                        <feGaussianBlur stdDeviation="3" result="blur"/>
+                        <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
+                      </filter>
+                      <linearGradient id="sunGradLive" x1="0%" y1="0%" x2="0%" y2="100%">
+                        <stop offset="0%" stop-color="#fef08a"/>
+                        <stop offset="50%" stop-color="#f59e0b"/>
+                        <stop offset="100%" stop-color="#dc2626"/>
+                      </linearGradient>
+                    </defs>
+                    <path d="M66,-2 Q72,8 66,14 Q60,8 66,-2 Z" fill="url(#sunGradLive)" filter="url(#solarBloomLive)"/>
+                    <path d="M124,66 Q116,72 110,66 Q116,60 124,66 Z" fill="url(#sunGradLive)" filter="url(#solarBloomLive)"/>
+                    <path d="M66,134 Q60,124 66,118 Q72,124 66,134 Z" fill="url(#sunGradLive)" filter="url(#solarBloomLive)"/>
+                    <path d="M8,66 Q16,60 22,66 Q16,72 8,66 Z" fill="url(#sunGradLive)" filter="url(#solarBloomLive)"/>
+                    <circle cx="28" cy="28" r="2" fill="#fbbf24" class="animate-ping"/>
+                    <circle cx="106" cy="30" r="1.8" fill="#fef08a" filter="drop-shadow(0 0 5px #f59e0b)"/>
+                    <circle cx="104" cy="102" r="2.2" fill="#ef4444" filter="drop-shadow(0 0 6px #ef4444)"/>
+                  </svg>
+                </div>
+              `;
+
+            case 'frost-crystal':
+              return `
+                <div class="w-full h-full rounded-full relative flex items-center justify-center overflow-visible pointer-events-none" style="overflow: visible;">
+                  <div class="absolute inset-[-3px] rounded-full pointer-events-none" style="box-shadow: 0 0 14px rgba(34, 211, 238, 0.8), inset 0 0 8px rgba(165, 243, 252, 0.6); border: 2px solid #67e8f9;"></div>
+                  <div class="absolute inset-[-1px] rounded-full animate-spin-slower pointer-events-none" style="background: conic-gradient(from 0deg, rgba(34,211,238,0.7), transparent 30%, rgba(224,242,254,0.9) 60%, transparent 90%, rgba(34,211,238,0.7)); -webkit-mask: radial-gradient(farthest-side, transparent calc(100% - 2.5px), black calc(100% - 2px)); mask: radial-gradient(farthest-side, transparent calc(100% - 2.5px), black calc(100% - 2px));"></div>
+                  <svg viewBox="0 0 132 132" class="w-full h-full overflow-visible pointer-events-none" style="overflow: visible;">
+                    <defs>
+                      <filter id="iceBloomLive" x="-50%" y="-50%" width="200%" height="200%">
+                        <feGaussianBlur stdDeviation="2" result="blur"/>
+                        <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
+                      </filter>
+                    </defs>
+                    <g class="animate-tiara-shimmer" style="transform-origin: 66px 8px;" filter="url(#iceBloomLive)">
+                      <polygon points="66,0 69,6 75,8 69,10 66,16 63,10 57,8 63,6" fill="#e0f2fe"/>
+                      <circle cx="66" cy="8" r="1.5" fill="#38bdf8"/>
+                    </g>
+                    <g style="transform-origin: 120px 66px;" filter="url(#iceBloomLive)">
+                      <polygon points="120,60 122,64 126,66 122,68 120,72 118,68 114,66 118,64" fill="#67e8f9"/>
+                    </g>
+                    <g style="transform-origin: 12px 66px;" filter="url(#iceBloomLive)">
+                      <polygon points="12,60 14,64 18,66 14,68 12,72 10,68 6,66 10,64" fill="#a5f3fc"/>
+                    </g>
+                    <circle cx="28" cy="98" r="1.8" fill="#ffffff" class="animate-ping"/>
+                    <circle cx="104" cy="98" r="1.8" fill="#67e8f9" filter="drop-shadow(0 0 5px #22d3ee)"/>
+                  </svg>
+                </div>
+              `;
+
+            case 'cyber-glitch':
+              return `
+                <div class="w-full h-full rounded-full relative flex items-center justify-center overflow-visible pointer-events-none" style="overflow: visible;">
+                  <svg viewBox="0 0 132 132" class="w-full h-full overflow-visible pointer-events-none" style="overflow: visible;">
+                    <circle cx="66" cy="66" r="62" fill="none" stroke="#00f3ff" stroke-width="2.5" stroke-dasharray="28 12 6 14 36 10" stroke-linecap="round" class="animate-plasma-cw origin-center" style="transform-origin: 66px 66px; filter: drop-shadow(0 0 6px #00f3ff);"/>
+                    <circle cx="66" cy="66" r="56" fill="none" stroke="#ff007f" stroke-width="2" stroke-dasharray="18 16 32 8" stroke-linecap="round" class="animate-plasma-ccw origin-center" style="transform-origin: 66px 66px; filter: drop-shadow(0 0 6px #ff007f);"/>
+                    <path d="M22,34 L22,22 L34,22" fill="none" stroke="#00f3ff" stroke-width="2" stroke-linecap="square"/>
+                    <path d="M110,34 L110,22 L98,22" fill="none" stroke="#ff007f" stroke-width="2" stroke-linecap="square"/>
+                    <path d="M22,98 L22,110 L34,110" fill="none" stroke="#ff007f" stroke-width="2" stroke-linecap="square"/>
+                    <path d="M110,98 L110,110 L98,110" fill="none" stroke="#00f3ff" stroke-width="2" stroke-linecap="square"/>
+                    <circle cx="66" cy="4" r="2.5" fill="#ffffff" filter="drop-shadow(0 0 4px #00f3ff)"/>
+                    <circle cx="128" cy="66" r="2.5" fill="#ffffff" filter="drop-shadow(0 0 4px #ff007f)"/>
+                  </svg>
+                </div>
+              `;
+
+            case 'void-eclipse':
+              return `
+                <div class="w-full h-full rounded-full relative flex items-center justify-center overflow-visible pointer-events-none" style="overflow: visible;">
+                  <div class="absolute inset-[-4px] rounded-full pointer-events-none animate-pulse" style="box-shadow: 0 0 18px rgba(168, 85, 247, 0.9), 0 0 6px rgba(255, 255, 255, 0.8), inset 0 0 10px rgba(76, 29, 149, 0.7); border: 2px solid #c084fc;"></div>
+                  <div class="absolute inset-[-1px] rounded-full animate-plasma-cw pointer-events-none" style="background: conic-gradient(from 0deg, #c084fc, #1e1b4b 25%, #7c3aed 50%, #09090b 75%, #c084fc); -webkit-mask: radial-gradient(farthest-side, transparent calc(100% - 3px), black calc(100% - 2.5px)); mask: radial-gradient(farthest-side, transparent calc(100% - 3px), black calc(100% - 2.5px));"></div>
+                  <div class="absolute inset-[-5px] rounded-full animate-spin-slow pointer-events-none">
+                    <div class="absolute -top-1 left-1/2 -translate-x-1/2 w-3 h-3 rounded-full bg-gradient-to-tr from-purple-600 to-white shadow-[0_0_10px_#c084fc]"></div>
+                    <div class="absolute -bottom-1 left-1/2 -translate-x-1/2 w-2 h-2 rounded-full bg-gradient-to-tr from-indigo-500 to-pink-300 shadow-[0_0_8px_#a855f7]"></div>
+                    <div class="absolute top-1/2 -left-1 -translate-y-1/2 w-2.5 h-2.5 rounded-full bg-gradient-to-tr from-purple-400 to-cyan-200 shadow-[0_0_8px_#e9d5ff]"></div>
+                  </div>
+                </div>
+              `;
+
+            case 'emerald-pulse':
+              return `
+                <div class="w-full h-full rounded-full relative flex items-center justify-center overflow-visible pointer-events-none" style="overflow: visible;">
+                  <div class="absolute inset-[-4px] rounded-full pointer-events-none animate-pulse" style="box-shadow: 0 0 16px rgba(16, 185, 129, 0.85), inset 0 0 8px rgba(52, 211, 153, 0.5); border: 2px solid #10b981;"></div>
+                  <div class="absolute inset-[-1px] rounded-full animate-plasma-cw pointer-events-none" style="background: conic-gradient(from 0deg, #10b981, #064e3b 30%, #34d399 60%, #059669 85%, #10b981); -webkit-mask: radial-gradient(farthest-side, transparent calc(100% - 2.5px), black calc(100% - 2px)); mask: radial-gradient(farthest-side, transparent calc(100% - 2.5px), black calc(100% - 2px)); filter: drop-shadow(0 0 6px #10b981);"></div>
+                  <svg viewBox="0 0 132 132" class="w-full h-full overflow-visible pointer-events-none" style="overflow: visible;">
+                    <circle cx="66" cy="8" r="2.2" fill="#a7f3d0" class="animate-ping" filter="drop-shadow(0 0 4px #10b981)"/>
+                    <circle cx="120" cy="40" r="2" fill="#34d399" filter="drop-shadow(0 0 5px #34d399)"/>
+                    <circle cx="112" cy="100" r="2.5" fill="#6ee7b7" filter="drop-shadow(0 0 6px #10b981)"/>
+                    <circle cx="20" cy="90" r="1.8" fill="#a7f3d0" filter="drop-shadow(0 0 4px #34d399)"/>
+                    <circle cx="16" cy="36" r="2.2" fill="#34d399" filter="drop-shadow(0 0 5px #10b981)"/>
+                  </svg>
+                </div>
+              `;
+
+            case 'royal-crown':
+              return `
+                <div class="w-full h-full rounded-full relative flex items-center justify-center overflow-visible pointer-events-none" style="overflow: visible;">
+                  <div class="absolute inset-[-3px] rounded-full pointer-events-none" style="box-shadow: 0 0 14px rgba(245, 158, 11, 0.7), inset 0 0 6px rgba(251, 191, 36, 0.5); border: 2.5px solid #f59e0b;"></div>
+                  <div class="absolute inset-[-1px] rounded-full animate-spin-slower pointer-events-none" style="background: conic-gradient(from 0deg, #fef08a, #d97706 25%, #fde047 50%, #b45309 75%, #fef08a); -webkit-mask: radial-gradient(farthest-side, transparent calc(100% - 2.5px), black calc(100% - 2px)); mask: radial-gradient(farthest-side, transparent calc(100% - 2.5px), black calc(100% - 2px));"></div>
+                  <div class="absolute -top-[28%] left-1/2 -translate-x-1/2 w-[46%] h-[46%] flex items-center justify-center animate-tiara-shimmer pointer-events-none drop-shadow-[0_4px_10px_rgba(245,158,11,0.8)]" style="overflow: visible;">
+                    <img src="https://fonts.gstatic.com/s/e/notoemoji/latest/1f451/512.webp" alt="Crown" class="w-full h-full object-contain pointer-events-none select-none" draggable="false" />
+                  </div>
+                </div>
+              `;
+
+            case 'kitsune-flame':
+              return `
+                <div class="w-full h-full rounded-full relative flex items-center justify-center overflow-visible pointer-events-none" style="overflow: visible;">
+                  <div class="absolute inset-[-4px] rounded-full animate-plasma-cw opacity-90 pointer-events-none" style="background: conic-gradient(from 0deg, #ec4899, #8b5cf6, #06b6d4, #f43f5e, #ec4899); -webkit-mask: radial-gradient(farthest-side, transparent calc(100% - 3px), black calc(100% - 2.5px)); mask: radial-gradient(farthest-side, transparent calc(100% - 3px), black calc(100% - 2.5px)); filter: drop-shadow(0 0 10px rgba(236, 72, 153, 0.8));"></div>
+                  <svg viewBox="0 0 132 132" class="w-full h-full overflow-visible pointer-events-none" style="overflow: visible;">
+                    <defs>
+                      <filter id="spiritBloomLive" x="-50%" y="-50%" width="200%" height="200%">
+                        <feGaussianBlur stdDeviation="2.5" result="blur"/>
+                        <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
+                      </filter>
+                      <radialGradient id="spiritFirePinkLive">
+                        <stop offset="0%" stop-color="#ffffff"/>
+                        <stop offset="40%" stop-color="#f472b6"/>
+                        <stop offset="100%" stop-color="transparent"/>
+                      </radialGradient>
+                      <radialGradient id="spiritFireCyanLive">
+                        <stop offset="0%" stop-color="#ffffff"/>
+                        <stop offset="40%" stop-color="#22d3ee"/>
+                        <stop offset="100%" stop-color="transparent"/>
+                      </radialGradient>
+                    </defs>
+                    <g class="animate-tiara-shimmer" style="transform-origin: 66px 6px;" filter="url(#spiritBloomLive)">
+                      <circle cx="66" cy="6" r="6" fill="url(#spiritFirePinkLive)"/>
+                      <path d="M66,0 Q70,6 66,12 Q62,6 66,0 Z" fill="#f43f5e"/>
+                    </g>
+                    <g class="animate-pulse" filter="url(#spiritBloomLive)">
+                      <circle cx="118" cy="40" r="5.5" fill="url(#spiritFireCyanLive)"/>
+                      <path d="M120,34 Q123,40 118,46 Q115,40 120,34 Z" fill="#06b6d4"/>
+                    </g>
+                    <g filter="url(#spiritBloomLive)">
+                      <circle cx="106" cy="110" r="5.5" fill="url(#spiritFirePinkLive)"/>
+                    </g>
+                    <g class="animate-pulse" filter="url(#spiritBloomLive)">
+                      <circle cx="26" cy="110" r="5.5" fill="url(#spiritFireCyanLive)"/>
+                    </g>
+                    <g filter="url(#spiritBloomLive)">
+                      <circle cx="14" cy="40" r="5.5" fill="url(#spiritFirePinkLive)"/>
+                    </g>
+                  </svg>
+                </div>
+              `;
+
+            case 'seraphim-light':
+              return `
+                <div class="w-full h-full rounded-full relative flex items-center justify-center overflow-visible pointer-events-none" style="overflow: visible;">
+                  <div class="absolute inset-[-4px] rounded-full pointer-events-none animate-pulse" style="box-shadow: 0 0 16px rgba(254, 240, 138, 0.9), 0 0 8px rgba(251, 191, 36, 0.6), inset 0 0 6px rgba(255, 255, 255, 0.7); border: 2px solid #fef08a;"></div>
+                  <svg viewBox="0 0 132 132" class="w-full h-full overflow-visible pointer-events-none" style="overflow: visible;">
+                    <defs>
+                      <filter id="haloBloomLive" x="-50%" y="-50%" width="200%" height="200%">
+                        <feGaussianBlur stdDeviation="3" result="blur"/>
+                        <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
+                      </filter>
+                      <linearGradient id="angelGoldLive" x1="0%" y1="0%" x2="100%" y2="100%">
+                        <stop offset="0%" stop-color="#ffffff"/>
+                        <stop offset="40%" stop-color="#fef08a"/>
+                        <stop offset="80%" stop-color="#f59e0b"/>
+                        <stop offset="100%" stop-color="#b45309"/>
+                      </linearGradient>
+                    </defs>
+                    <ellipse cx="66" cy="14" rx="42" ry="11" fill="none" stroke="url(#angelGoldLive)" stroke-width="3" filter="url(#haloBloomLive)"/>
+                    <ellipse cx="66" cy="14" rx="34" ry="8" fill="none" stroke="#ffffff" stroke-width="1.5" opacity="0.85"/>
+                    <circle cx="66" cy="6" r="3" fill="#ffffff" filter="drop-shadow(0 0 6px #ffffff)"/>
+                    <circle cx="20" cy="30" r="2.2" fill="#fef08a" class="animate-ping"/>
+                    <circle cx="112" cy="30" r="2.2" fill="#ffffff" filter="drop-shadow(0 0 4px #fef08a)"/>
+                    <circle cx="120" cy="80" r="2.5" fill="#fde047" filter="drop-shadow(0 0 5px #f59e0b)"/>
+                    <circle cx="12" cy="80" r="2.5" fill="#fde047" filter="drop-shadow(0 0 5px #f59e0b)"/>
+                    <circle cx="40" cy="122" r="1.8" fill="#ffffff"/>
+                    <circle cx="92" cy="122" r="1.8" fill="#ffffff"/>
+                  </svg>
+                </div>
+              `;
+
+            default:
+              return '';
           }
-          return '';
         }
 
-        // Discord Layering Architecture: Base Avatar 100% circle + Centered 122% Overlay
-        function renderDecoratedAvatarHtml(opts: { src?: string; initial?: string; decoration?: string; glowColor?: string; size?: number; customUrl?: string; useThumb?: boolean }) {
-          const size = opts.size || 56;
+        // Studio-Grade Avatar Architecture: Base Avatar 100% circle + Centered 120% Overlay
+        function renderDecoratedAvatarHtml(opts: { src?: string; initial?: string; decoration?: string; glowColor?: string; size?: number; customUrl?: string }) {
+          const size = opts.size || 52;
           const deco = opts.decoration || 'none';
           const src = opts.src || '';
           const initial = (opts.initial || 'H').charAt(0).toUpperCase();
-          const overlaySize = Math.round(size * 1.22);
+          const overlaySize = Math.round(size * 1.20);
           const overlayOffset = Math.round((size - overlaySize) / 2);
 
-          let overlayHtml = '';
-          if (deco !== 'none') {
-            if (opts.customUrl) {
-              overlayHtml = `<img src="${opts.customUrl}" alt="Deco" class="w-full h-full object-contain pointer-events-none select-none" draggable="false" />`;
-            } else if (OFFICIAL_DECORATIONS[deco]) {
-              const assetUrl = opts.useThumb ? OFFICIAL_DECORATIONS[deco].thumb : OFFICIAL_DECORATIONS[deco].asset;
-              overlayHtml = `<img src="${assetUrl}" alt="${OFFICIAL_DECORATIONS[deco].title}" class="w-full h-full object-contain pointer-events-none select-none" draggable="false" loading="lazy" />`;
-            }
-          }
+          const overlayHtml = renderDecorationOverlayHtml(deco, opts.glowColor || '#06b6d4', opts.customUrl);
 
           const avatarContent = src
             ? `<img src="${src}" alt="Avatar" class="w-full h-full rounded-full object-cover" onerror="this.style.display='none'" />`
-            : `<span class="text-white font-bold select-none" style="font-size: ${Math.round(size * 0.42)}px;">${initial}</span>`;
+            : `<span class="text-white font-bold select-none text-xl" style="font-size: ${Math.round(size * 0.42)}px;">${initial}</span>`;
 
           return `
-            <div class="relative inline-flex items-center justify-center shrink-0 select-none overflow-visible" style="width: ${size}px; height: ${size}px;">
-              <!-- 1. Clipped Circular Avatar Base -->
+            <div class="relative inline-flex items-center justify-center shrink-0 select-none overflow-visible" style="width: ${size}px; height: ${size}px; overflow: visible;">
+              <!-- 1. Clipped Circular Avatar Base: User's actual portrait or initial is ALWAYS rendered here -->
               <div class="w-full h-full rounded-full overflow-hidden relative z-10 flex items-center justify-center bg-gradient-to-tr from-purple-600 to-indigo-600 shadow-inner deco-tile-base border border-white/10">
                 ${avatarContent}
               </div>
 
-              <!-- 2. Discord-Grade Official Overlay (122% scale centered over circle) -->
+              <!-- 2. Studio-Grade Shader, Particle & 3D WebP Overlay (120% scale centered) -->
               ${overlayHtml ? `
-                <div class="absolute pointer-events-none z-20 flex items-center justify-center overflow-visible" style="width: ${overlaySize}px; height: ${overlaySize}px; top: ${overlayOffset}px; left: ${overlayOffset}px;">
+                <div class="absolute pointer-events-none z-20 flex items-center justify-center overflow-visible" style="width: ${overlaySize}px; height: ${overlaySize}px; top: ${overlayOffset}px; left: ${overlayOffset}px; overflow: visible;">
                   ${overlayHtml}
                 </div>
               ` : ''}
@@ -5726,29 +5978,17 @@ function renderPresets() {
             }
           }
           if (heroUserName) {
-            let textColorToUse = '#ffffff';
-            if (draftNameColor && draftNameColor !== 'default') {
-              if (draftNameColor.includes('gradient')) {
-                textColorToUse = draftNameColor;
-              } else {
-                try {
-                  const clean = draftNameColor.replace('#', '');
-                  if (clean.length === 6) {
-                    const r = parseInt(clean.substring(0, 2), 16);
-                    const g = parseInt(clean.substring(2, 4), 16);
-                    const b = parseInt(clean.substring(4, 6), 16);
-                    const lum = (0.299 * r + 0.587 * g + 0.114 * b) / 255;
-                    // Only use if bright enough to be clearly visible on dark #0d0f17 stage
-                    if (lum >= 0.52) {
-                      textColorToUse = draftNameColor;
-                    }
-                  }
-                } catch (e) {}
-              }
-            }
-            applyNameToElement(heroUserName, userName, textColorToUse);
-            heroUserName.classList.add('text-white', 'font-bold', 'text-base');
+            heroUserName.classList.add('text-white', 'font-bold', 'text-lg');
             heroUserName.style.textShadow = '0 2px 10px rgba(0,0,0,0.95)';
+            if (draftNameColor && draftNameColor !== 'default' && draftNameColor.includes('gradient')) {
+              applyNameToElement(heroUserName, userName, draftNameColor);
+            } else {
+              heroUserName.style.backgroundImage = 'none';
+              heroUserName.style.webkitBackgroundClip = '';
+              heroUserName.style.webkitTextFillColor = '#ffffff';
+              heroUserName.style.color = '#ffffff';
+              heroUserName.textContent = userName || 'Hossein';
+            }
           }
           if (heroUserBadge) {
             heroUserBadge.innerHTML = renderBadgeHtml(draftNameIcon, 'w-4 h-4 inline-block object-contain align-middle ml-1 shrink-0');
