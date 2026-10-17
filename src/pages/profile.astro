@@ -4107,28 +4107,28 @@ import {
       { 
         id: 'scene-library', 
         name: 'Fantasy Library', 
-        value: 'https://images.unsplash.com/photo-1521587760476-6c12a4b040da?auto=format&fit=crop&w=1080&q=80',
+        value: '/wallpapers/fantasy_library.webp',
         fallback: 'linear-gradient(135deg, #21150c 0%, #452815 50%, #140a05 100%)',
         icon: '📚'
       },
       { 
         id: 'scene-neon', 
         name: 'Neon Cyber City', 
-        value: 'https://images.unsplash.com/photo-1509198397868-475647b2a1e5?auto=format&fit=crop&w=1080&q=80',
+        value: '/wallpapers/neon_city.webp',
         fallback: 'linear-gradient(135deg, #0d1233 0%, #281745 50%, #4c0d3e 100%)',
         icon: '🏙️'
       },
       { 
         id: 'scene-starry', 
         name: 'Starry Galaxy', 
-        value: 'https://images.unsplash.com/photo-1506703719100-a0f3a48c0f86?auto=format&fit=crop&w=1080&q=80',
+        value: '/wallpapers/starry_galaxy.webp',
         fallback: 'linear-gradient(135deg, #050819 0%, #101c3d 50%, #1e1344 100%)',
         icon: '✨'
       },
       { 
         id: 'scene-cafe', 
         name: 'Cozy Tavern & Cafe', 
-        value: 'https://images.unsplash.com/photo-1501339847302-ac426a4a7cbb?auto=format&fit=crop&w=1080&q=80',
+        value: '/wallpapers/cozy_cafe.webp',
         fallback: 'linear-gradient(135deg, #22140a 0%, #462511 50%, #170b05 100%)',
         icon: '☕'
       }
@@ -4293,8 +4293,6 @@ import {
                 src="${s.value}" 
                 alt="${s.name}" 
                 class="absolute inset-0 w-full h-full object-cover transition group-hover:scale-105" 
-                loading="lazy"
-                onerror="this.style.opacity='0';" 
               />
               <div class="relative z-10 flex items-center justify-between w-full">
                 <span class="text-xs drop-shadow">${s.icon}</span>
@@ -4428,7 +4426,7 @@ import {
 
       // Custom URL load button
       document.getElementById('btn-apply-custom-val')?.addEventListener('click', () => {
-        const inputVal = (document.getElementById('input-wp-custom-val') as HTMLInputElement)?.value.trim();
+        const inputVal = ((document.getElementById('input-wp-custom-val') as HTMLInputElement)?.value || '').trim();
         if (!inputVal) return;
         const isGrad = inputVal.includes('gradient');
         draftWpConfig.type = isGrad ? 'gradient' : 'custom-image';
@@ -4680,10 +4678,10 @@ import {
       const inputEmail = document.getElementById('input-account-email') as HTMLInputElement;
 
       const user = getAccountUser();
-      user.name = inputName?.value.trim() || user.name || 'Hossein';
+      user.name = (inputName?.value || '').trim() || user.name || 'Hossein';
       user.displayName = user.name;
-      user.username = inputUsername?.value.trim() || user.username || 'hossein';
-      user.email = inputEmail?.value.trim() || user.email || '';
+      user.username = (inputUsername?.value || '').trim() || user.username || 'hossein';
+      user.email = (inputEmail?.value || '').trim() || user.email || '';
       user.avatarUrl = editAccountDraftAvatar;
 
       saveAccountUser(user);
@@ -7411,7 +7409,7 @@ function renderPresets() {
         }
 
         function filterBadges() {
-          const query = inputBadgeSearch?.value.trim().toLowerCase() || '';
+          const query = (inputBadgeSearch?.value || '').trim().toLowerCase();
           if (btnClearBadgeSearch) {
             if (query) btnClearBadgeSearch.classList.remove('hidden');
             else btnClearBadgeSearch.classList.add('hidden');
