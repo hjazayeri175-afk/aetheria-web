@@ -866,12 +866,12 @@ const PRESET_SCENES = [
       </div>
 
       <!-- ============================================================== -->
-      <!-- Wallpaper & Atmosphere Studio View (view-wallpaper-studio)    -->
+      <!-- VIEW 11: TELEGRAM CHAT WALLPAPER STUDIO                        -->
       <!-- ============================================================== -->
       <div id="view-wallpaper-studio" class="hidden space-y-4 max-w-2xl mx-auto pb-24">
 
-        <!-- Sticky Header Bar: Back, Segmented Presets|Custom, Reset -->
-        <div class="sticky top-16 sm:top-18 z-30 -mx-3 sm:-mx-4 px-3 sm:px-4 py-3 bg-[#07080d]/95 backdrop-blur-md border-b border-white/[0.08] flex items-center justify-between transition-all mb-2">
+        <!-- Header Bar: Back to Chat Settings & Reset -->
+        <div class="flex items-center justify-between py-1 mb-1">
           <button 
             type="button" 
             id="btn-back-from-wallpaper-studio"
@@ -881,129 +881,106 @@ const PRESET_SCENES = [
             <span class="font-semibold">Chat Settings</span>
           </button>
 
-          <!-- Segmented Mode Switch: Presets | Custom -->
-          <div class="flex items-center p-1 rounded-xl bg-white/[0.05] border border-white/10 text-xs">
-            <button 
-              type="button" 
-              id="btn-wp-mode-presets" 
-              class="px-3.5 py-1.5 rounded-lg font-bold transition cursor-pointer bg-purple-600 text-white shadow-xs"
-            >
-              Presets
-            </button>
-            <button 
-              type="button" 
-              id="btn-wp-mode-custom" 
-              class="px-3.5 py-1.5 rounded-lg font-medium transition cursor-pointer text-slate-400 hover:text-white"
-            >
-              Custom
-            </button>
-          </div>
-
           <!-- Reset Button -->
           <button 
             type="button" 
             id="btn-reset-wallpaper" 
-            class="p-2 rounded-xl text-slate-400 hover:text-white bg-white/[0.04] hover:bg-white/[0.08] border border-white/10 transition cursor-pointer active:scale-95" 
+            class="py-1.5 px-3 rounded-xl text-slate-300 hover:text-white bg-white/[0.04] hover:bg-white/[0.08] border border-white/10 transition cursor-pointer active:scale-95 flex items-center gap-1.5 text-xs font-medium" 
             title="Reset to default wallpaper"
           >
-            <RotateCcw class="w-4 h-4" />
+            <RotateCcw class="w-3.5 h-3.5 text-slate-400" />
+            <span>Reset</span>
           </button>
         </div>
 
-        <!-- Section 1: Live Chat Preview Card with 3 Live Sliders -->
-        <div class="rounded-3xl bg-[#141824] border border-white/[0.06] p-4 sm:p-5 shadow-xl space-y-4">
-          <div class="flex items-center justify-between">
-            <div class="flex items-center gap-2">
-              <Sparkles class="w-4 h-4 text-amber-400" />
-              <h3 class="text-sm font-bold text-white tracking-tight">Live Chat Preview</h3>
-            </div>
-            <span class="text-[11px] text-[#8e98a8]">Readability Sandbox</span>
-          </div>
+        <!-- Sticky Compact Preview & Condensed Sliders Dock -->
+        <div class="sticky top-[56px] z-30 bg-[#0b0d14]/95 backdrop-blur-xl pb-2 pt-1 border-b border-white/10 -mx-3 sm:-mx-4 px-3 sm:px-4 mb-3">
+          <div class="grid grid-cols-12 gap-3 p-3 rounded-2xl bg-[#12151f] border border-white/10 shadow-xl">
+            <!-- Left Column (col-span-6): Compact Live Chat Preview Box -->
+            <div class="col-span-6 h-[130px] rounded-xl overflow-hidden relative border border-white/10 flex flex-col justify-end p-2 select-none" id="wp-preview-viewport" style="background-color: #000000;">
+              <!-- Live Background Layer -->
+              <div id="wp-preview-bg" class="absolute inset-0 bg-cover bg-center transition-all duration-300"></div>
+              
+              <!-- Live Darkness Dimmer Layer -->
+              <div id="wp-preview-dimmer" class="absolute inset-0 bg-black pointer-events-none transition-opacity duration-200" style="opacity: 0.40;"></div>
+              
+              <!-- Live Vector Doodle Pattern Layer -->
+              <div id="wp-preview-pattern" class="absolute inset-0 pointer-events-none transition-opacity duration-200 bg-repeat" style="opacity: 0.15;"></div>
 
-          <!-- Preview Viewport Frame -->
-          <div class="relative w-full h-56 sm:h-64 rounded-2xl overflow-hidden border border-white/10 shadow-2xl flex flex-col justify-end p-3.5 select-none" id="wp-preview-viewport">
-            <!-- Live Background Image/Gradient Layer -->
-            <div id="wp-preview-bg" class="absolute inset-0 bg-cover bg-center transition-all duration-300"></div>
-            
-            <!-- Live Darkness Dimmer Layer -->
-            <div id="wp-preview-dimmer" class="absolute inset-0 bg-black pointer-events-none transition-opacity duration-200"></div>
-            
-            <!-- Live Vector Doodle Pattern Layer -->
-            <div id="wp-preview-pattern" class="absolute inset-0 pointer-events-none transition-opacity duration-200 bg-repeat"></div>
+              <!-- Live Sparkles Canvas -->
+              <canvas id="wp-preview-sparkles" class="absolute inset-0 pointer-events-none hidden w-full h-full z-0"></canvas>
 
-            <!-- Live Sparkles Canvas -->
-            <canvas id="wp-preview-sparkles" class="absolute inset-0 pointer-events-none hidden w-full h-full z-0"></canvas>
-
-            <!-- Simulated Chat Messages -->
-            <div class="relative z-10 space-y-2.5 max-w-sm w-full mx-auto sm:mx-0">
-              <!-- Incoming Character Message -->
-              <div class="flex items-end gap-2">
-                <div class="w-7 h-7 rounded-full overflow-hidden bg-purple-900 border border-purple-500/40 shrink-0 shadow-sm flex items-center justify-center text-[10px] text-purple-200 font-bold" style="color: #e9d5ff !important;">
-                  HA
+              <!-- Compact Sample Chat Bubbles -->
+              <div class="relative z-10 space-y-1.5 w-full">
+                <!-- Incoming Character Bubble -->
+                <div class="flex items-end gap-1.5">
+                  <div class="w-5 h-5 rounded-full overflow-hidden bg-purple-900 border border-purple-500/40 shrink-0 flex items-center justify-center text-[8px] text-purple-200 font-bold" style="color: #e9d5ff !important;">
+                    HA
+                  </div>
+                  <div class="chat-preview-char-box rounded-xl rounded-bl-xs px-2 py-1 text-[10px] leading-tight max-w-[85%] border border-purple-500/30 backdrop-blur-sm shadow-sm" style="background-color: #111526 !important;">
+                    <span class="chat-preview-char-name text-[9px] font-bold block text-purple-400 leading-none mb-0.5" style="color: #c084fc !important;">Helen & Anna</span>
+                    <span class="chat-preview-char-text font-normal" style="color: #f8fafc !important;">Good morning! ✨</span>
+                  </div>
                 </div>
-                <div class="chat-preview-char-box rounded-2xl rounded-bl-sm px-3.5 py-2 text-xs leading-relaxed max-w-[85%] shadow-md border border-purple-500/30 backdrop-blur-sm" style="background-color: #111526 !important;">
-                  <span class="chat-preview-char-name text-[10px] font-bold block mb-0.5" style="color: #c084fc !important;">Helen & Anna</span>
-                  <span class="chat-preview-char-text font-normal" style="color: #f8fafc !important;">Good morning! How are you feeling today? ✨</span>
-                </div>
-              </div>
 
-              <!-- Outgoing User Reply -->
-              <div class="flex justify-end">
-                <div class="chat-preview-user-box rounded-2xl rounded-br-sm px-3.5 py-2 text-xs leading-relaxed max-w-[85%] shadow-lg" style="background: linear-gradient(135deg, #7c3aed 0%, #4f46e5 100%) !important;">
-                  <span class="chat-preview-user-text font-medium" style="color: #ffffff !important;">Good morning! The atmospheric view looks amazing.</span>
+                <!-- Outgoing User Bubble -->
+                <div class="flex justify-end">
+                  <div class="chat-preview-user-box rounded-xl rounded-br-xs px-2 py-1 text-[10px] leading-tight max-w-[85%] shadow-sm font-medium" style="background: linear-gradient(135deg, #7c3aed 0%, #4f46e5 100%) !important;">
+                    <span class="chat-preview-user-text" style="color: #ffffff !important;">It's morning in Tokyo 😎</span>
+                  </div>
                 </div>
               </div>
             </div>
-          </div>
 
-          <!-- 3 Compact Live Sliders -->
-          <div class="grid grid-cols-1 sm:grid-cols-3 gap-2.5 pt-1">
-            <!-- Slider 1: Blur -->
-            <div class="p-3 rounded-2xl bg-white/[0.04] border border-white/[0.08] space-y-2">
-              <div class="flex items-center justify-between text-xs">
-                <span class="text-slate-300 font-medium">Blur</span>
-                <span id="val-wp-blur" class="font-bold text-purple-300 text-[11px]">0px</span>
+            <!-- Right Column (col-span-6): 3 Condensed Sliders -->
+            <div class="col-span-6 flex flex-col justify-between py-0.5 space-y-1">
+              <!-- Slider 1: Blur -->
+              <div class="space-y-0.5">
+                <div class="flex items-center justify-between text-[11px]">
+                  <span class="text-slate-300 font-medium">Blur</span>
+                  <span id="val-wp-blur" class="font-bold text-purple-300 text-[10px]">3px</span>
+                </div>
+                <input 
+                  type="range" 
+                  id="slider-wp-blur" 
+                  min="0" 
+                  max="20" 
+                  value="3" 
+                  class="w-full accent-purple-500 h-1 bg-white/10 rounded-lg cursor-pointer"
+                />
               </div>
-              <input 
-                type="range" 
-                id="slider-wp-blur" 
-                min="0" 
-                max="20" 
-                value="0" 
-                class="w-full accent-purple-500 h-1.5 bg-white/10 rounded-lg cursor-pointer"
-              />
-            </div>
 
-            <!-- Slider 2: Dim / Darkness -->
-            <div class="p-3 rounded-2xl bg-white/[0.04] border border-white/[0.08] space-y-2">
-              <div class="flex items-center justify-between text-xs">
-                <span class="text-slate-300 font-medium">Darkness</span>
-                <span id="val-wp-dim" class="font-bold text-amber-300 text-[11px]">20%</span>
+              <!-- Slider 2: Darkness -->
+              <div class="space-y-0.5">
+                <div class="flex items-center justify-between text-[11px]">
+                  <span class="text-slate-300 font-medium">Darkness</span>
+                  <span id="val-wp-dim" class="font-bold text-amber-300 text-[10px]">40%</span>
+                </div>
+                <input 
+                  type="range" 
+                  id="slider-wp-dim" 
+                  min="0" 
+                  max="90" 
+                  value="40" 
+                  class="w-full accent-amber-500 h-1 bg-white/10 rounded-lg cursor-pointer"
+                />
               </div>
-              <input 
-                type="range" 
-                id="slider-wp-dim" 
-                min="0" 
-                max="90" 
-                value="20" 
-                class="w-full accent-amber-500 h-1.5 bg-white/10 rounded-lg cursor-pointer"
-              />
-            </div>
 
-            <!-- Slider 3: Pattern / Overlay -->
-            <div class="p-3 rounded-2xl bg-white/[0.04] border border-white/[0.08] space-y-2">
-              <div class="flex items-center justify-between text-xs">
-                <span class="text-slate-300 font-medium">Doodle Pattern</span>
-                <span id="val-wp-pattern" class="font-bold text-cyan-300 text-[11px]">15%</span>
+              <!-- Slider 3: Pattern -->
+              <div class="space-y-0.5">
+                <div class="flex items-center justify-between text-[11px]">
+                  <span class="text-slate-300 font-medium">Pattern</span>
+                  <span id="val-wp-pattern" class="font-bold text-cyan-300 text-[10px]">15%</span>
+                </div>
+                <input 
+                  type="range" 
+                  id="slider-wp-pattern" 
+                  min="0" 
+                  max="100" 
+                  value="15" 
+                  class="w-full accent-cyan-500 h-1 bg-white/10 rounded-lg cursor-pointer"
+                />
               </div>
-              <input 
-                type="range" 
-                id="slider-wp-pattern" 
-                min="0" 
-                max="100" 
-                value="15" 
-                class="w-full accent-cyan-500 h-1.5 bg-white/10 rounded-lg cursor-pointer"
-              />
             </div>
           </div>
         </div>
@@ -1015,24 +992,24 @@ const PRESET_SCENES = [
             <span class="text-[11px] text-[#8e98a8]">Select style</span>
           </div>
 
-          <input type="file" id="input-wp-gallery-file" accept="image/*" class="hidden" />
+          <input type="file" id="input-wp-file" accept="image/*" class="hidden" />
 
           <!-- Presets Grid Container -->
           <div id="wp-presets-container" class="space-y-4">
             <!-- Special Dynamic Tiles: Upload & Character Portrait -->
             <div>
               <div class="text-[11px] font-semibold text-slate-400 mb-2 uppercase tracking-wider">Dynamic & Custom</div>
-              <div class="grid grid-cols-2 sm:grid-cols-4 gap-2.5">
+              <div class="grid grid-cols-2 gap-2.5 mb-2.5">
                 <!-- Tile 1: Upload from Gallery -->
                 <button 
                   type="button" 
                   id="btn-wp-tile-upload"
-                  class="relative h-24 rounded-2xl border-2 border-dashed border-purple-500/40 hover:border-purple-400 bg-purple-950/20 hover:bg-purple-900/30 p-2 flex flex-col items-center justify-center gap-1.5 transition cursor-pointer active:scale-95 group text-center"
+                  class="relative h-24 rounded-2xl border-2 border-dashed border-amber-500/30 hover:border-amber-400/60 bg-white/[0.03] hover:bg-white/[0.06] p-2 flex flex-col items-center justify-center gap-1.5 transition cursor-pointer active:scale-95 group text-center"
                 >
-                  <div class="w-8 h-8 rounded-full bg-purple-500/20 flex items-center justify-center text-purple-400 group-hover:scale-110 transition">
+                  <div class="w-8 h-8 rounded-full bg-amber-400/10 border border-amber-400/20 flex items-center justify-center text-amber-300 group-hover:scale-110 transition">
                     <Upload class="w-4 h-4" />
                   </div>
-                  <span class="text-[11px] font-semibold text-purple-200">Upload Photo</span>
+                  <span class="text-xs font-medium text-gray-200">Upload Photo</span>
                 </button>
 
                 <!-- Tile 2: Character Portrait Atmospheric Wallpaper -->
@@ -1043,12 +1020,29 @@ const PRESET_SCENES = [
                   data-type="character-avatar"
                   data-value="/avatars/anime_girl.webp"
                 >
-                  <img id="wp-tile-char-img" src="/avatars/anime_girl.webp" alt="Character" class="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition" />
-                  <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/30 to-transparent"></div>
-                  <div class="relative z-10 flex items-center justify-between w-full">
+                  <img id="wp-tile-char-img" src="/avatars/anime_girl.webp" alt="Character" class="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition pointer-events-none" />
+                  <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/30 to-transparent pointer-events-none"></div>
+                  <span class="wp-tile-check w-4 h-4 rounded-full bg-amber-400 text-slate-950 flex items-center justify-center text-[10px] font-black hidden absolute top-1.5 right-1.5 z-20 shadow-sm pointer-events-none">✓</span>
+                  <div class="relative z-10 flex items-center justify-between w-full pointer-events-none">
                     <span class="text-[11px] font-semibold text-white drop-shadow">Char Portrait</span>
-                    <span class="wp-tile-check w-4 h-4 rounded-full bg-amber-500 text-slate-950 flex items-center justify-center text-[10px] font-black hidden">✓</span>
                   </div>
+                </button>
+              </div>
+
+              <!-- Compact Custom URL Input -->
+              <div class="flex gap-2">
+                <input 
+                  type="text" 
+                  id="input-wp-custom-val" 
+                  placeholder="Paste image URL (https://...) or CSS gradient" 
+                  class="flex-1 px-3 py-2 rounded-xl bg-white/[0.04] border border-white/10 text-xs text-white placeholder-slate-500 focus:outline-none focus:border-amber-400/60 transition"
+                />
+                <button 
+                  type="button" 
+                  id="btn-apply-custom-val" 
+                  class="px-3.5 py-2 rounded-xl bg-white/[0.08] hover:bg-amber-400 hover:text-slate-950 border border-white/10 text-xs font-bold text-slate-200 transition cursor-pointer"
+                >
+                  Load
                 </button>
               </div>
             </div>
@@ -1056,33 +1050,30 @@ const PRESET_SCENES = [
             <!-- Row 1: Rich Dark Gradients -->
             <div>
               <div class="text-[11px] font-semibold text-slate-400 mb-2 uppercase tracking-wider">Rich Dark Gradients</div>
-              <div class="grid grid-cols-2 sm:grid-cols-3 gap-2.5" id="wp-grid-gradients">
+              <div class="grid grid-cols-3 gap-2.5" id="wp-grid-gradients">
                 {PRESET_GRADIENTS.map(g => (
                   <button 
                     type="button" 
-                    class="wp-preset-tile group relative h-20 rounded-xl overflow-hidden border border-white/10 hover:border-purple-400 transition-all p-2.5 flex flex-col justify-between text-left active:scale-95 cursor-pointer"
+                    class="wp-preset-tile group relative h-20 rounded-xl overflow-hidden border border-white/10 hover:border-amber-400/50 transition-all p-2.5 flex flex-col justify-end text-left active:scale-95 cursor-pointer"
                     data-type="gradient"
                     data-value={g.value}
                     style={`background: ${g.value};`}
                   >
-                    <div class="flex items-center justify-between w-full relative z-10 pointer-events-none">
-                      <span class="w-3 h-3 rounded-full border border-white/30 shadow-xs" style={`background-color: ${g.dot};`}></span>
-                      <span class="wp-tile-check w-4 h-4 rounded-full bg-amber-400 text-slate-950 flex items-center justify-center font-bold text-[10px] hidden">✓</span>
-                    </div>
+                    <span class="wp-tile-check w-4 h-4 rounded-full bg-amber-400 text-slate-950 flex items-center justify-center font-black text-[10px] hidden absolute top-1.5 right-1.5 z-20 shadow-sm pointer-events-none">✓</span>
                     <span class="text-[10px] font-semibold text-white truncate relative z-10 drop-shadow pointer-events-none">{g.name}</span>
                   </button>
                 ))}
               </div>
             </div>
 
-            <!-- Row 2: Roleplay Scenes -->
+            <!-- Row 2: Atmospheric Roleplay Scenes -->
             <div>
               <div class="text-[11px] font-semibold text-slate-400 mb-2 uppercase tracking-wider">Atmospheric Roleplay Scenes</div>
-              <div class="grid grid-cols-2 sm:grid-cols-4 gap-2.5" id="wp-grid-scenes">
+              <div class="grid grid-cols-2 sm:grid-cols-3 gap-2.5" id="wp-grid-scenes">
                 {PRESET_SCENES.map(s => (
                   <button 
                     type="button" 
-                    class="wp-preset-tile group relative h-24 rounded-xl overflow-hidden border border-white/10 hover:border-purple-400 transition-all p-2 flex flex-col justify-between text-left active:scale-95 bg-slate-900 cursor-pointer"
+                    class="wp-preset-tile group relative h-24 rounded-xl overflow-hidden border border-white/10 hover:border-amber-400/50 transition-all p-2 flex flex-col justify-end text-left active:scale-95 bg-slate-900 cursor-pointer"
                     data-type="preset-scene"
                     data-value={s.value}
                   >
@@ -1093,35 +1084,10 @@ const PRESET_SCENES = [
                       class="absolute inset-0 w-full h-full object-cover transition-transform duration-500 group-hover:scale-105 pointer-events-none"
                     />
                     <div class="absolute inset-0 bg-gradient-to-t from-black/85 via-black/25 to-transparent pointer-events-none"></div>
-                    <div class="flex items-center justify-between w-full relative z-10 pointer-events-none">
-                      <span class="text-xs">{s.icon}</span>
-                      <span class="wp-tile-check w-4 h-4 rounded-full bg-amber-400 text-slate-950 flex items-center justify-center font-bold text-[10px] hidden">✓</span>
-                    </div>
+                    <span class="wp-tile-check w-4 h-4 rounded-full bg-amber-400 text-slate-950 flex items-center justify-center font-black text-[10px] hidden absolute top-1.5 right-1.5 z-20 shadow-sm pointer-events-none">✓</span>
                     <span class="text-[10px] font-semibold text-white truncate relative z-10 drop-shadow pointer-events-none">{s.name}</span>
                   </button>
                 ))}
-              </div>
-            </div>
-          </div>
-
-          <!-- Custom Mode Container (URL / Color code / Uploaded image preview) -->
-          <div id="wp-custom-container" class="hidden space-y-4">
-            <div class="space-y-2">
-              <label class="text-xs font-semibold text-slate-300">Custom Image URL or CSS Gradient</label>
-              <div class="flex gap-2">
-                <input 
-                  type="text" 
-                  id="input-wp-custom-val" 
-                  placeholder="https://images.unsplash.com/... or linear-gradient(...)" 
-                  class="flex-1 px-3.5 py-2.5 rounded-xl bg-white/[0.05] border border-white/10 text-xs text-white placeholder-slate-500 focus:outline-none focus:border-purple-500/60"
-                />
-                <button 
-                  type="button" 
-                  id="btn-apply-custom-val" 
-                  class="px-4 py-2 rounded-xl bg-purple-600 hover:bg-purple-500 text-xs font-bold text-white transition cursor-pointer"
-                >
-                  Load
-                </button>
               </div>
             </div>
           </div>
@@ -1169,15 +1135,18 @@ const PRESET_SCENES = [
             </div>
           </div>
 
-          <!-- Target Character Dropdown (Visible only if Specific Chat selected) -->
-          <div id="wp-specific-char-selector" class="hidden space-y-1.5 pt-1">
-            <label class="text-[11px] font-semibold text-slate-400">Select Target Character / Chat</label>
-            <select 
-              id="select-wp-character" 
-              class="w-full px-3 py-2 rounded-xl bg-[#0e121d] border border-white/10 text-xs text-white focus:outline-none focus:border-purple-500/60"
-            >
-              <!-- Populated dynamically via JS -->
-            </select>
+          <!-- Target Character Pill Selector (Revealed when Specific Chat selected) -->
+          <div id="wp-specific-char-selector" class="hidden space-y-2 pt-2 transition-all duration-300">
+            <div class="flex items-center justify-between">
+              <label class="text-[11px] font-semibold text-slate-300 flex items-center gap-1.5">
+                <span>Target Chat:</span>
+                <span id="wp-selected-char-name" class="text-amber-400 font-bold">Helen & Anna</span>
+              </label>
+              <span class="text-[10px] text-slate-400">Select character to customize</span>
+            </div>
+            <div id="wp-char-pills-container" class="flex items-center gap-2 overflow-x-auto py-1 scrollbar-none">
+              <!-- Dynamically populated character pills -->
+            </div>
           </div>
 
           <!-- Full-width Glowing Gold Button: Apply Wallpaper -->
@@ -4070,16 +4039,16 @@ const PRESET_SCENES = [
     }
 
     let draftWpConfig: WallpaperStudioConfig = {
-      type: 'gradient',
-      value: 'linear-gradient(135deg, #0a1838 0%, #163668 50%, #060e22 100%)',
-      blur: 0,
-      dimness: 20,
+      type: 'preset-scene',
+      value: '/wallpapers/fantasy_library.webp',
+      blur: 3,
+      dimness: 40,
       patternOpacity: 15,
       sparkleOverlay: false
     };
 
     let draftScope: 'all' | 'specific' = 'all';
-    let draftTargetCharId: string = '';
+    let draftTargetCharId: string = 'helen';
     let studioInitialized = false;
 
     function updateLivePreviewDOM() {
@@ -4090,15 +4059,22 @@ const PRESET_SCENES = [
         const spkEl = document.getElementById('wp-preview-sparkles');
         if (!bgEl || !dimEl) return;
 
-        const isImage = draftWpConfig.type === 'custom-image' || draftWpConfig.type === 'preset-scene' || draftWpConfig.type === 'character-avatar' || (typeof draftWpConfig.value === 'string' && (draftWpConfig.value.startsWith('http') || draftWpConfig.value.startsWith('data:') || draftWpConfig.value.startsWith('/wallpapers/')));
+        const isImage = draftWpConfig.type === 'custom-image' || draftWpConfig.type === 'preset-scene' || draftWpConfig.type === 'character-avatar' || (typeof draftWpConfig.value === 'string' && (draftWpConfig.value.startsWith('http') || draftWpConfig.value.startsWith('data:') || draftWpConfig.value.startsWith('/')));
 
         if (isImage) {
-          bgEl.style.background = `url("${draftWpConfig.value}") center/cover no-repeat`;
+          bgEl.style.removeProperty('background');
+          bgEl.style.backgroundImage = `url("${draftWpConfig.value}")`;
+          bgEl.style.backgroundSize = 'cover';
+          bgEl.style.backgroundPosition = 'center';
+          bgEl.style.backgroundRepeat = 'no-repeat';
+          bgEl.style.backgroundColor = 'transparent';
         } else {
+          bgEl.style.removeProperty('background');
+          bgEl.style.backgroundImage = 'none';
           bgEl.style.background = draftWpConfig.value;
         }
 
-        const blurVal = draftWpConfig.blur ?? 0;
+        const blurVal = draftWpConfig.blur ?? 3;
         if (blurVal > 0) {
           bgEl.style.filter = `blur(${blurVal}px)`;
           bgEl.style.transform = 'scale(1.05)';
@@ -4107,7 +4083,7 @@ const PRESET_SCENES = [
           bgEl.style.transform = 'none';
         }
 
-        const dimVal = draftWpConfig.dimness ?? 20;
+        const dimVal = draftWpConfig.dimness ?? 40;
         dimEl.style.opacity = (dimVal / 100).toString();
 
         const patVal = draftWpConfig.patternOpacity ?? 15;
@@ -4134,16 +4110,16 @@ const PRESET_SCENES = [
 
     function renderPresetTiles() {
       try {
-        const allTiles = document.querySelectorAll('.wp-preset-tile');
+        const allTiles = document.querySelectorAll('.wp-preset-tile, .wp-tile-btn');
         allTiles.forEach(tile => {
           const val = tile.getAttribute('data-value');
           const isSelected = draftWpConfig.value === val;
           
           if (isSelected) {
-            tile.classList.add('border-purple-400', 'ring-2', 'ring-purple-400');
-            tile.classList.remove('border-white/10');
+            tile.classList.add('border-amber-400', 'ring-2', 'ring-amber-400', 'shadow-[0_0_15px_rgba(251,191,36,0.25)]');
+            tile.classList.remove('border-white/10', 'border-purple-400', 'ring-purple-400');
           } else {
-            tile.classList.remove('border-purple-400', 'ring-2', 'ring-purple-400');
+            tile.classList.remove('border-amber-400', 'ring-2', 'ring-amber-400', 'shadow-[0_0_15px_rgba(251,191,36,0.25)]', 'border-purple-400', 'ring-purple-400');
             tile.classList.add('border-white/10');
           }
 
@@ -4155,6 +4131,78 @@ const PRESET_SCENES = [
       } catch (err) {
         console.error('[WallpaperStudio] renderPresetTiles error:', err);
       }
+    }
+
+    function renderCharacterPills() {
+      const container = document.getElementById('wp-char-pills-container');
+      if (!container) return;
+      container.innerHTML = '';
+
+      let charList: Array<{ id: string; name: string; avatar?: string }> = [];
+      try {
+        const customChars = JSON.parse(localStorage.getItem('aetheria_custom_characters') || '[]');
+        if (Array.isArray(customChars) && customChars.length > 0) {
+          charList = customChars.map(c => ({
+            id: c.id,
+            name: c.name || c.id,
+            avatar: c.avatar || '/avatars/anime_girl.webp'
+          }));
+        }
+      } catch(e) {}
+
+      if (charList.length === 0) {
+        charList = [
+          { id: 'helen', name: 'Helen & Anna', avatar: '/avatars/anime_girl.webp' },
+          { id: 'seraphina', name: 'Seraphina', avatar: '/avatars/anime_girl.webp' },
+          { id: 'kaelen', name: 'Kaelen', avatar: '/avatars/anime_girl.webp' },
+          { id: 'lyra', name: 'Lyra', avatar: '/avatars/anime_girl.webp' }
+        ];
+      }
+
+      if (!draftTargetCharId || !charList.some(c => c.id === draftTargetCharId)) {
+        draftTargetCharId = charList[0].id;
+      }
+
+      const selectedNameLabel = document.getElementById('wp-selected-char-name');
+      if (selectedNameLabel) {
+        const active = charList.find(c => c.id === draftTargetCharId);
+        if (active) selectedNameLabel.textContent = active.name;
+      }
+
+      charList.forEach(c => {
+        const isSelected = draftTargetCharId === c.id;
+        const pill = document.createElement('button');
+        pill.type = 'button';
+        pill.className = `flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-semibold shrink-0 transition-all cursor-pointer border ${
+          isSelected 
+            ? 'bg-amber-400/20 border-amber-400 text-amber-300 ring-1 ring-amber-400/40 shadow-sm' 
+            : 'bg-white/[0.04] border-white/10 text-slate-300 hover:text-white hover:bg-white/[0.08]'
+        }`;
+        pill.innerHTML = `
+          ${isSelected ? '<span class="text-amber-400 text-[11px] font-black">✓</span>' : ''}
+          <img src="${c.avatar || '/avatars/anime_girl.webp'}" class="w-4 h-4 rounded-full object-cover" onerror="this.src='/avatars/anime_girl.webp'" />
+          <span>${c.name}</span>
+        `;
+        pill.addEventListener('click', () => {
+          draftTargetCharId = c.id;
+          renderCharacterPills();
+          const charConfig = (window as any).AetheriaTheme?.getWallpaperConfig?.(c.id);
+          if (charConfig && charConfig.value) {
+            draftWpConfig = { ...charConfig };
+            const sliderBlur = document.getElementById('slider-wp-blur') as HTMLInputElement | null;
+            if (sliderBlur) sliderBlur.value = (draftWpConfig.blur ?? 3).toString();
+            const sliderDim = document.getElementById('slider-wp-dim') as HTMLInputElement | null;
+            if (sliderDim) sliderDim.value = (draftWpConfig.dimness ?? 40).toString();
+            const sliderPat = document.getElementById('slider-wp-pattern') as HTMLInputElement | null;
+            if (sliderPat) sliderPat.value = (draftWpConfig.patternOpacity ?? 15).toString();
+            const toggleSparkles = document.getElementById('toggle-wp-sparkles') as HTMLInputElement | null;
+            if (toggleSparkles) toggleSparkles.checked = Boolean(draftWpConfig.sparkleOverlay);
+            renderPresetTiles();
+            updateLivePreviewDOM();
+          }
+        });
+        container.appendChild(pill);
+      });
     }
 
     function setupStudioEventListeners() {
@@ -4169,30 +4217,6 @@ const PRESET_SCENES = [
           renderPresetTiles();
           updateLivePreviewDOM();
         });
-      });
-
-      // Tabs: Presets vs Custom
-      const btnModePresets = document.getElementById('btn-wp-mode-presets');
-      const btnModeCustom = document.getElementById('btn-wp-mode-custom');
-      const presetsContainer = document.getElementById('wp-presets-container');
-      const customContainer = document.getElementById('wp-custom-container');
-
-      btnModePresets?.addEventListener('click', () => {
-        btnModePresets.classList.add('bg-purple-600', 'text-white', 'shadow-xs');
-        btnModePresets.classList.remove('text-slate-400');
-        btnModeCustom?.classList.remove('bg-purple-600', 'text-white', 'shadow-xs');
-        btnModeCustom?.classList.add('text-slate-400');
-        presetsContainer?.classList.remove('hidden');
-        customContainer?.classList.add('hidden');
-      });
-
-      btnModeCustom?.addEventListener('click', () => {
-        btnModeCustom.classList.add('bg-purple-600', 'text-white', 'shadow-xs');
-        btnModeCustom.classList.remove('text-slate-400');
-        btnModePresets?.classList.remove('bg-purple-600', 'text-white', 'shadow-xs');
-        btnModePresets?.classList.add('text-slate-400');
-        presetsContainer?.classList.add('hidden');
-        customContainer?.classList.remove('hidden');
       });
 
       // Custom URL load button
@@ -4263,7 +4287,6 @@ const PRESET_SCENES = [
       const btnScopeAll = document.getElementById('btn-wp-scope-all');
       const btnScopeSpecific = document.getElementById('btn-wp-scope-specific');
       const specificCharSection = document.getElementById('wp-specific-char-selector');
-      const selectChar = document.getElementById('select-wp-character') as HTMLSelectElement | null;
 
       btnScopeAll?.addEventListener('click', () => {
         draftScope = 'all';
@@ -4281,19 +4304,16 @@ const PRESET_SCENES = [
         btnScopeAll?.classList.remove('bg-purple-600', 'text-white', 'shadow-sm');
         btnScopeAll?.classList.add('text-slate-400');
         specificCharSection?.classList.remove('hidden');
-      });
-
-      selectChar?.addEventListener('change', () => {
-        draftTargetCharId = selectChar.value;
+        renderCharacterPills();
       });
 
       // Reset Button
       document.getElementById('btn-reset-wallpaper')?.addEventListener('click', () => {
         draftWpConfig = {
-          type: 'gradient',
-          value: 'linear-gradient(135deg, #0a1838 0%, #163668 50%, #060e22 100%)',
-          blur: 0,
-          dimness: 20,
+          type: 'preset-scene',
+          value: '/wallpapers/fantasy_library.webp',
+          blur: 3,
+          dimness: 40,
           patternOpacity: 15,
           sparkleOverlay: false
         };
@@ -4312,7 +4332,7 @@ const PRESET_SCENES = [
         const sliderBlur = document.getElementById('slider-wp-blur') as HTMLInputElement | null;
         if (sliderBlur) draftWpConfig.blur = Number(sliderBlur.value) || 0;
         const sliderDim = document.getElementById('slider-wp-dim') as HTMLInputElement | null;
-        if (sliderDim) draftWpConfig.dimness = Number(sliderDim.value) ?? 20;
+        if (sliderDim) draftWpConfig.dimness = Number(sliderDim.value) ?? 40;
         const sliderPat = document.getElementById('slider-wp-pattern') as HTMLInputElement | null;
         if (sliderPat) draftWpConfig.patternOpacity = Number(sliderPat.value) ?? 15;
         const toggleSparkles = document.getElementById('toggle-wp-sparkles') as HTMLInputElement | null;
@@ -4334,12 +4354,21 @@ const PRESET_SCENES = [
         const currentConfig = (window as any).AetheriaTheme?.getWallpaperConfig?.(draftScope === 'specific' ? draftTargetCharId : null);
         if (currentConfig && typeof currentConfig === 'object') {
           draftWpConfig = {
-            type: currentConfig.type || 'gradient',
-            value: currentConfig.value || 'linear-gradient(135deg, #0a1838 0%, #163668 50%, #060e22 100%)',
-            blur: typeof currentConfig.blur === 'number' ? currentConfig.blur : 0,
-            dimness: typeof currentConfig.dimness === 'number' ? currentConfig.dimness : 20,
+            type: currentConfig.type || 'preset-scene',
+            value: currentConfig.value || '/wallpapers/fantasy_library.webp',
+            blur: typeof currentConfig.blur === 'number' ? currentConfig.blur : 3,
+            dimness: typeof currentConfig.dimness === 'number' ? currentConfig.dimness : 40,
             patternOpacity: typeof currentConfig.patternOpacity === 'number' ? currentConfig.patternOpacity : 15,
             sparkleOverlay: Boolean(currentConfig.sparkleOverlay)
+          };
+        } else {
+          draftWpConfig = {
+            type: 'preset-scene',
+            value: '/wallpapers/fantasy_library.webp',
+            blur: 3,
+            dimness: 40,
+            patternOpacity: 15,
+            sparkleOverlay: false
           };
         }
 
@@ -4356,34 +4385,15 @@ const PRESET_SCENES = [
         if (charImg) charImg.src = activeAvatar;
         if (charTile) charTile.setAttribute('data-value', activeAvatar);
 
-        // Populate Character Select Dropdown
-        const selectChar = document.getElementById('select-wp-character') as HTMLSelectElement | null;
-        if (selectChar) {
-          selectChar.innerHTML = '';
-          try {
-            const customChars = JSON.parse(localStorage.getItem('aetheria_custom_characters') || '[]');
-            if (customChars.length === 0) {
-              selectChar.innerHTML = '<option value="helen">Helen & Anna (Default)</option>';
-            } else {
-              customChars.forEach((c: any) => {
-                const opt = document.createElement('option');
-                opt.value = c.id;
-                opt.textContent = c.name || c.id;
-                selectChar.appendChild(opt);
-              });
-            }
-            draftTargetCharId = selectChar.value;
-          } catch(e) {
-            selectChar.innerHTML = '<option value="helen">Helen & Anna (Default)</option>';
-          }
-        }
+        // Render character pills
+        renderCharacterPills();
 
         // Sync sliders safely with fallback defaults
         const sliderBlur = document.getElementById('slider-wp-blur') as HTMLInputElement | null;
-        if (sliderBlur) sliderBlur.value = (draftWpConfig.blur ?? 0).toString();
+        if (sliderBlur) sliderBlur.value = (draftWpConfig.blur ?? 3).toString();
 
         const sliderDim = document.getElementById('slider-wp-dim') as HTMLInputElement | null;
-        if (sliderDim) sliderDim.value = (draftWpConfig.dimness ?? 20).toString();
+        if (sliderDim) sliderDim.value = (draftWpConfig.dimness ?? 40).toString();
 
         const sliderPat = document.getElementById('slider-wp-pattern') as HTMLInputElement | null;
         if (sliderPat) sliderPat.value = (draftWpConfig.patternOpacity ?? 15).toString();
