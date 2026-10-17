@@ -442,16 +442,20 @@ import {
       <!-- ========================================== -->
       <div id="view-personas" class="hidden space-y-4 pt-2 sm:pt-3">
         
-        <!-- Header Bar: Back to Settings + Persona Counter (Clean & Minimal) -->
-        <div class="flex items-center justify-between pb-1 border-b border-white/[0.06]">
+        <!-- Sticky Header Bar: Back to Settings + Persona Counter -->
+        <div class="sticky top-14 z-20 bg-[#07080d]/95 backdrop-blur-md py-2.5 px-1 border-b border-white/[0.08] flex items-center justify-between">
           <button 
             type="button" 
             id="btn-back-from-personas"
-            class="flex items-center gap-2 text-white/90 hover:text-white font-medium text-sm py-1.5 px-2 rounded-xl hover:bg-white/[0.05] transition cursor-pointer"
+            class="flex items-center gap-1.5 text-white/90 hover:text-white font-medium text-xs sm:text-sm py-1.5 px-3 rounded-xl bg-white/[0.06] hover:bg-white/[0.1] border border-white/10 transition cursor-pointer active:scale-95 shadow-sm"
           >
-            <ArrowLeft class="w-5 h-5" />
+            <ArrowLeft class="w-4 h-4 text-purple-400" />
             <span>Settings</span>
           </button>
+
+          <div class="text-center">
+            <h2 class="text-sm sm:text-base font-bold text-white tracking-tight">Chat Personas</h2>
+          </div>
 
           <span id="personas-count-badge" class="px-2.5 py-1 rounded-full bg-purple-500/10 border border-purple-500/30 text-purple-300 text-[11px] font-semibold">
             1 Persona
@@ -2309,7 +2313,11 @@ import {
 
   function normalizePersona(raw: any, index: number): Persona {
     const id = raw.id || ('p_' + Date.now() + '_' + index);
-    const name = (raw.name || '').trim();
+    
+    // Cleanse legacy VIP badge artifacts from persona names (e.g., 'Hossein 👑' -> 'Hossein')
+    let name = (raw.name || '').trim().replace(/👑|⭐|⚡|✨|💎/gu, '').trim();
+    if (!name) name = (raw.name || '').trim() || 'Hossein';
+
     const avatar = raw.avatar || '';
     const age = (raw.age || '').trim();
     const pronouns = (raw.pronouns || '').trim();
@@ -2318,10 +2326,6 @@ import {
     const isActive = (raw.isActive !== undefined) ? !!raw.isActive : (raw.isDefault !== undefined ? !!raw.isDefault : false);
     const boundChatIds = Array.isArray(raw.boundChatIds) ? raw.boundChatIds : [];
     const tokenCount = estimateTokens(about + ' ' + additionalInstructions);
-    const nameColor = raw.nameColor || '#a855f7';
-    const avatarBorderEffect = raw.avatarBorderEffect || 'none';
-    const nameIcon = raw.nameIcon !== undefined ? raw.nameIcon : '';
-    const avatarGlowColor = raw.avatarGlowColor || '#a855f7';
 
     return {
       id,
@@ -2336,11 +2340,7 @@ import {
       tokenCount,
       bio: about,
       directives: additionalInstructions,
-      isDefault: isActive,
-      nameColor,
-      avatarBorderEffect,
-      nameIcon,
-      avatarGlowColor
+      isDefault: isActive
     };
   }
 
@@ -2378,6 +2378,9 @@ import {
 
     const activeIdx = personas.findIndex(p => p.isActive);
     activeCardIndex = activeIdx >= 0 ? activeIdx : 0;
+    
+    // Save cleaned personas immediately to overwrite any legacy badges in localStorage
+    savePersonas();
   }
 
   function getAccountUser() {
@@ -2400,6 +2403,10 @@ import {
       p.directives = p.additionalInstructions;
       p.isDefault = p.isActive;
       p.tokenCount = estimateTokens((p.about || '') + ' ' + (p.additionalInstructions || ''));
+      delete (p as any).nameColor;
+      delete (p as any).nameIcon;
+      delete (p as any).avatarBorderEffect;
+      delete (p as any).avatarGlowColor;
     });
 
     localStorage.setItem(STORAGE_KEY_PERSONAS, JSON.stringify(personas));
@@ -2582,18 +2589,7 @@ import {
 
       const tokens = p.tokenCount || estimateTokens((p.about || '') + ' ' + (p.additionalInstructions || ''));
 
-      const cardColor = p.nameColor || '#a855f7';
-      const cardIcon = p.nameIcon || '';
-      const cardBorderEffect = p.avatarBorderEffect || 'none';
-      const isCardGrad = cardColor.includes('gradient');
-      const cardNameStyle = isCardGrad
-        ? `background-image: ${cardColor}; -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent; color: transparent; display: inline-block;`
-        : `color: ${cardColor}; display: inline-block;`;
-      
-      let cardBorderClass = 'border-2 ' + (p.isActive ? (isDay ? 'border-purple-500 ring-2 ring-purple-400/30' : 'border-purple-400 ring-2 ring-purple-500/30 gilded-avatar-glow') : (isDay ? 'border-slate-300' : 'border-purple-500/30'));
-      if (cardBorderEffect === 'glow') cardBorderClass = 'avatar-border-glow';
-      else if (cardBorderEffect === 'dual-gradient') cardBorderClass = 'avatar-border-dual-gradient';
-      else if (cardBorderEffect === 'dynamic-sparkle') cardBorderClass = 'avatar-border-dynamic-sparkle';
+      const cardBorderClass = 'border-2 ' + (p.isActive ? (isDay ? 'border-purple-500 ring-2 ring-purple-400/40' : 'border-purple-400 ring-2 ring-purple-500/40') : (isDay ? 'border-slate-300' : 'border-purple-500/30'));
 
       cardsHtml += `
         <div 
@@ -2624,7 +2620,7 @@ import {
 
               <!-- Center Avatar & Identity -->
               <div class="flex flex-col items-center text-center my-auto py-1 z-10">
-                <div class="relative w-24 h-24 sm:w-26 sm:h-26 rounded-full overflow-hidden ${cardBorderClass} ${isDay ? 'bg-slate-100' : 'bg-black/60'} flex items-center justify-center mb-2 transition" style="--avatar-glow-color: ${p.avatarGlowColor || '#a855f7'}; --avatar-border-color: ${p.avatarGlowColor || '#a855f7'};">
+                <div class="relative w-24 h-24 sm:w-26 sm:h-26 rounded-full overflow-hidden ${cardBorderClass} ${isDay ? 'bg-slate-100' : 'bg-black/60'} flex items-center justify-center mb-2 transition">
                   ${p.avatar ? `
                     <img src="${p.avatar}" alt="${displayName}" class="w-full h-full object-cover" />
                   ` : `
@@ -2634,9 +2630,9 @@ import {
                   `}
                 </div>
 
-                <!-- Name & ACTIVE Badge -->
+                <!-- Name & ACTIVE Badge (Pure Roleplay Identity) -->
                 <div class="flex items-center justify-center gap-2 mt-1">
-                  <h2 class="text-xl sm:text-2xl font-bold tracking-tight truncate max-w-[200px] user-name-styled" style="${cardNameStyle}"><span>${displayName}</span>${renderBadgeHtml(cardIcon, 'w-5 h-5 inline-block object-contain align-middle ml-1 shrink-0')}</h2>
+                  <h2 class="text-xl sm:text-2xl font-bold tracking-tight truncate max-w-[220px] ${isDay ? 'text-slate-900' : 'text-white'}">${displayName}</h2>
                   ${p.isActive ? `
                     <span class="px-2.5 py-0.5 rounded-full border ${isDay ? 'border-purple-300 bg-purple-100 text-purple-700' : 'border-purple-400/80 bg-purple-950/80 text-purple-300 shadow-[0_0_8px_var(--theme-accent-glow,rgba(147,51,234,0.3))]'} text-[10px] font-bold tracking-wider uppercase">
                       ACTIVE
@@ -3857,6 +3853,13 @@ import {
     document.getElementById('btn-back-from-privacy')?.addEventListener('click', () => showView('view-hub'));
     document.getElementById('btn-back-from-devices')?.addEventListener('click', () => showView('view-hub'));
     document.getElementById('btn-back-from-power')?.addEventListener('click', () => showView('view-hub'));
+
+    // Ensure Bottom Navigation "Profile" button always navigates to main view-hub
+    document.getElementById('nav-btn-persona')?.addEventListener('click', (e) => {
+      e.preventDefault();
+      history.pushState(null, '', '/profile');
+      showView('view-hub');
+    });
 
     // ==========================================
     // POWER SAVING & PERFORMANCE CONTROLLER
