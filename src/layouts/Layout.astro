@@ -907,30 +907,45 @@ const {
             root.removeAttribute('data-chat-density');
           }
 
-          // Chat Stream Wallpaper & Background (Adaptive Day / Dark)
-          const isCustomImage = typeof theme.chatWallpaper === 'string' && (theme.chatWallpaper.startsWith('http') || theme.chatWallpaper.startsWith('data:'));
+          // Chat Stream Wallpaper & Background (Resolved WallpaperConfig Engine)
+          let activeCharId = getActiveCharId();
+          let wpConfig = null;
+          try {
+            const charRaw = activeCharId ? localStorage.getItem('aetheria_wallpaper_config_' + activeCharId) : null;
+            const globalRaw = localStorage.getItem('aetheria_wallpaper_config');
+            wpConfig = charRaw ? JSON.parse(charRaw) : (globalRaw ? JSON.parse(globalRaw) : null);
+          } catch(e) {}
+
+          const wpType = wpConfig?.type || '';
+          const isCustomImage = wpConfig 
+            ? (wpType === 'custom-image' || wpType === 'preset-scene' || wpType === 'character-avatar' || (typeof wpConfig.value === 'string' && (wpConfig.value.startsWith('http') || wpConfig.value.startsWith('data:'))))
+            : (typeof theme.chatWallpaper === 'string' && (theme.chatWallpaper.startsWith('http') || theme.chatWallpaper.startsWith('data:')));
+
           const dayGradient = `linear-gradient(180deg, #f8fafc 0%, rgba(${rgb}, 0.04) 50%, #f1f5f9 100%)`;
-          const darkGradient = theme.chatWallpaper || theme.chatBg || 'linear-gradient(180deg, #050811 0%, #0d122b 50%, #04050a 100%)';
-          const wpVal = isDay ? (isCustomImage ? theme.chatWallpaper : dayGradient) : darkGradient;
+          const darkGradient = (wpConfig && wpConfig.value) ? wpConfig.value : (theme.chatWallpaper || theme.chatBg || 'linear-gradient(180deg, #050811 0%, #0d122b 50%, #04050a 100%)');
+          const wpVal = isDay ? (isCustomImage ? (wpConfig?.value || theme.chatWallpaper) : dayGradient) : darkGradient;
 
           root.style.setProperty('--theme-chat-bg', wpVal);
           root.style.setProperty('--theme-chat-wallpaper', isCustomImage ? `url("${wpVal}")` : wpVal);
 
-          // Blur & Dimmer
-          const blurVal = theme.chatBlur ? 'blur(12px)' : 'none';
+          // Blur & Dimmer (Supported from Studio Sliders)
+          const blurPx = wpConfig && typeof wpConfig.blur === 'number' ? wpConfig.blur : (typeof theme.chatBlur === 'number' ? theme.chatBlur : (theme.chatBlur ? 12 : 0));
+          const blurVal = blurPx > 0 ? `blur(${blurPx}px)` : 'none';
           root.style.setProperty('--theme-chat-blur', blurVal);
 
           const dimVal = isDay 
-            ? (isCustomImage ? Math.min(Number(theme.chatDim !== undefined ? theme.chatDim : 0.08), 0.12) : 0) 
-            : (theme.chatDim !== undefined ? theme.chatDim : 0.20);
+            ? (isCustomImage ? Math.min(Number(wpConfig && typeof wpConfig.dimness === 'number' ? (wpConfig.dimness / 100) : (theme.chatDim !== undefined ? theme.chatDim : 0.08)), 0.25) : 0) 
+            : (wpConfig && typeof wpConfig.dimness === 'number' ? (wpConfig.dimness / 100) : (theme.chatDim !== undefined ? theme.chatDim : 0.20));
           root.style.setProperty('--theme-chat-dim', dimVal.toString());
 
           // Doodle Pattern (Subtle & Inverted in Day Mode)
           const patId = theme.chatPatternId || (theme.id ? ('pattern-' + theme.id.replace('-mode', '').replace('-corner', '').replace('-luxury', '')) : 'pattern-gamer');
           const patObj = DOODLE_PATTERNS[patId] || DOODLE_PATTERNS['pattern-gamer'] || DOODLE_PATTERNS['none'];
-          const patOpacity = isDay 
-            ? (theme.chatPatternOpacity !== undefined ? Math.min(Number(theme.chatPatternOpacity) * 0.5, 0.10) : 0.07) 
-            : (theme.chatPatternOpacity !== undefined ? theme.chatPatternOpacity : 0.16);
+          const patOpacity = wpConfig && typeof wpConfig.patternOpacity === 'number'
+            ? (wpConfig.patternOpacity / 100)
+            : (isDay 
+                ? (theme.chatPatternOpacity !== undefined ? Math.min(Number(theme.chatPatternOpacity) * 0.5, 0.10) : 0.07) 
+                : (theme.chatPatternOpacity !== undefined ? theme.chatPatternOpacity : 0.16));
 
           root.style.setProperty('--theme-chat-pattern', patObj.pattern);
           root.style.setProperty('--theme-chat-pattern-size', patObj.patternSize);
@@ -960,12 +975,30 @@ const {
               imgLayer.style.backgroundPosition = '';
             }
             imgLayer.style.filter = blurVal;
+            imgLayer.style.transform = blurPx > 0 ? 'scale(1.05)' : 'scale(1.0)';
           }
 
           const dimLayer = document.getElementById('chat-wallpaper-dimmer');
           if (dimLayer) {
             dimLayer.setAttribute('data-has-custom-image', isCustomImage ? 'true' : 'false');
             dimLayer.style.opacity = dimVal.toString();
+          }
+
+          // Sparkle particles overlay toggle
+          const sparkleCanvas = document.getElementById('chat-wallpaper-sparkles');
+          const isSparkleActive = Boolean(wpConfig?.sparkleOverlay && !isOled && !document.documentElement.classList.contains('power-saving-disable-glows'));
+          if (sparkleCanvas) {
+            if (isSparkleActive) {
+              sparkleCanvas.classList.remove('hidden');
+              if (typeof (window as any).__initChatSparkles === 'function') {
+                (window as any).__initChatSparkles(sparkleCanvas);
+              }
+            } else {
+              sparkleCanvas.classList.add('hidden');
+              if (typeof (window as any).__stopChatSparkles === 'function') {
+                (window as any).__stopChatSparkles();
+              }
+            }
           }
 
           // Force Pure Black & Hide Wallpaper/Pattern when OLED is active
@@ -1024,6 +1057,73 @@ const {
           }
         }
 
+        // Dynamic Atmospheric Sparkles Engine
+        let sparklesRafId = 0;
+        let sparklesParticles = [];
+
+        function initChatSparkles(canvas) {
+          if (!canvas) return;
+          const ctx = canvas.getContext('2d');
+          if (!ctx) return;
+          cancelAnimationFrame(sparklesRafId);
+
+          canvas.width = canvas.offsetWidth || 300;
+          canvas.height = canvas.offsetHeight || 400;
+
+          sparklesParticles = [];
+          const count = 18;
+          for (let i = 0; i < count; i++) {
+            sparklesParticles.push({
+              x: Math.random() * (canvas.width || 300),
+              y: Math.random() * (canvas.height || 400),
+              size: Math.random() * 2 + 1,
+              speedY: Math.random() * 0.45 + 0.2,
+              speedX: (Math.random() - 0.5) * 0.25,
+              opacity: Math.random() * 0.7 + 0.3,
+              pulse: Math.random() * Math.PI
+            });
+          }
+
+          function loop() {
+            if (canvas.classList.contains('hidden') || !canvas.isConnected) {
+              return;
+            }
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            sparklesParticles.forEach(p => {
+              p.y -= p.speedY;
+              p.x += p.speedX;
+              p.pulse += 0.035;
+              const currentOpacity = p.opacity * (0.6 + 0.4 * Math.sin(p.pulse));
+
+              if (p.y < 0) {
+                p.y = canvas.height;
+                p.x = Math.random() * canvas.width;
+              }
+              if (p.x < 0) p.x = canvas.width;
+              if (p.x > canvas.width) p.x = 0;
+
+              ctx.fillStyle = `rgba(251, 191, 36, ${currentOpacity * 0.85})`;
+              ctx.beginPath();
+              ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
+              ctx.fill();
+
+              ctx.fillStyle = `rgba(192, 132, 252, ${currentOpacity * 0.35})`;
+              ctx.beginPath();
+              ctx.arc(p.x, p.y, p.size * 2, 0, Math.PI * 2);
+              ctx.fill();
+            });
+            sparklesRafId = requestAnimationFrame(loop);
+          }
+          loop();
+        }
+
+        function stopChatSparkles() {
+          cancelAnimationFrame(sparklesRafId);
+        }
+
+        window.__initChatSparkles = initChatSparkles;
+        window.__stopChatSparkles = stopChatSparkles;
+
         // Apply immediately on first paint
         const initialTheme = getSettings();
         applyThemeToDOM(initialTheme);
@@ -1033,9 +1133,61 @@ const {
           }
         } catch(e) {}
 
+        function getWallpaperConfig(charId = null) {
+          try {
+            const targetChar = charId || getActiveCharId();
+            if (targetChar) {
+              const raw = localStorage.getItem('aetheria_wallpaper_config_' + targetChar);
+              if (raw) return JSON.parse(raw);
+            }
+            const globalRaw = localStorage.getItem('aetheria_wallpaper_config');
+            if (globalRaw) return JSON.parse(globalRaw);
+          } catch(e) {}
+          return {
+            type: 'gradient',
+            value: 'linear-gradient(180deg, #09122c 0%, #111e42 50%, #060b1b 100%)',
+            blur: 0,
+            dimness: 20,
+            patternOpacity: 15,
+            sparkleOverlay: false
+          };
+        }
+
+        function saveWallpaperConfig(config, charId = null) {
+          try {
+            const targetChar = charId !== undefined ? charId : getActiveCharId();
+            const cleanConfig = { ...config };
+            if (targetChar) {
+              localStorage.setItem('aetheria_wallpaper_config_' + targetChar, JSON.stringify(cleanConfig));
+            } else {
+              localStorage.setItem('aetheria_wallpaper_config', JSON.stringify(cleanConfig));
+            }
+            // Trigger DOM re-render
+            const currentTheme = getSettings(targetChar);
+            applyThemeToDOM(currentTheme);
+            window.dispatchEvent(new CustomEvent('aetheria-wallpaper-changed', { detail: { config: cleanConfig, charId: targetChar } }));
+          } catch(e) {
+            console.error(e);
+          }
+        }
+
+        function resetWallpaperConfig(charId = null) {
+          try {
+            const targetChar = charId !== undefined ? charId : getActiveCharId();
+            if (targetChar) {
+              localStorage.removeItem('aetheria_wallpaper_config_' + targetChar);
+            } else {
+              localStorage.removeItem('aetheria_wallpaper_config');
+            }
+            const currentTheme = getSettings(targetChar);
+            applyThemeToDOM(currentTheme);
+            window.dispatchEvent(new CustomEvent('aetheria-wallpaper-changed', { detail: { config: null, charId: targetChar } }));
+          } catch(e) {}
+        }
+
         // Cross-tab sync
         window.addEventListener('storage', function(e) {
-          if (e.key === 'aetheria_theme_settings' || (e.key && e.key.startsWith('aetheria_theme_char_'))) {
+          if (e.key === 'aetheria_theme_settings' || (e.key && e.key.startsWith('aetheria_theme_char_')) || e.key === 'aetheria_wallpaper_config' || (e.key && e.key.startsWith('aetheria_wallpaper_config_'))) {
             applyThemeToDOM(getSettings());
           }
         });
@@ -1055,6 +1207,9 @@ const {
           exportTheme,
           importTheme,
           resetToDefault,
+          getWallpaperConfig,
+          saveWallpaperConfig,
+          resetWallpaperConfig,
           apply: applyThemeToDOM
         };
       })();

@@ -557,6 +557,12 @@ const { character } = Astro.props;
           class="absolute inset-0 pointer-events-none transition-all duration-300 z-0 bg-repeat" 
           style="background-image: var(--theme-chat-pattern, none); background-size: var(--theme-chat-pattern-size, auto); opacity: var(--theme-chat-pattern-opacity, 0.18);"
         ></div>
+
+        <!-- 4. Dynamic Atmospheric Sparkles Layer -->
+        <canvas 
+          id="chat-wallpaper-sparkles" 
+          class="absolute inset-0 pointer-events-none z-0 hidden w-full h-full"
+        ></canvas>
         
         <!-- Multi-Modal AI Engine Suite Modal / Drawer -->
         <div 
