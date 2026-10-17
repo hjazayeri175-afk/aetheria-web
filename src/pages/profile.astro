@@ -69,63 +69,46 @@ import {
       <!-- ========================================== -->
       <div id="view-hub" class="space-y-4">
         
-        <!-- User Account Profile Header Card (Primary Account Identity) -->
-        <div class="rounded-3xl bg-[#141824] border border-white/[0.06] p-5 shadow-xl relative overflow-hidden">
+        <!-- User Account Profile Header Card (Tappable -> Opens Edit Account) -->
+        <div 
+          id="hub-account-card-trigger" 
+          class="rounded-3xl bg-[#141824] hover:bg-[#181d2c] border border-white/[0.06] hover:border-purple-500/30 p-4 sm:p-5 shadow-xl relative overflow-hidden transition-all duration-200 cursor-pointer active:scale-[0.99] group"
+          title="Tap to edit account"
+        >
           <div class="absolute -right-12 -top-12 w-44 h-44 rounded-full bg-purple-500/10 blur-3xl pointer-events-none"></div>
           
-          <div class="flex items-center gap-4 relative z-10">
-            <!-- Account Avatar with Edit Trigger & Live Decoration -->
-            <div class="relative group cursor-pointer overflow-visible shrink-0" id="hub-account-avatar-trigger" title="Change Account Avatar">
-              <div class="relative inline-flex items-center justify-center overflow-visible" id="hub-account-avatar-container">
-                <div class="w-16 h-16 sm:w-18 sm:h-18 rounded-full overflow-hidden border-2 border-purple-500/30 bg-purple-950/40 flex items-center justify-center shadow-lg shadow-purple-950/40 relative z-10 transition-all duration-300" id="hub-account-avatar-base">
-                  <img id="hub-account-avatar-img" src="" alt="Account Avatar" class="w-full h-full object-cover hidden" />
-                  <div id="hub-account-avatar-placeholder" class="flex items-center justify-center text-purple-200 font-bold text-xl sm:text-2xl">
-                    H
+          <div class="flex items-center justify-between gap-4 relative z-10">
+            <!-- Left: Avatar + Info -->
+            <div class="flex items-center gap-4 min-w-0 flex-1">
+              <!-- Account Avatar (with active border/halo & live deco) -->
+              <div class="relative overflow-visible shrink-0">
+                <div class="relative inline-flex items-center justify-center overflow-visible" id="hub-account-avatar-container">
+                  <div class="w-16 h-16 sm:w-18 sm:h-18 rounded-full overflow-hidden border-2 border-purple-500/30 bg-purple-950/40 flex items-center justify-center shadow-lg shadow-purple-950/40 relative z-10 transition-all duration-300" id="hub-account-avatar-base">
+                    <img id="hub-account-avatar-img" src="" alt="Account Avatar" class="w-full h-full object-cover hidden" />
+                    <div id="hub-account-avatar-placeholder" class="flex items-center justify-center text-purple-200 font-bold text-xl sm:text-2xl">
+                      H
+                    </div>
                   </div>
+                  <div id="hub-account-avatar-deco-layer" class="absolute inset-0 pointer-events-none z-20 flex items-center justify-center overflow-visible"></div>
                 </div>
-                <div id="hub-account-avatar-deco-layer" class="absolute inset-0 pointer-events-none z-20 flex items-center justify-center overflow-visible"></div>
               </div>
-              <div class="absolute -bottom-1 -right-1 w-6 h-6 rounded-full bg-purple-600 border-2 border-[#141824] flex items-center justify-center text-white shadow-sm z-30 group-hover:scale-110 transition">
-                <Camera class="w-3 h-3" />
+
+              <!-- Account User Info -->
+              <div class="min-w-0 flex-1">
+                <div class="flex items-center gap-1.5 min-w-0">
+                  <h1 id="hub-account-name" class="text-lg sm:text-xl font-bold text-white truncate user-name-styled group-hover:text-purple-200 transition">Hossein</h1>
+                  <span id="hub-account-badge" class="inline-flex items-center shrink-0"></span>
+                  <span class="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-semibold bg-emerald-500/15 text-emerald-400 border border-emerald-500/30 shrink-0 ml-1">
+                    Online
+                  </span>
+                </div>
+                <p id="hub-account-handle" class="text-xs text-[#8e98a8] mt-1 truncate">@hossein</p>
               </div>
             </div>
 
-            <!-- Account User Info -->
-            <div class="min-w-0 flex-1">
-              <div class="flex items-center gap-1.5 min-w-0">
-                <h1 id="hub-account-name" class="text-lg sm:text-xl font-bold text-white truncate user-name-styled">Hossein</h1>
-                <span id="hub-account-badge" class="inline-flex items-center shrink-0"></span>
-                <span class="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-semibold bg-emerald-500/15 text-emerald-400 border border-emerald-500/30 shrink-0 ml-1">
-                  Online
-                </span>
-              </div>
-              <p id="hub-account-handle" class="text-xs text-[#8e98a8] mt-0.5 truncate">@hossein</p>
-              
-              <div class="flex flex-wrap items-center gap-2 mt-2.5">
-                <button 
-                  type="button" 
-                  id="btn-open-edit-account" 
-                  class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-semibold bg-white/[0.07] hover:bg-white/[0.12] text-slate-200 hover:text-white border border-white/10 transition active:scale-95 cursor-pointer"
-                >
-                  <Pencil class="w-3.5 h-3.5 text-purple-400" />
-                  <span>Edit Account</span>
-                </button>
-
-                <button 
-                  type="button" 
-                  id="btn-open-profile-style" 
-                  class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-semibold bg-purple-500/15 hover:bg-purple-500/25 text-purple-300 hover:text-purple-200 border border-purple-500/30 transition active:scale-95 cursor-pointer"
-                  title="Customize profile color, animated avatar frame and badges"
-                >
-                  <Palette class="w-3.5 h-3.5 text-pink-400" />
-                  <span>Profile Style</span>
-                </button>
-
-                <span id="hub-account-stars-badge" class="inline-flex items-center gap-1 px-2.5 py-1.5 rounded-xl text-xs font-semibold bg-amber-500/10 text-amber-400 border border-amber-500/20">
-                  <Sparkles class="w-3.5 h-3.5" />
-                  <span id="hub-stars-val">10 Stars</span>
-                </span>
-              </div>
+            <!-- Right: Subtle Chevron -->
+            <div class="shrink-0 text-white/30 group-hover:text-purple-400 group-hover:translate-x-1 transition duration-200">
+              <ChevronRight class="w-5 h-5" />
             </div>
           </div>
         </div>
@@ -395,46 +378,6 @@ import {
             </button>
           </div>
         </div>
-
-        <!-- Profile Style & Badges Quick Link -->
-        <div class="rounded-3xl bg-[#141824] border border-white/[0.06] p-4 flex items-center justify-between">
-          <div class="flex items-center gap-3">
-            <div class="w-10 h-10 rounded-2xl bg-purple-500/15 text-purple-400 border border-purple-500/30 flex items-center justify-center shrink-0">
-              <Palette class="w-5 h-5 text-pink-400" />
-            </div>
-            <div>
-              <div class="text-sm font-semibold text-white">Profile Style & Badges</div>
-              <div class="text-xs text-[#8e98a8]">Custom name colors, avatar decorations, halos & VIP badges</div>
-            </div>
-          </div>
-          <button 
-            type="button" 
-            id="btn-goto-style-from-account" 
-            class="px-3.5 py-1.5 rounded-xl bg-purple-500/20 hover:bg-purple-500/30 border border-purple-500/40 text-xs font-semibold text-purple-300 transition cursor-pointer"
-          >
-            Customize
-          </button>
-        </div>
-
-        <!-- Privacy & Password Link -->
-        <div class="rounded-3xl bg-[#141824] border border-white/[0.06] p-4 flex items-center justify-between">
-          <div class="flex items-center gap-3">
-            <div class="w-10 h-10 rounded-2xl bg-emerald-500/15 text-emerald-400 border border-emerald-500/30 flex items-center justify-center shrink-0">
-              <Shield class="w-5 h-5" />
-            </div>
-            <div>
-              <div class="text-sm font-semibold text-white">Security & Password</div>
-              <div class="text-xs text-[#8e98a8]">Manage 2FA, OTP, sessions, and password</div>
-            </div>
-          </div>
-          <button 
-            type="button" 
-            id="btn-goto-security-from-account" 
-            class="px-3 py-1.5 rounded-xl bg-white/[0.06] hover:bg-white/[0.12] text-xs font-semibold text-slate-200 transition cursor-pointer"
-          >
-            Manage
-          </button>
-        </div>
       </div>
 
       <!-- ========================================== -->
@@ -647,6 +590,27 @@ import {
                   <span>Upload Custom Wallpaper</span>
                 </button>
               </div>
+            </div>
+
+            <!-- Row 2: Change Name Color & Style -->
+            <div class="border-t border-white/[0.06] pt-1">
+              <button 
+                type="button" 
+                id="btn-toggle-name-color-drawer" 
+                class="w-full flex items-center justify-between py-2.5 px-1 text-left cursor-pointer group transition"
+                title="Customize name color, gradients, badges and avatar border"
+              >
+                <div class="flex items-center gap-3">
+                  <div class="w-8 h-8 rounded-xl bg-purple-500/15 border border-purple-500/30 flex items-center justify-center text-purple-400 group-hover:scale-105 transition">
+                    <Palette class="w-4 h-4 text-pink-400" />
+                  </div>
+                  <div>
+                    <div class="text-xs font-semibold text-white group-hover:text-purple-300 transition">Change Name Color & Style</div>
+                    <div class="text-[11px] text-[#8e98a8]">Gradients, VIP icons, dynamic sparkles & avatar halos</div>
+                  </div>
+                </div>
+                <ChevronRight class="w-4 h-4 text-white/30 group-hover:text-white/70 group-hover:translate-x-0.5 transition" />
+              </button>
             </div>
           </div>
         </div>
@@ -1714,7 +1678,7 @@ import {
           class="flex items-center gap-2 text-white/90 hover:text-white font-medium text-sm py-1.5 px-2.5 rounded-xl hover:bg-white/[0.08] transition cursor-pointer active:scale-95"
         >
           <ArrowLeft class="w-5 h-5 text-purple-400" />
-          <span>Profile</span>
+          <span>Chat Settings</span>
         </button>
       </div>
 
@@ -3714,13 +3678,9 @@ import {
     window.addEventListener('popstate', syncFromHash);
     syncFromHash();
 
-    // Profile Style Page Navigation (Bound to Main Account)
-    document.getElementById('btn-back-from-name-color')?.addEventListener('click', () => showView('view-hub'));
-    document.getElementById('btn-open-profile-style')?.addEventListener('click', () => {
-      showView('view-name-color');
-      if (typeof (window as any).__initNameColorPage === 'function') (window as any).__initNameColorPage();
-    });
-    document.getElementById('btn-goto-style-from-account')?.addEventListener('click', () => {
+    // Name Color & Style Navigation (Opened from Chat Settings)
+    document.getElementById('btn-back-from-name-color')?.addEventListener('click', () => showView('view-appearance'));
+    document.getElementById('btn-toggle-name-color-drawer')?.addEventListener('click', () => {
       showView('view-name-color');
       if (typeof (window as any).__initNameColorPage === 'function') (window as any).__initNameColorPage();
     });
@@ -3765,19 +3725,14 @@ import {
       }
     }
 
-    document.getElementById('btn-open-edit-account')?.addEventListener('click', () => {
-      populateAccountEditForm();
-      showView('view-edit-account');
-    });
-
-    document.getElementById('hub-account-avatar-trigger')?.addEventListener('click', () => {
+    // Tapping Account Header Card opens Edit Account
+    document.getElementById('hub-account-card-trigger')?.addEventListener('click', () => {
       populateAccountEditForm();
       showView('view-edit-account');
     });
 
     document.getElementById('btn-back-from-edit-account')?.addEventListener('click', () => showView('view-hub'));
     document.getElementById('btn-cancel-edit-account')?.addEventListener('click', () => showView('view-hub'));
-    document.getElementById('btn-goto-security-from-account')?.addEventListener('click', () => showView('view-privacy'));
 
     document.getElementById('input-account-avatar-url')?.addEventListener('input', (e) => {
       const val = (e.target as HTMLInputElement).value.trim();
@@ -6754,14 +6709,14 @@ function renderPresets() {
 
           updateAccountHeaderUI();
           showToast('Profile style & badges updated successfully! ✨', 'success');
-          showView('view-hub');
+          showView('view-appearance');
         }
 
         btnHeaderApply?.addEventListener('click', applyStylesAndSave);
         btnApply?.addEventListener('click', applyStylesAndSave);
 
         btnCancel?.addEventListener('click', () => {
-          showView('view-hub');
+          showView('view-appearance');
         });
 
         btnReset?.addEventListener('click', () => {
