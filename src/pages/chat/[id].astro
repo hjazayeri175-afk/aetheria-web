@@ -20414,7 +20414,8 @@ Requirements:
   function updateLivePreview(theme) {
     if (!theme) return;
 
-    const isDay = document.documentElement.getAttribute('data-base-mode') === 'day' || document.documentElement.classList.contains('day-mode') || theme.baseMode === 'day' || theme.dayNightMode === 'day';
+    const isOled = document.documentElement.getAttribute('data-base-mode') === 'oled' || document.documentElement.classList.contains('power-saving-oled') || theme.baseMode === 'oled' || theme.baseMode === 'amoled';
+    const isDay = !isOled && (document.documentElement.getAttribute('data-base-mode') === 'day' || theme.baseMode === 'day');
     const isCustomImage = typeof theme.chatWallpaper === 'string' && (theme.chatWallpaper.startsWith('http') || theme.chatWallpaper.startsWith('data:'));
     const rawWp = theme.chatWallpaper || theme.chatBg || 'linear-gradient(to bottom, #090a12, #0e1122, #07080f)';
     const wpVal = isDay ? (isCustomImage ? rawWp : 'linear-gradient(180deg, #f8fafc 0%, #f1f5f9 100%)') : rawWp;

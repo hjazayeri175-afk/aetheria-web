@@ -49,29 +49,38 @@ const {
           const rawTheme = localStorage.getItem('aetheria_theme_settings');
           const rawPower = localStorage.getItem('aetheria_power_saving');
           const masterPower = localStorage.getItem('master_power_saving') === 'true';
-          let isOled = false;
-          let isDay = false;
-
-          if (rawPower) {
-            try {
-              const ps = JSON.parse(rawPower);
-              if (ps && (ps.deepDarkOLED === true || ps.master === true)) isOled = true;
-            } catch(e) {}
-          }
-          if (masterPower) isOled = true;
+          let mode = 'dark';
 
           if (rawTheme) {
             try {
               const parsed = JSON.parse(rawTheme);
               if (parsed) {
                 if (parsed.baseMode === 'oled' || parsed.baseMode === 'amoled') {
-                  isOled = true;
-                } else if (!isOled && (parsed.baseMode === 'day' || parsed.dayNightMode === 'day')) {
-                  isDay = true;
+                  mode = 'oled';
+                } else if (parsed.baseMode === 'day') {
+                  mode = 'day';
+                } else if (parsed.baseMode === 'dark') {
+                  mode = 'dark';
+                } else if (parsed.dayNightMode === 'day') {
+                  mode = 'day';
                 }
               }
             } catch(e) {}
           }
+
+          if (mode === 'dark') {
+            if (masterPower) {
+              mode = 'oled';
+            } else if (rawPower) {
+              try {
+                const ps = JSON.parse(rawPower);
+                if (ps && (ps.deepDarkOLED === true || ps.master === true)) mode = 'oled';
+              } catch(e) {}
+            }
+          }
+
+          const isOled = mode === 'oled';
+          const isDay = mode === 'day';
 
           if (isOled) {
             document.documentElement.setAttribute('data-base-mode', 'oled');
@@ -659,27 +668,16 @@ const {
             const merged = { ...current, ...partial };
 
             if (partial.baseMode) {
-              if (partial.baseMode === 'oled' || partial.baseMode === 'amoled') {
-                merged.baseMode = 'oled';
-                try {
-                  if (window.AetheriaPowerSaving && typeof window.AetheriaPowerSaving.setSetting === 'function') {
-                    const ps = window.AetheriaPowerSaving.getSettings();
-                    if (!ps.deepDarkOLED) {
-                      window.AetheriaPowerSaving.setSetting('deepDarkOLED', true);
-                    }
-                  }
-                } catch(e) {}
-              } else if (partial.baseMode === 'day' || partial.baseMode === 'dark') {
-                merged.baseMode = partial.baseMode;
-                try {
-                  if (window.AetheriaPowerSaving && typeof window.AetheriaPowerSaving.setSetting === 'function') {
-                    const ps = window.AetheriaPowerSaving.getSettings();
-                    if (ps && ps.deepDarkOLED && !ps.master) {
-                      window.AetheriaPowerSaving.setSetting('deepDarkOLED', false);
-                    }
-                  }
-                } catch(e) {}
+              const m = (partial.baseMode === 'amoled' || partial.baseMode === 'oled') ? 'oled'
+                      : (partial.baseMode === 'day' ? 'day' : 'dark');
+              merged.baseMode = m;
+              merged.dayNightMode = m === 'day' ? 'day' : 'dark';
+              if (m === 'oled' && current.baseMode && current.baseMode !== 'oled') {
+                try { localStorage.setItem('aetheria_prev_base_mode', current.baseMode); } catch(e) {}
               }
+            } else if (partial.dayNightMode) {
+              merged.dayNightMode = partial.dayNightMode;
+              merged.baseMode = partial.dayNightMode === 'day' ? 'day' : 'dark';
             }
 
             if (targetChar) {
@@ -696,6 +694,18 @@ const {
               localStorage.setItem('aetheria_theme_settings', JSON.stringify(cleanData));
               merged._isCharSpecific = false;
             }
+
+            // Directly synchronize power saving setting to prevent recursive loops
+            try {
+              const rawPS = localStorage.getItem('aetheria_power_saving');
+              const ps = rawPS ? JSON.parse(rawPS) : {};
+              const shouldBeOled = merged.baseMode === 'oled';
+              if (Boolean(ps.deepDarkOLED) !== shouldBeOled) {
+                ps.deepDarkOLED = shouldBeOled;
+                localStorage.setItem('aetheria_power_saving', JSON.stringify(ps));
+                window.dispatchEvent(new CustomEvent('aetheria:power-saving-change', { detail: ps }));
+              }
+            } catch(e) {}
 
             applyThemeToDOM(merged);
             window.dispatchEvent(new CustomEvent('aetheria-theme-change', { detail: merged }));
@@ -811,24 +821,13 @@ const {
             root.style.setProperty('--theme-bubble-char-bg', theme.charBubbleBg);
           }
 
-          // Base Mode (Day / Dark / OLED) Handling
-          let psSettings = null;
-          try {
-            if (window.AetheriaPowerSaving && typeof window.AetheriaPowerSaving.getSettings === 'function') {
-              psSettings = window.AetheriaPowerSaving.getSettings();
-            } else {
-              const rawPS = localStorage.getItem('aetheria_power_saving');
-              if (rawPS) psSettings = JSON.parse(rawPS);
-            }
-          } catch(e) {}
-
-          const isOled = (
-            theme.baseMode === 'oled' ||
-            theme.baseMode === 'amoled' ||
-            root.classList.contains('power-saving-oled') ||
-            (psSettings && (psSettings.deepDarkOLED === true || psSettings.master === true))
-          );
-          const isDay = !isOled && (theme.baseMode === 'day' || theme.dayNightMode === 'day');
+          // Base Mode (Day / Dark / OLED) Handling - Single Source of Truth
+          const mode = (theme.baseMode === 'oled' || theme.baseMode === 'amoled') ? 'oled'
+                     : (theme.baseMode === 'day' ? 'day'
+                     : (theme.baseMode === 'dark' ? 'dark'
+                     : (theme.dayNightMode === 'day' ? 'day' : 'dark')));
+          const isOled = mode === 'oled';
+          const isDay = mode === 'day';
 
           if (isOled) {
             root.setAttribute('data-base-mode', 'oled');
@@ -1170,16 +1169,15 @@ const {
             if (wpDim) wpDim.style.display = 'none';
             if (chatViewport) chatViewport.style.background = '#000000';
             if (chatRoot) chatRoot.style.background = '#000000';
-            if (window.AetheriaTheme?.apply) {
+            if (window.AetheriaTheme?.getSettings) {
               const currentTheme = window.AetheriaTheme.getSettings();
               if (currentTheme.baseMode !== 'oled') {
                 if (currentTheme.baseMode && currentTheme.baseMode !== 'amoled') {
                   try { localStorage.setItem('aetheria_prev_base_mode', currentTheme.baseMode); } catch(e) {}
                 }
                 currentTheme.baseMode = 'oled';
+                currentTheme.dayNightMode = 'dark';
                 window.AetheriaTheme.saveSettings(currentTheme);
-              } else {
-                window.AetheriaTheme.apply(currentTheme);
               }
             }
           } else {
@@ -1189,7 +1187,7 @@ const {
             if (wpDim) wpDim.style.display = '';
             if (chatViewport) chatViewport.style.background = '';
             if (chatRoot) chatRoot.style.background = '';
-            if (wasOled && window.AetheriaTheme?.apply) {
+            if (wasOled && window.AetheriaTheme?.getSettings) {
               const currentTheme = window.AetheriaTheme.getSettings();
               if (currentTheme.baseMode === 'oled' || currentTheme.baseMode === 'amoled') {
                 let prev = 'dark';
@@ -1198,9 +1196,8 @@ const {
                   if (storedPrev === 'day' || storedPrev === 'dark') prev = storedPrev;
                 } catch(e) {}
                 currentTheme.baseMode = prev;
+                currentTheme.dayNightMode = prev;
                 window.AetheriaTheme.saveSettings(currentTheme);
-              } else {
-                window.AetheriaTheme.apply(currentTheme);
               }
             }
           }

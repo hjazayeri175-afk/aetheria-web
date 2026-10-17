@@ -1948,7 +1948,8 @@ import {
     const wrapper = document.getElementById('persona-cards-wrapper');
     if (!wrapper) return;
 
-    const isDay = document.documentElement.getAttribute('data-base-mode') === 'day' || document.documentElement.classList.contains('day-mode') || (window as any).AetheriaTheme?.getSettings?.(null)?.baseMode === 'day';
+    const isOled = document.documentElement.getAttribute('data-base-mode') === 'oled' || document.documentElement.classList.contains('power-saving-oled') || (window as any).AetheriaTheme?.getSettings?.(null)?.baseMode === 'oled';
+    const isDay = !isOled && (document.documentElement.getAttribute('data-base-mode') === 'day' || (window as any).AetheriaTheme?.getSettings?.(null)?.baseMode === 'day');
 
     let cardsHtml = '';
 
@@ -4543,11 +4544,77 @@ import {
       const photoFileInput = document.getElementById('profile-photo-file') as HTMLInputElement | null;
       const photoBtn = document.getElementById('profile-photo-btn');
 
+      function syncModeButtons(activeMode: string) {
+        const mode = (activeMode === 'oled' || activeMode === 'amoled') ? 'oled'
+                   : (activeMode === 'day' ? 'day' : 'dark');
+
+        const allBaseModeButtons = document.querySelectorAll('#profile-base-mode-group .profile-mode-btn');
+        allBaseModeButtons.forEach((btn: any) => {
+          const btnMode = btn.getAttribute('data-mode');
+          const isSelected = btnMode === mode;
+          btn.setAttribute('aria-pressed', isSelected ? 'true' : 'false');
+          if (isSelected) {
+            if (mode === 'day') {
+              btn.className = 'profile-mode-btn flex items-center justify-center gap-1.5 py-2 px-2 rounded-lg text-xs font-bold bg-amber-500/20 text-amber-300 border border-amber-500/40 shadow-xs transition cursor-pointer';
+            } else if (mode === 'oled') {
+              btn.className = 'profile-mode-btn flex items-center justify-center gap-1.5 py-2 px-2 rounded-lg text-xs font-bold bg-emerald-500/20 text-emerald-400 border border-emerald-500/40 shadow-xs transition cursor-pointer';
+            } else {
+              btn.className = 'profile-mode-btn flex items-center justify-center gap-1.5 py-2 px-2 rounded-lg text-xs font-bold bg-purple-600/30 text-purple-200 border border-purple-500/40 shadow-xs transition cursor-pointer';
+            }
+          } else {
+            btn.className = 'profile-mode-btn flex items-center justify-center gap-1.5 py-2 px-2 rounded-lg text-xs font-medium text-slate-400 hover:text-white hover:bg-white/5 border border-transparent transition cursor-pointer';
+          }
+        });
+
+        // Update Theme Mode Header Badge & Icons
+        const badgeThemeMode = document.getElementById('badge-theme-mode');
+        const iconThemeSun = document.getElementById('icon-theme-indicator-sun');
+        const iconThemeMoon = document.getElementById('icon-theme-indicator-moon');
+        const iconThemeZap = document.getElementById('icon-theme-indicator-zap');
+
+        if (badgeThemeMode) {
+          badgeThemeMode.textContent = mode === 'oled' ? 'OLED Pure' : (mode === 'day' ? 'Day' : 'Dark');
+          if (mode === 'oled') {
+            badgeThemeMode.className = 'text-xs text-emerald-400 font-bold capitalize px-2.5 py-0.5 rounded-full bg-emerald-950/70 border border-emerald-500/40 shadow-xs';
+          } else if (mode === 'day') {
+            badgeThemeMode.className = 'text-xs text-amber-300 font-bold capitalize px-2.5 py-0.5 rounded-full bg-amber-950/70 border border-amber-500/40 shadow-xs';
+          } else {
+            badgeThemeMode.className = 'text-xs text-purple-300 font-bold capitalize px-2.5 py-0.5 rounded-full bg-purple-950/70 border border-purple-500/40 shadow-xs';
+          }
+        }
+
+        if (iconThemeSun) iconThemeSun.classList.toggle('hidden', mode !== 'day');
+        if (iconThemeMoon) iconThemeMoon.classList.toggle('hidden', mode !== 'dark');
+        if (iconThemeZap) iconThemeZap.classList.toggle('hidden', mode !== 'oled');
+
+        // Legacy compatibility
+        const isDayMode = mode === 'day';
+        const iconSun = document.getElementById('icon-sun');
+        const iconMoon = document.getElementById('icon-moon');
+        if (badgeDayNight) {
+          badgeDayNight.textContent = isDayMode ? 'Day' : (mode === 'oled' ? 'OLED' : 'Dark');
+        }
+        if (labelDayNight) {
+          labelDayNight.textContent = isDayMode ? 'Switch to Dark Mode' : 'Switch to Day Mode';
+        }
+        if (iconSun && iconMoon) {
+          iconSun.classList.toggle('hidden', isDayMode);
+          iconMoon.classList.toggle('hidden', !isDayMode);
+        }
+
+        // Synchronize battery tab toggle
+        const oledToggle = document.getElementById('toggle-deep-dark-oled') as HTMLInputElement | null;
+        if (oledToggle) {
+          oledToggle.checked = mode === 'oled';
+        }
+      }
+
       function updatePreview() {
         if (!previewViewport) return;
-        const psSettings = (window as any).AetheriaPowerSaving?.getSettings?.();
-        const isOled = settings.baseMode === 'oled' || settings.baseMode === 'amoled' || document.documentElement.classList.contains('power-saving-oled') || (psSettings && (psSettings.deepDarkOLED || psSettings.master));
-        const isDay = !isOled && (document.documentElement.getAttribute('data-base-mode') === 'day' || settings.baseMode === 'day');
+        const currentActiveMode = (settings.baseMode === 'oled' || settings.baseMode === 'amoled') ? 'oled'
+                                : (settings.baseMode === 'day' ? 'day' : 'dark');
+        const isOled = currentActiveMode === 'oled';
+        const isDay = currentActiveMode === 'day';
 
         // 1. Wallpaper background
         if (isOled) {
@@ -4631,54 +4698,8 @@ import {
           namePill.style.color = nameColor;
         }
 
-        // 6. Tri-State Theme mode badge and icons
-        const currentActiveMode = isOled ? 'oled' : (isDay ? 'day' : 'dark');
-        const badgeThemeMode = document.getElementById('badge-theme-mode');
-        const iconThemeSun = document.getElementById('icon-theme-indicator-sun');
-        const iconThemeMoon = document.getElementById('icon-theme-indicator-moon');
-        const iconThemeZap = document.getElementById('icon-theme-indicator-zap');
-
-        if (badgeThemeMode) {
-          badgeThemeMode.textContent = isOled ? 'OLED Pure' : (isDay ? 'Day' : 'Dark');
-          if (isOled) {
-            badgeThemeMode.className = 'text-xs text-purple-300 font-bold capitalize px-2.5 py-0.5 rounded-full bg-purple-950/70 border border-purple-500/40 shadow-xs';
-          } else if (isDay) {
-            badgeThemeMode.className = 'text-xs text-amber-700 font-bold capitalize px-2.5 py-0.5 rounded-full bg-amber-100 border border-amber-300 shadow-xs';
-          } else {
-            badgeThemeMode.className = 'text-xs text-slate-300 font-semibold capitalize px-2.5 py-0.5 rounded-full bg-white/[0.06] border border-white/[0.06]';
-          }
-        }
-
-        if (iconThemeSun) iconThemeSun.classList.toggle('hidden', currentActiveMode !== 'day');
-        if (iconThemeMoon) iconThemeMoon.classList.toggle('hidden', currentActiveMode !== 'dark');
-        if (iconThemeZap) iconThemeZap.classList.toggle('hidden', currentActiveMode !== 'oled');
-
-        // Segmented control button styles
-        const allBaseModeButtons = document.querySelectorAll('#profile-base-mode-group .profile-mode-btn');
-        allBaseModeButtons.forEach((btn: any) => {
-          const btnMode = btn.getAttribute('data-mode');
-          const isSelected = (btnMode === currentActiveMode) || (btnMode === 'oled' && currentActiveMode === 'amoled');
-          if (isSelected) {
-            btn.className = 'profile-mode-btn flex items-center justify-center gap-1.5 py-2 px-2 rounded-lg text-xs font-bold bg-white/20 text-white border border-white/25 shadow-xs transition cursor-pointer';
-          } else {
-            btn.className = 'profile-mode-btn flex items-center justify-center gap-1.5 py-2 px-2 rounded-lg text-xs font-semibold text-slate-400 hover:text-white hover:bg-white/5 transition cursor-pointer';
-          }
-        });
-
-        // Legacy compatibility
-        const isDayMode = currentActiveMode === 'day';
-        const iconSun = document.getElementById('icon-sun');
-        const iconMoon = document.getElementById('icon-moon');
-        if (badgeDayNight) {
-          badgeDayNight.textContent = isDayMode ? 'Day' : (isOled ? 'OLED' : 'Dark');
-        }
-        if (labelDayNight) {
-          labelDayNight.textContent = isDayMode ? 'Switch to Dark Mode' : 'Switch to Day Mode';
-        }
-        if (iconSun && iconMoon) {
-          iconSun.classList.toggle('hidden', isDayMode);
-          iconMoon.classList.toggle('hidden', !isDayMode);
-        }
+        // 6. Ensure buttons and indicators are synchronized with currentActiveMode
+        syncModeButtons(currentActiveMode);
       }
 
       function saveAndApply() {
@@ -4698,7 +4719,7 @@ function renderPresets() {
         if (!presetsGrid) return;
         const presets = (window as any).AetheriaTheme?.PRESETS || [];
         const activePresetId = settings.id || 'gamer-mode';
-        const isDay = document.documentElement.getAttribute('data-base-mode') === 'day' || settings.baseMode === 'day';
+        const isDay = settings.baseMode === 'day';
 
         presetsGrid.innerHTML = presets.map((p: any) => {
           const isSelected = p.id === activePresetId;
@@ -4785,6 +4806,7 @@ function renderPresets() {
             settings = { ...settings, ...found };
             if (currentBaseMode) {
               settings.baseMode = currentBaseMode;
+              settings.dayNightMode = currentBaseMode === 'day' ? 'day' : 'dark';
             }
             syncInputs();
             updatePreview();
@@ -4852,7 +4874,7 @@ function renderPresets() {
         const val = parseFloat(slider.value) || 0;
         const percent = Math.min(Math.max(((val - min) / (max - min)) * 100, 0), 100);
         const activeColor = settings.accent || 'var(--theme-accent, #8E9AB6)';
-        const isDay = document.documentElement.getAttribute('data-base-mode') === 'day' || settings.baseMode === 'day';
+        const isDay = settings.baseMode === 'day';
         const trackColor = isDay ? '#e2e8f0' : 'rgba(255, 255, 255, 0.14)';
         slider.style.background = `linear-gradient(to right, ${activeColor} 0%, ${activeColor} ${percent}%, ${trackColor} ${percent}%, ${trackColor} 100%)`;
       }
@@ -4862,6 +4884,7 @@ function renderPresets() {
         if (fontVal) fontVal.textContent = String(settings.fontSize || 16);
         if (radiusSlider) radiusSlider.value = String(settings.bubbleRadius !== undefined ? settings.bubbleRadius : 16);
         if (radiusVal) radiusVal.textContent = `${settings.bubbleRadius !== undefined ? settings.bubbleRadius : 16}px`;
+        syncModeButtons(settings.baseMode || 'dark');
         updateSliderProgress(fontSlider);
         updateSliderProgress(radiusSlider);
       }
@@ -4889,22 +4912,11 @@ function renderPresets() {
         btn.addEventListener('click', () => {
           const targetMode = btn.getAttribute('data-mode') || 'dark';
           settings.baseMode = targetMode;
-          const ps = (window as any).AetheriaPowerSaving;
-          if (targetMode === 'oled') {
-            if (ps && typeof ps.setSetting === 'function') {
-              ps.setSetting('deepDarkOLED', true);
-            }
-          } else {
-            if (ps && typeof ps.setSetting === 'function') {
-              const psSettings = ps.getSettings?.();
-              if (psSettings && psSettings.deepDarkOLED && !psSettings.master) {
-                ps.setSetting('deepDarkOLED', false);
-              }
-            }
-          }
-          syncInputs();
-          updatePreview();
+          settings.dayNightMode = targetMode === 'day' ? 'day' : 'dark';
+
           saveAndApply();
+          syncModeButtons(targetMode);
+          updatePreview();
           renderPresets();
           render3DCarousel();
         });
@@ -4916,19 +4928,42 @@ function renderPresets() {
         if (psSettings) {
           if (psSettings.deepDarkOLED || psSettings.master) {
             settings.baseMode = 'oled';
+            settings.dayNightMode = 'dark';
           } else if (settings.baseMode === 'oled') {
-            settings.baseMode = 'dark';
+            let prev = 'dark';
+            try {
+              const stored = localStorage.getItem('aetheria_prev_base_mode');
+              if (stored === 'day' || stored === 'dark') prev = stored;
+            } catch(e) {}
+            settings.baseMode = prev;
+            settings.dayNightMode = prev;
           }
+          syncModeButtons(settings.baseMode || 'dark');
           updatePreview();
           renderPresets();
+          render3DCarousel();
+        }
+      });
+
+      // Synchronize when Theme changes from another origin/action
+      window.addEventListener('aetheria-theme-change', (e: any) => {
+        if (e.detail && e.detail.baseMode) {
+          settings.baseMode = e.detail.baseMode;
+          settings.dayNightMode = e.detail.baseMode === 'day' ? 'day' : 'dark';
+          syncModeButtons(settings.baseMode);
+          updatePreview();
+          renderPresets();
+          render3DCarousel();
         }
       });
 
       btnSwitchDayNight?.addEventListener('click', () => {
-        settings.baseMode = settings.baseMode === 'day' ? 'dark' : 'day';
-        syncInputs();
-        updatePreview();
+        const nextMode = settings.baseMode === 'day' ? 'dark' : 'day';
+        settings.baseMode = nextMode;
+        settings.dayNightMode = nextMode;
         saveAndApply();
+        syncModeButtons(nextMode);
+        updatePreview();
         renderPresets();
         render3DCarousel();
       });
