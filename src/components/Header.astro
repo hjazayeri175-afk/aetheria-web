@@ -218,8 +218,17 @@ const isLibrary = pathname.startsWith('/library');
           starsPill.classList.remove('hidden');
           starsPill.classList.add('flex');
         }
-        if (user.avatarUrl && img && icon) {
-          img.src = user.avatarUrl;
+        let avatarSrc = user.avatarUrl;
+        try {
+          const rawPersona = localStorage.getItem('aetheria_user_persona');
+          if (rawPersona) {
+            const p = JSON.parse(rawPersona);
+            if (p.avatar) avatarSrc = p.avatar;
+          }
+        } catch {}
+
+        if (avatarSrc && img && icon) {
+          img.src = avatarSrc;
           img.classList.remove('hidden');
           icon.classList.add('hidden');
         }
