@@ -5605,11 +5605,12 @@ function renderPresets() {
         let animTime = Math.random() * 100;
 
         function drawSparkle(ctx: CanvasRenderingContext2D, x: number, y: number, s: number, color: string, alpha = 1) {
+          if (s <= 0.2 || alpha <= 0.02) return;
           ctx.save();
           ctx.globalAlpha = Math.max(0, Math.min(1, alpha));
           ctx.fillStyle = color;
           ctx.shadowColor = color;
-          ctx.shadowBlur = s * 2.2;
+          ctx.shadowBlur = Math.min(s * 1.5, 6);
           ctx.beginPath();
           for (let i = 0; i < 4; i++) {
             const angle = (i * Math.PI) / 2;
@@ -5632,7 +5633,7 @@ function renderPresets() {
           grad.addColorStop(1, '#eb2f96');
           ctx.fillStyle = grad;
           ctx.shadowColor = '#ff85c0';
-          ctx.shadowBlur = 6;
+          ctx.shadowBlur = 5;
           ctx.beginPath();
           ctx.moveTo(0, -s);
           ctx.bezierCurveTo(s * 0.9, -s * 0.8, s * 0.9, s * 0.6, 0, s);
@@ -5667,7 +5668,7 @@ function renderPresets() {
             ctx.strokeStyle = 'rgba(253, 224, 71, 0.75)';
             ctx.lineWidth = 2.2;
             ctx.shadowColor = '#facc15';
-            ctx.shadowBlur = 12;
+            ctx.shadowBlur = 8;
             ctx.beginPath();
             ctx.arc(cx, cy, r + 2, 0, Math.PI * 2);
             ctx.stroke();
@@ -5680,7 +5681,7 @@ function renderPresets() {
               ctx.strokeStyle = '#fef08a';
               ctx.lineWidth = 3;
               ctx.shadowColor = '#eab308';
-              ctx.shadowBlur = 14;
+              ctx.shadowBlur = 8;
               ctx.beginPath();
               ctx.arc(0, 0, r * 0.82, 0, Math.PI * 2);
               ctx.stroke();
@@ -5699,7 +5700,7 @@ function renderPresets() {
             ctx.strokeStyle = '#f472b6';
             ctx.lineWidth = 2.5;
             ctx.shadowColor = '#ec4899';
-            ctx.shadowBlur = 12;
+            ctx.shadowBlur = 8;
             ctx.beginPath();
             ctx.arc(cx, cy, r + 2, 0, Math.PI * 2);
             ctx.stroke();
@@ -5721,7 +5722,7 @@ function renderPresets() {
                 ctx.fillStyle = color;
                 ctx.globalAlpha = (1 - tail / 8) * 0.85;
                 ctx.shadowColor = color;
-                ctx.shadowBlur = 10;
+                ctx.shadowBlur = 6;
                 ctx.beginPath();
                 ctx.arc(cx + Math.cos(ta) * tr, cy + Math.sin(ta) * tr, size * 0.065 * (1 - tail / 10), 0, Math.PI * 2);
                 ctx.fill();
@@ -5740,7 +5741,7 @@ function renderPresets() {
               ctx.strokeStyle = grad;
               ctx.lineWidth = 3 - ring * 0.6;
               ctx.shadowColor = '#a855f7';
-              ctx.shadowBlur = 14;
+              ctx.shadowBlur = 8;
               ctx.beginPath();
               ctx.arc(0, 0, r + 2 + ring * 2.5, 0, Math.PI * 1.4);
               ctx.stroke();
@@ -5754,14 +5755,14 @@ function renderPresets() {
             ctx.save();
             ctx.strokeStyle = '#38bdf8';
             ctx.shadowColor = '#0284c7';
-            ctx.shadowBlur = 15;
+            ctx.shadowBlur = 8;
             ctx.lineWidth = 2;
             for (let bolt = 0; bolt < 3; bolt++) {
               ctx.beginPath();
-              const steps = 28;
+              const steps = 24;
               for (let i = 0; i <= steps; i++) {
-                const a = (i / steps) * Math.PI * 2 + t * 0.5;
-                const jitter = (Math.random() - 0.5) * (size * 0.09);
+                const a = (i / steps) * Math.PI * 2 + t * 0.4;
+                const jitter = Math.sin(t * 10 + i * 1.6 + bolt * 2.2) * (size * 0.045);
                 const rad = r + 3 + jitter;
                 const x = cx + Math.cos(a) * rad;
                 const y = cy + Math.sin(a) * rad;
@@ -5779,7 +5780,7 @@ function renderPresets() {
               ctx.lineWidth = 3;
               ctx.lineCap = 'round';
               ctx.shadowColor = '#ea580c';
-              ctx.shadowBlur = 12;
+              ctx.shadowBlur = 8;
               ctx.beginPath();
               ctx.moveTo(cx + Math.cos(a) * r, cy + Math.sin(a) * r);
               ctx.lineTo(cx + Math.cos(a) * (r + 6 + Math.abs(wave)), cy + Math.sin(a) * (r + 6 + Math.abs(wave)));
@@ -5795,7 +5796,7 @@ function renderPresets() {
               ctx.strokeStyle = col;
               ctx.lineWidth = 2.5;
               ctx.shadowColor = col;
-              ctx.shadowBlur = 10;
+              ctx.shadowBlur = 6;
               ctx.setLineDash([size * 0.18, size * 0.1]);
               ctx.beginPath();
               ctx.arc(0, 0, r + 2 + idx * 2.5, 0, Math.PI * 2);
@@ -5807,7 +5808,7 @@ function renderPresets() {
             ctx.strokeStyle = '#fbbf24';
             ctx.lineWidth = 3;
             ctx.shadowColor = '#f59e0b';
-            ctx.shadowBlur = 14;
+            ctx.shadowBlur = 8;
             ctx.beginPath();
             ctx.arc(cx, cy, r + 2, 0, Math.PI * 2);
             ctx.stroke();
@@ -5838,7 +5839,7 @@ function renderPresets() {
               ctx.strokeStyle = grad;
               ctx.lineWidth = ring === 0 ? 2.8 : 1.8;
               ctx.shadowColor = ring === 0 ? c1 : c2;
-              ctx.shadowBlur = 14;
+              ctx.shadowBlur = 8;
               ctx.beginPath();
               ctx.arc(0, 0, r + 2 + ring * 2.5, 0, Math.PI * 1.55);
               ctx.stroke();
@@ -5857,7 +5858,7 @@ function renderPresets() {
         function refreshCanvasRegistry() {
           canvasEntries = [];
           const canvasElements = document.querySelectorAll<HTMLCanvasElement>('canvas.avatar-deco-canvas');
-          const dpr = window.devicePixelRatio || 1;
+          const dpr = Math.min(window.devicePixelRatio || 1, 2);
 
           canvasElements.forEach((canvas) => {
             const preset = canvas.dataset.preset || 'none';
@@ -5867,10 +5868,14 @@ function renderPresets() {
             const ctx = canvas.getContext('2d');
             if (!ctx) return;
 
-            canvas.width = overlaySize * dpr;
-            canvas.height = overlaySize * dpr;
-            ctx.setTransform(1, 0, 0, 1, 0, 0);
-            ctx.scale(dpr, dpr);
+            const targetW = overlaySize * dpr;
+            const targetH = overlaySize * dpr;
+            if (canvas.width !== targetW || canvas.height !== targetH) {
+              canvas.width = targetW;
+              canvas.height = targetH;
+              ctx.setTransform(1, 0, 0, 1, 0, 0);
+              ctx.scale(dpr, dpr);
+            }
 
             canvasEntries.push({
               canvas,
@@ -5894,12 +5899,28 @@ function renderPresets() {
           function loop() {
             animTime += 0.025;
             for (let i = 0; i < canvasEntries.length; i++) {
-              renderCanvasItem(canvasEntries[i], animTime);
+              const entry = canvasEntries[i];
+              // Skip canvases that are detached or hidden in inactive tabs to prevent compositor thrashing & flicker
+              if (!entry.canvas.isConnected || entry.canvas.offsetParent === null) continue;
+              renderCanvasItem(entry, animTime);
             }
             animId = requestAnimationFrame(loop);
           }
           animId = requestAnimationFrame(loop);
         }
+
+        document.addEventListener('visibilitychange', () => {
+          if (document.hidden) {
+            if (animId) {
+              cancelAnimationFrame(animId);
+              animId = null;
+            }
+          } else {
+            if (!animId && canvasEntries.length > 0) {
+              startCanvasAnimation();
+            }
+          }
+        });
 
         // Studio-Grade Avatar Architecture: Base Avatar 100% circle + 142% 60fps Canvas
         function renderDecoratedAvatarHtml(opts: { src?: string; initial?: string; decoration?: string; glowColor?: string; size?: number; customUrl?: string }) {
