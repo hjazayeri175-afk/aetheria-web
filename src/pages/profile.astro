@@ -4298,13 +4298,26 @@ const PRESET_SCENES = [
           sparkleOverlay: false
         };
         const activeChar = draftScope === 'specific' ? draftTargetCharId : null;
-        (window as any).AetheriaTheme?.resetWallpaper?.(activeChar);
+        if ((window as any).AetheriaTheme?.resetWallpaperConfig) {
+          (window as any).AetheriaTheme.resetWallpaperConfig(activeChar);
+        } else if ((window as any).AetheriaTheme?.resetWallpaper) {
+          (window as any).AetheriaTheme.resetWallpaper(activeChar);
+        }
         initWallpaperStudio();
         showToast('Wallpaper reset to default', 'info');
       });
 
       // Apply Button (Primary CTA)
       document.getElementById('btn-apply-wallpaper-studio')?.addEventListener('click', () => {
+        const sliderBlur = document.getElementById('slider-wp-blur') as HTMLInputElement | null;
+        if (sliderBlur) draftWpConfig.blur = Number(sliderBlur.value) || 0;
+        const sliderDim = document.getElementById('slider-wp-dim') as HTMLInputElement | null;
+        if (sliderDim) draftWpConfig.dimness = Number(sliderDim.value) ?? 20;
+        const sliderPat = document.getElementById('slider-wp-pattern') as HTMLInputElement | null;
+        if (sliderPat) draftWpConfig.patternOpacity = Number(sliderPat.value) ?? 15;
+        const toggleSparkles = document.getElementById('toggle-wp-sparkles') as HTMLInputElement | null;
+        if (toggleSparkles) draftWpConfig.sparkleOverlay = Boolean(toggleSparkles.checked);
+
         const targetId = draftScope === 'specific' ? draftTargetCharId : null;
         (window as any).AetheriaTheme?.saveWallpaperConfig?.(draftWpConfig, targetId);
         showToast('Wallpaper applied successfully! ✨', 'success');

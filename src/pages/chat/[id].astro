@@ -541,7 +541,7 @@ const { character } = Astro.props;
         <div 
           id="chat-wallpaper-image-layer" 
           class="absolute inset-0 pointer-events-none transition-all duration-300 z-0 bg-cover bg-center"
-          style="background-image: var(--theme-chat-wallpaper, none); filter: blur(var(--theme-chat-blur, 0px)) scale(1.04);"
+          style="background-image: var(--theme-chat-wallpaper, none); filter: blur(var(--theme-chat-blur, 0px)); transform: scale(1.04);"
         ></div>
 
         <!-- 2. Darkness Dimmer Scrim Layer -->
@@ -20478,13 +20478,13 @@ Requirements:
 
     const isOled = document.documentElement.getAttribute('data-base-mode') === 'oled' || document.documentElement.classList.contains('power-saving-oled') || theme.baseMode === 'oled' || theme.baseMode === 'amoled';
     const isDay = !isOled && (document.documentElement.getAttribute('data-base-mode') === 'day' || theme.baseMode === 'day');
-    const isCustomImage = typeof theme.chatWallpaper === 'string' && (theme.chatWallpaper.startsWith('http') || theme.chatWallpaper.startsWith('data:'));
+    const isCustomImage = typeof theme.chatWallpaper === 'string' && (theme.chatWallpaper.startsWith('http') || theme.chatWallpaper.startsWith('data:') || theme.chatWallpaper.startsWith('/'));
     const rawWp = theme.chatWallpaper || theme.chatBg || 'linear-gradient(to bottom, #090a12, #0e1122, #07080f)';
     const wpVal = isDay ? (isCustomImage ? rawWp : 'linear-gradient(180deg, #f8fafc 0%, #f1f5f9 100%)') : rawWp;
 
     // 1. Wallpaper Image / Gradient
     if (previewImage) {
-      if (wpVal.startsWith('http') || wpVal.startsWith('data:')) {
+      if (wpVal.startsWith('http') || wpVal.startsWith('data:') || wpVal.startsWith('/')) {
         previewImage.style.backgroundImage = `url("${wpVal}")`;
         previewImage.style.backgroundSize = 'cover';
         previewImage.style.backgroundPosition = 'center';
