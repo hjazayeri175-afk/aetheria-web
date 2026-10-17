@@ -5164,26 +5164,27 @@ html.oled-mode .text-slate-800 {
 }
 
 .avatar-border-none {
-  border: 1.5px solid rgba(255, 255, 255, 0.15) !important;
+  border: 1.5px solid var(--avatar-border-color, rgba(255, 255, 255, 0.15)) !important;
   box-shadow: none !important;
 }
 
 .avatar-border-glow {
-  border: 2px solid #a855f7 !important;
-  box-shadow: 0 0 14px rgba(168, 85, 247, 0.7), inset 0 0 4px rgba(168, 85, 247, 0.35) !important;
+  border: 2px solid var(--avatar-glow-color, #a855f7) !important;
+  box-shadow: 0 0 14px var(--avatar-glow-color, rgba(168, 85, 247, 0.7)), inset 0 0 4px var(--avatar-glow-color, rgba(168, 85, 247, 0.35)) !important;
 }
 
 .avatar-border-dual-gradient {
   border: 2.5px solid transparent !important;
   background-origin: border-box !important;
   background-clip: padding-box, border-box !important;
-  background-image: linear-gradient(#0c0e1a, #0c0e1a), linear-gradient(135deg, #06b6d4 0%, #a855f7 50%, #ec4899 100%) !important;
-  box-shadow: 0 0 12px rgba(236, 72, 153, 0.4) !important;
+  background-image: linear-gradient(#0c0e1a, #0c0e1a), linear-gradient(135deg, var(--avatar-glow-color, #06b6d4) 0%, #a855f7 50%, #ec4899 100%) !important;
+  box-shadow: 0 0 12px var(--avatar-glow-color, rgba(236, 72, 153, 0.4)) !important;
 }
 
 .avatar-border-dynamic-sparkle {
-  border: 2px solid #f59e0b !important;
+  border: 2px solid var(--avatar-glow-color, #f59e0b) !important;
   animation: sparkleHalo 3s ease-in-out infinite alternate !important;
+  box-shadow: 0 0 12px var(--avatar-glow-color, rgba(245, 158, 11, 0.5)) !important;
 }
 
 /* Day Mode Overrides for Avatar Borders */

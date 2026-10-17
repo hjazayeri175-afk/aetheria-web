@@ -1852,9 +1852,11 @@ import {
         </div>
 
         <!-- ========================================== -->
-        <!-- TAB 2: AVATAR & BORDER (Conditionally rendered when activeTab === 'avatar') -->
+        <!-- TAB 2: AVATAR & BORDER (Dedicated Border & Halo Studio) -->
         <!-- ========================================== -->
         <div id="view-tab-avatar" class="hidden space-y-3">
+          
+          <!-- Card A: 2x2 Grid for Avatar Border Effects -->
           <div class="p-3 sm:p-3.5 rounded-2xl bg-[#11141d] border border-white/10 shadow-sm">
             <div class="flex items-center justify-between mb-2.5">
               <div class="flex items-center gap-1.5">
@@ -1864,43 +1866,59 @@ import {
               <span class="text-[10px] text-slate-400">Select halo preset</span>
             </div>
 
+            <!-- Clean 2x2 Grid -->
             <div id="border-effects-grid" class="grid grid-cols-2 gap-2.5">
-              <!-- 4 Effects: None, Glow, Dual Gradient, Dynamic Sparkle -->
+              <!-- 4 Effects: None (Clean Ring), Neon Glow Halo, Dual Gradient Ring, Dynamic Sparkle Shimmer -->
             </div>
           </div>
+
+          <!-- Card B: Compact Border Glow Color 8-dot strip -->
+          <div class="p-3 rounded-2xl bg-[#11141d] border border-white/10 shadow-sm">
+            <div class="flex items-center justify-between mb-2">
+              <div class="flex items-center gap-1.5">
+                <Palette class="w-4 h-4 text-cyan-400" />
+                <span class="text-xs font-bold text-slate-200">Border Glow Color</span>
+              </div>
+              <span class="text-[10px] text-slate-400">Custom halo tint</span>
+            </div>
+
+            <div id="grid-border-glow-colors" class="grid grid-cols-8 gap-2 sm:gap-2.5 place-items-center pt-1">
+              <!-- 8 glow color dots -->
+            </div>
+          </div>
+
         </div>
 
       </div>
 
       <!-- Bottom Actions (Sticky) -->
-      <div class="pt-3 border-t border-white/[0.08] flex items-center justify-between gap-2 shrink-0 mt-2">
+      <div class="pt-3 border-t border-white/[0.08] flex items-center gap-2.5 shrink-0 mt-3">
         <button 
           type="button" 
           id="btn-reset-name-style" 
-          class="px-3 py-2 rounded-xl bg-white/[0.04] hover:bg-white/[0.08] text-slate-400 hover:text-white text-xs font-semibold flex items-center gap-1.5 transition active:scale-95 cursor-pointer"
+          class="h-11 px-3.5 rounded-xl bg-white/[0.04] hover:bg-white/[0.08] text-slate-400 hover:text-white text-xs font-semibold flex items-center justify-center gap-1.5 transition active:scale-95 cursor-pointer shrink-0"
           title="Reset to default purple"
         >
           <RotateCcw class="w-3.5 h-3.5" />
           <span>Reset</span>
         </button>
 
-        <div class="flex items-center gap-2">
-          <button 
-            type="button" 
-            id="btn-cancel-name-style" 
-            class="px-4 py-2 rounded-xl bg-white/[0.06] hover:bg-white/[0.12] text-slate-300 hover:text-white text-xs font-semibold transition active:scale-95 cursor-pointer"
-          >
-            Cancel
-          </button>
-          <button 
-            type="button" 
-            id="btn-apply-name-style" 
-            class="px-5 py-2 rounded-xl bg-gradient-to-r from-purple-600 via-indigo-600 to-indigo-700 hover:from-purple-500 hover:to-indigo-600 border border-purple-400/30 text-white text-xs font-bold flex items-center gap-2 shadow-lg shadow-purple-900/30 transition-all duration-200 active:scale-95 cursor-pointer"
-          >
-            <Check class="w-4 h-4" />
-            <span>Apply Style</span>
-          </button>
-        </div>
+        <button 
+          type="button" 
+          id="btn-cancel-name-style" 
+          class="h-11 px-4 rounded-xl bg-white/[0.06] hover:bg-white/[0.12] text-slate-300 hover:text-white text-xs font-semibold transition active:scale-95 cursor-pointer shrink-0"
+        >
+          Cancel
+        </button>
+
+        <button 
+          type="button" 
+          id="btn-apply-name-style" 
+          class="h-11 flex-1 rounded-xl bg-gradient-to-r from-purple-600 via-indigo-600 to-indigo-700 hover:from-purple-500 hover:to-indigo-600 border border-purple-400/30 text-white text-xs sm:text-sm font-semibold flex items-center justify-center gap-2 shadow-lg shadow-purple-900/30 transition-all duration-200 active:scale-95 cursor-pointer"
+        >
+          <Check class="w-4 h-4" />
+          <span>Apply Style</span>
+        </button>
       </div>
 
     </div>
@@ -1932,6 +1950,7 @@ import {
     nameColor?: string;
     avatarBorderEffect?: 'none' | 'glow' | 'dual-gradient' | 'dynamic-sparkle';
     nameIcon?: string;
+    avatarGlowColor?: string;
   }
 
   const STORAGE_KEY_PERSONAS = 'aetheria_saved_personas';
@@ -2044,6 +2063,7 @@ import {
     const nameColor = raw.nameColor || '#a855f7';
     const avatarBorderEffect = raw.avatarBorderEffect || 'none';
     const nameIcon = raw.nameIcon !== undefined ? raw.nameIcon : '';
+    const avatarGlowColor = raw.avatarGlowColor || '#a855f7';
 
     return {
       id,
@@ -2061,7 +2081,8 @@ import {
       isDefault: isActive,
       nameColor,
       avatarBorderEffect,
-      nameIcon
+      nameIcon,
+      avatarGlowColor
     };
   }
 
@@ -2173,9 +2194,12 @@ import {
       
       const hubAvatarTrigger = document.getElementById('hub-avatar-trigger');
       const borderEffect = active.avatarBorderEffect || 'none';
+      const glowColor = active.avatarGlowColor || '#a855f7';
       if (hubAvatarTrigger) {
-        const avatarWrapper = hubAvatarTrigger.querySelector('div:first-child');
+        const avatarWrapper = hubAvatarTrigger.querySelector('div:first-child') as HTMLElement | null;
         if (avatarWrapper) {
+          avatarWrapper.style.setProperty('--avatar-glow-color', glowColor);
+          avatarWrapper.style.setProperty('--avatar-border-color', glowColor);
           avatarWrapper.classList.remove('avatar-border-none', 'avatar-border-glow', 'avatar-border-dual-gradient', 'avatar-border-dynamic-sparkle');
           if (borderEffect === 'glow') avatarWrapper.classList.add('avatar-border-glow');
           else if (borderEffect === 'dual-gradient') avatarWrapper.classList.add('avatar-border-dual-gradient');
@@ -2313,7 +2337,7 @@ import {
 
               <!-- Center Avatar & Identity -->
               <div class="flex flex-col items-center text-center my-auto py-1 z-10">
-                <div class="relative w-24 h-24 sm:w-26 sm:h-26 rounded-full overflow-hidden ${cardBorderClass} ${isDay ? 'bg-slate-100' : 'bg-black/60'} flex items-center justify-center mb-2 transition">
+                <div class="relative w-24 h-24 sm:w-26 sm:h-26 rounded-full overflow-hidden ${cardBorderClass} ${isDay ? 'bg-slate-100' : 'bg-black/60'} flex items-center justify-center mb-2 transition" style="--avatar-glow-color: ${p.avatarGlowColor || '#a855f7'}; --avatar-border-color: ${p.avatarGlowColor || '#a855f7'};">
                   ${p.avatar ? `
                     <img src="${p.avatar}" alt="${displayName}" class="w-full h-full object-cover" />
                   ` : `
@@ -5117,6 +5141,7 @@ function renderPresets() {
 
         const gridColorMatrix = document.getElementById('grid-color-matrix');
         const borderEffectsGrid = document.getElementById('border-effects-grid');
+        const gridBorderGlowColors = document.getElementById('grid-border-glow-colors');
         const toggleBadges = document.getElementById('toggle-name-badges') as HTMLInputElement | null;
         const wrapperBadgeSelector = document.getElementById('wrapper-badge-selector');
 
@@ -5149,18 +5174,31 @@ function renderPresets() {
         // 8 Status Icons (Single-row strip)
         const STATUS_ICONS = ['⚡', '💎', '🌸', '✨', '🔥', '👑', '🌙', '🎮'];
 
-        // 4 Avatar Border Effects
+        // 4 Avatar Border Effects for clean 2x2 Grid
         const BORDER_EFFECTS = [
-          { id: 'none', name: 'None', desc: 'Base Border', effectClass: 'avatar-border-none' },
-          { id: 'glow', name: 'Neon Glow', desc: 'Vibrant Halo', effectClass: 'avatar-border-glow' },
-          { id: 'dual-gradient', name: 'Dual Gradient', desc: 'Multi-Stop Ring', effectClass: 'avatar-border-dual-gradient' },
-          { id: 'dynamic-sparkle', name: 'Dynamic Sparkle', desc: 'Pulsing Shimmer', effectClass: 'avatar-border-dynamic-sparkle' }
+          { id: 'none', name: 'None', desc: 'Clean Ring', effectClass: 'avatar-border-none' },
+          { id: 'glow', name: 'Neon Glow', desc: 'Halo', effectClass: 'avatar-border-glow' },
+          { id: 'dual-gradient', name: 'Dual Gradient', desc: 'Ring', effectClass: 'avatar-border-dual-gradient' },
+          { id: 'dynamic-sparkle', name: 'Dynamic Sparkle', desc: 'Shimmer', effectClass: 'avatar-border-dynamic-sparkle' }
+        ];
+
+        // 8 Border Glow Colors (Compact dot strip)
+        const GLOW_COLORS = [
+          { id: 'cyan', name: 'Cyan Glow', value: '#06b6d4' },
+          { id: 'purple', name: 'Purple Glow', value: '#a855f7' },
+          { id: 'pink', name: 'Pink Glow', value: '#ec4899' },
+          { id: 'amber', name: 'Amber Gold', value: '#f59e0b' },
+          { id: 'emerald', name: 'Emerald', value: '#10b981' },
+          { id: 'blue', name: 'Electric Blue', value: '#3b82f6' },
+          { id: 'rose', name: 'Rose Red', value: '#f43f5e' },
+          { id: 'silver', name: 'Silver White', value: '#f8fafc' }
         ];
 
         let activeTab: 'name' | 'avatar' = 'name';
         let draftNameColor = '#a855f7';
         let draftBorderEffect = 'none';
         let draftNameIcon = '';
+        let draftGlowColor = '#a855f7';
 
         function switchTab(tab: 'name' | 'avatar') {
           activeTab = tab;
@@ -5225,13 +5263,16 @@ function renderPresets() {
           applyNameToElement(bubbleName, userName, draftNameColor);
           if (bubbleBadge) bubbleBadge.textContent = draftNameIcon ? ` ${draftNameIcon}` : '';
 
-          // 3. Pinned Avatar container border effect
+          // 3. Pinned Avatar container border effect & glow color
           const avatarContainer = document.getElementById('preview-avatar-container');
           const avatarImg = document.getElementById('preview-avatar-img') as HTMLImageElement;
           const avatarInitial = document.getElementById('preview-avatar-initial');
 
           if (avatarContainer) {
             avatarContainer.className = 'w-14 h-14 rounded-full p-[2px] transition-all duration-300 shrink-0 flex items-center justify-center mb-1.5';
+            avatarContainer.style.setProperty('--avatar-glow-color', draftGlowColor);
+            avatarContainer.style.setProperty('--avatar-border-color', draftGlowColor);
+
             if (draftBorderEffect === 'glow') {
               avatarContainer.classList.add('avatar-border-glow');
             } else if (draftBorderEffect === 'dual-gradient') {
@@ -5293,17 +5334,38 @@ function renderPresets() {
             }
           }
 
-          // 7. Update Border Effect Cards
+          // 7. Update Border Effect Cards in 2x2 Grid
           document.querySelectorAll('.border-effect-card').forEach((card: any) => {
             const effectId = card.dataset.effect;
             const isSelected = (effectId === draftBorderEffect);
             const radioDot = card.querySelector('.effect-radio-dot');
+            const miniWrapper = card.querySelector('.card-mini-avatar-wrapper');
+            if (miniWrapper) {
+              miniWrapper.style.setProperty('--avatar-glow-color', draftGlowColor);
+              miniWrapper.style.setProperty('--avatar-border-color', draftGlowColor);
+            }
             if (isSelected) {
-              card.className = 'border-effect-card p-3 rounded-2xl border border-cyan-400 bg-cyan-500/10 ring-1 ring-cyan-400/40 transition-all cursor-pointer flex items-center gap-3 select-none';
+              card.className = 'border-effect-card p-2.5 sm:p-3 rounded-2xl border border-cyan-400 bg-cyan-500/10 ring-1 ring-cyan-400/40 transition-all cursor-pointer flex items-center gap-2.5 select-none';
               if (radioDot) radioDot.classList.remove('hidden');
             } else {
-              card.className = 'border-effect-card p-3 rounded-2xl border border-white/10 bg-white/[0.02] hover:bg-white/[0.05] transition-all cursor-pointer flex items-center gap-3 select-none';
+              card.className = 'border-effect-card p-2.5 sm:p-3 rounded-2xl border border-white/10 bg-white/[0.02] hover:bg-white/[0.05] transition-all cursor-pointer flex items-center gap-2.5 select-none';
               if (radioDot) radioDot.classList.add('hidden');
+            }
+          });
+
+          // 8. Update Glow Color 8-dot strip
+          document.querySelectorAll('.glow-color-dot').forEach((btn: any) => {
+            const val = btn.dataset.value;
+            const isSelected = (val === draftGlowColor);
+            const check = btn.querySelector('.glow-check');
+            if (isSelected) {
+              btn.className = 'glow-color-dot relative w-7 h-7 sm:w-8 sm:h-8 rounded-full cursor-pointer transition-all active:scale-90 flex items-center justify-center shadow-md select-none ring-2 ring-offset-2 ring-offset-[#11141d] ring-cyan-400 scale-110 z-10';
+              check?.classList.remove('hidden');
+              check?.classList.add('flex');
+            } else {
+              btn.className = 'glow-color-dot relative w-7 h-7 sm:w-8 sm:h-8 rounded-full cursor-pointer transition-all active:scale-90 flex items-center justify-center shadow-md select-none hover:scale-105';
+              check?.classList.add('hidden');
+              check?.classList.remove('flex');
             }
           });
         }
@@ -5341,15 +5403,15 @@ function renderPresets() {
           `).join('');
         }
 
-        // Render Border Effects Grid
+        // Render Clean 2x2 Grid for Avatar Border Effects
         if (borderEffectsGrid) {
           const active = personas.find(p => p.isActive) || personas[0] || { name: 'Hossein' };
           borderEffectsGrid.innerHTML = BORDER_EFFECTS.map(eff => `
             <div 
-              class="border-effect-card p-3 rounded-2xl border border-white/10 bg-white/[0.02] hover:bg-white/[0.05] transition-all cursor-pointer flex items-center gap-3 select-none"
+              class="border-effect-card p-2.5 sm:p-3 rounded-2xl border border-white/10 bg-white/[0.02] hover:bg-white/[0.05] transition-all cursor-pointer flex items-center gap-2.5 select-none"
               data-effect="${eff.id}"
             >
-              <div class="w-10 h-10 rounded-full p-[2px] flex items-center justify-center shrink-0 ${eff.effectClass}">
+              <div class="card-mini-avatar-wrapper w-9 h-9 sm:w-10 sm:h-10 rounded-full p-[2px] flex items-center justify-center shrink-0 ${eff.effectClass}" style="--avatar-glow-color: ${draftGlowColor}; --avatar-border-color: ${draftGlowColor};">
                 ${active.avatar ? `
                   <img src="${active.avatar}" alt="Avatar" class="w-full h-full rounded-full object-cover" />
                 ` : `
@@ -5366,6 +5428,21 @@ function renderPresets() {
                 <div class="effect-radio-dot w-2 h-2 rounded-full bg-cyan-400 hidden"></div>
               </div>
             </div>
+          `).join('');
+        }
+
+        // Render Border Glow Color 8-dot strip
+        if (gridBorderGlowColors) {
+          gridBorderGlowColors.innerHTML = GLOW_COLORS.map(c => `
+            <button 
+              type="button" 
+              class="glow-color-dot relative w-7 h-7 sm:w-8 sm:h-8 rounded-full cursor-pointer transition-all active:scale-90 flex items-center justify-center shadow-md select-none hover:scale-105"
+              data-value="${c.value}"
+              title="${c.name}"
+              style="background: ${c.value};"
+            >
+              <span class="glow-check hidden text-white text-[10px] font-bold drop-shadow-[0_1px_2px_rgba(0,0,0,0.8)] select-none pointer-events-none">✓</span>
+            </button>
           `).join('');
         }
 
@@ -5400,10 +5477,18 @@ function renderPresets() {
           updateLivePreview();
         });
 
-        // Click Border Effect Handlers
+        // Click Border Effect Handlers (2x2 Grid)
         document.querySelectorAll('.border-effect-card').forEach((card: any) => {
           card.addEventListener('click', () => {
             draftBorderEffect = card.dataset.effect;
+            updateLivePreview();
+          });
+        });
+
+        // Click Glow Color Handlers (8-dot strip)
+        document.querySelectorAll('.glow-color-dot').forEach((btn: any) => {
+          btn.addEventListener('click', () => {
+            draftGlowColor = btn.dataset.value;
             updateLivePreview();
           });
         });
@@ -5415,6 +5500,7 @@ function renderPresets() {
             draftNameColor = active.nameColor || '#a855f7';
             draftBorderEffect = active.avatarBorderEffect || 'none';
             draftNameIcon = active.nameIcon || '';
+            draftGlowColor = active.avatarGlowColor || '#a855f7';
           }
 
           switchTab('name');
@@ -5460,17 +5546,19 @@ function renderPresets() {
           draftNameColor = '#a855f7';
           draftBorderEffect = 'none';
           draftNameIcon = '';
+          draftGlowColor = '#a855f7';
           updateLivePreview();
           showToast('Reset to default name style & border', 'info');
         });
 
-        // Apply Style CTA Button
+        // Apply Style CTA Button (Pinned at bottom, h-11 font-semibold)
         btnApply?.addEventListener('click', () => {
           const active = personas.find(p => p.isActive) || personas[0];
           if (active) {
             active.nameColor = draftNameColor;
             active.avatarBorderEffect = draftBorderEffect as any;
             active.nameIcon = draftNameIcon;
+            active.avatarGlowColor = draftGlowColor;
 
             // Save to LocalStorage
             savePersonas();
@@ -5480,7 +5568,8 @@ function renderPresets() {
               detail: {
                 nameColor: draftNameColor,
                 avatarBorderEffect: draftBorderEffect,
-                nameIcon: draftNameIcon
+                nameIcon: draftNameIcon,
+                avatarGlowColor: draftGlowColor
               }
             }));
 
@@ -5490,7 +5579,7 @@ function renderPresets() {
 
             updateHubProfileSummary();
             render3DCarousel();
-            showToast('Name color, style & avatar border applied! ✨', 'success');
+            showToast('Name style & avatar halo applied! ✨', 'success');
             closeModal();
           }
         });
