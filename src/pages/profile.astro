@@ -56,6 +56,42 @@ import {
   X,
   Search
 } from '@lucide/astro';
+
+const PRESET_GRADIENTS = [
+  { id: 'grad-sapphire', name: 'Midnight Sapphire', value: 'linear-gradient(135deg, #0a1838 0%, #163668 50%, #060e22 100%)', dot: '#38bdf8' },
+  { id: 'grad-amethyst', name: 'Royal Amethyst', value: 'linear-gradient(135deg, #2a0e4e 0%, #581c87 50%, #16072b 100%)', dot: '#c084fc' },
+  { id: 'grad-sunset', name: 'Cyber Crimson', value: 'linear-gradient(135deg, #3d0a26 0%, #7e1654 50%, #1c0512 100%)', dot: '#f43f5e' },
+  { id: 'grad-emerald', name: 'Emerald Twilight', value: 'linear-gradient(135deg, #05261d 0%, #065f46 50%, #021711 100%)', dot: '#34d399' },
+  { id: 'grad-espresso', name: 'Warm Espresso', value: 'linear-gradient(135deg, #2b1509 0%, #683719 50%, #180a04 100%)', dot: '#fbbf24' },
+  { id: 'grad-oled', name: 'Pure OLED Dark', value: 'linear-gradient(180deg, #181920 0%, #020305 100%)', dot: '#94a3b8' }
+];
+
+const PRESET_SCENES = [
+  { 
+    id: 'scene-library', 
+    name: 'Fantasy Library', 
+    value: '/wallpapers/fantasy_library.webp',
+    icon: '📚'
+  },
+  { 
+    id: 'scene-neon', 
+    name: 'Neon Cyber City', 
+    value: '/wallpapers/neon_city.webp',
+    icon: '🏙️'
+  },
+  { 
+    id: 'scene-starry', 
+    name: 'Starry Galaxy', 
+    value: '/wallpapers/starry_galaxy.webp',
+    icon: '✨'
+  },
+  { 
+    id: 'scene-cafe', 
+    name: 'Cozy Tavern & Cafe', 
+    value: '/wallpapers/cozy_cafe.webp',
+    icon: '☕'
+  }
+];
 ---
 
 <Layout title="Settings - Aetheria" activeNav="persona">
@@ -1020,8 +1056,22 @@ import {
             <!-- Row 1: Rich Dark Gradients -->
             <div>
               <div class="text-[11px] font-semibold text-slate-400 mb-2 uppercase tracking-wider">Rich Dark Gradients</div>
-              <div class="grid grid-cols-2 sm:grid-cols-4 gap-2.5" id="wp-grid-gradients">
-                <!-- Dynamically rendered gradient tiles -->
+              <div class="grid grid-cols-2 sm:grid-cols-3 gap-2.5" id="wp-grid-gradients">
+                {PRESET_GRADIENTS.map(g => (
+                  <button 
+                    type="button" 
+                    class="wp-preset-tile group relative h-20 rounded-xl overflow-hidden border border-white/10 hover:border-purple-400 transition-all p-2.5 flex flex-col justify-between text-left active:scale-95 cursor-pointer"
+                    data-type="gradient"
+                    data-value={g.value}
+                    style={`background: ${g.value};`}
+                  >
+                    <div class="flex items-center justify-between w-full relative z-10 pointer-events-none">
+                      <span class="w-3 h-3 rounded-full border border-white/30 shadow-xs" style={`background-color: ${g.dot};`}></span>
+                      <span class="wp-tile-check w-4 h-4 rounded-full bg-amber-400 text-slate-950 flex items-center justify-center font-bold text-[10px] hidden">✓</span>
+                    </div>
+                    <span class="text-[10px] font-semibold text-white truncate relative z-10 drop-shadow pointer-events-none">{g.name}</span>
+                  </button>
+                ))}
               </div>
             </div>
 
@@ -1029,7 +1079,27 @@ import {
             <div>
               <div class="text-[11px] font-semibold text-slate-400 mb-2 uppercase tracking-wider">Atmospheric Roleplay Scenes</div>
               <div class="grid grid-cols-2 sm:grid-cols-4 gap-2.5" id="wp-grid-scenes">
-                <!-- Dynamically rendered scene tiles -->
+                {PRESET_SCENES.map(s => (
+                  <button 
+                    type="button" 
+                    class="wp-preset-tile group relative h-24 rounded-xl overflow-hidden border border-white/10 hover:border-purple-400 transition-all p-2 flex flex-col justify-between text-left active:scale-95 bg-slate-900 cursor-pointer"
+                    data-type="preset-scene"
+                    data-value={s.value}
+                  >
+                    <img 
+                      src={s.value} 
+                      alt={s.name} 
+                      loading="lazy"
+                      class="absolute inset-0 w-full h-full object-cover transition-transform duration-500 group-hover:scale-105 pointer-events-none"
+                    />
+                    <div class="absolute inset-0 bg-gradient-to-t from-black/85 via-black/25 to-transparent pointer-events-none"></div>
+                    <div class="flex items-center justify-between w-full relative z-10 pointer-events-none">
+                      <span class="text-xs">{s.icon}</span>
+                      <span class="wp-tile-check w-4 h-4 rounded-full bg-amber-400 text-slate-950 flex items-center justify-center font-bold text-[10px] hidden">✓</span>
+                    </div>
+                    <span class="text-[10px] font-semibold text-white truncate relative z-10 drop-shadow pointer-events-none">{s.name}</span>
+                  </button>
+                ))}
               </div>
             </div>
           </div>
@@ -3988,6 +4058,338 @@ import {
     updateHubProfileSummary();
 
     // ==========================================
+    // Wallpaper & Atmosphere Studio Controller
+    // ==========================================
+    interface WallpaperStudioConfig {
+      type: 'default' | 'gradient' | 'preset-scene' | 'custom-image' | 'character-avatar';
+      value: string;
+      blur: number; // 0 to 20 px
+      dimness: number; // 0 to 90 %
+      patternOpacity: number; // 0 to 100 %
+      sparkleOverlay: boolean;
+    }
+
+    let draftWpConfig: WallpaperStudioConfig = {
+      type: 'gradient',
+      value: 'linear-gradient(135deg, #0a1838 0%, #163668 50%, #060e22 100%)',
+      blur: 0,
+      dimness: 20,
+      patternOpacity: 15,
+      sparkleOverlay: false
+    };
+
+    let draftScope: 'all' | 'specific' = 'all';
+    let draftTargetCharId: string = '';
+    let studioInitialized = false;
+
+    function updateLivePreviewDOM() {
+      try {
+        const bgEl = document.getElementById('wp-preview-bg');
+        const dimEl = document.getElementById('wp-preview-dimmer');
+        const patEl = document.getElementById('wp-preview-pattern');
+        const spkEl = document.getElementById('wp-preview-sparkles');
+        if (!bgEl || !dimEl) return;
+
+        const isImage = draftWpConfig.type === 'custom-image' || draftWpConfig.type === 'preset-scene' || draftWpConfig.type === 'character-avatar' || (typeof draftWpConfig.value === 'string' && (draftWpConfig.value.startsWith('http') || draftWpConfig.value.startsWith('data:') || draftWpConfig.value.startsWith('/wallpapers/')));
+
+        if (isImage) {
+          bgEl.style.background = `url("${draftWpConfig.value}") center/cover no-repeat`;
+        } else {
+          bgEl.style.background = draftWpConfig.value;
+        }
+
+        const blurVal = draftWpConfig.blur ?? 0;
+        if (blurVal > 0) {
+          bgEl.style.filter = `blur(${blurVal}px)`;
+          bgEl.style.transform = 'scale(1.05)';
+        } else {
+          bgEl.style.filter = 'none';
+          bgEl.style.transform = 'none';
+        }
+
+        const dimVal = draftWpConfig.dimness ?? 20;
+        dimEl.style.opacity = (dimVal / 100).toString();
+
+        const patVal = draftWpConfig.patternOpacity ?? 15;
+        if (patEl) {
+          patEl.style.opacity = (patVal / 100).toString();
+        }
+
+        if (spkEl) {
+          spkEl.classList.toggle('hidden', !draftWpConfig.sparkleOverlay);
+        }
+
+        const valBlur = document.getElementById('val-wp-blur');
+        if (valBlur) valBlur.textContent = `${blurVal}px`;
+
+        const valDim = document.getElementById('val-wp-dim');
+        if (valDim) valDim.textContent = `${dimVal}%`;
+
+        const valPat = document.getElementById('val-wp-pattern');
+        if (valPat) valPat.textContent = `${patVal}%`;
+      } catch (err) {
+        console.error('[WallpaperStudio] updateLivePreviewDOM error:', err);
+      }
+    }
+
+    function renderPresetTiles() {
+      try {
+        const allTiles = document.querySelectorAll('.wp-preset-tile');
+        allTiles.forEach(tile => {
+          const val = tile.getAttribute('data-value');
+          const isSelected = draftWpConfig.value === val;
+          
+          if (isSelected) {
+            tile.classList.add('border-purple-400', 'ring-2', 'ring-purple-400');
+            tile.classList.remove('border-white/10');
+          } else {
+            tile.classList.remove('border-purple-400', 'ring-2', 'ring-purple-400');
+            tile.classList.add('border-white/10');
+          }
+
+          const checkEl = tile.querySelector('.wp-tile-check');
+          if (checkEl) {
+            checkEl.classList.toggle('hidden', !isSelected);
+          }
+        });
+      } catch (err) {
+        console.error('[WallpaperStudio] renderPresetTiles error:', err);
+      }
+    }
+
+    function setupStudioEventListeners() {
+      // Preset tiles click handler
+      document.querySelectorAll('.wp-preset-tile').forEach(tile => {
+        tile.addEventListener('click', (e) => {
+          const target = (e.currentTarget || tile) as HTMLElement;
+          const type = (target.getAttribute('data-type') || 'gradient') as any;
+          const value = target.getAttribute('data-value') || '';
+          draftWpConfig.type = type;
+          draftWpConfig.value = value;
+          renderPresetTiles();
+          updateLivePreviewDOM();
+        });
+      });
+
+      // Tabs: Presets vs Custom
+      const btnModePresets = document.getElementById('btn-wp-mode-presets');
+      const btnModeCustom = document.getElementById('btn-wp-mode-custom');
+      const presetsContainer = document.getElementById('wp-presets-container');
+      const customContainer = document.getElementById('wp-custom-container');
+
+      btnModePresets?.addEventListener('click', () => {
+        btnModePresets.classList.add('bg-purple-600', 'text-white', 'shadow-xs');
+        btnModePresets.classList.remove('text-slate-400');
+        btnModeCustom?.classList.remove('bg-purple-600', 'text-white', 'shadow-xs');
+        btnModeCustom?.classList.add('text-slate-400');
+        presetsContainer?.classList.remove('hidden');
+        customContainer?.classList.add('hidden');
+      });
+
+      btnModeCustom?.addEventListener('click', () => {
+        btnModeCustom.classList.add('bg-purple-600', 'text-white', 'shadow-xs');
+        btnModeCustom.classList.remove('text-slate-400');
+        btnModePresets?.classList.remove('bg-purple-600', 'text-white', 'shadow-xs');
+        btnModePresets?.classList.add('text-slate-400');
+        presetsContainer?.classList.add('hidden');
+        customContainer?.classList.remove('hidden');
+      });
+
+      // Custom URL load button
+      document.getElementById('btn-apply-custom-val')?.addEventListener('click', () => {
+        const inputVal = ((document.getElementById('input-wp-custom-val') as HTMLInputElement)?.value || '').trim();
+        if (!inputVal) return;
+        draftWpConfig.type = (inputVal.startsWith('linear-gradient') || inputVal.startsWith('radial-gradient') || inputVal.startsWith('#') || inputVal.startsWith('rgb')) ? 'gradient' : 'custom-image';
+        draftWpConfig.value = inputVal;
+        renderPresetTiles();
+        updateLivePreviewDOM();
+        showToast('Custom wallpaper loaded in preview', 'info');
+      });
+
+      // Upload Photo Tile
+      const fileInput = document.getElementById('input-wp-file') as HTMLInputElement | null;
+      document.getElementById('btn-wp-tile-upload')?.addEventListener('click', () => {
+        fileInput?.click();
+      });
+
+      fileInput?.addEventListener('change', (e: any) => {
+        const file = e.target.files?.[0];
+        if (!file) return;
+        const reader = new FileReader();
+        reader.onload = (ev) => {
+          const res = ev.target?.result as string;
+          draftWpConfig.type = 'custom-image';
+          draftWpConfig.value = res;
+          renderPresetTiles();
+          updateLivePreviewDOM();
+          showToast('Image uploaded to preview', 'info');
+        };
+        reader.readAsDataURL(file);
+      });
+
+      // Character Portrait Tile
+      document.getElementById('btn-wp-tile-char-portrait')?.addEventListener('click', () => {
+        const tile = document.getElementById('btn-wp-tile-char-portrait');
+        const val = tile?.getAttribute('data-value') || '/avatars/anime_girl.webp';
+        draftWpConfig.type = 'character-avatar';
+        draftWpConfig.value = val;
+        renderPresetTiles();
+        updateLivePreviewDOM();
+      });
+
+      // Sliders Live Preview
+      document.getElementById('slider-wp-blur')?.addEventListener('input', (e) => {
+        draftWpConfig.blur = Number((e.target as HTMLInputElement).value);
+        updateLivePreviewDOM();
+      });
+
+      document.getElementById('slider-wp-dim')?.addEventListener('input', (e) => {
+        draftWpConfig.dimness = Number((e.target as HTMLInputElement).value);
+        updateLivePreviewDOM();
+      });
+
+      document.getElementById('slider-wp-pattern')?.addEventListener('input', (e) => {
+        draftWpConfig.patternOpacity = Number((e.target as HTMLInputElement).value);
+        updateLivePreviewDOM();
+      });
+
+      // Sparkles toggle
+      document.getElementById('toggle-wp-sparkles')?.addEventListener('change', (e) => {
+        draftWpConfig.sparkleOverlay = (e.target as HTMLInputElement).checked;
+        updateLivePreviewDOM();
+      });
+
+      // Scope Selector Buttons
+      const btnScopeAll = document.getElementById('btn-wp-scope-all');
+      const btnScopeSpecific = document.getElementById('btn-wp-scope-specific');
+      const specificCharSection = document.getElementById('wp-specific-char-selector');
+      const selectChar = document.getElementById('select-wp-character') as HTMLSelectElement | null;
+
+      btnScopeAll?.addEventListener('click', () => {
+        draftScope = 'all';
+        btnScopeAll.classList.add('bg-purple-600', 'text-white', 'shadow-sm');
+        btnScopeAll.classList.remove('text-slate-400');
+        btnScopeSpecific?.classList.remove('bg-purple-600', 'text-white', 'shadow-sm');
+        btnScopeSpecific?.classList.add('text-slate-400');
+        specificCharSection?.classList.add('hidden');
+      });
+
+      btnScopeSpecific?.addEventListener('click', () => {
+        draftScope = 'specific';
+        btnScopeSpecific.classList.add('bg-purple-600', 'text-white', 'shadow-sm');
+        btnScopeSpecific.classList.remove('text-slate-400');
+        btnScopeAll?.classList.remove('bg-purple-600', 'text-white', 'shadow-sm');
+        btnScopeAll?.classList.add('text-slate-400');
+        specificCharSection?.classList.remove('hidden');
+      });
+
+      selectChar?.addEventListener('change', () => {
+        draftTargetCharId = selectChar.value;
+      });
+
+      // Reset Button
+      document.getElementById('btn-reset-wallpaper')?.addEventListener('click', () => {
+        draftWpConfig = {
+          type: 'gradient',
+          value: 'linear-gradient(135deg, #0a1838 0%, #163668 50%, #060e22 100%)',
+          blur: 0,
+          dimness: 20,
+          patternOpacity: 15,
+          sparkleOverlay: false
+        };
+        const activeChar = draftScope === 'specific' ? draftTargetCharId : null;
+        (window as any).AetheriaTheme?.resetWallpaper?.(activeChar);
+        initWallpaperStudio();
+        showToast('Wallpaper reset to default', 'info');
+      });
+
+      // Apply Button (Primary CTA)
+      document.getElementById('btn-apply-wallpaper-studio')?.addEventListener('click', () => {
+        const targetId = draftScope === 'specific' ? draftTargetCharId : null;
+        (window as any).AetheriaTheme?.saveWallpaperConfig?.(draftWpConfig, targetId);
+        showToast('Wallpaper applied successfully! ✨', 'success');
+        showView('view-appearance');
+      });
+    }
+
+    function initWallpaperStudio() {
+      try {
+        const activeChar = (window as any).AetheriaTheme?.getActiveCharId?.();
+        const currentConfig = (window as any).AetheriaTheme?.getWallpaperConfig?.(draftScope === 'specific' ? draftTargetCharId : null);
+        if (currentConfig && typeof currentConfig === 'object') {
+          draftWpConfig = {
+            type: currentConfig.type || 'gradient',
+            value: currentConfig.value || 'linear-gradient(135deg, #0a1838 0%, #163668 50%, #060e22 100%)',
+            blur: typeof currentConfig.blur === 'number' ? currentConfig.blur : 0,
+            dimness: typeof currentConfig.dimness === 'number' ? currentConfig.dimness : 20,
+            patternOpacity: typeof currentConfig.patternOpacity === 'number' ? currentConfig.patternOpacity : 15,
+            sparkleOverlay: Boolean(currentConfig.sparkleOverlay)
+          };
+        }
+
+        // Sync character portrait tile with active character
+        const charTile = document.getElementById('btn-wp-tile-char-portrait');
+        const charImg = document.getElementById('wp-tile-char-img') as HTMLImageElement | null;
+        let activeAvatar = '/avatars/anime_girl.webp';
+        try {
+          const customChars = JSON.parse(localStorage.getItem('aetheria_custom_characters') || '[]');
+          if (customChars.length > 0 && customChars[0].avatar) {
+            activeAvatar = customChars[0].avatar;
+          }
+        } catch(e) {}
+        if (charImg) charImg.src = activeAvatar;
+        if (charTile) charTile.setAttribute('data-value', activeAvatar);
+
+        // Populate Character Select Dropdown
+        const selectChar = document.getElementById('select-wp-character') as HTMLSelectElement | null;
+        if (selectChar) {
+          selectChar.innerHTML = '';
+          try {
+            const customChars = JSON.parse(localStorage.getItem('aetheria_custom_characters') || '[]');
+            if (customChars.length === 0) {
+              selectChar.innerHTML = '<option value="helen">Helen & Anna (Default)</option>';
+            } else {
+              customChars.forEach((c: any) => {
+                const opt = document.createElement('option');
+                opt.value = c.id;
+                opt.textContent = c.name || c.id;
+                selectChar.appendChild(opt);
+              });
+            }
+            draftTargetCharId = selectChar.value;
+          } catch(e) {
+            selectChar.innerHTML = '<option value="helen">Helen & Anna (Default)</option>';
+          }
+        }
+
+        // Sync sliders safely with fallback defaults
+        const sliderBlur = document.getElementById('slider-wp-blur') as HTMLInputElement | null;
+        if (sliderBlur) sliderBlur.value = (draftWpConfig.blur ?? 0).toString();
+
+        const sliderDim = document.getElementById('slider-wp-dim') as HTMLInputElement | null;
+        if (sliderDim) sliderDim.value = (draftWpConfig.dimness ?? 20).toString();
+
+        const sliderPat = document.getElementById('slider-wp-pattern') as HTMLInputElement | null;
+        if (sliderPat) sliderPat.value = (draftWpConfig.patternOpacity ?? 15).toString();
+
+        const toggleSparkles = document.getElementById('toggle-wp-sparkles') as HTMLInputElement | null;
+        if (toggleSparkles) toggleSparkles.checked = Boolean(draftWpConfig.sparkleOverlay);
+
+        renderPresetTiles();
+        updateLivePreviewDOM();
+
+        if (!studioInitialized) {
+          studioInitialized = true;
+          setupStudioEventListeners();
+        }
+      } catch (err) {
+        console.error('[WallpaperStudio] init error:', err);
+      }
+    }
+
+    (window as any).__initWallpaperStudio = initWallpaperStudio;
+
+    // ==========================================
     // Telegram-Style View Switcher (SPA Hub)
     // ==========================================
     function showView(targetId: string) {
@@ -4007,9 +4409,7 @@ import {
               (window as any).__initNameColorPage();
             }
           } else if (id === 'view-wallpaper-studio') {
-            if (typeof (window as any).__initWallpaperStudio === 'function') {
-              (window as any).__initWallpaperStudio();
-            }
+            initWallpaperStudio();
           }
         } else {
           el.classList.add('hidden');
@@ -4082,486 +4482,7 @@ import {
       if (typeof (window as any).__initNameColorPage === 'function') (window as any).__initNameColorPage();
     });
 
-    // ==========================================
-    // Wallpaper & Atmosphere Studio Controller
-    // ==========================================
-    interface WallpaperStudioConfig {
-      type: 'default' | 'gradient' | 'preset-scene' | 'custom-image' | 'character-avatar';
-      value: string;
-      blur: number; // 0 to 20 px
-      dimness: number; // 0 to 90 %
-      patternOpacity: number; // 0 to 100 %
-      sparkleOverlay: boolean;
-    }
-
-    const WP_PRESET_GRADIENTS = [
-      { id: 'grad-sapphire', name: 'Midnight Sapphire', value: 'linear-gradient(135deg, #0a1838 0%, #163668 50%, #060e22 100%)', dot: '#38bdf8' },
-      { id: 'grad-amethyst', name: 'Royal Amethyst', value: 'linear-gradient(135deg, #2a0e4e 0%, #581c87 50%, #16072b 100%)', dot: '#c084fc' },
-      { id: 'grad-sunset', name: 'Cyber Crimson', value: 'linear-gradient(135deg, #3d0a26 0%, #7e1654 50%, #1c0512 100%)', dot: '#f43f5e' },
-      { id: 'grad-emerald', name: 'Emerald Twilight', value: 'linear-gradient(135deg, #05261d 0%, #065f46 50%, #021711 100%)', dot: '#34d399' },
-      { id: 'grad-espresso', name: 'Warm Espresso', value: 'linear-gradient(135deg, #2b1509 0%, #683719 50%, #180a04 100%)', dot: '#fbbf24' },
-      { id: 'grad-oled', name: 'Pure OLED Dark', value: 'linear-gradient(180deg, #181920 0%, #020305 100%)', dot: '#94a3b8' }
-    ];
-
-    const WP_ROLEPLAY_SCENES = [
-      { 
-        id: 'scene-library', 
-        name: 'Fantasy Library', 
-        value: '/wallpapers/fantasy_library.webp',
-        fallback: 'linear-gradient(135deg, #21150c 0%, #452815 50%, #140a05 100%)',
-        icon: '📚'
-      },
-      { 
-        id: 'scene-neon', 
-        name: 'Neon Cyber City', 
-        value: '/wallpapers/neon_city.webp',
-        fallback: 'linear-gradient(135deg, #0d1233 0%, #281745 50%, #4c0d3e 100%)',
-        icon: '🏙️'
-      },
-      { 
-        id: 'scene-starry', 
-        name: 'Starry Galaxy', 
-        value: '/wallpapers/starry_galaxy.webp',
-        fallback: 'linear-gradient(135deg, #050819 0%, #101c3d 50%, #1e1344 100%)',
-        icon: '✨'
-      },
-      { 
-        id: 'scene-cafe', 
-        name: 'Cozy Tavern & Cafe', 
-        value: '/wallpapers/cozy_cafe.webp',
-        fallback: 'linear-gradient(135deg, #22140a 0%, #462511 50%, #170b05 100%)',
-        icon: '☕'
-      }
-    ];
-
-    let draftWpConfig: WallpaperStudioConfig = {
-      type: 'gradient',
-      value: 'linear-gradient(135deg, #0a1838 0%, #163668 50%, #060e22 100%)',
-      blur: 0,
-      dimness: 20,
-      patternOpacity: 15,
-      sparkleOverlay: false
-    };
-
-    let draftScope: 'all' | 'specific' = 'all';
-    let draftTargetCharId: string = '';
-    let studioInitialized = false;
-
-    function resizeWallpaperImage(file: File, maxWidth = 1080, quality = 0.80): Promise<string> {
-      return new Promise((resolve, reject) => {
-        if (!file || !file.type.startsWith('image/')) {
-          return reject(new Error('Selected file is not an image'));
-        }
-        const reader = new FileReader();
-        reader.onerror = () => reject(new Error('Failed to read file'));
-        reader.onload = (e) => {
-          const img = new window.Image();
-          img.onerror = () => reject(new Error('Failed to decode image'));
-          img.onload = () => {
-            let width = img.width;
-            let height = img.height;
-
-            if (width > maxWidth) {
-              height = Math.round((height * maxWidth) / width);
-              width = maxWidth;
-            }
-
-            const canvas = document.createElement('canvas');
-            canvas.width = Math.max(1, width);
-            canvas.height = Math.max(1, height);
-            const ctx = canvas.getContext('2d');
-            if (!ctx) return reject(new Error('Canvas context unavailable'));
-
-            ctx.drawImage(img, 0, 0, width, height);
-
-            try {
-              const webpData = canvas.toDataURL('image/webp', quality);
-              if (webpData && webpData.startsWith('data:image/webp')) {
-                resolve(webpData);
-              } else {
-                resolve(canvas.toDataURL('image/jpeg', quality));
-              }
-            } catch {
-              resolve(canvas.toDataURL('image/jpeg', quality));
-            }
-          };
-          img.src = e.target?.result as string;
-        };
-        reader.readAsDataURL(file);
-      });
-    }
-
-    function updateLivePreviewDOM() {
-      const bgEl = document.getElementById('wp-preview-bg');
-      const dimEl = document.getElementById('wp-preview-dimmer');
-      const patEl = document.getElementById('wp-preview-pattern');
-      const sparklesCanvas = document.getElementById('wp-preview-sparkles') as HTMLCanvasElement | null;
-
-      if (bgEl) {
-        const isImage = draftWpConfig.type === 'custom-image' || draftWpConfig.type === 'preset-scene' || draftWpConfig.type === 'character-avatar' || (typeof draftWpConfig.value === 'string' && (draftWpConfig.value.startsWith('http') || draftWpConfig.value.startsWith('data:')));
-        if (isImage) {
-          bgEl.style.backgroundImage = `url("${draftWpConfig.value}")`;
-          bgEl.style.background = '';
-          bgEl.style.backgroundSize = 'cover';
-          bgEl.style.backgroundPosition = 'center';
-        } else {
-          bgEl.style.backgroundImage = 'none';
-          bgEl.style.background = draftWpConfig.value;
-          bgEl.style.backgroundSize = '';
-          bgEl.style.backgroundPosition = '';
-        }
-        bgEl.style.filter = draftWpConfig.blur > 0 ? `blur(${draftWpConfig.blur}px)` : 'none';
-        bgEl.style.transform = draftWpConfig.blur > 0 ? 'scale(1.05)' : 'scale(1.0)';
-      }
-
-      if (dimEl) {
-        dimEl.style.opacity = (draftWpConfig.dimness / 100).toString();
-      }
-
-      if (patEl) {
-        const doodlePat = (window as any).AetheriaTheme?.DOODLE_PATTERNS?.['pattern-gamer']?.pattern || 'radial-gradient(circle, rgba(255,255,255,0.15) 1px, transparent 1px)';
-        patEl.style.backgroundImage = doodlePat;
-        patEl.style.backgroundSize = '24px 24px';
-        patEl.style.opacity = (draftWpConfig.patternOpacity / 100).toString();
-      }
-
-      // Sparkles canvas
-      if (sparklesCanvas) {
-        if (draftWpConfig.sparkleOverlay) {
-          sparklesCanvas.classList.remove('hidden');
-          if (typeof (window as any).__initChatSparkles === 'function') {
-            (window as any).__initChatSparkles(sparklesCanvas);
-          }
-        } else {
-          sparklesCanvas.classList.add('hidden');
-          if (typeof (window as any).__stopChatSparkles === 'function') {
-            (window as any).__stopChatSparkles();
-          }
-        }
-      }
-
-      // Update text badges
-      const valBlur = document.getElementById('val-wp-blur');
-      if (valBlur) valBlur.textContent = `${draftWpConfig.blur}px`;
-
-      const valDim = document.getElementById('val-wp-dim');
-      if (valDim) valDim.textContent = `${draftWpConfig.dimness}%`;
-
-      const valPat = document.getElementById('val-wp-pattern');
-      if (valPat) valPat.textContent = `${draftWpConfig.patternOpacity}%`;
-    }
-
-    function renderPresetTiles() {
-      const gradContainer = document.getElementById('wp-grid-gradients');
-      const sceneContainer = document.getElementById('wp-grid-scenes');
-
-      if (gradContainer) {
-        gradContainer.innerHTML = WP_PRESET_GRADIENTS.map(g => {
-          const isSelected = draftWpConfig.value === g.value;
-          return `
-            <button 
-              type="button" 
-              class="wp-preset-tile relative h-20 rounded-2xl overflow-hidden border p-2 flex flex-col justify-between transition cursor-pointer active:scale-95 text-left group ${isSelected ? 'ring-2 ring-amber-400 border-amber-400 shadow-lg shadow-amber-400/25' : 'border-white/10 hover:border-white/30'}"
-              data-type="gradient"
-              data-value="${g.value}"
-            >
-              <div class="absolute inset-0 transition group-hover:scale-105" style="background: ${g.value};"></div>
-              <div class="relative z-10 flex items-center justify-between w-full">
-                <span class="w-2.5 h-2.5 rounded-full border border-white/40 shadow-xs" style="background-color: ${g.dot};"></span>
-                <span class="wp-tile-check w-4 h-4 rounded-full bg-amber-500 text-slate-950 flex items-center justify-center text-[10px] font-black shrink-0 ${isSelected ? '' : 'hidden'}">✓</span>
-              </div>
-              <div class="absolute inset-x-0 bottom-0 p-2 bg-gradient-to-t from-black/95 via-black/60 to-transparent z-10 flex items-center justify-between w-full">
-                <span class="wp-preset-name wp-tile-label text-xs font-bold truncate pr-1" style="color: #ffffff !important; text-shadow: 0 1px 4px rgba(0,0,0,0.95);">${g.name}</span>
-              </div>
-            </button>
-          `;
-        }).join('');
-      }
-
-      if (sceneContainer) {
-        sceneContainer.innerHTML = WP_ROLEPLAY_SCENES.map(s => {
-          const isSelected = draftWpConfig.value === s.value;
-          return `
-            <button 
-              type="button" 
-              class="wp-preset-tile relative h-24 rounded-2xl overflow-hidden border p-2 flex flex-col justify-between transition cursor-pointer active:scale-95 text-left group ${isSelected ? 'ring-2 ring-amber-400 border-amber-400 shadow-lg shadow-amber-400/25' : 'border-white/10 hover:border-white/30'}"
-              data-type="preset-scene"
-              data-value="${s.value}"
-            >
-              <div class="absolute inset-0 transition group-hover:scale-105" style="background: ${s.fallback};"></div>
-              <img 
-                src="${s.value}" 
-                alt="${s.name}" 
-                class="absolute inset-0 w-full h-full object-cover transition group-hover:scale-105" 
-              />
-              <div class="relative z-10 flex items-center justify-between w-full">
-                <span class="text-xs drop-shadow">${s.icon}</span>
-                <span class="wp-tile-check w-4 h-4 rounded-full bg-amber-500 text-slate-950 flex items-center justify-center text-[10px] font-black shrink-0 ${isSelected ? '' : 'hidden'}">✓</span>
-              </div>
-              <div class="absolute inset-x-0 bottom-0 p-2 bg-gradient-to-t from-black/95 via-black/60 to-transparent z-10 flex items-center justify-between w-full">
-                <span class="wp-preset-name wp-tile-label text-xs font-bold truncate pr-1" style="color: #ffffff !important; text-shadow: 0 1px 4px rgba(0,0,0,0.95);">${s.name}</span>
-              </div>
-            </button>
-          `;
-        }).join('');
-      }
-
-      // Check character tile selection
-      const charTile = document.getElementById('btn-wp-tile-char-portrait');
-      if (charTile) {
-        const charVal = charTile.getAttribute('data-value') || '';
-        const isSelected = draftWpConfig.type === 'character-avatar' || draftWpConfig.value === charVal;
-        const checkEl = charTile.querySelector('.wp-tile-check');
-        if (isSelected) {
-          charTile.classList.add('ring-2', 'ring-amber-400', 'border-amber-400', 'shadow-lg', 'shadow-amber-400/20');
-          checkEl?.classList.remove('hidden');
-        } else {
-          charTile.classList.remove('ring-2', 'ring-amber-400', 'border-amber-400', 'shadow-lg', 'shadow-amber-400/20');
-          checkEl?.classList.add('hidden');
-        }
-      }
-
-      // Add click listeners to all preset tiles
-      document.querySelectorAll('.wp-preset-tile').forEach(btn => {
-        btn.addEventListener('click', () => {
-          const type = (btn.getAttribute('data-type') || 'gradient') as any;
-          const val = btn.getAttribute('data-value') || '';
-          draftWpConfig.type = type;
-          draftWpConfig.value = val;
-          renderPresetTiles();
-          updateLivePreviewDOM();
-        });
-      });
-    }
-
-    function initWallpaperStudio() {
-      // Load current config
-      const activeChar = (window as any).AetheriaTheme?.getActiveCharId?.();
-      const currentConfig = (window as any).AetheriaTheme?.getWallpaperConfig?.(draftScope === 'specific' ? draftTargetCharId : null);
-      if (currentConfig) {
-        draftWpConfig = { ...currentConfig };
-      }
-
-      // Sync character portrait tile with active character
-      const charTile = document.getElementById('btn-wp-tile-char-portrait');
-      const charImg = document.getElementById('wp-tile-char-img') as HTMLImageElement | null;
-      let activeAvatar = '/avatars/anime_girl.webp';
-      try {
-        const customChars = JSON.parse(localStorage.getItem('aetheria_custom_characters') || '[]');
-        if (customChars.length > 0 && customChars[0].avatar) {
-          activeAvatar = customChars[0].avatar;
-        }
-      } catch(e) {}
-      if (charImg) charImg.src = activeAvatar;
-      if (charTile) charTile.setAttribute('data-value', activeAvatar);
-
-      // Populate Character Select Dropdown
-      const selectChar = document.getElementById('select-wp-character') as HTMLSelectElement | null;
-      if (selectChar) {
-        selectChar.innerHTML = '';
-        try {
-          const customChars = JSON.parse(localStorage.getItem('aetheria_custom_characters') || '[]');
-          if (customChars.length === 0) {
-            selectChar.innerHTML = '<option value="helen">Helen & Anna (Default)</option>';
-          } else {
-            customChars.forEach((c: any) => {
-              const opt = document.createElement('option');
-              opt.value = c.id;
-              opt.textContent = c.name || c.id;
-              selectChar.appendChild(opt);
-            });
-          }
-          draftTargetCharId = selectChar.value;
-        } catch(e) {
-          selectChar.innerHTML = '<option value="helen">Helen & Anna (Default)</option>';
-        }
-      }
-
-      // Sync sliders
-      const sliderBlur = document.getElementById('slider-wp-blur') as HTMLInputElement | null;
-      if (sliderBlur) sliderBlur.value = draftWpConfig.blur.toString();
-
-      const sliderDim = document.getElementById('slider-wp-dim') as HTMLInputElement | null;
-      if (sliderDim) sliderDim.value = draftWpConfig.dimness.toString();
-
-      const sliderPat = document.getElementById('slider-wp-pattern') as HTMLInputElement | null;
-      if (sliderPat) sliderPat.value = draftWpConfig.patternOpacity.toString();
-
-      const toggleSparkles = document.getElementById('toggle-wp-sparkles') as HTMLInputElement | null;
-      if (toggleSparkles) toggleSparkles.checked = Boolean(draftWpConfig.sparkleOverlay);
-
-      renderPresetTiles();
-      updateLivePreviewDOM();
-
-      if (!studioInitialized) {
-        studioInitialized = true;
-        setupStudioEventListeners();
-      }
-    }
-
-    function setupStudioEventListeners() {
-      // Mode tabs: Presets vs Custom
-      const btnModePresets = document.getElementById('btn-wp-mode-presets');
-      const btnModeCustom = document.getElementById('btn-wp-mode-custom');
-      const presetsContainer = document.getElementById('wp-presets-container');
-      const customContainer = document.getElementById('wp-custom-container');
-
-      btnModePresets?.addEventListener('click', () => {
-        btnModePresets.classList.add('bg-purple-600', 'text-white', 'shadow-xs');
-        btnModePresets.classList.remove('text-slate-400');
-        btnModeCustom?.classList.remove('bg-purple-600', 'text-white', 'shadow-xs');
-        btnModeCustom?.classList.add('text-slate-400');
-        presetsContainer?.classList.remove('hidden');
-        customContainer?.classList.add('hidden');
-      });
-
-      btnModeCustom?.addEventListener('click', () => {
-        btnModeCustom.classList.add('bg-purple-600', 'text-white', 'shadow-xs');
-        btnModeCustom.classList.remove('text-slate-400');
-        btnModePresets?.classList.remove('bg-purple-600', 'text-white', 'shadow-xs');
-        btnModePresets?.classList.add('text-slate-400');
-        presetsContainer?.classList.add('hidden');
-        customContainer?.classList.remove('hidden');
-      });
-
-      // Custom URL load button
-      document.getElementById('btn-apply-custom-val')?.addEventListener('click', () => {
-        const inputVal = ((document.getElementById('input-wp-custom-val') as HTMLInputElement)?.value || '').trim();
-        if (!inputVal) return;
-        const isGrad = inputVal.includes('gradient');
-        draftWpConfig.type = isGrad ? 'gradient' : 'custom-image';
-        draftWpConfig.value = inputVal;
-        updateLivePreviewDOM();
-        showToast('Custom wallpaper loaded', 'info');
-      });
-
-      // Upload from Gallery Tile
-      const fileInput = document.getElementById('input-wp-gallery-file') as HTMLInputElement | null;
-      document.getElementById('btn-wp-tile-upload')?.addEventListener('click', () => {
-        if (fileInput) {
-          fileInput.value = '';
-          fileInput.click();
-        }
-      });
-
-      fileInput?.addEventListener('change', async () => {
-        const file = fileInput.files?.[0];
-        if (!file) return;
-        try {
-          showToast('Compressing wallpaper photo...', 'info');
-          const dataUrl = await resizeWallpaperImage(file, 1080, 0.80);
-          draftWpConfig.type = 'custom-image';
-          draftWpConfig.value = dataUrl;
-          renderPresetTiles();
-          updateLivePreviewDOM();
-          showToast('Photo ready! Tap Apply Wallpaper to save.', 'success');
-        } catch(err) {
-          showToast('Failed to load image', 'error');
-        }
-      });
-
-      // Character Portrait Tile Click
-      document.getElementById('btn-wp-tile-char-portrait')?.addEventListener('click', () => {
-        const charTile = document.getElementById('btn-wp-tile-char-portrait');
-        const charVal = charTile?.getAttribute('data-value') || '/avatars/anime_girl.webp';
-        draftWpConfig.type = 'character-avatar';
-        draftWpConfig.value = charVal;
-        if (draftWpConfig.blur === 0) draftWpConfig.blur = 8;
-        if (draftWpConfig.dimness < 30) draftWpConfig.dimness = 35;
-        const sliderBlur = document.getElementById('slider-wp-blur') as HTMLInputElement | null;
-        if (sliderBlur) sliderBlur.value = draftWpConfig.blur.toString();
-        const sliderDim = document.getElementById('slider-wp-dim') as HTMLInputElement | null;
-        if (sliderDim) sliderDim.value = draftWpConfig.dimness.toString();
-        renderPresetTiles();
-        updateLivePreviewDOM();
-      });
-
-      // Sliders input events
-      document.getElementById('slider-wp-blur')?.addEventListener('input', (e) => {
-        draftWpConfig.blur = Number((e.target as HTMLInputElement).value);
-        updateLivePreviewDOM();
-      });
-
-      document.getElementById('slider-wp-dim')?.addEventListener('input', (e) => {
-        draftWpConfig.dimness = Number((e.target as HTMLInputElement).value);
-        updateLivePreviewDOM();
-      });
-
-      document.getElementById('slider-wp-pattern')?.addEventListener('input', (e) => {
-        draftWpConfig.patternOpacity = Number((e.target as HTMLInputElement).value);
-        updateLivePreviewDOM();
-      });
-
-      // Sparkles toggle
-      document.getElementById('toggle-wp-sparkles')?.addEventListener('change', (e) => {
-        draftWpConfig.sparkleOverlay = (e.target as HTMLInputElement).checked;
-        updateLivePreviewDOM();
-      });
-
-      // Scope Selector Buttons
-      const btnScopeAll = document.getElementById('btn-wp-scope-all');
-      const btnScopeSpecific = document.getElementById('btn-wp-scope-specific');
-      const specificCharSection = document.getElementById('wp-specific-char-selector');
-      const selectChar = document.getElementById('select-wp-character') as HTMLSelectElement | null;
-
-      btnScopeAll?.addEventListener('click', () => {
-        draftScope = 'all';
-        btnScopeAll.classList.add('bg-purple-600', 'text-white', 'shadow-sm');
-        btnScopeAll.classList.remove('text-slate-400');
-        btnScopeSpecific?.classList.remove('bg-purple-600', 'text-white', 'shadow-sm');
-        btnScopeSpecific?.classList.add('text-slate-400');
-        specificCharSection?.classList.add('hidden');
-      });
-
-      btnScopeSpecific?.addEventListener('click', () => {
-        draftScope = 'specific';
-        btnScopeSpecific.classList.add('bg-purple-600', 'text-white', 'shadow-sm');
-        btnScopeSpecific.classList.remove('text-slate-400');
-        btnScopeAll?.classList.remove('bg-purple-600', 'text-white', 'shadow-sm');
-        btnScopeAll?.classList.add('text-slate-400');
-        specificCharSection?.classList.remove('hidden');
-      });
-
-      selectChar?.addEventListener('change', () => {
-        draftTargetCharId = selectChar.value;
-      });
-
-      // Reset Button
-      document.getElementById('btn-reset-wallpaper')?.addEventListener('click', () => {
-        draftWpConfig = {
-          type: 'gradient',
-          value: 'linear-gradient(135deg, #0a1838 0%, #163668 50%, #060e22 100%)',
-          blur: 0,
-          dimness: 20,
-          patternOpacity: 15,
-          sparkleOverlay: false
-        };
-        const sliderBlur = document.getElementById('slider-wp-blur') as HTMLInputElement | null;
-        if (sliderBlur) sliderBlur.value = '0';
-        const sliderDim = document.getElementById('slider-wp-dim') as HTMLInputElement | null;
-        if (sliderDim) sliderDim.value = '20';
-        const sliderPat = document.getElementById('slider-wp-pattern') as HTMLInputElement | null;
-        if (sliderPat) sliderPat.value = '15';
-        const toggleSparkles = document.getElementById('toggle-wp-sparkles') as HTMLInputElement | null;
-        if (toggleSparkles) toggleSparkles.checked = false;
-
-        renderPresetTiles();
-        updateLivePreviewDOM();
-        showToast('Wallpaper reset to default', 'info');
-      });
-
-      // Apply Button (Primary CTA)
-      document.getElementById('btn-apply-wallpaper-studio')?.addEventListener('click', () => {
-        const targetId = draftScope === 'specific' ? draftTargetCharId : null;
-        (window as any).AetheriaTheme?.saveWallpaperConfig?.(draftWpConfig, targetId);
-        showToast('Wallpaper applied successfully! ✨', 'success');
-        showView('view-appearance');
-      });
-    }
-
-    (window as any).__initWallpaperStudio = initWallpaperStudio;
-
-    // Hub Menu Item Clicks
+// Hub Menu Item Clicks
     document.getElementById('hub-item-personas')?.addEventListener('click', () => showView('view-personas'));
     document.getElementById('hub-item-appearance')?.addEventListener('click', () => showView('view-appearance'));
     document.getElementById('hub-item-ai')?.addEventListener('click', () => showView('view-ai-engine'));
@@ -7770,11 +7691,6 @@ function renderPresets() {
         render3DCarousel();
       });
 
-      btnToggleWallpaperDrawer?.addEventListener('click', () => {
-        const isHidden = drawerWallpaper?.classList.toggle('hidden');
-        chevronWallpaper?.classList.toggle('rotate-90', !isHidden);
-      });
-
       photoBtn?.addEventListener('click', () => photoFileInput?.click());
       photoFileInput?.addEventListener('change', (e: any) => {
         const file = e.target.files?.[0];
@@ -7876,6 +7792,9 @@ function renderPresets() {
 
     // Call initProfileChatSettings
     initProfileChatSettings();
+
+    // Call initWallpaperStudio to ensure event listeners and live state are attached immediately
+    initWallpaperStudio();
   }
 
   if (document.readyState === 'loading') {
