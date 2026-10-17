@@ -5774,51 +5774,108 @@ html.day-mode .avatar-border-dual-gradient {
   animation: wingRightFlap 3s ease-in-out infinite;
 }
 
-/* Day Mode and OLED Mode overrides for visual grid tiles */
-html[data-base-mode="day"] .avatar-deco-tile:not(.ring-2),
-html.day-mode .avatar-deco-tile:not(.ring-2) {
-  background-color: #f1f5f9 !important;
+/* ========================================================
+   DAY MODE & OLED THEME STYLES FOR AVATAR DECORATIONS TAB
+   ======================================================== */
+
+/* Tab 2 Container Cards in Day Mode */
+html[data-base-mode="day"] #view-tab-avatar .rounded-2xl.bg-\[\#11141d\],
+html.day-mode #view-tab-avatar .rounded-2xl.bg-\[\#11141d\] {
+  background-color: #ffffff !important;
   border-color: rgba(0, 0, 0, 0.08) !important;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.04) !important;
 }
 
-html[data-base-mode="day"] .avatar-deco-tile:not(.ring-2):hover,
-html.day-mode .avatar-deco-tile:not(.ring-2):hover {
-  background-color: #e2e8f0 !important;
+html[data-base-mode="day"] #view-tab-avatar span.text-slate-200,
+html.day-mode #view-tab-avatar span.text-slate-200 {
+  color: #0f172a !important;
+}
+
+html[data-base-mode="day"] #view-tab-avatar span.text-slate-400,
+html[data-base-mode="day"] #view-tab-avatar p.text-slate-400,
+html.day-mode #view-tab-avatar span.text-slate-400,
+html.day-mode #view-tab-avatar p.text-slate-400 {
+  color: #64748b !important;
+}
+
+/* Day Mode Inputs in Tab 2 */
+html[data-base-mode="day"] #input-custom-deco-url,
+html.day-mode #input-custom-deco-url {
+  background-color: #f8fafc !important;
+  border-color: rgba(0, 0, 0, 0.12) !important;
+  color: #0f172a !important;
+}
+
+html[data-base-mode="day"] #input-custom-deco-url::placeholder,
+html.day-mode #input-custom-deco-url::placeholder {
+  color: #94a3b8 !important;
+}
+
+/* Hero Showcase Card in Day Mode */
+html[data-base-mode="day"] #preview-hero-avatar-card,
+html.day-mode #preview-hero-avatar-card {
+  background-color: #ffffff !important;
+  border-color: rgba(0, 0, 0, 0.08) !important;
+  box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.06), 0 8px 10px -6px rgba(0, 0, 0, 0.03) !important;
+}
+
+/* Day Mode Grid Tiles */
+html[data-base-mode="day"] .avatar-deco-tile,
+html.day-mode .avatar-deco-tile {
+  background-color: #f8fafc !important;
+  border: 1px solid rgba(0, 0, 0, 0.08) !important;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.03) !important;
+}
+
+html[data-base-mode="day"] .avatar-deco-tile:hover,
+html.day-mode .avatar-deco-tile:hover {
+  background-color: #f1f5f9 !important;
+  border-color: rgba(147, 51, 234, 0.4) !important;
 }
 
 html[data-base-mode="day"] .avatar-deco-tile.ring-2,
 html.day-mode .avatar-deco-tile.ring-2 {
-  background-color: #fdf2f8 !important;
-  box-shadow: 0 4px 14px rgba(236, 72, 153, 0.2) !important;
+  background-color: #f5f3ff !important;
+  border-color: #9333ea !important;
+  box-shadow: 0 0 0 2px #9333ea, 0 4px 12px rgba(147, 51, 234, 0.15) !important;
 }
 
-html.power-saving-oled .avatar-deco-tile:not(.ring-2),
-html[data-base-mode="oled"] .avatar-deco-tile:not(.ring-2) {
+html[data-base-mode="day"] .deco-tile-name,
+html.day-mode .deco-tile-name {
+  color: #334155 !important;
+}
+
+html[data-base-mode="day"] .deco-tile-base,
+html.day-mode .deco-tile-base {
+  background: linear-gradient(135deg, #e2e8f0 0%, #cbd5e1 100%) !important;
+  border-color: rgba(0, 0, 0, 0.06) !important;
+}
+
+/* OLED Mode Overrides for Tab 2 */
+html.power-saving-oled #view-tab-avatar .rounded-2xl.bg-\[\#11141d\],
+html[data-base-mode="oled"] #view-tab-avatar .rounded-2xl.bg-\[\#11141d\] {
+  background-color: #000000 !important;
+  border-color: rgba(255, 255, 255, 0.12) !important;
+  box-shadow: none !important;
+}
+
+html.power-saving-oled .avatar-deco-tile,
+html[data-base-mode="oled"] .avatar-deco-tile {
   background-color: #000000 !important;
   border-color: rgba(255, 255, 255, 0.1) !important;
 }
 
 html.power-saving-oled .avatar-deco-tile.ring-2,
 html[data-base-mode="oled"] .avatar-deco-tile.ring-2 {
-  background-color: #1a0814 !important;
-}
-
-/* Discord Hero Avatar Showcase Card (Always High-Contrast Dark Stage) */
-#preview-hero-avatar-card {
-  background-color: #111218;
-}
-
-html[data-base-mode="day"] #preview-hero-avatar-card,
-html.day-mode #preview-hero-avatar-card {
-  background-color: #111218 !important;
-  border-color: rgba(255, 255, 255, 0.12) !important;
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.12) !important;
+  background-color: #120a1c !important;
+  border-color: #a855f7 !important;
+  box-shadow: 0 0 0 2px #a855f7 !important;
 }
 
 html.power-saving-oled #preview-hero-avatar-card,
 html[data-base-mode="oled"] #preview-hero-avatar-card {
-  background-color: #050505 !important;
-  border-color: rgba(255, 255, 255, 0.1) !important;
+  background-color: #000000 !important;
+  border-color: rgba(255, 255, 255, 0.12) !important;
   box-shadow: none !important;
 }
 
