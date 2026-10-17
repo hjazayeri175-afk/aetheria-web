@@ -4892,6 +4892,259 @@ html.day-mode #library-toast-action:hover {
   color: #78350f !important;
 }
 
+/* ==========================================================================
+   TRI-STATE THEME SYSTEM: TRUE OLED BLACK MASTER OVERRIDES
+   Guarantees 100% pixel turn-off (#000000) for OLED/AMOLED displays,
+   complete elimination of conflicting day-mode styles, and maximum legibility.
+   ========================================================================== */
+
+/* 1. Core Root & Base Reset */
+html[data-base-mode="oled"],
+html.power-saving-oled,
+html.oled-mode {
+  --bg-primary: #000000 !important;
+  --bg-secondary: #000000 !important;
+  --bg-card: #000000 !important;
+  --border-subtle: rgba(255, 255, 255, 0.12) !important;
+  --text-primary: #ffffff !important;
+  --text-secondary: #94a3b8 !important;
+  --text-muted: #64748b !important;
+  --theme-chat-bg: #000000 !important;
+  --theme-chat-wallpaper: none !important;
+  --theme-chat-pattern-opacity: 0 !important;
+  --theme-bubble-char-bg: #050505 !important;
+  --theme-bubble-char-text: #f8fafc !important;
+  --theme-bubble-char-border: rgba(255, 255, 255, 0.14) !important;
+  --theme-bubble-user-bg: #0c0e18 !important;
+  --theme-thought-bg: #020202 !important;
+  --theme-thought-border: rgba(255, 255, 255, 0.12) !important;
+  --theme-thought-text: #f8fafc !important;
+  --theme-thought-accent: rgba(255, 255, 255, 0.4) !important;
+  background-color: #000000 !important;
+  color-scheme: dark !important;
+}
+
+html[data-base-mode="oled"] body,
+html.power-saving-oled body,
+html.oled-mode body,
+html[data-base-mode="oled"] main,
+html.power-saving-oled main,
+html.oled-mode main {
+  background-color: #000000 !important;
+  background-image: none !important;
+  color: #f1f5f9 !important;
+}
+
+/* 2. Disable All Background Blur Lights and Ambient Neon Orbs */
+html[data-base-mode="oled"] .blur-3xl,
+html.power-saving-oled .blur-3xl,
+html.oled-mode .blur-3xl,
+html[data-base-mode="oled"] .blur-2xl,
+html.power-saving-oled .blur-2xl,
+html.oled-mode .blur-2xl,
+html[data-base-mode="oled"] div.absolute.rounded-full.pointer-events-none,
+html.power-saving-oled div.absolute.rounded-full.pointer-events-none,
+html.oled-mode div.absolute.rounded-full.pointer-events-none {
+  display: none !important;
+  opacity: 0 !important;
+  visibility: hidden !important;
+}
+
+/* 3. Site Header & Global Navigation */
+html[data-base-mode="oled"] #site-header,
+html.power-saving-oled #site-header,
+html.oled-mode #site-header {
+  background-color: #000000 !important;
+  background-image: none !important;
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1) !important;
+}
+
+html[data-base-mode="oled"] #site-header nav a,
+html.power-saving-oled #site-header nav a,
+html.oled-mode #site-header nav a {
+  color: #94a3b8 !important;
+}
+
+html[data-base-mode="oled"] #site-header nav a:hover,
+html.power-saving-oled #site-header nav a:hover,
+html.oled-mode #site-header nav a:hover,
+html[data-base-mode="oled"] #site-header nav a.header-nav-active,
+html.power-saving-oled #site-header nav a.header-nav-active,
+html.oled-mode #site-header nav a.header-nav-active {
+  color: #ffffff !important;
+  background-color: #0d0d0d !important;
+}
+
+html[data-base-mode="oled"] #site-header .bg-\[\#090b12\],
+html.power-saving-oled #site-header .bg-\[\#090b12\],
+html.oled-mode #site-header .bg-\[\#090b12\] {
+  background-color: #050505 !important;
+  border-color: rgba(255, 255, 255, 0.12) !important;
+}
+
+html[data-base-mode="oled"] #site-header input,
+html.power-saving-oled #site-header input,
+html.oled-mode #site-header input {
+  background-color: #000000 !important;
+  border-color: rgba(255, 255, 255, 0.14) !important;
+  color: #ffffff !important;
+}
+
+/* 4. Home Hero Banner & Quick Actions */
+html[data-base-mode="oled"] #home-hero-banner,
+html.power-saving-oled #home-hero-banner,
+html.oled-mode #home-hero-banner {
+  background-color: #000000 !important;
+  background-image: none !important;
+  border: 1px solid rgba(255, 255, 255, 0.12) !important;
+  box-shadow: none !important;
+}
+
+html[data-base-mode="oled"] #home-hero-banner h1,
+html.power-saving-oled #home-hero-banner h1,
+html.oled-mode #home-hero-banner h1 {
+  color: #ffffff !important;
+}
+
+html[data-base-mode="oled"] #home-hero-banner p,
+html.power-saving-oled #home-hero-banner p,
+html.oled-mode #home-hero-banner p {
+  color: #cbd5e1 !important;
+}
+
+html[data-base-mode="oled"] #home-hero-banner a.bg-white\/\[0\.05\],
+html.power-saving-oled #home-hero-banner a.bg-white\/\[0\.05\],
+html.oled-mode #home-hero-banner a.bg-white\/\[0\.05\],
+html[data-base-mode="oled"] #home-hero-banner .bg-white\/\[0\.04\],
+html.power-saving-oled #home-hero-banner .bg-white\/\[0\.04\],
+html.oled-mode #home-hero-banner .bg-white\/\[0\.04\] {
+  background-color: #080808 !important;
+  border-color: rgba(255, 255, 255, 0.1) !important;
+  color: #f1f5f9 !important;
+}
+
+/* 5. Category Pills Bar & Filter Controls */
+html[data-base-mode="oled"] #category-pills-bar,
+html.power-saving-oled #category-pills-bar,
+html.oled-mode #category-pills-bar {
+  background-color: #000000 !important;
+  background-image: none !important;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08) !important;
+}
+
+html[data-base-mode="oled"] .quick-tag-btn,
+html.power-saving-oled .quick-tag-btn,
+html.oled-mode .quick-tag-btn,
+html[data-base-mode="oled"] .category-pill-btn,
+html.power-saving-oled .category-pill-btn,
+html.oled-mode .category-pill-btn {
+  background-color: #050505 !important;
+  border: 1px solid rgba(255, 255, 255, 0.1) !important;
+  color: #94a3b8 !important;
+}
+
+html[data-base-mode="oled"] .quick-tag-btn.active,
+html.power-saving-oled .quick-tag-btn.active,
+html.oled-mode .quick-tag-btn.active,
+html[data-base-mode="oled"] .category-pill-btn.active,
+html.power-saving-oled .category-pill-btn.active,
+html.oled-mode .category-pill-btn.active {
+  background-color: #111111 !important;
+  border-color: rgba(255, 255, 255, 0.3) !important;
+  color: #ffffff !important;
+}
+
+/* 6. Character Poster Cards & Library Cards */
+html[data-base-mode="oled"] .character-card,
+html.power-saving-oled .character-card,
+html.oled-mode .character-card,
+html[data-base-mode="oled"] .library-card,
+html.power-saving-oled .library-card,
+html.oled-mode .library-card {
+  background-color: #000000 !important;
+  background-image: none !important;
+  border: 1px solid rgba(255, 255, 255, 0.12) !important;
+  box-shadow: none !important;
+}
+
+html[data-base-mode="oled"] .character-card:hover,
+html.power-saving-oled .character-card:hover,
+html.oled-mode .character-card:hover,
+html[data-base-mode="oled"] .library-card:hover,
+html.power-saving-oled .library-card:hover,
+html.oled-mode .library-card:hover {
+  border-color: rgba(255, 255, 255, 0.25) !important;
+  background-color: #040404 !important;
+}
+
+html[data-base-mode="oled"] .character-card .bg-\[\#090b12\],
+html.power-saving-oled .character-card .bg-\[\#090b12\],
+html.oled-mode .character-card .bg-\[\#090b12\],
+html[data-base-mode="oled"] .character-card [class*="bg-black\/"],
+html.power-saving-oled .character-card [class*="bg-black\/"],
+html.oled-mode .character-card [class*="bg-black\/"] {
+  background-color: #080808 !important;
+  border-color: rgba(255, 255, 255, 0.1) !important;
+  color: #e2e8f0 !important;
+}
+
+html[data-base-mode="oled"] .character-card h3,
+html.power-saving-oled .character-card h3,
+html.oled-mode .character-card h3 {
+  color: #ffffff !important;
+}
+
+html[data-base-mode="oled"] .character-card p,
+html.power-saving-oled .character-card p,
+html.oled-mode .character-card p {
+  color: #94a3b8 !important;
+}
+
+/* 7. Mobile Bottom Navigation Bar */
+html[data-base-mode="oled"] #mobile-bottom-nav,
+html.power-saving-oled #mobile-bottom-nav,
+html.oled-mode #mobile-bottom-nav {
+  background-color: #000000 !important;
+  background-image: none !important;
+  border-top: 1px solid rgba(255, 255, 255, 0.1) !important;
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+}
+
+html[data-base-mode="oled"] #mobile-bottom-nav .nav-item:not(.nav-active),
+html.power-saving-oled #mobile-bottom-nav .nav-item:not(.nav-active),
+html.oled-mode #mobile-bottom-nav .nav-item:not(.nav-active) {
+  color: #64748b !important;
+}
+
+html[data-base-mode="oled"] #mobile-bottom-nav .nav-item.nav-active,
+html.power-saving-oled #mobile-bottom-nav .nav-item.nav-active,
+html.oled-mode #mobile-bottom-nav .nav-item.nav-active {
+  color: #ffffff !important;
+}
+
+/* 8. Text Legibility Safety Guards */
+html[data-base-mode="oled"] main h1.text-white,
+html.power-saving-oled main h1.text-white,
+html.oled-mode main h1.text-white,
+html[data-base-mode="oled"] main h2.text-white,
+html.power-saving-oled main h2.text-white,
+html.oled-mode main h2.text-white {
+  color: #ffffff !important;
+}
+
+html[data-base-mode="oled"] .text-slate-900,
+html.power-saving-oled .text-slate-900,
+html.oled-mode .text-slate-900,
+html[data-base-mode="oled"] .text-slate-800,
+html.power-saving-oled .text-slate-800,
+html.oled-mode .text-slate-800 {
+  color: #f8fafc !important;
+}
+
+
 
 
 

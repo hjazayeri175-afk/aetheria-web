@@ -533,20 +533,51 @@ import {
           </div>
 
           <!-- Action Rows Inside Card 2 -->
-          <div class="space-y-1 pt-1 border-t border-white/[0.06]">
-            <!-- Row 1: Switch to Day Mode / Dark Mode -->
-            <button 
-              type="button" 
-              id="btn-switch-day-night" 
-              class="w-full flex items-center justify-between py-2 px-1 text-left cursor-pointer group transition"
-            >
-              <div class="flex items-center gap-3">
-                <Sun class="w-5 h-5 text-amber-400 transition-colors" id="icon-sun" />
-                <Moon class="w-5 h-5 text-indigo-400 transition-colors hidden" id="icon-moon" />
-                <span id="label-day-night" class="text-sm font-medium text-[#8E9AB6] group-hover:text-white transition-colors">Switch to Day Mode</span>
+          <div class="space-y-2 pt-2 border-t border-white/[0.06]">
+            <!-- Row 1: Appearance Mode (Day / Dark / OLED Tri-State Selector) -->
+            <div class="py-1 px-1 space-y-2">
+              <div class="flex items-center justify-between">
+                <div class="flex items-center gap-2">
+                  <Sun class="w-4 h-4 text-amber-400" id="icon-theme-indicator-sun" />
+                  <Moon class="w-4 h-4 text-indigo-400 hidden" id="icon-theme-indicator-moon" />
+                  <Zap class="w-4 h-4 text-purple-400 hidden" id="icon-theme-indicator-zap" />
+                  <span class="text-sm font-medium text-[#8E9AB6]">Theme Mode</span>
+                </div>
+                <span id="badge-theme-mode" class="text-xs font-semibold text-slate-300 capitalize px-2.5 py-0.5 rounded-full bg-white/[0.06] border border-white/[0.06]">Dark</span>
               </div>
-              <span id="badge-day-night" class="text-xs text-slate-400 capitalize px-2.5 py-0.5 rounded-full bg-white/[0.04]">Dark</span>
-            </button>
+              <div class="grid grid-cols-3 gap-1.5 p-1 rounded-xl bg-black/50 border border-white/[0.08]" id="profile-base-mode-group">
+                <button 
+                  type="button" 
+                  data-mode="day" 
+                  class="profile-mode-btn flex items-center justify-center gap-1.5 py-2 px-2 rounded-lg text-xs font-semibold text-slate-400 hover:text-white transition cursor-pointer"
+                >
+                  <Sun class="w-3.5 h-3.5 text-amber-400" />
+                  <span>Day</span>
+                </button>
+                <button 
+                  type="button" 
+                  data-mode="dark" 
+                  class="profile-mode-btn flex items-center justify-center gap-1.5 py-2 px-2 rounded-lg text-xs font-semibold text-slate-400 hover:text-white transition cursor-pointer"
+                >
+                  <Moon class="w-3.5 h-3.5 text-indigo-400" />
+                  <span>Dark</span>
+                </button>
+                <button 
+                  type="button" 
+                  data-mode="oled" 
+                  class="profile-mode-btn flex items-center justify-center gap-1.5 py-2 px-2 rounded-lg text-xs font-semibold text-slate-400 hover:text-white transition cursor-pointer"
+                >
+                  <Zap class="w-3.5 h-3.5 text-purple-400" />
+                  <span>OLED</span>
+                </button>
+              </div>
+              <!-- Hidden button and labels for legacy compatibility -->
+              <button type="button" id="btn-switch-day-night" class="hidden"></button>
+              <span id="label-day-night" class="hidden"></span>
+              <span id="badge-day-night" class="hidden"></span>
+              <span id="icon-sun" class="hidden"></span>
+              <span id="icon-moon" class="hidden"></span>
+            </div>
 
             <!-- Row 2: Corner Radius Slider (Telegram-fidelity filled progress) -->
             <div class="border-t border-white/[0.06] pt-2.5 pb-1 space-y-2.5">
@@ -660,10 +691,10 @@ import {
 
         <!-- Hidden Compatibility Containers for Stored Settings -->
         <div class="hidden">
-          <div id="profile-base-mode-group">
-            <button data-mode="dark" class="profile-mode-btn"></button>
-            <button data-mode="amoled" class="profile-mode-btn"></button>
-            <button data-mode="day" class="profile-mode-btn"></button>
+          <div id="profile-base-mode-group-legacy">
+            <button data-mode="dark" class="profile-mode-btn-legacy"></button>
+            <button data-mode="amoled" class="profile-mode-btn-legacy"></button>
+            <button data-mode="day" class="profile-mode-btn-legacy"></button>
           </div>
           <div id="profile-sound-toggle"></div>
           <input type="radio" id="profile-send-enter" name="send-key" checked />
@@ -4514,10 +4545,15 @@ import {
 
       function updatePreview() {
         if (!previewViewport) return;
-        const isDay = document.documentElement.getAttribute('data-base-mode') === 'day' || settings.baseMode === 'day';
+        const psSettings = (window as any).AetheriaPowerSaving?.getSettings?.();
+        const isOled = settings.baseMode === 'oled' || settings.baseMode === 'amoled' || document.documentElement.classList.contains('power-saving-oled') || (psSettings && (psSettings.deepDarkOLED || psSettings.master));
+        const isDay = !isOled && (document.documentElement.getAttribute('data-base-mode') === 'day' || settings.baseMode === 'day');
 
         // 1. Wallpaper background
-        if (settings.chatWallpaper && (settings.chatWallpaper.startsWith('url(') || settings.chatWallpaper.startsWith('data:'))) {
+        if (isOled) {
+          previewViewport.style.background = '#000000';
+          previewViewport.style.backgroundImage = 'none';
+        } else if (settings.chatWallpaper && (settings.chatWallpaper.startsWith('url(') || settings.chatWallpaper.startsWith('data:'))) {
           previewViewport.style.background = settings.chatWallpaper;
           previewViewport.style.backgroundSize = 'cover';
           previewViewport.style.backgroundPosition = 'center';
@@ -4531,14 +4567,18 @@ import {
 
         // 1.5 Wallpaper pattern overlay
         if (previewPattern) {
-          const patId = settings.chatPatternId || (settings.id ? ('pattern-' + settings.id.replace('-mode', '').replace('-corner', '').replace('-luxury', '')) : 'pattern-gamer');
-          const patObj = (window as any).AetheriaTheme?.PATTERNS?.[patId];
-          if (patObj && patObj.pattern && patObj.pattern !== 'none') {
-            previewPattern.style.backgroundImage = patObj.pattern;
-            previewPattern.style.backgroundSize = patObj.patternSize;
-            previewPattern.style.opacity = (settings.chatPatternOpacity !== undefined ? settings.chatPatternOpacity : (isDay ? 0.06 : 0.16)).toString();
-          } else {
+          if (isOled) {
             previewPattern.style.backgroundImage = 'none';
+          } else {
+            const patId = settings.chatPatternId || (settings.id ? ('pattern-' + settings.id.replace('-mode', '').replace('-corner', '').replace('-luxury', '')) : 'pattern-gamer');
+            const patObj = (window as any).AetheriaTheme?.PATTERNS?.[patId];
+            if (patObj && patObj.pattern && patObj.pattern !== 'none') {
+              previewPattern.style.backgroundImage = patObj.pattern;
+              previewPattern.style.backgroundSize = patObj.patternSize;
+              previewPattern.style.opacity = (settings.chatPatternOpacity !== undefined ? settings.chatPatternOpacity : (isDay ? 0.06 : 0.16)).toString();
+            } else {
+              previewPattern.style.backgroundImage = 'none';
+            }
           }
         }
 
@@ -4546,8 +4586,12 @@ import {
         if (previewUserBubble) {
           const radius = settings.bubbleRadius !== undefined ? settings.bubbleRadius : 16;
           previewUserBubble.style.borderRadius = `${radius}px`;
-          if (settings.userBubbleBg) {
+          if (isOled) {
+            previewUserBubble.style.background = '#0c0e18';
+            previewUserBubble.style.border = '1px solid rgba(255, 255, 255, 0.15)';
+          } else if (settings.userBubbleBg) {
             previewUserBubble.style.background = settings.userBubbleBg;
+            previewUserBubble.style.border = '';
           }
         }
 
@@ -4555,7 +4599,11 @@ import {
         if (previewCharBubble) {
           const radius = settings.bubbleRadius !== undefined ? settings.bubbleRadius : 16;
           previewCharBubble.style.borderRadius = `${radius}px`;
-          if (isDay) {
+          if (isOled) {
+            previewCharBubble.style.background = '#050505';
+            previewCharBubble.style.borderColor = 'rgba(255, 255, 255, 0.14)';
+            previewCharBubble.style.boxShadow = 'none';
+          } else if (isDay) {
             previewCharBubble.style.background = '#ffffff';
             previewCharBubble.style.borderColor = 'rgba(0, 0, 0, 0.08)';
             previewCharBubble.style.boxShadow = '0 2px 8px rgba(0, 0, 0, 0.04)';
@@ -4566,7 +4614,7 @@ import {
           }
           const charMsgText = previewCharBubble.querySelector('p');
           if (charMsgText) {
-            charMsgText.style.color = isDay ? '#0f172a' : '#ffffff';
+            charMsgText.style.color = isOled ? '#f8fafc' : (isDay ? '#0f172a' : '#ffffff');
           }
         }
 
@@ -4583,29 +4631,53 @@ import {
           namePill.style.color = nameColor;
         }
 
-        // 6. Day / Night mode badge button
-        const isDayMode = settings.baseMode === 'day';
+        // 6. Tri-State Theme mode badge and icons
+        const currentActiveMode = isOled ? 'oled' : (isDay ? 'day' : 'dark');
+        const badgeThemeMode = document.getElementById('badge-theme-mode');
+        const iconThemeSun = document.getElementById('icon-theme-indicator-sun');
+        const iconThemeMoon = document.getElementById('icon-theme-indicator-moon');
+        const iconThemeZap = document.getElementById('icon-theme-indicator-zap');
+
+        if (badgeThemeMode) {
+          badgeThemeMode.textContent = isOled ? 'OLED Pure' : (isDay ? 'Day' : 'Dark');
+          if (isOled) {
+            badgeThemeMode.className = 'text-xs text-purple-300 font-bold capitalize px-2.5 py-0.5 rounded-full bg-purple-950/70 border border-purple-500/40 shadow-xs';
+          } else if (isDay) {
+            badgeThemeMode.className = 'text-xs text-amber-700 font-bold capitalize px-2.5 py-0.5 rounded-full bg-amber-100 border border-amber-300 shadow-xs';
+          } else {
+            badgeThemeMode.className = 'text-xs text-slate-300 font-semibold capitalize px-2.5 py-0.5 rounded-full bg-white/[0.06] border border-white/[0.06]';
+          }
+        }
+
+        if (iconThemeSun) iconThemeSun.classList.toggle('hidden', currentActiveMode !== 'day');
+        if (iconThemeMoon) iconThemeMoon.classList.toggle('hidden', currentActiveMode !== 'dark');
+        if (iconThemeZap) iconThemeZap.classList.toggle('hidden', currentActiveMode !== 'oled');
+
+        // Segmented control button styles
+        const allBaseModeButtons = document.querySelectorAll('#profile-base-mode-group .profile-mode-btn');
+        allBaseModeButtons.forEach((btn: any) => {
+          const btnMode = btn.getAttribute('data-mode');
+          const isSelected = (btnMode === currentActiveMode) || (btnMode === 'oled' && currentActiveMode === 'amoled');
+          if (isSelected) {
+            btn.className = 'profile-mode-btn flex items-center justify-center gap-1.5 py-2 px-2 rounded-lg text-xs font-bold bg-white/20 text-white border border-white/25 shadow-xs transition cursor-pointer';
+          } else {
+            btn.className = 'profile-mode-btn flex items-center justify-center gap-1.5 py-2 px-2 rounded-lg text-xs font-semibold text-slate-400 hover:text-white hover:bg-white/5 transition cursor-pointer';
+          }
+        });
+
+        // Legacy compatibility
+        const isDayMode = currentActiveMode === 'day';
         const iconSun = document.getElementById('icon-sun');
         const iconMoon = document.getElementById('icon-moon');
         if (badgeDayNight) {
-          badgeDayNight.textContent = isDayMode ? 'Day' : 'Dark';
-          if (isDayMode) {
-            badgeDayNight.className = 'text-xs text-amber-700 font-bold capitalize px-2.5 py-0.5 rounded-full bg-amber-100 border border-amber-300 shadow-xs';
-          } else {
-            badgeDayNight.className = 'text-xs text-slate-400 capitalize px-2.5 py-0.5 rounded-full bg-white/[0.04]';
-          }
+          badgeDayNight.textContent = isDayMode ? 'Day' : (isOled ? 'OLED' : 'Dark');
         }
         if (labelDayNight) {
           labelDayNight.textContent = isDayMode ? 'Switch to Dark Mode' : 'Switch to Day Mode';
         }
         if (iconSun && iconMoon) {
-          if (isDayMode) {
-            iconSun.classList.add('hidden');
-            iconMoon.classList.remove('hidden');
-          } else {
-            iconSun.classList.remove('hidden');
-            iconMoon.classList.add('hidden');
-          }
+          iconSun.classList.toggle('hidden', isDayMode);
+          iconMoon.classList.toggle('hidden', !isDayMode);
         }
       }
 
@@ -4809,6 +4881,47 @@ function renderPresets() {
         if (radiusVal) radiusVal.textContent = `${val}px`;
         updatePreview();
         saveAndApply();
+      });
+
+      // Tri-State Mode Selector Buttons (Day / Dark / OLED)
+      const allModeButtons = document.querySelectorAll('#profile-base-mode-group .profile-mode-btn');
+      allModeButtons.forEach((btn: any) => {
+        btn.addEventListener('click', () => {
+          const targetMode = btn.getAttribute('data-mode') || 'dark';
+          settings.baseMode = targetMode;
+          const ps = (window as any).AetheriaPowerSaving;
+          if (targetMode === 'oled') {
+            if (ps && typeof ps.setSetting === 'function') {
+              ps.setSetting('deepDarkOLED', true);
+            }
+          } else {
+            if (ps && typeof ps.setSetting === 'function') {
+              const psSettings = ps.getSettings?.();
+              if (psSettings && psSettings.deepDarkOLED && !psSettings.master) {
+                ps.setSetting('deepDarkOLED', false);
+              }
+            }
+          }
+          syncInputs();
+          updatePreview();
+          saveAndApply();
+          renderPresets();
+          render3DCarousel();
+        });
+      });
+
+      // Synchronize when Power Saving OLED toggle is changed from the battery tab
+      window.addEventListener('aetheria:power-saving-change', (e: any) => {
+        const psSettings = e.detail || (window as any).AetheriaPowerSaving?.getSettings?.();
+        if (psSettings) {
+          if (psSettings.deepDarkOLED || psSettings.master) {
+            settings.baseMode = 'oled';
+          } else if (settings.baseMode === 'oled') {
+            settings.baseMode = 'dark';
+          }
+          updatePreview();
+          renderPresets();
+        }
       });
 
       btnSwitchDayNight?.addEventListener('click', () => {

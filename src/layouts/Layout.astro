@@ -44,22 +44,60 @@ const {
     <!-- Telegram-Inspired Instant Zero-Latency Global Theming Engine (Step 3: Cohesive Presets, Per-Char Themes & Advanced Customization) -->
     <script is:inline>
       (function() {
-        // Immediate early baseMode detection to avoid FOUC
+        // Immediate early baseMode detection (day | dark | oled) to avoid FOUC
         try {
           const rawTheme = localStorage.getItem('aetheria_theme_settings');
+          const rawPower = localStorage.getItem('aetheria_power_saving');
+          const masterPower = localStorage.getItem('master_power_saving') === 'true';
+          let isOled = false;
+          let isDay = false;
+
+          if (rawPower) {
+            try {
+              const ps = JSON.parse(rawPower);
+              if (ps && (ps.deepDarkOLED === true || ps.master === true)) isOled = true;
+            } catch(e) {}
+          }
+          if (masterPower) isOled = true;
+
           if (rawTheme) {
-            const parsed = JSON.parse(rawTheme);
-            if (parsed && (parsed.baseMode === 'day' || parsed.dayNightMode === 'day')) {
-              document.documentElement.setAttribute('data-base-mode', 'day');
-              document.documentElement.classList.add('day-mode');
-              document.documentElement.classList.remove('dark');
-              document.documentElement.style.setProperty('--bg-primary', '#f8fafc');
-              document.documentElement.style.setProperty('--bg-secondary', '#f1f5f9');
-              document.documentElement.style.setProperty('--theme-chat-bg', 'linear-gradient(to bottom, #f8fafc, #f1f5f9)');
-              document.documentElement.style.setProperty('--theme-bubble-char-bg', '#ffffff');
-              document.documentElement.style.setProperty('--theme-bubble-char-text', '#1e293b');
-              document.documentElement.style.setProperty('--theme-bubble-char-border', 'rgba(0, 0, 0, 0.08)');
-            }
+            try {
+              const parsed = JSON.parse(rawTheme);
+              if (parsed) {
+                if (parsed.baseMode === 'oled' || parsed.baseMode === 'amoled') {
+                  isOled = true;
+                } else if (!isOled && (parsed.baseMode === 'day' || parsed.dayNightMode === 'day')) {
+                  isDay = true;
+                }
+              }
+            } catch(e) {}
+          }
+
+          if (isOled) {
+            document.documentElement.setAttribute('data-base-mode', 'oled');
+            document.documentElement.classList.remove('day-mode');
+            document.documentElement.classList.add('dark', 'power-saving-oled', 'oled-mode');
+            document.documentElement.style.setProperty('--bg-primary', '#000000');
+            document.documentElement.style.setProperty('--bg-secondary', '#000000');
+            document.documentElement.style.setProperty('--bg-card', '#000000');
+            document.documentElement.style.setProperty('--theme-chat-bg', '#000000');
+            document.documentElement.style.setProperty('--theme-bubble-char-bg', '#050505');
+            document.documentElement.style.setProperty('--theme-bubble-char-text', '#f8fafc');
+            document.documentElement.style.setProperty('--theme-bubble-char-border', 'rgba(255, 255, 255, 0.12)');
+          } else if (isDay) {
+            document.documentElement.setAttribute('data-base-mode', 'day');
+            document.documentElement.classList.add('day-mode');
+            document.documentElement.classList.remove('dark', 'power-saving-oled', 'oled-mode');
+            document.documentElement.style.setProperty('--bg-primary', '#f8fafc');
+            document.documentElement.style.setProperty('--bg-secondary', '#f1f5f9');
+            document.documentElement.style.setProperty('--theme-chat-bg', 'linear-gradient(to bottom, #f8fafc, #f1f5f9)');
+            document.documentElement.style.setProperty('--theme-bubble-char-bg', '#ffffff');
+            document.documentElement.style.setProperty('--theme-bubble-char-text', '#1e293b');
+            document.documentElement.style.setProperty('--theme-bubble-char-border', 'rgba(0, 0, 0, 0.08)');
+          } else {
+            document.documentElement.setAttribute('data-base-mode', 'dark');
+            document.documentElement.classList.add('dark');
+            document.documentElement.classList.remove('day-mode', 'power-saving-oled', 'oled-mode');
           }
         } catch(e) {}
 
@@ -620,6 +658,30 @@ const {
             const current = getSettings(targetChar);
             const merged = { ...current, ...partial };
 
+            if (partial.baseMode) {
+              if (partial.baseMode === 'oled' || partial.baseMode === 'amoled') {
+                merged.baseMode = 'oled';
+                try {
+                  if (window.AetheriaPowerSaving && typeof window.AetheriaPowerSaving.setSetting === 'function') {
+                    const ps = window.AetheriaPowerSaving.getSettings();
+                    if (!ps.deepDarkOLED) {
+                      window.AetheriaPowerSaving.setSetting('deepDarkOLED', true);
+                    }
+                  }
+                } catch(e) {}
+              } else if (partial.baseMode === 'day' || partial.baseMode === 'dark') {
+                merged.baseMode = partial.baseMode;
+                try {
+                  if (window.AetheriaPowerSaving && typeof window.AetheriaPowerSaving.setSetting === 'function') {
+                    const ps = window.AetheriaPowerSaving.getSettings();
+                    if (ps && ps.deepDarkOLED && !ps.master) {
+                      window.AetheriaPowerSaving.setSetting('deepDarkOLED', false);
+                    }
+                  }
+                } catch(e) {}
+              }
+            }
+
             if (targetChar) {
               const cleanData = { ...merged };
               delete cleanData._isCharSpecific;
@@ -749,12 +811,52 @@ const {
             root.style.setProperty('--theme-bubble-char-bg', theme.charBubbleBg);
           }
 
-          // Base Mode (Day / Dark) Handling
-          const isDay = (theme.baseMode === 'day' || theme.dayNightMode === 'day');
-          if (isDay) {
+          // Base Mode (Day / Dark / OLED) Handling
+          let psSettings = null;
+          try {
+            if (window.AetheriaPowerSaving && typeof window.AetheriaPowerSaving.getSettings === 'function') {
+              psSettings = window.AetheriaPowerSaving.getSettings();
+            } else {
+              const rawPS = localStorage.getItem('aetheria_power_saving');
+              if (rawPS) psSettings = JSON.parse(rawPS);
+            }
+          } catch(e) {}
+
+          const isOled = (
+            theme.baseMode === 'oled' ||
+            theme.baseMode === 'amoled' ||
+            root.classList.contains('power-saving-oled') ||
+            (psSettings && (psSettings.deepDarkOLED === true || psSettings.master === true))
+          );
+          const isDay = !isOled && (theme.baseMode === 'day' || theme.dayNightMode === 'day');
+
+          if (isOled) {
+            root.setAttribute('data-base-mode', 'oled');
+            root.classList.remove('day-mode');
+            root.classList.add('dark', 'power-saving-oled', 'oled-mode');
+            root.style.setProperty('--bg-primary', '#000000');
+            root.style.setProperty('--bg-secondary', '#000000');
+            root.style.setProperty('--bg-card', '#000000');
+            root.style.setProperty('--border-subtle', 'rgba(255, 255, 255, 0.12)');
+            root.style.setProperty('--text-primary', '#ffffff');
+            root.style.setProperty('--text-secondary', '#94a3b8');
+            root.style.setProperty('--text-muted', '#64748b');
+
+            root.style.setProperty('--theme-chat-bg', '#000000');
+            root.style.setProperty('--theme-chat-wallpaper', 'none');
+            root.style.setProperty('--theme-chat-pattern-opacity', '0');
+            root.style.setProperty('--theme-bubble-char-bg', '#050505');
+            root.style.setProperty('--theme-bubble-char-text', '#f8fafc');
+            root.style.setProperty('--theme-bubble-char-border', 'rgba(255, 255, 255, 0.14)');
+            root.style.setProperty('--theme-bubble-user-bg', '#0c0e18');
+            root.style.setProperty('--theme-thought-bg', '#020202');
+            root.style.setProperty('--theme-thought-border', 'rgba(255, 255, 255, 0.12)');
+            root.style.setProperty('--theme-thought-text', '#f8fafc');
+            root.style.setProperty('--theme-thought-accent', 'rgba(255, 255, 255, 0.4)');
+          } else if (isDay) {
             root.setAttribute('data-base-mode', 'day');
             root.classList.add('day-mode');
-            root.classList.remove('dark');
+            root.classList.remove('dark', 'power-saving-oled', 'oled-mode');
             root.style.setProperty('--bg-primary', '#f8fafc');
             root.style.setProperty('--bg-secondary', '#f1f5f9');
             root.style.setProperty('--bg-card', 'rgba(255, 255, 255, 0.9)');
@@ -780,7 +882,7 @@ const {
             root.style.setProperty('--theme-thought-text', '#334155');
           } else {
             root.setAttribute('data-base-mode', 'dark');
-            root.classList.remove('day-mode');
+            root.classList.remove('day-mode', 'power-saving-oled', 'oled-mode');
             root.classList.add('dark');
             root.style.setProperty('--bg-primary', '#07080d');
             root.style.setProperty('--bg-secondary', '#0d0f17');
@@ -795,8 +897,7 @@ const {
           try {
             const metaTheme = document.querySelector('meta[name="theme-color"]');
             if (metaTheme) {
-              const isOled = !isDay && root.classList.contains('power-saving-oled');
-              metaTheme.setAttribute('content', isDay ? '#f8fafc' : (isOled ? '#000000' : '#07080d'));
+              metaTheme.setAttribute('content', isOled ? '#000000' : (isDay ? '#f8fafc' : '#07080d'));
             }
           } catch(e) {}
 
@@ -869,16 +970,24 @@ const {
           }
 
           // Force Pure Black & Hide Wallpaper/Pattern when OLED is active
-          if (!isDay && root.classList.contains('power-saving-oled')) {
+          if (isOled) {
             root.style.setProperty('--theme-chat-bg', '#000000');
-            root.style.setProperty('--theme-bubble-char-bg', '#070707');
-            root.style.setProperty('--theme-bubble-user-bg', '#10131d');
+            root.style.setProperty('--theme-chat-wallpaper', 'none');
+            root.style.setProperty('--theme-chat-pattern-opacity', '0');
+            root.style.setProperty('--bg-primary', '#000000');
+            root.style.setProperty('--bg-secondary', '#000000');
+            root.style.setProperty('--bg-card', '#000000');
+            root.style.setProperty('--theme-bubble-char-bg', '#050505');
+            root.style.setProperty('--theme-bubble-user-bg', '#0c0e18');
             root.style.setProperty('--theme-thought-bg', '#020202');
             root.style.setProperty('--theme-thought-border', 'rgba(255, 255, 255, 0.12)');
             root.style.setProperty('--theme-thought-text', '#f8fafc');
             root.style.setProperty('--theme-thought-accent', 'rgba(255, 255, 255, 0.4)');
             if (overlayLayer) overlayLayer.style.display = 'none';
-            if (imgLayer) imgLayer.style.display = 'none';
+            if (imgLayer) {
+              imgLayer.style.display = 'none';
+              imgLayer.style.background = '#000000';
+            }
             if (dimLayer) dimLayer.style.display = 'none';
           } else {
             if (overlayLayer && overlayLayer.style.display === 'none') overlayLayer.style.display = '';
@@ -1044,6 +1153,7 @@ const {
           const isOled = Boolean(settings.deepDarkOLED || settings.master);
           const wasOled = root.classList.contains('power-saving-oled');
           root.classList.toggle('power-saving-oled', isOled);
+          root.classList.toggle('oled-mode', isOled);
 
           // Direct DOM updates for Chat Wallpaper Layers (Pure Black OLED)
           const wpOverlay = document.getElementById('chat-wallpaper-overlay');
@@ -1053,19 +1163,45 @@ const {
           const chatRoot = document.getElementById('chat-root-container');
 
           if (isOled) {
+            root.classList.remove('day-mode');
+            root.setAttribute('data-base-mode', 'oled');
             if (wpOverlay) wpOverlay.style.display = 'none';
             if (wpImg) wpImg.style.display = 'none';
             if (wpDim) wpDim.style.display = 'none';
             if (chatViewport) chatViewport.style.background = '#000000';
             if (chatRoot) chatRoot.style.background = '#000000';
+            if (window.AetheriaTheme?.apply) {
+              const currentTheme = window.AetheriaTheme.getSettings();
+              if (currentTheme.baseMode !== 'oled') {
+                if (currentTheme.baseMode && currentTheme.baseMode !== 'amoled') {
+                  try { localStorage.setItem('aetheria_prev_base_mode', currentTheme.baseMode); } catch(e) {}
+                }
+                currentTheme.baseMode = 'oled';
+                window.AetheriaTheme.saveSettings(currentTheme);
+              } else {
+                window.AetheriaTheme.apply(currentTheme);
+              }
+            }
           } else {
+            root.classList.remove('power-saving-oled', 'oled-mode');
             if (wpOverlay) wpOverlay.style.display = '';
             if (wpImg) wpImg.style.display = '';
             if (wpDim) wpDim.style.display = '';
             if (chatViewport) chatViewport.style.background = '';
             if (chatRoot) chatRoot.style.background = '';
             if (wasOled && window.AetheriaTheme?.apply) {
-              window.AetheriaTheme.apply(window.AetheriaTheme.getSettings());
+              const currentTheme = window.AetheriaTheme.getSettings();
+              if (currentTheme.baseMode === 'oled' || currentTheme.baseMode === 'amoled') {
+                let prev = 'dark';
+                try {
+                  const storedPrev = localStorage.getItem('aetheria_prev_base_mode');
+                  if (storedPrev === 'day' || storedPrev === 'dark') prev = storedPrev;
+                } catch(e) {}
+                currentTheme.baseMode = prev;
+                window.AetheriaTheme.saveSettings(currentTheme);
+              } else {
+                window.AetheriaTheme.apply(currentTheme);
+              }
             }
           }
 
