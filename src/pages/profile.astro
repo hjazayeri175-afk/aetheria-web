@@ -57,41 +57,13 @@ import {
   Search
 } from '@lucide/astro';
 
-const PRESET_GRADIENTS = [
-  { id: 'grad-sapphire', name: 'Midnight Sapphire', value: 'linear-gradient(135deg, #0a1838 0%, #163668 50%, #060e22 100%)', dot: '#38bdf8' },
-  { id: 'grad-amethyst', name: 'Royal Amethyst', value: 'linear-gradient(135deg, #2a0e4e 0%, #581c87 50%, #16072b 100%)', dot: '#c084fc' },
-  { id: 'grad-sunset', name: 'Cyber Crimson', value: 'linear-gradient(135deg, #3d0a26 0%, #7e1654 50%, #1c0512 100%)', dot: '#f43f5e' },
-  { id: 'grad-emerald', name: 'Emerald Twilight', value: 'linear-gradient(135deg, #05261d 0%, #065f46 50%, #021711 100%)', dot: '#34d399' },
-  { id: 'grad-espresso', name: 'Warm Espresso', value: 'linear-gradient(135deg, #2b1509 0%, #683719 50%, #180a04 100%)', dot: '#fbbf24' },
-  { id: 'grad-oled', name: 'Pure OLED Dark', value: 'linear-gradient(180deg, #181920 0%, #020305 100%)', dot: '#94a3b8' }
-];
-
-const PRESET_SCENES = [
-  { 
-    id: 'scene-library', 
-    name: 'Fantasy Library', 
-    value: '/wallpapers/fantasy_library.webp',
-    icon: '📚'
-  },
-  { 
-    id: 'scene-neon', 
-    name: 'Neon Cyber City', 
-    value: '/wallpapers/neon_city.webp',
-    icon: '🏙️'
-  },
-  { 
-    id: 'scene-starry', 
-    name: 'Starry Galaxy', 
-    value: '/wallpapers/starry_galaxy.webp',
-    icon: '✨'
-  },
-  { 
-    id: 'scene-cafe', 
-    name: 'Cozy Tavern & Cafe', 
-    value: '/wallpapers/cozy_cafe.webp',
-    icon: '☕'
-  }
-];
+import {
+  GALLERY_SCENES,
+  GALLERY_PATTERNS,
+  COLOR_MESH_GRADIENTS,
+  SOLID_DARK_TONES,
+  DOODLE_PATTERNS
+} from '../data/wallpapers';
 ---
 
 <Layout title="Settings - Aetheria" activeNav="persona">
@@ -866,299 +838,425 @@ const PRESET_SCENES = [
       </div>
 
       <!-- ============================================================== -->
-      <!-- VIEW 11: TELEGRAM CHAT WALLPAPER STUDIO                        -->
+      <!-- VIEW 11: TELEGRAM CHAT WALLPAPER ARCHITECTURE (VIEW 1 & VIEW 2)-->
       <!-- ============================================================== -->
-      <div id="view-wallpaper-studio" class="hidden space-y-4 max-w-2xl mx-auto pb-24">
+      <div id="view-wallpaper-studio" class="hidden max-w-2xl mx-auto pb-24">
 
-        <!-- Header Bar: Back to Chat Settings & Reset -->
-        <div class="flex items-center justify-between py-1 mb-1">
-          <button 
-            type="button" 
-            id="btn-back-from-wallpaper-studio"
-            class="flex items-center gap-1.5 text-white/90 hover:text-white font-medium text-xs sm:text-sm py-1.5 px-3 rounded-xl bg-white/[0.06] hover:bg-white/[0.1] border border-white/10 transition cursor-pointer active:scale-95 shadow-sm"
-          >
-            <ArrowLeft class="w-4 h-4 text-purple-400" />
-            <span class="font-semibold">Chat Settings</span>
-          </button>
+        <!-- ============================================================ -->
+        <!-- VIEW 1: MAIN WALLPAPER GALLERY (view === 'gallery')          -->
+        <!-- Matches Telegram image_35                                    -->
+        <!-- ============================================================ -->
+        <div id="wp-subview-gallery" class="space-y-3">
+          <!-- Top Header: Back to Chat Settings on Left, Reset Icon on Right -->
+          <div class="flex items-center justify-between py-2">
+            <button 
+              type="button" 
+              id="btn-back-from-wallpaper-studio"
+              class="flex items-center gap-2 text-white/90 hover:text-white font-medium text-xs sm:text-sm py-1.5 px-3 rounded-xl bg-white/[0.06] hover:bg-white/[0.1] border border-white/10 transition cursor-pointer active:scale-95 shadow-sm"
+            >
+              <ArrowLeft class="w-4 h-4 text-purple-400" />
+              <span class="font-semibold">Chat Background</span>
+            </button>
 
-          <!-- Reset Button -->
-          <button 
-            type="button" 
-            id="btn-reset-wallpaper" 
-            class="py-1.5 px-3 rounded-xl text-slate-300 hover:text-white bg-white/[0.04] hover:bg-white/[0.08] border border-white/10 transition cursor-pointer active:scale-95 flex items-center gap-1.5 text-xs font-medium" 
-            title="Reset to default wallpaper"
-          >
-            <RotateCcw class="w-3.5 h-3.5 text-slate-400" />
-            <span>Reset</span>
-          </button>
-        </div>
-
-        <!-- Sticky Compact Preview & Condensed Sliders Dock -->
-        <div class="sticky top-[56px] z-30 bg-[#0b0d14]/95 backdrop-blur-xl pb-2 pt-1 border-b border-white/10 -mx-3 sm:-mx-4 px-3 sm:px-4 mb-3">
-          <div class="grid grid-cols-12 gap-3 p-3 rounded-2xl bg-[#12151f] border border-white/10 shadow-xl">
-            <!-- Left Column (col-span-6): Compact Live Chat Preview Box -->
-            <div class="col-span-6 h-[130px] rounded-xl overflow-hidden relative border border-white/10 flex flex-col justify-end p-2 select-none" id="wp-preview-viewport" style="background-color: #000000;">
-              <!-- Live Background Layer -->
-              <div id="wp-preview-bg" class="absolute inset-0 bg-cover bg-center transition-all duration-300"></div>
-              
-              <!-- Live Darkness Dimmer Layer -->
-              <div id="wp-preview-dimmer" class="absolute inset-0 bg-black pointer-events-none transition-opacity duration-200" style="opacity: 0.40;"></div>
-              
-              <!-- Live Vector Doodle Pattern Layer -->
-              <div id="wp-preview-pattern" class="absolute inset-0 pointer-events-none transition-opacity duration-200 bg-repeat" style="opacity: 0.15;"></div>
-
-              <!-- Live Sparkles Canvas -->
-              <canvas id="wp-preview-sparkles" class="absolute inset-0 pointer-events-none hidden w-full h-full z-0"></canvas>
-
-              <!-- Compact Sample Chat Bubbles -->
-              <div class="relative z-10 space-y-1.5 w-full">
-                <!-- Incoming Character Bubble -->
-                <div class="flex items-end gap-1.5">
-                  <div class="w-5 h-5 rounded-full overflow-hidden bg-purple-900 border border-purple-500/40 shrink-0 flex items-center justify-center text-[8px] text-purple-200 font-bold" style="color: #e9d5ff !important;">
-                    HA
-                  </div>
-                  <div class="chat-preview-char-box rounded-xl rounded-bl-xs px-2 py-1 text-[10px] leading-tight max-w-[85%] border border-purple-500/30 backdrop-blur-sm shadow-sm" style="background-color: #111526 !important;">
-                    <span class="chat-preview-char-name text-[9px] font-bold block text-purple-400 leading-none mb-0.5" style="color: #c084fc !important;">Helen & Anna</span>
-                    <span class="chat-preview-char-text font-normal" style="color: #f8fafc !important;">Good morning! ✨</span>
-                  </div>
-                </div>
-
-                <!-- Outgoing User Bubble -->
-                <div class="flex justify-end">
-                  <div class="chat-preview-user-box rounded-xl rounded-br-xs px-2 py-1 text-[10px] leading-tight max-w-[85%] shadow-sm font-medium" style="background: linear-gradient(135deg, #7c3aed 0%, #4f46e5 100%) !important;">
-                    <span class="chat-preview-user-text" style="color: #ffffff !important;">It's morning in Tokyo 😎</span>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            <!-- Right Column (col-span-6): 3 Condensed Sliders -->
-            <div class="col-span-6 flex flex-col justify-between py-0.5 space-y-1">
-              <!-- Slider 1: Blur -->
-              <div class="space-y-0.5">
-                <div class="flex items-center justify-between text-[11px]">
-                  <span class="text-slate-300 font-medium">Blur</span>
-                  <span id="val-wp-blur" class="font-bold text-purple-300 text-[10px]">3px</span>
-                </div>
-                <input 
-                  type="range" 
-                  id="slider-wp-blur" 
-                  min="0" 
-                  max="20" 
-                  value="3" 
-                  class="w-full accent-purple-500 h-1 bg-white/10 rounded-lg cursor-pointer"
-                />
-              </div>
-
-              <!-- Slider 2: Darkness -->
-              <div class="space-y-0.5">
-                <div class="flex items-center justify-between text-[11px]">
-                  <span class="text-slate-300 font-medium">Darkness</span>
-                  <span id="val-wp-dim" class="font-bold text-amber-300 text-[10px]">40%</span>
-                </div>
-                <input 
-                  type="range" 
-                  id="slider-wp-dim" 
-                  min="0" 
-                  max="90" 
-                  value="40" 
-                  class="w-full accent-amber-500 h-1 bg-white/10 rounded-lg cursor-pointer"
-                />
-              </div>
-
-              <!-- Slider 3: Pattern -->
-              <div class="space-y-0.5">
-                <div class="flex items-center justify-between text-[11px]">
-                  <span class="text-slate-300 font-medium">Pattern</span>
-                  <span id="val-wp-pattern" class="font-bold text-cyan-300 text-[10px]">15%</span>
-                </div>
-                <input 
-                  type="range" 
-                  id="slider-wp-pattern" 
-                  min="0" 
-                  max="100" 
-                  value="15" 
-                  class="w-full accent-cyan-500 h-1 bg-white/10 rounded-lg cursor-pointer"
-                />
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <!-- Section 2: Choose Wallpaper Grid -->
-        <div class="rounded-3xl bg-[#141824] border border-white/[0.06] p-4 sm:p-5 shadow-xl space-y-4">
-          <div class="flex items-center justify-between">
-            <h3 class="text-sm font-bold text-white tracking-tight" id="wp-grid-title">Wallpapers & Atmosphere</h3>
-            <span class="text-[11px] text-[#8e98a8]">Select style</span>
+            <!-- Reset Icon Button -->
+            <button 
+              type="button" 
+              id="btn-reset-wallpaper" 
+              class="p-2 px-3 rounded-xl text-slate-300 hover:text-white bg-white/[0.04] hover:bg-white/[0.08] border border-white/10 transition cursor-pointer active:scale-95 flex items-center gap-1.5 text-xs font-medium" 
+              title="Reset to default wallpaper"
+            >
+              <RotateCcw class="w-3.5 h-3.5 text-slate-400" />
+              <span class="hidden sm:inline">Reset</span>
+            </button>
           </div>
 
-          <input type="file" id="input-wp-file" accept="image/*" class="hidden" />
+          <!-- Top Action Card (Matches Telegram image_35) -->
+          <div class="rounded-2xl bg-[#131620] border border-white/10 divide-y divide-white/5 overflow-hidden shadow-xl">
+            <!-- Hidden File Input for Device Gallery -->
+            <input type="file" id="input-wp-gallery-picker" accept="image/*" class="hidden" />
 
-          <!-- Presets Grid Container -->
-          <div id="wp-presets-container" class="space-y-4">
-            <!-- Special Dynamic Tiles: Upload & Character Portrait -->
-            <div>
-              <div class="text-[11px] font-semibold text-slate-400 mb-2 uppercase tracking-wider">Dynamic & Custom</div>
-              <div class="grid grid-cols-2 gap-2.5 mb-2.5">
-                <!-- Tile 1: Upload from Gallery -->
-                <button 
-                  type="button" 
-                  id="btn-wp-tile-upload"
-                  class="relative h-24 rounded-2xl border-2 border-dashed border-amber-500/30 hover:border-amber-400/60 bg-white/[0.03] hover:bg-white/[0.06] p-2 flex flex-col items-center justify-center gap-1.5 transition cursor-pointer active:scale-95 group text-center"
-                >
-                  <div class="w-8 h-8 rounded-full bg-amber-400/10 border border-amber-400/20 flex items-center justify-center text-amber-300 group-hover:scale-110 transition">
-                    <Upload class="w-4 h-4" />
-                  </div>
-                  <span class="text-xs font-medium text-gray-200">Upload Photo</span>
-                </button>
-
-                <!-- Tile 2: Character Portrait Atmospheric Wallpaper -->
-                <button 
-                  type="button" 
-                  id="btn-wp-tile-char-portrait"
-                  class="wp-tile-btn relative h-24 rounded-2xl overflow-hidden border border-white/10 hover:border-amber-400/50 p-2 flex flex-col justify-end transition cursor-pointer active:scale-95 text-left group"
-                  data-type="character-avatar"
-                  data-value="/avatars/anime_girl.webp"
-                >
-                  <img id="wp-tile-char-img" src="/avatars/anime_girl.webp" alt="Character" class="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition pointer-events-none" />
-                  <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/30 to-transparent pointer-events-none"></div>
-                  <span class="wp-tile-check w-4 h-4 rounded-full bg-amber-400 text-slate-950 flex items-center justify-center text-[10px] font-black hidden absolute top-1.5 right-1.5 z-20 shadow-sm pointer-events-none">✓</span>
-                  <div class="relative z-10 flex items-center justify-between w-full pointer-events-none">
-                    <span class="text-[11px] font-semibold text-white drop-shadow">Char Portrait</span>
-                  </div>
-                </button>
-              </div>
-
-              <!-- Compact Custom URL Input -->
-              <div class="flex gap-2">
-                <input 
-                  type="text" 
-                  id="input-wp-custom-val" 
-                  placeholder="Paste image URL (https://...) or CSS gradient" 
-                  class="flex-1 px-3 py-2 rounded-xl bg-white/[0.04] border border-white/10 text-xs text-white placeholder-slate-500 focus:outline-none focus:border-amber-400/60 transition"
-                />
-                <button 
-                  type="button" 
-                  id="btn-apply-custom-val" 
-                  class="px-3.5 py-2 rounded-xl bg-white/[0.08] hover:bg-amber-400 hover:text-slate-950 border border-white/10 text-xs font-bold text-slate-200 transition cursor-pointer"
-                >
-                  Load
-                </button>
-              </div>
-            </div>
-
-            <!-- Row 1: Rich Dark Gradients -->
-            <div>
-              <div class="text-[11px] font-semibold text-slate-400 mb-2 uppercase tracking-wider">Rich Dark Gradients</div>
-              <div class="grid grid-cols-3 gap-2.5" id="wp-grid-gradients">
-                {PRESET_GRADIENTS.map(g => (
-                  <button 
-                    type="button" 
-                    class="wp-preset-tile group relative h-20 rounded-xl overflow-hidden border border-white/10 hover:border-amber-400/50 transition-all p-2.5 flex flex-col justify-end text-left active:scale-95 cursor-pointer"
-                    data-type="gradient"
-                    data-value={g.value}
-                    style={`background: ${g.value};`}
-                  >
-                    <span class="wp-tile-check w-4 h-4 rounded-full bg-amber-400 text-slate-950 flex items-center justify-center font-black text-[10px] hidden absolute top-1.5 right-1.5 z-20 shadow-sm pointer-events-none">✓</span>
-                    <span class="text-[10px] font-semibold text-white truncate relative z-10 drop-shadow pointer-events-none">{g.name}</span>
-                  </button>
-                ))}
-              </div>
-            </div>
-
-            <!-- Row 2: Atmospheric Roleplay Scenes -->
-            <div>
-              <div class="text-[11px] font-semibold text-slate-400 mb-2 uppercase tracking-wider">Atmospheric Roleplay Scenes</div>
-              <div class="grid grid-cols-2 sm:grid-cols-3 gap-2.5" id="wp-grid-scenes">
-                {PRESET_SCENES.map(s => (
-                  <button 
-                    type="button" 
-                    class="wp-preset-tile group relative h-24 rounded-xl overflow-hidden border border-white/10 hover:border-amber-400/50 transition-all p-2 flex flex-col justify-end text-left active:scale-95 bg-slate-900 cursor-pointer"
-                    data-type="preset-scene"
-                    data-value={s.value}
-                  >
-                    <img 
-                      src={s.value} 
-                      alt={s.name} 
-                      loading="lazy"
-                      class="absolute inset-0 w-full h-full object-cover transition-transform duration-500 group-hover:scale-105 pointer-events-none"
-                    />
-                    <div class="absolute inset-0 bg-gradient-to-t from-black/85 via-black/25 to-transparent pointer-events-none"></div>
-                    <span class="wp-tile-check w-4 h-4 rounded-full bg-amber-400 text-slate-950 flex items-center justify-center font-black text-[10px] hidden absolute top-1.5 right-1.5 z-20 shadow-sm pointer-events-none">✓</span>
-                    <span class="text-[10px] font-semibold text-white truncate relative z-10 drop-shadow pointer-events-none">{s.name}</span>
-                  </button>
-                ))}
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <!-- Section 3: Atmospheric Effects (Sparkles / Floating Particles) -->
-        <div class="rounded-3xl bg-[#141824] border border-white/[0.06] p-4 sm:p-5 shadow-xl">
-          <div class="flex items-center justify-between">
-            <div class="flex items-center gap-3">
-              <div class="w-8 h-8 rounded-xl bg-amber-500/15 border border-amber-500/30 flex items-center justify-center text-amber-400">
-                <Sparkles class="w-4 h-4" />
-              </div>
-              <div>
-                <div class="text-xs font-semibold text-white">Motion / Sparkle Overlay</div>
-                <div class="text-[11px] text-[#8e98a8]">Ambient floating particles in chat viewport</div>
-              </div>
-            </div>
-            
-            <label class="relative inline-flex items-center cursor-pointer">
-              <input type="checkbox" id="toggle-wp-sparkles" class="sr-only peer" />
-              <div class="w-11 h-6 bg-white/10 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-amber-500"></div>
-            </label>
-          </div>
-        </div>
-
-        <!-- Section 4: Scope Selector & Primary CTA -->
-        <div class="rounded-3xl bg-[#141824] border border-white/[0.06] p-4 sm:p-5 shadow-xl space-y-4">
-          <div>
-            <label class="text-xs font-semibold text-slate-300 block mb-2">Scope of Application</label>
-            <div class="grid grid-cols-2 gap-2 p-1 bg-white/[0.04] border border-white/10 rounded-2xl">
+            <!-- Row 1: Select from Gallery -->
+            <div class="flex items-center justify-between p-3.5 hover:bg-white/[0.04] transition group">
               <button 
                 type="button" 
-                id="btn-wp-scope-all" 
-                class="py-2 px-3 rounded-xl text-xs font-bold transition cursor-pointer bg-purple-600 text-white shadow-sm"
+                id="btn-wp-row-gallery" 
+                class="flex items-center gap-3 flex-1 text-left cursor-pointer"
               >
-                Apply to All Chats
+                <div class="w-9 h-9 rounded-xl bg-purple-500/15 border border-purple-500/30 flex items-center justify-center text-purple-400 group-hover:scale-105 transition">
+                  <Image class="w-4 h-4" />
+                </div>
+                <div>
+                  <div class="text-xs sm:text-sm font-semibold text-white">Select from Gallery</div>
+                  <div class="text-[11px] text-slate-400">Choose a photo from your device</div>
+                </div>
               </button>
+
               <button 
                 type="button" 
-                id="btn-wp-scope-specific" 
-                class="py-2 px-3 rounded-xl text-xs font-medium transition cursor-pointer text-slate-400 hover:text-white"
+                id="btn-wp-row-url" 
+                class="text-[11px] font-medium text-amber-400/90 hover:text-amber-300 px-2.5 py-1 rounded-lg bg-amber-400/10 hover:bg-amber-400/20 border border-amber-400/30 transition cursor-pointer"
               >
-                Apply to Specific Chat
+                URL
               </button>
             </div>
+
+            <!-- Row 2: Set a Color (Navigates to View 2) -->
+            <button 
+              type="button" 
+              id="btn-wp-row-color" 
+              class="w-full flex items-center justify-between p-3.5 hover:bg-white/[0.04] transition group cursor-pointer text-left"
+            >
+              <div class="flex items-center gap-3">
+                <div class="w-9 h-9 rounded-xl bg-amber-500/15 border border-amber-500/30 flex items-center justify-center text-amber-400 group-hover:scale-105 transition">
+                  <Palette class="w-4 h-4" />
+                </div>
+                <div>
+                  <div class="text-xs sm:text-sm font-semibold text-white">Set a Color</div>
+                  <div class="text-[11px] text-slate-400">Soft mesh gradients & solid matte tones</div>
+                </div>
+              </div>
+              <ChevronRight class="w-4 h-4 text-slate-400 group-hover:text-white transition group-hover:translate-x-0.5" />
+            </button>
+
+            <!-- Row 3: Use Character Portrait -->
+            <button 
+              type="button" 
+              id="btn-wp-row-char" 
+              class="w-full flex items-center justify-between p-3.5 hover:bg-white/[0.04] transition group cursor-pointer text-left"
+            >
+              <div class="flex items-center gap-3">
+                <div class="w-9 h-9 rounded-xl overflow-hidden border border-purple-500/40 relative shrink-0">
+                  <img id="wp-row-char-img" src="/avatars/anime_girl.webp" alt="Character" class="w-full h-full object-cover group-hover:scale-105 transition" />
+                </div>
+                <div>
+                  <div class="text-xs sm:text-sm font-semibold text-white">Use Character Portrait</div>
+                  <div class="text-[11px] text-slate-400">Atmospheric roleplay portrait background</div>
+                </div>
+              </div>
+              <ChevronRight class="w-4 h-4 text-slate-400 group-hover:text-white transition group-hover:translate-x-0.5" />
+            </button>
           </div>
 
-          <!-- Target Character Pill Selector (Revealed when Specific Chat selected) -->
-          <div id="wp-specific-char-selector" class="hidden space-y-2 pt-2 transition-all duration-300">
-            <div class="flex items-center justify-between">
-              <label class="text-[11px] font-semibold text-slate-300 flex items-center gap-1.5">
-                <span>Target Chat:</span>
-                <span id="wp-selected-char-name" class="text-amber-400 font-bold">Helen & Anna</span>
-              </label>
-              <span class="text-[10px] text-slate-400">Select character to customize</span>
-            </div>
-            <div id="wp-char-pills-container" class="flex items-center gap-2 overflow-x-auto py-1 scrollbar-none">
-              <!-- Dynamically populated character pills -->
+          <!-- 3-Column Pattern & Scene Grid (p-2 rounded-2xl bg-[#131620] border border-white/10) -->
+          <!-- ZERO text labels or emojis on tiles! Pure visual rectangular cards -->
+          <div class="p-2 rounded-2xl bg-[#131620] border border-white/10 shadow-xl">
+            <div class="grid grid-cols-3 gap-1.5" id="wp-grid-gallery">
+              <!-- Atmospheric Roleplay Scenes (4 tiles) -->
+              {GALLERY_SCENES.map(s => (
+                <button 
+                  type="button" 
+                  class="wp-gallery-tile aspect-[3/4] rounded-lg overflow-hidden relative cursor-pointer group active:scale-95 transition-transform bg-slate-900"
+                  data-type="preset-scene"
+                  data-value={s.value}
+                  data-blur="3"
+                  data-dimness="40"
+                  data-pattern="none"
+                  data-pattern-opacity="0"
+                >
+                  <img 
+                    src={s.value} 
+                    alt="Wallpaper" 
+                    loading="lazy" 
+                    class="absolute inset-0 w-full h-full object-cover transition-transform duration-500 group-hover:scale-105 pointer-events-none"
+                  />
+                  <div class="absolute inset-0 bg-black/15 pointer-events-none"></div>
+                  <!-- Centered Translucent Circle Checkmark for Active item -->
+                  <div class="wp-tile-check absolute inset-0 flex items-center justify-center pointer-events-none hidden">
+                    <div class="w-8 h-8 rounded-full bg-black/45 backdrop-blur-sm border border-white/20 flex items-center justify-center shadow-lg">
+                      <span class="text-white font-bold text-sm leading-none">✓</span>
+                    </div>
+                  </div>
+                </button>
+              ))}
+
+              <!-- Patterned Doodle Wallpapers (11 tiles) -->
+              {GALLERY_PATTERNS.map(p => {
+                const patObj = DOODLE_PATTERNS[p.patternId] || DOODLE_PATTERNS['pattern-gamer'];
+                return (
+                  <button 
+                    type="button" 
+                    class="wp-gallery-tile aspect-[3/4] rounded-lg overflow-hidden relative cursor-pointer group active:scale-95 transition-transform"
+                    data-type="doodle-pattern"
+                    data-value={p.gradient}
+                    data-pattern={p.patternId}
+                    data-pattern-opacity={p.patternOpacity}
+                    data-blur="0"
+                    data-dimness="25"
+                    style={`background: ${p.gradient};`}
+                  >
+                    <div 
+                      class="absolute inset-0 pointer-events-none bg-repeat transition-opacity" 
+                      style={`background-image: ${patObj.pattern}; background-size: ${patObj.patternSize}; opacity: ${p.patternOpacity / 100};`}
+                    ></div>
+                    <!-- Centered Translucent Circle Checkmark for Active item -->
+                    <div class="wp-tile-check absolute inset-0 flex items-center justify-center pointer-events-none hidden">
+                      <div class="w-8 h-8 rounded-full bg-black/45 backdrop-blur-sm border border-white/20 flex items-center justify-center shadow-lg">
+                        <span class="text-white font-bold text-sm leading-none">✓</span>
+                      </div>
+                    </div>
+                  </button>
+                );
+              })}
             </div>
           </div>
+        </div>
 
-          <!-- Full-width Glowing Gold Button: Apply Wallpaper -->
+        <!-- ============================================================ -->
+        <!-- VIEW 2: DEDICATED "CHOOSE A COLOR" SUB-PAGE (view === 'colors')-->
+        <!-- Matches Telegram image_37                                    -->
+        <!-- ============================================================ -->
+        <div id="wp-subview-colors" class="hidden space-y-3">
+          <!-- Top Header: <- Choose a Color back arrow (returns to gallery) -->
+          <div class="flex items-center justify-between py-2">
+            <button 
+              type="button" 
+              id="btn-back-from-colors"
+              class="flex items-center gap-2 text-white/90 hover:text-white font-medium text-xs sm:text-sm py-1.5 px-3 rounded-xl bg-white/[0.06] hover:bg-white/[0.1] border border-white/10 transition cursor-pointer active:scale-95 shadow-sm"
+            >
+              <ArrowLeft class="w-4 h-4 text-purple-400" />
+              <span class="font-semibold">Choose a Color</span>
+            </button>
+            <span class="text-xs text-slate-400">Tap to preview</span>
+          </div>
+
+          <!-- 3-Column Color & Gradient Grid (p-2 rounded-2xl bg-[#131620] border border-white/10) -->
+          <!-- ZERO text labels! Pure square/soft tiles matching Telegram image_37 -->
+          <div class="p-2 rounded-2xl bg-[#131620] border border-white/10 shadow-xl">
+            <div class="grid grid-cols-3 gap-1.5" id="wp-grid-colors">
+              <!-- Rows 1–3: 9 Soft Mesh Gradients -->
+              {COLOR_MESH_GRADIENTS.map(m => (
+                <button 
+                  type="button" 
+                  class="wp-color-tile aspect-[4/4.5] rounded-md overflow-hidden relative cursor-pointer group active:scale-95 transition-transform"
+                  data-type="mesh-gradient"
+                  data-value={m.value}
+                  data-pattern="none"
+                  data-pattern-opacity="0"
+                  data-blur="0"
+                  data-dimness="15"
+                  style={`background: ${m.value};`}
+                >
+                  <div class="wp-tile-check absolute inset-0 flex items-center justify-center pointer-events-none hidden">
+                    <div class="w-7 h-7 rounded-full bg-black/45 backdrop-blur-sm border border-white/20 flex items-center justify-center shadow-lg">
+                      <span class="text-white font-bold text-xs leading-none">✓</span>
+                    </div>
+                  </div>
+                </button>
+              ))}
+
+              <!-- Rows 4–7: 12 Solid Matte Dark Tones -->
+              {SOLID_DARK_TONES.map(s => (
+                <button 
+                  type="button" 
+                  class="wp-color-tile aspect-[4/4.5] rounded-md overflow-hidden relative cursor-pointer group active:scale-95 transition-transform"
+                  data-type="solid-color"
+                  data-value={s.value}
+                  data-pattern="none"
+                  data-pattern-opacity="0"
+                  data-blur="0"
+                  data-dimness="0"
+                  style={`background-color: ${s.value};`}
+                >
+                  <div class="wp-tile-check absolute inset-0 flex items-center justify-center pointer-events-none hidden">
+                    <div class="w-7 h-7 rounded-full bg-black/45 backdrop-blur-sm border border-white/20 flex items-center justify-center shadow-lg">
+                      <span class="text-white font-bold text-xs leading-none">✓</span>
+                    </div>
+                  </div>
+                </button>
+              ))}
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- ============================================================== -->
+      <!-- VIEW 3: FULL-SCREEN INTERACTIVE PREVIEW (view === 'preview')   -->
+      <!-- Matches Telegram image_36                                      -->
+      <!-- ============================================================== -->
+      <div id="wp-fullscreen-preview" class="fixed inset-0 z-[100] hidden flex-col justify-between bg-black overflow-hidden select-none">
+        <!-- 1. Live Full-Screen Background Layer across 100% of Screen -->
+        <div class="absolute inset-0 z-0">
+          <div id="wp-fs-bg" class="absolute inset-0 bg-cover bg-center transition-all duration-300"></div>
+          <div id="wp-fs-dimmer" class="absolute inset-0 bg-black pointer-events-none transition-opacity duration-200" style="opacity: 0.40;"></div>
+          <div id="wp-fs-pattern" class="absolute inset-0 pointer-events-none transition-opacity duration-200 bg-repeat" style="opacity: 0.15;"></div>
+          <canvas id="wp-fs-sparkles" class="absolute inset-0 pointer-events-none hidden w-full h-full z-0"></canvas>
+        </div>
+
+        <!-- 2. Top Translucent Bar -->
+        <div class="relative z-10 flex items-center justify-between px-4 h-14 bg-black/35 backdrop-blur-md border-b border-white/10">
           <button 
             type="button" 
-            id="btn-apply-wallpaper-studio" 
-            class="w-full py-3.5 px-5 rounded-2xl bg-gradient-to-r from-amber-500 via-amber-400 to-yellow-500 hover:from-amber-400 hover:to-yellow-400 text-slate-950 font-bold text-sm shadow-lg shadow-amber-500/25 active:scale-[0.99] transition flex items-center justify-center gap-2 cursor-pointer"
+            id="btn-wp-fs-back" 
+            class="flex items-center gap-2 text-white font-medium text-xs sm:text-sm py-1.5 px-3 rounded-xl bg-white/10 hover:bg-white/15 border border-white/10 transition active:scale-95 cursor-pointer shadow-sm"
           >
-            <span>🖼 Apply Wallpaper</span>
+            <ArrowLeft class="w-4 h-4 text-purple-300" />
+            <span>Wallpaper Preview</span>
+          </button>
+          
+          <div class="text-xs text-white/70 font-semibold tracking-wide">Aetheria Chat</div>
+        </div>
+
+        <!-- 3. Bottom Chat Sample & Floating Translucent Controls (Matches Telegram image_36) -->
+        <div class="relative z-10 mt-auto p-4 flex flex-col gap-3.5 bg-gradient-to-t from-black/90 via-black/50 to-transparent pt-16">
+          
+          <!-- Two Realistic Chat Bubbles -->
+          <div class="space-y-3 max-w-sm w-full mx-auto mb-1">
+            <!-- Left Bubble (Character) -->
+            <div class="flex items-end gap-2">
+              <div class="w-7 h-7 rounded-full bg-purple-900 border border-purple-500/40 shrink-0 flex items-center justify-center text-[10px] text-purple-200 font-bold shadow-sm">
+                HA
+              </div>
+              <div class="rounded-2xl rounded-bl-xs px-3.5 py-2 max-w-[85%] border border-purple-500/30 backdrop-blur-md bg-[#111526]/85 shadow-lg">
+                <div class="text-[11px] font-bold text-purple-300 mb-0.5">Helen & Anna</div>
+                <div class="text-xs text-slate-100 leading-relaxed">To set this background, tap 'Set Background' below.</div>
+                <div class="text-[10px] text-slate-400 text-right mt-1">23:52</div>
+              </div>
+            </div>
+
+            <!-- Right Bubble (User) -->
+            <div class="flex justify-end">
+              <div class="rounded-2xl rounded-br-xs px-3.5 py-2 max-w-[85%] bg-gradient-to-r from-purple-600 to-indigo-600 text-white shadow-lg">
+                <div class="text-xs font-medium">Looks great! ✨</div>
+                <div class="text-[10px] text-purple-200/80 text-right mt-1 flex items-center justify-end gap-1">
+                  <span>23:52</span>
+                  <span>✓✓</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Conditional Glass Slider Popover (Revealed when Pattern, Blur, or Dim pill tapped) -->
+          <div id="wp-fs-slider-popover" class="hidden max-w-sm w-full mx-auto bg-black/80 backdrop-blur-xl px-4 py-3 rounded-2xl border border-white/20 shadow-2xl transition-all">
+            <div class="flex items-center justify-between text-xs font-semibold text-slate-200 mb-2">
+              <span id="wp-fs-slider-label">Darkness</span>
+              <span id="wp-fs-slider-val" class="text-amber-400 font-bold">40%</span>
+            </div>
+            <input 
+              type="range" 
+              id="wp-fs-slider-input" 
+              min="0" 
+              max="100" 
+              value="40" 
+              class="w-full accent-amber-400 h-1.5 bg-white/20 rounded-lg cursor-pointer"
+            />
+          </div>
+
+          <!-- Translucent Action Pills Row (Matching Telegram image_36) -->
+          <div class="flex items-center justify-center gap-2 max-w-sm w-full mx-auto">
+            <!-- ◯ Pattern -->
+            <button 
+              type="button" 
+              id="btn-pill-pattern" 
+              class="wp-action-pill flex items-center gap-1.5 py-2 px-3 rounded-full text-xs font-medium bg-black/45 hover:bg-black/65 border border-white/15 backdrop-blur-md text-slate-200 transition cursor-pointer active:scale-95 shadow-md"
+            >
+              <span class="text-[13px]">◯</span>
+              <span>Pattern</span>
+            </button>
+
+            <!-- ◐ Blur -->
+            <button 
+              type="button" 
+              id="btn-pill-blur" 
+              class="wp-action-pill flex items-center gap-1.5 py-2 px-3 rounded-full text-xs font-medium bg-black/45 hover:bg-black/65 border border-white/15 backdrop-blur-md text-slate-200 transition cursor-pointer active:scale-95 shadow-md"
+            >
+              <span class="text-[13px]">◐</span>
+              <span>Blur</span>
+            </button>
+
+            <!-- ☀ Dim -->
+            <button 
+              type="button" 
+              id="btn-pill-dim" 
+              class="wp-action-pill flex items-center gap-1.5 py-2 px-3 rounded-full text-xs font-medium bg-black/45 hover:bg-black/65 border border-white/15 backdrop-blur-md text-slate-200 transition cursor-pointer active:scale-95 shadow-md"
+            >
+              <span class="text-[13px]">☀</span>
+              <span>Dim</span>
+            </button>
+
+            <!-- ✦ Motion -->
+            <button 
+              type="button" 
+              id="btn-pill-motion" 
+              class="wp-action-pill flex items-center gap-1.5 py-2 px-3 rounded-full text-xs font-medium bg-black/45 hover:bg-black/65 border border-white/15 backdrop-blur-md text-slate-200 transition cursor-pointer active:scale-95 shadow-md"
+            >
+              <span class="text-[13px]">✦</span>
+              <span>Motion</span>
+            </button>
+          </div>
+
+          <!-- Primary Bottom CTA: Set Background -->
+          <div class="max-w-sm w-full mx-auto">
+            <button 
+              type="button" 
+              id="btn-wp-fs-set-bg" 
+              class="w-full h-12 rounded-2xl bg-white/20 hover:bg-white/30 active:scale-[0.99] backdrop-blur-md border border-white/25 text-white font-semibold text-sm shadow-xl flex items-center justify-center gap-2 transition cursor-pointer"
+            >
+              <span>Set Background</span>
+            </button>
+          </div>
+
+        </div>
+
+        <!-- Set Background Bottom Sheet / Scope Choice (Revealed when Set Background is tapped) -->
+        <div id="wp-set-bg-modal" class="hidden absolute inset-x-0 bottom-0 z-30 p-5 bg-[#121520]/95 backdrop-blur-2xl border-t border-white/15 rounded-t-3xl shadow-2xl space-y-4 max-w-md mx-auto">
+          <div class="flex items-center justify-between">
+            <h4 class="text-sm font-bold text-white">Apply Chat Background</h4>
+            <button type="button" id="btn-cancel-set-bg" class="text-xs text-slate-400 hover:text-white p-1">Cancel</button>
+          </div>
+
+          <!-- Scope Radio / Buttons -->
+          <div class="grid grid-cols-2 gap-2 p-1 bg-white/[0.04] border border-white/10 rounded-2xl">
+            <button 
+              type="button" 
+              id="btn-modal-scope-all" 
+              class="py-2 px-3 rounded-xl text-xs font-bold transition cursor-pointer bg-purple-600 text-white shadow-sm"
+            >
+              All Chats
+            </button>
+            <button 
+              type="button" 
+              id="btn-modal-scope-specific" 
+              class="py-2 px-3 rounded-xl text-xs font-medium transition cursor-pointer text-slate-400 hover:text-white"
+            >
+              Specific Chat
+            </button>
+          </div>
+
+          <!-- Specific Chat Picker (Pills) -->
+          <div id="wp-modal-specific-selector" class="hidden space-y-2 pt-1">
+            <div class="flex items-center justify-between text-[11px]">
+              <span class="text-slate-300 font-semibold">Target Chat: <span id="wp-modal-selected-char" class="text-amber-400 font-bold">Helen & Anna</span></span>
+            </div>
+            <div id="wp-modal-char-pills" class="flex items-center gap-2 overflow-x-auto py-1 scrollbar-none">
+              <!-- Rendered via JS -->
+            </div>
+          </div>
+
+          <!-- Confirm CTA -->
+          <button 
+            type="button" 
+            id="btn-confirm-set-bg" 
+            class="w-full py-3.5 px-5 rounded-2xl bg-gradient-to-r from-amber-500 via-amber-400 to-yellow-500 hover:from-amber-400 hover:to-yellow-400 text-slate-950 font-bold text-sm shadow-lg shadow-amber-500/25 active:scale-[0.99] transition cursor-pointer"
+          >
+            Apply Wallpaper
           </button>
         </div>
 
+        <!-- Custom Image URL Dialog Modal -->
+        <dialog id="modal-wp-url-dialog" class="rounded-3xl bg-[#141824] border border-white/15 text-white p-5 max-w-sm w-full backdrop:bg-black/75 shadow-2xl space-y-3.5">
+          <h4 class="text-sm font-bold text-white">Enter Image URL</h4>
+          <input 
+            type="url" 
+            id="input-wp-url-field" 
+            placeholder="https://example.com/image.jpg" 
+            class="w-full px-3.5 py-2.5 rounded-xl bg-white/[0.05] border border-white/15 text-xs text-white placeholder-slate-500 focus:outline-none focus:border-purple-400"
+          />
+          <div class="flex justify-end gap-2">
+            <button type="button" id="btn-cancel-url-modal" class="px-3 py-1.5 rounded-xl text-xs text-slate-300 hover:text-white cursor-pointer">Cancel</button>
+            <button type="button" id="btn-submit-url-modal" class="px-4 py-1.5 rounded-xl text-xs font-bold bg-purple-600 hover:bg-purple-500 text-white cursor-pointer shadow-sm">Preview</button>
+          </div>
+        </dialog>
       </div>
 
       <div id="view-ai-engine" class="hidden space-y-5">
@@ -4029,52 +4127,141 @@ const PRESET_SCENES = [
     // ==========================================
     // Wallpaper & Atmosphere Studio Controller
     // ==========================================
+    // ==============================================================
+    // TELEGRAM CHAT WALLPAPER ARCHITECTURE CONTROLLER (3-VIEW FLOW)
+    // View 1: Main Gallery (Scenes + Patterns + Top Action Card)
+    // View 2: Dedicated "Choose a Color" (Soft Mesh Gradients + Solid Matte)
+    // View 3: Full-Screen Interactive Preview (Glass Pills, Bubbles, Popovers)
+    // ==============================================================
+
     interface WallpaperStudioConfig {
-      type: 'default' | 'gradient' | 'preset-scene' | 'custom-image' | 'character-avatar';
+      type: 'preset-scene' | 'doodle-pattern' | 'mesh-gradient' | 'solid-color' | 'custom-image' | 'character-avatar';
       value: string;
       blur: number; // 0 to 20 px
       dimness: number; // 0 to 90 %
+      patternId?: string;
       patternOpacity: number; // 0 to 100 %
       sparkleOverlay: boolean;
     }
+
+    let currentWpSubview: 'gallery' | 'colors' = 'gallery';
+    let previousWpSubview: 'gallery' | 'colors' = 'gallery';
 
     let draftWpConfig: WallpaperStudioConfig = {
       type: 'preset-scene',
       value: '/wallpapers/fantasy_library.webp',
       blur: 3,
       dimness: 40,
-      patternOpacity: 15,
+      patternId: 'none',
+      patternOpacity: 0,
       sparkleOverlay: false
     };
 
     let draftScope: 'all' | 'specific' = 'all';
     let draftTargetCharId: string = 'helen';
-    let studioInitialized = false;
+    let activePopoverSlider: 'blur' | 'dim' | 'pattern' | null = null;
+    let studioEventsAttached = false;
+    let sparklesAnimId: number | null = null;
 
-    function updateLivePreviewDOM() {
+    // Switch between Subview 1 (Gallery) and Subview 2 (Colors)
+    function switchWpSubview(subview: 'gallery' | 'colors') {
+      currentWpSubview = subview;
+      const galleryEl = document.getElementById('wp-subview-gallery');
+      const colorsEl = document.getElementById('wp-subview-colors');
+      const fsEl = document.getElementById('wp-fullscreen-preview');
+
+      if (fsEl) {
+        fsEl.classList.add('hidden');
+        fsEl.classList.remove('flex');
+      }
+
+      if (subview === 'gallery') {
+        galleryEl?.classList.remove('hidden');
+        colorsEl?.classList.add('hidden');
+      } else {
+        galleryEl?.classList.add('hidden');
+        colorsEl?.classList.remove('hidden');
+      }
+      updateActiveCheckmarks();
+    }
+
+    // Open View 3 (Full-Screen Interactive Preview)
+    function openFullscreenPreview(origin: 'gallery' | 'colors') {
+      previousWpSubview = origin;
+      const fsEl = document.getElementById('wp-fullscreen-preview');
+      if (!fsEl) return;
+
+      // Close any open popover or modal
+      closeSliderPopover();
+      document.getElementById('wp-set-bg-modal')?.classList.add('hidden');
+
+      fsEl.classList.remove('hidden');
+      fsEl.classList.add('flex');
+      updateFullscreenDOM();
+    }
+
+    // Close View 3 (Returns to whichever grid user came from)
+    function closeFullscreenPreview() {
+      const fsEl = document.getElementById('wp-fullscreen-preview');
+      if (fsEl) {
+        fsEl.classList.add('hidden');
+        fsEl.classList.remove('flex');
+      }
+      closeSliderPopover();
+      document.getElementById('wp-set-bg-modal')?.classList.add('hidden');
+      stopSparklesAnimation();
+      switchWpSubview(previousWpSubview);
+    }
+
+    // Update centered translucent checkmarks on tiles in View 1 & View 2
+    function updateActiveCheckmarks() {
       try {
-        const bgEl = document.getElementById('wp-preview-bg');
-        const dimEl = document.getElementById('wp-preview-dimmer');
-        const patEl = document.getElementById('wp-preview-pattern');
-        const spkEl = document.getElementById('wp-preview-sparkles');
+        const savedConfig = (window as any).AetheriaTheme?.getWallpaperConfig?.(null);
+        const activeVal = savedConfig?.value || '/wallpapers/fantasy_library.webp';
+
+        const allTiles = document.querySelectorAll('.wp-gallery-tile, .wp-color-tile');
+        allTiles.forEach(tile => {
+          const val = tile.getAttribute('data-value');
+          const isSelected = val === activeVal;
+          const checkEl = tile.querySelector('.wp-tile-check');
+          if (checkEl) {
+            checkEl.classList.toggle('hidden', !isSelected);
+          }
+        });
+      } catch (err) {
+        console.error('[WallpaperStudio] updateActiveCheckmarks error:', err);
+      }
+    }
+
+    // Update Full-Screen Preview DOM Layers
+    function updateFullscreenDOM() {
+      try {
+        const bgEl = document.getElementById('wp-fs-bg');
+        const dimEl = document.getElementById('wp-fs-dimmer');
+        const patEl = document.getElementById('wp-fs-pattern');
+        const spkEl = document.getElementById('wp-fs-sparkles');
         if (!bgEl || !dimEl) return;
 
-        const isImage = draftWpConfig.type === 'custom-image' || draftWpConfig.type === 'preset-scene' || draftWpConfig.type === 'character-avatar' || (typeof draftWpConfig.value === 'string' && (draftWpConfig.value.startsWith('http') || draftWpConfig.value.startsWith('data:') || draftWpConfig.value.startsWith('/')));
+        const val = draftWpConfig.value || '/wallpapers/fantasy_library.webp';
+        const isImage = draftWpConfig.type === 'custom-image' || draftWpConfig.type === 'preset-scene' || draftWpConfig.type === 'character-avatar' || (typeof val === 'string' && (val.startsWith('http') || val.startsWith('data:') || val.startsWith('/')));
 
+        // 1. Background image / gradient / solid color
         if (isImage) {
           bgEl.style.removeProperty('background');
-          bgEl.style.backgroundImage = `url("${draftWpConfig.value}")`;
+          bgEl.style.backgroundImage = `url("${val}")`;
           bgEl.style.backgroundSize = 'cover';
           bgEl.style.backgroundPosition = 'center';
           bgEl.style.backgroundRepeat = 'no-repeat';
-          bgEl.style.backgroundColor = 'transparent';
+          bgEl.style.backgroundColor = '#000000';
         } else {
           bgEl.style.removeProperty('background');
           bgEl.style.backgroundImage = 'none';
-          bgEl.style.background = draftWpConfig.value;
+          bgEl.style.background = val;
+          bgEl.style.backgroundColor = val.startsWith('#') ? val : '#090b17';
         }
 
-        const blurVal = draftWpConfig.blur ?? 3;
+        // 2. Blur
+        const blurVal = draftWpConfig.blur ?? (isImage ? 3 : 0);
         if (blurVal > 0) {
           bgEl.style.filter = `blur(${blurVal}px)`;
           bgEl.style.transform = 'scale(1.05)';
@@ -4083,58 +4270,185 @@ const PRESET_SCENES = [
           bgEl.style.transform = 'none';
         }
 
-        const dimVal = draftWpConfig.dimness ?? 40;
+        // 3. Darkness Dimmer
+        const dimVal = draftWpConfig.dimness ?? (isImage ? 40 : 15);
         dimEl.style.opacity = (dimVal / 100).toString();
 
-        const patVal = draftWpConfig.patternOpacity ?? 15;
+        // 4. Vector Doodle Pattern
+        const patId = draftWpConfig.patternId;
+        const patOpacity = draftWpConfig.patternOpacity ?? 0;
+        const patObj = (window as any).AetheriaTheme?.PATTERNS?.[patId || 'pattern-gamer'] || (window as any).AetheriaTheme?.PATTERNS?.['pattern-stargazer'];
+
         if (patEl) {
-          patEl.style.opacity = (patVal / 100).toString();
-        }
-
-        if (spkEl) {
-          spkEl.classList.toggle('hidden', !draftWpConfig.sparkleOverlay);
-        }
-
-        const valBlur = document.getElementById('val-wp-blur');
-        if (valBlur) valBlur.textContent = `${blurVal}px`;
-
-        const valDim = document.getElementById('val-wp-dim');
-        if (valDim) valDim.textContent = `${dimVal}%`;
-
-        const valPat = document.getElementById('val-wp-pattern');
-        if (valPat) valPat.textContent = `${patVal}%`;
-      } catch (err) {
-        console.error('[WallpaperStudio] updateLivePreviewDOM error:', err);
-      }
-    }
-
-    function renderPresetTiles() {
-      try {
-        const allTiles = document.querySelectorAll('.wp-preset-tile, .wp-tile-btn');
-        allTiles.forEach(tile => {
-          const val = tile.getAttribute('data-value');
-          const isSelected = draftWpConfig.value === val;
-          
-          if (isSelected) {
-            tile.classList.add('border-amber-400', 'ring-2', 'ring-amber-400', 'shadow-[0_0_15px_rgba(251,191,36,0.25)]');
-            tile.classList.remove('border-white/10', 'border-purple-400', 'ring-purple-400');
+          if (patId && patId !== 'none' && patObj && patObj.pattern && patObj.pattern !== 'none' && patOpacity > 0) {
+            patEl.style.backgroundImage = patObj.pattern;
+            patEl.style.backgroundSize = patObj.patternSize;
+            patEl.style.opacity = (patOpacity / 100).toString();
           } else {
-            tile.classList.remove('border-amber-400', 'ring-2', 'ring-amber-400', 'shadow-[0_0_15px_rgba(251,191,36,0.25)]', 'border-purple-400', 'ring-purple-400');
-            tile.classList.add('border-white/10');
+            patEl.style.backgroundImage = 'none';
+            patEl.style.opacity = '0';
           }
+        }
 
-          const checkEl = tile.querySelector('.wp-tile-check');
-          if (checkEl) {
-            checkEl.classList.toggle('hidden', !isSelected);
+        // 5. Sparkles Canvas
+        if (spkEl) {
+          if (draftWpConfig.sparkleOverlay) {
+            spkEl.classList.remove('hidden');
+            startSparklesAnimation();
+          } else {
+            spkEl.classList.add('hidden');
+            stopSparklesAnimation();
           }
-        });
+        }
+
+        // 6. Update action pill active states
+        updateActionPillsState();
+
+        // 7. Update popover slider if open
+        if (activePopoverSlider) {
+          syncPopoverSliderValues();
+        }
       } catch (err) {
-        console.error('[WallpaperStudio] renderPresetTiles error:', err);
+        console.error('[WallpaperStudio] updateFullscreenDOM error:', err);
       }
     }
 
-    function renderCharacterPills() {
-      const container = document.getElementById('wp-char-pills-container');
+    function updateActionPillsState() {
+      const pillBlur = document.getElementById('btn-pill-blur');
+      const pillDim = document.getElementById('btn-pill-dim');
+      const pillPattern = document.getElementById('btn-pill-pattern');
+      const pillMotion = document.getElementById('btn-pill-motion');
+
+      const isBlurActive = (draftWpConfig.blur ?? 0) > 0;
+      pillBlur?.classList.toggle('bg-purple-600/40', isBlurActive);
+      pillBlur?.classList.toggle('border-purple-400/60', isBlurActive);
+      pillBlur?.classList.toggle('text-purple-200', isBlurActive);
+
+      const isDimActive = (draftWpConfig.dimness ?? 0) > 0;
+      pillDim?.classList.toggle('bg-amber-600/40', isDimActive);
+      pillDim?.classList.toggle('border-amber-400/60', isDimActive);
+      pillDim?.classList.toggle('text-amber-200', isDimActive);
+
+      const isPatternActive = (draftWpConfig.patternOpacity ?? 0) > 0;
+      pillPattern?.classList.toggle('bg-cyan-600/40', isPatternActive);
+      pillPattern?.classList.toggle('border-cyan-400/60', isPatternActive);
+      pillPattern?.classList.toggle('text-cyan-200', isPatternActive);
+
+      const isMotionActive = Boolean(draftWpConfig.sparkleOverlay);
+      pillMotion?.classList.toggle('bg-amber-400/30', isMotionActive);
+      pillMotion?.classList.toggle('border-amber-400/70', isMotionActive);
+      pillMotion?.classList.toggle('text-amber-300', isMotionActive);
+    }
+
+    // Toggle Popover Glass Slider
+    function toggleSliderPopover(type: 'blur' | 'dim' | 'pattern') {
+      const popover = document.getElementById('wp-fs-slider-popover');
+      if (!popover) return;
+
+      if (activePopoverSlider === type) {
+        closeSliderPopover();
+        return;
+      }
+
+      activePopoverSlider = type;
+      popover.classList.remove('hidden');
+      syncPopoverSliderValues();
+    }
+
+    function closeSliderPopover() {
+      activePopoverSlider = null;
+      document.getElementById('wp-fs-slider-popover')?.classList.add('hidden');
+    }
+
+    function syncPopoverSliderValues() {
+      const labelEl = document.getElementById('wp-fs-slider-label');
+      const valEl = document.getElementById('wp-fs-slider-val');
+      const inputEl = document.getElementById('wp-fs-slider-input') as HTMLInputElement | null;
+      if (!labelEl || !valEl || !inputEl || !activePopoverSlider) return;
+
+      if (activePopoverSlider === 'blur') {
+        labelEl.textContent = 'Background Blur';
+        inputEl.min = '0';
+        inputEl.max = '20';
+        inputEl.value = (draftWpConfig.blur ?? 0).toString();
+        valEl.textContent = `${inputEl.value}px`;
+        valEl.className = 'text-purple-300 font-bold';
+      } else if (activePopoverSlider === 'dim') {
+        labelEl.textContent = 'Darkness Dimmer';
+        inputEl.min = '0';
+        inputEl.max = '90';
+        inputEl.value = (draftWpConfig.dimness ?? 40).toString();
+        valEl.textContent = `${inputEl.value}%`;
+        valEl.className = 'text-amber-300 font-bold';
+      } else if (activePopoverSlider === 'pattern') {
+        labelEl.textContent = 'Vector Doodle Pattern';
+        inputEl.min = '0';
+        inputEl.max = '100';
+        if ((draftWpConfig.patternOpacity ?? 0) === 0 && (!draftWpConfig.patternId || draftWpConfig.patternId === 'none')) {
+          draftWpConfig.patternId = 'pattern-gamer';
+          draftWpConfig.patternOpacity = 25;
+        }
+        inputEl.value = (draftWpConfig.patternOpacity ?? 25).toString();
+        valEl.textContent = `${inputEl.value}%`;
+        valEl.className = 'text-cyan-300 font-bold';
+      }
+    }
+
+    // Sparkles Animation Loop
+    function startSparklesAnimation() {
+      const canvas = document.getElementById('wp-fs-sparkles') as HTMLCanvasElement | null;
+      if (!canvas) return;
+      const ctx = canvas.getContext('2d');
+      if (!ctx) return;
+
+      canvas.width = canvas.parentElement?.clientWidth || window.innerWidth;
+      canvas.height = canvas.parentElement?.clientHeight || window.innerHeight;
+
+      const particles: Array<{ x: number; y: number; r: number; alpha: number; speed: number; drift: number }> = [];
+      for (let i = 0; i < 35; i++) {
+        particles.push({
+          x: Math.random() * canvas.width,
+          y: Math.random() * canvas.height,
+          r: Math.random() * 1.6 + 0.8,
+          alpha: Math.random() * 0.7 + 0.3,
+          speed: Math.random() * 0.4 + 0.2,
+          drift: (Math.random() - 0.5) * 0.3
+        });
+      }
+
+      function draw() {
+        if (!ctx || !canvas || !draftWpConfig.sparkleOverlay) return;
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        particles.forEach(p => {
+          p.y -= p.speed;
+          p.x += p.drift;
+          if (p.y < 0) {
+            p.y = canvas.height;
+            p.x = Math.random() * canvas.width;
+          }
+          ctx.beginPath();
+          ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
+          ctx.fillStyle = `rgba(251, 191, 36, ${p.alpha})`;
+          ctx.shadowBlur = 6;
+          ctx.shadowColor = '#f59e0b';
+          ctx.fill();
+        });
+        sparklesAnimId = requestAnimationFrame(draw);
+      }
+      if (sparklesAnimId) cancelAnimationFrame(sparklesAnimId);
+      sparklesAnimId = requestAnimationFrame(draw);
+    }
+
+    function stopSparklesAnimation() {
+      if (sparklesAnimId) {
+        cancelAnimationFrame(sparklesAnimId);
+        sparklesAnimId = null;
+      }
+    }
+
+    // Render Character Pills inside Set Background Modal
+    function renderModalCharacterPills() {
+      const container = document.getElementById('wp-modal-char-pills');
       if (!container) return;
       container.innerHTML = '';
 
@@ -4163,7 +4477,7 @@ const PRESET_SCENES = [
         draftTargetCharId = charList[0].id;
       }
 
-      const selectedNameLabel = document.getElementById('wp-selected-char-name');
+      const selectedNameLabel = document.getElementById('wp-modal-selected-char');
       if (selectedNameLabel) {
         const active = charList.find(c => c.id === draftTargetCharId);
         if (active) selectedNameLabel.textContent = active.name;
@@ -4185,136 +4499,262 @@ const PRESET_SCENES = [
         `;
         pill.addEventListener('click', () => {
           draftTargetCharId = c.id;
-          renderCharacterPills();
-          const charConfig = (window as any).AetheriaTheme?.getWallpaperConfig?.(c.id);
-          if (charConfig && charConfig.value) {
-            draftWpConfig = { ...charConfig };
-            const sliderBlur = document.getElementById('slider-wp-blur') as HTMLInputElement | null;
-            if (sliderBlur) sliderBlur.value = (draftWpConfig.blur ?? 3).toString();
-            const sliderDim = document.getElementById('slider-wp-dim') as HTMLInputElement | null;
-            if (sliderDim) sliderDim.value = (draftWpConfig.dimness ?? 40).toString();
-            const sliderPat = document.getElementById('slider-wp-pattern') as HTMLInputElement | null;
-            if (sliderPat) sliderPat.value = (draftWpConfig.patternOpacity ?? 15).toString();
-            const toggleSparkles = document.getElementById('toggle-wp-sparkles') as HTMLInputElement | null;
-            if (toggleSparkles) toggleSparkles.checked = Boolean(draftWpConfig.sparkleOverlay);
-            renderPresetTiles();
-            updateLivePreviewDOM();
-          }
+          renderModalCharacterPills();
         });
         container.appendChild(pill);
       });
     }
 
-    function setupStudioEventListeners() {
-      // Preset tiles click handler
-      document.querySelectorAll('.wp-preset-tile').forEach(tile => {
-        tile.addEventListener('click', (e) => {
-          const target = (e.currentTarget || tile) as HTMLElement;
-          const type = (target.getAttribute('data-type') || 'gradient') as any;
-          const value = target.getAttribute('data-value') || '';
-          draftWpConfig.type = type;
-          draftWpConfig.value = value;
-          renderPresetTiles();
-          updateLivePreviewDOM();
-        });
+    // Attach All Event Listeners for 3-View Architecture
+    function setupTelegramWallpaperStudioEvents() {
+      if (studioEventsAttached) return;
+      studioEventsAttached = true;
+
+      // 1. Navigation: Back from Gallery -> Chat Settings
+      document.getElementById('btn-back-from-wallpaper-studio')?.addEventListener('click', () => {
+        showView('view-appearance');
       });
 
-      // Custom URL load button
-      document.getElementById('btn-apply-custom-val')?.addEventListener('click', () => {
-        const inputVal = ((document.getElementById('input-wp-custom-val') as HTMLInputElement)?.value || '').trim();
-        if (!inputVal) return;
-        draftWpConfig.type = (inputVal.startsWith('linear-gradient') || inputVal.startsWith('radial-gradient') || inputVal.startsWith('#') || inputVal.startsWith('rgb')) ? 'gradient' : 'custom-image';
-        draftWpConfig.value = inputVal;
-        renderPresetTiles();
-        updateLivePreviewDOM();
-        showToast('Custom wallpaper loaded in preview', 'info');
+      // 2. Navigation: Set a Color row -> View 2 (Colors)
+      document.getElementById('btn-wp-row-color')?.addEventListener('click', () => {
+        switchWpSubview('colors');
       });
 
-      // Upload Photo Tile
-      const fileInput = document.getElementById('input-wp-file') as HTMLInputElement | null;
-      document.getElementById('btn-wp-tile-upload')?.addEventListener('click', () => {
-        fileInput?.click();
+      // 3. Navigation: Back from Colors -> View 1 (Gallery)
+      document.getElementById('btn-back-from-colors')?.addEventListener('click', () => {
+        switchWpSubview('gallery');
       });
 
-      fileInput?.addEventListener('change', (e: any) => {
+      // 4. Select from Gallery (File Picker)
+      const galleryFilePicker = document.getElementById('input-wp-gallery-picker') as HTMLInputElement | null;
+      document.getElementById('btn-wp-row-gallery')?.addEventListener('click', () => {
+        galleryFilePicker?.click();
+      });
+
+      galleryFilePicker?.addEventListener('change', (e: any) => {
         const file = e.target.files?.[0];
         if (!file) return;
         const reader = new FileReader();
         reader.onload = (ev) => {
           const res = ev.target?.result as string;
-          draftWpConfig.type = 'custom-image';
-          draftWpConfig.value = res;
-          renderPresetTiles();
-          updateLivePreviewDOM();
-          showToast('Image uploaded to preview', 'info');
+          draftWpConfig = {
+            type: 'custom-image',
+            value: res,
+            blur: 0,
+            dimness: 25,
+            patternId: 'none',
+            patternOpacity: 0,
+            sparkleOverlay: false
+          };
+          openFullscreenPreview('gallery');
         };
         reader.readAsDataURL(file);
       });
 
-      // Character Portrait Tile
-      document.getElementById('btn-wp-tile-char-portrait')?.addEventListener('click', () => {
-        const tile = document.getElementById('btn-wp-tile-char-portrait');
-        const val = tile?.getAttribute('data-value') || '/avatars/anime_girl.webp';
-        draftWpConfig.type = 'character-avatar';
-        draftWpConfig.value = val;
-        renderPresetTiles();
-        updateLivePreviewDOM();
+      // 5. Custom URL Modal
+      const urlModal = document.getElementById('modal-wp-url-dialog') as HTMLDialogElement | null;
+      document.getElementById('btn-wp-row-url')?.addEventListener('click', () => {
+        if (urlModal) {
+          (urlModal as any).showModal?.();
+        } else {
+          const url = prompt('Enter Image URL (https://...):');
+          if (url && url.trim()) {
+            draftWpConfig = {
+              type: 'custom-image',
+              value: url.trim(),
+              blur: 0,
+              dimness: 25,
+              patternId: 'none',
+              patternOpacity: 0,
+              sparkleOverlay: false
+            };
+            openFullscreenPreview('gallery');
+          }
+        }
       });
 
-      // Sliders Live Preview
-      document.getElementById('slider-wp-blur')?.addEventListener('input', (e) => {
-        draftWpConfig.blur = Number((e.target as HTMLInputElement).value);
-        updateLivePreviewDOM();
+      document.getElementById('btn-cancel-url-modal')?.addEventListener('click', () => {
+        urlModal?.close();
       });
 
-      document.getElementById('slider-wp-dim')?.addEventListener('input', (e) => {
-        draftWpConfig.dimness = Number((e.target as HTMLInputElement).value);
-        updateLivePreviewDOM();
+      document.getElementById('btn-submit-url-modal')?.addEventListener('click', () => {
+        const inputField = document.getElementById('input-wp-url-field') as HTMLInputElement | null;
+        const val = inputField?.value?.trim();
+        if (val) {
+          draftWpConfig = {
+            type: 'custom-image',
+            value: val,
+            blur: 0,
+            dimness: 25,
+            patternId: 'none',
+            patternOpacity: 0,
+            sparkleOverlay: false
+          };
+          urlModal?.close();
+          openFullscreenPreview('gallery');
+        }
       });
 
-      document.getElementById('slider-wp-pattern')?.addEventListener('input', (e) => {
-        draftWpConfig.patternOpacity = Number((e.target as HTMLInputElement).value);
-        updateLivePreviewDOM();
+      // 6. Use Character Portrait Row
+      document.getElementById('btn-wp-row-char')?.addEventListener('click', () => {
+        let activeAvatar = '/avatars/anime_girl.webp';
+        try {
+          const customChars = JSON.parse(localStorage.getItem('aetheria_custom_characters') || '[]');
+          if (customChars.length > 0 && customChars[0].avatar) {
+            activeAvatar = customChars[0].avatar;
+          }
+        } catch(e) {}
+        draftWpConfig = {
+          type: 'character-avatar',
+          value: activeAvatar,
+          blur: 6,
+          dimness: 35,
+          patternId: 'none',
+          patternOpacity: 0,
+          sparkleOverlay: false
+        };
+        openFullscreenPreview('gallery');
       });
 
-      // Sparkles toggle
-      document.getElementById('toggle-wp-sparkles')?.addEventListener('change', (e) => {
-        draftWpConfig.sparkleOverlay = (e.target as HTMLInputElement).checked;
-        updateLivePreviewDOM();
+      // 7. Click tile in View 1 (Gallery: Scenes & Patterns)
+      document.querySelectorAll('.wp-gallery-tile').forEach(tile => {
+        tile.addEventListener('click', (e) => {
+          const target = (e.currentTarget || tile) as HTMLElement;
+          const type = (target.getAttribute('data-type') || 'preset-scene') as any;
+          const value = target.getAttribute('data-value') || '';
+          const patternId = target.getAttribute('data-pattern') || 'none';
+          const patternOpacity = Number(target.getAttribute('data-pattern-opacity') || '0');
+          const blur = Number(target.getAttribute('data-blur') || '0');
+          const dimness = Number(target.getAttribute('data-dimness') || '40');
+
+          draftWpConfig = {
+            type,
+            value,
+            blur,
+            dimness,
+            patternId,
+            patternOpacity,
+            sparkleOverlay: false
+          };
+          openFullscreenPreview('gallery');
+        });
       });
 
-      // Scope Selector Buttons
-      const btnScopeAll = document.getElementById('btn-wp-scope-all');
-      const btnScopeSpecific = document.getElementById('btn-wp-scope-specific');
-      const specificCharSection = document.getElementById('wp-specific-char-selector');
+      // 8. Click tile in View 2 (Colors: Mesh Gradients & Solid Matte)
+      document.querySelectorAll('.wp-color-tile').forEach(tile => {
+        tile.addEventListener('click', (e) => {
+          const target = (e.currentTarget || tile) as HTMLElement;
+          const type = (target.getAttribute('data-type') || 'solid-color') as any;
+          const value = target.getAttribute('data-value') || '';
+          const dimness = Number(target.getAttribute('data-dimness') || '0');
 
-      btnScopeAll?.addEventListener('click', () => {
+          draftWpConfig = {
+            type,
+            value,
+            blur: 0,
+            dimness,
+            patternId: 'none',
+            patternOpacity: 0,
+            sparkleOverlay: false
+          };
+          openFullscreenPreview('colors');
+        });
+      });
+
+      // 9. View 3 Back Button
+      document.getElementById('btn-wp-fs-back')?.addEventListener('click', () => {
+        closeFullscreenPreview();
+      });
+
+      // 10. Action Pills inside View 3 (Full-Screen Preview)
+      document.getElementById('btn-pill-pattern')?.addEventListener('click', () => {
+        toggleSliderPopover('pattern');
+      });
+
+      document.getElementById('btn-pill-blur')?.addEventListener('click', () => {
+        toggleSliderPopover('blur');
+      });
+
+      document.getElementById('btn-pill-dim')?.addEventListener('click', () => {
+        toggleSliderPopover('dim');
+      });
+
+      document.getElementById('btn-pill-motion')?.addEventListener('click', () => {
+        draftWpConfig.sparkleOverlay = !draftWpConfig.sparkleOverlay;
+        updateFullscreenDOM();
+      });
+
+      // 11. Slider input event inside popover
+      document.getElementById('wp-fs-slider-input')?.addEventListener('input', (e) => {
+        const val = Number((e.target as HTMLInputElement).value);
+        if (activePopoverSlider === 'blur') {
+          draftWpConfig.blur = val;
+        } else if (activePopoverSlider === 'dim') {
+          draftWpConfig.dimness = val;
+        } else if (activePopoverSlider === 'pattern') {
+          draftWpConfig.patternOpacity = val;
+        }
+        updateFullscreenDOM();
+      });
+
+      // 12. Primary CTA "Set Background" in View 3
+      document.getElementById('btn-wp-fs-set-bg')?.addEventListener('click', () => {
+        closeSliderPopover();
+        const modal = document.getElementById('wp-set-bg-modal');
+        modal?.classList.remove('hidden');
+        renderModalCharacterPills();
+      });
+
+      document.getElementById('btn-cancel-set-bg')?.addEventListener('click', () => {
+        document.getElementById('wp-set-bg-modal')?.classList.add('hidden');
+      });
+
+      // Modal Scope buttons
+      const btnModalScopeAll = document.getElementById('btn-modal-scope-all');
+      const btnModalScopeSpecific = document.getElementById('btn-modal-scope-specific');
+      const modalSpecificSection = document.getElementById('wp-modal-specific-selector');
+
+      btnModalScopeAll?.addEventListener('click', () => {
         draftScope = 'all';
-        btnScopeAll.classList.add('bg-purple-600', 'text-white', 'shadow-sm');
-        btnScopeAll.classList.remove('text-slate-400');
-        btnScopeSpecific?.classList.remove('bg-purple-600', 'text-white', 'shadow-sm');
-        btnScopeSpecific?.classList.add('text-slate-400');
-        specificCharSection?.classList.add('hidden');
+        btnModalScopeAll.classList.add('bg-purple-600', 'text-white', 'shadow-sm');
+        btnModalScopeAll.classList.remove('text-slate-400');
+        btnModalScopeSpecific?.classList.remove('bg-purple-600', 'text-white', 'shadow-sm');
+        btnModalScopeSpecific?.classList.add('text-slate-400');
+        modalSpecificSection?.classList.add('hidden');
       });
 
-      btnScopeSpecific?.addEventListener('click', () => {
+      btnModalScopeSpecific?.addEventListener('click', () => {
         draftScope = 'specific';
-        btnScopeSpecific.classList.add('bg-purple-600', 'text-white', 'shadow-sm');
-        btnScopeSpecific.classList.remove('text-slate-400');
-        btnScopeAll?.classList.remove('bg-purple-600', 'text-white', 'shadow-sm');
-        btnScopeAll?.classList.add('text-slate-400');
-        specificCharSection?.classList.remove('hidden');
-        renderCharacterPills();
+        btnModalScopeSpecific.classList.add('bg-purple-600', 'text-white', 'shadow-sm');
+        btnModalScopeSpecific.classList.remove('text-slate-400');
+        btnModalScopeAll?.classList.remove('bg-purple-600', 'text-white', 'shadow-sm');
+        btnModalScopeAll?.classList.add('text-slate-400');
+        modalSpecificSection?.classList.remove('hidden');
+        renderModalCharacterPills();
       });
 
-      // Reset Button
+      // Confirm Set Background button
+      document.getElementById('btn-confirm-set-bg')?.addEventListener('click', () => {
+        const targetId = draftScope === 'specific' ? draftTargetCharId : null;
+        (window as any).AetheriaTheme?.saveWallpaperConfig?.(draftWpConfig, targetId);
+        showToast('Wallpaper applied successfully! ✨', 'success');
+
+        closeFullscreenPreview();
+        showView('view-appearance');
+        if (typeof (window as any).__updateProfileChatPreview === 'function') {
+          (window as any).__updateProfileChatPreview();
+        }
+      });
+
+      // 13. Reset Wallpaper Button
       document.getElementById('btn-reset-wallpaper')?.addEventListener('click', () => {
         draftWpConfig = {
           type: 'preset-scene',
           value: '/wallpapers/fantasy_library.webp',
           blur: 3,
           dimness: 40,
-          patternOpacity: 15,
+          patternId: 'none',
+          patternOpacity: 0,
           sparkleOverlay: false
         };
         const activeChar = draftScope === 'specific' ? draftTargetCharId : null;
@@ -4323,25 +4763,8 @@ const PRESET_SCENES = [
         } else if ((window as any).AetheriaTheme?.resetWallpaper) {
           (window as any).AetheriaTheme.resetWallpaper(activeChar);
         }
-        initWallpaperStudio();
+        updateActiveCheckmarks();
         showToast('Wallpaper reset to default', 'info');
-      });
-
-      // Apply Button (Primary CTA)
-      document.getElementById('btn-apply-wallpaper-studio')?.addEventListener('click', () => {
-        const sliderBlur = document.getElementById('slider-wp-blur') as HTMLInputElement | null;
-        if (sliderBlur) draftWpConfig.blur = Number(sliderBlur.value) || 0;
-        const sliderDim = document.getElementById('slider-wp-dim') as HTMLInputElement | null;
-        if (sliderDim) draftWpConfig.dimness = Number(sliderDim.value) ?? 40;
-        const sliderPat = document.getElementById('slider-wp-pattern') as HTMLInputElement | null;
-        if (sliderPat) draftWpConfig.patternOpacity = Number(sliderPat.value) ?? 15;
-        const toggleSparkles = document.getElementById('toggle-wp-sparkles') as HTMLInputElement | null;
-        if (toggleSparkles) draftWpConfig.sparkleOverlay = Boolean(toggleSparkles.checked);
-
-        const targetId = draftScope === 'specific' ? draftTargetCharId : null;
-        (window as any).AetheriaTheme?.saveWallpaperConfig?.(draftWpConfig, targetId);
-        showToast('Wallpaper applied successfully! ✨', 'success');
-        showView('view-appearance');
         if (typeof (window as any).__updateProfileChatPreview === 'function') {
           (window as any).__updateProfileChatPreview();
         }
@@ -4350,31 +4773,10 @@ const PRESET_SCENES = [
 
     function initWallpaperStudio() {
       try {
-        const activeChar = (window as any).AetheriaTheme?.getActiveCharId?.();
-        const currentConfig = (window as any).AetheriaTheme?.getWallpaperConfig?.(draftScope === 'specific' ? draftTargetCharId : null);
-        if (currentConfig && typeof currentConfig === 'object') {
-          draftWpConfig = {
-            type: currentConfig.type || 'preset-scene',
-            value: currentConfig.value || '/wallpapers/fantasy_library.webp',
-            blur: typeof currentConfig.blur === 'number' ? currentConfig.blur : 3,
-            dimness: typeof currentConfig.dimness === 'number' ? currentConfig.dimness : 40,
-            patternOpacity: typeof currentConfig.patternOpacity === 'number' ? currentConfig.patternOpacity : 15,
-            sparkleOverlay: Boolean(currentConfig.sparkleOverlay)
-          };
-        } else {
-          draftWpConfig = {
-            type: 'preset-scene',
-            value: '/wallpapers/fantasy_library.webp',
-            blur: 3,
-            dimness: 40,
-            patternOpacity: 15,
-            sparkleOverlay: false
-          };
-        }
+        switchWpSubview('gallery');
 
-        // Sync character portrait tile with active character
-        const charTile = document.getElementById('btn-wp-tile-char-portrait');
-        const charImg = document.getElementById('wp-tile-char-img') as HTMLImageElement | null;
+        // Sync Character Portrait Row thumbnail
+        const charImg = document.getElementById('wp-row-char-img') as HTMLImageElement | null;
         let activeAvatar = '/avatars/anime_girl.webp';
         try {
           const customChars = JSON.parse(localStorage.getItem('aetheria_custom_characters') || '[]');
@@ -4383,31 +4785,9 @@ const PRESET_SCENES = [
           }
         } catch(e) {}
         if (charImg) charImg.src = activeAvatar;
-        if (charTile) charTile.setAttribute('data-value', activeAvatar);
 
-        // Render character pills
-        renderCharacterPills();
-
-        // Sync sliders safely with fallback defaults
-        const sliderBlur = document.getElementById('slider-wp-blur') as HTMLInputElement | null;
-        if (sliderBlur) sliderBlur.value = (draftWpConfig.blur ?? 3).toString();
-
-        const sliderDim = document.getElementById('slider-wp-dim') as HTMLInputElement | null;
-        if (sliderDim) sliderDim.value = (draftWpConfig.dimness ?? 40).toString();
-
-        const sliderPat = document.getElementById('slider-wp-pattern') as HTMLInputElement | null;
-        if (sliderPat) sliderPat.value = (draftWpConfig.patternOpacity ?? 15).toString();
-
-        const toggleSparkles = document.getElementById('toggle-wp-sparkles') as HTMLInputElement | null;
-        if (toggleSparkles) toggleSparkles.checked = Boolean(draftWpConfig.sparkleOverlay);
-
-        renderPresetTiles();
-        updateLivePreviewDOM();
-
-        if (!studioInitialized) {
-          studioInitialized = true;
-          setupStudioEventListeners();
-        }
+        updateActiveCheckmarks();
+        setupTelegramWallpaperStudioEvents();
       } catch (err) {
         console.error('[WallpaperStudio] init error:', err);
       }
