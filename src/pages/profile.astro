@@ -5570,7 +5570,7 @@ function renderPresets() {
             const isSelected = (val === draftNameColor);
             const check = btn.querySelector('.swatch-check');
             if (isSelected) {
-              btn.className = 'swatch-trigger-btn relative w-8 h-8 rounded-full cursor-pointer transition-all active:scale-90 flex items-center justify-center shadow-md select-none ring-2 ring-offset-2 ring-offset-[#11141d] ring-cyan-400 scale-110 z-10';
+              btn.className = 'swatch-trigger-btn relative w-8 h-8 rounded-full cursor-pointer transition-all active:scale-90 flex items-center justify-center shadow-md select-none ring-2 ring-offset-2 ring-offset-[var(--card-bg-offset,#11141d)] ring-cyan-400 scale-110 z-10';
               check?.classList.remove('hidden');
               check?.classList.add('flex');
             } else {
@@ -5625,7 +5625,7 @@ function renderPresets() {
             const isSelected = (val === draftGlowColor);
             const check = btn.querySelector('.glow-check');
             if (isSelected) {
-              btn.className = 'glow-color-dot relative w-8 h-8 rounded-full cursor-pointer transition-all active:scale-90 flex items-center justify-center shadow-md select-none ring-2 ring-offset-2 ring-offset-[#11141d] ring-cyan-400 scale-110 z-10';
+              btn.className = 'glow-color-dot relative w-8 h-8 rounded-full cursor-pointer transition-all active:scale-90 flex items-center justify-center shadow-md select-none ring-2 ring-offset-2 ring-offset-[var(--card-bg-offset,#11141d)] ring-cyan-400 scale-110 z-10';
               check?.classList.remove('hidden');
               check?.classList.add('flex');
             } else {
