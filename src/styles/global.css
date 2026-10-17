@@ -2952,19 +2952,30 @@ html.day-mode #voice-engine-modal > div,
 html[data-base-mode="day"] #lorebook-modal > div,
 html.day-mode #lorebook-modal > div,
 html[data-base-mode="day"] #model-search-modal > div,
-html.day-mode #model-search-modal > div {
+html.day-mode #model-search-modal > div,
+html[data-base-mode="day"] #persona-picker-modal,
+html.day-mode #persona-picker-modal {
   background-color: #ffffff !important;
   border-color: rgba(0, 0, 0, 0.1) !important;
   box-shadow: 0 24px 60px rgba(0, 0, 0, 0.16) !important;
   color: #0f172a !important;
 }
 
+/* Modal Headers & Sub-sections */
 html[data-base-mode="day"] #chat-byok-tray .bg-\[\#090c1b\],
 html.day-mode #chat-byok-tray .bg-\[\#090c1b\],
 html[data-base-mode="day"] #chat-byok-tray .bg-\[\#0a0d1e\],
 html.day-mode #chat-byok-tray .bg-\[\#0a0d1e\],
 html[data-base-mode="day"] #chat-appearance-modal .bg-white\/\[0\.02\],
-html.day-mode #chat-appearance-modal .bg-white\/\[0\.02\] {
+html.day-mode #chat-appearance-modal .bg-white\/\[0\.02\],
+html[data-base-mode="day"] #lorebook-modal .bg-\[\#090c1b\],
+html.day-mode #lorebook-modal .bg-\[\#090c1b\],
+html[data-base-mode="day"] #lorebook-modal .bg-\[\#080b18\],
+html.day-mode #lorebook-modal .bg-\[\#080b18\],
+html[data-base-mode="day"] #voice-engine-modal .bg-white\/\[0\.01\],
+html.day-mode #voice-engine-modal .bg-white\/\[0\.01\],
+html[data-base-mode="day"] #model-search-modal .bg-white\/\[0\.01\],
+html.day-mode #model-search-modal .bg-white\/\[0\.01\] {
   background-color: #f8fafc !important;
   border-bottom-color: rgba(0, 0, 0, 0.08) !important;
 }
@@ -2972,14 +2983,26 @@ html.day-mode #chat-appearance-modal .bg-white\/\[0\.02\] {
 html[data-base-mode="day"] #chat-byok-tray h3,
 html.day-mode #chat-byok-tray h3,
 html[data-base-mode="day"] #chat-appearance-modal h3,
-html.day-mode #chat-appearance-modal h3 {
+html.day-mode #chat-appearance-modal h3,
+html[data-base-mode="day"] #lorebook-modal h3,
+html.day-mode #lorebook-modal h3,
+html[data-base-mode="day"] #voice-engine-modal h3,
+html.day-mode #voice-engine-modal h3,
+html[data-base-mode="day"] #model-search-modal h3,
+html.day-mode #model-search-modal h3 {
   color: #0f172a !important;
 }
 
 html[data-base-mode="day"] #close-chat-byok,
 html.day-mode #close-chat-byok,
 html[data-base-mode="day"] #chat-appearance-close-btn,
-html.day-mode #chat-appearance-close-btn {
+html.day-mode #chat-appearance-close-btn,
+html[data-base-mode="day"] #close-lorebook-modal,
+html.day-mode #close-lorebook-modal,
+html[data-base-mode="day"] #close-voice-engine-modal-btn,
+html.day-mode #close-voice-engine-modal-btn,
+html[data-base-mode="day"] #close-model-search-modal-btn,
+html.day-mode #close-model-search-modal-btn {
   background-color: rgba(0, 0, 0, 0.05) !important;
   color: #64748b !important;
 }
@@ -2987,11 +3010,337 @@ html.day-mode #chat-appearance-close-btn {
 html[data-base-mode="day"] #close-chat-byok:hover,
 html.day-mode #close-chat-byok:hover,
 html[data-base-mode="day"] #chat-appearance-close-btn:hover,
-html.day-mode #chat-appearance-close-btn:hover {
+html.day-mode #chat-appearance-close-btn:hover,
+html[data-base-mode="day"] #close-lorebook-modal:hover,
+html.day-mode #close-lorebook-modal:hover,
+html[data-base-mode="day"] #close-voice-engine-modal-btn:hover,
+html.day-mode #close-voice-engine-modal-btn:hover,
+html[data-base-mode="day"] #close-model-search-modal-btn:hover,
+html.day-mode #close-model-search-modal-btn:hover {
   background-color: rgba(0, 0, 0, 0.1) !important;
   color: #0f172a !important;
 }
 
+/* Card Containers & Panels inside Modals */
+html[data-base-mode="day"] #chat-byok-tray .bg-white\/\[0\.02\],
+html.day-mode #chat-byok-tray .bg-white\/\[0\.02\],
+html[data-base-mode="day"] #chat-byok-tray .bg-white\/\[0\.03\],
+html.day-mode #chat-byok-tray .bg-white\/\[0\.03\],
+html[data-base-mode="day"] #chat-byok-tray .bg-white\/\[0\.04\],
+html.day-mode #chat-byok-tray .bg-white\/\[0\.04\],
+html[data-base-mode="day"] #chat-byok-tray .bg-white\/\[0\.05\],
+html.day-mode #chat-byok-tray .bg-white\/\[0\.05\],
+html[data-base-mode="day"] #chat-byok-tray .bg-white\/\[0\.06\],
+html.day-mode #chat-byok-tray .bg-white\/\[0\.06\],
+html[data-base-mode="day"] #chat-byok-tray .bg-white\/\[0\.08\],
+html.day-mode #chat-byok-tray .bg-white\/\[0\.08\],
+html[data-base-mode="day"] #chat-byok-tray .bg-white\/5,
+html.day-mode #chat-byok-tray .bg-white\/5,
+html[data-base-mode="day"] #chat-byok-tray .bg-white\/10,
+html.day-mode #chat-byok-tray .bg-white\/10,
+html[data-base-mode="day"] #lorebook-modal .bg-white\/\[0\.04\],
+html.day-mode #lorebook-modal .bg-white\/\[0\.04\],
+html[data-base-mode="day"] #voice-engine-modal .bg-white\/\[0\.04\],
+html.day-mode #voice-engine-modal .bg-white\/\[0\.04\],
+html[data-base-mode="day"] #model-search-modal .bg-white\/\[0\.04\],
+html.day-mode #model-search-modal .bg-white\/\[0\.04\] {
+  background-color: #f8fafc !important;
+  border-color: #e2e8f0 !important;
+}
+
+html[data-base-mode="day"] #chat-byok-tray [class*="border-white"],
+html.day-mode #chat-byok-tray [class*="border-white"],
+html[data-base-mode="day"] #lorebook-modal [class*="border-white"],
+html.day-mode #lorebook-modal [class*="border-white"],
+html[data-base-mode="day"] #voice-engine-modal [class*="border-white"],
+html.day-mode #voice-engine-modal [class*="border-white"],
+html[data-base-mode="day"] #model-search-modal [class*="border-white"],
+html.day-mode #model-search-modal [class*="border-white"] {
+  border-color: #e2e8f0 !important;
+}
+
+/* High Contrast Labels & Typography inside BYOK Modal */
+html[data-base-mode="day"] #chat-byok-tray .text-slate-200,
+html.day-mode #chat-byok-tray .text-slate-200,
+html[data-base-mode="day"] #chat-byok-tray .text-slate-300,
+html.day-mode #chat-byok-tray .text-slate-300,
+html[data-base-mode="day"] #lorebook-modal .text-slate-300,
+html.day-mode #lorebook-modal .text-slate-300,
+html[data-base-mode="day"] #voice-engine-modal .text-slate-300,
+html.day-mode #voice-engine-modal .text-slate-300,
+html[data-base-mode="day"] #model-search-modal .text-slate-300,
+html.day-mode #model-search-modal .text-slate-300 {
+  color: #334155 !important;
+  font-weight: 500 !important;
+}
+
+html[data-base-mode="day"] #chat-byok-tray .text-slate-400,
+html.day-mode #chat-byok-tray .text-slate-400,
+html[data-base-mode="day"] #chat-byok-tray .text-slate-500,
+html.day-mode #chat-byok-tray .text-slate-500,
+html[data-base-mode="day"] #lorebook-modal .text-slate-400,
+html.day-mode #lorebook-modal .text-slate-400,
+html[data-base-mode="day"] #voice-engine-modal .text-slate-400,
+html.day-mode #voice-engine-modal .text-slate-400,
+html[data-base-mode="day"] #model-search-modal .text-slate-400,
+html.day-mode #model-search-modal .text-slate-400 {
+  color: #64748b !important;
+}
+
+html[data-base-mode="day"] #chat-byok-tray span.text-white:not([class*="bg-purple"]):not([class*="from-purple"]):not([class*="bg-indigo"]):not([class*="bg-emerald"]),
+html.day-mode #chat-byok-tray span.text-white:not([class*="bg-purple"]):not([class*="from-purple"]):not([class*="bg-indigo"]):not([class*="bg-emerald"]),
+html[data-base-mode="day"] #chat-byok-tray div.text-white:not([class*="bg-purple"]):not([class*="from-purple"]):not([class*="bg-indigo"]):not([class*="bg-emerald"]),
+html.day-mode #chat-byok-tray div.text-white:not([class*="bg-purple"]):not([class*="from-purple"]):not([class*="bg-indigo"]):not([class*="bg-emerald"]),
+html[data-base-mode="day"] #chat-byok-tray p.text-white:not([class*="bg-purple"]):not([class*="from-purple"]):not([class*="bg-indigo"]):not([class*="bg-emerald"]),
+html.day-mode #chat-byok-tray p.text-white:not([class*="bg-purple"]):not([class*="from-purple"]):not([class*="bg-indigo"]):not([class*="bg-emerald"]) {
+  color: #0f172a !important;
+}
+
+/* Ensure vibrant colored action buttons keep white text */
+html[data-base-mode="day"] #chat-byok-tray [class*="bg-purple-600"],
+html.day-mode #chat-byok-tray [class*="bg-purple-600"],
+html[data-base-mode="day"] #chat-byok-tray [class*="from-purple-600"],
+html.day-mode #chat-byok-tray [class*="from-purple-600"],
+html[data-base-mode="day"] #chat-byok-tray [class*="bg-indigo-600"],
+html.day-mode #chat-byok-tray [class*="bg-indigo-600"],
+html[data-base-mode="day"] #save-chat-byok,
+html.day-mode #save-chat-byok {
+  color: #ffffff !important;
+}
+
+html[data-base-mode="day"] #chat-byok-tray [class*="bg-purple-600"] *,
+html.day-mode #chat-byok-tray [class*="bg-purple-600"] *,
+html[data-base-mode="day"] #chat-byok-tray [class*="from-purple-600"] *,
+html.day-mode #chat-byok-tray [class*="from-purple-600"] *,
+html[data-base-mode="day"] #save-chat-byok *,
+html.day-mode #save-chat-byok * {
+  color: #ffffff !important;
+}
+
+/* Dropdown Triggers inside BYOK Modal */
+html[data-base-mode="day"] #chat-byok-tray [id$="-trigger"],
+html.day-mode #chat-byok-tray [id$="-trigger"],
+html[data-base-mode="day"] #chat-byok-tray #custom-model-trigger-btn,
+html.day-mode #chat-byok-tray #custom-model-trigger-btn,
+html[data-base-mode="day"] #chat-byok-tray .bg-black\/60,
+html.day-mode #chat-byok-tray .bg-black\/60 {
+  background-color: #ffffff !important;
+  border-color: #cbd5e1 !important;
+  color: #0f172a !important;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05) !important;
+}
+
+html[data-base-mode="day"] #chat-byok-tray [id$="-trigger"]:hover,
+html.day-mode #chat-byok-tray [id$="-trigger"]:hover,
+html[data-base-mode="day"] #chat-byok-tray #custom-model-trigger-btn:hover,
+html.day-mode #chat-byok-tray #custom-model-trigger-btn:hover,
+html[data-base-mode="day"] #chat-byok-tray .bg-black\/60:hover,
+html.day-mode #chat-byok-tray .bg-black\/60:hover {
+  background-color: #f8fafc !important;
+  border-color: #9333ea !important;
+  color: #0f172a !important;
+}
+
+html[data-base-mode="day"] #chat-byok-tray [id$="-trigger"] *,
+html.day-mode #chat-byok-tray [id$="-trigger"] *,
+html[data-base-mode="day"] #chat-byok-tray #custom-model-trigger-btn *,
+html.day-mode #chat-byok-tray #custom-model-trigger-btn * {
+  color: #0f172a !important;
+}
+
+html[data-base-mode="day"] #chat-byok-tray [id$="-trigger"] [id$="-desc"],
+html.day-mode #chat-byok-tray [id$="-trigger"] [id$="-desc"],
+html[data-base-mode="day"] #chat-byok-tray #provider-trigger-desc,
+html.day-mode #chat-byok-tray #provider-trigger-desc,
+html[data-base-mode="day"] #chat-byok-tray #custom-model-trigger-sub,
+html.day-mode #chat-byok-tray #custom-model-trigger-sub,
+html[data-base-mode="day"] #chat-byok-tray [id$="-trigger"] svg,
+html.day-mode #chat-byok-tray [id$="-trigger"] svg,
+html[data-base-mode="day"] #chat-byok-tray #custom-model-trigger-btn svg,
+html.day-mode #chat-byok-tray #custom-model-trigger-btn svg {
+  color: #64748b !important;
+}
+
+/* Custom Dropdown Menus & Popovers */
+html[data-base-mode="day"] #chat-byok-tray [id$="-menu"],
+html.day-mode #chat-byok-tray [id$="-menu"],
+html[data-base-mode="day"] [id$="-menu"].bg-\[\#0c0f24\]\/95,
+html.day-mode [id$="-menu"].bg-\[\#0c0f24\]\/95,
+html[data-base-mode="day"] #multimodal-aspect-menu,
+html.day-mode #multimodal-aspect-menu {
+  background-color: #ffffff !important;
+  border-color: #e2e8f0 !important;
+  box-shadow: 0 16px 40px -8px rgba(0, 0, 0, 0.18), 0 0 0 1px rgba(0, 0, 0, 0.05) !important;
+}
+
+html[data-base-mode="day"] #chat-byok-tray [id$="-menu"] button,
+html.day-mode #chat-byok-tray [id$="-menu"] button,
+html[data-base-mode="day"] #multimodal-aspect-menu button,
+html.day-mode #multimodal-aspect-menu button {
+  color: #1e293b !important;
+  background-color: transparent !important;
+}
+
+html[data-base-mode="day"] #chat-byok-tray [id$="-menu"] button:hover,
+html.day-mode #chat-byok-tray [id$="-menu"] button:hover,
+html[data-base-mode="day"] #multimodal-aspect-menu button:hover,
+html.day-mode #multimodal-aspect-menu button:hover {
+  background-color: #f1f5f9 !important;
+  color: #0f172a !important;
+}
+
+html[data-base-mode="day"] #chat-byok-tray [id$="-menu"] button div.font-bold,
+html.day-mode #chat-byok-tray [id$="-menu"] button div.font-bold,
+html[data-base-mode="day"] #chat-byok-tray [id$="-menu"] button span.font-semibold,
+html.day-mode #chat-byok-tray [id$="-menu"] button span.font-semibold,
+html[data-base-mode="day"] #chat-byok-tray [id$="-menu"] button span.font-medium,
+html.day-mode #chat-byok-tray [id$="-menu"] button span.font-medium {
+  color: #0f172a !important;
+}
+
+html[data-base-mode="day"] #chat-byok-tray [id$="-menu"] button div.text-\[10px\],
+html.day-mode #chat-byok-tray [id$="-menu"] button div.text-\[10px\],
+html[data-base-mode="day"] #chat-byok-tray [id$="-menu"] button span.text-\[10px\],
+html.day-mode #chat-byok-tray [id$="-menu"] button span.text-\[10px\] {
+  color: #64748b !important;
+}
+
+/* Selected Item in Dropdown Menu */
+html[data-base-mode="day"] #chat-byok-tray [id$="-menu"] button[class*="bg-purple-600"],
+html.day-mode #chat-byok-tray [id$="-menu"] button[class*="bg-purple-600"] {
+  background-color: #f5f3ff !important;
+  border-color: #c4b5fd !important;
+  color: #6b21a8 !important;
+}
+
+html[data-base-mode="day"] #chat-byok-tray [id$="-menu"] button[class*="bg-purple-600"] div.font-bold,
+html.day-mode #chat-byok-tray [id$="-menu"] button[class*="bg-purple-600"] div.font-bold,
+html[data-base-mode="day"] #chat-byok-tray [id$="-menu"] button[class*="bg-purple-600"] span,
+html.day-mode #chat-byok-tray [id$="-menu"] button[class*="bg-purple-600"] span {
+  color: #6b21a8 !important;
+}
+
+html[data-base-mode="day"] #chat-byok-tray [id$="-menu"] .bg-white\/\[0\.08\],
+html.day-mode #chat-byok-tray [id$="-menu"] .bg-white\/\[0\.08\] {
+  background-color: #e2e8f0 !important;
+}
+
+/* Smart Setup Nova Card */
+html[data-base-mode="day"] #smart-setup-pane .bg-gradient-to-b,
+html.day-mode #smart-setup-pane .bg-gradient-to-b {
+  background: linear-gradient(180deg, #f8fafc 0%, #f1f5f9 100%) !important;
+  border-color: #e2e8f0 !important;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.04) !important;
+}
+
+html[data-base-mode="day"] #smart-setup-pane .bg-\[\#090b1a\]\/80,
+html.day-mode #smart-setup-pane .bg-\[\#090b1a\]\/80,
+html[data-base-mode="day"] #smart-setup-pane .bg-\[\#0d1029\],
+html.day-mode #smart-setup-pane .bg-\[\#0d1029\] {
+  background-color: #ffffff !important;
+  border-color: #e2e8f0 !important;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05) !important;
+}
+
+html[data-base-mode="day"] #smart-setup-pane #wizard-nova-bubble,
+html.day-mode #smart-setup-pane #wizard-nova-bubble {
+  color: #334155 !important;
+}
+
+html[data-base-mode="day"] #smart-setup-pane #wizard-provider-card-name,
+html.day-mode #smart-setup-pane #wizard-provider-card-name,
+html[data-base-mode="day"] #smart-setup-pane #wizard-model-card-name,
+html.day-mode #smart-setup-pane #wizard-model-card-name {
+  color: #0f172a !important;
+}
+
+html[data-base-mode="day"] #smart-setup-pane button.bg-white\/\[0\.05\],
+html.day-mode #smart-setup-pane button.bg-white\/\[0\.05\] {
+  background-color: #ffffff !important;
+  border-color: #cbd5e1 !important;
+  color: #334155 !important;
+}
+
+html[data-base-mode="day"] #smart-setup-pane button.bg-white\/\[0\.05\]:hover,
+html.day-mode #smart-setup-pane button.bg-white\/\[0\.05\]:hover {
+  background-color: #f8fafc !important;
+  color: #0f172a !important;
+  border-color: #94a3b8 !important;
+}
+
+/* Connected API Key Display Row */
+html[data-base-mode="day"] #chat-byok-tray .bg-black\/40,
+html.day-mode #chat-byok-tray .bg-black\/40 {
+  background-color: #f1f5f9 !important;
+  border-color: #e2e8f0 !important;
+  color: #0f172a !important;
+}
+
+html[data-base-mode="day"] #chat-byok-tray #text-connected-key-masked,
+html.day-mode #chat-byok-tray #text-connected-key-masked {
+  color: #334155 !important;
+}
+
+html[data-base-mode="day"] #chat-byok-tray #text-disconnect-btn,
+html.day-mode #chat-byok-tray #text-disconnect-btn {
+  background-color: #ffffff !important;
+  border-color: #cbd5e1 !important;
+  color: #334155 !important;
+}
+
+html[data-base-mode="day"] #chat-byok-tray #text-disconnect-btn:hover,
+html.day-mode #chat-byok-tray #text-disconnect-btn:hover {
+  background-color: #f8fafc !important;
+  color: #0f172a !important;
+}
+
+html[data-base-mode="day"] #chat-byok-tray #ping-text-btn,
+html.day-mode #chat-byok-tray #ping-text-btn {
+  background-color: #ecfdf5 !important;
+  border-color: #a7f3d0 !important;
+  color: #065f46 !important;
+}
+
+/* Modal Footer Action Buttons */
+html[data-base-mode="day"] #cancel-engine-modal,
+html.day-mode #cancel-engine-modal {
+  background-color: #f1f5f9 !important;
+  border: 1px solid #cbd5e1 !important;
+  color: #334155 !important;
+}
+
+html[data-base-mode="day"] #cancel-engine-modal:hover,
+html.day-mode #cancel-engine-modal:hover {
+  background-color: #e2e8f0 !important;
+  color: #0f172a !important;
+}
+
+html[data-base-mode="day"] #reset-engine-defaults-btn,
+html.day-mode #reset-engine-defaults-btn {
+  color: #64748b !important;
+}
+
+html[data-base-mode="day"] #reset-engine-defaults-btn:hover,
+html.day-mode #reset-engine-defaults-btn:hover {
+  color: #dc2626 !important;
+}
+
+/* Subtabs Switcher (Smart Setup vs Manual) */
+html[data-base-mode="day"] #subtab-smart-setup-btn:not([class*="from-purple"]),
+html.day-mode #subtab-smart-setup-btn:not([class*="from-purple"]),
+html[data-base-mode="day"] #subtab-manual-btn:not([class*="from-purple"]),
+html.day-mode #subtab-manual-btn:not([class*="from-purple"]) {
+  color: #64748b !important;
+}
+
+html[data-base-mode="day"] #subtab-smart-setup-btn:not([class*="from-purple"]):hover,
+html.day-mode #subtab-smart-setup-btn:not([class*="from-purple"]):hover,
+html[data-base-mode="day"] #subtab-manual-btn:not([class*="from-purple"]):hover,
+html.day-mode #subtab-manual-btn:not([class*="from-purple"]):hover {
+  color: #0f172a !important;
+}
+
+/* Inputs & Form Controls */
 html[data-base-mode="day"] #chat-byok-tray input,
 html.day-mode #chat-byok-tray input,
 html[data-base-mode="day"] #chat-byok-tray select,
@@ -2999,7 +3348,11 @@ html.day-mode #chat-byok-tray select,
 html[data-base-mode="day"] #chat-byok-tray textarea,
 html.day-mode #chat-byok-tray textarea,
 html[data-base-mode="day"] #fullscreen-composer-textarea,
-html.day-mode #fullscreen-composer-textarea {
+html.day-mode #fullscreen-composer-textarea,
+html[data-base-mode="day"] #voice-modal-search,
+html.day-mode #voice-modal-search,
+html[data-base-mode="day"] #model-search-input,
+html.day-mode #model-search-input {
   background-color: #f8fafc !important;
   border-color: rgba(0, 0, 0, 0.12) !important;
   color: #0f172a !important;
@@ -3012,9 +3365,170 @@ html.day-mode #chat-byok-tray select:focus,
 html[data-base-mode="day"] #chat-byok-tray textarea:focus,
 html.day-mode #chat-byok-tray textarea:focus,
 html[data-base-mode="day"] #fullscreen-composer-textarea:focus,
-html.day-mode #fullscreen-composer-textarea:focus {
+html.day-mode #fullscreen-composer-textarea:focus,
+html[data-base-mode="day"] #voice-modal-search:focus,
+html.day-mode #voice-modal-search:focus,
+html[data-base-mode="day"] #model-search-input:focus,
+html.day-mode #model-search-input:focus {
   background-color: #ffffff !important;
   border-color: #9333ea !important;
+}
+
+/* ==========================================================================
+   AETHERIA DAY MODE - PERSONA SELECTION MODAL
+   ========================================================================== */
+html[data-base-mode="day"] #persona-picker-backdrop,
+html.day-mode #persona-picker-backdrop {
+  background-color: rgba(15, 23, 42, 0.45) !important;
+  backdrop-filter: blur(12px) !important;
+  -webkit-backdrop-filter: blur(12px) !important;
+}
+
+html[data-base-mode="day"] #persona-picker-modal,
+html.day-mode #persona-picker-modal {
+  background-color: #ffffff !important;
+  border-color: #e2e8f0 !important;
+  color: #0f172a !important;
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.2) !important;
+}
+
+html[data-base-mode="day"] #persona-picker-modal .persona-drag-handle,
+html.day-mode #persona-picker-modal .persona-drag-handle {
+  background-color: #cbd5e1 !important;
+}
+
+html[data-base-mode="day"] #persona-picker-modal .persona-header-row,
+html.day-mode #persona-picker-modal .persona-header-row {
+  border-bottom-color: #e2e8f0 !important;
+}
+
+html[data-base-mode="day"] #persona-picker-modal .persona-header-title,
+html.day-mode #persona-picker-modal .persona-header-title {
+  color: #0f172a !important;
+}
+
+html[data-base-mode="day"] #persona-picker-modal .persona-header-sub,
+html.day-mode #persona-picker-modal .persona-header-sub {
+  color: #64748b !important;
+}
+
+html[data-base-mode="day"] #persona-picker-modal .persona-header-badge,
+html.day-mode #persona-picker-modal .persona-header-badge {
+  background-color: #f3e8ff !important;
+  color: #7e22ce !important;
+  border-color: #d8b4fe !important;
+}
+
+html[data-base-mode="day"] #persona-picker-modal .persona-header-icon,
+html.day-mode #persona-picker-modal .persona-header-icon {
+  background: linear-gradient(135deg, rgba(99, 102, 241, 0.12), rgba(168, 85, 247, 0.12)) !important;
+  border-color: rgba(99, 102, 241, 0.3) !important;
+  color: #4f46e5 !important;
+}
+
+html[data-base-mode="day"] #persona-picker-modal .persona-manage-btn,
+html.day-mode #persona-picker-modal .persona-manage-btn {
+  background-color: #f8fafc !important;
+  border-color: #cbd5e1 !important;
+  color: #334155 !important;
+}
+
+html[data-base-mode="day"] #persona-picker-modal .persona-manage-btn:hover,
+html.day-mode #persona-picker-modal .persona-manage-btn:hover {
+  background-color: #f1f5f9 !important;
+  color: #0f172a !important;
+  border-color: #94a3b8 !important;
+}
+
+html[data-base-mode="day"] #persona-picker-modal .persona-close-btn,
+html.day-mode #persona-picker-modal .persona-close-btn {
+  background-color: #f8fafc !important;
+  color: #64748b !important;
+}
+
+html[data-base-mode="day"] #persona-picker-modal .persona-close-btn:hover,
+html.day-mode #persona-picker-modal .persona-close-btn:hover {
+  background-color: #f1f5f9 !important;
+  color: #0f172a !important;
+}
+
+/* Inactive persona items */
+html[data-base-mode="day"] #persona-picker-modal .persona-card-item.inactive-persona,
+html.day-mode #persona-picker-modal .persona-card-item.inactive-persona {
+  background-color: #f8fafc !important;
+  border-color: #e2e8f0 !important;
+  color: #1e293b !important;
+}
+
+html[data-base-mode="day"] #persona-picker-modal .persona-card-item.inactive-persona:hover,
+html.day-mode #persona-picker-modal .persona-card-item.inactive-persona:hover {
+  background-color: #f1f5f9 !important;
+  border-color: #cbd5e1 !important;
+}
+
+html[data-base-mode="day"] #persona-picker-modal .persona-card-item.inactive-persona .persona-card-name,
+html.day-mode #persona-picker-modal .persona-card-item.inactive-persona .persona-card-name {
+  color: #0f172a !important;
+}
+
+html[data-base-mode="day"] #persona-picker-modal .persona-card-item.inactive-persona .persona-card-sub,
+html.day-mode #persona-picker-modal .persona-card-item.inactive-persona .persona-card-sub {
+  color: #64748b !important;
+}
+
+html[data-base-mode="day"] #persona-picker-modal .persona-card-item.inactive-persona .persona-avatar-fallback,
+html.day-mode #persona-picker-modal .persona-card-item.inactive-persona .persona-avatar-fallback {
+  background: #ede9fe !important;
+  border-color: #ddd6fe !important;
+  color: #6b21a8 !important;
+}
+
+/* Active persona item */
+html[data-base-mode="day"] #persona-picker-modal .persona-card-item.active-persona,
+html.day-mode #persona-picker-modal .persona-card-item.active-persona {
+  background: linear-gradient(135deg, rgba(99, 102, 241, 0.08), rgba(168, 85, 247, 0.08)) !important;
+  border-color: #818cf8 !important;
+  box-shadow: 0 4px 14px rgba(129, 140, 248, 0.15) !important;
+}
+
+html[data-base-mode="day"] #persona-picker-modal .persona-card-item.active-persona .persona-card-name,
+html.day-mode #persona-picker-modal .persona-card-item.active-persona .persona-card-name {
+  color: #0f172a !important;
+}
+
+html[data-base-mode="day"] #persona-picker-modal .persona-card-item.active-persona .persona-card-sub,
+html.day-mode #persona-picker-modal .persona-card-item.active-persona .persona-card-sub {
+  color: #64748b !important;
+}
+
+html[data-base-mode="day"] #persona-picker-modal .persona-active-badge,
+html.day-mode #persona-picker-modal .persona-active-badge {
+  background-color: #e0e7ff !important;
+  border-color: #c7d2fe !important;
+  color: #4338ca !important;
+}
+
+/* Footer */
+html[data-base-mode="day"] #persona-picker-modal .persona-footer-row,
+html.day-mode #persona-picker-modal .persona-footer-row {
+  border-top-color: #e2e8f0 !important;
+}
+
+html[data-base-mode="day"] #persona-picker-modal .persona-footer-tip,
+html.day-mode #persona-picker-modal .persona-footer-tip {
+  color: #64748b !important;
+}
+
+html[data-base-mode="day"] #persona-picker-modal .persona-done-btn,
+html.day-mode #persona-picker-modal .persona-done-btn {
+  background-color: #0f172a !important;
+  color: #ffffff !important;
+  border-color: #0f172a !important;
+}
+
+html[data-base-mode="day"] #persona-picker-modal .persona-done-btn:hover,
+html.day-mode #persona-picker-modal .persona-done-btn:hover {
+  background-color: #1e293b !important;
 }
 
 /* ==========================================================================
