@@ -1608,7 +1608,7 @@ import {
               </div>
             </div>
             <!-- Discord-style Bleed Overlay Layer -->
-            <div id="preview-avatar-deco-layer" class="absolute -inset-[18%] pointer-events-none z-10 flex items-center justify-center overflow-visible"></div>
+            <div id="preview-avatar-deco-layer" class="absolute inset-0 pointer-events-none z-10 flex items-center justify-center overflow-visible"></div>
           </div>
           <!-- User Name + Badge -->
           <div class="flex items-center justify-center gap-1 max-w-full min-w-0">
@@ -1782,8 +1782,8 @@ import {
                       H
                     </div>
                   </div>
-                  <!-- 2. Studio-Grade Oversized Decoration Overlay (142px = 142% scale centered over circle) -->
-                  <div id="hero-avatar-deco-layer" class="absolute pointer-events-none z-20 flex items-center justify-center overflow-visible" style="width: 142px; height: 142px; top: -21px; left: -21px; overflow: visible;">
+                  <!-- 2. Studio-Grade Oversized Decoration Overlay (142% scale centered over circle) -->
+                  <div id="hero-avatar-deco-layer" class="absolute inset-0 pointer-events-none z-20 flex items-center justify-center overflow-visible">
                     <!-- Rendered live -->
                   </div>
                 </div>
@@ -5928,7 +5928,7 @@ function renderPresets() {
                   class="avatar-deco-canvas absolute pointer-events-none z-20"
                   data-preset="${deco}"
                   data-size="${size}"
-                  style="width: ${overlaySize}px; height: ${overlaySize}px; top: ${overlayOffset}px; left: ${overlayOffset}px; overflow: visible;"
+                  style="width: ${overlaySize}px; height: ${overlaySize}px; top: 50%; left: 50%; transform: translate(-50%, -50%); overflow: visible;"
                 ></canvas>
               ` : ''}
 
@@ -5938,7 +5938,7 @@ function renderPresets() {
                   src="https://fonts.gstatic.com/s/e/notoemoji/latest/1f451/512.webp"
                   alt="crown"
                   class="absolute pointer-events-none z-30 drop-shadow-[0_2px_8px_rgba(250,204,21,0.8)]"
-                  style="width: ${Math.round(size * 0.42)}px; height: ${Math.round(size * 0.42)}px; top: -${Math.round(size * 0.24)}px;"
+                  style="width: ${Math.round(size * 0.42)}px; height: ${Math.round(size * 0.42)}px; top: -${Math.round(size * 0.24)}px; left: 50%; transform: translateX(-50%);"
                 />
               ` : ''}
             </div>
@@ -5977,7 +5977,7 @@ function renderPresets() {
             avatarContainer.style.setProperty('--avatar-border-color', draftGlowColor);
           }
           if (decoLayer) {
-            const size = 64;
+            const size = 56;
             const overlaySize = Math.round(size * 1.42);
             const isCrown = (draftBorderEffect === 'aurora_crown' || draftBorderEffect === 'royal-sovereign' || draftBorderEffect === 'royal-crown');
             decoLayer.innerHTML = (draftBorderEffect && draftBorderEffect !== 'none') ? `
@@ -5985,14 +5985,14 @@ function renderPresets() {
                 class="avatar-deco-canvas absolute pointer-events-none z-20"
                 data-preset="${draftBorderEffect}"
                 data-size="${size}"
-                style="width: ${overlaySize}px; height: ${overlaySize}px; top: 0px; left: 0px; overflow: visible;"
+                style="width: ${overlaySize}px; height: ${overlaySize}px; top: 50%; left: 50%; transform: translate(-50%, -50%); overflow: visible;"
               ></canvas>
               ${isCrown ? `
                 <img
                   src="https://fonts.gstatic.com/s/e/notoemoji/latest/1f451/512.webp"
                   alt="crown"
                   class="absolute pointer-events-none z-30 drop-shadow-[0_2px_8px_rgba(250,204,21,0.8)]"
-                  style="width: ${Math.round(size * 0.42)}px; height: ${Math.round(size * 0.42)}px; top: -${Math.round(size * 0.24)}px;"
+                  style="width: ${Math.round(size * 0.42)}px; height: ${Math.round(size * 0.42)}px; top: -${Math.round(size * 0.24)}px; left: 50%; transform: translateX(-50%);"
                 />
               ` : ''}
             ` : '';
@@ -6029,14 +6029,14 @@ function renderPresets() {
                 class="avatar-deco-canvas absolute pointer-events-none z-20"
                 data-preset="${draftBorderEffect}"
                 data-size="${size}"
-                style="width: ${overlaySize}px; height: ${overlaySize}px; top: 0px; left: 0px; overflow: visible;"
+                style="width: ${overlaySize}px; height: ${overlaySize}px; top: 50%; left: 50%; transform: translate(-50%, -50%); overflow: visible;"
               ></canvas>
               ${isCrown ? `
                 <img
                   src="https://fonts.gstatic.com/s/e/notoemoji/latest/1f451/512.webp"
                   alt="crown"
                   class="absolute pointer-events-none z-30 drop-shadow-[0_2px_8px_rgba(250,204,21,0.8)]"
-                  style="width: 42px; height: 42px; top: -24px;"
+                  style="width: 42px; height: 42px; top: -24px; left: 50%; transform: translateX(-50%);"
                 />
               ` : ''}
             ` : '';

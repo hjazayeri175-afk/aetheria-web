@@ -393,6 +393,9 @@ export const DecoratedAvatar: React.FC<DecoratedAvatarProps> = ({
             width: overlaySize,
             height: overlaySize,
             maxWidth: 'none',
+            top: '50%',
+            left: '50%',
+            transform: 'translate(-50%, -50%)',
           }}
         />
       )}
@@ -402,7 +405,13 @@ export const DecoratedAvatar: React.FC<DecoratedAvatarProps> = ({
         <canvas
           ref={canvasRef}
           className="absolute pointer-events-none z-20"
-          style={{ width: overlaySize, height: overlaySize }}
+          style={{
+            width: overlaySize,
+            height: overlaySize,
+            top: '50%',
+            left: '50%',
+            transform: 'translate(-50%, -50%)',
+          }}
         />
       )}
 
@@ -416,6 +425,8 @@ export const DecoratedAvatar: React.FC<DecoratedAvatarProps> = ({
             width: size * 0.42,
             height: size * 0.42,
             top: -size * 0.24,
+            left: '50%',
+            transform: 'translateX(-50%)',
           }}
         />
       )}

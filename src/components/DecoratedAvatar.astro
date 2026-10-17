@@ -73,7 +73,7 @@ const apngUrl = PRESET_APNG_MAP[activePreset] || '';
       src={apngUrl}
       alt={activePreset}
       class="absolute pointer-events-none z-20 object-contain overflow-visible"
-      style={`width: ${overlaySize}px; height: ${overlaySize}px; top: ${overlayOffset}px; left: ${overlayOffset}px; max-width: none; overflow: visible;`}
+      style={`width: ${overlaySize}px; height: ${overlaySize}px; top: 50%; left: 50%; transform: translate(-50%, -50%); max-width: none; overflow: visible;`}
       loading="lazy"
     />
   )}
