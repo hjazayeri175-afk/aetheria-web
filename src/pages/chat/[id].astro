@@ -18162,25 +18162,29 @@ const { character } = Astro.props;
 
   // Live sync with Power Saving OLED state (Mutes wallpaper pattern for pure #000000 black)
   function syncChatOLEDBackground() {
-    const isOled = document.documentElement.classList.contains('power-saving-oled');
-    const wpOverlay = document.getElementById('chat-wallpaper-overlay');
-    const wpImg = document.getElementById('chat-wallpaper-image-layer');
-    const wpDim = document.getElementById('chat-wallpaper-dimmer');
-    const chatViewport = document.getElementById('chat-viewport-section');
-    const chatRoot = document.getElementById('chat-root-container');
+    try {
+      const isOled = document.documentElement.classList.contains('power-saving-oled');
+      const wpOverlay = document.getElementById('chat-wallpaper-overlay');
+      const wpImg = document.getElementById('chat-wallpaper-image-layer');
+      const wpDim = document.getElementById('chat-wallpaper-dimmer');
+      const chatViewport = document.getElementById('chat-viewport-section');
+      const chatRoot = document.getElementById('chat-root-container');
 
-    if (isOled) {
-      if (wpOverlay) wpOverlay.style.display = 'none';
-      if (wpImg) wpImg.style.display = 'none';
-      if (wpDim) wpDim.style.display = 'none';
-      if (chatViewport) chatViewport.style.background = '#000000';
-      if (chatRoot) chatRoot.style.background = '#000000';
-    } else {
-      if (wpOverlay) wpOverlay.style.display = '';
-      if (wpImg) wpImg.style.display = '';
-      if (wpDim) wpDim.style.display = '';
-      if (chatViewport) chatViewport.style.background = '';
-      if (chatRoot) chatRoot.style.background = '';
+      if (isOled) {
+        if (wpOverlay) wpOverlay.style.display = 'none';
+        if (wpImg) wpImg.style.display = 'none';
+        if (wpDim) wpDim.style.display = 'none';
+        if (chatViewport) chatViewport.style.background = '#000000';
+        if (chatRoot) chatRoot.style.background = '#000000';
+      } else {
+        if (wpOverlay) wpOverlay.style.display = '';
+        if (wpImg) wpImg.style.display = '';
+        if (wpDim) wpDim.style.display = '';
+        if (chatViewport) chatViewport.style.background = '';
+        if (chatRoot) chatRoot.style.background = '';
+      }
+    } catch (e) {
+      console.warn('[PowerSaving] syncChatOLEDBackground error:', e);
     }
   }
 
@@ -21033,17 +21037,27 @@ Requirements:
   });
 
   // Startup theme load for active character
-  const charActiveTheme = window.AetheriaTheme.getSettings(activeCharId);
-  window.AetheriaTheme.apply(charActiveTheme);
+  try {
+    const charActiveTheme = window.AetheriaTheme?.getSettings?.(activeCharId);
+    if (charActiveTheme && window.AetheriaTheme?.apply) {
+      window.AetheriaTheme.apply(charActiveTheme);
+    }
+  } catch (themeErr) {
+    console.warn('[Startup] Warning applying initial character theme:', themeErr);
+  }
 
   // Sync listener across tabs & windows
   window.addEventListener('aetheria-theme-change', (e) => {
-    if (e.detail) {
-      updateLivePreview(e.detail);
-    }
-    const sDesc = document.getElementById('chat-sidebar-desc');
-    if (sDesc && typeof window.resolveAdaptiveContrast === 'function') {
-      window.resolveAdaptiveContrast(sDesc);
+    try {
+      if (e.detail) {
+        updateLivePreview(e.detail);
+      }
+      const sDesc = document.getElementById('chat-sidebar-desc');
+      if (sDesc && typeof window.resolveAdaptiveContrast === 'function') {
+        window.resolveAdaptiveContrast(sDesc);
+      }
+    } catch (syncErr) {
+      console.warn('[ThemeSync] Warning during theme sync:', syncErr);
     }
   });
 

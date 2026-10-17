@@ -714,9 +714,10 @@ const {
 
         function applyThemeToDOM(theme) {
           if (!theme) return;
-          const root = document.documentElement;
-          const accent = theme.accent || '#9333ea';
-          const rgb = theme.accentRgb || hexToRgb(accent);
+          try {
+            const root = document.documentElement;
+            const accent = theme.accent || '#9333ea';
+            const rgb = theme.accentRgb || hexToRgb(accent);
 
           root.style.setProperty('--theme-accent', accent);
           root.style.setProperty('--theme-accent-rgb', rgb);
@@ -879,7 +880,10 @@ const {
             if (overlayLayer) overlayLayer.style.display = 'none';
             if (imgLayer) imgLayer.style.display = 'none';
             if (dimLayer) dimLayer.style.display = 'none';
-            if (overlay) overlay.style.display = 'none';
+          } else {
+            if (overlayLayer && overlayLayer.style.display === 'none') overlayLayer.style.display = '';
+            if (imgLayer && imgLayer.style.display === 'none') imgLayer.style.display = '';
+            if (dimLayer && dimLayer.style.display === 'none') dimLayer.style.display = '';
           }
 
           // Apply to live chat stream containers
@@ -907,6 +911,9 @@ const {
               }
             }
           });
+          } catch(err) {
+            console.warn('[AetheriaTheme] applyThemeToDOM caught error:', err);
+          }
         }
 
         // Apply immediately on first paint
