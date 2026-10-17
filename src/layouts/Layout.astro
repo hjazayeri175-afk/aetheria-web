@@ -806,22 +806,30 @@ const {
             root.removeAttribute('data-chat-density');
           }
 
-          // Chat Stream Wallpaper & Background
-          const wpVal = theme.chatWallpaper || theme.chatBg || (isDay ? 'linear-gradient(to bottom, #f8fafc, #f1f5f9)' : 'linear-gradient(to bottom, #090a12, #0e1122, #07080f)');
+          // Chat Stream Wallpaper & Background (Adaptive Day / Dark)
+          const isCustomImage = typeof theme.chatWallpaper === 'string' && (theme.chatWallpaper.startsWith('http') || theme.chatWallpaper.startsWith('data:'));
+          const dayGradient = `linear-gradient(180deg, #f8fafc 0%, rgba(${rgb}, 0.04) 50%, #f1f5f9 100%)`;
+          const darkGradient = theme.chatWallpaper || theme.chatBg || 'linear-gradient(180deg, #050811 0%, #0d122b 50%, #04050a 100%)';
+          const wpVal = isDay ? (isCustomImage ? theme.chatWallpaper : dayGradient) : darkGradient;
+
           root.style.setProperty('--theme-chat-bg', wpVal);
-          root.style.setProperty('--theme-chat-wallpaper', wpVal.startsWith('http') || wpVal.startsWith('data:') ? `url("${wpVal}")` : wpVal);
+          root.style.setProperty('--theme-chat-wallpaper', isCustomImage ? `url("${wpVal}")` : wpVal);
 
           // Blur & Dimmer
           const blurVal = theme.chatBlur ? 'blur(12px)' : 'none';
           root.style.setProperty('--theme-chat-blur', blurVal);
 
-          const dimVal = theme.chatDim !== undefined ? theme.chatDim : (isDay ? 0 : 0.20);
+          const dimVal = isDay 
+            ? (isCustomImage ? Math.min(Number(theme.chatDim !== undefined ? theme.chatDim : 0.08), 0.12) : 0) 
+            : (theme.chatDim !== undefined ? theme.chatDim : 0.20);
           root.style.setProperty('--theme-chat-dim', dimVal.toString());
 
-          // Doodle Pattern
+          // Doodle Pattern (Subtle & Inverted in Day Mode)
           const patId = theme.chatPatternId || (theme.id ? ('pattern-' + theme.id.replace('-mode', '').replace('-corner', '').replace('-luxury', '')) : 'pattern-gamer');
           const patObj = DOODLE_PATTERNS[patId] || DOODLE_PATTERNS['pattern-gamer'] || DOODLE_PATTERNS['none'];
-          const patOpacity = theme.chatPatternOpacity !== undefined ? theme.chatPatternOpacity : (isDay ? 0.08 : 0.16);
+          const patOpacity = isDay 
+            ? (theme.chatPatternOpacity !== undefined ? Math.min(Number(theme.chatPatternOpacity) * 0.5, 0.10) : 0.07) 
+            : (theme.chatPatternOpacity !== undefined ? theme.chatPatternOpacity : 0.16);
 
           root.style.setProperty('--theme-chat-pattern', patObj.pattern);
           root.style.setProperty('--theme-chat-pattern-size', patObj.patternSize);
@@ -832,16 +840,20 @@ const {
             overlayLayer.style.backgroundImage = patObj.pattern || 'none';
             overlayLayer.style.backgroundSize = patObj.patternSize || 'auto';
             overlayLayer.style.opacity = patOpacity.toString();
+            overlayLayer.style.filter = isDay ? 'invert(1)' : 'none';
           }
 
           // Direct DOM live updates for active chat container
           const imgLayer = document.getElementById('chat-wallpaper-image-layer');
           if (imgLayer) {
-            if (wpVal.startsWith('http') || wpVal.startsWith('data:')) {
+            imgLayer.setAttribute('data-has-custom-image', isCustomImage ? 'true' : 'false');
+            if (isCustomImage) {
               imgLayer.style.backgroundImage = `url("${wpVal}")`;
               imgLayer.style.backgroundSize = 'cover';
               imgLayer.style.backgroundPosition = 'center';
+              imgLayer.style.background = '';
             } else {
+              imgLayer.style.backgroundImage = 'none';
               imgLayer.style.background = wpVal;
               imgLayer.style.backgroundSize = '';
               imgLayer.style.backgroundPosition = '';
@@ -851,14 +863,8 @@ const {
 
           const dimLayer = document.getElementById('chat-wallpaper-dimmer');
           if (dimLayer) {
+            dimLayer.setAttribute('data-has-custom-image', isCustomImage ? 'true' : 'false');
             dimLayer.style.opacity = dimVal.toString();
-          }
-
-          const overlay = document.getElementById('chat-wallpaper-overlay');
-          if (overlay) {
-            overlay.style.backgroundImage = patObj.pattern;
-            overlay.style.backgroundSize = patObj.patternSize;
-            overlay.style.opacity = patOpacity.toString();
           }
 
           // Force Pure Black & Hide Wallpaper/Pattern when OLED is active

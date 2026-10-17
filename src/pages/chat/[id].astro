@@ -20408,8 +20408,12 @@ Requirements:
   function updateLivePreview(theme) {
     if (!theme) return;
 
+    const isDay = document.documentElement.getAttribute('data-base-mode') === 'day' || document.documentElement.classList.contains('day-mode') || theme.baseMode === 'day' || theme.dayNightMode === 'day';
+    const isCustomImage = typeof theme.chatWallpaper === 'string' && (theme.chatWallpaper.startsWith('http') || theme.chatWallpaper.startsWith('data:'));
+    const rawWp = theme.chatWallpaper || theme.chatBg || 'linear-gradient(to bottom, #090a12, #0e1122, #07080f)';
+    const wpVal = isDay ? (isCustomImage ? rawWp : 'linear-gradient(180deg, #f8fafc 0%, #f1f5f9 100%)') : rawWp;
+
     // 1. Wallpaper Image / Gradient
-    const wpVal = theme.chatWallpaper || theme.chatBg || 'linear-gradient(to bottom, #090a12, #0e1122, #07080f)';
     if (previewImage) {
       if (wpVal.startsWith('http') || wpVal.startsWith('data:')) {
         previewImage.style.backgroundImage = `url("${wpVal}")`;
@@ -20425,7 +20429,7 @@ Requirements:
 
     // 2. Dimmer
     if (previewDimmer) {
-      previewDimmer.style.opacity = (theme.chatDim !== undefined ? theme.chatDim : 0.20).toString();
+      previewDimmer.style.opacity = (isDay ? (isCustomImage ? 0.08 : 0) : (theme.chatDim !== undefined ? theme.chatDim : 0.20)).toString();
     }
 
     // 3. Doodle Pattern
@@ -20434,12 +20438,14 @@ Requirements:
       const patObj = window.AetheriaTheme.DOODLE_PATTERNS[patId] || window.AetheriaTheme.DOODLE_PATTERNS['telegram-doodles'];
       previewPattern.style.backgroundImage = patObj.pattern;
       previewPattern.style.backgroundSize = patObj.patternSize;
-      previewPattern.style.opacity = (theme.chatPatternOpacity !== undefined ? theme.chatPatternOpacity : 0.18).toString();
+      previewPattern.style.opacity = (isDay ? 0.07 : (theme.chatPatternOpacity !== undefined ? theme.chatPatternOpacity : 0.18)).toString();
+      previewPattern.style.filter = isDay ? 'invert(1)' : 'none';
     }
 
     // 4. Character Bubble
     if (previewCharBubble) {
-      previewCharBubble.style.backgroundColor = theme.charBubbleBg || '#101426';
+      previewCharBubble.style.backgroundColor = isDay ? '#ffffff' : (theme.charBubbleBg || '#101426');
+      previewCharBubble.style.color = isDay ? '#1e293b' : '#f1f5f9';
       previewCharBubble.style.borderRadius = `${theme.bubbleRadius || 16}px`;
       previewCharBubble.style.fontSize = `${theme.fontSize || 16}px`;
     }

@@ -2421,17 +2421,24 @@ html.day-mode #chat-root-container {
 
 html[data-base-mode="day"] #chat-viewport-section,
 html.day-mode #chat-viewport-section {
-  background: var(--theme-chat-bg, linear-gradient(to bottom, #f8fafc, #f1f5f9)) !important;
+  background: var(--theme-chat-bg, linear-gradient(180deg, #f8fafc 0%, #f1f5f9 100%)) !important;
 }
 
-html[data-base-mode="day"] #chat-wallpaper-dimmer,
-html.day-mode #chat-wallpaper-dimmer {
-  opacity: var(--theme-chat-dim, 0) !important;
+html[data-base-mode="day"] #chat-wallpaper-image-layer:not([data-has-custom-image="true"]),
+html.day-mode #chat-wallpaper-image-layer:not([data-has-custom-image="true"]) {
+  background: var(--theme-chat-bg, linear-gradient(180deg, #f8fafc 0%, #f1f5f9 100%)) !important;
+  background-image: none !important;
+}
+
+html[data-base-mode="day"] #chat-wallpaper-dimmer:not([data-has-custom-image="true"]),
+html.day-mode #chat-wallpaper-dimmer:not([data-has-custom-image="true"]) {
+  opacity: 0 !important;
 }
 
 html[data-base-mode="day"] #chat-wallpaper-overlay,
 html.day-mode #chat-wallpaper-overlay {
-  opacity: var(--theme-chat-pattern-opacity, 0.08) !important;
+  filter: invert(1) !important;
+  opacity: var(--theme-chat-pattern-opacity, 0.07) !important;
 }
 
 /* 2. Top Navigation Header & Buttons */
