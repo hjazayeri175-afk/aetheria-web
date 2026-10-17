@@ -1715,173 +1715,165 @@ import {
   >
     <div 
       id="name-color-modal-dialog" 
-      class="w-full sm:max-w-xl max-h-[92vh] sm:max-h-[88vh] rounded-t-[28px] sm:rounded-3xl bg-[#0c0e1a]/98 border-t sm:border border-white/10 p-4 sm:p-6 backdrop-blur-2xl shadow-2xl flex flex-col transform translate-y-full sm:translate-y-0 sm:scale-95 transition-all duration-300 overflow-hidden"
+      class="w-full sm:max-w-lg max-h-[92vh] sm:max-h-[88vh] rounded-t-[28px] sm:rounded-3xl bg-[#0c0e1a]/98 border-t sm:border border-white/10 p-4 sm:p-5 backdrop-blur-2xl shadow-2xl flex flex-col transform translate-y-full sm:translate-y-0 sm:scale-95 transition-all duration-300 overflow-hidden"
     >
       <!-- Top Drag Handle for mobile -->
-      <div class="w-12 h-1.5 bg-white/20 rounded-full mx-auto mb-3 shrink-0 sm:hidden"></div>
+      <div class="w-12 h-1.5 bg-white/20 rounded-full mx-auto mb-2 shrink-0 sm:hidden"></div>
 
-      <!-- Sticky Header & Navigation -->
-      <div class="flex items-center justify-between pb-3 border-b border-white/[0.08] shrink-0">
+      <!-- Sticky Header -->
+      <div class="flex items-center justify-between pb-2.5 border-b border-white/[0.08] shrink-0 mb-3">
         <div class="flex items-center gap-2.5">
-          <div class="w-9 h-9 rounded-xl bg-purple-500/10 border border-purple-500/20 flex items-center justify-center text-purple-400">
-            <Palette class="w-5 h-5" />
+          <div class="w-8 h-8 rounded-xl bg-purple-500/10 border border-purple-500/20 flex items-center justify-center text-purple-400">
+            <Palette class="w-4.5 h-4.5" />
           </div>
           <div>
-            <h3 id="name-color-modal-title" class="text-base sm:text-lg font-bold text-white tracking-tight">Change Name Color & Style</h3>
-            <p class="text-xs text-slate-400">Personalize your name, badges and avatar border across chats</p>
+            <h3 id="name-color-modal-title" class="text-sm sm:text-base font-bold text-white tracking-tight">Change Name Color & Style</h3>
+            <p class="text-[11px] text-slate-400">Personalize your name, badges and avatar border</p>
           </div>
         </div>
         <button 
           type="button" 
           id="btn-close-name-color-modal" 
-          class="w-8 h-8 rounded-full bg-white/[0.06] hover:bg-white/[0.12] text-slate-400 hover:text-white flex items-center justify-center transition active:scale-95 cursor-pointer"
+          class="w-7 h-7 rounded-full bg-white/[0.06] hover:bg-white/[0.12] text-slate-400 hover:text-white flex items-center justify-center transition active:scale-95 cursor-pointer"
           aria-label="Close"
         >
           <X class="w-4 h-4" />
         </button>
       </div>
 
-      <!-- View / Section Navigation Tabs (Avatar / Border vs Name view toggles) -->
-      <div class="flex items-center p-1 bg-white/[0.04] border border-white/[0.08] rounded-xl my-3 shrink-0">
+      <!-- Step 1: Top Segmented Switch (True Tab Conditional Rendering) -->
+      <div class="h-10 p-1 rounded-xl bg-white/[0.04] border border-white/10 flex items-center shrink-0 mb-3">
         <button 
           type="button" 
           id="tab-toggle-name-colors" 
-          class="flex-1 py-1.5 px-3 rounded-lg text-xs font-semibold flex items-center justify-center gap-2 transition-all cursor-pointer bg-purple-600 text-white shadow-sm"
+          class="whitespace-nowrap text-xs font-semibold flex-1 py-1.5 px-3 rounded-lg flex items-center justify-center gap-1.5 transition-all cursor-pointer bg-purple-600 text-white shadow-sm"
         >
           <Palette class="w-3.5 h-3.5" />
-          <span>Name Color & Swatches</span>
+          <span>Name Style</span>
         </button>
         <button 
           type="button" 
           id="tab-toggle-avatar-border" 
-          class="flex-1 py-1.5 px-3 rounded-lg text-xs font-semibold flex items-center justify-center gap-2 transition-all cursor-pointer text-slate-400 hover:text-white"
+          class="whitespace-nowrap text-xs font-semibold flex-1 py-1.5 px-3 rounded-lg flex items-center justify-center gap-1.5 transition-all cursor-pointer text-slate-400 hover:text-white"
         >
           <Sparkles class="w-3.5 h-3.5" />
-          <span>Avatar Border Effects</span>
+          <span>Avatar & Border</span>
         </button>
       </div>
 
-      <!-- Scrollable Content Body -->
-      <div class="overflow-y-auto space-y-4 pr-1 text-slate-200 text-sm flex-1 scrollbar-thin">
-        
-        <!-- 1. LIVE PREVIEW SECTION (RTL Friendly) [Top Card] -->
-        <div class="p-3.5 sm:p-4 rounded-2xl bg-black/40 border border-white/10 shadow-inner">
-          <div class="flex items-center justify-between mb-2">
-            <span class="text-[11px] font-bold uppercase tracking-wider text-purple-300/80">Live Real-time Preview</span>
-            <span class="text-[10px] text-slate-400">Updates instantly</span>
+      <!-- Step 2: Permanently Pinned Compact Live Preview (Side-by-Side Layout) -->
+      <div class="shrink-0 mb-3 grid grid-cols-12 gap-2.5 p-3 rounded-2xl bg-[#11141d] border border-white/10 shadow-lg">
+        <!-- Left Column: col-span-5 -->
+        <div class="col-span-5 flex flex-col items-center justify-center p-2 rounded-xl bg-black/30 border border-white/[0.04] text-center min-w-0">
+          <!-- Centered 56px Avatar with live border effect -->
+          <div id="preview-avatar-container" class="w-14 h-14 rounded-full p-[2px] transition-all duration-300 shrink-0 flex items-center justify-center avatar-border-none mb-1.5">
+            <img id="preview-avatar-img" src="" alt="Avatar" class="w-full h-full rounded-full object-cover hidden" />
+            <div id="preview-avatar-initial" class="w-full h-full rounded-full bg-gradient-to-tr from-purple-600 to-indigo-600 flex items-center justify-center text-white text-base font-bold select-none">
+              H
+            </div>
           </div>
-          
-          <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 items-center">
-            <!-- Left side: Circular 56px Avatar + User name (nameColor) + subtitle "online" -->
-            <div class="flex items-center gap-3.5 p-3 rounded-xl bg-white/[0.03] border border-white/[0.06]">
-              <!-- 56px Avatar Container -->
-              <div id="preview-avatar-container" class="w-14 h-14 rounded-full p-[2px] transition-all duration-300 shrink-0 flex items-center justify-center avatar-border-none">
-                <img id="preview-avatar-img" src="" alt="Avatar" class="w-full h-full rounded-full object-cover hidden" />
-                <div id="preview-avatar-initial" class="w-full h-full rounded-full bg-gradient-to-tr from-purple-600 to-indigo-600 flex items-center justify-center text-white text-base font-bold select-none">
-                  H
-                </div>
-              </div>
-              <!-- Name & Online Subtitle -->
-              <div class="min-w-0 flex-1">
-                <div class="flex items-center gap-1.5 flex-wrap">
-                  <span id="preview-user-name" class="font-bold text-base transition-all duration-300 truncate user-name-styled" style="color: #a855f7;">
-                    Hossein
-                  </span>
-                  <span id="preview-user-badge" class="inline-block text-base select-none transition-all duration-300"></span>
-                </div>
-                <div class="flex items-center gap-1.5 mt-0.5">
-                  <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
-                  <span class="text-xs text-emerald-400/90 font-medium">online</span>
-                </div>
-              </div>
-            </div>
-
-            <!-- Right side: Mockup user message bubble -->
-            <div class="p-3 rounded-xl bg-white/[0.03] border border-white/[0.06] flex flex-col justify-between">
-              <div class="flex items-center justify-between gap-2 mb-1.5">
-                <span class="text-[10px] text-slate-400">12:45 PM</span>
-                <div class="flex items-center gap-1">
-                  <span id="preview-bubble-name" class="text-xs font-bold transition-all duration-300 user-name-styled" style="color: #a855f7;">
-                    Hossein
-                  </span>
-                  <span id="preview-bubble-badge" class="inline-block text-xs select-none transition-all duration-300"></span>
-                </div>
-              </div>
-              <!-- Chat bubble -->
-              <div class="bg-purple-600/30 border border-purple-500/30 rounded-2xl rounded-tr-xs p-2.5 text-xs text-white leading-relaxed text-left shadow-sm">
-                <p>Hey! Check out my new custom name styling ✨</p>
-                <div class="flex items-center justify-end mt-1 text-[10px] text-purple-300 font-bold gap-0.5">
-                  <span>12:45 PM</span>
-                  <span>✓✓</span>
-                </div>
-              </div>
-            </div>
+          <!-- User Name + Badge -->
+          <div class="flex items-center justify-center gap-1 max-w-full min-w-0">
+            <span id="preview-user-name" class="font-bold text-xs transition-all duration-300 truncate user-name-styled" style="color: #a855f7;">
+              Hossein
+            </span>
+            <span id="preview-user-badge" class="inline-block text-xs select-none transition-all duration-300 shrink-0"></span>
+          </div>
+          <!-- Online Subtitle -->
+          <div class="flex items-center justify-center gap-1 mt-0.5">
+            <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span>
+            <span class="text-[10px] text-emerald-400/90 font-medium">online</span>
           </div>
         </div>
 
-        <!-- 2. INTERACTIVE COLOR GRIDS -->
-        <div id="section-name-colors" class="space-y-4">
+        <!-- Right Column: col-span-7 -->
+        <div class="col-span-7 flex flex-col justify-center min-w-0">
+          <div class="p-2 sm:p-2.5 rounded-xl bg-purple-600/25 border border-purple-500/25 text-white shadow-sm flex flex-col justify-between">
+            <div class="flex items-center justify-between gap-1 mb-1">
+              <span class="text-[9px] text-slate-400">12:45 PM</span>
+              <div class="flex items-center gap-1 max-w-[130px] min-w-0">
+                <span id="preview-bubble-name" class="text-[11px] font-bold transition-all duration-300 truncate user-name-styled" style="color: #a855f7;">
+                  Hossein
+                </span>
+                <span id="preview-bubble-badge" class="inline-block text-[11px] select-none transition-all duration-300 shrink-0"></span>
+              </div>
+            </div>
+            <p class="text-[11px] leading-tight text-slate-100">Check out my new style ✨</p>
+            <div class="flex items-center justify-end mt-1 text-[9px] text-purple-300 font-bold gap-0.5">
+              <span>12:45 PM</span>
+              <span>✓✓</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Tab Content Area (Truly conditionally rendered) -->
+      <div class="flex-1 overflow-y-auto pr-0.5 scrollbar-thin">
+        
+        <!-- ========================================== -->
+        <!-- TAB 1: NAME STYLE (Telegram-style 8x2 Swatches & Badges) -->
+        <!-- ========================================== -->
+        <div id="view-tab-name" class="space-y-3">
           
-          <!-- Row 1: Solids -->
-          <div class="space-y-2">
-            <div class="flex items-center justify-between">
-              <label class="text-xs font-bold text-slate-200">Solid Colors</label>
-              <span class="text-[10px] text-slate-400">8 pure vibrant shades</span>
+          <!-- Card A: Compact 16-Color Swatch Grid (8-columns, no labels!) -->
+          <div class="p-3 sm:p-3.5 rounded-2xl bg-[#11141d] border border-white/10 shadow-sm">
+            <div class="flex items-center justify-between mb-2">
+              <span class="text-xs font-bold text-slate-200">Color Palette</span>
+              <span class="text-[10px] text-slate-400">Solids & Dual Gradients</span>
             </div>
-            <div id="grid-solid-colors" class="grid grid-cols-4 sm:grid-cols-8 gap-2.5">
+            
+            <!-- 8x2 Matrix Grid -->
+            <div id="grid-color-matrix" class="grid grid-cols-8 gap-2 sm:gap-2.5 place-items-center">
               <!-- Rendered via JS -->
             </div>
           </div>
 
-          <!-- Row 2: Dual Gradients -->
-          <div class="space-y-2">
-            <div class="flex items-center justify-between">
-              <label class="text-xs font-bold text-slate-200">Dual Gradients</label>
-              <span class="text-[10px] text-purple-400">8 glowing multi-stop styles</span>
-            </div>
-            <div id="grid-gradient-colors" class="grid grid-cols-4 sm:grid-cols-8 gap-2.5">
-              <!-- Rendered via JS -->
-            </div>
-          </div>
-
-          <!-- Icon Embellishment (Add-on Row) -->
-          <div class="p-3.5 rounded-2xl bg-white/[0.02] border border-white/[0.06] space-y-3">
-            <div class="flex items-center justify-between">
-              <div class="flex items-center gap-2">
+          <!-- Card B: Compact Status Badge / Icon Picker (Single-row 8-icon strip) -->
+          <div class="p-3 rounded-2xl bg-[#11141d] border border-white/10 shadow-sm">
+            <div class="flex items-center justify-between mb-2">
+              <div class="flex items-center gap-1.5">
                 <Sparkles class="w-4 h-4 text-amber-400" />
                 <label for="toggle-name-badges" class="text-xs font-bold text-slate-200 cursor-pointer">
-                  Add Status / Icons to Name
+                  Add Icon next to Name
                 </label>
               </div>
               <label class="relative inline-flex items-center cursor-pointer">
                 <input type="checkbox" id="toggle-name-badges" class="sr-only peer" />
-                <div class="w-9 h-5 bg-white/10 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-purple-600"></div>
+                <div class="w-8 h-4.5 bg-white/10 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-3.5 after:w-3.5 after:transition-all peer-checked:bg-purple-600"></div>
               </label>
             </div>
 
-            <div id="wrapper-badge-selector" class="flex items-center gap-2 overflow-x-auto pb-1 scrollbar-none transition-all">
-              <!-- Mini badges: None, 🌟, 🔥, 👑, ⚡, 💎, 🌸, ✨, 🏆, 🛡️, ⚔️ -->
+            <!-- Single horizontal row of 8 icons -->
+            <div id="wrapper-badge-selector" class="grid grid-cols-8 gap-1.5 sm:gap-2 place-items-center transition-all pt-1">
+              <!-- 8 icon-only circular buttons -->
             </div>
           </div>
 
         </div>
 
-        <!-- 3. AVATAR BORDER EFFECTS (Horizontal Scroll) -->
-        <div id="section-avatar-border" class="space-y-3">
-          <div class="flex items-center justify-between">
-            <label class="text-xs font-bold text-slate-200">Avatar Border Effects</label>
-            <span class="text-[10px] text-slate-400">Horizontal scroll presets</span>
-          </div>
-          
-          <div id="border-effects-list" class="flex gap-3 overflow-x-auto pb-2 scrollbar-none snap-x">
-            <!-- 4 Preset Cards: None, Glow, Dual Gradient, Dynamic Sparkle -->
+        <!-- ========================================== -->
+        <!-- TAB 2: AVATAR & BORDER (Conditionally rendered when activeTab === 'avatar') -->
+        <!-- ========================================== -->
+        <div id="view-tab-avatar" class="hidden space-y-3">
+          <div class="p-3 sm:p-3.5 rounded-2xl bg-[#11141d] border border-white/10 shadow-sm">
+            <div class="flex items-center justify-between mb-2.5">
+              <div class="flex items-center gap-1.5">
+                <Sparkles class="w-4 h-4 text-purple-400" />
+                <span class="text-xs font-bold text-slate-200">Avatar Border Effects</span>
+              </div>
+              <span class="text-[10px] text-slate-400">Select halo preset</span>
+            </div>
+
+            <div id="border-effects-grid" class="grid grid-cols-2 gap-2.5">
+              <!-- 4 Effects: None, Glow, Dual Gradient, Dynamic Sparkle -->
+            </div>
           </div>
         </div>
 
       </div>
 
-      <!-- Bottom Actions (Apply, Reset, Cancel) -->
-      <div class="pt-3 border-t border-white/[0.08] flex items-center justify-between gap-2 shrink-0">
+      <!-- Bottom Actions (Sticky) -->
+      <div class="pt-3 border-t border-white/[0.08] flex items-center justify-between gap-2 shrink-0 mt-2">
         <button 
           type="button" 
           id="btn-reset-name-style" 
@@ -5107,7 +5099,7 @@ function renderPresets() {
       });
 
       // ==========================================
-      // DYNAMIC PERSONALIZATION: NAME COLOR, GRADIENTS & AVATAR BORDER
+      // DYNAMIC PERSONALIZATION: NAME COLOR, GRADIENTS & AVATAR BORDER (OVERHAUL)
       // ==========================================
       function initNameColorModal() {
         const modal = document.getElementById('name-color-modal');
@@ -5120,17 +5112,17 @@ function renderPresets() {
 
         const tabNameColors = document.getElementById('tab-toggle-name-colors');
         const tabAvatarBorder = document.getElementById('tab-toggle-avatar-border');
-        const sectionNameColors = document.getElementById('section-name-colors');
-        const sectionAvatarBorder = document.getElementById('section-avatar-border');
+        const viewTabName = document.getElementById('view-tab-name');
+        const viewTabAvatar = document.getElementById('view-tab-avatar');
 
-        const gridSolids = document.getElementById('grid-solid-colors');
-        const gridGradients = document.getElementById('grid-gradient-colors');
-        const borderEffectsList = document.getElementById('border-effects-list');
+        const gridColorMatrix = document.getElementById('grid-color-matrix');
+        const borderEffectsGrid = document.getElementById('border-effects-grid');
         const toggleBadges = document.getElementById('toggle-name-badges') as HTMLInputElement | null;
         const wrapperBadgeSelector = document.getElementById('wrapper-badge-selector');
 
         if (!modal || !btnOpen) return;
 
+        // 8 Solids (Row 1)
         const SOLID_COLORS = [
           { id: 'deep-blue', name: 'Deep Blue', value: '#2563eb' },
           { id: 'forest-green', name: 'Forest Green', value: '#16a34a' },
@@ -5142,17 +5134,22 @@ function renderPresets() {
           { id: 'muted-slate', name: 'Muted Slate', value: '#94a3b8' }
         ];
 
+        // 8 Dual Gradients with 45-deg diagonal split swatch (Row 2)
         const GRADIENT_COLORS = [
-          { id: 'cyan-blue', name: 'Cyan / Blue', value: 'linear-gradient(135deg, #06b6d4 0%, #3b82f6 100%)' },
-          { id: 'lime-green', name: 'Lime / Green', value: 'linear-gradient(135deg, #84cc16 0%, #10b981 100%)' },
-          { id: 'orange-amber', name: 'Orange / Amber', value: 'linear-gradient(135deg, #f97316 0%, #fbbf24 100%)' },
-          { id: 'pink-gold', name: 'Pink / Gold', value: 'linear-gradient(135deg, #ec4899 0%, #f59e0b 100%)' },
-          { id: 'purple-blue', name: 'Purple / Blue', value: 'linear-gradient(135deg, #a855f7 0%, #3b82f6 100%)' },
-          { id: 'turquoise-aqua', name: 'Turquoise / Aqua', value: 'linear-gradient(135deg, #14b8a6 0%, #06b6d4 100%)' },
-          { id: 'rose-peach', name: 'Rose / Peach', value: 'linear-gradient(135deg, #f43f5e 0%, #fb923c 100%)' },
-          { id: 'silver-gray', name: 'Silver / Gray', value: 'linear-gradient(135deg, #e2e8f0 0%, #94a3b8 100%)' }
+          { id: 'cyan-blue', name: 'Cyan / Blue', value: 'linear-gradient(135deg, #06b6d4 0%, #3b82f6 100%)', split: 'linear-gradient(135deg, #06b6d4 0%, #06b6d4 50%, #3b82f6 50%, #3b82f6 100%)' },
+          { id: 'lime-green', name: 'Lime / Green', value: 'linear-gradient(135deg, #84cc16 0%, #10b981 100%)', split: 'linear-gradient(135deg, #84cc16 0%, #84cc16 50%, #10b981 50%, #10b981 100%)' },
+          { id: 'orange-amber', name: 'Orange / Amber', value: 'linear-gradient(135deg, #f97316 0%, #fbbf24 100%)', split: 'linear-gradient(135deg, #f97316 0%, #f97316 50%, #fbbf24 50%, #fbbf24 100%)' },
+          { id: 'pink-gold', name: 'Pink / Gold', value: 'linear-gradient(135deg, #ec4899 0%, #f59e0b 100%)', split: 'linear-gradient(135deg, #ec4899 0%, #ec4899 50%, #f59e0b 50%, #f59e0b 100%)' },
+          { id: 'purple-blue', name: 'Purple / Blue', value: 'linear-gradient(135deg, #a855f7 0%, #3b82f6 100%)', split: 'linear-gradient(135deg, #a855f7 0%, #a855f7 50%, #3b82f6 50%, #3b82f6 100%)' },
+          { id: 'turquoise-aqua', name: 'Turquoise / Aqua', value: 'linear-gradient(135deg, #14b8a6 0%, #06b6d4 100%)', split: 'linear-gradient(135deg, #14b8a6 0%, #14b8a6 50%, #06b6d4 50%, #06b6d4 100%)' },
+          { id: 'rose-peach', name: 'Rose / Peach', value: 'linear-gradient(135deg, #f43f5e 0%, #fb923c 100%)', split: 'linear-gradient(135deg, #f43f5e 0%, #f43f5e 50%, #fb923c 50%, #fb923c 100%)' },
+          { id: 'silver-gray', name: 'Silver / Gray', value: 'linear-gradient(135deg, #e2e8f0 0%, #94a3b8 100%)', split: 'linear-gradient(135deg, #e2e8f0 0%, #e2e8f0 50%, #94a3b8 50%, #94a3b8 100%)' }
         ];
 
+        // 8 Status Icons (Single-row strip)
+        const STATUS_ICONS = ['⚡', '💎', '🌸', '✨', '🔥', '👑', '🌙', '🎮'];
+
+        // 4 Avatar Border Effects
         const BORDER_EFFECTS = [
           { id: 'none', name: 'None', desc: 'Base Border', effectClass: 'avatar-border-none' },
           { id: 'glow', name: 'Neon Glow', desc: 'Vibrant Halo', effectClass: 'avatar-border-glow' },
@@ -5160,23 +5157,38 @@ function renderPresets() {
           { id: 'dynamic-sparkle', name: 'Dynamic Sparkle', desc: 'Pulsing Shimmer', effectClass: 'avatar-border-dynamic-sparkle' }
         ];
 
-        const MINI_BADGES = [
-          { id: 'none', label: 'None', icon: '' },
-          { id: 'star', label: 'Star', icon: '🌟' },
-          { id: 'fire', label: 'Fire', icon: '🔥' },
-          { id: 'crown', label: 'Crown', icon: '👑' },
-          { id: 'bolt', label: 'Bolt', icon: '⚡' },
-          { id: 'diamond', label: 'Diamond', icon: '💎' },
-          { id: 'flower', label: 'Flower', icon: '🌸' },
-          { id: 'sparkles', label: 'Sparkles', icon: '✨' },
-          { id: 'trophy', label: 'Trophy', icon: '🏆' },
-          { id: 'shield', label: 'Shield', icon: '🛡️' },
-          { id: 'swords', label: 'Swords', icon: '⚔️' }
-        ];
-
+        let activeTab: 'name' | 'avatar' = 'name';
         let draftNameColor = '#a855f7';
         let draftBorderEffect = 'none';
         let draftNameIcon = '';
+
+        function switchTab(tab: 'name' | 'avatar') {
+          activeTab = tab;
+          const isName = tab === 'name';
+
+          if (tabNameColors && tabAvatarBorder) {
+            if (isName) {
+              tabNameColors.className = 'whitespace-nowrap text-xs font-semibold flex-1 py-1.5 px-3 rounded-lg flex items-center justify-center gap-1.5 transition-all cursor-pointer bg-purple-600 text-white shadow-sm';
+              tabAvatarBorder.className = 'whitespace-nowrap text-xs font-semibold flex-1 py-1.5 px-3 rounded-lg flex items-center justify-center gap-1.5 transition-all cursor-pointer text-slate-400 hover:text-white';
+            } else {
+              tabAvatarBorder.className = 'whitespace-nowrap text-xs font-semibold flex-1 py-1.5 px-3 rounded-lg flex items-center justify-center gap-1.5 transition-all cursor-pointer bg-purple-600 text-white shadow-sm';
+              tabNameColors.className = 'whitespace-nowrap text-xs font-semibold flex-1 py-1.5 px-3 rounded-lg flex items-center justify-center gap-1.5 transition-all cursor-pointer text-slate-400 hover:text-white';
+            }
+          }
+
+          if (viewTabName && viewTabAvatar) {
+            if (isName) {
+              viewTabName.classList.remove('hidden');
+              viewTabAvatar.classList.add('hidden');
+            } else {
+              viewTabName.classList.add('hidden');
+              viewTabAvatar.classList.remove('hidden');
+            }
+          }
+        }
+
+        tabNameColors?.addEventListener('click', () => switchTab('name'));
+        tabAvatarBorder?.addEventListener('click', () => switchTab('avatar'));
 
         function applyNameToElement(el: HTMLElement | null, text: string, color: string) {
           if (!el) return;
@@ -5201,25 +5213,25 @@ function renderPresets() {
           const active = personas.find(p => p.isActive) || personas[0] || { name: 'Hossein' };
           const userName = active.name || 'Hossein';
 
-          // 1. Top Preview Card Name & Badge
+          // 1. Pinned Preview Avatar & Name
           const previewName = document.getElementById('preview-user-name');
           const previewBadge = document.getElementById('preview-user-badge');
           applyNameToElement(previewName, userName, draftNameColor);
-          if (previewBadge) previewBadge.textContent = draftNameIcon;
+          if (previewBadge) previewBadge.textContent = draftNameIcon ? ` ${draftNameIcon}` : '';
 
           // 2. Chat Bubble Sender Name & Badge
           const bubbleName = document.getElementById('preview-bubble-name');
           const bubbleBadge = document.getElementById('preview-bubble-badge');
           applyNameToElement(bubbleName, userName, draftNameColor);
-          if (bubbleBadge) bubbleBadge.textContent = draftNameIcon;
+          if (bubbleBadge) bubbleBadge.textContent = draftNameIcon ? ` ${draftNameIcon}` : '';
 
-          // 3. Avatar preview
+          // 3. Pinned Avatar container border effect
           const avatarContainer = document.getElementById('preview-avatar-container');
           const avatarImg = document.getElementById('preview-avatar-img') as HTMLImageElement;
           const avatarInitial = document.getElementById('preview-avatar-initial');
 
           if (avatarContainer) {
-            avatarContainer.className = 'w-14 h-14 rounded-full p-[2px] transition-all duration-300 shrink-0 flex items-center justify-center';
+            avatarContainer.className = 'w-14 h-14 rounded-full p-[2px] transition-all duration-300 shrink-0 flex items-center justify-center mb-1.5';
             if (draftBorderEffect === 'glow') {
               avatarContainer.classList.add('avatar-border-glow');
             } else if (draftBorderEffect === 'dual-gradient') {
@@ -5244,55 +5256,34 @@ function renderPresets() {
             }
           }
 
-          // 4. Update Swatch Buttons
+          // 4. Update Swatch Buttons (Telegram-Style 8x2 Matrix: ring-2 ring-offset-2 ring-offset-[#11141d] ring-cyan-400 scale-110)
           document.querySelectorAll('.swatch-trigger-btn').forEach((btn: any) => {
             const val = btn.dataset.value;
             const isSelected = (val === draftNameColor);
-            const ring = btn.querySelector('.swatch-ring');
             const check = btn.querySelector('.swatch-check');
             if (isSelected) {
-              ring?.classList.add('ring-2', 'ring-amber-400', 'ring-offset-2', 'ring-offset-[#0c0e1a]', 'scale-105');
-              ring?.classList.remove('ring-transparent');
+              btn.className = 'swatch-trigger-btn relative w-8 h-8 rounded-full cursor-pointer transition-all active:scale-90 flex items-center justify-center shadow-md select-none ring-2 ring-offset-2 ring-offset-[#11141d] ring-cyan-400 scale-110 z-10';
               check?.classList.remove('hidden');
               check?.classList.add('flex');
             } else {
-              ring?.classList.remove('ring-2', 'ring-amber-400', 'ring-offset-2', 'ring-offset-[#0c0e1a]', 'scale-105');
-              ring?.classList.add('ring-transparent');
+              btn.className = 'swatch-trigger-btn relative w-8 h-8 rounded-full cursor-pointer transition-all active:scale-90 flex items-center justify-center shadow-md select-none hover:scale-105';
               check?.classList.add('hidden');
               check?.classList.remove('flex');
             }
           });
 
-          // 5. Update Border Effect Cards
-          document.querySelectorAll('.border-effect-card').forEach((card: any) => {
-            const effectId = card.dataset.effect;
-            const isSelected = (effectId === draftBorderEffect);
-            const radioDot = card.querySelector('.effect-radio-dot');
-            if (isSelected) {
-              card.classList.add('border-amber-400', 'bg-amber-500/10', 'ring-1', 'ring-amber-400/40');
-              card.classList.remove('border-white/10', 'bg-white/[0.03]');
-              if (radioDot) radioDot.classList.remove('hidden');
-            } else {
-              card.classList.remove('border-amber-400', 'bg-amber-500/10', 'ring-1', 'ring-amber-400/40');
-              card.classList.add('border-white/10', 'bg-white/[0.03]');
-              if (radioDot) radioDot.classList.add('hidden');
-            }
-          });
-
-          // 6. Update Mini Badge Buttons
+          // 5. Update Status Icons (Single-row 8 icons)
           document.querySelectorAll('.mini-badge-btn').forEach((btn: any) => {
             const bIcon = btn.dataset.icon || '';
             const isSelected = (bIcon === draftNameIcon);
             if (isSelected) {
-              btn.classList.add('border-purple-400', 'bg-purple-600/30', 'text-white', 'shadow-sm', 'scale-105');
-              btn.classList.remove('border-white/10', 'bg-white/[0.04]', 'text-slate-400');
+              btn.className = 'mini-badge-btn w-8 h-8 rounded-full border border-cyan-400 bg-cyan-500/25 text-white shadow-sm ring-2 ring-cyan-400/50 scale-105 flex items-center justify-center text-sm transition-all cursor-pointer select-none';
             } else {
-              btn.classList.remove('border-purple-400', 'bg-purple-600/30', 'text-white', 'shadow-sm', 'scale-105');
-              btn.classList.add('border-white/10', 'bg-white/[0.04]', 'text-slate-400');
+              btn.className = 'mini-badge-btn w-8 h-8 rounded-full border border-white/10 bg-white/[0.04] hover:bg-white/[0.08] text-slate-300 flex items-center justify-center text-sm transition-all cursor-pointer select-none active:scale-95';
             }
           });
 
-          // 7. Update Toggle Switch
+          // 6. Update Status Toggle Switch
           if (toggleBadges && wrapperBadgeSelector) {
             toggleBadges.checked = !!draftNameIcon;
             if (toggleBadges.checked) {
@@ -5301,59 +5292,68 @@ function renderPresets() {
               wrapperBadgeSelector.classList.add('opacity-30', 'pointer-events-none');
             }
           }
+
+          // 7. Update Border Effect Cards
+          document.querySelectorAll('.border-effect-card').forEach((card: any) => {
+            const effectId = card.dataset.effect;
+            const isSelected = (effectId === draftBorderEffect);
+            const radioDot = card.querySelector('.effect-radio-dot');
+            if (isSelected) {
+              card.className = 'border-effect-card p-3 rounded-2xl border border-cyan-400 bg-cyan-500/10 ring-1 ring-cyan-400/40 transition-all cursor-pointer flex items-center gap-3 select-none';
+              if (radioDot) radioDot.classList.remove('hidden');
+            } else {
+              card.className = 'border-effect-card p-3 rounded-2xl border border-white/10 bg-white/[0.02] hover:bg-white/[0.05] transition-all cursor-pointer flex items-center gap-3 select-none';
+              if (radioDot) radioDot.classList.add('hidden');
+            }
+          });
         }
 
-        // Render Solids
-        if (gridSolids) {
-          gridSolids.innerHTML = SOLID_COLORS.map(c => `
+        // Render Color Matrix (Row 1: 8 Solids, Row 2: 8 Dual Gradients)
+        if (gridColorMatrix) {
+          const all16 = [
+            ...SOLID_COLORS.map(c => ({ ...c, isGrad: false })),
+            ...GRADIENT_COLORS.map(g => ({ ...g, isGrad: true }))
+          ];
+          gridColorMatrix.innerHTML = all16.map(item => `
             <button 
               type="button" 
-              class="swatch-trigger-btn group flex flex-col items-center gap-1.5 p-1 rounded-xl cursor-pointer transition-all active:scale-90"
-              data-value="${c.value}"
-              title="${c.name}"
+              class="swatch-trigger-btn relative w-8 h-8 rounded-full cursor-pointer transition-all active:scale-90 flex items-center justify-center shadow-md select-none hover:scale-105"
+              data-value="${item.value}"
+              title="${item.name}"
+              style="background: ${(item as any).split || item.value};"
             >
-              <div class="swatch-ring relative w-10 h-10 sm:w-11 sm:h-11 rounded-full p-[2px] transition-all duration-200 ring-transparent flex items-center justify-center">
-                <div class="w-full h-full rounded-full shadow-md flex items-center justify-center" style="background: ${c.value};">
-                  <span class="swatch-check hidden text-white text-xs font-bold drop-shadow-md select-none">✓</span>
-                </div>
-              </div>
-              <span class="text-[10px] text-slate-400 group-hover:text-slate-200 transition-colors truncate max-w-full text-center">${c.name}</span>
+              <span class="swatch-check hidden text-white text-[11px] font-bold drop-shadow-[0_1px_2px_rgba(0,0,0,0.8)] select-none pointer-events-none">✓</span>
             </button>
           `).join('');
         }
 
-        // Render Gradients
-        if (gridGradients) {
-          gridGradients.innerHTML = GRADIENT_COLORS.map(g => `
+        // Render Single-row Icon Strip (8 icons)
+        if (wrapperBadgeSelector) {
+          wrapperBadgeSelector.innerHTML = STATUS_ICONS.map(icon => `
             <button 
               type="button" 
-              class="swatch-trigger-btn group flex flex-col items-center gap-1.5 p-1 rounded-xl cursor-pointer transition-all active:scale-90"
-              data-value="${g.value}"
-              title="${g.name}"
+              class="mini-badge-btn w-8 h-8 rounded-full border border-white/10 bg-white/[0.04] hover:bg-white/[0.08] text-slate-300 flex items-center justify-center text-sm transition-all cursor-pointer select-none active:scale-95"
+              data-icon="${icon}"
+              title="${icon}"
             >
-              <div class="swatch-ring relative w-10 h-10 sm:w-11 sm:h-11 rounded-full p-[2px] transition-all duration-200 ring-transparent flex items-center justify-center">
-                <div class="w-full h-full rounded-full shadow-md flex items-center justify-center" style="background: ${g.value};">
-                  <span class="swatch-check hidden text-white text-xs font-bold drop-shadow-md select-none">✓</span>
-                </div>
-              </div>
-              <span class="text-[10px] text-slate-400 group-hover:text-slate-200 transition-colors truncate max-w-full text-center">${g.name}</span>
+              ${icon}
             </button>
           `).join('');
         }
 
-        // Render Border Effects
-        if (borderEffectsList) {
+        // Render Border Effects Grid
+        if (borderEffectsGrid) {
           const active = personas.find(p => p.isActive) || personas[0] || { name: 'Hossein' };
-          borderEffectsList.innerHTML = BORDER_EFFECTS.map(eff => `
+          borderEffectsGrid.innerHTML = BORDER_EFFECTS.map(eff => `
             <div 
-              class="border-effect-card shrink-0 w-36 sm:w-40 p-3 rounded-2xl border border-white/10 bg-white/[0.03] hover:bg-white/[0.06] transition-all cursor-pointer flex flex-col items-center text-center gap-2 select-none snap-start"
+              class="border-effect-card p-3 rounded-2xl border border-white/10 bg-white/[0.02] hover:bg-white/[0.05] transition-all cursor-pointer flex items-center gap-3 select-none"
               data-effect="${eff.id}"
             >
-              <div class="w-12 h-12 rounded-full p-[2px] flex items-center justify-center transition-all ${eff.effectClass}">
+              <div class="w-10 h-10 rounded-full p-[2px] flex items-center justify-center shrink-0 ${eff.effectClass}">
                 ${active.avatar ? `
                   <img src="${active.avatar}" alt="Avatar" class="w-full h-full rounded-full object-cover" />
                 ` : `
-                  <div class="w-full h-full rounded-full bg-gradient-to-tr from-purple-600 to-indigo-600 flex items-center justify-center text-white text-sm font-bold">
+                  <div class="w-full h-full rounded-full bg-gradient-to-tr from-purple-600 to-indigo-600 flex items-center justify-center text-white text-xs font-bold">
                     ${(active.name || 'H').charAt(0).toUpperCase()}
                   </div>
                 `}
@@ -5362,29 +5362,14 @@ function renderPresets() {
                 <div class="text-xs font-bold text-white truncate">${eff.name}</div>
                 <div class="text-[10px] text-slate-400 truncate">${eff.desc}</div>
               </div>
-              <div class="w-4 h-4 rounded-full border border-white/20 flex items-center justify-center mt-0.5">
-                <div class="effect-radio-dot w-2 h-2 rounded-full bg-amber-400 hidden"></div>
+              <div class="w-4 h-4 rounded-full border border-white/20 flex items-center justify-center shrink-0">
+                <div class="effect-radio-dot w-2 h-2 rounded-full bg-cyan-400 hidden"></div>
               </div>
             </div>
           `).join('');
         }
 
-        // Render Mini Badges
-        if (wrapperBadgeSelector) {
-          wrapperBadgeSelector.innerHTML = MINI_BADGES.map(b => `
-            <button 
-              type="button" 
-              class="mini-badge-btn shrink-0 px-2.5 py-1.5 rounded-xl border border-white/10 bg-white/[0.04] hover:bg-white/[0.08] text-xs font-semibold flex items-center gap-1.5 transition-all cursor-pointer"
-              data-icon="${b.icon}"
-              title="${b.label}"
-            >
-              ${b.icon ? `<span>${b.icon}</span>` : '<span class="text-[11px] text-slate-400">None</span>'}
-              ${b.icon ? `<span class="text-[10px] text-slate-300">${b.label}</span>` : ''}
-            </button>
-          `).join('');
-        }
-
-        // Click on Swatches
+        // Click Swatch Handlers
         document.querySelectorAll('.swatch-trigger-btn').forEach((btn: any) => {
           btn.addEventListener('click', () => {
             draftNameColor = btn.dataset.value;
@@ -5392,18 +5377,15 @@ function renderPresets() {
           });
         });
 
-        // Click on Border Effect Cards
-        document.querySelectorAll('.border-effect-card').forEach((card: any) => {
-          card.addEventListener('click', () => {
-            draftBorderEffect = card.dataset.effect;
-            updateLivePreview();
-          });
-        });
-
-        // Click on Mini Badges
+        // Click Icon Handlers
         document.querySelectorAll('.mini-badge-btn').forEach((btn: any) => {
           btn.addEventListener('click', () => {
-            draftNameIcon = btn.dataset.icon || '';
+            const icon = btn.dataset.icon || '';
+            if (draftNameIcon === icon) {
+              draftNameIcon = '';
+            } else {
+              draftNameIcon = icon;
+            }
             updateLivePreview();
           });
         });
@@ -5413,24 +5395,17 @@ function renderPresets() {
           if (!toggleBadges.checked) {
             draftNameIcon = '';
           } else if (!draftNameIcon) {
-            draftNameIcon = '🌟';
+            draftNameIcon = '⚡';
           }
           updateLivePreview();
         });
 
-        // View Toggles / Tabs
-        tabNameColors?.addEventListener('click', () => {
-          tabNameColors.className = 'flex-1 py-1.5 px-3 rounded-lg text-xs font-semibold flex items-center justify-center gap-2 transition-all cursor-pointer bg-purple-600 text-white shadow-sm';
-          tabAvatarBorder?.classList.remove('bg-purple-600', 'text-white', 'shadow-sm');
-          tabAvatarBorder?.classList.add('text-slate-400');
-          sectionNameColors?.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
-        });
-
-        tabAvatarBorder?.addEventListener('click', () => {
-          tabAvatarBorder.className = 'flex-1 py-1.5 px-3 rounded-lg text-xs font-semibold flex items-center justify-center gap-2 transition-all cursor-pointer bg-purple-600 text-white shadow-sm';
-          tabNameColors?.classList.remove('bg-purple-600', 'text-white', 'shadow-sm');
-          tabNameColors?.classList.add('text-slate-400');
-          sectionAvatarBorder?.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+        // Click Border Effect Handlers
+        document.querySelectorAll('.border-effect-card').forEach((card: any) => {
+          card.addEventListener('click', () => {
+            draftBorderEffect = card.dataset.effect;
+            updateLivePreview();
+          });
         });
 
         // Open Modal
@@ -5441,6 +5416,8 @@ function renderPresets() {
             draftBorderEffect = active.avatarBorderEffect || 'none';
             draftNameIcon = active.nameIcon || '';
           }
+
+          switchTab('name');
 
           modal.classList.remove('hidden');
           modal.classList.add('flex');
@@ -5523,7 +5500,6 @@ function renderPresets() {
           setTimeout(openModal, 200);
         }
       }
-
       // Wallpapers
       function renderWallpapers() {
         if (!wallpapersGrid) return;
