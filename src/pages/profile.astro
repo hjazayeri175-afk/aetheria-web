@@ -306,21 +306,44 @@ import {
 
         <!-- Account Form Card -->
         <div class="rounded-3xl bg-[#141824] border border-white/[0.06] p-5 shadow-xl space-y-5">
-          <!-- Avatar Uploader / URL -->
-          <div class="flex flex-col sm:flex-row items-center gap-4 pb-4 border-b border-white/[0.08]">
-            <div class="relative w-20 h-20 rounded-full overflow-hidden border-2 border-purple-500/40 bg-purple-950/40 flex items-center justify-center shadow-lg shrink-0" id="edit-account-avatar-preview-box">
-              <img id="edit-account-avatar-preview" src="" alt="Avatar" class="w-full h-full object-cover hidden" />
-              <div id="edit-account-avatar-placeholder" class="text-purple-200 font-bold text-2xl">H</div>
+          <!-- Interactive Avatar Picker -->
+          <div class="flex flex-col items-center justify-center py-2 pb-5 border-b border-white/[0.08] space-y-3">
+            <input type="file" id="input-account-avatar-file" accept="image/*" class="hidden" />
+            
+            <!-- Large Circular Avatar with Camera Badge Overlay -->
+            <div class="relative group cursor-pointer active:scale-95 transition-transform" id="btn-trigger-avatar-upload" title="Tap to choose photo from gallery or camera">
+              <div class="w-24 h-24 sm:w-28 sm:h-28 rounded-full overflow-hidden border-2 border-purple-500/40 bg-purple-950/40 flex items-center justify-center shadow-xl relative" id="edit-account-avatar-preview-box">
+                <img id="edit-account-avatar-preview" src="" alt="Avatar" class="w-full h-full object-cover hidden" />
+                <div id="edit-account-avatar-placeholder" class="text-purple-200 font-bold text-3xl sm:text-4xl">H</div>
+                
+                <!-- Hover dark overlay with camera -->
+                <div class="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+                  <Camera class="w-7 h-7 text-white drop-shadow" />
+                </div>
+              </div>
+
+              <!-- Camera Badge Overlay on Bottom-Right -->
+              <div class="absolute bottom-0 right-0 w-8 h-8 rounded-full bg-gradient-to-tr from-purple-600 to-indigo-600 border-2 border-[#141824] flex items-center justify-center text-white shadow-lg group-hover:scale-110 transition-transform">
+                <Camera class="w-4 h-4" />
+              </div>
             </div>
-            <div class="space-y-1.5 text-center sm:text-left flex-1 min-w-0 w-full">
-              <label class="text-xs font-semibold text-slate-300">Account Avatar URL</label>
-              <input 
-                type="text" 
-                id="input-account-avatar-url" 
-                placeholder="https://example.com/avatar.jpg" 
-                class="w-full px-3.5 py-2.5 rounded-xl bg-white/[0.05] border border-white/10 text-xs text-white placeholder-slate-500 focus:outline-none focus:border-purple-500/60 transition"
-              />
-              <p class="text-[11px] text-[#8e98a8]">This is your primary account picture across Aetheria.</p>
+
+            <!-- Subtle action labels -->
+            <div class="flex flex-col items-center gap-1">
+              <button 
+                type="button" 
+                id="btn-edit-account-change-photo" 
+                class="text-xs font-semibold text-purple-400 hover:text-purple-300 transition cursor-pointer"
+              >
+                Tap to change photo
+              </button>
+              <button 
+                type="button" 
+                id="btn-edit-account-remove-photo" 
+                class="text-[11px] text-red-400/80 hover:text-red-300 transition cursor-pointer hidden"
+              >
+                Remove photo
+              </button>
             </div>
           </div>
 
@@ -3600,20 +3623,73 @@ import {
     });
   }
 
+  // ==========================================
+  // Client-Side Image Resizing & Compression (HTML5 Canvas)
+  // Max 256x256px, WebP/JPEG quality 0.85, super lightweight payload (<25KB)
+  // ==========================================
+  function resizeAndCompressImage(file: File, maxDim = 256, quality = 0.85): Promise<string> {
+    return new Promise((resolve, reject) => {
+      if (!file || !file.type.startsWith('image/')) {
+        return reject(new Error('Selected file is not an image'));
+      }
+      const reader = new FileReader();
+      reader.onerror = () => reject(new Error('Failed to read file'));
+      reader.onload = (e) => {
+        const img = new window.Image();
+        img.onerror = () => reject(new Error('Failed to decode image'));
+        img.onload = () => {
+          let width = img.width;
+          let height = img.height;
+
+          // Preserve aspect ratio while constraining to maxDim
+          if (width > height) {
+            if (width > maxDim) {
+              height = Math.round((height * maxDim) / width);
+              width = maxDim;
+            }
+          } else {
+            if (height > maxDim) {
+              width = Math.round((width * maxDim) / height);
+              height = maxDim;
+            }
+          }
+
+          const canvas = document.createElement('canvas');
+          canvas.width = Math.max(1, width);
+          canvas.height = Math.max(1, height);
+          const ctx = canvas.getContext('2d');
+          if (!ctx) {
+            return reject(new Error('Canvas context unavailable'));
+          }
+
+          ctx.drawImage(img, 0, 0, width, height);
+
+          try {
+            const webpData = canvas.toDataURL('image/webp', quality);
+            if (webpData && webpData.startsWith('data:image/webp')) {
+              resolve(webpData);
+            } else {
+              resolve(canvas.toDataURL('image/jpeg', quality));
+            }
+          } catch {
+            resolve(canvas.toDataURL('image/jpeg', quality));
+          }
+        };
+        img.src = e.target?.result as string;
+      };
+      reader.readAsDataURL(file);
+    });
+  }
+
   // File input change listener for Base64 image
   const globalAvatarFileInput = document.getElementById('avatar-file-input') as HTMLInputElement;
-  globalAvatarFileInput?.addEventListener('change', () => {
+  globalAvatarFileInput?.addEventListener('change', async () => {
     const file = globalAvatarFileInput.files?.[0];
     if (!file || !targetAvatarUploadPersonaId) return;
 
-    if (file.size > 4 * 1024 * 1024) {
-      showToast('Image size exceeds 4MB limit', 'warning');
-      return;
-    }
-
-    const reader = new FileReader();
-    reader.onload = (e) => {
-      const base64 = e.target?.result as string;
+    try {
+      showToast('Optimizing photo...', 'info');
+      const base64 = await resizeAndCompressImage(file, 256, 0.85);
       const p = personas.find(x => x.id === targetAvatarUploadPersonaId);
       if (p) {
         p.avatar = base64;
@@ -3621,8 +3697,9 @@ import {
         render3DCarousel();
         showToast('Avatar photo updated', 'success');
       }
-    };
-    reader.readAsDataURL(file);
+    } catch {
+      showToast('Failed to process image', 'error');
+    }
   });
 
   // Setup Event Handlers
@@ -3719,14 +3796,38 @@ import {
     document.getElementById('hub-item-data')?.addEventListener('click', () => showView('view-privacy'));
 
     // Account Edit Form Handlers
+    let editAccountDraftAvatar = '';
+
+    function renderEditAccountAvatar(url: string, name: string) {
+      const previewImg = document.getElementById('edit-account-avatar-preview') as HTMLImageElement;
+      const previewPlaceholder = document.getElementById('edit-account-avatar-placeholder');
+      const removeBtn = document.getElementById('btn-edit-account-remove-photo');
+
+      if (url) {
+        if (previewImg) {
+          previewImg.src = url;
+          previewImg.classList.remove('hidden');
+        }
+        if (previewPlaceholder) previewPlaceholder.classList.add('hidden');
+        if (removeBtn) removeBtn.classList.remove('hidden');
+      } else {
+        if (previewImg) {
+          previewImg.src = '';
+          previewImg.classList.add('hidden');
+        }
+        if (previewPlaceholder) {
+          previewPlaceholder.classList.remove('hidden');
+          previewPlaceholder.textContent = (name || 'H').charAt(0).toUpperCase();
+        }
+        if (removeBtn) removeBtn.classList.add('hidden');
+      }
+    }
+
     function populateAccountEditForm() {
       const user = getAccountUser();
       const inputName = document.getElementById('input-account-display-name') as HTMLInputElement;
       const inputUsername = document.getElementById('input-account-username') as HTMLInputElement;
       const inputEmail = document.getElementById('input-account-email') as HTMLInputElement;
-      const inputAvatar = document.getElementById('input-account-avatar-url') as HTMLInputElement;
-      const previewImg = document.getElementById('edit-account-avatar-preview') as HTMLImageElement;
-      const previewPlaceholder = document.getElementById('edit-account-avatar-placeholder');
 
       const displayName = user.name || user.displayName || 'Hossein';
       const username = (user.username || displayName).toLowerCase().replace(/\s+/g, '');
@@ -3734,20 +3835,9 @@ import {
       if (inputName) inputName.value = displayName;
       if (inputUsername) inputUsername.value = username;
       if (inputEmail) inputEmail.value = user.email || '';
-      if (inputAvatar) inputAvatar.value = user.avatarUrl || '';
 
-      if (previewImg && previewPlaceholder) {
-        if (user.avatarUrl) {
-          previewImg.src = user.avatarUrl;
-          previewImg.classList.remove('hidden');
-          previewPlaceholder.classList.add('hidden');
-        } else {
-          previewImg.src = '';
-          previewImg.classList.add('hidden');
-          previewPlaceholder.classList.remove('hidden');
-          previewPlaceholder.textContent = displayName.charAt(0).toUpperCase();
-        }
-      }
+      editAccountDraftAvatar = user.avatarUrl || '';
+      renderEditAccountAvatar(editAccountDraftAvatar, displayName);
     }
 
     // Tapping Account Header Card opens Edit Account
@@ -3759,38 +3849,68 @@ import {
     document.getElementById('btn-back-from-edit-account')?.addEventListener('click', () => showView('view-hub'));
     document.getElementById('btn-cancel-edit-account')?.addEventListener('click', () => showView('view-hub'));
 
-    document.getElementById('input-account-avatar-url')?.addEventListener('input', (e) => {
-      const val = (e.target as HTMLInputElement).value.trim();
-      const previewImg = document.getElementById('edit-account-avatar-preview') as HTMLImageElement;
-      const previewPlaceholder = document.getElementById('edit-account-avatar-placeholder');
-      if (previewImg && previewPlaceholder) {
-        if (val) {
-          previewImg.src = val;
-          previewImg.classList.remove('hidden');
-          previewPlaceholder.classList.add('hidden');
-        } else {
-          previewImg.src = '';
-          previewImg.classList.add('hidden');
-          previewPlaceholder.classList.remove('hidden');
-        }
+    // Native Avatar File Pickers (Triggered via Avatar Click or "Tap to change photo")
+    const triggerAvatarUpload = () => {
+      const fileInput = document.getElementById('input-account-avatar-file') as HTMLInputElement;
+      if (fileInput) {
+        fileInput.value = '';
+        fileInput.click();
+      }
+    };
+
+    document.getElementById('btn-trigger-avatar-upload')?.addEventListener('click', triggerAvatarUpload);
+    document.getElementById('btn-edit-account-change-photo')?.addEventListener('click', triggerAvatarUpload);
+
+    // Native File Selected -> Client-Side Canvas Resize (256x256 WebP/JPEG 0.85)
+    const accountFileInput = document.getElementById('input-account-avatar-file') as HTMLInputElement;
+    accountFileInput?.addEventListener('change', async () => {
+      const file = accountFileInput.files?.[0];
+      if (!file) return;
+
+      try {
+        showToast('Optimizing photo...', 'info');
+        const compressedBase64 = await resizeAndCompressImage(file, 256, 0.85);
+        editAccountDraftAvatar = compressedBase64;
+        const inputName = document.getElementById('input-account-display-name') as HTMLInputElement;
+        renderEditAccountAvatar(editAccountDraftAvatar, inputName?.value || 'Hossein');
+        showToast('Photo selected! Tap Save to apply.', 'success');
+      } catch {
+        showToast('Failed to process image file', 'error');
       }
     });
 
+    // Remove Avatar
+    document.getElementById('btn-edit-account-remove-photo')?.addEventListener('click', (e) => {
+      e.stopPropagation();
+      editAccountDraftAvatar = '';
+      const inputName = document.getElementById('input-account-display-name') as HTMLInputElement;
+      renderEditAccountAvatar('', inputName?.value || 'Hossein');
+      showToast('Photo removed. Tap Save to apply.', 'info');
+    });
+
+    // Update avatar letter placeholder dynamically on display name input
+    document.getElementById('input-account-display-name')?.addEventListener('input', (e) => {
+      if (!editAccountDraftAvatar) {
+        const val = (e.target as HTMLInputElement).value.trim();
+        const placeholder = document.getElementById('edit-account-avatar-placeholder');
+        if (placeholder) placeholder.textContent = (val || 'H').charAt(0).toUpperCase();
+      }
+    });
+
+    // Save Account Profile
     document.getElementById('btn-save-account')?.addEventListener('click', async () => {
       const inputName = document.getElementById('input-account-display-name') as HTMLInputElement;
       const inputUsername = document.getElementById('input-account-username') as HTMLInputElement;
       const inputEmail = document.getElementById('input-account-email') as HTMLInputElement;
-      const inputAvatar = document.getElementById('input-account-avatar-url') as HTMLInputElement;
 
       const user = getAccountUser();
       user.name = inputName?.value.trim() || user.name || 'Hossein';
       user.displayName = user.name;
       user.username = inputUsername?.value.trim() || user.username || 'hossein';
       user.email = inputEmail?.value.trim() || user.email || '';
-      user.avatarUrl = inputAvatar?.value.trim() || '';
+      user.avatarUrl = editAccountDraftAvatar;
 
-      localStorage.setItem('aetheria_user', JSON.stringify(user));
-      window.dispatchEvent(new CustomEvent('aetheria_auth_changed'));
+      saveAccountUser(user);
       updateAccountHeaderUI();
 
       const token = localStorage.getItem('aetheria_auth_token');
