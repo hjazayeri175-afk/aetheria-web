@@ -5690,6 +5690,90 @@ html.day-mode .avatar-border-dual-gradient {
   animation: voidCoronaPulse 3s ease-in-out infinite alternate;
 }
 
+/* ========================================================
+   DISCORD-STYLE ILLUSTRATED DECORATION ARTWORK KEYFRAMES
+   ======================================================== */
+
+@keyframes wolfEarLeft {
+  0%, 100% { transform: rotate(0deg); }
+  45% { transform: rotate(-3deg); }
+  50% { transform: rotate(2deg); }
+  55% { transform: rotate(-1deg); }
+}
+@keyframes wolfEarRight {
+  0%, 100% { transform: rotate(0deg); }
+  40% { transform: rotate(3deg); }
+  46% { transform: rotate(-2deg); }
+  52% { transform: rotate(1deg); }
+}
+@keyframes moonFloat {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-3px); }
+}
+@keyframes wolfTailSway {
+  0%, 100% { transform: rotate(0deg); }
+  50% { transform: rotate(4deg); }
+}
+.animate-wolf-ear-left {
+  animation: wolfEarLeft 4s ease-in-out infinite;
+}
+.animate-wolf-ear-right {
+  animation: wolfEarRight 4.5s ease-in-out infinite;
+}
+.animate-moon-float {
+  animation: moonFloat 3s ease-in-out infinite;
+}
+.animate-wolf-tail {
+  animation: wolfTailSway 3.5s ease-in-out infinite;
+}
+
+@keyframes tiaraShimmer {
+  0%, 100% { filter: drop-shadow(0 2px 8px rgba(234,179,8,0.7)); }
+  50% { filter: drop-shadow(0 2px 14px rgba(254,240,138,0.95)) drop-shadow(0 0 8px #f59e0b); }
+}
+@keyframes starburstSpin {
+  0% { transform: rotate(0deg) scale(0.9); }
+  50% { transform: rotate(180deg) scale(1.15); }
+  100% { transform: rotate(360deg) scale(0.9); }
+}
+.animate-tiara-shimmer {
+  animation: tiaraShimmer 2.8s ease-in-out infinite;
+}
+.animate-starburst-spin {
+  animation: starburstSpin 6s ease-in-out infinite;
+}
+
+@keyframes hatWobble {
+  0%, 100% { transform: rotate(-1deg); }
+  50% { transform: rotate(1.5deg); }
+}
+@keyframes catTailTwitch {
+  0%, 100% { transform: rotate(0deg); }
+  30% { transform: rotate(-4deg); }
+  60% { transform: rotate(3deg); }
+}
+.animate-hat-wobble {
+  animation: hatWobble 3.5s ease-in-out infinite;
+}
+.animate-cat-tail {
+  animation: catTailTwitch 3s ease-in-out infinite;
+}
+
+@keyframes wingLeftFlap {
+  0%, 100% { transform: scale(1) rotate(0deg); }
+  50% { transform: scale(1.04) rotate(-3deg); }
+}
+@keyframes wingRightFlap {
+  0%, 100% { transform: scale(1) rotate(0deg); }
+  50% { transform: scale(1.04) rotate(3deg); }
+}
+.animate-wing-left {
+  animation: wingLeftFlap 3s ease-in-out infinite;
+}
+.animate-wing-right {
+  animation: wingRightFlap 3s ease-in-out infinite;
+}
+
 /* Day Mode and OLED Mode overrides for visual grid tiles */
 html[data-base-mode="day"] .avatar-deco-tile:not(.ring-2),
 html.day-mode .avatar-deco-tile:not(.ring-2) {
@@ -5717,6 +5801,25 @@ html[data-base-mode="oled"] .avatar-deco-tile:not(.ring-2) {
 html.power-saving-oled .avatar-deco-tile.ring-2,
 html[data-base-mode="oled"] .avatar-deco-tile.ring-2 {
   background-color: #1a0814 !important;
+}
+
+/* Discord Hero Avatar Showcase Card (Always High-Contrast Dark Stage) */
+#preview-hero-avatar-card {
+  background-color: #111218;
+}
+
+html[data-base-mode="day"] #preview-hero-avatar-card,
+html.day-mode #preview-hero-avatar-card {
+  background-color: #111218 !important;
+  border-color: rgba(255, 255, 255, 0.12) !important;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.12) !important;
+}
+
+html.power-saving-oled #preview-hero-avatar-card,
+html[data-base-mode="oled"] #preview-hero-avatar-card {
+  background-color: #050505 !important;
+  border-color: rgba(255, 255, 255, 0.1) !important;
+  box-shadow: none !important;
 }
 
 /* Smooth color and styling transitions for user name */
