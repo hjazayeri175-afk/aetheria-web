@@ -218,19 +218,14 @@ const isLibrary = pathname.startsWith('/library');
           starsPill.classList.remove('hidden');
           starsPill.classList.add('flex');
         }
-        let avatarSrc = user.avatarUrl;
-        try {
-          const rawPersona = localStorage.getItem('aetheria_user_persona');
-          if (rawPersona) {
-            const p = JSON.parse(rawPersona);
-            if (p.avatar) avatarSrc = p.avatar;
-          }
-        } catch {}
-
+        const avatarSrc = user.avatarUrl;
         if (avatarSrc && img && icon) {
           img.src = avatarSrc;
           img.classList.remove('hidden');
           icon.classList.add('hidden');
+        } else if (img && icon) {
+          img.classList.add('hidden');
+          icon.classList.remove('hidden');
         }
       } else {
         if (signinBtn) signinBtn.classList.remove('hidden');

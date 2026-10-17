@@ -76,18 +76,18 @@ const isProfile = pathname.startsWith('/profile');
       <span class={`nav-indicator w-1 h-1 rounded-full mt-0.5 ${isLibrary ? '' : 'hidden'}`}></span>
     </a>
 
-    <!-- 5. Persona -->
+    <!-- 5. Profile -->
     <a 
       href="/profile" 
       id="nav-btn-persona"
       class={`nav-item group relative flex flex-col items-center justify-center py-1 px-2.5 active:scale-95 transition-all cursor-pointer ${
         isProfile ? 'nav-active' : 'text-slate-400 hover:text-slate-200'
       }`}
-      title="User Persona & Identity"
+      title="User Account & Profile"
       data-route="profile"
     >
       <User class="w-5 h-5 transition-transform duration-200 group-hover:scale-110" />
-      <span class="text-[10px] font-medium tracking-tight mt-1">Persona</span>
+      <span class="text-[10px] font-medium tracking-tight mt-1">Profile</span>
       <span class={`nav-indicator w-1 h-1 rounded-full mt-0.5 ${isProfile ? '' : 'hidden'}`}></span>
     </a>
 
