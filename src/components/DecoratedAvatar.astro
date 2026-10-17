@@ -1,0 +1,219 @@
+---
+interface Props {
+  src?: string;
+  initial?: string;
+  decoration?: string;
+  glowColor?: string;
+  size?: number; // Size in px (e.g. 56 or 44)
+  class?: string;
+  id?: string;
+}
+
+const {
+  src = '',
+  initial = 'H',
+  decoration = 'none',
+  glowColor = '#a855f7',
+  size = 56,
+  class: className = '',
+  id = ''
+} = Astro.props;
+
+// Normalizing legacy decoration IDs
+const normalizedDeco = (decoration === 'glow' || decoration === 'dual-gradient') 
+  ? 'plasma-vortex' 
+  : (decoration === 'dynamic-sparkle') 
+    ? 'starlight-orbit' 
+    : (decoration || 'none');
+---
+
+<div 
+  class={`relative flex items-center justify-center shrink-0 select-none ${className}`}
+  style={`width: ${size}px; height: ${size}px; --avatar-glow-color: ${glowColor}; --avatar-border-color: ${glowColor};`}
+  id={id || undefined}
+>
+  <!-- Base Avatar (100% size, rounded-full overflow-hidden) -->
+  <div class="w-full h-full rounded-full overflow-hidden relative z-0 flex items-center justify-center bg-gradient-to-tr from-purple-600 to-indigo-600 shadow-inner">
+    {src ? (
+      <img src={src} alt="Avatar" class="w-full h-full rounded-full object-cover" />
+    ) : (
+      <span class="text-white font-bold select-none" style={`font-size: ${Math.round(size * 0.42)}px;`}>
+        {initial.charAt(0).toUpperCase()}
+      </span>
+    )}
+  </div>
+
+  <!-- Discord-style Decoration Layer (bleed -inset-[18%]) -->
+  <div class="absolute -inset-[18%] pointer-events-none z-10 flex items-center justify-center overflow-visible">
+    {normalizedDeco === 'none' && (
+      <div class="w-full h-full rounded-full border border-white/20"></div>
+    )}
+
+    {normalizedDeco === 'cyber-spin' && (
+      <div class="w-full h-full rounded-full relative flex items-center justify-center">
+        <div 
+          class="absolute inset-0 rounded-full animate-cyber-spin-laser pointer-events-none" 
+          style="background: conic-gradient(from 0deg, transparent 0%, transparent 60%, var(--avatar-glow-color, #06b6d4) 92%, #ffffff 100%); -webkit-mask: radial-gradient(farthest-side, transparent calc(100% - 3px), black calc(100% - 2.5px)); mask: radial-gradient(farthest-side, transparent calc(100% - 3px), black calc(100% - 2.5px)); filter: drop-shadow(0 0 6px var(--avatar-glow-color, #06b6d4));"
+        ></div>
+      </div>
+    )}
+
+    {normalizedDeco === 'plasma-vortex' && (
+      <div class="w-full h-full rounded-full relative flex items-center justify-center">
+        <div 
+          class="absolute inset-0 rounded-full animate-plasma-cw opacity-85" 
+          style="background: conic-gradient(from 0deg, #06b6d4, #a855f7, #ec4899, #06b6d4); -webkit-mask: radial-gradient(farthest-side, transparent calc(100% - 2.5px), black calc(100% - 2px)); mask: radial-gradient(farthest-side, transparent calc(100% - 2.5px), black calc(100% - 2px)); filter: drop-shadow(0 0 6px rgba(168, 85, 247, 0.7));"
+        ></div>
+        <div 
+          class="absolute inset-[3px] rounded-full animate-plasma-ccw opacity-75" 
+          style="background: conic-gradient(from 180deg, #f59e0b, #ec4899, #6366f1, #f59e0b); -webkit-mask: radial-gradient(farthest-side, transparent calc(100% - 2px), black calc(100% - 1.5px)); mask: radial-gradient(farthest-side, transparent calc(100% - 2px), black calc(100% - 1.5px)); filter: drop-shadow(0 0 5px rgba(245, 158, 11, 0.6));"
+        ></div>
+      </div>
+    )}
+
+    {normalizedDeco === 'electric-arc' && (
+      <div class="w-full h-full relative flex items-center justify-center animate-electric-arc">
+        <svg viewBox="0 0 100 100" class="w-full h-full animate-plasma-ccw">
+          <circle cx="50" cy="50" r="45" fill="none" stroke="var(--avatar-glow-color, #06b6d4)" stroke-width="2.5" stroke-dasharray="14 8 4 6 10 12" stroke-linecap="round" style="filter: drop-shadow(0 0 6px var(--avatar-glow-color, #06b6d4)) drop-shadow(0 0 2px #ffffff);" />
+          <polygon points="50,3 48,8 52,7 49,12 53,6 50,7" fill="#ffffff" style="filter: drop-shadow(0 0 4px #06b6d4);" />
+          <polygon points="95,50 90,48 91,52 86,49 92,53 91,50" fill="#ffffff" style="filter: drop-shadow(0 0 4px #a855f7);" />
+        </svg>
+      </div>
+    )}
+
+    {normalizedDeco === 'solar-flare' && (
+      <div class="w-full h-full relative flex items-center justify-center animate-solar-flare">
+        <div class="absolute inset-[2px] rounded-full" style="box-shadow: 0 0 14px rgba(245, 158, 11, 0.7), inset 0 0 8px rgba(239, 68, 68, 0.5); border: 2px solid #fbbf24;"></div>
+        <svg viewBox="0 0 100 100" class="w-full h-full animate-plasma-cw">
+          <defs>
+            <linearGradient id="astroSolarGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+              <stop offset="0%" stop-color="#fbbf24" />
+              <stop offset="50%" stop-color="#f59e0b" />
+              <stop offset="100%" stop-color="#ef4444" />
+            </linearGradient>
+          </defs>
+          <path d="M50,2 Q53,8 50,11 Q47,8 50,2 Z" fill="url(#astroSolarGrad)" filter="drop-shadow(0 0 4px #f59e0b)" />
+          <path d="M98,50 Q92,53 89,50 Q92,47 98,50 Z" fill="url(#astroSolarGrad)" filter="drop-shadow(0 0 4px #f59e0b)" />
+          <path d="M50,98 Q47,92 50,89 Q53,92 50,98 Z" fill="url(#astroSolarGrad)" filter="drop-shadow(0 0 4px #ef4444)" />
+          <path d="M2,50 Q8,47 11,50 Q8,53 2,50 Z" fill="url(#astroSolarGrad)" filter="drop-shadow(0 0 4px #ef4444)" />
+          <path d="M16,16 Q22,20 20,24 Q18,20 16,16 Z" fill="url(#astroSolarGrad)" />
+          <path d="M84,16 Q80,22 76,20 Q80,18 84,16 Z" fill="url(#astroSolarGrad)" />
+          <path d="M84,84 Q78,80 80,76 Q82,80 84,84 Z" fill="url(#astroSolarGrad)" />
+          <path d="M16,84 Q20,78 24,80 Q20,82 16,84 Z" fill="url(#astroSolarGrad)" />
+        </svg>
+      </div>
+    )}
+
+    {normalizedDeco === 'royal-crown' && (
+      <div class="w-full h-full relative flex items-center justify-center">
+        <div class="absolute inset-[3px] rounded-full border-2 border-amber-400" style="box-shadow: 0 0 10px rgba(251, 191, 36, 0.6), inset 0 0 4px rgba(245, 158, 11, 0.4);"></div>
+        <div class="absolute -top-[12%] left-1/2 -translate-x-1/2 w-[44%] h-[28%] animate-crown-hover pointer-events-none" style="filter: drop-shadow(0 2px 6px rgba(245, 158, 11, 0.8));">
+          <svg viewBox="0 0 36 24" class="w-full h-full">
+            <defs>
+              <linearGradient id="astroGoldCrownGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+                <stop offset="0%" stop-color="#fef08a" />
+                <stop offset="40%" stop-color="#facc15" />
+                <stop offset="100%" stop-color="#b45309" />
+              </linearGradient>
+            </defs>
+            <path d="M2,20 L34,20 L31,7 L23,14 L18,3 L13,14 L5,7 Z" fill="url(#astroGoldCrownGrad)" stroke="#78350f" stroke-width="0.8" />
+            <circle cx="18" cy="4" r="1.8" fill="#ef4444" />
+            <circle cx="5" cy="8" r="1.5" fill="#38bdf8" />
+            <circle cx="31" cy="8" r="1.5" fill="#38bdf8" />
+            <rect x="5" y="17" width="26" height="2.5" rx="1" fill="#fef08a" opacity="0.9" />
+          </svg>
+        </div>
+      </div>
+    )}
+
+    {normalizedDeco === 'sakura-drift' && (
+      <div class="w-full h-full relative flex items-center justify-center">
+        <div class="absolute inset-[3px] rounded-full border-2 border-pink-400" style="box-shadow: 0 0 10px rgba(244, 114, 182, 0.6), inset 0 0 5px rgba(244, 114, 182, 0.3);"></div>
+        <div class="absolute inset-0 animate-sakura-orbit">
+          <div class="absolute top-[2px] left-1/2 -translate-x-1/2 w-3.5 h-3.5 animate-sakura-petal" style="filter: drop-shadow(0 0 4px #f472b6);">
+            <svg viewBox="0 0 20 20" class="w-full h-full"><path d="M10,2 C13,4 16,8 14,13 C12,18 8,18 6,13 C4,8 7,4 10,2 Z" fill="#fbcfe8" stroke="#f472b6" stroke-width="0.8"/></svg>
+          </div>
+          <div class="absolute top-1/2 right-[2px] -translate-y-1/2 w-3 h-3 animate-sakura-petal" style="filter: drop-shadow(0 0 4px #f472b6);">
+            <svg viewBox="0 0 20 20" class="w-full h-full"><path d="M10,2 C13,4 16,8 14,13 C12,18 8,18 6,13 C4,8 7,4 10,2 Z" fill="#f472b6" stroke="#db2777" stroke-width="0.8"/></svg>
+          </div>
+          <div class="absolute bottom-[2px] left-1/2 -translate-x-1/2 w-3.5 h-3.5 animate-sakura-petal" style="filter: drop-shadow(0 0 4px #f472b6);">
+            <svg viewBox="0 0 20 20" class="w-full h-full"><path d="M10,2 C13,4 16,8 14,13 C12,18 8,18 6,13 C4,8 7,4 10,2 Z" fill="#fbcfe8" stroke="#f472b6" stroke-width="0.8"/></svg>
+          </div>
+          <div class="absolute top-1/2 left-[2px] -translate-y-1/2 w-3 h-3 animate-sakura-petal" style="filter: drop-shadow(0 0 4px #f472b6);">
+            <svg viewBox="0 0 20 20" class="w-full h-full"><path d="M10,2 C13,4 16,8 14,13 C12,18 8,18 6,13 C4,8 7,4 10,2 Z" fill="#f472b6" stroke="#db2777" stroke-width="0.8"/></svg>
+          </div>
+        </div>
+      </div>
+    )}
+
+    {normalizedDeco === 'starlight-orbit' && (
+      <div class="w-full h-full relative flex items-center justify-center">
+        <div class="absolute inset-[3px] rounded-full border-2 border-indigo-400" style="box-shadow: 0 0 12px rgba(99, 102, 241, 0.7), inset 0 0 6px rgba(168, 85, 247, 0.4);"></div>
+        <div class="absolute inset-0 animate-starlight-1">
+          <div class="absolute -top-1 left-1/2 -translate-x-1/2 text-cyan-300 text-xs font-black select-none" style="filter: drop-shadow(0 0 5px #22d3ee);">✦</div>
+        </div>
+        <div class="absolute inset-0 animate-starlight-2">
+          <div class="absolute -bottom-1 left-1/2 -translate-x-1/2 text-pink-400 text-xs font-black select-none" style="filter: drop-shadow(0 0 5px #f472b6);">✦</div>
+        </div>
+        <div class="absolute inset-0 animate-starlight-3">
+          <div class="absolute top-1/2 -right-1 -translate-y-1/2 text-amber-300 text-[10px] font-black select-none" style="filter: drop-shadow(0 0 4px #fbbf24);">✦</div>
+        </div>
+      </div>
+    )}
+
+    {normalizedDeco === 'cyber-glitch' && (
+      <div class="w-full h-full relative flex items-center justify-center animate-hud-glitch-jitter">
+        <svg viewBox="0 0 100 100" class="w-full h-full animate-hud-glitch-spin">
+          <path d="M15,25 L15,15 L25,15" fill="none" stroke="#22d3ee" stroke-width="2.5" stroke-linecap="square" style="filter: drop-shadow(0 0 4px #22d3ee);" />
+          <path d="M85,25 L85,15 L75,15" fill="none" stroke="#22d3ee" stroke-width="2.5" stroke-linecap="square" style="filter: drop-shadow(0 0 4px #22d3ee);" />
+          <path d="M85,75 L85,85 L75,85" fill="none" stroke="#22d3ee" stroke-width="2.5" stroke-linecap="square" style="filter: drop-shadow(0 0 4px #22d3ee);" />
+          <path d="M15,75 L15,85 L25,85" fill="none" stroke="#22d3ee" stroke-width="2.5" stroke-linecap="square" style="filter: drop-shadow(0 0 4px #22d3ee);" />
+          <circle cx="50" cy="50" r="43" fill="none" stroke="#a855f7" stroke-width="2" stroke-dasharray="24 18 12 18" stroke-linecap="round" style="filter: drop-shadow(0 0 4px #ec4899);" />
+          <line x1="50" y1="2" x2="50" y2="8" stroke="#22d3ee" stroke-width="2" />
+          <line x1="50" y1="92" x2="50" y2="98" stroke="#22d3ee" stroke-width="2" />
+          <line x1="2" y1="50" x2="8" y2="50" stroke="#22d3ee" stroke-width="2" />
+          <line x1="92" y1="50" x2="98" y2="50" stroke="#22d3ee" stroke-width="2" />
+        </svg>
+      </div>
+    )}
+
+    {normalizedDeco === 'frost-crystal' && (
+      <div class="w-full h-full relative flex items-center justify-center animate-frost-gleam">
+        <div class="absolute inset-[3px] rounded-full border-2 border-sky-300" style="box-shadow: 0 0 12px rgba(56, 189, 248, 0.7), inset 0 0 6px rgba(224, 242, 254, 0.5);"></div>
+        <svg viewBox="0 0 100 100" class="w-full h-full">
+          <defs>
+            <linearGradient id="astroIceGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+              <stop offset="0%" stop-color="#ffffff" />
+              <stop offset="50%" stop-color="#7dd3fc" />
+              <stop offset="100%" stop-color="#0284c7" />
+            </linearGradient>
+          </defs>
+          <polygon points="50,2 47,8 50,11 53,8" fill="url(#astroIceGrad)" filter="drop-shadow(0 0 4px #38bdf8)" />
+          <polygon points="98,50 92,47 89,50 92,53" fill="url(#astroIceGrad)" filter="drop-shadow(0 0 4px #38bdf8)" />
+          <polygon points="50,98 53,92 50,89 47,92" fill="url(#astroIceGrad)" filter="drop-shadow(0 0 4px #38bdf8)" />
+          <polygon points="2,50 8,53 11,50 8,47" fill="url(#astroIceGrad)" filter="drop-shadow(0 0 4px #38bdf8)" />
+          <polygon points="16,16 22,18 20,22 17,19" fill="url(#astroIceGrad)" />
+          <polygon points="84,84 78,82 80,78 83,81" fill="url(#astroIceGrad)" />
+        </svg>
+      </div>
+    )}
+
+    {normalizedDeco === 'emerald-pulse' && (
+      <div class="w-full h-full relative flex items-center justify-center">
+        <div class="absolute inset-[3px] rounded-full border-2 border-emerald-400" style="box-shadow: 0 0 12px rgba(16, 185, 129, 0.8), inset 0 0 6px rgba(16, 185, 129, 0.4);"></div>
+        <div class="absolute inset-0 rounded-full border-2 border-emerald-400 animate-emerald-wave-1"></div>
+        <div class="absolute inset-0 rounded-full border-2 border-emerald-300 animate-emerald-wave-2"></div>
+      </div>
+    )}
+
+    {normalizedDeco === 'void-eclipse' && (
+      <div class="w-full h-full relative flex items-center justify-center animate-void-corona">
+        <div class="absolute inset-[2px] rounded-full border-2 border-white" style="box-shadow: 0 0 14px #ffffff, 0 0 24px rgba(168, 85, 247, 0.9), inset 0 0 8px rgba(0, 0, 0, 0.9);"></div>
+        <div class="absolute inset-0 animate-plasma-cw">
+          <div class="absolute top-1 left-1/2 -translate-x-1/2 w-1.5 h-1.5 rounded-full bg-violet-400" style="box-shadow: 0 0 6px #c084fc;"></div>
+          <div class="absolute bottom-1 left-1/2 -translate-x-1/2 w-2 h-2 rounded-full bg-white" style="box-shadow: 0 0 8px #ffffff;"></div>
+        </div>
+      </div>
+    )}
+  </div>
+</div>

@@ -1555,7 +1555,7 @@ import {
     <!-- VIEW 9: NAME COLOR & STYLE SUB-PAGE (FULL SCREEN) -->
     <!-- ========================================== -->
     <div id="view-name-color" class="hidden space-y-4">
-      <!-- Sticky Top Header Bar -->
+      <!-- Sticky Top Header Bar (Clean - Duplicate Apply removed) -->
       <div class="sticky top-16 sm:top-18 z-30 -mx-3 sm:-mx-4 px-3 sm:px-4 py-3 bg-[#07080d]/95 backdrop-blur-md border-b border-white/[0.06] flex items-center justify-between transition-all">
         <button 
           type="button" 
@@ -1564,15 +1564,6 @@ import {
         >
           <ArrowLeft class="w-5 h-5 text-purple-400" />
           <span>Chat Settings</span>
-        </button>
-        
-        <button 
-          type="button" 
-          id="btn-header-apply-name-style" 
-          class="px-4 py-1.5 rounded-full bg-gradient-to-r from-purple-600 via-indigo-600 to-indigo-700 hover:from-purple-500 hover:to-indigo-600 border border-purple-400/30 text-white text-xs font-bold flex items-center gap-1.5 shadow-lg shadow-purple-900/30 transition-all duration-200 active:scale-95 cursor-pointer"
-        >
-          <Check class="w-3.5 h-3.5" />
-          <span>Apply Style</span>
         </button>
       </div>
 
@@ -1608,12 +1599,16 @@ import {
       <div class="shrink-0 grid grid-cols-12 gap-3 p-3.5 rounded-2xl bg-[#11141d] border border-white/10 shadow-xl">
         <!-- Left Column: col-span-5 -->
         <div class="col-span-5 flex flex-col items-center justify-center p-3 rounded-xl bg-black/40 border border-white/[0.04] text-center min-w-0">
-          <!-- Centered 56px Avatar with live border effect -->
-          <div id="preview-avatar-container" class="w-14 h-14 rounded-full p-[2px] transition-all duration-300 shrink-0 flex items-center justify-center avatar-border-none mb-1.5">
-            <img id="preview-avatar-img" src="" alt="Avatar" class="w-full h-full rounded-full object-cover hidden" />
-            <div id="preview-avatar-initial" class="w-full h-full rounded-full bg-gradient-to-tr from-purple-600 to-indigo-600 flex items-center justify-center text-white text-base font-bold select-none">
-              H
+          <!-- Centered 56px Avatar with Discord-style live decoration -->
+          <div id="preview-avatar-container" class="relative w-14 h-14 flex items-center justify-center shrink-0 mb-1.5 select-none" style="--avatar-glow-color: #a855f7;">
+            <div class="w-full h-full rounded-full overflow-hidden relative z-0 flex items-center justify-center bg-gradient-to-tr from-purple-600 to-indigo-600 shadow-inner">
+              <img id="preview-avatar-img" src="" alt="Avatar" class="w-full h-full rounded-full object-cover hidden" />
+              <div id="preview-avatar-initial" class="w-full h-full rounded-full flex items-center justify-center text-white text-base font-bold select-none">
+                H
+              </div>
             </div>
+            <!-- Discord-style Bleed Overlay Layer -->
+            <div id="preview-avatar-deco-layer" class="absolute -inset-[18%] pointer-events-none z-10 flex items-center justify-center overflow-visible"></div>
           </div>
           <!-- User Name + Badge -->
           <div class="flex items-center justify-center gap-1 max-w-full min-w-0">
@@ -1770,19 +1765,19 @@ import {
         <!-- ========================================== -->
         <div id="view-tab-avatar" class="hidden space-y-4">
           
-          <!-- Card A: 2x2 Clean Grid for Avatar Border Effects -->
+          <!-- Card A: 4x3 Visual Grid for Discord-Style Avatar Decorations -->
           <div class="p-4 rounded-2xl bg-[#11141d] border border-white/10 shadow-sm">
             <div class="flex items-center justify-between mb-3">
               <div class="flex items-center gap-2">
                 <Sparkles class="w-4 h-4 text-purple-400" />
-                <span class="text-xs sm:text-sm font-bold text-slate-200">Avatar Border Effects</span>
+                <span class="text-xs sm:text-sm font-bold text-slate-200">Avatar Decorations</span>
               </div>
-              <span class="text-[11px] text-slate-400">Select halo preset</span>
+              <span class="text-[11px] text-slate-400">12 animated presets</span>
             </div>
 
-            <!-- Clean 2x2 Grid -->
-            <div id="border-effects-grid" class="grid grid-cols-2 gap-3">
-              <!-- 4 Effects -->
+            <!-- Sleek 4x3 Visual Grid (Zero text!) -->
+            <div id="border-effects-grid" class="grid grid-cols-4 gap-3.5 place-items-center py-2">
+              <!-- 12 Visual Interactive Avatar Tiles -->
             </div>
           </div>
 
@@ -2023,7 +2018,7 @@ import {
     directives?: string;
     isDefault?: boolean;
     nameColor?: string;
-    avatarBorderEffect?: 'none' | 'glow' | 'dual-gradient' | 'dynamic-sparkle';
+    avatarBorderEffect?: string;
     nameIcon?: string;
     avatarGlowColor?: string;
   }
@@ -5270,12 +5265,20 @@ function renderPresets() {
           { id: 'silver-gray', name: 'Silver / Gray', value: 'linear-gradient(135deg, #e2e8f0 0%, #94a3b8 100%)', split: 'linear-gradient(135deg, #e2e8f0 0%, #e2e8f0 50%, #94a3b8 50%, #94a3b8 100%)' }
         ];
 
-        // 4 Avatar Border Effects
+        // 12 Discord-Style Avatar Animated Decorations
         const BORDER_EFFECTS = [
-          { id: 'none', name: 'None', desc: 'Clean Ring', effectClass: 'avatar-border-none' },
-          { id: 'glow', name: 'Neon Glow', desc: 'Halo', effectClass: 'avatar-border-glow' },
-          { id: 'dual-gradient', name: 'Dual Gradient', desc: 'Ring', effectClass: 'avatar-border-dual-gradient' },
-          { id: 'dynamic-sparkle', name: 'Dynamic Sparkle', desc: 'Shimmer', effectClass: 'avatar-border-dynamic-sparkle' }
+          { id: 'none', name: 'None' },
+          { id: 'cyber-spin', name: 'Cyber Spin' },
+          { id: 'plasma-vortex', name: 'Plasma Vortex' },
+          { id: 'electric-arc', name: 'Electric Arc' },
+          { id: 'solar-flare', name: 'Solar Flare' },
+          { id: 'royal-crown', name: 'Royal Crown' },
+          { id: 'sakura-drift', name: 'Sakura Drift' },
+          { id: 'starlight-orbit', name: 'Starlight Orbit' },
+          { id: 'cyber-glitch', name: 'Cyber Glitch' },
+          { id: 'frost-crystal', name: 'Frost Crystal' },
+          { id: 'emerald-pulse', name: 'Emerald Pulse' },
+          { id: 'void-eclipse', name: 'Void Eclipse' }
         ];
 
         // 8 Avatar Halo Tint Colors
@@ -5484,6 +5487,7 @@ function renderPresets() {
             } else {
               viewTabName.classList.add('hidden');
               viewTabAvatar.classList.remove('hidden');
+              renderBorderEffects();
             }
           }
         }
@@ -5510,6 +5514,188 @@ function renderPresets() {
           el.textContent = text || 'Hossein';
         }
 
+        // Reusable Discord-Style Avatar Decoration Overlay Engine
+        function renderDecorationOverlayHtml(decoId: string, glowColor: string) {
+          const c = glowColor || '#06b6d4';
+          const normalized = (decoId === 'glow' || decoId === 'dual-gradient')
+            ? 'plasma-vortex'
+            : (decoId === 'dynamic-sparkle')
+              ? 'starlight-orbit'
+              : (decoId || 'none');
+
+          switch (normalized) {
+            case 'cyber-spin':
+              return `
+                <div class="w-full h-full rounded-full relative flex items-center justify-center">
+                  <div class="absolute inset-0 rounded-full animate-cyber-spin-laser pointer-events-none" style="background: conic-gradient(from 0deg, transparent 0%, transparent 60%, ${c} 92%, #ffffff 100%); -webkit-mask: radial-gradient(farthest-side, transparent calc(100% - 3px), black calc(100% - 2.5px)); mask: radial-gradient(farthest-side, transparent calc(100% - 3px), black calc(100% - 2.5px)); filter: drop-shadow(0 0 6px ${c});"></div>
+                </div>`;
+            case 'plasma-vortex':
+              return `
+                <div class="w-full h-full rounded-full relative flex items-center justify-center">
+                  <div class="absolute inset-0 rounded-full animate-plasma-cw opacity-85" style="background: conic-gradient(from 0deg, #06b6d4, #a855f7, #ec4899, #06b6d4); -webkit-mask: radial-gradient(farthest-side, transparent calc(100% - 2.5px), black calc(100% - 2px)); mask: radial-gradient(farthest-side, transparent calc(100% - 2.5px), black calc(100% - 2px)); filter: drop-shadow(0 0 6px rgba(168, 85, 247, 0.7));"></div>
+                  <div class="absolute inset-[3px] rounded-full animate-plasma-ccw opacity-75" style="background: conic-gradient(from 180deg, #f59e0b, #ec4899, #6366f1, #f59e0b); -webkit-mask: radial-gradient(farthest-side, transparent calc(100% - 2px), black calc(100% - 1.5px)); mask: radial-gradient(farthest-side, transparent calc(100% - 2px), black calc(100% - 1.5px)); filter: drop-shadow(0 0 5px rgba(245, 158, 11, 0.6));"></div>
+                </div>`;
+            case 'electric-arc':
+              return `
+                <div class="w-full h-full relative flex items-center justify-center animate-electric-arc">
+                  <svg viewBox="0 0 100 100" class="w-full h-full animate-plasma-ccw">
+                    <circle cx="50" cy="50" r="45" fill="none" stroke="${c}" stroke-width="2.5" stroke-dasharray="14 8 4 6 10 12" stroke-linecap="round" style="filter: drop-shadow(0 0 6px ${c}) drop-shadow(0 0 2px #ffffff);" />
+                    <polygon points="50,3 48,8 52,7 49,12 53,6 50,7" fill="#ffffff" style="filter: drop-shadow(0 0 4px #06b6d4);" />
+                    <polygon points="95,50 90,48 91,52 86,49 92,53 91,50" fill="#ffffff" style="filter: drop-shadow(0 0 4px #a855f7);" />
+                  </svg>
+                </div>`;
+            case 'solar-flare':
+              return `
+                <div class="w-full h-full relative flex items-center justify-center animate-solar-flare">
+                  <div class="absolute inset-[2px] rounded-full" style="box-shadow: 0 0 14px rgba(245, 158, 11, 0.7), inset 0 0 8px rgba(239, 68, 68, 0.5); border: 2px solid #fbbf24;"></div>
+                  <svg viewBox="0 0 100 100" class="w-full h-full animate-plasma-cw">
+                    <defs>
+                      <linearGradient id="solarGradJs" x1="0%" y1="0%" x2="100%" y2="100%">
+                        <stop offset="0%" stop-color="#fbbf24" />
+                        <stop offset="50%" stop-color="#f59e0b" />
+                        <stop offset="100%" stop-color="#ef4444" />
+                      </linearGradient>
+                    </defs>
+                    <path d="M50,2 Q53,8 50,11 Q47,8 50,2 Z" fill="url(#solarGradJs)" filter="drop-shadow(0 0 4px #f59e0b)" />
+                    <path d="M98,50 Q92,53 89,50 Q92,47 98,50 Z" fill="url(#solarGradJs)" filter="drop-shadow(0 0 4px #f59e0b)" />
+                    <path d="M50,98 Q47,92 50,89 Q53,92 50,98 Z" fill="url(#solarGradJs)" filter="drop-shadow(0 0 4px #ef4444)" />
+                    <path d="M2,50 Q8,47 11,50 Q8,53 2,50 Z" fill="url(#solarGradJs)" filter="drop-shadow(0 0 4px #ef4444)" />
+                    <path d="M16,16 Q22,20 20,24 Q18,20 16,16 Z" fill="url(#solarGradJs)" />
+                    <path d="M84,16 Q80,22 76,20 Q80,18 84,16 Z" fill="url(#solarGradJs)" />
+                    <path d="M84,84 Q78,80 80,76 Q82,80 84,84 Z" fill="url(#solarGradJs)" />
+                    <path d="M16,84 Q20,78 24,80 Q20,82 16,84 Z" fill="url(#solarGradJs)" />
+                  </svg>
+                </div>`;
+            case 'royal-crown':
+              return `
+                <div class="w-full h-full relative flex items-center justify-center">
+                  <div class="absolute inset-[3px] rounded-full border-2 border-amber-400" style="box-shadow: 0 0 10px rgba(251, 191, 36, 0.6), inset 0 0 4px rgba(245, 158, 11, 0.4);"></div>
+                  <div class="absolute -top-[12%] left-1/2 -translate-x-1/2 w-[44%] h-[28%] animate-crown-hover pointer-events-none" style="filter: drop-shadow(0 2px 6px rgba(245, 158, 11, 0.8));">
+                    <svg viewBox="0 0 36 24" class="w-full h-full">
+                      <defs>
+                        <linearGradient id="goldCrownGradJs" x1="0%" y1="0%" x2="100%" y2="100%">
+                          <stop offset="0%" stop-color="#fef08a" />
+                          <stop offset="40%" stop-color="#facc15" />
+                          <stop offset="100%" stop-color="#b45309" />
+                        </linearGradient>
+                      </defs>
+                      <path d="M2,20 L34,20 L31,7 L23,14 L18,3 L13,14 L5,7 Z" fill="url(#goldCrownGradJs)" stroke="#78350f" stroke-width="0.8" />
+                      <circle cx="18" cy="4" r="1.8" fill="#ef4444" />
+                      <circle cx="5" cy="8" r="1.5" fill="#38bdf8" />
+                      <circle cx="31" cy="8" r="1.5" fill="#38bdf8" />
+                      <rect x="5" y="17" width="26" height="2.5" rx="1" fill="#fef08a" opacity="0.9" />
+                    </svg>
+                  </div>
+                </div>`;
+            case 'sakura-drift':
+              return `
+                <div class="w-full h-full relative flex items-center justify-center">
+                  <div class="absolute inset-[3px] rounded-full border-2 border-pink-400" style="box-shadow: 0 0 10px rgba(244, 114, 182, 0.6), inset 0 0 5px rgba(244, 114, 182, 0.3);"></div>
+                  <div class="absolute inset-0 animate-sakura-orbit">
+                    <div class="absolute top-[2px] left-1/2 -translate-x-1/2 w-3.5 h-3.5 animate-sakura-petal" style="filter: drop-shadow(0 0 4px #f472b6);">
+                      <svg viewBox="0 0 20 20" class="w-full h-full"><path d="M10,2 C13,4 16,8 14,13 C12,18 8,18 6,13 C4,8 7,4 10,2 Z" fill="#fbcfe8" stroke="#f472b6" stroke-width="0.8"/></svg>
+                    </div>
+                    <div class="absolute top-1/2 right-[2px] -translate-y-1/2 w-3 h-3 animate-sakura-petal" style="filter: drop-shadow(0 0 4px #f472b6);">
+                      <svg viewBox="0 0 20 20" class="w-full h-full"><path d="M10,2 C13,4 16,8 14,13 C12,18 8,18 6,13 C4,8 7,4 10,2 Z" fill="#f472b6" stroke="#db2777" stroke-width="0.8"/></svg>
+                    </div>
+                    <div class="absolute bottom-[2px] left-1/2 -translate-x-1/2 w-3.5 h-3.5 animate-sakura-petal" style="filter: drop-shadow(0 0 4px #f472b6);">
+                      <svg viewBox="0 0 20 20" class="w-full h-full"><path d="M10,2 C13,4 16,8 14,13 C12,18 8,18 6,13 C4,8 7,4 10,2 Z" fill="#fbcfe8" stroke="#f472b6" stroke-width="0.8"/></svg>
+                    </div>
+                    <div class="absolute top-1/2 left-[2px] -translate-y-1/2 w-3 h-3 animate-sakura-petal" style="filter: drop-shadow(0 0 4px #f472b6);">
+                      <svg viewBox="0 0 20 20" class="w-full h-full"><path d="M10,2 C13,4 16,8 14,13 C12,18 8,18 6,13 C4,8 7,4 10,2 Z" fill="#f472b6" stroke="#db2777" stroke-width="0.8"/></svg>
+                    </div>
+                  </div>
+                </div>`;
+            case 'starlight-orbit':
+              return `
+                <div class="w-full h-full relative flex items-center justify-center">
+                  <div class="absolute inset-[3px] rounded-full border-2 border-indigo-400" style="box-shadow: 0 0 12px rgba(99, 102, 241, 0.7), inset 0 0 6px rgba(168, 85, 247, 0.4);"></div>
+                  <div class="absolute inset-0 animate-starlight-1">
+                    <div class="absolute -top-1 left-1/2 -translate-x-1/2 text-cyan-300 text-xs font-black select-none" style="filter: drop-shadow(0 0 5px #22d3ee);">✦</div>
+                  </div>
+                  <div class="absolute inset-0 animate-starlight-2">
+                    <div class="absolute -bottom-1 left-1/2 -translate-x-1/2 text-pink-400 text-xs font-black select-none" style="filter: drop-shadow(0 0 5px #f472b6);">✦</div>
+                  </div>
+                  <div class="absolute inset-0 animate-starlight-3">
+                    <div class="absolute top-1/2 -right-1 -translate-y-1/2 text-amber-300 text-[10px] font-black select-none" style="filter: drop-shadow(0 0 4px #fbbf24);">✦</div>
+                  </div>
+                </div>`;
+            case 'cyber-glitch':
+              return `
+                <div class="w-full h-full relative flex items-center justify-center animate-hud-glitch-jitter">
+                  <svg viewBox="0 0 100 100" class="w-full h-full animate-hud-glitch-spin">
+                    <path d="M15,25 L15,15 L25,15" fill="none" stroke="#22d3ee" stroke-width="2.5" stroke-linecap="square" style="filter: drop-shadow(0 0 4px #22d3ee);" />
+                    <path d="M85,25 L85,15 L75,15" fill="none" stroke="#22d3ee" stroke-width="2.5" stroke-linecap="square" style="filter: drop-shadow(0 0 4px #22d3ee);" />
+                    <path d="M85,75 L85,85 L75,85" fill="none" stroke="#22d3ee" stroke-width="2.5" stroke-linecap="square" style="filter: drop-shadow(0 0 4px #22d3ee);" />
+                    <path d="M15,75 L15,85 L25,85" fill="none" stroke="#22d3ee" stroke-width="2.5" stroke-linecap="square" style="filter: drop-shadow(0 0 4px #22d3ee);" />
+                    <circle cx="50" cy="50" r="43" fill="none" stroke="#a855f7" stroke-width="2" stroke-dasharray="24 18 12 18" stroke-linecap="round" style="filter: drop-shadow(0 0 4px #ec4899);" />
+                    <line x1="50" y1="2" x2="50" y2="8" stroke="#22d3ee" stroke-width="2" />
+                    <line x1="50" y1="92" x2="50" y2="98" stroke="#22d3ee" stroke-width="2" />
+                    <line x1="2" y1="50" x2="8" y2="50" stroke="#22d3ee" stroke-width="2" />
+                    <line x1="92" y1="50" x2="98" y2="50" stroke="#22d3ee" stroke-width="2" />
+                  </svg>
+                </div>`;
+            case 'frost-crystal':
+              return `
+                <div class="w-full h-full relative flex items-center justify-center animate-frost-gleam">
+                  <div class="absolute inset-[3px] rounded-full border-2 border-sky-300" style="box-shadow: 0 0 12px rgba(56, 189, 248, 0.7), inset 0 0 6px rgba(224, 242, 254, 0.5);"></div>
+                  <svg viewBox="0 0 100 100" class="w-full h-full">
+                    <defs>
+                      <linearGradient id="iceGradJs" x1="0%" y1="0%" x2="100%" y2="100%">
+                        <stop offset="0%" stop-color="#ffffff" />
+                        <stop offset="50%" stop-color="#7dd3fc" />
+                        <stop offset="100%" stop-color="#0284c7" />
+                      </linearGradient>
+                    </defs>
+                    <polygon points="50,2 47,8 50,11 53,8" fill="url(#iceGradJs)" filter="drop-shadow(0 0 4px #38bdf8)" />
+                    <polygon points="98,50 92,47 89,50 92,53" fill="url(#iceGradJs)" filter="drop-shadow(0 0 4px #38bdf8)" />
+                    <polygon points="50,98 53,92 50,89 47,92" fill="url(#iceGradJs)" filter="drop-shadow(0 0 4px #38bdf8)" />
+                    <polygon points="2,50 8,53 11,50 8,47" fill="url(#iceGradJs)" filter="drop-shadow(0 0 4px #38bdf8)" />
+                    <polygon points="16,16 22,18 20,22 17,19" fill="url(#iceGradJs)" />
+                    <polygon points="84,84 78,82 80,78 83,81" fill="url(#iceGradJs)" />
+                  </svg>
+                </div>`;
+            case 'emerald-pulse':
+              return `
+                <div class="w-full h-full relative flex items-center justify-center">
+                  <div class="absolute inset-[3px] rounded-full border-2 border-emerald-400" style="box-shadow: 0 0 12px rgba(16, 185, 129, 0.8), inset 0 0 6px rgba(16, 185, 129, 0.4);"></div>
+                  <div class="absolute inset-0 rounded-full border-2 border-emerald-400 animate-emerald-wave-1"></div>
+                  <div class="absolute inset-0 rounded-full border-2 border-emerald-300 animate-emerald-wave-2"></div>
+                </div>`;
+            case 'void-eclipse':
+              return `
+                <div class="w-full h-full relative flex items-center justify-center animate-void-corona">
+                  <div class="absolute inset-[2px] rounded-full border-2 border-white" style="box-shadow: 0 0 14px #ffffff, 0 0 24px rgba(168, 85, 247, 0.9), inset 0 0 8px rgba(0, 0, 0, 0.9);"></div>
+                  <div class="absolute inset-0 animate-plasma-cw">
+                    <div class="absolute top-1 left-1/2 -translate-x-1/2 w-1.5 h-1.5 rounded-full bg-violet-400" style="box-shadow: 0 0 6px #c084fc;"></div>
+                    <div class="absolute bottom-1 left-1/2 -translate-x-1/2 w-2 h-2 rounded-full bg-white" style="box-shadow: 0 0 8px #ffffff;"></div>
+                  </div>
+                </div>`;
+            default:
+              return `<div class="w-full h-full rounded-full border border-white/20"></div>`;
+          }
+        }
+
+        // Reusable Full Avatar with Overlay Generator
+        function renderDecoratedAvatarHtml(opts: { src?: string; initial?: string; decoration?: string; glowColor?: string; size?: number }) {
+          const size = opts.size || 56;
+          const deco = opts.decoration || 'none';
+          const glow = opts.glowColor || '#06b6d4';
+          const src = opts.src || '';
+          const initial = (opts.initial || 'H').charAt(0).toUpperCase();
+
+          return `
+            <div class="relative flex items-center justify-center shrink-0 select-none" style="width: ${size}px; height: ${size}px; --avatar-glow-color: ${glow}; --avatar-border-color: ${glow};">
+              <div class="w-full h-full rounded-full overflow-hidden relative z-0 flex items-center justify-center bg-gradient-to-tr from-purple-600 to-indigo-600 shadow-inner">
+                ${src ? `<img src="${src}" alt="Avatar" class="w-full h-full rounded-full object-cover" />` : `<span class="text-white font-bold select-none" style="font-size: ${Math.round(size * 0.42)}px;">${initial}</span>`}
+              </div>
+              <div class="absolute -inset-[18%] pointer-events-none z-10 flex items-center justify-center overflow-visible">
+                ${renderDecorationOverlayHtml(deco, glow)}
+              </div>
+            </div>
+          `;
+        }
+
         function updateLivePreview() {
           const active = personas.find(p => p.isActive) || personas[0] || { name: 'Hossein' };
           const userName = active.name || 'Hossein';
@@ -5530,25 +5716,18 @@ function renderPresets() {
             bubbleBadge.innerHTML = renderBadgeHtml(draftNameIcon, 'w-3.5 h-3.5 inline-block object-contain align-middle ml-1 shrink-0');
           }
 
-          // 3. Pinned Avatar container border effect & glow color
+          // 3. Pinned Avatar container Discord-style decoration & glow color
           const avatarContainer = document.getElementById('preview-avatar-container');
+          const decoLayer = document.getElementById('preview-avatar-deco-layer');
           const avatarImg = document.getElementById('preview-avatar-img') as HTMLImageElement;
           const avatarInitial = document.getElementById('preview-avatar-initial');
 
           if (avatarContainer) {
-            avatarContainer.className = 'w-14 h-14 rounded-full p-[2px] transition-all duration-300 shrink-0 flex items-center justify-center mb-1.5';
             avatarContainer.style.setProperty('--avatar-glow-color', draftGlowColor);
             avatarContainer.style.setProperty('--avatar-border-color', draftGlowColor);
-
-            if (draftBorderEffect === 'glow') {
-              avatarContainer.classList.add('avatar-border-glow');
-            } else if (draftBorderEffect === 'dual-gradient') {
-              avatarContainer.classList.add('avatar-border-dual-gradient');
-            } else if (draftBorderEffect === 'dynamic-sparkle') {
-              avatarContainer.classList.add('avatar-border-dynamic-sparkle');
-            } else {
-              avatarContainer.classList.add('avatar-border-none');
-            }
+          }
+          if (decoLayer) {
+            decoLayer.innerHTML = renderDecorationOverlayHtml(draftBorderEffect, draftGlowColor);
           }
 
           if (avatarImg && avatarInitial) {
@@ -5603,19 +5782,22 @@ function renderPresets() {
             }
           });
 
-          // 7. Update Border Effect Cards in 2x2 Grid
-          document.querySelectorAll('.border-effect-card').forEach((card: any) => {
-            const effectId = card.dataset.effect;
-            const isSelected = (effectId === draftBorderEffect);
-            const miniAvatar = card.querySelector('.card-mini-avatar-wrapper');
-            if (miniAvatar) {
-              miniAvatar.style.setProperty('--avatar-glow-color', draftGlowColor);
-              miniAvatar.style.setProperty('--avatar-border-color', draftGlowColor);
-            }
+          // 7. Update Avatar Decoration Tiles in 4x3 Grid
+          document.querySelectorAll('.avatar-deco-tile').forEach((tile: any) => {
+            const decoId = tile.dataset.deco;
+            const isSelected = (decoId === draftBorderEffect);
+            const check = tile.querySelector('.deco-check-badge');
             if (isSelected) {
-              card.className = 'border-effect-card p-2.5 sm:p-3 rounded-2xl border border-cyan-400 bg-cyan-500/10 ring-1 ring-cyan-400/40 shadow-sm transition-all cursor-pointer flex items-center gap-2 sm:gap-2.5 select-none';
+              tile.className = 'avatar-deco-tile relative w-16 h-16 rounded-2xl flex items-center justify-center cursor-pointer transition-all duration-200 active:scale-95 select-none ring-2 ring-pink-500 bg-pink-500/15 shadow-lg shadow-pink-500/20 scale-105 z-10';
+              check?.classList.remove('hidden');
             } else {
-              card.className = 'border-effect-card p-2.5 sm:p-3 rounded-2xl border border-white/10 bg-white/[0.02] hover:bg-white/[0.05] transition-all cursor-pointer flex items-center gap-2 sm:gap-2.5 select-none';
+              tile.className = 'avatar-deco-tile relative w-16 h-16 rounded-2xl flex items-center justify-center cursor-pointer transition-all duration-200 active:scale-95 select-none bg-white/[0.03] hover:bg-white/[0.07] border border-white/10';
+              check?.classList.add('hidden');
+            }
+            const avatarInner = tile.querySelector('.select-none[style*="--avatar-glow-color"]');
+            if (avatarInner) {
+              avatarInner.style.setProperty('--avatar-glow-color', draftGlowColor);
+              avatarInner.style.setProperty('--avatar-border-color', draftGlowColor);
             }
           });
 
@@ -5806,37 +5988,42 @@ function renderPresets() {
           updateLivePreview();
         });
 
-        // Render 2x2 Grid of Border Effects
-        if (borderEffectsGrid) {
+        // Render 4x3 Sleek Visual Grid of 12 Discord-Style Avatar Decorations (Zero Text!)
+        function renderBorderEffects() {
+          if (!borderEffectsGrid) return;
           const active = personas.find(p => p.isActive) || personas[0] || { name: 'Hossein' };
-          borderEffectsGrid.innerHTML = BORDER_EFFECTS.map(eff => `
-            <div 
-              class="border-effect-card p-2.5 sm:p-3 rounded-2xl border border-white/10 bg-white/[0.02] hover:bg-white/[0.05] transition-all cursor-pointer flex items-center gap-2 sm:gap-2.5 select-none"
-              data-effect="${eff.id}"
-            >
-              <div class="card-mini-avatar-wrapper w-9 h-9 sm:w-10 sm:h-10 rounded-full p-[2px] flex items-center justify-center shrink-0 ${eff.effectClass}" style="--avatar-glow-color: ${draftGlowColor}; --avatar-border-color: ${draftGlowColor};">
-                ${active.avatar ? `
-                  <img src="${active.avatar}" alt="Avatar" class="w-full h-full rounded-full object-cover" />
-                ` : `
-                  <div class="w-full h-full rounded-full bg-gradient-to-tr from-purple-600 to-indigo-600 flex items-center justify-center text-white text-xs font-bold">
-                    ${(active.name || 'H').charAt(0).toUpperCase()}
-                  </div>
-                `}
-              </div>
-              <div class="flex-1 min-w-0">
-                <div class="text-xs font-semibold text-white whitespace-nowrap">${eff.name}</div>
-                <div class="text-[10px] text-slate-400 whitespace-nowrap truncate">${eff.desc}</div>
-              </div>
-            </div>
-          `).join('');
 
-          borderEffectsGrid.querySelectorAll('.border-effect-card').forEach((card: any) => {
-            card.addEventListener('click', () => {
-              draftBorderEffect = card.dataset.effect;
+          borderEffectsGrid.innerHTML = BORDER_EFFECTS.map(deco => {
+            const isSelected = (deco.id === draftBorderEffect);
+            return `
+              <div 
+                class="avatar-deco-tile relative w-16 h-16 rounded-2xl flex items-center justify-center cursor-pointer transition-all duration-200 active:scale-95 select-none ${isSelected ? 'ring-2 ring-pink-500 bg-pink-500/15 shadow-lg shadow-pink-500/20 scale-105 z-10' : 'bg-white/[0.03] hover:bg-white/[0.07] border border-white/10'}"
+                data-deco="${deco.id}"
+                title="${deco.name}"
+              >
+                ${renderDecoratedAvatarHtml({
+                  src: active.avatar,
+                  initial: active.name,
+                  decoration: deco.id,
+                  glowColor: draftGlowColor,
+                  size: 44
+                })}
+                <div class="deco-check-badge absolute -bottom-1 -right-1 w-4 h-4 rounded-full bg-pink-500 text-white flex items-center justify-center text-[10px] font-bold shadow-md shadow-pink-500/50 ${isSelected ? '' : 'hidden'}">
+                  ✓
+                </div>
+              </div>
+            `;
+          }).join('');
+
+          borderEffectsGrid.querySelectorAll('.avatar-deco-tile').forEach((tile: any) => {
+            tile.addEventListener('click', () => {
+              draftBorderEffect = tile.dataset.deco;
               updateLivePreview();
             });
           });
         }
+
+        renderBorderEffects();
 
         // Render Border Glow Colors (8 dots)
         if (gridGlowColors) {
@@ -5856,6 +6043,7 @@ function renderPresets() {
             btn.addEventListener('click', () => {
               draftGlowColor = btn.dataset.value;
               updateLivePreview();
+              renderBorderEffects();
             });
           });
         }

@@ -5543,6 +5543,182 @@ html.day-mode .avatar-border-dual-gradient {
   background-image: linear-gradient(#ffffff, #ffffff), linear-gradient(135deg, #06b6d4 0%, #a855f7 50%, #ec4899 100%) !important;
 }
 
+/* ========================================================
+   DISCORD-STYLE ANIMATED AVATAR DECORATION ENGINE (12 FX)
+   ======================================================== */
+
+@keyframes cyberSpinLaser {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+.animate-cyber-spin-laser {
+  animation: cyberSpinLaser 3s linear infinite;
+}
+
+@keyframes plasmaSpinClockwise {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+@keyframes plasmaSpinCounter {
+  0% { transform: rotate(360deg); }
+  100% { transform: rotate(0deg); }
+}
+.animate-plasma-cw {
+  animation: plasmaSpinClockwise 3.5s linear infinite;
+}
+.animate-plasma-ccw {
+  animation: plasmaSpinCounter 4.5s linear infinite;
+}
+
+@keyframes electricArcFlicker {
+  0%, 100% { opacity: 1; transform: scale(1); filter: drop-shadow(0 0 5px var(--avatar-glow-color, #06b6d4)); }
+  20% { opacity: 0.85; transform: scale(1.02); filter: drop-shadow(0 0 9px #ffffff); }
+  40% { opacity: 0.95; transform: scale(0.99); filter: drop-shadow(0 0 7px var(--avatar-glow-color, #a855f7)); }
+  60% { opacity: 0.88; transform: scale(1.01); filter: drop-shadow(0 0 4px #06b6d4); }
+  80% { opacity: 1; transform: scale(1); filter: drop-shadow(0 0 8px #ffffff); }
+}
+.animate-electric-arc {
+  animation: electricArcFlicker 1.8s ease-in-out infinite;
+}
+
+@keyframes solarFlarePulse {
+  0% { transform: scale(0.98); filter: drop-shadow(0 0 6px #f59e0b); }
+  50% { transform: scale(1.03); filter: drop-shadow(0 0 14px #ef4444); }
+  100% { transform: scale(0.98); filter: drop-shadow(0 0 6px #f59e0b); }
+}
+.animate-solar-flare {
+  animation: solarFlarePulse 2.2s ease-in-out infinite;
+}
+
+@keyframes crownHover {
+  0% { transform: translate(-50%, 0) rotate(-1deg); }
+  50% { transform: translate(-50%, -3px) rotate(1deg); }
+  100% { transform: translate(-50%, 0) rotate(-1deg); }
+}
+.animate-crown-hover {
+  animation: crownHover 2.5s ease-in-out infinite;
+}
+
+@keyframes sakuraOrbitRotate {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+@keyframes sakuraPetalSpin {
+  0% { transform: rotate(0deg) scale(0.9); }
+  50% { transform: rotate(180deg) scale(1.1); }
+  100% { transform: rotate(360deg) scale(0.9); }
+}
+.animate-sakura-orbit {
+  animation: sakuraOrbitRotate 7s linear infinite;
+}
+.animate-sakura-petal {
+  animation: sakuraPetalSpin 4s ease-in-out infinite;
+}
+
+@keyframes starlightOrbit1 {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+@keyframes starlightOrbit2 {
+  0% { transform: rotate(360deg); }
+  100% { transform: rotate(0deg); }
+}
+@keyframes starlightOrbit3 {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+.animate-starlight-1 {
+  animation: starlightOrbit1 4s linear infinite;
+}
+.animate-starlight-2 {
+  animation: starlightOrbit2 5.5s linear infinite;
+}
+.animate-starlight-3 {
+  animation: starlightOrbit3 7.5s linear infinite;
+}
+
+@keyframes hudGlitchSpin {
+  0% { transform: rotate(0deg); }
+  25% { transform: rotate(90deg); }
+  27% { transform: rotate(86deg); }
+  50% { transform: rotate(180deg); }
+  75% { transform: rotate(270deg); }
+  77% { transform: rotate(266deg); }
+  100% { transform: rotate(360deg); }
+}
+@keyframes hudGlitchJitter {
+  0%, 100% { transform: translate(0, 0); opacity: 1; }
+  20% { transform: translate(-1px, 1px); opacity: 0.9; }
+  40% { transform: translate(1px, -1px); opacity: 0.95; }
+  60% { transform: translate(-1px, -0.5px); opacity: 0.85; }
+  80% { transform: translate(1px, 0.5px); opacity: 1; }
+}
+.animate-hud-glitch-spin {
+  animation: hudGlitchSpin 6s linear infinite;
+}
+.animate-hud-glitch-jitter {
+  animation: hudGlitchJitter 2.5s steps(1) infinite;
+}
+
+@keyframes frostGleam {
+  0% { filter: drop-shadow(0 0 5px #38bdf8); }
+  50% { filter: drop-shadow(0 0 14px #e0f2fe) drop-shadow(0 0 6px #0284c7); }
+  100% { filter: drop-shadow(0 0 5px #38bdf8); }
+}
+.animate-frost-gleam {
+  animation: frostGleam 2.8s ease-in-out infinite alternate;
+}
+
+@keyframes emeraldSonarWave {
+  0% { transform: scale(0.85); opacity: 0.95; }
+  60% { transform: scale(1.15); opacity: 0.35; }
+  100% { transform: scale(1.22); opacity: 0; }
+}
+.animate-emerald-wave-1 {
+  animation: emeraldSonarWave 2.2s cubic-bezier(0, 0, 0.2, 1) infinite;
+}
+.animate-emerald-wave-2 {
+  animation: emeraldSonarWave 2.2s cubic-bezier(0, 0, 0.2, 1) 1.1s infinite;
+}
+
+@keyframes voidCoronaPulse {
+  0% { filter: drop-shadow(0 0 8px #ffffff) drop-shadow(0 0 16px #a855f7); transform: scale(0.99); }
+  50% { filter: drop-shadow(0 0 14px #ffffff) drop-shadow(0 0 24px #c084fc); transform: scale(1.02); }
+  100% { filter: drop-shadow(0 0 8px #ffffff) drop-shadow(0 0 16px #a855f7); transform: scale(0.99); }
+}
+.animate-void-corona {
+  animation: voidCoronaPulse 3s ease-in-out infinite alternate;
+}
+
+/* Day Mode and OLED Mode overrides for visual grid tiles */
+html[data-base-mode="day"] .avatar-deco-tile:not(.ring-2),
+html.day-mode .avatar-deco-tile:not(.ring-2) {
+  background-color: #f1f5f9 !important;
+  border-color: rgba(0, 0, 0, 0.08) !important;
+}
+
+html[data-base-mode="day"] .avatar-deco-tile:not(.ring-2):hover,
+html.day-mode .avatar-deco-tile:not(.ring-2):hover {
+  background-color: #e2e8f0 !important;
+}
+
+html[data-base-mode="day"] .avatar-deco-tile.ring-2,
+html.day-mode .avatar-deco-tile.ring-2 {
+  background-color: #fdf2f8 !important;
+  box-shadow: 0 4px 14px rgba(236, 72, 153, 0.2) !important;
+}
+
+html.power-saving-oled .avatar-deco-tile:not(.ring-2),
+html[data-base-mode="oled"] .avatar-deco-tile:not(.ring-2) {
+  background-color: #000000 !important;
+  border-color: rgba(255, 255, 255, 0.1) !important;
+}
+
+html.power-saving-oled .avatar-deco-tile.ring-2,
+html[data-base-mode="oled"] .avatar-deco-tile.ring-2 {
+  background-color: #1a0814 !important;
+}
+
 /* Smooth color and styling transitions for user name */
 .user-name-styled {
   transition: color 0.3s ease, background-image 0.3s ease, filter 0.3s ease;
