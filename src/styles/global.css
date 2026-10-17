@@ -4666,7 +4666,7 @@ html:not([data-base-mode="day"]):not(.day-mode) #showcase-description.clean-read
    ========================================================================== */
 
 .chat-card-swipe-container {
-  touch-action: pan-y pinch-zoom;
+  touch-action: pan-y;
   position: relative;
   overflow: hidden;
   border-radius: 1rem;
@@ -4681,6 +4681,13 @@ html:not([data-base-mode="day"]):not(.day-mode) #showcase-description.clean-read
   backface-visibility: hidden;
   user-select: none;
   -webkit-user-select: none;
+  touch-action: pan-y;
+  transition: transform 0.28s cubic-bezier(0.18, 0.9, 0.32, 1.08), box-shadow 0.2s ease;
+}
+
+.chat-card-front.is-swiping,
+.chat-card-front.is-docked {
+  box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.45), 0 8px 10px -6px rgba(0, 0, 0, 0.3) !important;
 }
 
 .chat-swipe-action-left,
@@ -4695,12 +4702,16 @@ html:not([data-base-mode="day"]):not(.day-mode) #showcase-description.clean-read
   -webkit-user-select: none;
   -webkit-backface-visibility: hidden;
   backface-visibility: hidden;
+  display: flex;
+  align-items: center;
+  transition: opacity 0.15s ease;
 }
 
 .chat-swipe-action-left {
   left: 0;
   background-color: #e11d48 !important;
   color: #ffffff !important;
+  justify-content: flex-start;
   z-index: 1;
 }
 
@@ -4708,7 +4719,40 @@ html:not([data-base-mode="day"]):not(.day-mode) #showcase-description.clean-read
   right: 0;
   background-color: #d97706 !important;
   color: #ffffff !important;
+  justify-content: flex-end;
   z-index: 1;
+}
+
+.chat-swipe-action-btn {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  width: 84px;
+  height: 100%;
+  background: transparent;
+  border: none;
+  color: #ffffff;
+  cursor: pointer;
+  user-select: none;
+  -webkit-user-select: none;
+  touch-action: manipulation;
+}
+
+.chat-swipe-icon-circle {
+  width: 2.5rem;
+  height: 2.5rem;
+  border-radius: 9999px;
+  background-color: rgba(255, 255, 255, 0.2);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.15);
+  transition: transform 0.15s cubic-bezier(0.18, 0.9, 0.32, 1.2);
+}
+
+.chat-swipe-action-btn:active .chat-swipe-icon-circle {
+  transform: scale(0.92);
 }
 
 /* Day Mode styling for Library Compact Cards & Archive */
@@ -4718,6 +4762,13 @@ html.day-mode .chat-card-front {
   border-color: #e2e8f0 !important;
   color: #0f172a !important;
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05) !important;
+}
+
+html[data-base-mode="day"] .chat-card-front.is-swiping,
+html.day-mode .chat-card-front.is-swiping,
+html[data-base-mode="day"] .chat-card-front.is-docked,
+html.day-mode .chat-card-front.is-docked {
+  box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.12), 0 8px 10px -6px rgba(0, 0, 0, 0.08) !important;
 }
 
 html[data-base-mode="day"] .chat-card-front:hover,

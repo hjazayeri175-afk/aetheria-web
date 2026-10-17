@@ -604,23 +604,27 @@ import {
 
       wrapper.innerHTML = `
         <!-- Left Action: Trash (Revealed on Swipe Right) -->
-        <div class="chat-swipe-action-left absolute inset-y-0 left-0 w-full flex items-center justify-start pl-6 bg-[#e11d48] text-white font-medium cursor-pointer pointer-events-none opacity-0 select-none z-[1]" title="Delete">
-          <div class="chat-swipe-left-content flex items-center gap-2.5 text-white will-change-transform origin-left">
-            <span class="w-5 h-5 flex items-center justify-center shrink-0 text-white">${ICONS.trash}</span>
-            <span class="text-xs font-bold uppercase tracking-wider text-white">Trash</span>
-          </div>
+        <div class="chat-swipe-action-left absolute inset-y-0 left-0 w-full flex items-center justify-start bg-[#e11d48] text-white select-none z-[1]" style="opacity: 0; pointer-events: none;" title="Delete">
+          <button type="button" class="chat-swipe-action-btn chat-swipe-btn-left flex flex-col items-center justify-center w-[84px] h-full gap-1 text-white select-none active:opacity-80 transition-transform">
+            <div class="chat-swipe-icon-circle w-10 h-10 rounded-full bg-white/20 flex items-center justify-center shadow-inner transition-transform">
+              <span class="w-5 h-5 flex items-center justify-center shrink-0 text-white">${ICONS.trash}</span>
+            </div>
+            <span class="text-[10px] font-semibold uppercase tracking-wider text-white">Delete</span>
+          </button>
         </div>
 
         <!-- Right Action: Archive / Unarchive (Revealed on Swipe Left) -->
-        <div class="chat-swipe-action-right absolute inset-y-0 right-0 w-full flex items-center justify-end pr-6 bg-[#d97706] text-white font-medium cursor-pointer pointer-events-none opacity-0 select-none z-[1]" title="${currentView === 'archived' ? 'Unarchive' : 'Archive'}">
-          <div class="chat-swipe-right-content flex items-center gap-2.5 text-white will-change-transform origin-right">
-            <span class="text-xs font-bold uppercase tracking-wider text-white">${currentView === 'archived' ? 'Unarchive' : 'Archive'}</span>
-            <span class="w-5 h-5 flex items-center justify-center shrink-0 text-white">${currentView === 'archived' ? ICONS.archiveRestore : ICONS.archive}</span>
-          </div>
+        <div class="chat-swipe-action-right absolute inset-y-0 right-0 w-full flex items-center justify-end bg-[#d97706] text-white select-none z-[1]" style="opacity: 0; pointer-events: none;" title="${currentView === 'archived' ? 'Restore' : 'Archive'}">
+          <button type="button" class="chat-swipe-action-btn chat-swipe-btn-right flex flex-col items-center justify-center w-[84px] h-full gap-1 text-white select-none active:opacity-80 transition-transform">
+            <div class="chat-swipe-icon-circle w-10 h-10 rounded-full bg-white/20 flex items-center justify-center shadow-inner transition-transform">
+              <span class="w-5 h-5 flex items-center justify-center shrink-0 text-white">${currentView === 'archived' ? ICONS.archiveRestore : ICONS.archive}</span>
+            </div>
+            <span class="text-[10px] font-semibold uppercase tracking-wider text-white">${currentView === 'archived' ? 'Restore' : 'Archive'}</span>
+          </button>
         </div>
 
         <!-- Front Card (Z-10) -->
-        <div class="chat-card-front chat-history-card relative z-10 w-full rounded-2xl bg-[#15161c] hover:bg-[#191b22] border border-white/[0.08] p-3 sm:p-3.5 flex items-center gap-3 cursor-pointer shadow-sm" role="button" tabindex="0">
+        <div class="chat-card-front chat-history-card relative z-10 w-full rounded-2xl bg-[#15161c] hover:bg-[#191b22] border border-white/[0.08] p-3 sm:p-3.5 flex items-center gap-3 cursor-pointer shadow-sm select-none" role="button" tabindex="0">
           <!-- Avatar: w-12 h-12 -->
           <div class="relative w-12 h-12 rounded-xl overflow-hidden ring-1 ring-white/10 shrink-0 bg-white/[0.04]">
             <img src="${escapeHtml(char.avatarUrl)}" alt="${escapeHtml(char.name)}" class="w-full h-full object-cover" loading="lazy" />
@@ -661,131 +665,186 @@ import {
     });
   }
 
-  // Bind Touch & Mouse Gestures for Swipeable Cards
+  // Global reference to the currently open/docked card
+  let activeDockedCard = null;
+
+  // Global listeners to automatically close any docked card when tapping outside or scrolling
+  window.addEventListener('scroll', () => {
+    if (activeDockedCard) {
+      activeDockedCard.close();
+    }
+  }, { passive: true });
+
+  document.addEventListener('pointerdown', (e) => {
+    if (activeDockedCard && !activeDockedCard.element.contains(e.target)) {
+      activeDockedCard.close();
+    }
+  }, { passive: true });
+
+  // Bind Touch & Mouse Gestures for Swipeable Cards (Telegram & iOS Native Quality)
   function bindCardGestures(wrapper, item, chatUrl) {
     const front = wrapper.querySelector('.chat-card-front');
     const leftAction = wrapper.querySelector('.chat-swipe-action-left');
     const rightAction = wrapper.querySelector('.chat-swipe-action-right');
-    const leftContent = wrapper.querySelector('.chat-swipe-left-content');
-    const rightContent = wrapper.querySelector('.chat-swipe-right-content');
+    const leftBtn = wrapper.querySelector('.chat-swipe-btn-left');
+    const rightBtn = wrapper.querySelector('.chat-swipe-btn-right');
+    const leftIconCircle = wrapper.querySelector('.chat-swipe-btn-left .chat-swipe-icon-circle');
+    const rightIconCircle = wrapper.querySelector('.chat-swipe-btn-right .chat-swipe-icon-circle');
 
-    let startX = 0;
-    let startY = 0;
-    let latestClientX = 0;
-    let latestClientY = 0;
-    let currentDeltaX = 0;
+    if (!front) return;
+
+    const SNAP_WIDTH = 84; // Docked action button width in px
+    const REVEAL_THRESHOLD = 38; // Drag needed to snap open
+    const FULL_SWIPE_THRESHOLD = 170; // Drag needed for automatic full swipe
+    const VELOCITY_SNAP_THRESHOLD = 0.32; // px/ms flick to snap open
+    const VELOCITY_FULL_SWIPE_THRESHOLD = 1.25; // px/ms fast flick for full swipe
+    const DEAD_ZONE = 7; // Lock horizontal vs vertical gesture
+
+    let currentTranslation = 0;
+    let dockedState = 0; // 0 = closed, +SNAP_WIDTH = right open (trash), -SNAP_WIDTH = left open (archive)
     let isTracking = false;
     let isSwiping = false;
     let isScrolling = false;
     let hasMoved = false;
-    let hasVibratedThreshold = false;
+    let hasVibratedFull = false;
+
+    let startX = 0;
+    let startY = 0;
+    let startTranslation = 0;
+    let latestClientX = 0;
+    let lastMoveX = 0;
+    let lastMoveTime = 0;
+    let currentVelocityX = 0;
     let rafId = null;
-    let resetTimer = null;
 
-    // Thresholds
-    const COMMIT_THRESHOLD = 110; // px to activate action
-    const DEAD_ZONE = 7; // px to distinguish horizontal swipe from vertical scroll
+    function animateTo(targetPx, duration = 280) {
+      dockedState = targetPx;
+      currentTranslation = targetPx;
 
-    // Clean reset of action background and icons
-    function resetActionLayers(delayMs = 0) {
-      if (resetTimer) clearTimeout(resetTimer);
-      const applyReset = () => {
-        if (leftAction) {
-          leftAction.style.opacity = '0';
-          leftAction.style.pointerEvents = 'none';
-          leftAction.style.zIndex = '1';
-        }
-        if (rightAction) {
-          rightAction.style.opacity = '0';
-          rightAction.style.pointerEvents = 'none';
-          rightAction.style.zIndex = '1';
-        }
-        if (leftContent) {
-          leftContent.style.transform = 'scale(1)';
-          leftContent.style.opacity = '1';
-          leftContent.style.transition = 'none';
-        }
-        if (rightContent) {
-          rightContent.style.transform = 'scale(1)';
-          rightContent.style.opacity = '1';
-          rightContent.style.transition = 'none';
-        }
-      };
+      front.style.transition = `transform ${duration}ms cubic-bezier(0.18, 0.9, 0.32, 1.08), box-shadow 0.2s ease`;
+      front.style.transform = `translate3d(${targetPx}px, 0, 0)`;
 
-      if (delayMs > 0) {
-        resetTimer = setTimeout(applyReset, delayMs);
+      if (targetPx === 0) {
+        front.classList.remove('is-docked', 'is-swiping');
+        if (activeDockedCard && activeDockedCard.element === wrapper) {
+          activeDockedCard = null;
+        }
+        setTimeout(() => {
+          if (dockedState === 0) {
+            if (leftAction) {
+              leftAction.style.opacity = '0';
+              leftAction.style.pointerEvents = 'none';
+            }
+            if (rightAction) {
+              rightAction.style.opacity = '0';
+              rightAction.style.pointerEvents = 'none';
+            }
+            if (leftIconCircle) leftIconCircle.style.transform = 'scale(1)';
+            if (rightIconCircle) rightIconCircle.style.transform = 'scale(1)';
+          }
+        }, duration);
       } else {
-        applyReset();
+        front.classList.remove('is-swiping');
+        front.classList.add('is-docked');
+        activeDockedCard = {
+          element: wrapper,
+          close: () => animateTo(0)
+        };
+        if (targetPx > 0) {
+          if (leftAction) {
+            leftAction.style.opacity = '1';
+            leftAction.style.pointerEvents = 'auto';
+          }
+          if (rightAction) {
+            rightAction.style.opacity = '0';
+            rightAction.style.pointerEvents = 'none';
+          }
+        } else {
+          if (rightAction) {
+            rightAction.style.opacity = '1';
+            rightAction.style.pointerEvents = 'auto';
+          }
+          if (leftAction) {
+            leftAction.style.opacity = '0';
+            leftAction.style.pointerEvents = 'none';
+          }
+        }
       }
     }
 
-    // Direct click on revealed action buttons
-    leftAction?.addEventListener('click', (e) => {
-      e.stopPropagation();
-      handleCardDelete(item, wrapper, front);
-    });
+    wrapper._dockReset = () => animateTo(0);
 
-    rightAction?.addEventListener('click', (e) => {
-      e.stopPropagation();
+    function triggerDeleteAction() {
+      dockedState = 0;
+      if (activeDockedCard && activeDockedCard.element === wrapper) {
+        activeDockedCard = null;
+      }
+      front.classList.remove('is-docked', 'is-swiping');
+      if (navigator.vibrate) {
+        try { navigator.vibrate([14, 25]); } catch {}
+      }
+      front.style.transition = 'transform 0.24s cubic-bezier(0.2, 0.9, 0.3, 1), opacity 0.2s ease';
+      front.style.transform = 'translate3d(100%, 0, 0)';
+      front.style.opacity = '0';
+      handleCardDelete(item, wrapper, front);
+    }
+
+    function triggerArchiveAction() {
+      dockedState = 0;
+      if (activeDockedCard && activeDockedCard.element === wrapper) {
+        activeDockedCard = null;
+      }
+      front.classList.remove('is-docked', 'is-swiping');
+      if (navigator.vibrate) {
+        try { navigator.vibrate([14, 25]); } catch {}
+      }
+      front.style.transition = 'transform 0.24s cubic-bezier(0.2, 0.9, 0.3, 1), opacity 0.2s ease';
+      front.style.transform = 'translate3d(-100%, 0, 0)';
+      front.style.opacity = '0';
       if (currentView === 'archived') {
         handleCardUnarchive(item, wrapper, front);
       } else {
         handleCardArchive(item, wrapper, front);
       }
+    }
+
+    leftBtn?.addEventListener('click', (e) => {
+      e.preventDefault();
+      e.stopPropagation();
+      triggerDeleteAction();
     });
 
-    function onGestureStart(clientX, clientY) {
-      if (rafId) {
-        cancelAnimationFrame(rafId);
-        rafId = null;
-      }
-      if (resetTimer) {
-        clearTimeout(resetTimer);
-        resetTimer = null;
-      }
-
-      startX = clientX;
-      startY = clientY;
-      latestClientX = clientX;
-      latestClientY = clientY;
-      currentDeltaX = 0;
-      isTracking = true;
-      isSwiping = false;
-      isScrolling = false;
-      hasMoved = false;
-      hasVibratedThreshold = false;
-
-      // Disable CSS transitions during active touch tracking
-      front.style.transition = 'none';
-      if (leftContent) leftContent.style.transition = 'none';
-      if (rightContent) rightContent.style.transition = 'none';
-    }
+    rightBtn?.addEventListener('click', (e) => {
+      e.preventDefault();
+      e.stopPropagation();
+      triggerArchiveAction();
+    });
 
     function renderSwipeFrame() {
       rafId = null;
       if (!isTracking || !isSwiping) return;
 
-      const deltaX = latestClientX - startX;
-      const absX = Math.abs(deltaX);
-      const sign = Math.sign(deltaX);
+      const dragDelta = latestClientX - startX;
+      let targetX = startTranslation + dragDelta;
+      const absTarget = Math.abs(targetX);
+      const sign = Math.sign(targetX);
 
-      // 1:1 Direct Tracking up to threshold + Asymptotic Elastic Resistance beyond
-      let translation = deltaX;
-      if (absX > COMMIT_THRESHOLD) {
-        const overdrag = absX - COMMIT_THRESHOLD;
-        const elasticExtra = (overdrag * 0.4) / (1 + overdrag * 0.002);
-        translation = sign * (COMMIT_THRESHOLD + elasticExtra);
+      // Continuous asymptotic rubber-band resistance beyond FULL_SWIPE_THRESHOLD
+      let computedX = targetX;
+      if (absTarget > FULL_SWIPE_THRESHOLD) {
+        const overdrag = absTarget - FULL_SWIPE_THRESHOLD;
+        const elasticExtra = (overdrag * 0.35) / (1 + overdrag * 0.003);
+        computedX = sign * (FULL_SWIPE_THRESHOLD + elasticExtra);
       }
 
-      currentDeltaX = translation;
-      front.style.transform = `translate3d(${translation}px, 0, 0)`;
+      currentTranslation = computedX;
+      front.style.transform = `translate3d(${computedX}px, 0, 0)`;
 
-      // Dynamic Layer Switching
-      const isRightSwipe = translation > 0;
+      const isRightSwipe = computedX > 0;
       const activeAction = isRightSwipe ? leftAction : rightAction;
       const inactiveAction = isRightSwipe ? rightAction : leftAction;
-      const activeContent = isRightSwipe ? leftContent : rightContent;
-      const inactiveContent = isRightSwipe ? rightContent : leftContent;
+      const activeIconCircle = isRightSwipe ? leftIconCircle : rightIconCircle;
+      const inactiveIconCircle = isRightSwipe ? rightIconCircle : leftIconCircle;
 
       if (activeAction) {
         activeAction.style.opacity = '1';
@@ -798,38 +857,66 @@ import {
         inactiveAction.style.zIndex = '1';
       }
 
-      // Smooth Icon Scaling Feedback
-      if (activeContent) {
-        const progress = Math.min(1, absX / COMMIT_THRESHOLD);
-        if (absX >= COMMIT_THRESHOLD) {
-          activeContent.style.transform = 'scale(1.14)';
-          activeContent.style.opacity = '1';
-        } else {
-          const scale = 0.85 + progress * 0.15;
-          const opacity = 0.5 + progress * 0.5;
-          activeContent.style.transform = `scale(${scale})`;
-          activeContent.style.opacity = `${opacity}`;
-        }
-      }
-
-      // Haptic Vibration at Threshold with Hysteresis
-      if (absX >= COMMIT_THRESHOLD) {
-        if (!hasVibratedThreshold) {
-          hasVibratedThreshold = true;
+      // Haptic tick & icon scale when crossing full-swipe threshold
+      if (absTarget >= FULL_SWIPE_THRESHOLD) {
+        if (activeIconCircle) activeIconCircle.style.transform = 'scale(1.22)';
+        if (!hasVibratedFull) {
+          hasVibratedFull = true;
           if (navigator.vibrate) {
-            try { navigator.vibrate(12); } catch {}
+            try { navigator.vibrate(14); } catch {}
           }
         }
-      } else if (absX < COMMIT_THRESHOLD - 25) {
-        hasVibratedThreshold = false;
+      } else {
+        if (activeIconCircle) {
+          const p = Math.min(1, Math.max(0, (absTarget - 25) / (SNAP_WIDTH - 25)));
+          activeIconCircle.style.transform = `scale(${0.9 + p * 0.1})`;
+        }
+        if (absTarget < FULL_SWIPE_THRESHOLD - 25) {
+          hasVibratedFull = false;
+        }
       }
+    }
+
+    function onGestureStart(clientX, clientY) {
+      if (rafId) {
+        cancelAnimationFrame(rafId);
+        rafId = null;
+      }
+
+      // Close any other open card before tracking this one
+      if (activeDockedCard && activeDockedCard.element !== wrapper) {
+        activeDockedCard.close();
+      }
+
+      startX = clientX;
+      startY = clientY;
+      latestClientX = clientX;
+      lastMoveX = clientX;
+      lastMoveTime = performance.now();
+      currentVelocityX = 0;
+
+      startTranslation = dockedState;
+      isTracking = true;
+      isSwiping = false;
+      isScrolling = false;
+      hasMoved = false;
+      hasVibratedFull = false;
+
+      front.style.transition = 'none';
+      front.classList.add('is-swiping');
     }
 
     function onGestureMove(clientX, clientY, e) {
       if (!isTracking) return;
 
       latestClientX = clientX;
-      latestClientY = clientY;
+      const now = performance.now();
+      const dt = now - lastMoveTime;
+      if (dt > 8) {
+        currentVelocityX = (clientX - lastMoveX) / dt;
+        lastMoveX = clientX;
+        lastMoveTime = now;
+      }
 
       const rawDeltaX = clientX - startX;
       const rawDeltaY = clientY - startY;
@@ -838,12 +925,11 @@ import {
         if (Math.hypot(rawDeltaX, rawDeltaY) < DEAD_ZONE) return;
 
         if (Math.abs(rawDeltaY) >= Math.abs(rawDeltaX)) {
-          // Vertical scroll detected - pass control to native scroll
           isScrolling = true;
           isTracking = false;
+          front.classList.remove('is-swiping');
           return;
         } else {
-          // Horizontal swipe detected - lock swipe and compensate deadzone
           isSwiping = true;
           startX = clientX - Math.sign(rawDeltaX) * DEAD_ZONE;
         }
@@ -860,120 +946,112 @@ import {
     }
 
     function onGestureEnd() {
-      if (!isTracking && !isSwiping) return;
-
+      if (!isTracking) return;
       if (rafId) {
         cancelAnimationFrame(rafId);
         rafId = null;
       }
-
       isTracking = false;
 
       if (!isSwiping) {
-        front.style.transition = 'transform 0.25s cubic-bezier(0.25, 1, 0.5, 1)';
-        front.style.transform = 'translate3d(0px, 0, 0)';
-        resetActionLayers(250);
+        animateTo(dockedState, 200);
         return;
       }
 
       isSwiping = false;
 
-      // Final position calculation
-      const deltaX = latestClientX - startX;
-      const absX = Math.abs(deltaX);
-      const sign = Math.sign(deltaX);
-      let translation = deltaX;
-      if (absX > COMMIT_THRESHOLD) {
-        const overdrag = absX - COMMIT_THRESHOLD;
-        const elasticExtra = (overdrag * 0.4) / (1 + overdrag * 0.002);
-        translation = sign * (COMMIT_THRESHOLD + elasticExtra);
-      }
-      currentDeltaX = translation;
+      const dragDelta = latestClientX - startX;
+      let targetX = startTranslation + dragDelta;
+      const absTarget = Math.abs(targetX);
+      const sign = Math.sign(targetX);
 
-      const absDelta = Math.abs(currentDeltaX);
+      // Check Full Swipe commit
+      const isFullSwipeByDistance = absTarget >= FULL_SWIPE_THRESHOLD;
+      const isFullSwipeByVelocity = Math.abs(currentVelocityX) > VELOCITY_FULL_SWIPE_THRESHOLD && Math.sign(currentVelocityX) === sign;
 
-      if (absDelta >= COMMIT_THRESHOLD) {
-        // Commit Action: trigger subtle double haptic confirmation
-        if (navigator.vibrate) {
-          try { navigator.vibrate([14, 25]); } catch {}
-        }
-
-        // Animate off-screen with smooth glide
-        front.style.transition = 'transform 0.24s cubic-bezier(0.2, 0.9, 0.3, 1), opacity 0.2s ease';
-        front.style.transform = currentDeltaX > 0 ? 'translate3d(100%, 0, 0)' : 'translate3d(-100%, 0, 0)';
-        front.style.opacity = '0';
-
-        if (currentDeltaX > 0) {
-          // Swiped Right -> Trash
-          handleCardDelete(item, wrapper, front);
+      if (isFullSwipeByDistance || isFullSwipeByVelocity) {
+        if (sign > 0) {
+          triggerDeleteAction();
         } else {
-          // Swiped Left -> Archive / Unarchive
-          if (currentView === 'archived') {
-            handleCardUnarchive(item, wrapper, front);
-          } else {
-            handleCardArchive(item, wrapper, front);
-          }
+          triggerArchiveAction();
         }
+        return;
+      }
+
+      // Check Snap-to-Reveal Docking
+      const isSnapByDistance = absTarget >= REVEAL_THRESHOLD;
+      const isSnapByVelocity = Math.abs(currentVelocityX) > VELOCITY_SNAP_THRESHOLD && Math.sign(currentVelocityX) === sign;
+
+      // Check if user was already docked and flicked backwards to close
+      const isClosingFlick = dockedState !== 0 && Math.sign(currentVelocityX) !== Math.sign(dockedState) && Math.abs(currentVelocityX) > VELOCITY_SNAP_THRESHOLD;
+
+      if (isClosingFlick || (!isSnapByDistance && !isSnapByVelocity)) {
+        animateTo(0);
       } else {
-        // Snap back to centered 0px smoothly
-        front.style.transition = 'transform 0.28s cubic-bezier(0.25, 1, 0.5, 1)';
-        front.style.transform = 'translate3d(0px, 0, 0)';
-        if (leftContent) {
-          leftContent.style.transition = 'transform 0.24s ease, opacity 0.24s ease';
-          leftContent.style.transform = 'scale(0.85)';
-          leftContent.style.opacity = '0';
-        }
-        if (rightContent) {
-          rightContent.style.transition = 'transform 0.24s ease, opacity 0.24s ease';
-          rightContent.style.transform = 'scale(0.85)';
-          rightContent.style.opacity = '0';
-        }
-        resetActionLayers(280);
+        animateTo(sign * SNAP_WIDTH);
       }
     }
 
-    // Touch events
+    // Touch events on front card
     front.addEventListener('touchstart', (e) => {
-      if (e.touches.length === 1) {
-        onGestureStart(e.touches[0].clientX, e.touches[0].clientY);
-      }
+      if (e.touches.length !== 1) return;
+      onGestureStart(e.touches[0].clientX, e.touches[0].clientY);
     }, { passive: true });
 
-    front.addEventListener('touchmove', (e) => {
-      if (e.touches.length === 1) {
-        onGestureMove(e.touches[0].clientX, e.touches[0].clientY, e);
-      }
+    window.addEventListener('touchmove', (e) => {
+      if (!isTracking) return;
+      if (e.touches.length !== 1) return;
+      onGestureMove(e.touches[0].clientX, e.touches[0].clientY, e);
     }, { passive: false });
 
-    front.addEventListener('touchend', onGestureEnd, { passive: true });
-    front.addEventListener('touchcancel', onGestureEnd, { passive: true });
+    window.addEventListener('touchend', (e) => {
+      if (!isTracking) return;
+      onGestureEnd();
+    }, { passive: true });
 
-    // Desktop mouse drag support
+    window.addEventListener('touchcancel', (e) => {
+      if (!isTracking) return;
+      onGestureEnd();
+    }, { passive: true });
+
+    // Mouse drag support for desktop debugging
+    let isMouseDown = false;
     front.addEventListener('mousedown', (e) => {
       if (e.button !== 0) return;
+      isMouseDown = true;
       onGestureStart(e.clientX, e.clientY);
-
-      const onMouseMove = (moveEvent) => {
-        onGestureMove(moveEvent.clientX, moveEvent.clientY, moveEvent);
-      };
-
-      const onMouseUp = () => {
-        window.removeEventListener('mousemove', onMouseMove);
-        window.removeEventListener('mouseup', onMouseUp);
-        onGestureEnd();
-      };
-
-      window.addEventListener('mousemove', onMouseMove);
-      window.addEventListener('mouseup', onMouseUp);
     });
 
-    // Card click navigation
+    window.addEventListener('mousemove', (e) => {
+      if (!isMouseDown || !isTracking) return;
+      onGestureMove(e.clientX, e.clientY, e);
+    });
+
+    window.addEventListener('mouseup', (e) => {
+      if (!isMouseDown) return;
+      isMouseDown = false;
+      if (isTracking) {
+        onGestureEnd();
+      }
+    });
+
+    // Front card tap/click handler
     front.addEventListener('click', (e) => {
-      if (hasMoved || Math.abs(currentDeltaX) > 8) {
+      // If card was docked open, any tap on the card front should close it
+      if (dockedState !== 0) {
+        e.preventDefault();
+        e.stopPropagation();
+        animateTo(0);
+        return;
+      }
+
+      // If user dragged during this touch, prevent navigation
+      if (hasMoved || Math.abs(currentTranslation) > 6) {
         e.preventDefault();
         e.stopPropagation();
         return;
       }
+
       window.location.href = chatUrl;
     });
 
@@ -1019,33 +1097,23 @@ import {
         });
       }, 250);
     } else {
-      front.style.transition = 'transform 0.28s cubic-bezier(0.25, 1, 0.5, 1), opacity 0.24s ease';
-      front.style.transform = 'translate3d(0px, 0, 0)';
-      front.style.opacity = '1';
+      if (typeof wrapper._dockReset === 'function') {
+        wrapper._dockReset();
+      } else {
+        front.style.transition = 'transform 0.28s cubic-bezier(0.18, 0.9, 0.32, 1.08), opacity 0.24s ease';
+        front.style.transform = 'translate3d(0px, 0, 0)';
+        front.style.opacity = '1';
+      }
       setTimeout(() => {
         const leftAction = wrapper.querySelector('.chat-swipe-action-left');
         const rightAction = wrapper.querySelector('.chat-swipe-action-right');
-        const leftContent = wrapper.querySelector('.chat-swipe-left-content');
-        const rightContent = wrapper.querySelector('.chat-swipe-right-content');
         if (leftAction) {
           leftAction.style.opacity = '0';
           leftAction.style.pointerEvents = 'none';
-          leftAction.style.zIndex = '1';
         }
         if (rightAction) {
           rightAction.style.opacity = '0';
           rightAction.style.pointerEvents = 'none';
-          rightAction.style.zIndex = '1';
-        }
-        if (leftContent) {
-          leftContent.style.transform = 'scale(1)';
-          leftContent.style.opacity = '1';
-          leftContent.style.transition = 'none';
-        }
-        if (rightContent) {
-          rightContent.style.transform = 'scale(1)';
-          rightContent.style.opacity = '1';
-          rightContent.style.transition = 'none';
         }
       }, 280);
     }
