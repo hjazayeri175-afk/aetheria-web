@@ -4322,6 +4322,9 @@ const PRESET_SCENES = [
         (window as any).AetheriaTheme?.saveWallpaperConfig?.(draftWpConfig, targetId);
         showToast('Wallpaper applied successfully! ✨', 'success');
         showView('view-appearance');
+        if (typeof (window as any).__updateProfileChatPreview === 'function') {
+          (window as any).__updateProfileChatPreview();
+        }
       });
     }
 
@@ -4423,6 +4426,10 @@ const PRESET_SCENES = [
             }
           } else if (id === 'view-wallpaper-studio') {
             initWallpaperStudio();
+          } else if (id === 'view-appearance') {
+            if (typeof (window as any).__updateProfileChatPreview === 'function') {
+              (window as any).__updateProfileChatPreview();
+            }
           }
         } else {
           el.classList.add('hidden');
@@ -6126,38 +6133,78 @@ const PRESET_SCENES = [
 
       function updatePreview() {
         if (!previewViewport) return;
+        // Always refresh settings and wallpaperConfig from AetheriaTheme / localStorage
+        settings = { ...(window.AetheriaTheme?.getSettings?.(null) || {}) };
+        const wpConfig = (window as any).AetheriaTheme?.getWallpaperConfig?.(null);
+
         const currentActiveMode = (settings.baseMode === 'oled' || settings.baseMode === 'amoled') ? 'oled'
                                 : (settings.baseMode === 'day' ? 'day' : 'dark');
         const isOled = currentActiveMode === 'oled';
         const isDay = currentActiveMode === 'day';
 
-        // 1. Wallpaper background
+        // Resolve wallpaper value and type
+        const rawWp = wpConfig?.value || settings.chatWallpaper || 'linear-gradient(180deg, #050811 0%, #0d122b 50%, #04050a 100%)';
+        const wpType = wpConfig?.type || '';
+        const isImage = (wpType === 'preset-scene' || wpType === 'custom-image' || wpType === 'image' || rawWp.startsWith('http') || rawWp.startsWith('data:') || rawWp.startsWith('/'));
+
+        const blurPx = typeof wpConfig?.blur === 'number' ? wpConfig.blur : (typeof settings.chatBlur === 'number' ? settings.chatBlur : (settings.chatBlur ? 12 : 0));
+        const dimVal = isDay 
+          ? (isImage ? Math.min(Number(typeof wpConfig?.dimness === 'number' ? (wpConfig.dimness / 100) : (settings.chatDim !== undefined ? settings.chatDim : 0.08)), 0.25) : 0) 
+          : (typeof wpConfig?.dimness === 'number' ? (wpConfig.dimness / 100) : (settings.chatDim !== undefined ? settings.chatDim : 0.20));
+
+        // 1. Wallpaper background & image layer
         if (isOled) {
           previewViewport.style.background = '#000000';
-          previewViewport.style.backgroundImage = 'none';
-        } else if (settings.chatWallpaper && (settings.chatWallpaper.startsWith('url(') || settings.chatWallpaper.startsWith('data:'))) {
-          previewViewport.style.background = settings.chatWallpaper;
-          previewViewport.style.backgroundSize = 'cover';
-          previewViewport.style.backgroundPosition = 'center';
-        } else if (settings.chatWallpaper && !isDay) {
-          previewViewport.style.background = settings.chatWallpaper;
-          previewViewport.style.backgroundSize = 'cover';
-          previewViewport.style.backgroundPosition = 'center';
+          if (previewImage) {
+            previewImage.style.display = 'none';
+            previewImage.style.backgroundImage = 'none';
+          }
+          if (previewDimmer) previewDimmer.style.display = 'none';
         } else {
-          previewViewport.style.background = isDay ? 'linear-gradient(to bottom, #f8fafc, #f1f5f9)' : '#0a0d16';
+          previewViewport.style.background = isDay ? (isImage ? '#ffffff' : 'linear-gradient(to bottom, #f8fafc, #f1f5f9)') : '#090b17';
+          if (previewImage) {
+            previewImage.style.display = '';
+            if (isImage) {
+              previewImage.style.removeProperty('background');
+              previewImage.style.backgroundImage = `url("${rawWp}")`;
+              previewImage.style.backgroundSize = 'cover';
+              previewImage.style.backgroundPosition = 'center';
+              previewImage.style.backgroundRepeat = 'no-repeat';
+              previewImage.style.backgroundColor = 'transparent';
+              previewImage.style.filter = blurPx > 0 ? `blur(${blurPx}px)` : 'none';
+              previewImage.style.transform = blurPx > 0 ? 'scale(1.05)' : 'scale(1.0)';
+            } else {
+              previewImage.style.removeProperty('background');
+              previewImage.style.backgroundImage = 'none';
+              previewImage.style.background = rawWp;
+              previewImage.style.filter = 'none';
+              previewImage.style.transform = 'none';
+            }
+          }
+          if (previewDimmer) {
+            previewDimmer.style.display = '';
+            previewDimmer.style.opacity = dimVal.toString();
+            previewDimmer.style.backgroundColor = '#000000';
+          }
         }
 
         // 1.5 Wallpaper pattern overlay
         if (previewPattern) {
           if (isOled) {
-            previewPattern.style.backgroundImage = 'none';
+            previewPattern.style.display = 'none';
           } else {
+            previewPattern.style.display = '';
             const patId = settings.chatPatternId || (settings.id ? ('pattern-' + settings.id.replace('-mode', '').replace('-corner', '').replace('-luxury', '')) : 'pattern-gamer');
             const patObj = (window as any).AetheriaTheme?.PATTERNS?.[patId];
+            const patOpacity = wpConfig && typeof wpConfig.patternOpacity === 'number'
+              ? (wpConfig.patternOpacity / 100)
+              : (settings.chatPatternOpacity !== undefined ? settings.chatPatternOpacity : (isDay ? 0.06 : 0.16));
+
             if (patObj && patObj.pattern && patObj.pattern !== 'none') {
               previewPattern.style.backgroundImage = patObj.pattern;
               previewPattern.style.backgroundSize = patObj.patternSize;
-              previewPattern.style.opacity = (settings.chatPatternOpacity !== undefined ? settings.chatPatternOpacity : (isDay ? 0.06 : 0.16)).toString();
+              previewPattern.style.opacity = patOpacity.toString();
+              previewPattern.style.filter = isDay ? 'invert(1)' : 'none';
             } else {
               previewPattern.style.backgroundImage = 'none';
             }
@@ -6216,6 +6263,15 @@ const PRESET_SCENES = [
         // 6. Ensure buttons and indicators are synchronized with currentActiveMode
         syncModeButtons(currentActiveMode);
       }
+
+      (window as any).__updateProfileChatPreview = updatePreview;
+      window.addEventListener('aetheria-wallpaper-changed', updatePreview);
+      window.addEventListener('aetheria-theme-change', updatePreview);
+      window.addEventListener('storage', (e) => {
+        if (e.key && (e.key.startsWith('aetheria_wallpaper_') || e.key.startsWith('aetheria_theme_'))) {
+          updatePreview();
+        }
+      });
 
       function saveAndApply() {
         try {
