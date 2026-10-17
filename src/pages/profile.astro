@@ -2356,7 +2356,11 @@ import {
               style="width: ${overlaySize}px; height: ${overlaySize}px; top: 50%; left: 50%; transform: translate(-50%, -50%); overflow: visible;"
             ></canvas>
           `;
-          refreshCanvasRegistry();
+          try {
+            if (typeof (window as any).__refreshCanvasRegistry === 'function') {
+              (window as any).__refreshCanvasRegistry();
+            }
+          } catch {}
         }
       }
 
@@ -5290,7 +5294,8 @@ function renderPresets() {
       // DYNAMIC PERSONALIZATION: NAME COLOR & STYLE SUB-PAGE (FULL SCREEN & 150+ BADGES)
       // ==========================================
       function initNameColorPage() {
-      (window as any).__initNameColorPage = initNameColorPage;
+        (window as any).__initNameColorPage = initNameColorPage;
+        (window as any).__refreshCanvasRegistry = refreshCanvasRegistry;
 
         const pageView = document.getElementById('view-name-color');
         if (!pageView) return;
@@ -5891,6 +5896,7 @@ function renderPresets() {
         }
 
         function refreshCanvasRegistry() {
+          (window as any).__refreshCanvasRegistry = refreshCanvasRegistry;
           canvasEntries = [];
           const canvasElements = document.querySelectorAll<HTMLCanvasElement>('canvas.avatar-deco-canvas');
           const dpr = Math.min(window.devicePixelRatio || 1, 2);
