@@ -1551,7 +1551,7 @@ import {
         </div>
       </div>
 
-<!-- ========================================== -->
+    <!-- ========================================== -->
     <!-- VIEW 9: NAME COLOR & STYLE SUB-PAGE (FULL SCREEN) -->
     <!-- ========================================== -->
     <div id="view-name-color" class="hidden space-y-4">
@@ -1991,7 +1991,7 @@ import {
 
   </div>
 
-  <!-- Toast Notification Container -->
+    <!-- Toast Notification Container -->
   <div id="toast-container" class="fixed bottom-24 left-1/2 -translate-x-1/2 z-50 flex flex-col items-center gap-2 pointer-events-none w-full max-w-xs"></div>
 
   <BottomNav activeNav="persona" />
@@ -3456,7 +3456,9 @@ import {
           } else if (id === 'view-power-saving') {
             syncPowerSavingUI();
           } else if (id === 'view-name-color') {
-            initNameColorPage();
+            if (typeof (window as any).__initNameColorPage === 'function') {
+              (window as any).__initNameColorPage();
+            }
           }
         } else {
           el.classList.add('hidden');
@@ -5213,6 +5215,924 @@ function renderPresets() {
         if (presetsGrid) presetsGrid.scrollBy({ left: 140, behavior: 'smooth' });
       });
 
+      // ==========================================
+      // DYNAMIC PERSONALIZATION: NAME COLOR & STYLE SUB-PAGE (FULL SCREEN & 150+ BADGES)
+      // ==========================================
+      function initNameColorPage() {
+      (window as any).__initNameColorPage = initNameColorPage;
+
+        const pageView = document.getElementById('view-name-color');
+        if (!pageView) return;
+
+        const btnBack = document.getElementById('btn-back-from-name-color');
+        const btnHeaderApply = document.getElementById('btn-header-apply-name-style');
+        const btnApply = document.getElementById('btn-apply-name-style');
+        const btnCancel = document.getElementById('btn-cancel-name-style');
+        const btnReset = document.getElementById('btn-reset-name-style');
+
+        const tabNameColors = document.getElementById('tab-toggle-name-colors');
+        const tabAvatarBorder = document.getElementById('tab-toggle-avatar-border');
+        const viewTabName = document.getElementById('view-tab-name');
+        const viewTabAvatar = document.getElementById('view-tab-avatar');
+
+        const gridColorMatrix = document.getElementById('grid-color-matrix');
+        const borderEffectsGrid = document.getElementById('border-effects-grid');
+        const gridGlowColors = document.getElementById('grid-border-glow-colors');
+        const toggleBadges = document.getElementById('toggle-name-badges') as HTMLInputElement | null;
+        const btnRemoveBadge = document.getElementById('btn-remove-badge');
+        const inputBadgeSearch = document.getElementById('input-badge-search') as HTMLInputElement | null;
+        const btnClearBadgeSearch = document.getElementById('btn-clear-badge-search');
+        const gridBadgesDisplay = document.getElementById('grid-badges-display');
+        const badgePickerCount = document.getElementById('badge-picker-count');
+        const wrapperBadgePickerContainer = document.getElementById('wrapper-badge-picker-container');
+
+        // 8 Solids (Row 1)
+        const SOLID_COLORS = [
+          { id: 'deep-blue', name: 'Deep Blue', value: '#2563eb' },
+          { id: 'forest-green', name: 'Forest Green', value: '#16a34a' },
+          { id: 'amber', name: 'Amber', value: '#f59e0b' },
+          { id: 'coral', name: 'Coral', value: '#f97316' },
+          { id: 'purple', name: 'Purple', value: '#a855f7' },
+          { id: 'cyan', name: 'Cyan', value: '#06b6d4' },
+          { id: 'ruby-red', name: 'Ruby Red', value: '#e11d48' },
+          { id: 'muted-slate', name: 'Muted Slate', value: '#94a3b8' }
+        ];
+
+        // 8 Dual Gradients with 45-deg diagonal split swatch (Row 2)
+        const GRADIENT_COLORS = [
+          { id: 'cyan-blue', name: 'Cyan / Blue', value: 'linear-gradient(135deg, #06b6d4 0%, #3b82f6 100%)', split: 'linear-gradient(135deg, #06b6d4 0%, #06b6d4 50%, #3b82f6 50%, #3b82f6 100%)' },
+          { id: 'lime-green', name: 'Lime / Green', value: 'linear-gradient(135deg, #84cc16 0%, #10b981 100%)', split: 'linear-gradient(135deg, #84cc16 0%, #84cc16 50%, #10b981 50%, #10b981 100%)' },
+          { id: 'orange-amber', name: 'Orange / Amber', value: 'linear-gradient(135deg, #f97316 0%, #fbbf24 100%)', split: 'linear-gradient(135deg, #f97316 0%, #f97316 50%, #fbbf24 50%, #fbbf24 100%)' },
+          { id: 'pink-gold', name: 'Pink / Gold', value: 'linear-gradient(135deg, #ec4899 0%, #f59e0b 100%)', split: 'linear-gradient(135deg, #ec4899 0%, #ec4899 50%, #f59e0b 50%, #f59e0b 100%)' },
+          { id: 'purple-blue', name: 'Purple / Blue', value: 'linear-gradient(135deg, #a855f7 0%, #3b82f6 100%)', split: 'linear-gradient(135deg, #a855f7 0%, #a855f7 50%, #3b82f6 50%, #3b82f6 100%)' },
+          { id: 'turquoise-aqua', name: 'Turquoise / Aqua', value: 'linear-gradient(135deg, #14b8a6 0%, #06b6d4 100%)', split: 'linear-gradient(135deg, #14b8a6 0%, #14b8a6 50%, #06b6d4 50%, #06b6d4 100%)' },
+          { id: 'rose-peach', name: 'Rose / Peach', value: 'linear-gradient(135deg, #f43f5e 0%, #fb923c 100%)', split: 'linear-gradient(135deg, #f43f5e 0%, #f43f5e 50%, #fb923c 50%, #fb923c 100%)' },
+          { id: 'silver-gray', name: 'Silver / Gray', value: 'linear-gradient(135deg, #e2e8f0 0%, #94a3b8 100%)', split: 'linear-gradient(135deg, #e2e8f0 0%, #e2e8f0 50%, #94a3b8 50%, #94a3b8 100%)' }
+        ];
+
+        // 4 Avatar Border Effects
+        const BORDER_EFFECTS = [
+          { id: 'none', name: 'None', desc: 'Clean Ring', effectClass: 'avatar-border-none' },
+          { id: 'glow', name: 'Neon Glow', desc: 'Halo', effectClass: 'avatar-border-glow' },
+          { id: 'dual-gradient', name: 'Dual Gradient', desc: 'Ring', effectClass: 'avatar-border-dual-gradient' },
+          { id: 'dynamic-sparkle', name: 'Dynamic Sparkle', desc: 'Shimmer', effectClass: 'avatar-border-dynamic-sparkle' }
+        ];
+
+        // 8 Avatar Halo Tint Colors
+        const GLOW_COLORS = [
+          { id: 'cyan', name: 'Cyan Glow', value: '#06b6d4' },
+          { id: 'purple', name: 'Purple Glow', value: '#a855f7' },
+          { id: 'pink', name: 'Pink Glow', value: '#ec4899' },
+          { id: 'amber', name: 'Amber Gold', value: '#f59e0b' },
+          { id: 'emerald', name: 'Emerald', value: '#10b981' },
+          { id: 'blue', name: 'Electric Blue', value: '#3b82f6' },
+          { id: 'rose', name: 'Rose Red', value: '#f43f5e' },
+          { id: 'silver', name: 'Silver White', value: '#f8fafc' }
+        ];
+
+        // 150+ Curated Badge & Animated Emoji Library
+        const BADGE_LIBRARY = [
+          // 1. POPULAR & ANIMATED (🔥)
+          { id: 'noto-fire', cat: 'popular', name: 'Fire Animated', url: '/badges/noto-fire.webp' },
+          { id: 'noto-sparkles', cat: 'popular', name: 'Sparkles Animated', url: '/badges/noto-sparkles.webp' },
+          { id: 'noto-crown', cat: 'popular', name: 'Crown Animated', url: '/badges/noto-crown.webp' },
+          { id: 'noto-rocket', cat: 'popular', name: 'Rocket Animated', url: '/badges/noto-rocket.webp' },
+          { id: 'noto-heart-fire', cat: 'popular', name: 'Heart on Fire', url: '/badges/noto-heart-fire.webp' },
+          { id: 'noto-crystal', cat: 'popular', name: 'Crystal Ball', url: '/badges/noto-crystal.webp' },
+          { id: 'noto-100', cat: 'popular', name: '100 Score', url: '/badges/noto-100.webp' },
+          { id: 'noto-party', cat: 'popular', name: 'Party Popper', url: '/badges/noto-party.webp' },
+          { id: 'noto-star', cat: 'popular', name: 'Glowing Star', url: '/badges/noto-star.webp' },
+          { id: 'noto-wand', cat: 'popular', name: 'Magic Wand', url: '/badges/noto-wand.webp' },
+          { id: 'noto-diamond', cat: 'popular', name: 'Diamond Animated', url: '/badges/noto-diamond.webp' },
+          { id: 'noto-robot', cat: 'popular', name: 'Robot Animated', url: '/badges/noto-robot.webp' },
+          { id: 'sol-verified', cat: 'popular', name: 'Verified Star', url: '/badges/sol-verified.svg' },
+          { id: 'sol-fire', cat: 'popular', name: 'Solar Fire', url: '/badges/sol-fire.svg' },
+          { id: 'sol-bolt', cat: 'popular', name: 'Solar Bolt', url: '/badges/sol-bolt.svg' },
+          { id: 'sol-magic-stick', cat: 'popular', name: 'Magic Stick', url: '/badges/sol-magic-stick.svg' },
+          { id: 'sol-rocket', cat: 'popular', name: 'Solar Rocket', url: '/badges/sol-rocket.svg' },
+          { id: 'sol-heart', cat: 'popular', name: 'Solar Heart', url: '/badges/sol-heart.svg' },
+          { id: 'sol-star', cat: 'popular', name: 'Solar Star', url: '/badges/sol-star.svg' },
+          { id: 'sol-sun', cat: 'popular', name: 'Solar Sun', url: '/badges/sol-sun.svg' },
+          { id: 'sol-moon', cat: 'popular', name: 'Solar Moon', url: '/badges/sol-moon.svg' },
+          { id: 'sol-target', cat: 'popular', name: 'Solar Target', url: '/badges/sol-target.svg' },
+          { id: 'sol-bell', cat: 'popular', name: 'Solar Bell', url: '/badges/sol-bell.svg' },
+          { id: 'fl-zap', cat: 'popular', name: 'High Voltage', url: '/badges/fl-zap.svg' },
+          { id: 'fl-bomb', cat: 'popular', name: 'Bomb', url: '/badges/fl-bomb.svg' },
+          { id: 'fl-bullseye', cat: 'popular', name: 'Bullseye', url: '/badges/fl-bullseye.svg' },
+          { id: 'fl-sparkler', cat: 'popular', name: 'Sparkler', url: '/badges/fl-sparkler.svg' },
+          { id: 'fl-dizzy', cat: 'popular', name: 'Dizzy Star', url: '/badges/fl-dizzy.svg' },
+          { id: 'fl-collision', cat: 'popular', name: 'Collision', url: '/badges/fl-collision.svg' },
+          { id: 'fl-sparkle-heart', cat: 'popular', name: 'Heart Sparkle', url: '/badges/fl-sparkle-heart.svg' },
+          { id: 'fl-heart-fire', cat: 'popular', name: 'Fire Heart', url: '/badges/fl-heart-fire.svg' },
+          { id: 'fl-crown', cat: 'popular', name: 'Crown Gold', url: '/badges/fl-crown.svg' },
+
+          // 2. ROYAL & VIP (👑)
+          { id: 'fl-gem', cat: 'royal', name: 'Gem Stone', url: '/badges/fl-gem.svg' },
+          { id: 'fl-trophy', cat: 'royal', name: 'Gold Trophy', url: '/badges/fl-trophy.svg' },
+          { id: 'fl-medal1', cat: 'royal', name: '1st Place Medal', url: '/badges/fl-medal1.svg' },
+          { id: 'fl-medal2', cat: 'royal', name: '2nd Place Medal', url: '/badges/fl-medal2.svg' },
+          { id: 'fl-medal3', cat: 'royal', name: '3rd Place Medal', url: '/badges/fl-medal3.svg' },
+          { id: 'fl-mil-medal', cat: 'royal', name: 'Military Medal', url: '/badges/fl-mil-medal.svg' },
+          { id: 'fl-shield', cat: 'royal', name: 'Royal Shield', url: '/badges/fl-shield.svg' },
+          { id: 'fl-swords', cat: 'royal', name: 'Crossed Swords', url: '/badges/fl-swords.svg' },
+          { id: 'fl-dagger', cat: 'royal', name: 'Dagger', url: '/badges/fl-dagger.svg' },
+          { id: 'fl-ring', cat: 'royal', name: 'Diamond Ring', url: '/badges/fl-ring.svg' },
+          { id: 'fl-check', cat: 'royal', name: 'VIP Check', url: '/badges/fl-check.svg' },
+          { id: 'fl-coin', cat: 'royal', name: 'Gold Coin', url: '/badges/fl-coin.svg' },
+          { id: 'fl-money-bag', cat: 'royal', name: 'Money Bag', url: '/badges/fl-money-bag.svg' },
+          { id: 'fl-star', cat: 'royal', name: 'Golden Star', url: '/badges/fl-star.svg' },
+          { id: 'sol-crown-gold', cat: 'royal', name: 'Solar Crown', url: '/badges/sol-crown-gold.svg' },
+          { id: 'sol-crown-star', cat: 'royal', name: 'Solar Crown Star', url: '/badges/sol-crown-star.svg' },
+          { id: 'sol-shield-check', cat: 'royal', name: 'Solar Shield Check', url: '/badges/sol-shield-check.svg' },
+          { id: 'sol-shield-star', cat: 'royal', name: 'Solar Shield Star', url: '/badges/sol-shield-star.svg' },
+          { id: 'sol-cup-star', cat: 'royal', name: 'Solar Cup Star', url: '/badges/sol-cup-star.svg' },
+          { id: 'sol-ribbon', cat: 'royal', name: 'Ribbon Medal', url: '/badges/sol-ribbon.svg' },
+          { id: 'sol-diploma', cat: 'royal', name: 'Verified Badge', url: '/badges/sol-diploma.svg' },
+          { id: 'sol-key', cat: 'royal', name: 'VIP Key', url: '/badges/sol-key.svg' },
+          { id: 'sol-safe', cat: 'royal', name: 'Solar Vault', url: '/badges/sol-safe.svg' },
+          { id: 'sol-stars', cat: 'royal', name: 'Triple Stars', url: '/badges/sol-stars.svg' },
+          { id: 'fl-fleur', cat: 'royal', name: 'Fleur-de-lis', url: '/badges/fl-fleur.svg' },
+          { id: 'sol-star-circle', cat: 'royal', name: 'Star Circle', url: '/badges/sol-star-circle.svg' },
+          { id: 'sol-shield-up', cat: 'royal', name: 'Royal Guard', url: '/badges/sol-shield-up.svg' },
+          { id: 'sol-scepter', cat: 'royal', name: 'Royal Scepter', url: '/badges/sol-scepter.svg' },
+          { id: 'sol-magic-wand-vip', cat: 'royal', name: 'Diamond Wand', url: '/badges/sol-magic-wand-vip.svg' },
+          { id: 'fl-sparkles-vip', cat: 'royal', name: 'Golden Sparkles', url: '/badges/fl-sparkles-vip.svg' },
+
+          // 3. GAMING & CYBER (🎮)
+          { id: 'fl-gamepad', cat: 'gaming', name: 'Gamepad 3D', url: '/badges/fl-gamepad.svg' },
+          { id: 'fl-joystick', cat: 'gaming', name: 'Joystick', url: '/badges/fl-joystick.svg' },
+          { id: 'fl-alien', cat: 'gaming', name: 'Alien', url: '/badges/fl-alien.svg' },
+          { id: 'fl-monster', cat: 'gaming', name: 'Alien Monster', url: '/badges/fl-monster.svg' },
+          { id: 'fl-robot', cat: 'gaming', name: 'Robot Head', url: '/badges/fl-robot.svg' },
+          { id: 'fl-skull', cat: 'gaming', name: 'Skull', url: '/badges/fl-skull.svg' },
+          { id: 'fl-crossbones', cat: 'gaming', name: 'Crossbones', url: '/badges/fl-crossbones.svg' },
+          { id: 'fl-die', cat: 'gaming', name: 'Game Die', url: '/badges/fl-die.svg' },
+          { id: 'fl-wand', cat: 'gaming', name: 'Magic Wand', url: '/badges/fl-wand.svg' },
+          { id: 'fl-orb', cat: 'gaming', name: 'Crystal Orb', url: '/badges/fl-orb.svg' },
+          { id: 'fl-headphone', cat: 'gaming', name: 'Headphone', url: '/badges/fl-headphone.svg' },
+          { id: 'fl-laptop', cat: 'gaming', name: 'Gaming Laptop', url: '/badges/fl-laptop.svg' },
+          { id: 'fl-battery', cat: 'gaming', name: 'Full Battery', url: '/badges/fl-battery.svg' },
+          { id: 'fl-radioactive', cat: 'gaming', name: 'Radioactive', url: '/badges/fl-radioactive.svg' },
+          { id: 'fl-biohazard', cat: 'gaming', name: 'Biohazard', url: '/badges/fl-biohazard.svg' },
+          { id: 'fl-antenna', cat: 'gaming', name: 'Satellite Dish', url: '/badges/fl-antenna.svg' },
+          { id: 'fl-ufo', cat: 'gaming', name: 'Flying Saucer', url: '/badges/fl-ufo.svg' },
+          { id: 'sol-gamepad-cyan', cat: 'gaming', name: 'Solar Gamepad', url: '/badges/sol-gamepad-cyan.svg' },
+          { id: 'sol-game-charge', cat: 'gaming', name: 'Game Charge', url: '/badges/sol-game-charge.svg' },
+          { id: 'sol-ghost', cat: 'gaming', name: 'Solar Ghost', url: '/badges/sol-ghost.svg' },
+          { id: 'sol-cpu-bolt', cat: 'gaming', name: 'CPU Bolt', url: '/badges/sol-cpu-bolt.svg' },
+          { id: 'sol-headphones', cat: 'gaming', name: 'Pro Headset', url: '/badges/sol-headphones.svg' },
+          { id: 'sol-warning', cat: 'gaming', name: 'Cyber Warning', url: '/badges/sol-warning.svg' },
+          { id: 'sol-widget', cat: 'gaming', name: 'Cyber Widget', url: '/badges/sol-widget.svg' },
+          { id: 'sol-target-cyan', cat: 'gaming', name: 'Darts Target', url: '/badges/sol-target-cyan.svg' },
+          { id: 'sol-radar', cat: 'gaming', name: 'Radar Scanner', url: '/badges/sol-radar.svg' },
+          { id: 'sol-server', cat: 'gaming', name: 'Server Node', url: '/badges/sol-server.svg' },
+          { id: 'sol-lightning', cat: 'gaming', name: 'Cyber Lightning', url: '/badges/sol-lightning.svg' },
+          { id: 'fl-water-gun', cat: 'gaming', name: 'Laser Blaster', url: '/badges/fl-water-gun.svg' },
+          { id: 'fl-sparkler-game', cat: 'gaming', name: 'Magic Sparkler', url: '/badges/fl-sparkler-game.svg' },
+
+          // 4. AESTHETIC & NATURE (✨)
+          { id: 'fl-crescent', cat: 'aesthetic', name: 'Crescent Moon', url: '/badges/fl-crescent.svg' },
+          { id: 'fl-full-moon', cat: 'aesthetic', name: 'Full Moon', url: '/badges/fl-full-moon.svg' },
+          { id: 'fl-new-moon', cat: 'aesthetic', name: 'New Moon Face', url: '/badges/fl-new-moon.svg' },
+          { id: 'fl-sun-face', cat: 'aesthetic', name: 'Sun Face', url: '/badges/fl-sun-face.svg' },
+          { id: 'fl-planet', cat: 'aesthetic', name: 'Saturn Planet', url: '/badges/fl-planet.svg' },
+          { id: 'fl-sakura', cat: 'aesthetic', name: 'Sakura Blossom', url: '/badges/fl-sakura.svg' },
+          { id: 'fl-blossom', cat: 'aesthetic', name: 'Spring Blossom', url: '/badges/fl-blossom.svg' },
+          { id: 'fl-rose', cat: 'aesthetic', name: 'Red Rose', url: '/badges/fl-rose.svg' },
+          { id: 'fl-hibiscus', cat: 'aesthetic', name: 'Hibiscus', url: '/badges/fl-hibiscus.svg' },
+          { id: 'fl-sunflower', cat: 'aesthetic', name: 'Sunflower', url: '/badges/fl-sunflower.svg' },
+          { id: 'fl-butterfly', cat: 'aesthetic', name: 'Blue Butterfly', url: '/badges/fl-butterfly.svg' },
+          { id: 'fl-feather', cat: 'aesthetic', name: 'White Feather', url: '/badges/fl-feather.svg' },
+          { id: 'fl-snowflake', cat: 'aesthetic', name: 'Snowflake', url: '/badges/fl-snowflake.svg' },
+          { id: 'fl-lotus', cat: 'aesthetic', name: 'Lotus Flower', url: '/badges/fl-lotus.svg' },
+          { id: 'fl-sparkles-aes', cat: 'aesthetic', name: 'Aesthetic Sparkles', url: '/badges/fl-sparkles-aes.svg' },
+          { id: 'fl-coffee', cat: 'aesthetic', name: 'Coffee Cup', url: '/badges/fl-coffee.svg' },
+          { id: 'fl-clover', cat: 'aesthetic', name: 'Lucky Clover', url: '/badges/fl-clover.svg' },
+          { id: 'fl-rainbow', cat: 'aesthetic', name: 'Rainbow', url: '/badges/fl-rainbow.svg' },
+          { id: 'fl-heart-aes', cat: 'aesthetic', name: 'Sparkling Heart', url: '/badges/fl-heart-aes.svg' },
+          { id: 'sol-moon-stars', cat: 'aesthetic', name: 'Moon Stars', url: '/badges/sol-moon-stars.svg' },
+          { id: 'sol-star-fall', cat: 'aesthetic', name: 'Shooting Star', url: '/badges/sol-star-fall.svg' },
+          { id: 'sol-leaf', cat: 'aesthetic', name: 'Green Leaf', url: '/badges/sol-leaf.svg' },
+          { id: 'sol-cloud-sun', cat: 'aesthetic', name: 'Cloud Sun', url: '/badges/sol-cloud-sun.svg' },
+          { id: 'sol-cup-hot', cat: 'aesthetic', name: 'Warm Cup', url: '/badges/sol-cup-hot.svg' },
+          { id: 'sol-planet', cat: 'aesthetic', name: 'Galaxy Planet', url: '/badges/sol-planet.svg' },
+          { id: 'sol-waterdrops', cat: 'aesthetic', name: 'Water Drops', url: '/badges/sol-waterdrops.svg' },
+          { id: 'sol-snow', cat: 'aesthetic', name: 'Solar Snowflake', url: '/badges/sol-snow.svg' },
+          { id: 'sol-sun-fog', cat: 'aesthetic', name: 'Golden Sun', url: '/badges/sol-sun-fog.svg' },
+          { id: 'fl-maple', cat: 'aesthetic', name: 'Maple Leaf', url: '/badges/fl-maple.svg' },
+          { id: 'fl-crystal-aes', cat: 'aesthetic', name: 'Crystal Gem', url: '/badges/fl-crystal-aes.svg' },
+
+          // 5. ANIMALS & MYTHIC (🐾)
+          { id: 'fl-dragon', cat: 'animals', name: 'Dragon', url: '/badges/fl-dragon.svg' },
+          { id: 'fl-dragon-face', cat: 'animals', name: 'Dragon Face', url: '/badges/fl-dragon-face.svg' },
+          { id: 'fl-fox', cat: 'animals', name: 'Fox', url: '/badges/fl-fox.svg' },
+          { id: 'fl-wolf', cat: 'animals', name: 'Wolf', url: '/badges/fl-wolf.svg' },
+          { id: 'fl-cat', cat: 'animals', name: 'Cute Cat', url: '/badges/fl-cat.svg' },
+          { id: 'fl-black-cat', cat: 'animals', name: 'Black Cat', url: '/badges/fl-black-cat.svg' },
+          { id: 'fl-owl', cat: 'animals', name: 'Night Owl', url: '/badges/fl-owl.svg' },
+          { id: 'fl-unicorn', cat: 'animals', name: 'Unicorn', url: '/badges/fl-unicorn.svg' },
+          { id: 'fl-bat', cat: 'animals', name: 'Vampire Bat', url: '/badges/fl-bat.svg' },
+          { id: 'fl-snake', cat: 'animals', name: 'Snake', url: '/badges/fl-snake.svg' },
+          { id: 'fl-eagle', cat: 'animals', name: 'Eagle', url: '/badges/fl-eagle.svg' },
+          { id: 'fl-lion', cat: 'animals', name: 'Lion', url: '/badges/fl-lion.svg' },
+          { id: 'fl-tiger', cat: 'animals', name: 'Tiger', url: '/badges/fl-tiger.svg' },
+          { id: 'fl-bear', cat: 'animals', name: 'Bear', url: '/badges/fl-bear.svg' },
+          { id: 'fl-panda', cat: 'animals', name: 'Panda', url: '/badges/fl-panda.svg' },
+          { id: 'fl-dove', cat: 'animals', name: 'White Dove', url: '/badges/fl-dove.svg' },
+          { id: 'fl-peacock', cat: 'animals', name: 'Peacock', url: '/badges/fl-peacock.svg' },
+          { id: 'fl-spider', cat: 'animals', name: 'Spider', url: '/badges/fl-spider.svg' },
+          { id: 'fl-scorpion', cat: 'animals', name: 'Scorpion', url: '/badges/fl-scorpion.svg' },
+          { id: 'sol-bone', cat: 'animals', name: 'Solar Bone', url: '/badges/sol-bone.svg' },
+          { id: 'sol-paw', cat: 'animals', name: 'Solar Paw', url: '/badges/sol-paw.svg' },
+          { id: 'sol-cat', cat: 'animals', name: 'Solar Cat', url: '/badges/sol-cat.svg' },
+          { id: 'sol-dog', cat: 'animals', name: 'Solar Dog', url: '/badges/sol-dog.svg' },
+          { id: 'sol-fish', cat: 'animals', name: 'Solar Fish', url: '/badges/sol-fish.svg' },
+          { id: 'sol-bug', cat: 'animals', name: 'Solar Bug', url: '/badges/sol-bug.svg' },
+          { id: 'fl-dolphin', cat: 'animals', name: 'Dolphin', url: '/badges/fl-dolphin.svg' },
+          { id: 'fl-shark', cat: 'animals', name: 'Shark', url: '/badges/fl-shark.svg' },
+          { id: 'fl-flamingo', cat: 'animals', name: 'Flamingo', url: '/badges/fl-flamingo.svg' },
+          { id: 'fl-honeybee', cat: 'animals', name: 'Honeybee', url: '/badges/fl-honeybee.svg' },
+          { id: 'fl-phoenix', cat: 'animals', name: 'Phoenix Bird', url: '/badges/fl-phoenix.svg' }
+        ];
+
+        let activeTab: 'name' | 'avatar' = 'name';
+        let activeBadgeCategory = 'popular';
+        let draftNameColor = '#a855f7';
+        let draftBorderEffect = 'none';
+        let draftGlowColor = '#a855f7';
+        let draftNameIcon = '';
+        let liveSearchDebounceTimer: any = null;
+
+        function switchTab(tab: 'name' | 'avatar') {
+          activeTab = tab;
+          const isName = tab === 'name';
+
+          if (tabNameColors && tabAvatarBorder) {
+            if (isName) {
+              tabNameColors.className = 'whitespace-nowrap text-xs font-semibold flex-1 py-2 px-3 rounded-xl flex items-center justify-center gap-2 transition-all cursor-pointer bg-purple-600 text-white shadow-sm';
+              tabAvatarBorder.className = 'whitespace-nowrap text-xs font-semibold flex-1 py-2 px-3 rounded-xl flex items-center justify-center gap-2 transition-all cursor-pointer text-slate-400 hover:text-white';
+            } else {
+              tabAvatarBorder.className = 'whitespace-nowrap text-xs font-semibold flex-1 py-2 px-3 rounded-xl flex items-center justify-center gap-2 transition-all cursor-pointer bg-purple-600 text-white shadow-sm';
+              tabNameColors.className = 'whitespace-nowrap text-xs font-semibold flex-1 py-2 px-3 rounded-xl flex items-center justify-center gap-2 transition-all cursor-pointer text-slate-400 hover:text-white';
+            }
+          }
+
+          if (viewTabName && viewTabAvatar) {
+            if (isName) {
+              viewTabName.classList.remove('hidden');
+              viewTabAvatar.classList.add('hidden');
+            } else {
+              viewTabName.classList.add('hidden');
+              viewTabAvatar.classList.remove('hidden');
+            }
+          }
+        }
+
+        tabNameColors?.addEventListener('click', () => switchTab('name'));
+        tabAvatarBorder?.addEventListener('click', () => switchTab('avatar'));
+
+        function applyNameToElement(el: HTMLElement | null, text: string, color: string) {
+          if (!el) return;
+          const isGrad = color && color.includes('gradient');
+          if (isGrad) {
+            el.style.backgroundImage = color;
+            el.style.webkitBackgroundClip = 'text';
+            el.style.backgroundClip = 'text';
+            el.style.webkitTextFillColor = 'transparent';
+            el.style.color = 'transparent';
+          } else {
+            el.style.backgroundImage = 'none';
+            el.style.webkitBackgroundClip = '';
+            el.style.backgroundClip = '';
+            el.style.webkitTextFillColor = '';
+            el.style.color = color || '#a855f7';
+          }
+          el.textContent = text || 'Hossein';
+        }
+
+        function updateLivePreview() {
+          const active = personas.find(p => p.isActive) || personas[0] || { name: 'Hossein' };
+          const userName = active.name || 'Hossein';
+
+          // 1. Pinned Preview Avatar & Name
+          const previewName = document.getElementById('preview-user-name');
+          const previewBadge = document.getElementById('preview-user-badge');
+          applyNameToElement(previewName, userName, draftNameColor);
+          if (previewBadge) {
+            previewBadge.innerHTML = renderBadgeHtml(draftNameIcon, 'w-4 h-4 inline-block object-contain align-middle ml-1 shrink-0');
+          }
+
+          // 2. Chat Bubble Sender Name & Badge
+          const bubbleName = document.getElementById('preview-bubble-name');
+          const bubbleBadge = document.getElementById('preview-bubble-badge');
+          applyNameToElement(bubbleName, userName, draftNameColor);
+          if (bubbleBadge) {
+            bubbleBadge.innerHTML = renderBadgeHtml(draftNameIcon, 'w-3.5 h-3.5 inline-block object-contain align-middle ml-1 shrink-0');
+          }
+
+          // 3. Pinned Avatar container border effect & glow color
+          const avatarContainer = document.getElementById('preview-avatar-container');
+          const avatarImg = document.getElementById('preview-avatar-img') as HTMLImageElement;
+          const avatarInitial = document.getElementById('preview-avatar-initial');
+
+          if (avatarContainer) {
+            avatarContainer.className = 'w-14 h-14 rounded-full p-[2px] transition-all duration-300 shrink-0 flex items-center justify-center mb-1.5';
+            avatarContainer.style.setProperty('--avatar-glow-color', draftGlowColor);
+            avatarContainer.style.setProperty('--avatar-border-color', draftGlowColor);
+
+            if (draftBorderEffect === 'glow') {
+              avatarContainer.classList.add('avatar-border-glow');
+            } else if (draftBorderEffect === 'dual-gradient') {
+              avatarContainer.classList.add('avatar-border-dual-gradient');
+            } else if (draftBorderEffect === 'dynamic-sparkle') {
+              avatarContainer.classList.add('avatar-border-dynamic-sparkle');
+            } else {
+              avatarContainer.classList.add('avatar-border-none');
+            }
+          }
+
+          if (avatarImg && avatarInitial) {
+            if (active.avatar) {
+              avatarImg.src = active.avatar;
+              avatarImg.classList.remove('hidden');
+              avatarInitial.classList.add('hidden');
+            } else {
+              avatarImg.src = '';
+              avatarImg.classList.add('hidden');
+              avatarInitial.classList.remove('hidden');
+              avatarInitial.textContent = (userName || 'H').charAt(0).toUpperCase();
+            }
+          }
+
+          // 4. Update Swatch Buttons (Telegram-Style 8x2 Matrix)
+          document.querySelectorAll('.swatch-trigger-btn').forEach((btn: any) => {
+            const val = btn.dataset.value;
+            const isSelected = (val === draftNameColor);
+            const check = btn.querySelector('.swatch-check');
+            if (isSelected) {
+              btn.className = 'swatch-trigger-btn relative w-8 h-8 rounded-full cursor-pointer transition-all active:scale-90 flex items-center justify-center shadow-md select-none ring-2 ring-offset-2 ring-offset-[#11141d] ring-cyan-400 scale-110 z-10';
+              check?.classList.remove('hidden');
+              check?.classList.add('flex');
+            } else {
+              btn.className = 'swatch-trigger-btn relative w-8 h-8 rounded-full cursor-pointer transition-all active:scale-90 flex items-center justify-center shadow-md select-none hover:scale-105';
+              check?.classList.add('hidden');
+              check?.classList.remove('flex');
+            }
+          });
+
+          // 5. Update Status Toggle Switch & Remove Badge Button
+          if (toggleBadges) {
+            toggleBadges.checked = !!draftNameIcon;
+          }
+          if (btnRemoveBadge) {
+            if (draftNameIcon) {
+              btnRemoveBadge.classList.remove('hidden');
+            } else {
+              btnRemoveBadge.classList.add('hidden');
+            }
+          }
+
+          // 6. Highlight active badge item in the grid
+          document.querySelectorAll('.badge-item-btn').forEach((btn: any) => {
+            const bUrl = btn.dataset.url;
+            const isSelected = (bUrl === draftNameIcon);
+            if (isSelected) {
+              btn.className = 'badge-item-btn relative w-9 h-9 rounded-xl bg-cyan-500/20 border border-cyan-400 ring-2 ring-cyan-400/50 flex items-center justify-center p-1.5 transition-all duration-150 active:scale-95 cursor-pointer select-none scale-105 shadow-sm z-10';
+            } else {
+              btn.className = 'badge-item-btn relative w-9 h-9 rounded-xl bg-white/[0.04] hover:bg-white/[0.1] border border-white/[0.08] flex items-center justify-center p-1.5 transition-all duration-150 active:scale-95 cursor-pointer select-none';
+            }
+          });
+
+          // 7. Update Border Effect Cards in 2x2 Grid
+          document.querySelectorAll('.border-effect-card').forEach((card: any) => {
+            const effectId = card.dataset.effect;
+            const isSelected = (effectId === draftBorderEffect);
+            const miniAvatar = card.querySelector('.card-mini-avatar-wrapper');
+            if (miniAvatar) {
+              miniAvatar.style.setProperty('--avatar-glow-color', draftGlowColor);
+              miniAvatar.style.setProperty('--avatar-border-color', draftGlowColor);
+            }
+            if (isSelected) {
+              card.className = 'border-effect-card p-2.5 sm:p-3 rounded-2xl border border-cyan-400 bg-cyan-500/10 ring-1 ring-cyan-400/40 shadow-sm transition-all cursor-pointer flex items-center gap-2 sm:gap-2.5 select-none';
+            } else {
+              card.className = 'border-effect-card p-2.5 sm:p-3 rounded-2xl border border-white/10 bg-white/[0.02] hover:bg-white/[0.05] transition-all cursor-pointer flex items-center gap-2 sm:gap-2.5 select-none';
+            }
+          });
+
+          // 8. Update Glow Color 8-dot strip
+          document.querySelectorAll('.glow-color-dot').forEach((btn: any) => {
+            const val = btn.dataset.value;
+            const isSelected = (val === draftGlowColor);
+            const check = btn.querySelector('.glow-check');
+            if (isSelected) {
+              btn.className = 'glow-color-dot relative w-8 h-8 rounded-full cursor-pointer transition-all active:scale-90 flex items-center justify-center shadow-md select-none ring-2 ring-offset-2 ring-offset-[#11141d] ring-cyan-400 scale-110 z-10';
+              check?.classList.remove('hidden');
+              check?.classList.add('flex');
+            } else {
+              btn.className = 'glow-color-dot relative w-8 h-8 rounded-full cursor-pointer transition-all active:scale-90 flex items-center justify-center shadow-md select-none hover:scale-105';
+              check?.classList.add('hidden');
+              check?.classList.remove('flex');
+            }
+          });
+        }
+
+        // Render Color Matrix (Row 1: 8 Solids, Row 2: 8 Dual Gradients)
+        if (gridColorMatrix) {
+          const all16 = [
+            ...SOLID_COLORS.map(c => ({ ...c, isGrad: false })),
+            ...GRADIENT_COLORS.map(g => ({ ...g, isGrad: true }))
+          ];
+          gridColorMatrix.innerHTML = all16.map(item => `
+            <button 
+              type="button" 
+              class="swatch-trigger-btn relative w-8 h-8 rounded-full cursor-pointer transition-all active:scale-90 flex items-center justify-center shadow-md select-none hover:scale-105"
+              data-value="${item.value}"
+              title="${item.name}"
+              style="background: ${(item as any).split || item.value};"
+            >
+              <span class="swatch-check hidden text-white text-[11px] font-bold drop-shadow-[0_1px_2px_rgba(0,0,0,0.8)] select-none pointer-events-none">✓</span>
+            </button>
+          `).join('');
+
+          gridColorMatrix.querySelectorAll('.swatch-trigger-btn').forEach((btn: any) => {
+            btn.addEventListener('click', () => {
+              draftNameColor = btn.dataset.value;
+              updateLivePreview();
+            });
+          });
+        }
+
+        // Render Badges in the 8-column grid
+        function renderBadges(badgesToRender: any[]) {
+          if (!gridBadgesDisplay) return;
+
+          if (badgesToRender.length === 0) {
+            gridBadgesDisplay.innerHTML = `
+              <div class="col-span-8 py-6 text-center text-xs text-slate-400">
+                <span>No badges found. Try another search term!</span>
+              </div>
+            `;
+            if (badgePickerCount) badgePickerCount.textContent = '0 badges';
+            return;
+          }
+
+          gridBadgesDisplay.innerHTML = badgesToRender.map(b => {
+            const isSelected = (b.url === draftNameIcon);
+            return `
+              <button 
+                type="button" 
+                class="badge-item-btn relative w-9 h-9 rounded-xl ${isSelected ? 'bg-cyan-500/20 border border-cyan-400 ring-2 ring-cyan-400/50 scale-105 shadow-sm z-10' : 'bg-white/[0.04] hover:bg-white/[0.1] border border-white/[0.08]'} flex items-center justify-center p-1.5 transition-all duration-150 active:scale-95 cursor-pointer select-none"
+                data-url="${b.url}"
+                data-name="${b.name}"
+                title="${b.name}"
+              >
+                <img src="${b.url}" alt="" class="w-6 h-6 object-contain pointer-events-none" loading="lazy" draggable="false" />
+              </button>
+            `;
+          }).join('');
+
+          if (badgePickerCount) {
+            badgePickerCount.textContent = `Showing ${badgesToRender.length} badges`;
+          }
+
+          gridBadgesDisplay.querySelectorAll('.badge-item-btn').forEach((btn: any) => {
+            btn.addEventListener('click', () => {
+              const url = btn.dataset.url;
+              if (draftNameIcon === url) {
+                draftNameIcon = '';
+              } else {
+                draftNameIcon = url;
+              }
+              updateLivePreview();
+            });
+          });
+        }
+
+        function filterBadges() {
+          const query = inputBadgeSearch?.value.trim().toLowerCase() || '';
+          if (btnClearBadgeSearch) {
+            if (query) btnClearBadgeSearch.classList.remove('hidden');
+            else btnClearBadgeSearch.classList.add('hidden');
+          }
+
+          let matched = BADGE_LIBRARY;
+          if (query) {
+            matched = BADGE_LIBRARY.filter(b => b.name.toLowerCase().includes(query) || b.id.toLowerCase().includes(query));
+          } else {
+            matched = BADGE_LIBRARY.filter(b => b.cat === activeBadgeCategory);
+          }
+
+          renderBadges(matched);
+
+          // If query is present and user typed >= 2 characters, debounced live query to Iconify
+          if (query && query.length >= 2) {
+            clearTimeout(liveSearchDebounceTimer);
+            liveSearchDebounceTimer = setTimeout(async () => {
+              try {
+                const res = await fetch(`https://api.iconify.design/search?query=${encodeURIComponent(query)}&prefixes=fluent-emoji-flat,solar,lucide&limit=40`);
+                if (res.ok) {
+                  const data = await res.json();
+                  if (data && Array.isArray(data.icons) && data.icons.length > 0) {
+                    const onlineBadges = data.icons.map((iconSlug: string) => {
+                      const parts = iconSlug.split(':');
+                      const prefix = parts[0];
+                      const name = parts[1] || '';
+                      let url = `https://api.iconify.design/${prefix}/${name}.svg`;
+                      if (prefix === 'solar' || prefix === 'lucide') {
+                        url += '?color=%2322d3ee';
+                      }
+                      return {
+                        id: iconSlug,
+                        cat: 'search',
+                        name: name.replace(/-/g, ' '),
+                        url
+                      };
+                    });
+
+                    // Merge without duplicates
+                    const existingUrls = new Set(matched.map(m => m.url));
+                    const newOnes = onlineBadges.filter((b: any) => !existingUrls.has(b.url));
+                    if (newOnes.length > 0) {
+                      renderBadges([...matched, ...newOnes]);
+                    }
+                  }
+                }
+              } catch (e) {
+                // Ignore offline or search errors gracefully
+              }
+            }, 350);
+          }
+        }
+
+        inputBadgeSearch?.addEventListener('input', filterBadges);
+
+        btnClearBadgeSearch?.addEventListener('click', () => {
+          if (inputBadgeSearch) {
+            inputBadgeSearch.value = '';
+            filterBadges();
+            inputBadgeSearch.focus();
+          }
+        });
+
+        // Category Pills Handlers
+        document.querySelectorAll('.badge-cat-pill').forEach((pill: any) => {
+          pill.addEventListener('click', () => {
+            activeBadgeCategory = pill.dataset.cat || 'popular';
+            document.querySelectorAll('.badge-cat-pill').forEach((p: any) => {
+              if (p === pill) {
+                p.className = 'badge-cat-pill whitespace-nowrap px-3 py-1.5 rounded-xl font-medium text-xs transition cursor-pointer bg-purple-600 text-white shadow-sm';
+              } else {
+                p.className = 'badge-cat-pill whitespace-nowrap px-3 py-1.5 rounded-xl font-medium text-xs transition cursor-pointer text-slate-400 hover:text-white hover:bg-white/[0.05]';
+              }
+            });
+            if (inputBadgeSearch) inputBadgeSearch.value = '';
+            filterBadges();
+          });
+        });
+
+        // Remove Badge Button
+        btnRemoveBadge?.addEventListener('click', () => {
+          draftNameIcon = '';
+          updateLivePreview();
+        });
+
+        // Toggle Badges Switch
+        toggleBadges?.addEventListener('change', () => {
+          if (!toggleBadges.checked) {
+            draftNameIcon = '';
+          } else if (!draftNameIcon) {
+            draftNameIcon = BADGE_LIBRARY[0].url; // Default to first animated fire
+          }
+          updateLivePreview();
+        });
+
+        // Render 2x2 Grid of Border Effects
+        if (borderEffectsGrid) {
+          const active = personas.find(p => p.isActive) || personas[0] || { name: 'Hossein' };
+          borderEffectsGrid.innerHTML = BORDER_EFFECTS.map(eff => `
+            <div 
+              class="border-effect-card p-2.5 sm:p-3 rounded-2xl border border-white/10 bg-white/[0.02] hover:bg-white/[0.05] transition-all cursor-pointer flex items-center gap-2 sm:gap-2.5 select-none"
+              data-effect="${eff.id}"
+            >
+              <div class="card-mini-avatar-wrapper w-9 h-9 sm:w-10 sm:h-10 rounded-full p-[2px] flex items-center justify-center shrink-0 ${eff.effectClass}" style="--avatar-glow-color: ${draftGlowColor}; --avatar-border-color: ${draftGlowColor};">
+                ${active.avatar ? `
+                  <img src="${active.avatar}" alt="Avatar" class="w-full h-full rounded-full object-cover" />
+                ` : `
+                  <div class="w-full h-full rounded-full bg-gradient-to-tr from-purple-600 to-indigo-600 flex items-center justify-center text-white text-xs font-bold">
+                    ${(active.name || 'H').charAt(0).toUpperCase()}
+                  </div>
+                `}
+              </div>
+              <div class="flex-1 min-w-0">
+                <div class="text-xs font-semibold text-white whitespace-nowrap">${eff.name}</div>
+                <div class="text-[10px] text-slate-400 whitespace-nowrap truncate">${eff.desc}</div>
+              </div>
+            </div>
+          `).join('');
+
+          borderEffectsGrid.querySelectorAll('.border-effect-card').forEach((card: any) => {
+            card.addEventListener('click', () => {
+              draftBorderEffect = card.dataset.effect;
+              updateLivePreview();
+            });
+          });
+        }
+
+        // Render Border Glow Colors (8 dots)
+        if (gridGlowColors) {
+          gridGlowColors.innerHTML = GLOW_COLORS.map(c => `
+            <button 
+              type="button" 
+              class="glow-color-dot relative w-8 h-8 rounded-full cursor-pointer transition-all active:scale-90 flex items-center justify-center shadow-md select-none hover:scale-105"
+              data-value="${c.value}"
+              title="${c.name}"
+              style="background: ${c.value};"
+            >
+              <span class="glow-check hidden text-white text-[10px] font-bold drop-shadow-[0_1px_2px_rgba(0,0,0,0.8)] select-none pointer-events-none">✓</span>
+            </button>
+          `).join('');
+
+          gridGlowColors.querySelectorAll('.glow-color-dot').forEach((btn: any) => {
+            btn.addEventListener('click', () => {
+              draftGlowColor = btn.dataset.value;
+              updateLivePreview();
+            });
+          });
+        }
+
+        // Initialize state from active persona
+        const active = personas.find(p => p.isActive) || personas[0];
+        if (active) {
+          draftNameColor = active.nameColor || '#a855f7';
+          draftBorderEffect = active.avatarBorderEffect || 'none';
+          draftGlowColor = active.avatarGlowColor || '#a855f7';
+          draftNameIcon = active.nameIcon || '';
+        }
+
+        switchTab('name');
+        filterBadges();
+        updateLivePreview();
+
+        // Apply Logic
+        function applyStylesAndSave() {
+          const active = personas.find(p => p.isActive) || personas[0];
+          if (active) {
+            active.nameColor = draftNameColor;
+            active.avatarBorderEffect = draftBorderEffect as any;
+            active.avatarGlowColor = draftGlowColor;
+            active.nameIcon = draftNameIcon;
+
+            // Save to LocalStorage
+            savePersonas();
+
+            // Dispatch global events
+            window.dispatchEvent(new CustomEvent('aetheria:name-style-changed', {
+              detail: {
+                nameColor: draftNameColor,
+                avatarBorderEffect: draftBorderEffect,
+                avatarGlowColor: draftGlowColor,
+                nameIcon: draftNameIcon
+              }
+            }));
+
+            window.dispatchEvent(new CustomEvent('aetheria:persona-updated', {
+              detail: active
+            }));
+
+            updateHubProfileSummary();
+            render3DCarousel();
+            showToast('Name style & avatar halo applied! ✨', 'success');
+            showView('view-appearance');
+          }
+        }
+
+        btnHeaderApply?.addEventListener('click', applyStylesAndSave);
+        btnApply?.addEventListener('click', applyStylesAndSave);
+
+        btnCancel?.addEventListener('click', () => {
+          showView('view-appearance');
+        });
+
+        btnReset?.addEventListener('click', () => {
+          draftNameColor = '#a855f7';
+          draftBorderEffect = 'none';
+          draftGlowColor = '#a855f7';
+          draftNameIcon = '';
+          updateLivePreview();
+          showToast('Reset to default name style & border', 'info');
+        });
+      }
+      // Wallpapers
+      function renderWallpapers() {
+        if (!wallpapersGrid) return;
+        const wps = (window as any).AetheriaTheme?.WALLPAPERS || [];
+        wallpapersGrid.innerHTML = wps.slice(0, 6).map((w: any) => `
+          <div class="wp-card relative h-16 rounded-xl overflow-hidden border border-white/10 cursor-pointer group shadow-sm" data-wp="${w.css}">
+            <div class="absolute inset-0 bg-cover bg-center" style="background: ${w.css};"></div>
+            <div class="absolute inset-0 bg-black/40 group-hover:bg-black/10 transition flex items-center justify-center">
+              <span class="text-[9px] font-bold text-white">${w.name}</span>
+            </div>
+          </div>
+        `).join('');
+
+        wallpapersGrid.querySelectorAll('.wp-card').forEach((card: any) => {
+          card.addEventListener('click', () => {
+            settings.chatWallpaper = card.dataset.wp;
+            updatePreview();
+            saveAndApply();
+          });
+        });
+      }
+
+      function updateSliderProgress(slider: HTMLInputElement | null) {
+        if (!slider) return;
+        const min = parseFloat(slider.min) || 0;
+        const max = parseFloat(slider.max) || 100;
+        const val = parseFloat(slider.value) || 0;
+        const percent = Math.min(Math.max(((val - min) / (max - min)) * 100, 0), 100);
+        const activeColor = settings.accent || 'var(--theme-accent, #8E9AB6)';
+        const isDay = settings.baseMode === 'day';
+        const trackColor = isDay ? '#e2e8f0' : 'rgba(255, 255, 255, 0.14)';
+        slider.style.background = `linear-gradient(to right, ${activeColor} 0%, ${activeColor} ${percent}%, ${trackColor} ${percent}%, ${trackColor} 100%)`;
+      }
+
+      function syncInputs() {
+        if (fontSlider) fontSlider.value = String(settings.fontSize || 16);
+        if (fontVal) fontVal.textContent = String(settings.fontSize || 16);
+        if (radiusSlider) radiusSlider.value = String(settings.bubbleRadius !== undefined ? settings.bubbleRadius : 16);
+        if (radiusVal) radiusVal.textContent = `${settings.bubbleRadius !== undefined ? settings.bubbleRadius : 16}px`;
+        syncModeButtons(settings.baseMode || 'dark');
+        updateSliderProgress(fontSlider);
+        updateSliderProgress(radiusSlider);
+      }
+
+      // Event Listeners
+      fontSlider?.addEventListener('input', (e: any) => {
+        const val = parseInt(e.target.value, 10);
+        settings.fontSize = val;
+        if (fontVal) fontVal.textContent = String(val);
+        updatePreview();
+        saveAndApply();
+      });
+
+      radiusSlider?.addEventListener('input', (e: any) => {
+        const val = parseInt(e.target.value, 10);
+        settings.bubbleRadius = val;
+        if (radiusVal) radiusVal.textContent = `${val}px`;
+        updatePreview();
+        saveAndApply();
+      });
+
+      // Tri-State Mode Selector Buttons (Day / Dark / OLED)
+      const allModeButtons = document.querySelectorAll('#profile-base-mode-group .profile-mode-btn');
+      allModeButtons.forEach((btn: any) => {
+        btn.addEventListener('click', () => {
+          const targetMode = btn.getAttribute('data-mode') || 'dark';
+          settings.baseMode = targetMode;
+          settings.dayNightMode = targetMode === 'day' ? 'day' : 'dark';
+
+          saveAndApply();
+          syncModeButtons(targetMode);
+          updatePreview();
+          renderPresets();
+          render3DCarousel();
+        });
+      });
+
+      // Synchronize when Power Saving OLED toggle is changed from the battery tab
+      window.addEventListener('aetheria:power-saving-change', (e: any) => {
+        const psSettings = e.detail || (window as any).AetheriaPowerSaving?.getSettings?.();
+        if (psSettings) {
+          if (psSettings.deepDarkOLED || psSettings.master) {
+            settings.baseMode = 'oled';
+            settings.dayNightMode = 'dark';
+          } else if (settings.baseMode === 'oled') {
+            let prev = 'dark';
+            try {
+              const stored = localStorage.getItem('aetheria_prev_base_mode');
+              if (stored === 'day' || stored === 'dark') prev = stored;
+            } catch(e) {}
+            settings.baseMode = prev;
+            settings.dayNightMode = prev;
+          }
+          syncModeButtons(settings.baseMode || 'dark');
+          updatePreview();
+          renderPresets();
+          render3DCarousel();
+        }
+      });
+
+      // Synchronize when Theme changes from another origin/action
+      window.addEventListener('aetheria-theme-change', (e: any) => {
+        if (e.detail && e.detail.baseMode) {
+          settings.baseMode = e.detail.baseMode;
+          settings.dayNightMode = e.detail.baseMode === 'day' ? 'day' : 'dark';
+          syncModeButtons(settings.baseMode);
+          updatePreview();
+          renderPresets();
+          render3DCarousel();
+        }
+      });
+
+      btnSwitchDayNight?.addEventListener('click', () => {
+        const nextMode = settings.baseMode === 'day' ? 'dark' : 'day';
+        settings.baseMode = nextMode;
+        settings.dayNightMode = nextMode;
+        saveAndApply();
+        syncModeButtons(nextMode);
+        updatePreview();
+        renderPresets();
+        render3DCarousel();
+      });
+
+      btnToggleWallpaperDrawer?.addEventListener('click', () => {
+        const isHidden = drawerWallpaper?.classList.toggle('hidden');
+        chevronWallpaper?.classList.toggle('rotate-90', !isHidden);
+      });
+
+      photoBtn?.addEventListener('click', () => photoFileInput?.click());
+      photoFileInput?.addEventListener('change', (e: any) => {
+        const file = e.target.files?.[0];
+        if (!file) return;
+        const reader = new FileReader();
+        reader.onload = (re) => {
+          const res = re.target?.result as string;
+          settings.chatWallpaper = `url("${res}")`;
+          updatePreview();
+          saveAndApply();
+        };
+        reader.readAsDataURL(file);
+      });
+
+      // Card 3 & 4 Toggles Wiring
+      const toggleSendEnter = document.getElementById('setting-send-enter') as HTMLInputElement | null;
+      const toggleStreamTypewriter = document.getElementById('setting-stream-typewriter') as HTMLInputElement | null;
+      const toggleSoundEffects = document.getElementById('setting-sound-effects') as HTMLInputElement | null;
+      const toggleAutoplayVoice = document.getElementById('setting-autoplay-voice') as HTMLInputElement | null;
+      const toggleTapNextMedia = document.getElementById('setting-tap-next-media') as HTMLInputElement | null;
+      const toggleReduceMotion = document.getElementById('setting-reduce-motion') as HTMLInputElement | null;
+
+      function playPreviewChime() {
+        try {
+          const ps = (window as any).AetheriaPowerSaving;
+          const gate = (window as any).AetheriaAudio;
+          if ((gate && gate.isSoundMuted && gate.isSoundMuted()) || (ps && (ps.getSettings?.().disableSounds || ps.getSettings?.().master))) {
+            return;
+          }
+          const ctx = new (window.AudioContext || (window as any).webkitAudioContext)();
+          const osc = ctx.createOscillator();
+          const gain = ctx.createGain();
+          osc.connect(gain);
+          gain.connect(ctx.destination);
+          osc.frequency.setValueAtTime(587.33, ctx.currentTime);
+          osc.frequency.exponentialRampToValueAtTime(880, ctx.currentTime + 0.12);
+          gain.gain.setValueAtTime(0.08, ctx.currentTime);
+          gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.13);
+          osc.start();
+          osc.stop(ctx.currentTime + 0.13);
+        } catch(e) {}
+      }
+
+      if (toggleSendEnter) {
+        toggleSendEnter.checked = localStorage.getItem('aetheria_chat_send_key') !== 'ctrl_enter';
+        toggleSendEnter.addEventListener('change', () => {
+          localStorage.setItem('aetheria_chat_send_key', toggleSendEnter.checked ? 'enter' : 'ctrl_enter');
+        });
+      }
+
+      if (toggleStreamTypewriter) {
+        toggleStreamTypewriter.checked = localStorage.getItem('aetheria_stream_typewriter') !== 'false';
+        toggleStreamTypewriter.addEventListener('change', () => {
+          localStorage.setItem('aetheria_stream_typewriter', String(toggleStreamTypewriter.checked));
+        });
+      }
+
+      if (toggleSoundEffects) {
+        toggleSoundEffects.checked = localStorage.getItem('aetheria_sound_effects') === 'true';
+        toggleSoundEffects.addEventListener('change', () => {
+          localStorage.setItem('aetheria_sound_effects', String(toggleSoundEffects.checked));
+          if (toggleSoundEffects.checked) {
+            playPreviewChime();
+          }
+        });
+      }
+
+      if (toggleAutoplayVoice) {
+        toggleAutoplayVoice.checked = (localStorage.getItem('aetheria_autoplay_voice') === 'true' || localStorage.getItem('aetheria_voice_autoplay') === 'true');
+        toggleAutoplayVoice.addEventListener('change', () => {
+          const val = String(toggleAutoplayVoice.checked);
+          localStorage.setItem('aetheria_autoplay_voice', val);
+          localStorage.setItem('aetheria_voice_autoplay', val);
+        });
+      }
+
+      if (toggleTapNextMedia) {
+        toggleTapNextMedia.checked = localStorage.getItem('aetheria_tap_next_media') !== 'false';
+        toggleTapNextMedia.addEventListener('change', () => {
+          localStorage.setItem('aetheria_tap_next_media', String(toggleTapNextMedia.checked));
+        });
+      }
+
       if (toggleReduceMotion) {
         toggleReduceMotion.checked = localStorage.getItem('aetheria_reduce_motion') === 'true';
         toggleReduceMotion.addEventListener('change', () => {
@@ -5229,925 +6149,8 @@ function renderPresets() {
       renderWallpapers();
     }
 
-    // ==========================================
-    // DYNAMIC PERSONALIZATION: NAME COLOR & STYLE SUB-PAGE (FULL SCREEN & 150+ BADGES)
-    // ==========================================
-    function initNameColorPage() {
-      const pageView = document.getElementById('view-name-color');
-      if (!pageView) return;
-
-      const btnBack = document.getElementById('btn-back-from-name-color');
-      const btnHeaderApply = document.getElementById('btn-header-apply-name-style');
-      const btnApply = document.getElementById('btn-apply-name-style');
-      const btnCancel = document.getElementById('btn-cancel-name-style');
-      const btnReset = document.getElementById('btn-reset-name-style');
-
-      const tabNameColors = document.getElementById('tab-toggle-name-colors');
-      const tabAvatarBorder = document.getElementById('tab-toggle-avatar-border');
-      const viewTabName = document.getElementById('view-tab-name');
-      const viewTabAvatar = document.getElementById('view-tab-avatar');
-
-      const gridColorMatrix = document.getElementById('grid-color-matrix');
-      const borderEffectsGrid = document.getElementById('border-effects-grid');
-      const gridGlowColors = document.getElementById('grid-border-glow-colors');
-      const toggleBadges = document.getElementById('toggle-name-badges') as HTMLInputElement | null;
-      const btnRemoveBadge = document.getElementById('btn-remove-badge');
-      const inputBadgeSearch = document.getElementById('input-badge-search') as HTMLInputElement | null;
-      const btnClearBadgeSearch = document.getElementById('btn-clear-badge-search');
-      const gridBadgesDisplay = document.getElementById('grid-badges-display');
-      const badgePickerCount = document.getElementById('badge-picker-count');
-      const wrapperBadgePickerContainer = document.getElementById('wrapper-badge-picker-container');
-
-      // 8 Solids (Row 1)
-      const SOLID_COLORS = [
-        { id: 'deep-blue', name: 'Deep Blue', value: '#2563eb' },
-        { id: 'forest-green', name: 'Forest Green', value: '#16a34a' },
-        { id: 'amber', name: 'Amber', value: '#f59e0b' },
-        { id: 'coral', name: 'Coral', value: '#f97316' },
-        { id: 'purple', name: 'Purple', value: '#a855f7' },
-        { id: 'cyan', name: 'Cyan', value: '#06b6d4' },
-        { id: 'ruby-red', name: 'Ruby Red', value: '#e11d48' },
-        { id: 'muted-slate', name: 'Muted Slate', value: '#94a3b8' }
-      ];
-
-      // 8 Dual Gradients with 45-deg diagonal split swatch (Row 2)
-      const GRADIENT_COLORS = [
-        { id: 'cyan-blue', name: 'Cyan / Blue', value: 'linear-gradient(135deg, #06b6d4 0%, #3b82f6 100%)', split: 'linear-gradient(135deg, #06b6d4 0%, #06b6d4 50%, #3b82f6 50%, #3b82f6 100%)' },
-        { id: 'lime-green', name: 'Lime / Green', value: 'linear-gradient(135deg, #84cc16 0%, #10b981 100%)', split: 'linear-gradient(135deg, #84cc16 0%, #84cc16 50%, #10b981 50%, #10b981 100%)' },
-        { id: 'orange-amber', name: 'Orange / Amber', value: 'linear-gradient(135deg, #f97316 0%, #fbbf24 100%)', split: 'linear-gradient(135deg, #f97316 0%, #f97316 50%, #fbbf24 50%, #fbbf24 100%)' },
-        { id: 'pink-gold', name: 'Pink / Gold', value: 'linear-gradient(135deg, #ec4899 0%, #f59e0b 100%)', split: 'linear-gradient(135deg, #ec4899 0%, #ec4899 50%, #f59e0b 50%, #f59e0b 100%)' },
-        { id: 'purple-blue', name: 'Purple / Blue', value: 'linear-gradient(135deg, #a855f7 0%, #3b82f6 100%)', split: 'linear-gradient(135deg, #a855f7 0%, #a855f7 50%, #3b82f6 50%, #3b82f6 100%)' },
-        { id: 'turquoise-aqua', name: 'Turquoise / Aqua', value: 'linear-gradient(135deg, #14b8a6 0%, #06b6d4 100%)', split: 'linear-gradient(135deg, #14b8a6 0%, #14b8a6 50%, #06b6d4 50%, #06b6d4 100%)' },
-        { id: 'rose-peach', name: 'Rose / Peach', value: 'linear-gradient(135deg, #f43f5e 0%, #fb923c 100%)', split: 'linear-gradient(135deg, #f43f5e 0%, #f43f5e 50%, #fb923c 50%, #fb923c 100%)' },
-        { id: 'silver-gray', name: 'Silver / Gray', value: 'linear-gradient(135deg, #e2e8f0 0%, #94a3b8 100%)', split: 'linear-gradient(135deg, #e2e8f0 0%, #e2e8f0 50%, #94a3b8 50%, #94a3b8 100%)' }
-      ];
-
-      // 4 Avatar Border Effects
-      const BORDER_EFFECTS = [
-        { id: 'none', name: 'None', desc: 'Clean Ring', effectClass: 'avatar-border-none' },
-        { id: 'glow', name: 'Neon Glow', desc: 'Halo', effectClass: 'avatar-border-glow' },
-        { id: 'dual-gradient', name: 'Dual Gradient', desc: 'Ring', effectClass: 'avatar-border-dual-gradient' },
-        { id: 'dynamic-sparkle', name: 'Dynamic Sparkle', desc: 'Shimmer', effectClass: 'avatar-border-dynamic-sparkle' }
-      ];
-
-      // 8 Avatar Halo Tint Colors
-      const GLOW_COLORS = [
-        { id: 'cyan', name: 'Cyan Glow', value: '#06b6d4' },
-        { id: 'purple', name: 'Purple Glow', value: '#a855f7' },
-        { id: 'pink', name: 'Pink Glow', value: '#ec4899' },
-        { id: 'amber', name: 'Amber Gold', value: '#f59e0b' },
-        { id: 'emerald', name: 'Emerald', value: '#10b981' },
-        { id: 'blue', name: 'Electric Blue', value: '#3b82f6' },
-        { id: 'rose', name: 'Rose Red', value: '#f43f5e' },
-        { id: 'silver', name: 'Silver White', value: '#f8fafc' }
-      ];
-
-      // 150+ Curated Badge & Animated Emoji Library
-      const BADGE_LIBRARY = [
-        // 1. POPULAR & ANIMATED (🔥)
-        { id: 'noto-fire', cat: 'popular', name: 'Fire Animated', url: '/badges/noto-fire.webp' },
-        { id: 'noto-sparkles', cat: 'popular', name: 'Sparkles Animated', url: '/badges/noto-sparkles.webp' },
-        { id: 'noto-crown', cat: 'popular', name: 'Crown Animated', url: '/badges/noto-crown.webp' },
-        { id: 'noto-rocket', cat: 'popular', name: 'Rocket Animated', url: '/badges/noto-rocket.webp' },
-        { id: 'noto-heart-fire', cat: 'popular', name: 'Heart on Fire', url: '/badges/noto-heart-fire.webp' },
-        { id: 'noto-crystal', cat: 'popular', name: 'Crystal Ball', url: '/badges/noto-crystal.webp' },
-        { id: 'noto-100', cat: 'popular', name: '100 Score', url: '/badges/noto-100.webp' },
-        { id: 'noto-party', cat: 'popular', name: 'Party Popper', url: '/badges/noto-party.webp' },
-        { id: 'noto-star', cat: 'popular', name: 'Glowing Star', url: '/badges/noto-star.webp' },
-        { id: 'noto-wand', cat: 'popular', name: 'Magic Wand', url: '/badges/noto-wand.webp' },
-        { id: 'noto-diamond', cat: 'popular', name: 'Diamond Animated', url: '/badges/noto-diamond.webp' },
-        { id: 'noto-robot', cat: 'popular', name: 'Robot Animated', url: '/badges/noto-robot.webp' },
-        { id: 'sol-verified', cat: 'popular', name: 'Verified Star', url: '/badges/sol-verified.svg' },
-        { id: 'sol-fire', cat: 'popular', name: 'Solar Fire', url: '/badges/sol-fire.svg' },
-        { id: 'sol-bolt', cat: 'popular', name: 'Solar Bolt', url: '/badges/sol-bolt.svg' },
-        { id: 'sol-magic-stick', cat: 'popular', name: 'Magic Stick', url: '/badges/sol-magic-stick.svg' },
-        { id: 'sol-rocket', cat: 'popular', name: 'Solar Rocket', url: '/badges/sol-rocket.svg' },
-        { id: 'sol-heart', cat: 'popular', name: 'Solar Heart', url: '/badges/sol-heart.svg' },
-        { id: 'sol-star', cat: 'popular', name: 'Solar Star', url: '/badges/sol-star.svg' },
-        { id: 'sol-sun', cat: 'popular', name: 'Solar Sun', url: '/badges/sol-sun.svg' },
-        { id: 'sol-moon', cat: 'popular', name: 'Solar Moon', url: '/badges/sol-moon.svg' },
-        { id: 'sol-target', cat: 'popular', name: 'Solar Target', url: '/badges/sol-target.svg' },
-        { id: 'sol-bell', cat: 'popular', name: 'Solar Bell', url: '/badges/sol-bell.svg' },
-        { id: 'fl-zap', cat: 'popular', name: 'High Voltage', url: '/badges/fl-zap.svg' },
-        { id: 'fl-bomb', cat: 'popular', name: 'Bomb', url: '/badges/fl-bomb.svg' },
-        { id: 'fl-bullseye', cat: 'popular', name: 'Bullseye', url: '/badges/fl-bullseye.svg' },
-        { id: 'fl-sparkler', cat: 'popular', name: 'Sparkler', url: '/badges/fl-sparkler.svg' },
-        { id: 'fl-dizzy', cat: 'popular', name: 'Dizzy Star', url: '/badges/fl-dizzy.svg' },
-        { id: 'fl-collision', cat: 'popular', name: 'Collision', url: '/badges/fl-collision.svg' },
-        { id: 'fl-sparkle-heart', cat: 'popular', name: 'Heart Sparkle', url: '/badges/fl-sparkle-heart.svg' },
-        { id: 'fl-heart-fire', cat: 'popular', name: 'Fire Heart', url: '/badges/fl-heart-fire.svg' },
-        { id: 'fl-crown', cat: 'popular', name: 'Crown Gold', url: '/badges/fl-crown.svg' },
-
-        // 2. ROYAL & VIP (👑)
-        { id: 'fl-gem', cat: 'royal', name: 'Gem Stone', url: '/badges/fl-gem.svg' },
-        { id: 'fl-trophy', cat: 'royal', name: 'Gold Trophy', url: '/badges/fl-trophy.svg' },
-        { id: 'fl-medal1', cat: 'royal', name: '1st Place Medal', url: '/badges/fl-medal1.svg' },
-        { id: 'fl-medal2', cat: 'royal', name: '2nd Place Medal', url: '/badges/fl-medal2.svg' },
-        { id: 'fl-medal3', cat: 'royal', name: '3rd Place Medal', url: '/badges/fl-medal3.svg' },
-        { id: 'fl-mil-medal', cat: 'royal', name: 'Military Medal', url: '/badges/fl-mil-medal.svg' },
-        { id: 'fl-shield', cat: 'royal', name: 'Royal Shield', url: '/badges/fl-shield.svg' },
-        { id: 'fl-swords', cat: 'royal', name: 'Crossed Swords', url: '/badges/fl-swords.svg' },
-        { id: 'fl-dagger', cat: 'royal', name: 'Dagger', url: '/badges/fl-dagger.svg' },
-        { id: 'fl-ring', cat: 'royal', name: 'Diamond Ring', url: '/badges/fl-ring.svg' },
-        { id: 'fl-check', cat: 'royal', name: 'VIP Check', url: '/badges/fl-check.svg' },
-        { id: 'fl-coin', cat: 'royal', name: 'Gold Coin', url: '/badges/fl-coin.svg' },
-        { id: 'fl-money-bag', cat: 'royal', name: 'Money Bag', url: '/badges/fl-money-bag.svg' },
-        { id: 'fl-star', cat: 'royal', name: 'Golden Star', url: '/badges/fl-star.svg' },
-        { id: 'sol-crown-gold', cat: 'royal', name: 'Solar Crown', url: '/badges/sol-crown-gold.svg' },
-        { id: 'sol-crown-star', cat: 'royal', name: 'Solar Crown Star', url: '/badges/sol-crown-star.svg' },
-        { id: 'sol-shield-check', cat: 'royal', name: 'Solar Shield Check', url: '/badges/sol-shield-check.svg' },
-        { id: 'sol-shield-star', cat: 'royal', name: 'Solar Shield Star', url: '/badges/sol-shield-star.svg' },
-        { id: 'sol-cup-star', cat: 'royal', name: 'Solar Cup Star', url: '/badges/sol-cup-star.svg' },
-        { id: 'sol-ribbon', cat: 'royal', name: 'Ribbon Medal', url: '/badges/sol-ribbon.svg' },
-        { id: 'sol-diploma', cat: 'royal', name: 'Verified Badge', url: '/badges/sol-diploma.svg' },
-        { id: 'sol-key', cat: 'royal', name: 'VIP Key', url: '/badges/sol-key.svg' },
-        { id: 'sol-safe', cat: 'royal', name: 'Solar Vault', url: '/badges/sol-safe.svg' },
-        { id: 'sol-stars', cat: 'royal', name: 'Triple Stars', url: '/badges/sol-stars.svg' },
-        { id: 'fl-fleur', cat: 'royal', name: 'Fleur-de-lis', url: '/badges/fl-fleur.svg' },
-        { id: 'sol-star-circle', cat: 'royal', name: 'Star Circle', url: '/badges/sol-star-circle.svg' },
-        { id: 'sol-shield-up', cat: 'royal', name: 'Royal Guard', url: '/badges/sol-shield-up.svg' },
-        { id: 'sol-scepter', cat: 'royal', name: 'Royal Scepter', url: '/badges/sol-scepter.svg' },
-        { id: 'sol-magic-wand-vip', cat: 'royal', name: 'Diamond Wand', url: '/badges/sol-magic-wand-vip.svg' },
-        { id: 'fl-sparkles-vip', cat: 'royal', name: 'Golden Sparkles', url: '/badges/fl-sparkles-vip.svg' },
-
-        // 3. GAMING & CYBER (🎮)
-        { id: 'fl-gamepad', cat: 'gaming', name: 'Gamepad 3D', url: '/badges/fl-gamepad.svg' },
-        { id: 'fl-joystick', cat: 'gaming', name: 'Joystick', url: '/badges/fl-joystick.svg' },
-        { id: 'fl-alien', cat: 'gaming', name: 'Alien', url: '/badges/fl-alien.svg' },
-        { id: 'fl-monster', cat: 'gaming', name: 'Alien Monster', url: '/badges/fl-monster.svg' },
-        { id: 'fl-robot', cat: 'gaming', name: 'Robot Head', url: '/badges/fl-robot.svg' },
-        { id: 'fl-skull', cat: 'gaming', name: 'Skull', url: '/badges/fl-skull.svg' },
-        { id: 'fl-crossbones', cat: 'gaming', name: 'Crossbones', url: '/badges/fl-crossbones.svg' },
-        { id: 'fl-die', cat: 'gaming', name: 'Game Die', url: '/badges/fl-die.svg' },
-        { id: 'fl-wand', cat: 'gaming', name: 'Magic Wand', url: '/badges/fl-wand.svg' },
-        { id: 'fl-orb', cat: 'gaming', name: 'Crystal Orb', url: '/badges/fl-orb.svg' },
-        { id: 'fl-headphone', cat: 'gaming', name: 'Headphone', url: '/badges/fl-headphone.svg' },
-        { id: 'fl-laptop', cat: 'gaming', name: 'Gaming Laptop', url: '/badges/fl-laptop.svg' },
-        { id: 'fl-battery', cat: 'gaming', name: 'Full Battery', url: '/badges/fl-battery.svg' },
-        { id: 'fl-radioactive', cat: 'gaming', name: 'Radioactive', url: '/badges/fl-radioactive.svg' },
-        { id: 'fl-biohazard', cat: 'gaming', name: 'Biohazard', url: '/badges/fl-biohazard.svg' },
-        { id: 'fl-antenna', cat: 'gaming', name: 'Satellite Dish', url: '/badges/fl-antenna.svg' },
-        { id: 'fl-ufo', cat: 'gaming', name: 'Flying Saucer', url: '/badges/fl-ufo.svg' },
-        { id: 'sol-gamepad-cyan', cat: 'gaming', name: 'Solar Gamepad', url: '/badges/sol-gamepad-cyan.svg' },
-        { id: 'sol-game-charge', cat: 'gaming', name: 'Game Charge', url: '/badges/sol-game-charge.svg' },
-        { id: 'sol-ghost', cat: 'gaming', name: 'Solar Ghost', url: '/badges/sol-ghost.svg' },
-        { id: 'sol-cpu-bolt', cat: 'gaming', name: 'CPU Bolt', url: '/badges/sol-cpu-bolt.svg' },
-        { id: 'sol-headphones', cat: 'gaming', name: 'Pro Headset', url: '/badges/sol-headphones.svg' },
-        { id: 'sol-warning', cat: 'gaming', name: 'Cyber Warning', url: '/badges/sol-warning.svg' },
-        { id: 'sol-widget', cat: 'gaming', name: 'Cyber Widget', url: '/badges/sol-widget.svg' },
-        { id: 'sol-target-cyan', cat: 'gaming', name: 'Darts Target', url: '/badges/sol-target-cyan.svg' },
-        { id: 'sol-radar', cat: 'gaming', name: 'Radar Scanner', url: '/badges/sol-radar.svg' },
-        { id: 'sol-server', cat: 'gaming', name: 'Server Node', url: '/badges/sol-server.svg' },
-        { id: 'sol-lightning', cat: 'gaming', name: 'Cyber Lightning', url: '/badges/sol-lightning.svg' },
-        { id: 'fl-water-gun', cat: 'gaming', name: 'Laser Blaster', url: '/badges/fl-water-gun.svg' },
-        { id: 'fl-sparkler-game', cat: 'gaming', name: 'Magic Sparkler', url: '/badges/fl-sparkler-game.svg' },
-
-        // 4. AESTHETIC & NATURE (✨)
-        { id: 'fl-crescent', cat: 'aesthetic', name: 'Crescent Moon', url: '/badges/fl-crescent.svg' },
-        { id: 'fl-full-moon', cat: 'aesthetic', name: 'Full Moon', url: '/badges/fl-full-moon.svg' },
-        { id: 'fl-new-moon', cat: 'aesthetic', name: 'New Moon Face', url: '/badges/fl-new-moon.svg' },
-        { id: 'fl-sun-face', cat: 'aesthetic', name: 'Sun Face', url: '/badges/fl-sun-face.svg' },
-        { id: 'fl-planet', cat: 'aesthetic', name: 'Saturn Planet', url: '/badges/fl-planet.svg' },
-        { id: 'fl-sakura', cat: 'aesthetic', name: 'Sakura Blossom', url: '/badges/fl-sakura.svg' },
-        { id: 'fl-blossom', cat: 'aesthetic', name: 'Spring Blossom', url: '/badges/fl-blossom.svg' },
-        { id: 'fl-rose', cat: 'aesthetic', name: 'Red Rose', url: '/badges/fl-rose.svg' },
-        { id: 'fl-hibiscus', cat: 'aesthetic', name: 'Hibiscus', url: '/badges/fl-hibiscus.svg' },
-        { id: 'fl-sunflower', cat: 'aesthetic', name: 'Sunflower', url: '/badges/fl-sunflower.svg' },
-        { id: 'fl-butterfly', cat: 'aesthetic', name: 'Blue Butterfly', url: '/badges/fl-butterfly.svg' },
-        { id: 'fl-feather', cat: 'aesthetic', name: 'White Feather', url: '/badges/fl-feather.svg' },
-        { id: 'fl-snowflake', cat: 'aesthetic', name: 'Snowflake', url: '/badges/fl-snowflake.svg' },
-        { id: 'fl-lotus', cat: 'aesthetic', name: 'Lotus Flower', url: '/badges/fl-lotus.svg' },
-        { id: 'fl-sparkles-aes', cat: 'aesthetic', name: 'Aesthetic Sparkles', url: '/badges/fl-sparkles-aes.svg' },
-        { id: 'fl-coffee', cat: 'aesthetic', name: 'Coffee Cup', url: '/badges/fl-coffee.svg' },
-        { id: 'fl-clover', cat: 'aesthetic', name: 'Lucky Clover', url: '/badges/fl-clover.svg' },
-        { id: 'fl-rainbow', cat: 'aesthetic', name: 'Rainbow', url: '/badges/fl-rainbow.svg' },
-        { id: 'fl-heart-aes', cat: 'aesthetic', name: 'Sparkling Heart', url: '/badges/fl-heart-aes.svg' },
-        { id: 'sol-moon-stars', cat: 'aesthetic', name: 'Moon Stars', url: '/badges/sol-moon-stars.svg' },
-        { id: 'sol-star-fall', cat: 'aesthetic', name: 'Shooting Star', url: '/badges/sol-star-fall.svg' },
-        { id: 'sol-leaf', cat: 'aesthetic', name: 'Green Leaf', url: '/badges/sol-leaf.svg' },
-        { id: 'sol-cloud-sun', cat: 'aesthetic', name: 'Cloud Sun', url: '/badges/sol-cloud-sun.svg' },
-        { id: 'sol-cup-hot', cat: 'aesthetic', name: 'Warm Cup', url: '/badges/sol-cup-hot.svg' },
-        { id: 'sol-planet', cat: 'aesthetic', name: 'Galaxy Planet', url: '/badges/sol-planet.svg' },
-        { id: 'sol-waterdrops', cat: 'aesthetic', name: 'Water Drops', url: '/badges/sol-waterdrops.svg' },
-        { id: 'sol-snow', cat: 'aesthetic', name: 'Solar Snowflake', url: '/badges/sol-snow.svg' },
-        { id: 'sol-sun-fog', cat: 'aesthetic', name: 'Golden Sun', url: '/badges/sol-sun-fog.svg' },
-        { id: 'fl-maple', cat: 'aesthetic', name: 'Maple Leaf', url: '/badges/fl-maple.svg' },
-        { id: 'fl-crystal-aes', cat: 'aesthetic', name: 'Crystal Gem', url: '/badges/fl-crystal-aes.svg' },
-
-        // 5. ANIMALS & MYTHIC (🐾)
-        { id: 'fl-dragon', cat: 'animals', name: 'Dragon', url: '/badges/fl-dragon.svg' },
-        { id: 'fl-dragon-face', cat: 'animals', name: 'Dragon Face', url: '/badges/fl-dragon-face.svg' },
-        { id: 'fl-fox', cat: 'animals', name: 'Fox', url: '/badges/fl-fox.svg' },
-        { id: 'fl-wolf', cat: 'animals', name: 'Wolf', url: '/badges/fl-wolf.svg' },
-        { id: 'fl-cat', cat: 'animals', name: 'Cute Cat', url: '/badges/fl-cat.svg' },
-        { id: 'fl-black-cat', cat: 'animals', name: 'Black Cat', url: '/badges/fl-black-cat.svg' },
-        { id: 'fl-owl', cat: 'animals', name: 'Night Owl', url: '/badges/fl-owl.svg' },
-        { id: 'fl-unicorn', cat: 'animals', name: 'Unicorn', url: '/badges/fl-unicorn.svg' },
-        { id: 'fl-bat', cat: 'animals', name: 'Vampire Bat', url: '/badges/fl-bat.svg' },
-        { id: 'fl-snake', cat: 'animals', name: 'Snake', url: '/badges/fl-snake.svg' },
-        { id: 'fl-eagle', cat: 'animals', name: 'Eagle', url: '/badges/fl-eagle.svg' },
-        { id: 'fl-lion', cat: 'animals', name: 'Lion', url: '/badges/fl-lion.svg' },
-        { id: 'fl-tiger', cat: 'animals', name: 'Tiger', url: '/badges/fl-tiger.svg' },
-        { id: 'fl-bear', cat: 'animals', name: 'Bear', url: '/badges/fl-bear.svg' },
-        { id: 'fl-panda', cat: 'animals', name: 'Panda', url: '/badges/fl-panda.svg' },
-        { id: 'fl-dove', cat: 'animals', name: 'White Dove', url: '/badges/fl-dove.svg' },
-        { id: 'fl-peacock', cat: 'animals', name: 'Peacock', url: '/badges/fl-peacock.svg' },
-        { id: 'fl-spider', cat: 'animals', name: 'Spider', url: '/badges/fl-spider.svg' },
-        { id: 'fl-scorpion', cat: 'animals', name: 'Scorpion', url: '/badges/fl-scorpion.svg' },
-        { id: 'sol-bone', cat: 'animals', name: 'Solar Bone', url: '/badges/sol-bone.svg' },
-        { id: 'sol-paw', cat: 'animals', name: 'Solar Paw', url: '/badges/sol-paw.svg' },
-        { id: 'sol-cat', cat: 'animals', name: 'Solar Cat', url: '/badges/sol-cat.svg' },
-        { id: 'sol-dog', cat: 'animals', name: 'Solar Dog', url: '/badges/sol-dog.svg' },
-        { id: 'sol-fish', cat: 'animals', name: 'Solar Fish', url: '/badges/sol-fish.svg' },
-        { id: 'sol-bug', cat: 'animals', name: 'Solar Bug', url: '/badges/sol-bug.svg' },
-        { id: 'fl-dolphin', cat: 'animals', name: 'Dolphin', url: '/badges/fl-dolphin.svg' },
-        { id: 'fl-shark', cat: 'animals', name: 'Shark', url: '/badges/fl-shark.svg' },
-        { id: 'fl-flamingo', cat: 'animals', name: 'Flamingo', url: '/badges/fl-flamingo.svg' },
-        { id: 'fl-honeybee', cat: 'animals', name: 'Honeybee', url: '/badges/fl-honeybee.svg' },
-        { id: 'fl-phoenix', cat: 'animals', name: 'Phoenix Bird', url: '/badges/fl-phoenix.svg' }
-      ];
-
-      let activeTab: 'name' | 'avatar' = 'name';
-      let activeBadgeCategory = 'popular';
-      let draftNameColor = '#a855f7';
-      let draftBorderEffect = 'none';
-      let draftGlowColor = '#a855f7';
-      let draftNameIcon = '';
-      let liveSearchDebounceTimer: any = null;
-
-      function switchTab(tab: 'name' | 'avatar') {
-        activeTab = tab;
-        const isName = tab === 'name';
-
-        if (tabNameColors && tabAvatarBorder) {
-          if (isName) {
-            tabNameColors.className = 'whitespace-nowrap text-xs font-semibold flex-1 py-2 px-3 rounded-xl flex items-center justify-center gap-2 transition-all cursor-pointer bg-purple-600 text-white shadow-sm';
-            tabAvatarBorder.className = 'whitespace-nowrap text-xs font-semibold flex-1 py-2 px-3 rounded-xl flex items-center justify-center gap-2 transition-all cursor-pointer text-slate-400 hover:text-white';
-          } else {
-            tabAvatarBorder.className = 'whitespace-nowrap text-xs font-semibold flex-1 py-2 px-3 rounded-xl flex items-center justify-center gap-2 transition-all cursor-pointer bg-purple-600 text-white shadow-sm';
-            tabNameColors.className = 'whitespace-nowrap text-xs font-semibold flex-1 py-2 px-3 rounded-xl flex items-center justify-center gap-2 transition-all cursor-pointer text-slate-400 hover:text-white';
-          }
-        }
-
-        if (viewTabName && viewTabAvatar) {
-          if (isName) {
-            viewTabName.classList.remove('hidden');
-            viewTabAvatar.classList.add('hidden');
-          } else {
-            viewTabName.classList.add('hidden');
-            viewTabAvatar.classList.remove('hidden');
-          }
-        }
-      }
-
-      tabNameColors?.addEventListener('click', () => switchTab('name'));
-      tabAvatarBorder?.addEventListener('click', () => switchTab('avatar'));
-
-      function applyNameToElement(el: HTMLElement | null, text: string, color: string) {
-        if (!el) return;
-        const isGrad = color && color.includes('gradient');
-        if (isGrad) {
-          el.style.backgroundImage = color;
-          el.style.webkitBackgroundClip = 'text';
-          el.style.backgroundClip = 'text';
-          el.style.webkitTextFillColor = 'transparent';
-          el.style.color = 'transparent';
-        } else {
-          el.style.backgroundImage = 'none';
-          el.style.webkitBackgroundClip = '';
-          el.style.backgroundClip = '';
-          el.style.webkitTextFillColor = '';
-          el.style.color = color || '#a855f7';
-        }
-        el.textContent = text || 'Hossein';
-      }
-
-      function updateLivePreview() {
-        const active = personas.find(p => p.isActive) || personas[0] || { name: 'Hossein' };
-        const userName = active.name || 'Hossein';
-
-        // 1. Pinned Preview Avatar & Name
-        const previewName = document.getElementById('preview-user-name');
-        const previewBadge = document.getElementById('preview-user-badge');
-        applyNameToElement(previewName, userName, draftNameColor);
-        if (previewBadge) {
-          previewBadge.innerHTML = renderBadgeHtml(draftNameIcon, 'w-4 h-4 inline-block object-contain align-middle ml-1 shrink-0');
-        }
-
-        // 2. Chat Bubble Sender Name & Badge
-        const bubbleName = document.getElementById('preview-bubble-name');
-        const bubbleBadge = document.getElementById('preview-bubble-badge');
-        applyNameToElement(bubbleName, userName, draftNameColor);
-        if (bubbleBadge) {
-          bubbleBadge.innerHTML = renderBadgeHtml(draftNameIcon, 'w-3.5 h-3.5 inline-block object-contain align-middle ml-1 shrink-0');
-        }
-
-        // 3. Pinned Avatar container border effect & glow color
-        const avatarContainer = document.getElementById('preview-avatar-container');
-        const avatarImg = document.getElementById('preview-avatar-img') as HTMLImageElement;
-        const avatarInitial = document.getElementById('preview-avatar-initial');
-
-        if (avatarContainer) {
-          avatarContainer.className = 'w-14 h-14 rounded-full p-[2px] transition-all duration-300 shrink-0 flex items-center justify-center mb-1.5';
-          avatarContainer.style.setProperty('--avatar-glow-color', draftGlowColor);
-          avatarContainer.style.setProperty('--avatar-border-color', draftGlowColor);
-
-          if (draftBorderEffect === 'glow') {
-            avatarContainer.classList.add('avatar-border-glow');
-          } else if (draftBorderEffect === 'dual-gradient') {
-            avatarContainer.classList.add('avatar-border-dual-gradient');
-          } else if (draftBorderEffect === 'dynamic-sparkle') {
-            avatarContainer.classList.add('avatar-border-dynamic-sparkle');
-          } else {
-            avatarContainer.classList.add('avatar-border-none');
-          }
-        }
-
-        if (avatarImg && avatarInitial) {
-          if (active.avatar) {
-            avatarImg.src = active.avatar;
-            avatarImg.classList.remove('hidden');
-            avatarInitial.classList.add('hidden');
-          } else {
-            avatarImg.src = '';
-            avatarImg.classList.add('hidden');
-            avatarInitial.classList.remove('hidden');
-            avatarInitial.textContent = (userName || 'H').charAt(0).toUpperCase();
-          }
-        }
-
-        // 4. Update Swatch Buttons (Telegram-Style 8x2 Matrix)
-        document.querySelectorAll('.swatch-trigger-btn').forEach((btn: any) => {
-          const val = btn.dataset.value;
-          const isSelected = (val === draftNameColor);
-          const check = btn.querySelector('.swatch-check');
-          if (isSelected) {
-            btn.className = 'swatch-trigger-btn relative w-8 h-8 rounded-full cursor-pointer transition-all active:scale-90 flex items-center justify-center shadow-md select-none ring-2 ring-offset-2 ring-offset-[#11141d] ring-cyan-400 scale-110 z-10';
-            check?.classList.remove('hidden');
-            check?.classList.add('flex');
-          } else {
-            btn.className = 'swatch-trigger-btn relative w-8 h-8 rounded-full cursor-pointer transition-all active:scale-90 flex items-center justify-center shadow-md select-none hover:scale-105';
-            check?.classList.add('hidden');
-            check?.classList.remove('flex');
-          }
-        });
-
-        // 5. Update Status Toggle Switch & Remove Badge Button
-        if (toggleBadges) {
-          toggleBadges.checked = !!draftNameIcon;
-        }
-        if (btnRemoveBadge) {
-          if (draftNameIcon) {
-            btnRemoveBadge.classList.remove('hidden');
-          } else {
-            btnRemoveBadge.classList.add('hidden');
-          }
-        }
-
-        // 6. Highlight active badge item in the grid
-        document.querySelectorAll('.badge-item-btn').forEach((btn: any) => {
-          const bUrl = btn.dataset.url;
-          const isSelected = (bUrl === draftNameIcon);
-          if (isSelected) {
-            btn.className = 'badge-item-btn relative w-9 h-9 rounded-xl bg-cyan-500/20 border border-cyan-400 ring-2 ring-cyan-400/50 flex items-center justify-center p-1.5 transition-all duration-150 active:scale-95 cursor-pointer select-none scale-105 shadow-sm z-10';
-          } else {
-            btn.className = 'badge-item-btn relative w-9 h-9 rounded-xl bg-white/[0.04] hover:bg-white/[0.1] border border-white/[0.08] flex items-center justify-center p-1.5 transition-all duration-150 active:scale-95 cursor-pointer select-none';
-          }
-        });
-
-        // 7. Update Border Effect Cards in 2x2 Grid
-        document.querySelectorAll('.border-effect-card').forEach((card: any) => {
-          const effectId = card.dataset.effect;
-          const isSelected = (effectId === draftBorderEffect);
-          const miniAvatar = card.querySelector('.card-mini-avatar-wrapper');
-          if (miniAvatar) {
-            miniAvatar.style.setProperty('--avatar-glow-color', draftGlowColor);
-            miniAvatar.style.setProperty('--avatar-border-color', draftGlowColor);
-          }
-          if (isSelected) {
-            card.className = 'border-effect-card p-2.5 sm:p-3 rounded-2xl border border-cyan-400 bg-cyan-500/10 ring-1 ring-cyan-400/40 shadow-sm transition-all cursor-pointer flex items-center gap-2 sm:gap-2.5 select-none';
-          } else {
-            card.className = 'border-effect-card p-2.5 sm:p-3 rounded-2xl border border-white/10 bg-white/[0.02] hover:bg-white/[0.05] transition-all cursor-pointer flex items-center gap-2 sm:gap-2.5 select-none';
-          }
-        });
-
-        // 8. Update Glow Color 8-dot strip
-        document.querySelectorAll('.glow-color-dot').forEach((btn: any) => {
-          const val = btn.dataset.value;
-          const isSelected = (val === draftGlowColor);
-          const check = btn.querySelector('.glow-check');
-          if (isSelected) {
-            btn.className = 'glow-color-dot relative w-8 h-8 rounded-full cursor-pointer transition-all active:scale-90 flex items-center justify-center shadow-md select-none ring-2 ring-offset-2 ring-offset-[#11141d] ring-cyan-400 scale-110 z-10';
-            check?.classList.remove('hidden');
-            check?.classList.add('flex');
-          } else {
-            btn.className = 'glow-color-dot relative w-8 h-8 rounded-full cursor-pointer transition-all active:scale-90 flex items-center justify-center shadow-md select-none hover:scale-105';
-            check?.classList.add('hidden');
-            check?.classList.remove('flex');
-          }
-        });
-      }
-
-      // Render Color Matrix (Row 1: 8 Solids, Row 2: 8 Dual Gradients)
-      if (gridColorMatrix) {
-        const all16 = [
-          ...SOLID_COLORS.map(c => ({ ...c, isGrad: false })),
-          ...GRADIENT_COLORS.map(g => ({ ...g, isGrad: true }))
-        ];
-        gridColorMatrix.innerHTML = all16.map(item => `
-          <button 
-            type="button" 
-            class="swatch-trigger-btn relative w-8 h-8 rounded-full cursor-pointer transition-all active:scale-90 flex items-center justify-center shadow-md select-none hover:scale-105"
-            data-value="${item.value}"
-            title="${item.name}"
-            style="background: ${(item as any).split || item.value};"
-          >
-            <span class="swatch-check hidden text-white text-[11px] font-bold drop-shadow-[0_1px_2px_rgba(0,0,0,0.8)] select-none pointer-events-none">✓</span>
-          </button>
-        `).join('');
-
-        gridColorMatrix.querySelectorAll('.swatch-trigger-btn').forEach((btn: any) => {
-          btn.addEventListener('click', () => {
-            draftNameColor = btn.dataset.value;
-            updateLivePreview();
-          });
-        });
-      }
-
-      // Render Badges in the 8-column grid
-      function renderBadges(badgesToRender: any[]) {
-        if (!gridBadgesDisplay) return;
-
-        if (badgesToRender.length === 0) {
-          gridBadgesDisplay.innerHTML = `
-            <div class="col-span-8 py-6 text-center text-xs text-slate-400">
-              <span>No badges found. Try another search term!</span>
-            </div>
-          `;
-          if (badgePickerCount) badgePickerCount.textContent = '0 badges';
-          return;
-        }
-
-        gridBadgesDisplay.innerHTML = badgesToRender.map(b => {
-          const isSelected = (b.url === draftNameIcon);
-          return `
-            <button 
-              type="button" 
-              class="badge-item-btn relative w-9 h-9 rounded-xl ${isSelected ? 'bg-cyan-500/20 border border-cyan-400 ring-2 ring-cyan-400/50 scale-105 shadow-sm z-10' : 'bg-white/[0.04] hover:bg-white/[0.1] border border-white/[0.08]'} flex items-center justify-center p-1.5 transition-all duration-150 active:scale-95 cursor-pointer select-none"
-              data-url="${b.url}"
-              data-name="${b.name}"
-              title="${b.name}"
-            >
-              <img src="${b.url}" alt="" class="w-6 h-6 object-contain pointer-events-none" loading="lazy" draggable="false" />
-            </button>
-          `;
-        }).join('');
-
-        if (badgePickerCount) {
-          badgePickerCount.textContent = `Showing ${badgesToRender.length} badges`;
-        }
-
-        gridBadgesDisplay.querySelectorAll('.badge-item-btn').forEach((btn: any) => {
-          btn.addEventListener('click', () => {
-            const url = btn.dataset.url;
-            if (draftNameIcon === url) {
-              draftNameIcon = '';
-            } else {
-              draftNameIcon = url;
-            }
-            updateLivePreview();
-          });
-        });
-      }
-
-      function filterBadges() {
-        const query = inputBadgeSearch?.value.trim().toLowerCase() || '';
-        if (btnClearBadgeSearch) {
-          if (query) btnClearBadgeSearch.classList.remove('hidden');
-          else btnClearBadgeSearch.classList.add('hidden');
-        }
-
-        let matched = BADGE_LIBRARY;
-        if (query) {
-          matched = BADGE_LIBRARY.filter(b => b.name.toLowerCase().includes(query) || b.id.toLowerCase().includes(query));
-        } else {
-          matched = BADGE_LIBRARY.filter(b => b.cat === activeBadgeCategory);
-        }
-
-        renderBadges(matched);
-
-        // If query is present and user typed >= 2 characters, debounced live query to Iconify
-        if (query && query.length >= 2) {
-          clearTimeout(liveSearchDebounceTimer);
-          liveSearchDebounceTimer = setTimeout(async () => {
-            try {
-              const res = await fetch(`https://api.iconify.design/search?query=${encodeURIComponent(query)}&prefixes=fluent-emoji-flat,solar,lucide&limit=40`);
-              if (res.ok) {
-                const data = await res.json();
-                if (data && Array.isArray(data.icons) && data.icons.length > 0) {
-                  const onlineBadges = data.icons.map((iconSlug: string) => {
-                    const parts = iconSlug.split(':');
-                    const prefix = parts[0];
-                    const name = parts[1] || '';
-                    let url = `https://api.iconify.design/${prefix}/${name}.svg`;
-                    if (prefix === 'solar' || prefix === 'lucide') {
-                      url += '?color=%2322d3ee';
-                    }
-                    return {
-                      id: iconSlug,
-                      cat: 'search',
-                      name: name.replace(/-/g, ' '),
-                      url
-                    };
-                  });
-
-                  // Merge without duplicates
-                  const existingUrls = new Set(matched.map(m => m.url));
-                  const newOnes = onlineBadges.filter((b: any) => !existingUrls.has(b.url));
-                  if (newOnes.length > 0) {
-                    renderBadges([...matched, ...newOnes]);
-                  }
-                }
-              }
-            } catch (e) {
-              // Ignore offline or search errors gracefully
-            }
-          }, 350);
-        }
-      }
-
-      inputBadgeSearch?.addEventListener('input', filterBadges);
-
-      btnClearBadgeSearch?.addEventListener('click', () => {
-        if (inputBadgeSearch) {
-          inputBadgeSearch.value = '';
-          filterBadges();
-          inputBadgeSearch.focus();
-        }
-      });
-
-      // Category Pills Handlers
-      document.querySelectorAll('.badge-cat-pill').forEach((pill: any) => {
-        pill.addEventListener('click', () => {
-          activeBadgeCategory = pill.dataset.cat || 'popular';
-          document.querySelectorAll('.badge-cat-pill').forEach((p: any) => {
-            if (p === pill) {
-              p.className = 'badge-cat-pill whitespace-nowrap px-3 py-1.5 rounded-xl font-medium text-xs transition cursor-pointer bg-purple-600 text-white shadow-sm';
-            } else {
-              p.className = 'badge-cat-pill whitespace-nowrap px-3 py-1.5 rounded-xl font-medium text-xs transition cursor-pointer text-slate-400 hover:text-white hover:bg-white/[0.05]';
-            }
-          });
-          if (inputBadgeSearch) inputBadgeSearch.value = '';
-          filterBadges();
-        });
-      });
-
-      // Remove Badge Button
-      btnRemoveBadge?.addEventListener('click', () => {
-        draftNameIcon = '';
-        updateLivePreview();
-      });
-
-      // Toggle Badges Switch
-      toggleBadges?.addEventListener('change', () => {
-        if (!toggleBadges.checked) {
-          draftNameIcon = '';
-        } else if (!draftNameIcon) {
-          draftNameIcon = BADGE_LIBRARY[0].url; // Default to first animated fire
-        }
-        updateLivePreview();
-      });
-
-      // Render 2x2 Grid of Border Effects
-      if (borderEffectsGrid) {
-        const active = personas.find(p => p.isActive) || personas[0] || { name: 'Hossein' };
-        borderEffectsGrid.innerHTML = BORDER_EFFECTS.map(eff => `
-          <div 
-            class="border-effect-card p-2.5 sm:p-3 rounded-2xl border border-white/10 bg-white/[0.02] hover:bg-white/[0.05] transition-all cursor-pointer flex items-center gap-2 sm:gap-2.5 select-none"
-            data-effect="${eff.id}"
-          >
-            <div class="card-mini-avatar-wrapper w-9 h-9 sm:w-10 sm:h-10 rounded-full p-[2px] flex items-center justify-center shrink-0 ${eff.effectClass}" style="--avatar-glow-color: ${draftGlowColor}; --avatar-border-color: ${draftGlowColor};">
-              ${active.avatar ? `
-                <img src="${active.avatar}" alt="Avatar" class="w-full h-full rounded-full object-cover" />
-              ` : `
-                <div class="w-full h-full rounded-full bg-gradient-to-tr from-purple-600 to-indigo-600 flex items-center justify-center text-white text-xs font-bold">
-                  ${(active.name || 'H').charAt(0).toUpperCase()}
-                </div>
-              `}
-            </div>
-            <div class="flex-1 min-w-0">
-              <div class="text-xs font-semibold text-white whitespace-nowrap">${eff.name}</div>
-              <div class="text-[10px] text-slate-400 whitespace-nowrap truncate">${eff.desc}</div>
-            </div>
-          </div>
-        `).join('');
-
-        borderEffectsGrid.querySelectorAll('.border-effect-card').forEach((card: any) => {
-          card.addEventListener('click', () => {
-            draftBorderEffect = card.dataset.effect;
-            updateLivePreview();
-          });
-        });
-      }
-
-      // Render Border Glow Colors (8 dots)
-      if (gridGlowColors) {
-        gridGlowColors.innerHTML = GLOW_COLORS.map(c => `
-          <button 
-            type="button" 
-            class="glow-color-dot relative w-8 h-8 rounded-full cursor-pointer transition-all active:scale-90 flex items-center justify-center shadow-md select-none hover:scale-105"
-            data-value="${c.value}"
-            title="${c.name}"
-            style="background: ${c.value};"
-          >
-            <span class="glow-check hidden text-white text-[10px] font-bold drop-shadow-[0_1px_2px_rgba(0,0,0,0.8)] select-none pointer-events-none">✓</span>
-          </button>
-        `).join('');
-
-        gridGlowColors.querySelectorAll('.glow-color-dot').forEach((btn: any) => {
-          btn.addEventListener('click', () => {
-            draftGlowColor = btn.dataset.value;
-            updateLivePreview();
-          });
-        });
-      }
-
-      // Initialize state from active persona
-      const active = personas.find(p => p.isActive) || personas[0];
-      if (active) {
-        draftNameColor = active.nameColor || '#a855f7';
-        draftBorderEffect = active.avatarBorderEffect || 'none';
-        draftGlowColor = active.avatarGlowColor || '#a855f7';
-        draftNameIcon = active.nameIcon || '';
-      }
-
-      switchTab('name');
-      filterBadges();
-      updateLivePreview();
-
-      // Apply Logic
-      function applyStylesAndSave() {
-        const active = personas.find(p => p.isActive) || personas[0];
-        if (active) {
-          active.nameColor = draftNameColor;
-          active.avatarBorderEffect = draftBorderEffect as any;
-          active.avatarGlowColor = draftGlowColor;
-          active.nameIcon = draftNameIcon;
-
-          // Save to LocalStorage
-          savePersonas();
-
-          // Dispatch global events
-          window.dispatchEvent(new CustomEvent('aetheria:name-style-changed', {
-            detail: {
-              nameColor: draftNameColor,
-              avatarBorderEffect: draftBorderEffect,
-              avatarGlowColor: draftGlowColor,
-              nameIcon: draftNameIcon
-            }
-          }));
-
-          window.dispatchEvent(new CustomEvent('aetheria:persona-updated', {
-            detail: active
-          }));
-
-          updateHubProfileSummary();
-          render3DCarousel();
-          showToast('Name style & avatar halo applied! ✨', 'success');
-          showView('view-appearance');
-        }
-      }
-
-      btnHeaderApply?.addEventListener('click', applyStylesAndSave);
-      btnApply?.addEventListener('click', applyStylesAndSave);
-
-      btnCancel?.addEventListener('click', () => {
-        showView('view-appearance');
-      });
-
-      btnReset?.addEventListener('click', () => {
-        draftNameColor = '#a855f7';
-        draftBorderEffect = 'none';
-        draftGlowColor = '#a855f7';
-        draftNameIcon = '';
-        updateLivePreview();
-        showToast('Reset to default name style & border', 'info');
-      });
-    }
-    // Wallpapers
-    function renderWallpapers() {
-      if (!wallpapersGrid) return;
-      const wps = (window as any).AetheriaTheme?.WALLPAPERS || [];
-      wallpapersGrid.innerHTML = wps.slice(0, 6).map((w: any) => `
-        <div class="wp-card relative h-16 rounded-xl overflow-hidden border border-white/10 cursor-pointer group shadow-sm" data-wp="${w.css}">
-          <div class="absolute inset-0 bg-cover bg-center" style="background: ${w.css};"></div>
-          <div class="absolute inset-0 bg-black/40 group-hover:bg-black/10 transition flex items-center justify-center">
-            <span class="text-[9px] font-bold text-white">${w.name}</span>
-          </div>
-        </div>
-      `).join('');
-
-      wallpapersGrid.querySelectorAll('.wp-card').forEach((card: any) => {
-        card.addEventListener('click', () => {
-          settings.chatWallpaper = card.dataset.wp;
-          updatePreview();
-          saveAndApply();
-        });
-      });
-    }
-
-    function updateSliderProgress(slider: HTMLInputElement | null) {
-      if (!slider) return;
-      const min = parseFloat(slider.min) || 0;
-      const max = parseFloat(slider.max) || 100;
-      const val = parseFloat(slider.value) || 0;
-      const percent = Math.min(Math.max(((val - min) / (max - min)) * 100, 0), 100);
-      const activeColor = settings.accent || 'var(--theme-accent, #8E9AB6)';
-      const isDay = settings.baseMode === 'day';
-      const trackColor = isDay ? '#e2e8f0' : 'rgba(255, 255, 255, 0.14)';
-      slider.style.background = `linear-gradient(to right, ${activeColor} 0%, ${activeColor} ${percent}%, ${trackColor} ${percent}%, ${trackColor} 100%)`;
-    }
-
-    function syncInputs() {
-      if (fontSlider) fontSlider.value = String(settings.fontSize || 16);
-      if (fontVal) fontVal.textContent = String(settings.fontSize || 16);
-      if (radiusSlider) radiusSlider.value = String(settings.bubbleRadius !== undefined ? settings.bubbleRadius : 16);
-      if (radiusVal) radiusVal.textContent = `${settings.bubbleRadius !== undefined ? settings.bubbleRadius : 16}px`;
-      syncModeButtons(settings.baseMode || 'dark');
-      updateSliderProgress(fontSlider);
-      updateSliderProgress(radiusSlider);
-    }
-
-    // Event Listeners
-    fontSlider?.addEventListener('input', (e: any) => {
-      const val = parseInt(e.target.value, 10);
-      settings.fontSize = val;
-      if (fontVal) fontVal.textContent = String(val);
-      updatePreview();
-      saveAndApply();
-    });
-
-    radiusSlider?.addEventListener('input', (e: any) => {
-      const val = parseInt(e.target.value, 10);
-      settings.bubbleRadius = val;
-      if (radiusVal) radiusVal.textContent = `${val}px`;
-      updatePreview();
-      saveAndApply();
-    });
-
-    // Tri-State Mode Selector Buttons (Day / Dark / OLED)
-    const allModeButtons = document.querySelectorAll('#profile-base-mode-group .profile-mode-btn');
-    allModeButtons.forEach((btn: any) => {
-      btn.addEventListener('click', () => {
-        const targetMode = btn.getAttribute('data-mode') || 'dark';
-        settings.baseMode = targetMode;
-        settings.dayNightMode = targetMode === 'day' ? 'day' : 'dark';
-
-        saveAndApply();
-        syncModeButtons(targetMode);
-        updatePreview();
-        renderPresets();
-        render3DCarousel();
-      });
-    });
-
-    // Synchronize when Power Saving OLED toggle is changed from the battery tab
-    window.addEventListener('aetheria:power-saving-change', (e: any) => {
-      const psSettings = e.detail || (window as any).AetheriaPowerSaving?.getSettings?.();
-      if (psSettings) {
-        if (psSettings.deepDarkOLED || psSettings.master) {
-          settings.baseMode = 'oled';
-          settings.dayNightMode = 'dark';
-        } else if (settings.baseMode === 'oled') {
-          let prev = 'dark';
-          try {
-            const stored = localStorage.getItem('aetheria_prev_base_mode');
-            if (stored === 'day' || stored === 'dark') prev = stored;
-          } catch(e) {}
-          settings.baseMode = prev;
-          settings.dayNightMode = prev;
-        }
-        syncModeButtons(settings.baseMode || 'dark');
-        updatePreview();
-        renderPresets();
-        render3DCarousel();
-      }
-    });
-
-    // Synchronize when Theme changes from another origin/action
-    window.addEventListener('aetheria-theme-change', (e: any) => {
-      if (e.detail && e.detail.baseMode) {
-        settings.baseMode = e.detail.baseMode;
-        settings.dayNightMode = e.detail.baseMode === 'day' ? 'day' : 'dark';
-        syncModeButtons(settings.baseMode);
-        updatePreview();
-        renderPresets();
-        render3DCarousel();
-      }
-    });
-
-    btnSwitchDayNight?.addEventListener('click', () => {
-      const nextMode = settings.baseMode === 'day' ? 'dark' : 'day';
-      settings.baseMode = nextMode;
-      settings.dayNightMode = nextMode;
-      saveAndApply();
-      syncModeButtons(nextMode);
-      updatePreview();
-      renderPresets();
-      render3DCarousel();
-    });
-
-    btnToggleWallpaperDrawer?.addEventListener('click', () => {
-      const isHidden = drawerWallpaper?.classList.toggle('hidden');
-      chevronWallpaper?.classList.toggle('rotate-90', !isHidden);
-    });
-
-    photoBtn?.addEventListener('click', () => photoFileInput?.click());
-    photoFileInput?.addEventListener('change', (e: any) => {
-      const file = e.target.files?.[0];
-      if (!file) return;
-      const reader = new FileReader();
-      reader.onload = (re) => {
-        const res = re.target?.result as string;
-        settings.chatWallpaper = `url("${res}")`;
-        updatePreview();
-        saveAndApply();
-      };
-      reader.readAsDataURL(file);
-    });
-
-    // Card 3 & 4 Toggles Wiring
-    const toggleSendEnter = document.getElementById('setting-send-enter') as HTMLInputElement | null;
-    const toggleStreamTypewriter = document.getElementById('setting-stream-typewriter') as HTMLInputElement | null;
-    const toggleSoundEffects = document.getElementById('setting-sound-effects') as HTMLInputElement | null;
-    const toggleAutoplayVoice = document.getElementById('setting-autoplay-voice') as HTMLInputElement | null;
-    const toggleTapNextMedia = document.getElementById('setting-tap-next-media') as HTMLInputElement | null;
-    const toggleReduceMotion = document.getElementById('setting-reduce-motion') as HTMLInputElement | null;
-
-    function playPreviewChime() {
-      try {
-        const ps = (window as any).AetheriaPowerSaving;
-        const gate = (window as any).AetheriaAudio;
-        if ((gate && gate.isSoundMuted && gate.isSoundMuted()) || (ps && (ps.getSettings?.().disableSounds || ps.getSettings?.().master))) {
-          return;
-        }
-        const ctx = new (window.AudioContext || (window as any).webkitAudioContext)();
-        const osc = ctx.createOscillator();
-        const gain = ctx.createGain();
-        osc.connect(gain);
-        gain.connect(ctx.destination);
-        osc.frequency.setValueAtTime(587.33, ctx.currentTime);
-        osc.frequency.exponentialRampToValueAtTime(880, ctx.currentTime + 0.12);
-        gain.gain.setValueAtTime(0.08, ctx.currentTime);
-        gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.13);
-        osc.start();
-        osc.stop(ctx.currentTime + 0.13);
-      } catch(e) {}
-    }
-
-    if (toggleSendEnter) {
-      toggleSendEnter.checked = localStorage.getItem('aetheria_chat_send_key') !== 'ctrl_enter';
-      toggleSendEnter.addEventListener('change', () => {
-        localStorage.setItem('aetheria_chat_send_key', toggleSendEnter.checked ? 'enter' : 'ctrl_enter');
-      });
-    }
-
-    if (toggleStreamTypewriter) {
-      toggleStreamTypewriter.checked = localStorage.getItem('aetheria_stream_typewriter') !== 'false';
-      toggleStreamTypewriter.addEventListener('change', () => {
-        localStorage.setItem('aetheria_stream_typewriter', String(toggleStreamTypewriter.checked));
-      });
-    }
-
-    if (toggleSoundEffects) {
-      toggleSoundEffects.checked = localStorage.getItem('aetheria_sound_effects') === 'true';
-      toggleSoundEffects.addEventListener('change', () => {
-        localStorage.setItem('aetheria_sound_effects', String(toggleSoundEffects.checked));
-        if (toggleSoundEffects.checked) {
-          playPreviewChime();
-        }
-      });
-    }
-
-    if (toggleAutoplayVoice) {
-      toggleAutoplayVoice.checked = (localStorage.getItem('aetheria_autoplay_voice') === 'true' || localStorage.getItem('aetheria_voice_autoplay') === 'true');
-      toggleAutoplayVoice.addEventListener('change', () => {
-        const val = String(toggleAutoplayVoice.checked);
-        localStorage.setItem('aetheria_autoplay_voice', val);
-        localStorage.setItem('aetheria_voice_autoplay', val);
-      });
-    }
-
-    if (toggleTapNextMedia) {
-      toggleTapNextMedia.checked = localStorage.getItem('aetheria_tap_next_media') !== 'false';
-      toggleTapNextMedia.addEventListener('change', () => {
-        localStorage.setItem('aetheria_tap_next_media', String(toggleTapNextMedia.checked));
-      });
-    }
-
-    // Call initProfileChatSettings & initNameColorPage
+    // Call initProfileChatSettings
     initProfileChatSettings();
-    initNameColorPage();
   }
 
   if (document.readyState === 'loading') {
