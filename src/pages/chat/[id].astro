@@ -16015,7 +16015,7 @@ const { character } = Astro.props;
             <span class="text-[10px] text-slate-500">${msg.timestamp || 'Just now'}</span>
             <span class="text-xs font-bold user-name-styled flex items-center gap-1" style="${nameStyleAttr}">
               <span>${displayName}</span>
-              ${userBadgeIcon ? `<span class="inline-block select-none text-xs" style="-webkit-text-fill-color: initial; color: initial;">${userBadgeIcon}</span>` : ''}
+              ${userBadgeIcon ? (userBadgeIcon.startsWith('http') || userBadgeIcon.startsWith('/') ? `<img src="${userBadgeIcon}" class="w-4 h-4 inline-block object-contain align-middle ml-1 shrink-0" alt="Badge" />` : `<span class="inline-block select-none text-xs ml-1" style="-webkit-text-fill-color: initial; color: initial;">${userBadgeIcon}</span>`) : ''}
             </span>
           </div>
           <div id="msg-bubble-${idx}" class="chat-msg-bubble chat-msg-bubble-user p-3.5 sm:p-4 rounded-tr-sm text-white leading-relaxed shadow-lg shadow-purple-950/40 text-left select-text" style="background: var(--theme-bubble-user-bg, linear-gradient(135deg, var(--theme-accent) 0%, #6366f1 100%)); border-radius: var(--theme-bubble-radius, 16px); font-size: var(--theme-msg-font-size, 16px); line-height: var(--theme-msg-line-height, 1.6);">

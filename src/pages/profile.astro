@@ -53,7 +53,8 @@ import {
   Layers,
   VolumeX,
   Activity,
-  X
+  X,
+  Search
 } from '@lucide/astro';
 ---
 
@@ -1701,70 +1702,64 @@ import {
         </button>
       </div>
     </div>
-  </div>
 
-  <!-- ========================================== -->
-  <!-- DYNAMIC PERSONALIZATION MODAL: NAME COLOR & STYLE -->
-  <!-- ========================================== -->
-  <div 
-    id="name-color-modal" 
-    class="fixed inset-0 z-50 flex items-end sm:items-center justify-center p-0 sm:p-4 bg-black/85 backdrop-blur-md hidden transition-all duration-300"
-    role="dialog"
-    aria-modal="true"
-    aria-labelledby="name-color-modal-title"
-  >
-    <div 
-      id="name-color-modal-dialog" 
-      class="w-full sm:max-w-lg max-h-[92vh] sm:max-h-[88vh] rounded-t-[28px] sm:rounded-3xl bg-[#0c0e1a]/98 border-t sm:border border-white/10 p-4 sm:p-5 backdrop-blur-2xl shadow-2xl flex flex-col transform translate-y-full sm:translate-y-0 sm:scale-95 transition-all duration-300 overflow-hidden"
-    >
-      <!-- Top Drag Handle for mobile -->
-      <div class="w-12 h-1.5 bg-white/20 rounded-full mx-auto mb-2 shrink-0 sm:hidden"></div>
-
-      <!-- Sticky Header -->
-      <div class="flex items-center justify-between pb-2.5 border-b border-white/[0.08] shrink-0 mb-3">
-        <div class="flex items-center gap-2.5">
-          <div class="w-8 h-8 rounded-xl bg-purple-500/10 border border-purple-500/20 flex items-center justify-center text-purple-400">
-            <Palette class="w-4.5 h-4.5" />
-          </div>
-          <div>
-            <h3 id="name-color-modal-title" class="text-sm sm:text-base font-bold text-white tracking-tight">Change Name Color & Style</h3>
-            <p class="text-[11px] text-slate-400">Personalize your name, badges and avatar border</p>
-          </div>
-        </div>
+    <!-- ========================================== -->
+    <!-- VIEW 9: NAME COLOR & STYLE SUB-PAGE (FULL SCREEN) -->
+    <!-- ========================================== -->
+    <div id="view-name-color" class="hidden space-y-4">
+      <!-- Sticky Top Header Bar -->
+      <div class="sticky top-16 sm:top-18 z-30 -mx-3 sm:-mx-4 px-3 sm:px-4 py-3 bg-[#07080d]/95 backdrop-blur-md border-b border-white/[0.06] flex items-center justify-between transition-all">
         <button 
           type="button" 
-          id="btn-close-name-color-modal" 
-          class="w-7 h-7 rounded-full bg-white/[0.06] hover:bg-white/[0.12] text-slate-400 hover:text-white flex items-center justify-center transition active:scale-95 cursor-pointer"
-          aria-label="Close"
+          id="btn-back-from-name-color"
+          class="flex items-center gap-2 text-white/90 hover:text-white font-medium text-sm py-1.5 px-2.5 rounded-xl hover:bg-white/[0.08] transition cursor-pointer active:scale-95"
         >
-          <X class="w-4 h-4" />
+          <ArrowLeft class="w-5 h-5 text-purple-400" />
+          <span>Chat Settings</span>
+        </button>
+        
+        <button 
+          type="button" 
+          id="btn-header-apply-name-style" 
+          class="px-4 py-1.5 rounded-full bg-gradient-to-r from-purple-600 via-indigo-600 to-indigo-700 hover:from-purple-500 hover:to-indigo-600 border border-purple-400/30 text-white text-xs font-bold flex items-center gap-1.5 shadow-lg shadow-purple-900/30 transition-all duration-200 active:scale-95 cursor-pointer"
+        >
+          <Check class="w-3.5 h-3.5" />
+          <span>Apply Style</span>
         </button>
       </div>
 
+      <div>
+        <h1 class="text-xl font-bold text-white tracking-tight flex items-center gap-2.5">
+          <Palette class="w-6 h-6 text-purple-400" />
+          <span>Name Color & Style</span>
+        </h1>
+        <p class="text-xs text-slate-400 mt-0.5">Customize your name color, gradients, 3D animated badges and avatar halos</p>
+      </div>
+
       <!-- Step 1: Top Segmented Switch (True Tab Conditional Rendering) -->
-      <div class="h-10 p-1 rounded-xl bg-white/[0.04] border border-white/10 flex items-center shrink-0 mb-3">
+      <div class="h-11 p-1 rounded-2xl bg-white/[0.04] border border-white/10 flex items-center shrink-0 mb-1">
         <button 
           type="button" 
           id="tab-toggle-name-colors" 
-          class="whitespace-nowrap text-xs font-semibold flex-1 py-1.5 px-3 rounded-lg flex items-center justify-center gap-1.5 transition-all cursor-pointer bg-purple-600 text-white shadow-sm"
+          class="whitespace-nowrap text-xs font-semibold flex-1 py-2 px-3 rounded-xl flex items-center justify-center gap-2 transition-all cursor-pointer bg-purple-600 text-white shadow-sm"
         >
-          <Palette class="w-3.5 h-3.5" />
+          <Palette class="w-4 h-4" />
           <span>Name Style</span>
         </button>
         <button 
           type="button" 
           id="tab-toggle-avatar-border" 
-          class="whitespace-nowrap text-xs font-semibold flex-1 py-1.5 px-3 rounded-lg flex items-center justify-center gap-1.5 transition-all cursor-pointer text-slate-400 hover:text-white"
+          class="whitespace-nowrap text-xs font-semibold flex-1 py-2 px-3 rounded-xl flex items-center justify-center gap-2 transition-all cursor-pointer text-slate-400 hover:text-white"
         >
-          <Sparkles class="w-3.5 h-3.5" />
+          <Sparkles class="w-4 h-4" />
           <span>Avatar & Border</span>
         </button>
       </div>
 
       <!-- Step 2: Permanently Pinned Compact Live Preview (Side-by-Side Layout) -->
-      <div class="shrink-0 mb-3 grid grid-cols-12 gap-2.5 p-3 rounded-2xl bg-[#11141d] border border-white/10 shadow-lg">
+      <div class="shrink-0 grid grid-cols-12 gap-3 p-3.5 rounded-2xl bg-[#11141d] border border-white/10 shadow-xl">
         <!-- Left Column: col-span-5 -->
-        <div class="col-span-5 flex flex-col items-center justify-center p-2 rounded-xl bg-black/30 border border-white/[0.04] text-center min-w-0">
+        <div class="col-span-5 flex flex-col items-center justify-center p-3 rounded-xl bg-black/40 border border-white/[0.04] text-center min-w-0">
           <!-- Centered 56px Avatar with live border effect -->
           <div id="preview-avatar-container" class="w-14 h-14 rounded-full p-[2px] transition-all duration-300 shrink-0 flex items-center justify-center avatar-border-none mb-1.5">
             <img id="preview-avatar-img" src="" alt="Avatar" class="w-full h-full rounded-full object-cover hidden" />
@@ -1774,10 +1769,10 @@ import {
           </div>
           <!-- User Name + Badge -->
           <div class="flex items-center justify-center gap-1 max-w-full min-w-0">
-            <span id="preview-user-name" class="font-bold text-xs transition-all duration-300 truncate user-name-styled" style="color: #a855f7;">
+            <span id="preview-user-name" class="font-bold text-xs sm:text-sm transition-all duration-300 truncate user-name-styled" style="color: #a855f7;">
               Hossein
             </span>
-            <span id="preview-user-badge" class="inline-block text-xs select-none transition-all duration-300 shrink-0"></span>
+            <span id="preview-user-badge" class="inline-flex items-center shrink-0"></span>
           </div>
           <!-- Online Subtitle -->
           <div class="flex items-center justify-center gap-1 mt-0.5">
@@ -1788,17 +1783,17 @@ import {
 
         <!-- Right Column: col-span-7 -->
         <div class="col-span-7 flex flex-col justify-center min-w-0">
-          <div class="p-2 sm:p-2.5 rounded-xl bg-purple-600/25 border border-purple-500/25 text-white shadow-sm flex flex-col justify-between">
-            <div class="flex items-center justify-between gap-1 mb-1">
+          <div class="p-3 rounded-xl bg-purple-600/25 border border-purple-500/25 text-white shadow-sm flex flex-col justify-between">
+            <div class="flex items-center justify-between gap-1 mb-1.5">
               <span class="text-[9px] text-slate-400">12:45 PM</span>
-              <div class="flex items-center gap-1 max-w-[130px] min-w-0">
-                <span id="preview-bubble-name" class="text-[11px] font-bold transition-all duration-300 truncate user-name-styled" style="color: #a855f7;">
+              <div class="flex items-center gap-1 max-w-[140px] min-w-0">
+                <span id="preview-bubble-name" class="text-xs font-bold transition-all duration-300 truncate user-name-styled" style="color: #a855f7;">
                   Hossein
                 </span>
-                <span id="preview-bubble-badge" class="inline-block text-[11px] select-none transition-all duration-300 shrink-0"></span>
+                <span id="preview-bubble-badge" class="inline-flex items-center shrink-0"></span>
               </div>
             </div>
-            <p class="text-[11px] leading-tight text-slate-100">Check out my new style ✨</p>
+            <p class="text-xs leading-relaxed text-slate-100">Check out my new style ✨</p>
             <div class="flex items-center justify-end mt-1 text-[9px] text-purple-300 font-bold gap-0.5">
               <span>12:45 PM</span>
               <span>✓✓</span>
@@ -1808,18 +1803,21 @@ import {
       </div>
 
       <!-- Tab Content Area (Truly conditionally rendered) -->
-      <div class="flex-1 overflow-y-auto pr-0.5 scrollbar-thin">
+      <div class="space-y-4">
         
         <!-- ========================================== -->
-        <!-- TAB 1: NAME STYLE (Telegram-style 8x2 Swatches & Badges) -->
+        <!-- TAB 1: NAME STYLE (Telegram-style 8x2 Swatches & Premium Badges) -->
         <!-- ========================================== -->
-        <div id="view-tab-name" class="space-y-3">
+        <div id="view-tab-name" class="space-y-4">
           
           <!-- Card A: Compact 16-Color Swatch Grid (8-columns, no labels!) -->
-          <div class="p-3 sm:p-3.5 rounded-2xl bg-[#11141d] border border-white/10 shadow-sm">
-            <div class="flex items-center justify-between mb-2">
-              <span class="text-xs font-bold text-slate-200">Color Palette</span>
-              <span class="text-[10px] text-slate-400">Solids & Dual Gradients</span>
+          <div class="p-4 rounded-2xl bg-[#11141d] border border-white/10 shadow-sm">
+            <div class="flex items-center justify-between mb-3">
+              <div class="flex items-center gap-2">
+                <Palette class="w-4 h-4 text-purple-400" />
+                <span class="text-xs sm:text-sm font-bold text-slate-200">Color Palette</span>
+              </div>
+              <span class="text-[11px] text-slate-400">Solids & Dual Gradients</span>
             </div>
             
             <!-- 8x2 Matrix Grid -->
@@ -1828,24 +1826,92 @@ import {
             </div>
           </div>
 
-          <!-- Card B: Compact Status Badge / Icon Picker (Single-row 8-icon strip) -->
-          <div class="p-3 rounded-2xl bg-[#11141d] border border-white/10 shadow-sm">
-            <div class="flex items-center justify-between mb-2">
-              <div class="flex items-center gap-1.5">
-                <Sparkles class="w-4 h-4 text-amber-400" />
-                <label for="toggle-name-badges" class="text-xs font-bold text-slate-200 cursor-pointer">
-                  Add Icon next to Name
+          <!-- Card B: Premium Badge & Animated Emoji Picker -->
+          <div class="p-4 rounded-2xl bg-[#11141d] border border-white/10 shadow-sm space-y-3">
+            <div class="flex items-center justify-between">
+              <div class="flex items-center gap-2">
+                <div class="w-7 h-7 rounded-lg bg-amber-500/10 border border-amber-500/20 flex items-center justify-center text-amber-400">
+                  <Sparkles class="w-4 h-4" />
+                </div>
+                <div>
+                  <label for="toggle-name-badges" class="text-xs sm:text-sm font-bold text-slate-200 cursor-pointer flex items-center gap-2">
+                    <span>Add Icon next to Name</span>
+                    <span class="text-[10px] px-2 py-0.5 rounded-full bg-purple-500/15 border border-purple-500/30 text-purple-300 font-semibold uppercase tracking-wider">Premium Badges</span>
+                  </label>
+                </div>
+              </div>
+
+              <div class="flex items-center gap-2.5">
+                <button 
+                  type="button" 
+                  id="btn-remove-badge" 
+                  class="text-[11px] text-slate-400 hover:text-rose-400 px-2 py-1 rounded-lg hover:bg-white/[0.04] transition active:scale-95 cursor-pointer hidden"
+                  title="Remove badge"
+                >
+                  Remove Badge
+                </button>
+                <label class="relative inline-flex items-center cursor-pointer">
+                  <input type="checkbox" id="toggle-name-badges" class="sr-only peer" />
+                  <div class="w-8 h-4.5 bg-white/10 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-3.5 after:w-3.5 after:transition-all peer-checked:bg-purple-600"></div>
                 </label>
               </div>
-              <label class="relative inline-flex items-center cursor-pointer">
-                <input type="checkbox" id="toggle-name-badges" class="sr-only peer" />
-                <div class="w-8 h-4.5 bg-white/10 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-3.5 after:w-3.5 after:transition-all peer-checked:bg-purple-600"></div>
-              </label>
             </div>
 
-            <!-- Single horizontal row of 8 icons -->
-            <div id="wrapper-badge-selector" class="grid grid-cols-8 gap-1.5 sm:gap-2 place-items-center transition-all pt-1">
-              <!-- 8 icon-only circular buttons -->
+            <!-- Badge Picker Container -->
+            <div id="wrapper-badge-picker-container" class="space-y-2.5 transition-all">
+              
+              <!-- Search Bar -->
+              <div class="relative">
+                <Search class="w-4 h-4 text-slate-400 absolute left-3 top-1/2 -translate-y-1/2 pointer-events-none" />
+                <input 
+                  type="text" 
+                  id="input-badge-search" 
+                  placeholder="Search 1,000+ badges & animated icons..." 
+                  class="w-full h-9.5 pl-9 pr-8 text-xs bg-black/40 border border-white/10 rounded-xl text-white placeholder:text-slate-500 focus:outline-none focus:border-purple-400/60 focus:ring-1 focus:ring-purple-400/40 transition"
+                />
+                <button 
+                  type="button" 
+                  id="btn-clear-badge-search" 
+                  class="absolute right-2.5 top-1/2 -translate-y-1/2 text-slate-400 hover:text-white hidden cursor-pointer"
+                  aria-label="Clear search"
+                >
+                  <X class="w-3.5 h-3.5" />
+                </button>
+              </div>
+
+              <!-- Category Pills Row -->
+              <div class="flex items-center gap-1.5 overflow-x-auto pb-1 scrollbar-none text-xs select-none" id="badge-category-pills">
+                <button type="button" class="badge-cat-pill whitespace-nowrap px-3 py-1.5 rounded-xl font-medium text-xs transition cursor-pointer bg-purple-600 text-white shadow-sm" data-cat="popular">
+                  🔥 Popular & Animated
+                </button>
+                <button type="button" class="badge-cat-pill whitespace-nowrap px-3 py-1.5 rounded-xl font-medium text-xs transition cursor-pointer text-slate-400 hover:text-white hover:bg-white/[0.05]" data-cat="royal">
+                  👑 Royal & VIP
+                </button>
+                <button type="button" class="badge-cat-pill whitespace-nowrap px-3 py-1.5 rounded-xl font-medium text-xs transition cursor-pointer text-slate-400 hover:text-white hover:bg-white/[0.05]" data-cat="gaming">
+                  🎮 Gaming & Cyber
+                </button>
+                <button type="button" class="badge-cat-pill whitespace-nowrap px-3 py-1.5 rounded-xl font-medium text-xs transition cursor-pointer text-slate-400 hover:text-white hover:bg-white/[0.05]" data-cat="aesthetic">
+                  ✨ Aesthetic & Nature
+                </button>
+                <button type="button" class="badge-cat-pill whitespace-nowrap px-3 py-1.5 rounded-xl font-medium text-xs transition cursor-pointer text-slate-400 hover:text-white hover:bg-white/[0.05]" data-cat="animals">
+                  🐾 Animals & Mythic
+                </button>
+              </div>
+
+              <!-- Scrollable 8-Column Icon Grid (grid-cols-8 gap-2 max-h-52 overflow-y-auto p-1) -->
+              <div 
+                id="grid-badges-display" 
+                class="grid grid-cols-8 gap-2 max-h-52 overflow-y-auto p-1 rounded-xl bg-black/20 border border-white/[0.04] scrollbar-thin"
+              >
+                <!-- Badges rendered via JS -->
+              </div>
+
+              <!-- Live Search Status / Icon Count -->
+              <div class="flex items-center justify-between text-[11px] text-slate-400 px-1 pt-0.5">
+                <span id="badge-picker-count">Showing badges</span>
+                <span class="text-[10px] text-slate-500">Tap to select • Tap again to unselect</span>
+              </div>
+
             </div>
           </div>
 
@@ -1854,32 +1920,32 @@ import {
         <!-- ========================================== -->
         <!-- TAB 2: AVATAR & BORDER (Dedicated Border & Halo Studio) -->
         <!-- ========================================== -->
-        <div id="view-tab-avatar" class="hidden space-y-3">
+        <div id="view-tab-avatar" class="hidden space-y-4">
           
-          <!-- Card A: 2x2 Grid for Avatar Border Effects -->
-          <div class="p-3 sm:p-3.5 rounded-2xl bg-[#11141d] border border-white/10 shadow-sm">
-            <div class="flex items-center justify-between mb-2.5">
-              <div class="flex items-center gap-1.5">
+          <!-- Card A: 2x2 Clean Grid for Avatar Border Effects -->
+          <div class="p-4 rounded-2xl bg-[#11141d] border border-white/10 shadow-sm">
+            <div class="flex items-center justify-between mb-3">
+              <div class="flex items-center gap-2">
                 <Sparkles class="w-4 h-4 text-purple-400" />
-                <span class="text-xs font-bold text-slate-200">Avatar Border Effects</span>
+                <span class="text-xs sm:text-sm font-bold text-slate-200">Avatar Border Effects</span>
               </div>
-              <span class="text-[10px] text-slate-400">Select halo preset</span>
+              <span class="text-[11px] text-slate-400">Select halo preset</span>
             </div>
 
             <!-- Clean 2x2 Grid -->
-            <div id="border-effects-grid" class="grid grid-cols-2 gap-2.5">
-              <!-- 4 Effects: None (Clean Ring), Neon Glow Halo, Dual Gradient Ring, Dynamic Sparkle Shimmer -->
+            <div id="border-effects-grid" class="grid grid-cols-2 gap-3">
+              <!-- 4 Effects -->
             </div>
           </div>
 
           <!-- Card B: Compact Border Glow Color 8-dot strip -->
-          <div class="p-3 rounded-2xl bg-[#11141d] border border-white/10 shadow-sm">
-            <div class="flex items-center justify-between mb-2">
-              <div class="flex items-center gap-1.5">
+          <div class="p-4 rounded-2xl bg-[#11141d] border border-white/10 shadow-sm">
+            <div class="flex items-center justify-between mb-2.5">
+              <div class="flex items-center gap-2">
                 <Palette class="w-4 h-4 text-cyan-400" />
-                <span class="text-xs font-bold text-slate-200">Border Glow Color</span>
+                <span class="text-xs sm:text-sm font-bold text-slate-200">Border Glow Color</span>
               </div>
-              <span class="text-[10px] text-slate-400">Custom halo tint</span>
+              <span class="text-[11px] text-slate-400">Custom halo tint</span>
             </div>
 
             <div id="grid-border-glow-colors" class="grid grid-cols-8 gap-2 sm:gap-2.5 place-items-center pt-1">
@@ -1891,12 +1957,12 @@ import {
 
       </div>
 
-      <!-- Bottom Actions (Sticky) -->
-      <div class="pt-3 border-t border-white/[0.08] flex items-center gap-2.5 shrink-0 mt-3">
+      <!-- Bottom Actions (Sticky / Bottom Bar) -->
+      <div class="pt-4 border-t border-white/[0.08] flex items-center gap-3">
         <button 
           type="button" 
           id="btn-reset-name-style" 
-          class="h-11 px-3.5 rounded-xl bg-white/[0.04] hover:bg-white/[0.08] text-slate-400 hover:text-white text-xs font-semibold flex items-center justify-center gap-1.5 transition active:scale-95 cursor-pointer shrink-0"
+          class="h-11 px-4 rounded-xl bg-white/[0.04] hover:bg-white/[0.08] text-slate-400 hover:text-white text-xs font-semibold flex items-center justify-center gap-2 transition active:scale-95 cursor-pointer shrink-0"
           title="Reset to default purple"
         >
           <RotateCcw class="w-3.5 h-3.5" />
@@ -1906,7 +1972,7 @@ import {
         <button 
           type="button" 
           id="btn-cancel-name-style" 
-          class="h-11 px-4 rounded-xl bg-white/[0.06] hover:bg-white/[0.12] text-slate-300 hover:text-white text-xs font-semibold transition active:scale-95 cursor-pointer shrink-0"
+          class="h-11 px-5 rounded-xl bg-white/[0.06] hover:bg-white/[0.12] text-slate-300 hover:text-white text-xs font-semibold transition active:scale-95 cursor-pointer shrink-0"
         >
           Cancel
         </button>
@@ -1924,6 +1990,8 @@ import {
     </div>
   </div>
 
+
+
   <!-- Toast Notification Container -->
   <div id="toast-container" class="fixed bottom-24 left-1/2 -translate-x-1/2 z-50 flex flex-col items-center gap-2 pointer-events-none w-full max-w-xs"></div>
 
@@ -1932,6 +2000,14 @@ import {
 
 <script>
   import { resolveFriendlyDeviceName, maskIp } from '../utils/deviceModelMap';
+
+  function renderBadgeHtml(icon: string, customClass = 'w-4 h-4 inline-block object-contain align-middle ml-1 shrink-0') {
+    if (!icon) return '';
+    if (icon.startsWith('http://') || icon.startsWith('https://') || icon.startsWith('/')) {
+      return `<img src="${icon}" class="${customClass}" alt="Badge" loading="lazy" />`;
+    }
+    return `<span class="inline-block select-none text-xs ml-1" style="-webkit-text-fill-color: initial; color: initial;">${icon}</span>`;
+  }
 
   interface Persona {
     id: string; // uuid
@@ -2168,7 +2244,12 @@ import {
           hubName.style.webkitTextFillColor = '';
           hubName.style.color = activeColor;
         }
-        hubName.textContent = (active.name || 'Hossein') + (activeIcon ? ` ${activeIcon}` : '');
+        const badgeMarkup = renderBadgeHtml(activeIcon, 'w-4 h-4 inline-block object-contain align-middle ml-1 shrink-0');
+        if (badgeMarkup) {
+          hubName.innerHTML = `<span>${active.name || 'Hossein'}</span>${badgeMarkup}`;
+        } else {
+          hubName.textContent = active.name || 'Hossein';
+        }
       }
 
       const profilePill = document.getElementById('profile-name-pill');
@@ -2186,7 +2267,8 @@ import {
           profilePill.style.webkitTextFillColor = '';
           profilePill.style.color = activeColor;
         }
-        profilePill.innerHTML = `<span>${active.name || 'Hossein'}</span>${activeIcon ? `<span class="select-none ml-1 text-xs" style="-webkit-text-fill-color: initial; color: initial;">${activeIcon}</span>` : ''}`;
+        const badgeMarkup = renderBadgeHtml(activeIcon, 'w-3.5 h-3.5 inline-block object-contain align-middle ml-1 shrink-0');
+        profilePill.innerHTML = `<span>${active.name || 'Hossein'}</span>${badgeMarkup}`;
       }
 
       if (hubHandle) hubHandle.textContent = `@${(active.name || 'user').toLowerCase().replace(/\s+/g, '')} • Active Persona`;
@@ -2349,7 +2431,7 @@ import {
 
                 <!-- Name & ACTIVE Badge -->
                 <div class="flex items-center justify-center gap-2 mt-1">
-                  <h2 class="text-xl sm:text-2xl font-bold tracking-tight truncate max-w-[200px] user-name-styled" style="${cardNameStyle}"><span>${displayName}</span>${cardIcon ? `<span class="select-none text-base ml-1" style="-webkit-text-fill-color: initial; color: initial;">${cardIcon}</span>` : ''}</h2>
+                  <h2 class="text-xl sm:text-2xl font-bold tracking-tight truncate max-w-[200px] user-name-styled" style="${cardNameStyle}"><span>${displayName}</span>${renderBadgeHtml(cardIcon, 'w-5 h-5 inline-block object-contain align-middle ml-1 shrink-0')}</h2>
                   ${p.isActive ? `
                     <span class="px-2.5 py-0.5 rounded-full border ${isDay ? 'border-purple-300 bg-purple-100 text-purple-700' : 'border-purple-400/80 bg-purple-950/80 text-purple-300 shadow-[0_0_8px_var(--theme-accent-glow,rgba(147,51,234,0.3))]'} text-[10px] font-bold tracking-wider uppercase">
                       ACTIVE
@@ -3363,7 +3445,7 @@ import {
     // Telegram-Style View Switcher (SPA Hub)
     // ==========================================
     function showView(targetId: string) {
-      const views = ['view-hub', 'view-personas', 'view-appearance', 'view-ai-engine', 'view-voice', 'view-privacy', 'view-devices', 'view-power-saving'];
+      const views = ['view-hub', 'view-personas', 'view-appearance', 'view-ai-engine', 'view-voice', 'view-privacy', 'view-devices', 'view-power-saving', 'view-name-color'];
       views.forEach(id => {
         const el = document.getElementById(id);
         if (!el) return;
@@ -3374,6 +3456,8 @@ import {
             render3DCarousel();
           } else if (id === 'view-power-saving') {
             syncPowerSavingUI();
+          } else if (id === 'view-name-color') {
+            initNameColorPage();
           }
         } else {
           el.classList.add('hidden');
@@ -3388,7 +3472,8 @@ import {
         'view-voice': '#voice',
         'view-privacy': '#privacy',
         'view-devices': '#devices',
-        'view-power-saving': '#power'
+        'view-power-saving': '#power',
+        'view-name-color': '#name-color'
       };
       const targetHash = hashMap[targetId] || '';
       if (window.location.hash !== targetHash) {
@@ -3411,11 +3496,18 @@ import {
         showView('view-power-saving');
         syncPowerSavingUI();
       }
+      else if (h === '#name-color' || h === '#name-style') {
+        showView('view-name-color');
+      }
       else showView('view-hub');
     }
 
     window.addEventListener('popstate', syncFromHash);
     syncFromHash();
+
+    // Name Color Page Navigation
+    document.getElementById('btn-back-from-name-color')?.addEventListener('click', () => showView('view-appearance'));
+    document.getElementById('btn-toggle-name-color-drawer')?.addEventListener('click', () => showView('view-name-color'));
 
     // Hub Menu Item Clicks
     document.getElementById('hub-item-personas')?.addEventListener('click', () => showView('view-personas'));
@@ -5123,15 +5215,16 @@ function renderPresets() {
       });
 
       // ==========================================
-      // DYNAMIC PERSONALIZATION: NAME COLOR, GRADIENTS & AVATAR BORDER (OVERHAUL)
+      // DYNAMIC PERSONALIZATION: NAME COLOR & STYLE SUB-PAGE (FULL SCREEN & 150+ BADGES)
       // ==========================================
-      function initNameColorModal() {
-        const modal = document.getElementById('name-color-modal');
-        const dialog = document.getElementById('name-color-modal-dialog');
-        const btnOpen = document.getElementById('btn-toggle-name-color-drawer');
-        const btnClose = document.getElementById('btn-close-name-color-modal');
-        const btnCancel = document.getElementById('btn-cancel-name-style');
+      function initNameColorPage() {
+        const pageView = document.getElementById('view-name-color');
+        if (!pageView) return;
+
+        const btnBack = document.getElementById('btn-back-from-name-color');
+        const btnHeaderApply = document.getElementById('btn-header-apply-name-style');
         const btnApply = document.getElementById('btn-apply-name-style');
+        const btnCancel = document.getElementById('btn-cancel-name-style');
         const btnReset = document.getElementById('btn-reset-name-style');
 
         const tabNameColors = document.getElementById('tab-toggle-name-colors');
@@ -5141,11 +5234,14 @@ function renderPresets() {
 
         const gridColorMatrix = document.getElementById('grid-color-matrix');
         const borderEffectsGrid = document.getElementById('border-effects-grid');
-        const gridBorderGlowColors = document.getElementById('grid-border-glow-colors');
+        const gridGlowColors = document.getElementById('grid-border-glow-colors');
         const toggleBadges = document.getElementById('toggle-name-badges') as HTMLInputElement | null;
-        const wrapperBadgeSelector = document.getElementById('wrapper-badge-selector');
-
-        if (!modal || !btnOpen) return;
+        const btnRemoveBadge = document.getElementById('btn-remove-badge');
+        const inputBadgeSearch = document.getElementById('input-badge-search') as HTMLInputElement | null;
+        const btnClearBadgeSearch = document.getElementById('btn-clear-badge-search');
+        const gridBadgesDisplay = document.getElementById('grid-badges-display');
+        const badgePickerCount = document.getElementById('badge-picker-count');
+        const wrapperBadgePickerContainer = document.getElementById('wrapper-badge-picker-container');
 
         // 8 Solids (Row 1)
         const SOLID_COLORS = [
@@ -5171,10 +5267,7 @@ function renderPresets() {
           { id: 'silver-gray', name: 'Silver / Gray', value: 'linear-gradient(135deg, #e2e8f0 0%, #94a3b8 100%)', split: 'linear-gradient(135deg, #e2e8f0 0%, #e2e8f0 50%, #94a3b8 50%, #94a3b8 100%)' }
         ];
 
-        // 8 Status Icons (Single-row strip)
-        const STATUS_ICONS = ['⚡', '💎', '🌸', '✨', '🔥', '👑', '🌙', '🎮'];
-
-        // 4 Avatar Border Effects for clean 2x2 Grid
+        // 4 Avatar Border Effects
         const BORDER_EFFECTS = [
           { id: 'none', name: 'None', desc: 'Clean Ring', effectClass: 'avatar-border-none' },
           { id: 'glow', name: 'Neon Glow', desc: 'Halo', effectClass: 'avatar-border-glow' },
@@ -5182,7 +5275,7 @@ function renderPresets() {
           { id: 'dynamic-sparkle', name: 'Dynamic Sparkle', desc: 'Shimmer', effectClass: 'avatar-border-dynamic-sparkle' }
         ];
 
-        // 8 Border Glow Colors (Compact dot strip)
+        // 8 Avatar Halo Tint Colors
         const GLOW_COLORS = [
           { id: 'cyan', name: 'Cyan Glow', value: '#06b6d4' },
           { id: 'purple', name: 'Purple Glow', value: '#a855f7' },
@@ -5194,11 +5287,178 @@ function renderPresets() {
           { id: 'silver', name: 'Silver White', value: '#f8fafc' }
         ];
 
+        // 150+ Curated Badge & Animated Emoji Library
+        const BADGE_LIBRARY = [
+          // 1. POPULAR & ANIMATED (🔥)
+          { id: 'noto-fire', cat: 'popular', name: 'Fire Animated', url: 'https://fonts.gstatic.com/s/e/notoemoji/latest/1f525/512.webp' },
+          { id: 'noto-sparkles', cat: 'popular', name: 'Sparkles Animated', url: 'https://fonts.gstatic.com/s/e/notoemoji/latest/2728/512.webp' },
+          { id: 'noto-crown', cat: 'popular', name: 'Crown Animated', url: 'https://fonts.gstatic.com/s/e/notoemoji/latest/1f451/512.webp' },
+          { id: 'noto-rocket', cat: 'popular', name: 'Rocket Animated', url: 'https://fonts.gstatic.com/s/e/notoemoji/latest/1f680/512.webp' },
+          { id: 'noto-heart-fire', cat: 'popular', name: 'Heart on Fire', url: 'https://fonts.gstatic.com/s/e/notoemoji/latest/2764_fe0f_200d_1f525/512.webp' },
+          { id: 'noto-crystal', cat: 'popular', name: 'Crystal Ball', url: 'https://fonts.gstatic.com/s/e/notoemoji/latest/1f52e/512.webp' },
+          { id: 'noto-100', cat: 'popular', name: '100 Score', url: 'https://fonts.gstatic.com/s/e/notoemoji/latest/1f4af/512.webp' },
+          { id: 'noto-party', cat: 'popular', name: 'Party Popper', url: 'https://fonts.gstatic.com/s/e/notoemoji/latest/1f389/512.webp' },
+          { id: 'noto-star', cat: 'popular', name: 'Glowing Star', url: 'https://fonts.gstatic.com/s/e/notoemoji/latest/1f31f/512.webp' },
+          { id: 'noto-wand', cat: 'popular', name: 'Magic Wand', url: 'https://fonts.gstatic.com/s/e/notoemoji/latest/1fa84/512.webp' },
+          { id: 'noto-diamond', cat: 'popular', name: 'Diamond Animated', url: 'https://fonts.gstatic.com/s/e/notoemoji/latest/1f48e/512.webp' },
+          { id: 'noto-robot', cat: 'popular', name: 'Robot Animated', url: 'https://fonts.gstatic.com/s/e/notoemoji/latest/1f916/512.webp' },
+          { id: 'sol-verified', cat: 'popular', name: 'Verified Star', url: 'https://api.iconify.design/solar/verified-check-bold-duotone.svg?color=%2322d3ee' },
+          { id: 'sol-fire', cat: 'popular', name: 'Solar Fire', url: 'https://api.iconify.design/solar/fire-bold-duotone.svg?color=%23f97316' },
+          { id: 'sol-bolt', cat: 'popular', name: 'Solar Bolt', url: 'https://api.iconify.design/solar/bolt-bold-duotone.svg?color=%23eab308' },
+          { id: 'sol-magic-stick', cat: 'popular', name: 'Magic Stick', url: 'https://api.iconify.design/solar/magic-stick-3-bold-duotone.svg?color=%23ec4899' },
+          { id: 'sol-rocket', cat: 'popular', name: 'Solar Rocket', url: 'https://api.iconify.design/solar/rocket-2-bold-duotone.svg?color=%23a855f7' },
+          { id: 'sol-heart', cat: 'popular', name: 'Solar Heart', url: 'https://api.iconify.design/solar/heart-bold-duotone.svg?color=%23f43f5e' },
+          { id: 'sol-star', cat: 'popular', name: 'Solar Star', url: 'https://api.iconify.design/solar/star-bold-duotone.svg?color=%23f59e0b' },
+          { id: 'sol-sun', cat: 'popular', name: 'Solar Sun', url: 'https://api.iconify.design/solar/sun-2-bold-duotone.svg?color=%23f59e0b' },
+          { id: 'sol-moon', cat: 'popular', name: 'Solar Moon', url: 'https://api.iconify.design/solar/moon-bold-duotone.svg?color=%2338bdf8' },
+          { id: 'sol-target', cat: 'popular', name: 'Solar Target', url: 'https://api.iconify.design/solar/target-bold-duotone.svg?color=%23ef4444' },
+          { id: 'sol-bell', cat: 'popular', name: 'Solar Bell', url: 'https://api.iconify.design/solar/bell-bold-duotone.svg?color=%23fbbf24' },
+          { id: 'fl-zap', cat: 'popular', name: 'High Voltage', url: 'https://api.iconify.design/fluent-emoji-flat/high-voltage.svg' },
+          { id: 'fl-bomb', cat: 'popular', name: 'Bomb', url: 'https://api.iconify.design/fluent-emoji-flat/bomb.svg' },
+          { id: 'fl-bullseye', cat: 'popular', name: 'Bullseye', url: 'https://api.iconify.design/fluent-emoji-flat/bullseye.svg' },
+          { id: 'fl-sparkler', cat: 'popular', name: 'Sparkler', url: 'https://api.iconify.design/fluent-emoji-flat/sparkler.svg' },
+          { id: 'fl-dizzy', cat: 'popular', name: 'Dizzy Star', url: 'https://api.iconify.design/fluent-emoji-flat/dizzy.svg' },
+          { id: 'fl-collision', cat: 'popular', name: 'Collision', url: 'https://api.iconify.design/fluent-emoji-flat/collision.svg' },
+          { id: 'fl-sparkle-heart', cat: 'popular', name: 'Heart Sparkle', url: 'https://api.iconify.design/fluent-emoji-flat/sparkling-heart.svg' },
+          { id: 'fl-heart-fire', cat: 'popular', name: 'Fire Heart', url: 'https://api.iconify.design/fluent-emoji-flat/heart-on-fire.svg' },
+          { id: 'fl-crown', cat: 'popular', name: 'Crown Gold', url: 'https://api.iconify.design/fluent-emoji-flat/crown.svg' },
+
+          // 2. ROYAL & VIP (👑)
+          { id: 'fl-gem', cat: 'royal', name: 'Gem Stone', url: 'https://api.iconify.design/fluent-emoji-flat/gem-stone.svg' },
+          { id: 'fl-trophy', cat: 'royal', name: 'Gold Trophy', url: 'https://api.iconify.design/fluent-emoji-flat/trophy.svg' },
+          { id: 'fl-medal1', cat: 'royal', name: '1st Place Medal', url: 'https://api.iconify.design/fluent-emoji-flat/1st-place-medal.svg' },
+          { id: 'fl-medal2', cat: 'royal', name: '2nd Place Medal', url: 'https://api.iconify.design/fluent-emoji-flat/2nd-place-medal.svg' },
+          { id: 'fl-medal3', cat: 'royal', name: '3rd Place Medal', url: 'https://api.iconify.design/fluent-emoji-flat/3rd-place-medal.svg' },
+          { id: 'fl-mil-medal', cat: 'royal', name: 'Military Medal', url: 'https://api.iconify.design/fluent-emoji-flat/military-medal.svg' },
+          { id: 'fl-shield', cat: 'royal', name: 'Royal Shield', url: 'https://api.iconify.design/fluent-emoji-flat/shield.svg' },
+          { id: 'fl-swords', cat: 'royal', name: 'Crossed Swords', url: 'https://api.iconify.design/fluent-emoji-flat/crossed-swords.svg' },
+          { id: 'fl-dagger', cat: 'royal', name: 'Dagger', url: 'https://api.iconify.design/fluent-emoji-flat/dagger.svg' },
+          { id: 'fl-ring', cat: 'royal', name: 'Diamond Ring', url: 'https://api.iconify.design/fluent-emoji-flat/ring.svg' },
+          { id: 'fl-check', cat: 'royal', name: 'VIP Check', url: 'https://api.iconify.design/fluent-emoji-flat/check-mark-button.svg' },
+          { id: 'fl-coin', cat: 'royal', name: 'Gold Coin', url: 'https://api.iconify.design/fluent-emoji-flat/coin.svg' },
+          { id: 'fl-money-bag', cat: 'royal', name: 'Money Bag', url: 'https://api.iconify.design/fluent-emoji-flat/money-bag.svg' },
+          { id: 'fl-star', cat: 'royal', name: 'Golden Star', url: 'https://api.iconify.design/fluent-emoji-flat/star.svg' },
+          { id: 'sol-crown-gold', cat: 'royal', name: 'Solar Crown', url: 'https://api.iconify.design/solar/crown-bold-duotone.svg?color=%23f59e0b' },
+          { id: 'sol-crown-star', cat: 'royal', name: 'Solar Crown Star', url: 'https://api.iconify.design/solar/crown-star-bold-duotone.svg?color=%23f59e0b' },
+          { id: 'sol-shield-check', cat: 'royal', name: 'Solar Shield Check', url: 'https://api.iconify.design/solar/shield-check-bold-duotone.svg?color=%2310b981' },
+          { id: 'sol-shield-star', cat: 'royal', name: 'Solar Shield Star', url: 'https://api.iconify.design/solar/shield-star-bold-duotone.svg?color=%2310b981' },
+          { id: 'sol-cup-star', cat: 'royal', name: 'Solar Cup Star', url: 'https://api.iconify.design/solar/cup-star-bold-duotone.svg?color=%23eab308' },
+          { id: 'sol-ribbon', cat: 'royal', name: 'Ribbon Medal', url: 'https://api.iconify.design/solar/medal-ribbons-star-bold-duotone.svg?color=%23a855f7' },
+          { id: 'sol-diploma', cat: 'royal', name: 'Verified Badge', url: 'https://api.iconify.design/solar/diploma-verified-bold-duotone.svg?color=%2306b6d4' },
+          { id: 'sol-key', cat: 'royal', name: 'VIP Key', url: 'https://api.iconify.design/solar/key-bold-duotone.svg?color=%23fbbf24' },
+          { id: 'sol-safe', cat: 'royal', name: 'Solar Vault', url: 'https://api.iconify.design/solar/safe-square-bold-duotone.svg?color=%2310b981' },
+          { id: 'sol-stars', cat: 'royal', name: 'Triple Stars', url: 'https://api.iconify.design/solar/stars-bold-duotone.svg?color=%23fbbf24' },
+          { id: 'fl-fleur', cat: 'royal', name: 'Fleur-de-lis', url: 'https://api.iconify.design/fluent-emoji-flat/fleur-de-lis.svg' },
+          { id: 'sol-star-circle', cat: 'royal', name: 'Star Circle', url: 'https://api.iconify.design/solar/star-circle-bold-duotone.svg?color=%23eab308' },
+          { id: 'sol-shield-up', cat: 'royal', name: 'Royal Guard', url: 'https://api.iconify.design/solar/shield-up-bold-duotone.svg?color=%2306b6d4' },
+          { id: 'sol-scepter', cat: 'royal', name: 'Royal Scepter', url: 'https://api.iconify.design/solar/pen-new-square-bold-duotone.svg?color=%23f59e0b' },
+          { id: 'sol-magic-wand-vip', cat: 'royal', name: 'Diamond Wand', url: 'https://api.iconify.design/solar/magic-stick-bold-duotone.svg?color=%23a855f7' },
+          { id: 'fl-sparkles-vip', cat: 'royal', name: 'Golden Sparkles', url: 'https://api.iconify.design/fluent-emoji-flat/sparkles.svg' },
+
+          // 3. GAMING & CYBER (🎮)
+          { id: 'fl-gamepad', cat: 'gaming', name: 'Gamepad 3D', url: 'https://api.iconify.design/fluent-emoji-flat/video-game.svg' },
+          { id: 'fl-joystick', cat: 'gaming', name: 'Joystick', url: 'https://api.iconify.design/fluent-emoji-flat/joystick.svg' },
+          { id: 'fl-alien', cat: 'gaming', name: 'Alien', url: 'https://api.iconify.design/fluent-emoji-flat/alien.svg' },
+          { id: 'fl-monster', cat: 'gaming', name: 'Alien Monster', url: 'https://api.iconify.design/fluent-emoji-flat/alien-monster.svg' },
+          { id: 'fl-robot', cat: 'gaming', name: 'Robot Head', url: 'https://api.iconify.design/fluent-emoji-flat/robot.svg' },
+          { id: 'fl-skull', cat: 'gaming', name: 'Skull', url: 'https://api.iconify.design/fluent-emoji-flat/skull.svg' },
+          { id: 'fl-crossbones', cat: 'gaming', name: 'Crossbones', url: 'https://api.iconify.design/fluent-emoji-flat/skull-and-crossbones.svg' },
+          { id: 'fl-die', cat: 'gaming', name: 'Game Die', url: 'https://api.iconify.design/fluent-emoji-flat/game-die.svg' },
+          { id: 'fl-wand', cat: 'gaming', name: 'Magic Wand', url: 'https://api.iconify.design/fluent-emoji-flat/magic-wand.svg' },
+          { id: 'fl-orb', cat: 'gaming', name: 'Crystal Orb', url: 'https://api.iconify.design/fluent-emoji-flat/crystal-ball.svg' },
+          { id: 'fl-headphone', cat: 'gaming', name: 'Headphone', url: 'https://api.iconify.design/fluent-emoji-flat/headphone.svg' },
+          { id: 'fl-laptop', cat: 'gaming', name: 'Gaming Laptop', url: 'https://api.iconify.design/fluent-emoji-flat/laptop.svg' },
+          { id: 'fl-battery', cat: 'gaming', name: 'Full Battery', url: 'https://api.iconify.design/fluent-emoji-flat/battery.svg' },
+          { id: 'fl-radioactive', cat: 'gaming', name: 'Radioactive', url: 'https://api.iconify.design/fluent-emoji-flat/radioactive.svg' },
+          { id: 'fl-biohazard', cat: 'gaming', name: 'Biohazard', url: 'https://api.iconify.design/fluent-emoji-flat/biohazard.svg' },
+          { id: 'fl-antenna', cat: 'gaming', name: 'Satellite Dish', url: 'https://api.iconify.design/fluent-emoji-flat/satellite-antenna.svg' },
+          { id: 'fl-ufo', cat: 'gaming', name: 'Flying Saucer', url: 'https://api.iconify.design/fluent-emoji-flat/flying-saucer.svg' },
+          { id: 'sol-gamepad-cyan', cat: 'gaming', name: 'Solar Gamepad', url: 'https://api.iconify.design/solar/gamepad-bold-duotone.svg?color=%2306b6d4' },
+          { id: 'sol-game-charge', cat: 'gaming', name: 'Game Charge', url: 'https://api.iconify.design/solar/gamepad-charge-bold-duotone.svg?color=%238b5cf6' },
+          { id: 'sol-ghost', cat: 'gaming', name: 'Solar Ghost', url: 'https://api.iconify.design/solar/ghost-bold-duotone.svg?color=%23ec4899' },
+          { id: 'sol-cpu-bolt', cat: 'gaming', name: 'CPU Bolt', url: 'https://api.iconify.design/solar/cpu-bolt-bold-duotone.svg?color=%2306b6d4' },
+          { id: 'sol-headphones', cat: 'gaming', name: 'Pro Headset', url: 'https://api.iconify.design/solar/headphones-round-bold-duotone.svg?color=%2310b981' },
+          { id: 'sol-warning', cat: 'gaming', name: 'Cyber Warning', url: 'https://api.iconify.design/solar/shield-warning-bold-duotone.svg?color=%23f97316' },
+          { id: 'sol-widget', cat: 'gaming', name: 'Cyber Widget', url: 'https://api.iconify.design/solar/widget-5-bold-duotone.svg?color=%23a855f7' },
+          { id: 'sol-target-cyan', cat: 'gaming', name: 'Darts Target', url: 'https://api.iconify.design/solar/target-bold-duotone.svg?color=%2322d3ee' },
+          { id: 'sol-radar', cat: 'gaming', name: 'Radar Scanner', url: 'https://api.iconify.design/solar/radar-bold-duotone.svg?color=%2338bdf8' },
+          { id: 'sol-server', cat: 'gaming', name: 'Server Node', url: 'https://api.iconify.design/solar/server-square-bold-duotone.svg?color=%2310b981' },
+          { id: 'sol-lightning', cat: 'gaming', name: 'Cyber Lightning', url: 'https://api.iconify.design/solar/lightning-bold-duotone.svg?color=%23eab308' },
+          { id: 'fl-water-gun', cat: 'gaming', name: 'Laser Blaster', url: 'https://api.iconify.design/fluent-emoji-flat/water-pistol.svg' },
+          { id: 'fl-sparkler-game', cat: 'gaming', name: 'Magic Sparkler', url: 'https://api.iconify.design/fluent-emoji-flat/sparkler.svg' },
+
+          // 4. AESTHETIC & NATURE (✨)
+          { id: 'fl-crescent', cat: 'aesthetic', name: 'Crescent Moon', url: 'https://api.iconify.design/fluent-emoji-flat/crescent-moon.svg' },
+          { id: 'fl-full-moon', cat: 'aesthetic', name: 'Full Moon', url: 'https://api.iconify.design/fluent-emoji-flat/full-moon.svg' },
+          { id: 'fl-new-moon', cat: 'aesthetic', name: 'New Moon Face', url: 'https://api.iconify.design/fluent-emoji-flat/new-moon-face.svg' },
+          { id: 'fl-sun-face', cat: 'aesthetic', name: 'Sun Face', url: 'https://api.iconify.design/fluent-emoji-flat/sun-with-face.svg' },
+          { id: 'fl-planet', cat: 'aesthetic', name: 'Saturn Planet', url: 'https://api.iconify.design/fluent-emoji-flat/ringed-planet.svg' },
+          { id: 'fl-sakura', cat: 'aesthetic', name: 'Sakura Blossom', url: 'https://api.iconify.design/fluent-emoji-flat/cherry-blossom.svg' },
+          { id: 'fl-blossom', cat: 'aesthetic', name: 'Spring Blossom', url: 'https://api.iconify.design/fluent-emoji-flat/blossom.svg' },
+          { id: 'fl-rose', cat: 'aesthetic', name: 'Red Rose', url: 'https://api.iconify.design/fluent-emoji-flat/rose.svg' },
+          { id: 'fl-hibiscus', cat: 'aesthetic', name: 'Hibiscus', url: 'https://api.iconify.design/fluent-emoji-flat/hibiscus.svg' },
+          { id: 'fl-sunflower', cat: 'aesthetic', name: 'Sunflower', url: 'https://api.iconify.design/fluent-emoji-flat/sunflower.svg' },
+          { id: 'fl-butterfly', cat: 'aesthetic', name: 'Blue Butterfly', url: 'https://api.iconify.design/fluent-emoji-flat/butterfly.svg' },
+          { id: 'fl-feather', cat: 'aesthetic', name: 'White Feather', url: 'https://api.iconify.design/fluent-emoji-flat/feather.svg' },
+          { id: 'fl-snowflake', cat: 'aesthetic', name: 'Snowflake', url: 'https://api.iconify.design/fluent-emoji-flat/snowflake.svg' },
+          { id: 'fl-lotus', cat: 'aesthetic', name: 'Lotus Flower', url: 'https://api.iconify.design/fluent-emoji-flat/lotus.svg' },
+          { id: 'fl-sparkles-aes', cat: 'aesthetic', name: 'Aesthetic Sparkles', url: 'https://api.iconify.design/fluent-emoji-flat/sparkles.svg' },
+          { id: 'fl-coffee', cat: 'aesthetic', name: 'Coffee Cup', url: 'https://api.iconify.design/fluent-emoji-flat/hot-beverage.svg' },
+          { id: 'fl-clover', cat: 'aesthetic', name: 'Lucky Clover', url: 'https://api.iconify.design/fluent-emoji-flat/four-leaf-clover.svg' },
+          { id: 'fl-rainbow', cat: 'aesthetic', name: 'Rainbow', url: 'https://api.iconify.design/fluent-emoji-flat/rainbow.svg' },
+          { id: 'fl-heart-aes', cat: 'aesthetic', name: 'Sparkling Heart', url: 'https://api.iconify.design/fluent-emoji-flat/sparkling-heart.svg' },
+          { id: 'sol-moon-stars', cat: 'aesthetic', name: 'Moon Stars', url: 'https://api.iconify.design/solar/moon-stars-bold-duotone.svg?color=%2338bdf8' },
+          { id: 'sol-star-fall', cat: 'aesthetic', name: 'Shooting Star', url: 'https://api.iconify.design/solar/star-fall-2-bold-duotone.svg?color=%23f59e0b' },
+          { id: 'sol-leaf', cat: 'aesthetic', name: 'Green Leaf', url: 'https://api.iconify.design/solar/leaf-bold-duotone.svg?color=%2310b981' },
+          { id: 'sol-cloud-sun', cat: 'aesthetic', name: 'Cloud Sun', url: 'https://api.iconify.design/solar/cloud-sun-bold-duotone.svg?color=%2306b6d4' },
+          { id: 'sol-cup-hot', cat: 'aesthetic', name: 'Warm Cup', url: 'https://api.iconify.design/solar/cup-hot-bold-duotone.svg?color=%23ec4899' },
+          { id: 'sol-planet', cat: 'aesthetic', name: 'Galaxy Planet', url: 'https://api.iconify.design/solar/planet-bold-duotone.svg?color=%23a855f7' },
+          { id: 'sol-waterdrops', cat: 'aesthetic', name: 'Water Drops', url: 'https://api.iconify.design/solar/waterdrops-bold-duotone.svg?color=%2338bdf8' },
+          { id: 'sol-snow', cat: 'aesthetic', name: 'Solar Snowflake', url: 'https://api.iconify.design/solar/snowflake-bold-duotone.svg?color=%2306b6d4' },
+          { id: 'sol-sun-fog', cat: 'aesthetic', name: 'Golden Sun', url: 'https://api.iconify.design/solar/sun-fog-bold-duotone.svg?color=%23fbbf24' },
+          { id: 'fl-maple', cat: 'aesthetic', name: 'Maple Leaf', url: 'https://api.iconify.design/fluent-emoji-flat/maple-leaf.svg' },
+          { id: 'fl-crystal-aes', cat: 'aesthetic', name: 'Crystal Gem', url: 'https://api.iconify.design/fluent-emoji-flat/crystal-ball.svg' },
+
+          // 5. ANIMALS & MYTHIC (🐾)
+          { id: 'fl-dragon', cat: 'animals', name: 'Dragon', url: 'https://api.iconify.design/fluent-emoji-flat/dragon.svg' },
+          { id: 'fl-dragon-face', cat: 'animals', name: 'Dragon Face', url: 'https://api.iconify.design/fluent-emoji-flat/dragon-face.svg' },
+          { id: 'fl-fox', cat: 'animals', name: 'Fox', url: 'https://api.iconify.design/fluent-emoji-flat/fox.svg' },
+          { id: 'fl-wolf', cat: 'animals', name: 'Wolf', url: 'https://api.iconify.design/fluent-emoji-flat/wolf.svg' },
+          { id: 'fl-cat', cat: 'animals', name: 'Cute Cat', url: 'https://api.iconify.design/fluent-emoji-flat/cat.svg' },
+          { id: 'fl-black-cat', cat: 'animals', name: 'Black Cat', url: 'https://api.iconify.design/fluent-emoji-flat/black-cat.svg' },
+          { id: 'fl-owl', cat: 'animals', name: 'Night Owl', url: 'https://api.iconify.design/fluent-emoji-flat/owl.svg' },
+          { id: 'fl-unicorn', cat: 'animals', name: 'Unicorn', url: 'https://api.iconify.design/fluent-emoji-flat/unicorn.svg' },
+          { id: 'fl-bat', cat: 'animals', name: 'Vampire Bat', url: 'https://api.iconify.design/fluent-emoji-flat/bat.svg' },
+          { id: 'fl-snake', cat: 'animals', name: 'Snake', url: 'https://api.iconify.design/fluent-emoji-flat/snake.svg' },
+          { id: 'fl-eagle', cat: 'animals', name: 'Eagle', url: 'https://api.iconify.design/fluent-emoji-flat/eagle.svg' },
+          { id: 'fl-lion', cat: 'animals', name: 'Lion', url: 'https://api.iconify.design/fluent-emoji-flat/lion.svg' },
+          { id: 'fl-tiger', cat: 'animals', name: 'Tiger', url: 'https://api.iconify.design/fluent-emoji-flat/tiger.svg' },
+          { id: 'fl-bear', cat: 'animals', name: 'Bear', url: 'https://api.iconify.design/fluent-emoji-flat/bear.svg' },
+          { id: 'fl-panda', cat: 'animals', name: 'Panda', url: 'https://api.iconify.design/fluent-emoji-flat/panda.svg' },
+          { id: 'fl-dove', cat: 'animals', name: 'White Dove', url: 'https://api.iconify.design/fluent-emoji-flat/dove.svg' },
+          { id: 'fl-peacock', cat: 'animals', name: 'Peacock', url: 'https://api.iconify.design/fluent-emoji-flat/peacock.svg' },
+          { id: 'fl-spider', cat: 'animals', name: 'Spider', url: 'https://api.iconify.design/fluent-emoji-flat/spider.svg' },
+          { id: 'fl-scorpion', cat: 'animals', name: 'Scorpion', url: 'https://api.iconify.design/fluent-emoji-flat/scorpion.svg' },
+          { id: 'sol-bone', cat: 'animals', name: 'Solar Bone', url: 'https://api.iconify.design/solar/bone-bold-duotone.svg?color=%23f59e0b' },
+          { id: 'sol-paw', cat: 'animals', name: 'Solar Paw', url: 'https://api.iconify.design/solar/paw-bold-duotone.svg?color=%23ec4899' },
+          { id: 'sol-cat', cat: 'animals', name: 'Solar Cat', url: 'https://api.iconify.design/solar/cat-bold-duotone.svg?color=%2338bdf8' },
+          { id: 'sol-dog', cat: 'animals', name: 'Solar Dog', url: 'https://api.iconify.design/solar/dog-bold-duotone.svg?color=%2310b981' },
+          { id: 'sol-fish', cat: 'animals', name: 'Solar Fish', url: 'https://api.iconify.design/solar/fish-bold-duotone.svg?color=%2306b6d4' },
+          { id: 'sol-bug', cat: 'animals', name: 'Solar Bug', url: 'https://api.iconify.design/solar/bug-bold-duotone.svg?color=%2384cc16' },
+          { id: 'fl-dolphin', cat: 'animals', name: 'Dolphin', url: 'https://api.iconify.design/fluent-emoji-flat/dolphin.svg' },
+          { id: 'fl-shark', cat: 'animals', name: 'Shark', url: 'https://api.iconify.design/fluent-emoji-flat/shark.svg' },
+          { id: 'fl-flamingo', cat: 'animals', name: 'Flamingo', url: 'https://api.iconify.design/fluent-emoji-flat/flamingo.svg' },
+          { id: 'fl-honeybee', cat: 'animals', name: 'Honeybee', url: 'https://api.iconify.design/fluent-emoji-flat/honeybee.svg' },
+          { id: 'fl-phoenix', cat: 'animals', name: 'Phoenix Bird', url: 'https://api.iconify.design/fluent-emoji-flat/bird.svg' }
+        ];
+
         let activeTab: 'name' | 'avatar' = 'name';
+        let activeBadgeCategory = 'popular';
         let draftNameColor = '#a855f7';
         let draftBorderEffect = 'none';
-        let draftNameIcon = '';
         let draftGlowColor = '#a855f7';
+        let draftNameIcon = '';
+        let liveSearchDebounceTimer: any = null;
 
         function switchTab(tab: 'name' | 'avatar') {
           activeTab = tab;
@@ -5206,11 +5466,11 @@ function renderPresets() {
 
           if (tabNameColors && tabAvatarBorder) {
             if (isName) {
-              tabNameColors.className = 'whitespace-nowrap text-xs font-semibold flex-1 py-1.5 px-3 rounded-lg flex items-center justify-center gap-1.5 transition-all cursor-pointer bg-purple-600 text-white shadow-sm';
-              tabAvatarBorder.className = 'whitespace-nowrap text-xs font-semibold flex-1 py-1.5 px-3 rounded-lg flex items-center justify-center gap-1.5 transition-all cursor-pointer text-slate-400 hover:text-white';
+              tabNameColors.className = 'whitespace-nowrap text-xs font-semibold flex-1 py-2 px-3 rounded-xl flex items-center justify-center gap-2 transition-all cursor-pointer bg-purple-600 text-white shadow-sm';
+              tabAvatarBorder.className = 'whitespace-nowrap text-xs font-semibold flex-1 py-2 px-3 rounded-xl flex items-center justify-center gap-2 transition-all cursor-pointer text-slate-400 hover:text-white';
             } else {
-              tabAvatarBorder.className = 'whitespace-nowrap text-xs font-semibold flex-1 py-1.5 px-3 rounded-lg flex items-center justify-center gap-1.5 transition-all cursor-pointer bg-purple-600 text-white shadow-sm';
-              tabNameColors.className = 'whitespace-nowrap text-xs font-semibold flex-1 py-1.5 px-3 rounded-lg flex items-center justify-center gap-1.5 transition-all cursor-pointer text-slate-400 hover:text-white';
+              tabAvatarBorder.className = 'whitespace-nowrap text-xs font-semibold flex-1 py-2 px-3 rounded-xl flex items-center justify-center gap-2 transition-all cursor-pointer bg-purple-600 text-white shadow-sm';
+              tabNameColors.className = 'whitespace-nowrap text-xs font-semibold flex-1 py-2 px-3 rounded-xl flex items-center justify-center gap-2 transition-all cursor-pointer text-slate-400 hover:text-white';
             }
           }
 
@@ -5255,13 +5515,17 @@ function renderPresets() {
           const previewName = document.getElementById('preview-user-name');
           const previewBadge = document.getElementById('preview-user-badge');
           applyNameToElement(previewName, userName, draftNameColor);
-          if (previewBadge) previewBadge.textContent = draftNameIcon ? ` ${draftNameIcon}` : '';
+          if (previewBadge) {
+            previewBadge.innerHTML = renderBadgeHtml(draftNameIcon, 'w-4 h-4 inline-block object-contain align-middle ml-1 shrink-0');
+          }
 
           // 2. Chat Bubble Sender Name & Badge
           const bubbleName = document.getElementById('preview-bubble-name');
           const bubbleBadge = document.getElementById('preview-bubble-badge');
           applyNameToElement(bubbleName, userName, draftNameColor);
-          if (bubbleBadge) bubbleBadge.textContent = draftNameIcon ? ` ${draftNameIcon}` : '';
+          if (bubbleBadge) {
+            bubbleBadge.innerHTML = renderBadgeHtml(draftNameIcon, 'w-3.5 h-3.5 inline-block object-contain align-middle ml-1 shrink-0');
+          }
 
           // 3. Pinned Avatar container border effect & glow color
           const avatarContainer = document.getElementById('preview-avatar-container');
@@ -5297,7 +5561,7 @@ function renderPresets() {
             }
           }
 
-          // 4. Update Swatch Buttons (Telegram-Style 8x2 Matrix: ring-2 ring-offset-2 ring-offset-[#11141d] ring-cyan-400 scale-110)
+          // 4. Update Swatch Buttons (Telegram-Style 8x2 Matrix)
           document.querySelectorAll('.swatch-trigger-btn').forEach((btn: any) => {
             const val = btn.dataset.value;
             const isSelected = (val === draftNameColor);
@@ -5313,42 +5577,44 @@ function renderPresets() {
             }
           });
 
-          // 5. Update Status Icons (Single-row 8 icons)
-          document.querySelectorAll('.mini-badge-btn').forEach((btn: any) => {
-            const bIcon = btn.dataset.icon || '';
-            const isSelected = (bIcon === draftNameIcon);
-            if (isSelected) {
-              btn.className = 'mini-badge-btn w-8 h-8 rounded-full border border-cyan-400 bg-cyan-500/25 text-white shadow-sm ring-2 ring-cyan-400/50 scale-105 flex items-center justify-center text-sm transition-all cursor-pointer select-none';
-            } else {
-              btn.className = 'mini-badge-btn w-8 h-8 rounded-full border border-white/10 bg-white/[0.04] hover:bg-white/[0.08] text-slate-300 flex items-center justify-center text-sm transition-all cursor-pointer select-none active:scale-95';
-            }
-          });
-
-          // 6. Update Status Toggle Switch
-          if (toggleBadges && wrapperBadgeSelector) {
+          // 5. Update Status Toggle Switch & Remove Badge Button
+          if (toggleBadges) {
             toggleBadges.checked = !!draftNameIcon;
-            if (toggleBadges.checked) {
-              wrapperBadgeSelector.classList.remove('opacity-30', 'pointer-events-none');
+          }
+          if (btnRemoveBadge) {
+            if (draftNameIcon) {
+              btnRemoveBadge.classList.remove('hidden');
             } else {
-              wrapperBadgeSelector.classList.add('opacity-30', 'pointer-events-none');
+              btnRemoveBadge.classList.add('hidden');
             }
           }
+
+          // 6. Highlight active badge item in the grid
+          document.querySelectorAll('.badge-item-btn').forEach((btn: any) => {
+            const bUrl = btn.dataset.url;
+            const isSelected = (bUrl === draftNameIcon);
+            if (isSelected) {
+              btn.className = 'badge-item-btn relative w-9 h-9 rounded-xl bg-cyan-500/20 border border-cyan-400 ring-2 ring-cyan-400/50 flex items-center justify-center p-1.5 transition-all duration-150 active:scale-95 cursor-pointer select-none scale-105 shadow-sm z-10';
+            } else {
+              btn.className = 'badge-item-btn relative w-9 h-9 rounded-xl bg-white/[0.04] hover:bg-white/[0.1] border border-white/[0.08] flex items-center justify-center p-1.5 transition-all duration-150 active:scale-95 cursor-pointer select-none';
+            }
+          });
 
           // 7. Update Border Effect Cards in 2x2 Grid
           document.querySelectorAll('.border-effect-card').forEach((card: any) => {
             const effectId = card.dataset.effect;
             const isSelected = (effectId === draftBorderEffect);
             const radioDot = card.querySelector('.effect-radio-dot');
-            const miniWrapper = card.querySelector('.card-mini-avatar-wrapper');
-            if (miniWrapper) {
-              miniWrapper.style.setProperty('--avatar-glow-color', draftGlowColor);
-              miniWrapper.style.setProperty('--avatar-border-color', draftGlowColor);
+            const miniAvatar = card.querySelector('.card-mini-avatar-wrapper');
+            if (miniAvatar) {
+              miniAvatar.style.setProperty('--avatar-glow-color', draftGlowColor);
+              miniAvatar.style.setProperty('--avatar-border-color', draftGlowColor);
             }
             if (isSelected) {
-              card.className = 'border-effect-card p-2.5 sm:p-3 rounded-2xl border border-cyan-400 bg-cyan-500/10 ring-1 ring-cyan-400/40 transition-all cursor-pointer flex items-center gap-2.5 select-none';
+              card.className = 'border-effect-card p-3 rounded-2xl border border-cyan-400 bg-cyan-500/10 ring-1 ring-cyan-400/40 transition-all cursor-pointer flex items-center gap-2.5 select-none';
               if (radioDot) radioDot.classList.remove('hidden');
             } else {
-              card.className = 'border-effect-card p-2.5 sm:p-3 rounded-2xl border border-white/10 bg-white/[0.02] hover:bg-white/[0.05] transition-all cursor-pointer flex items-center gap-2.5 select-none';
+              card.className = 'border-effect-card p-3 rounded-2xl border border-white/10 bg-white/[0.02] hover:bg-white/[0.05] transition-all cursor-pointer flex items-center gap-2.5 select-none';
               if (radioDot) radioDot.classList.add('hidden');
             }
           });
@@ -5359,11 +5625,11 @@ function renderPresets() {
             const isSelected = (val === draftGlowColor);
             const check = btn.querySelector('.glow-check');
             if (isSelected) {
-              btn.className = 'glow-color-dot relative w-7 h-7 sm:w-8 sm:h-8 rounded-full cursor-pointer transition-all active:scale-90 flex items-center justify-center shadow-md select-none ring-2 ring-offset-2 ring-offset-[#11141d] ring-cyan-400 scale-110 z-10';
+              btn.className = 'glow-color-dot relative w-8 h-8 rounded-full cursor-pointer transition-all active:scale-90 flex items-center justify-center shadow-md select-none ring-2 ring-offset-2 ring-offset-[#11141d] ring-cyan-400 scale-110 z-10';
               check?.classList.remove('hidden');
               check?.classList.add('flex');
             } else {
-              btn.className = 'glow-color-dot relative w-7 h-7 sm:w-8 sm:h-8 rounded-full cursor-pointer transition-all active:scale-90 flex items-center justify-center shadow-md select-none hover:scale-105';
+              btn.className = 'glow-color-dot relative w-8 h-8 rounded-full cursor-pointer transition-all active:scale-90 flex items-center justify-center shadow-md select-none hover:scale-105';
               check?.classList.add('hidden');
               check?.classList.remove('flex');
             }
@@ -5387,28 +5653,165 @@ function renderPresets() {
               <span class="swatch-check hidden text-white text-[11px] font-bold drop-shadow-[0_1px_2px_rgba(0,0,0,0.8)] select-none pointer-events-none">✓</span>
             </button>
           `).join('');
+
+          gridColorMatrix.querySelectorAll('.swatch-trigger-btn').forEach((btn: any) => {
+            btn.addEventListener('click', () => {
+              draftNameColor = btn.dataset.value;
+              updateLivePreview();
+            });
+          });
         }
 
-        // Render Single-row Icon Strip (8 icons)
-        if (wrapperBadgeSelector) {
-          wrapperBadgeSelector.innerHTML = STATUS_ICONS.map(icon => `
-            <button 
-              type="button" 
-              class="mini-badge-btn w-8 h-8 rounded-full border border-white/10 bg-white/[0.04] hover:bg-white/[0.08] text-slate-300 flex items-center justify-center text-sm transition-all cursor-pointer select-none active:scale-95"
-              data-icon="${icon}"
-              title="${icon}"
-            >
-              ${icon}
-            </button>
-          `).join('');
+        // Render Badges in the 8-column grid
+        function renderBadges(badgesToRender: any[]) {
+          if (!gridBadgesDisplay) return;
+
+          if (badgesToRender.length === 0) {
+            gridBadgesDisplay.innerHTML = `
+              <div class="col-span-8 py-6 text-center text-xs text-slate-400">
+                <span>No badges found. Try another search term!</span>
+              </div>
+            `;
+            if (badgePickerCount) badgePickerCount.textContent = '0 badges';
+            return;
+          }
+
+          gridBadgesDisplay.innerHTML = badgesToRender.map(b => {
+            const isSelected = (b.url === draftNameIcon);
+            return `
+              <button 
+                type="button" 
+                class="badge-item-btn relative w-9 h-9 rounded-xl ${isSelected ? 'bg-cyan-500/20 border border-cyan-400 ring-2 ring-cyan-400/50 scale-105 shadow-sm z-10' : 'bg-white/[0.04] hover:bg-white/[0.1] border border-white/[0.08]'} flex items-center justify-center p-1.5 transition-all duration-150 active:scale-95 cursor-pointer select-none"
+                data-url="${b.url}"
+                data-name="${b.name}"
+                title="${b.name}"
+              >
+                <img src="${b.url}" alt="${b.name}" class="w-6 h-6 object-contain pointer-events-none" loading="lazy" />
+              </button>
+            `;
+          }).join('');
+
+          if (badgePickerCount) {
+            badgePickerCount.textContent = `Showing ${badgesToRender.length} badges`;
+          }
+
+          gridBadgesDisplay.querySelectorAll('.badge-item-btn').forEach((btn: any) => {
+            btn.addEventListener('click', () => {
+              const url = btn.dataset.url;
+              if (draftNameIcon === url) {
+                draftNameIcon = '';
+              } else {
+                draftNameIcon = url;
+              }
+              updateLivePreview();
+            });
+          });
         }
 
-        // Render Clean 2x2 Grid for Avatar Border Effects
+        function filterBadges() {
+          const query = inputBadgeSearch?.value.trim().toLowerCase() || '';
+          if (btnClearBadgeSearch) {
+            if (query) btnClearBadgeSearch.classList.remove('hidden');
+            else btnClearBadgeSearch.classList.add('hidden');
+          }
+
+          let matched = BADGE_LIBRARY;
+          if (query) {
+            matched = BADGE_LIBRARY.filter(b => b.name.toLowerCase().includes(query) || b.id.toLowerCase().includes(query));
+          } else {
+            matched = BADGE_LIBRARY.filter(b => b.cat === activeBadgeCategory);
+          }
+
+          renderBadges(matched);
+
+          // If query is present and user typed >= 2 characters, debounced live query to Iconify
+          if (query && query.length >= 2) {
+            clearTimeout(liveSearchDebounceTimer);
+            liveSearchDebounceTimer = setTimeout(async () => {
+              try {
+                const res = await fetch(`https://api.iconify.design/search?query=${encodeURIComponent(query)}&prefixes=fluent-emoji-flat,solar,lucide&limit=40`);
+                if (res.ok) {
+                  const data = await res.json();
+                  if (data && Array.isArray(data.icons) && data.icons.length > 0) {
+                    const onlineBadges = data.icons.map((iconSlug: string) => {
+                      const parts = iconSlug.split(':');
+                      const prefix = parts[0];
+                      const name = parts[1] || '';
+                      let url = `https://api.iconify.design/${prefix}/${name}.svg`;
+                      if (prefix === 'solar' || prefix === 'lucide') {
+                        url += '?color=%2322d3ee';
+                      }
+                      return {
+                        id: iconSlug,
+                        cat: 'search',
+                        name: name.replace(/-/g, ' '),
+                        url
+                      };
+                    });
+
+                    // Merge without duplicates
+                    const existingUrls = new Set(matched.map(m => m.url));
+                    const newOnes = onlineBadges.filter((b: any) => !existingUrls.has(b.url));
+                    if (newOnes.length > 0) {
+                      renderBadges([...matched, ...newOnes]);
+                    }
+                  }
+                }
+              } catch (e) {
+                // Ignore offline or search errors gracefully
+              }
+            }, 350);
+          }
+        }
+
+        inputBadgeSearch?.addEventListener('input', filterBadges);
+
+        btnClearBadgeSearch?.addEventListener('click', () => {
+          if (inputBadgeSearch) {
+            inputBadgeSearch.value = '';
+            filterBadges();
+            inputBadgeSearch.focus();
+          }
+        });
+
+        // Category Pills Handlers
+        document.querySelectorAll('.badge-cat-pill').forEach((pill: any) => {
+          pill.addEventListener('click', () => {
+            activeBadgeCategory = pill.dataset.cat || 'popular';
+            document.querySelectorAll('.badge-cat-pill').forEach((p: any) => {
+              if (p === pill) {
+                p.className = 'badge-cat-pill whitespace-nowrap px-3 py-1.5 rounded-xl font-medium text-xs transition cursor-pointer bg-purple-600 text-white shadow-sm';
+              } else {
+                p.className = 'badge-cat-pill whitespace-nowrap px-3 py-1.5 rounded-xl font-medium text-xs transition cursor-pointer text-slate-400 hover:text-white hover:bg-white/[0.05]';
+              }
+            });
+            if (inputBadgeSearch) inputBadgeSearch.value = '';
+            filterBadges();
+          });
+        });
+
+        // Remove Badge Button
+        btnRemoveBadge?.addEventListener('click', () => {
+          draftNameIcon = '';
+          updateLivePreview();
+        });
+
+        // Toggle Badges Switch
+        toggleBadges?.addEventListener('change', () => {
+          if (!toggleBadges.checked) {
+            draftNameIcon = '';
+          } else if (!draftNameIcon) {
+            draftNameIcon = BADGE_LIBRARY[0].url; // Default to first animated fire
+          }
+          updateLivePreview();
+        });
+
+        // Render 2x2 Grid of Border Effects
         if (borderEffectsGrid) {
           const active = personas.find(p => p.isActive) || personas[0] || { name: 'Hossein' };
           borderEffectsGrid.innerHTML = BORDER_EFFECTS.map(eff => `
             <div 
-              class="border-effect-card p-2.5 sm:p-3 rounded-2xl border border-white/10 bg-white/[0.02] hover:bg-white/[0.05] transition-all cursor-pointer flex items-center gap-2.5 select-none"
+              class="border-effect-card p-3 rounded-2xl border border-white/10 bg-white/[0.02] hover:bg-white/[0.05] transition-all cursor-pointer flex items-center gap-2.5 select-none"
               data-effect="${eff.id}"
             >
               <div class="card-mini-avatar-wrapper w-9 h-9 sm:w-10 sm:h-10 rounded-full p-[2px] flex items-center justify-center shrink-0 ${eff.effectClass}" style="--avatar-glow-color: ${draftGlowColor}; --avatar-border-color: ${draftGlowColor};">
@@ -5429,14 +5832,21 @@ function renderPresets() {
               </div>
             </div>
           `).join('');
+
+          borderEffectsGrid.querySelectorAll('.border-effect-card').forEach((card: any) => {
+            card.addEventListener('click', () => {
+              draftBorderEffect = card.dataset.effect;
+              updateLivePreview();
+            });
+          });
         }
 
-        // Render Border Glow Color 8-dot strip
-        if (gridBorderGlowColors) {
-          gridBorderGlowColors.innerHTML = GLOW_COLORS.map(c => `
+        // Render Border Glow Colors (8 dots)
+        if (gridGlowColors) {
+          gridGlowColors.innerHTML = GLOW_COLORS.map(c => `
             <button 
               type="button" 
-              class="glow-color-dot relative w-7 h-7 sm:w-8 sm:h-8 rounded-full cursor-pointer transition-all active:scale-90 flex items-center justify-center shadow-md select-none hover:scale-105"
+              class="glow-color-dot relative w-8 h-8 rounded-full cursor-pointer transition-all active:scale-90 flex items-center justify-center shadow-md select-none hover:scale-105"
               data-value="${c.value}"
               title="${c.name}"
               style="background: ${c.value};"
@@ -5444,132 +5854,47 @@ function renderPresets() {
               <span class="glow-check hidden text-white text-[10px] font-bold drop-shadow-[0_1px_2px_rgba(0,0,0,0.8)] select-none pointer-events-none">✓</span>
             </button>
           `).join('');
+
+          gridGlowColors.querySelectorAll('.glow-color-dot').forEach((btn: any) => {
+            btn.addEventListener('click', () => {
+              draftGlowColor = btn.dataset.value;
+              updateLivePreview();
+            });
+          });
         }
 
-        // Click Swatch Handlers
-        document.querySelectorAll('.swatch-trigger-btn').forEach((btn: any) => {
-          btn.addEventListener('click', () => {
-            draftNameColor = btn.dataset.value;
-            updateLivePreview();
-          });
-        });
-
-        // Click Icon Handlers
-        document.querySelectorAll('.mini-badge-btn').forEach((btn: any) => {
-          btn.addEventListener('click', () => {
-            const icon = btn.dataset.icon || '';
-            if (draftNameIcon === icon) {
-              draftNameIcon = '';
-            } else {
-              draftNameIcon = icon;
-            }
-            updateLivePreview();
-          });
-        });
-
-        // Toggle Badges Switch
-        toggleBadges?.addEventListener('change', () => {
-          if (!toggleBadges.checked) {
-            draftNameIcon = '';
-          } else if (!draftNameIcon) {
-            draftNameIcon = '⚡';
-          }
-          updateLivePreview();
-        });
-
-        // Click Border Effect Handlers (2x2 Grid)
-        document.querySelectorAll('.border-effect-card').forEach((card: any) => {
-          card.addEventListener('click', () => {
-            draftBorderEffect = card.dataset.effect;
-            updateLivePreview();
-          });
-        });
-
-        // Click Glow Color Handlers (8-dot strip)
-        document.querySelectorAll('.glow-color-dot').forEach((btn: any) => {
-          btn.addEventListener('click', () => {
-            draftGlowColor = btn.dataset.value;
-            updateLivePreview();
-          });
-        });
-
-        // Open Modal
-        function openModal() {
-          const active = personas.find(p => p.isActive) || personas[0];
-          if (active) {
-            draftNameColor = active.nameColor || '#a855f7';
-            draftBorderEffect = active.avatarBorderEffect || 'none';
-            draftNameIcon = active.nameIcon || '';
-            draftGlowColor = active.avatarGlowColor || '#a855f7';
-          }
-
-          switchTab('name');
-
-          modal.classList.remove('hidden');
-          modal.classList.add('flex');
-          document.body.style.overflow = 'hidden';
-
-          setTimeout(() => {
-            dialog?.classList.remove('translate-y-full', 'sm:scale-95');
-            dialog?.classList.add('translate-y-0', 'sm:scale-100');
-          }, 10);
-
-          updateLivePreview();
+        // Initialize state from active persona
+        const active = personas.find(p => p.isActive) || personas[0];
+        if (active) {
+          draftNameColor = active.nameColor || '#a855f7';
+          draftBorderEffect = active.avatarBorderEffect || 'none';
+          draftGlowColor = active.avatarGlowColor || '#a855f7';
+          draftNameIcon = active.nameIcon || '';
         }
 
-        function closeModal() {
-          dialog?.classList.remove('translate-y-0', 'sm:scale-100');
-          dialog?.classList.add('translate-y-full', 'sm:scale-95');
-          setTimeout(() => {
-            modal.classList.add('hidden');
-            modal.classList.remove('flex');
-            document.body.style.overflow = '';
-          }, 200);
-        }
+        switchTab('name');
+        filterBadges();
+        updateLivePreview();
 
-        btnOpen?.addEventListener('click', openModal);
-        btnClose?.addEventListener('click', closeModal);
-        btnCancel?.addEventListener('click', closeModal);
-
-        modal.addEventListener('click', (e) => {
-          if (e.target === modal) closeModal();
-        });
-
-        document.addEventListener('keydown', (e) => {
-          if (e.key === 'Escape' && !modal.classList.contains('hidden')) {
-            closeModal();
-          }
-        });
-
-        // Reset to Default
-        btnReset?.addEventListener('click', () => {
-          draftNameColor = '#a855f7';
-          draftBorderEffect = 'none';
-          draftNameIcon = '';
-          draftGlowColor = '#a855f7';
-          updateLivePreview();
-          showToast('Reset to default name style & border', 'info');
-        });
-
-        // Apply Style CTA Button (Pinned at bottom, h-11 font-semibold)
-        btnApply?.addEventListener('click', () => {
+        // Apply Logic
+        function applyStylesAndSave() {
           const active = personas.find(p => p.isActive) || personas[0];
           if (active) {
             active.nameColor = draftNameColor;
             active.avatarBorderEffect = draftBorderEffect as any;
-            active.nameIcon = draftNameIcon;
             active.avatarGlowColor = draftGlowColor;
+            active.nameIcon = draftNameIcon;
 
             // Save to LocalStorage
             savePersonas();
 
-            // Dispatch real-time global events
+            // Dispatch global events
             window.dispatchEvent(new CustomEvent('aetheria:name-style-changed', {
               detail: {
                 nameColor: draftNameColor,
                 avatarBorderEffect: draftBorderEffect,
-                nameIcon: draftNameIcon,
-                avatarGlowColor: draftGlowColor
+                avatarGlowColor: draftGlowColor,
+                nameIcon: draftNameIcon
               }
             }));
 
@@ -5580,14 +5905,25 @@ function renderPresets() {
             updateHubProfileSummary();
             render3DCarousel();
             showToast('Name style & avatar halo applied! ✨', 'success');
-            closeModal();
+            showView('view-appearance');
           }
+        }
+
+        btnHeaderApply?.addEventListener('click', applyStylesAndSave);
+        btnApply?.addEventListener('click', applyStylesAndSave);
+
+        btnCancel?.addEventListener('click', () => {
+          showView('view-appearance');
         });
 
-        // Support direct anchor access (#name-color or #name-style)
-        if (window.location.hash === '#name-color' || window.location.hash === '#name-style') {
-          setTimeout(openModal, 200);
-        }
+        btnReset?.addEventListener('click', () => {
+          draftNameColor = '#a855f7';
+          draftBorderEffect = 'none';
+          draftGlowColor = '#a855f7';
+          draftNameIcon = '';
+          updateLivePreview();
+          showToast('Reset to default name style & border', 'info');
+        });
       }
       // Wallpapers
       function renderWallpapers() {
@@ -5812,7 +6148,7 @@ function renderPresets() {
       syncInputs();
       updatePreview();
       renderPresets();
-      initNameColorModal();
+      initNameColorPage();
       renderWallpapers();
     }
 
